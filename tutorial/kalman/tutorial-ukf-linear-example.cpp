@@ -37,7 +37,7 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 // ViSP includes
-#include <visp3/core/vpUniRand.h>
+#include <visp3/core/vpGaussRand.h>
 #include <visp3/gui/vpPlot.h>
 
 /**
@@ -52,9 +52,11 @@ std::vector<vpColVector> fx(const std::vector<vpColVector> &chi, const double &d
   unsigned int nbPoints = chi.size();
   std::vector<vpColVector> points;
   for (unsigned int i = 0; i < nbPoints; ++i) {
-    vpColVector point(2);
+    vpColVector point(4);
     point[0] = chi[i][1] * dt + chi[i][0];
     point[1] = chi[i][1];
+    point[2] = chi[i][3] * dt + chi[i][2];
+    point[3] = chi[i][3];
     points.push_back(point);
   }
   return points;
@@ -71,8 +73,9 @@ std::vector<vpColVector> hx(const std::vector<vpColVector> &chi)
   unsigned int nbPoints = chi.size();
   std::vector<vpColVector> points;
   for (unsigned int i = 0; i < nbPoints; ++i) {
-    vpColVector point(1);
+    vpColVector point(2);
     point[0] = chi[i][0];
+    point[1] = chi[i][2];
     points.push_back(point);
   }
   return points;
@@ -81,35 +84,45 @@ std::vector<vpColVector> hx(const std::vector<vpColVector> &chi)
 int main(/*const int argc, const char *argv[]*/)
 {
   const double dt = 1.; // Period of 1s
-  const double gt_dx = 1.; // Ground truth displacement between two measurements
-  const double gt_v = gt_dx / dt; // Ground truth velocity
-  const double processVariance = 0.03;
+  const double gt_dx = 1.; // Ground truth displacement along x axis between two measurements
+  const double gt_dy = 0.5; // Ground truth displacement along x axis between two measurements
+  vpColVector gt_dX(2); // Ground truth displacement between two measurements
+  gt_dX[0] = gt_dx;
+  gt_dX[1] = gt_dy;
+  const double gt_vx = gt_dx / dt; // Ground truth velocity along x axis
+  const double gt_vy = gt_dy / dt; // Ground truth velocity along y axis
+  const double processVariance = 0.02;
+  const double sigmaXmeas = 0.3; // Standard deviation of the measure along the x-axis
+  const double sigmaYmeas = 0.3; // Standard deviation of the measure along the y-axis
 
   // Initialize the attributes of the UKF
-  vpUKSigmaDrawerMerwe drawer(2, 0.3, 2., 0.1);
-  vpMatrix P0(2, 2); //  The initial guess of the process covariance
-  P0.eye(2, 2);
+  vpUKSigmaDrawerMerwe drawer(4, 0.3, 2., -1.);
+  vpMatrix P0(4, 4); //  The initial guess of the process covariance
+  P0.eye(4, 4);
   P0 = P0 * 10.;
   vpMatrix R(2, 2); // The covariance of the noise introduced by the measurement
-  R.eye(1, 1);
+  R.eye(2, 2);
   R = R * 0.5;
-  vpMatrix Q(2, 2); // The covariance of the process
-  Q[0][0] = std::pow(dt, 3) / 3.;
-  Q[0][1] = std::pow(dt, 2)/2.;
-  Q[1][0] = std::pow(dt, 2)/2.;
-  Q[1][1] = dt;
+  vpMatrix Q(4, 4, 0.); // The covariance of the process
+  vpMatrix Q1d(2, 2); // The covariance of a process whose states are {x, dx/dt} and for which the variance is 1
+  Q1d[0][0] = std::pow(dt, 3) / 3.;
+  Q1d[0][1] = std::pow(dt, 2)/2.;
+  Q1d[1][0] = std::pow(dt, 2)/2.;
+  Q1d[1][1] = dt;
+  Q.insert(Q1d, 0, 0);
+  Q.insert(Q1d, 2, 2);
   Q = Q * processVariance;
   vpUnscentedKalman::process_function f = fx;
   vpUnscentedKalman::measurement_function h = hx;
 
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, &drawer, f, h);
-  ukf.init(vpColVector(2, 0.), P0);
+  ukf.init(vpColVector(4, 0.), P0);
 
   // Initialize the plot
-  vpPlot plot(2);
+  vpPlot plot(4);
   plot.initGraph(0, 3);
-  plot.setTitle(0, "Position");
+  plot.setTitle(0, "Position along X-axis");
   plot.setUnitX(0, "Time (s)");
   plot.setUnitY(0, "Position (m)");
   plot.setLegend(0, 0, "GT");
@@ -117,42 +130,70 @@ int main(/*const int argc, const char *argv[]*/)
   plot.setLegend(0, 2, "Filtered");
 
   plot.initGraph(1, 3);
-  plot.setTitle(1, "Velocity");
+  plot.setTitle(1, "Velocity along X-axis");
   plot.setUnitX(1, "Time (s)");
   plot.setUnitY(1, "Velocity (m/s)");
   plot.setLegend(1, 0, "GT");
   plot.setLegend(1, 1, "Measure");
   plot.setLegend(1, 2, "Filtered");
 
+  plot.initGraph(2, 3);
+  plot.setTitle(2, "Position along Y-axis");
+  plot.setUnitX(2, "Time (s)");
+  plot.setUnitY(2, "Position (m)");
+  plot.setLegend(2, 0, "GT");
+  plot.setLegend(2, 1, "Measure");
+  plot.setLegend(2, 2, "Filtered");
+
+  plot.initGraph(3, 3);
+  plot.setTitle(3, "Velocity along Y-axis");
+  plot.setUnitX(3, "Time (s)");
+  plot.setUnitY(3, "Velocity (m/s)");
+  plot.setLegend(3, 0, "GT");
+  plot.setLegend(3, 1, "Measure");
+  plot.setLegend(3, 2, "Filtered");
+
   // Initialize measurement noise
-  vpUniRand rng(vpTime::measureTimeMicros());
+  vpGaussRand rngX(sigmaXmeas, 0., vpTime::measureTimeMicros());
+  vpGaussRand rngY(sigmaYmeas, 0., vpTime::measureTimeMicros() + 4221);
 
   // Main loop
-  double gt_x = 0.;
-  double z_prec = 0.;
+  vpColVector gt_X(2, 0.);
+  vpColVector z_prec(2, 0.);
   for (int i = 0; i < 50; ++i) {
     // Perform the measurement
-    double z_meas = gt_x + rng.uniform(-0.5, 0.5);
-    vpColVector z(1);
-    z[0] = z_meas;
+    double x_meas = gt_X[0] + rngX();
+    double y_meas = gt_X[1] + rngY();
+    vpColVector z(2);
+    z[0] = x_meas;
+    z[1] = y_meas;
 
     // Use the UKF to filter the measurement
     ukf.filter(z, dt);
     vpColVector Xest = ukf.getXest();
 
     // Plot the ground truth, measurement and filtered state
-    plot.plot(0, 0, i, gt_x);
-    plot.plot(0, 1, i, z_meas);
+    plot.plot(0, 0, i, gt_X[0]);
+    plot.plot(0, 1, i, x_meas);
     plot.plot(0, 2, i, Xest[0]);
 
-    double v_meas = (z_meas - z_prec) / dt;
-    plot.plot(1, 0, i, gt_v);
-    plot.plot(1, 1, i, v_meas);
+    double vX_meas = (x_meas - z_prec[0]) / dt;
+    plot.plot(1, 0, i, gt_vx);
+    plot.plot(1, 1, i, vX_meas);
     plot.plot(1, 2, i, Xest[1]);
 
+    plot.plot(2, 0, i, gt_X[1]);
+    plot.plot(2, 1, i, y_meas);
+    plot.plot(2, 2, i, Xest[2]);
+
+    double vY_meas = (y_meas - z_prec[1]) / dt;
+    plot.plot(3, 0, i, gt_vy);
+    plot.plot(3, 1, i, vY_meas);
+    plot.plot(3, 2, i, Xest[3]);
+
     // Update
-    gt_x += gt_dx;
-    z_prec = z_meas;
+    gt_X += gt_dX;
+    z_prec = z;
   }
   std::cout << "Press Enter to quit..." << std::endl;
   std::cin.get();
