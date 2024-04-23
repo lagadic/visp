@@ -670,7 +670,7 @@ int main()
  */
 void vpRealSense::setEnableStream(const rs::stream &stream, bool status) { m_enableStreams[stream] = status; }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Acquire data from RealSense device.
   \param pointcloud : Point cloud data information.

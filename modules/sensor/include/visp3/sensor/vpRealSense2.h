@@ -43,7 +43,7 @@
 #include <librealsense2/rs.hpp>
 #include <librealsense2/rsutil.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/common_headers.h>
 #endif
 
@@ -307,7 +307,7 @@ public:
                unsigned int *tracker_confidence = nullptr, double *ts = nullptr);
 #endif
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
                unsigned char *const data_infrared = nullptr, rs2::align *const align_to = nullptr, double *ts = nullptr);
@@ -399,7 +399,7 @@ protected:
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);
   void getNativeFrameData(const rs2::frame &frame, unsigned char *const data);
   void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void getPointcloud(const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
                      pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);

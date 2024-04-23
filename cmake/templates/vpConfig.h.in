@@ -480,6 +480,15 @@
 // Defined if Point Cloud Library is available
 #cmakedefine VISP_HAVE_PCL
 
+// Defined if required PCL components are found
+#if defined(VISP_HAVE_PCL)
+#cmakedefine VISP_HAVE_PCL_COMMON
+#cmakedefine VISP_HAVE_PCL_FILTERS
+#cmakedefine VISP_HAVE_PCL_IO
+#cmakedefine VISP_HAVE_PCL_SEGMENTATION
+#cmakedefine VISP_HAVE_PCL_VISUALIZATION
+#endif
+
 // Defined if libdmtx is available for bar code detection
 #cmakedefine VISP_HAVE_DMTX
 

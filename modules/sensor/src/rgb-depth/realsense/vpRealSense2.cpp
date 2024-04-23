@@ -470,7 +470,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 }
 #endif // #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Acquire data from RealSense device.
   \param data_image : Color image buffer or nullptr if not wanted.
@@ -882,7 +882,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_depthScale <= std::numeric_limits<float>::epsilon()) {

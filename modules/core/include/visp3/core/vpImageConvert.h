@@ -64,12 +64,13 @@
 #include <windows.h>
 #endif
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
-#include <pcl/impl/point_types.hpp>
+#include <pcl/pcl_config.h>
+#include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #endif
 
@@ -143,7 +144,7 @@ public:
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
 #endif
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
   static int depthToPointCloud(const vpImage<uint16_t> &depth_raw,
                                float depth_scale, const vpCameraParameters &cam_depth,
                                pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
