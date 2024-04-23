@@ -246,9 +246,18 @@ vpMatrix vpMatrix::choleskyByLapack()const
   integer rowNum_ = (integer)this->getRows();
   integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
   integer info;
-
-  vpMatrix L = *this;
   dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
+  L = L.transpose(); // For an unknown reason, dpotrf seems to return the transpose of L
+  if (info < 0) {
+    std::stringstream errMsg;
+    errMsg << "The " << -info << "th argument has an illegal value" << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
+  else if (info > 0) {
+    std::stringstream errMsg;
+    errMsg << "The leading minor of order" << info << "is not positive definite." << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
 #endif
   // Make sure that the upper part of L is null
   unsigned int nbRows = this->getRows();
