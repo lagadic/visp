@@ -48,7 +48,7 @@ int main(int argc, const char **argv)
 {
   bool invertTexture = false;
   bool stepByStep = false;
-  char *modelPathCstr;
+  char *modelPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
     {"-invert", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&invertTexture,
@@ -69,8 +69,11 @@ int main(int argc, const char **argv)
     return (false);
   }
 
-  std::string modelPath(modelPathCstr);
-  if (modelPath.size() == 0) {
+  std::string modelPath;
+  if (modelPathCstr) {
+    modelPath = modelPathCstr;
+  }
+  else {
     modelPath = "data/deformed_sphere.bam";
   }
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 1.0);
