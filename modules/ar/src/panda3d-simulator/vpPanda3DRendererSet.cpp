@@ -48,7 +48,7 @@ void vpPanda3DRendererSet::initFramework(bool showWindow)
 
   // load_prc_file_data("", "load-display p3tinydisplay");
   // load_prc_file_data("", "color-bits 32 32 32");
-  // load_prc_file_data("", "depth-bits 16");
+  load_prc_file_data("", "gl-version 3 2");
 
 
   if (m_framework.use_count() > 0) {

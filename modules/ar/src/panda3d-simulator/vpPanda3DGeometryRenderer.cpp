@@ -36,63 +36,74 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
-#version 120
+#version 330
 
-attribute vec3 p3d_Normal;
-attribute vec3 p3d_Vertex;
+in vec3 p3d_Normal;
+in vec4 p3d_Vertex;
 
-varying vec3 oNormal;
+out vec3 oNormal;
 uniform mat3 p3d_NormalMatrix;
 uniform mat4 p3d_ModelViewMatrix;
+uniform mat4 p3d_ModelViewProjectionMatrix;
 
 
-varying float distToCamera;
+out float distToCamera;
 
 void main()
 {
-    gl_Position = ftransform();
+    //gl_Position = ftransform();
+
+    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
     // View space is Z-up right handed, flip z and y
     oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
     oNormal.yz = oNormal.zy;
     oNormal.y = -oNormal.y;
-    vec4 cs_position = p3d_ModelViewMatrix * vec4(p3d_Vertex, 1.0);
+    vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
   distToCamera = -cs_position.z;
 }
 )shader";
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_WORLD = R"shader(
 
-#version 120
-attribute vec3 p3d_Normal;
-attribute vec3 p3d_Vertex;
+#version 330
+in vec3 p3d_Normal;
+in vec4 p3d_Vertex;
 uniform mat4 p3d_ModelViewMatrix;
-varying vec3 oNormal;
-varying float distToCamera;
+uniform mat4 p3d_ModelViewProjectionMatrix;
+out vec3 oNormal;
+out float distToCamera;
 
 
 void main()
 {
-    gl_Position = ftransform();
+    //gl_Position = ftransform();
+    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
     oNormal = normalize(p3d_Normal);
     oNormal.yz = oNormal.zy;
     oNormal.y = -oNormal.y;
-    vec4 cs_position = p3d_ModelViewMatrix * vec4(p3d_Vertex, 1.0);
+    vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
     distToCamera = -cs_position.z;
 }
 )shader";
 
 const char *vpPanda3DGeometryRenderer::SHADER_FRAG_NORMAL_AND_DEPTH = R"shader(
-#version 120
+#version 330
 
-varying vec3 oNormal;
-varying float distToCamera;
+in vec3 oNormal;
+in float distToCamera;
+out vec4 p3d_FragColor;
+out vec4 fragColor;
+
+out vec4 p3d_FragData;
+
 
 void main()
 {
   vec3 n = normalize(oNormal);
   //if (!gl_FrontFacing)
       //n = -n;
-  gl_FragColor = vec4(n, distToCamera);
+  p3d_FragData = vec4(n, distToCamera);
+
 }
 )shader";
 
