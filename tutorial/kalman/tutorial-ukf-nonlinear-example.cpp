@@ -184,7 +184,7 @@ private:
 
 int main(/*const int argc, const char *argv[]*/)
 {
-  const double dt = 3.; // Period of 1s
+  const double dt = 3.; // Period of 3s
   const double sigmaRange = 5; // Standard deviation of the range measurement: 5m
   const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
 
@@ -222,7 +222,7 @@ int main(/*const int argc, const char *argv[]*/)
   vpUnscentedKalman::vpProcessFunction f = fx;
   vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle);
   using std::placeholders::_1;
-  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpRadarStation::state_to_measurement, radar, _1);
+  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpRadarStation::state_to_measurement, &radar, _1);
 
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, &drawer, f, h);

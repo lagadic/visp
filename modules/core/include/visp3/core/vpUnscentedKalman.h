@@ -89,13 +89,13 @@ public:
   typedef std::function<vpColVector(const vpColVector &, const double &)> vpProcessFunction;
 
   /**
-   * \brief Residual function, which computes either the equivalent of the substraction in the
-   * state space or the equivalent of the substraction in the measurement space.
-   * The first argument is the vector to which we must substract something
-   * and the second argument is the thing to be substracted. The return is the
-   * result of this "substraction".
+   * \brief Function that computes either the equivalent of an addition or the equivalent
+   * of a substraction in the state space or in the measurement space.
+   * The first argument is the vector to which we must add/substract something
+   * and the second argument is the thing to be added/substracted. The return is the
+   * result of this operation.
    */
-  typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpResidualFunction;
+  typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpAddSubFunction;
 
   /**
    * \brief Residual function, which computes either the equivalent of the substraction in the
@@ -130,6 +130,26 @@ public:
   void init(const vpColVector &mu0, const vpMatrix &P0);
 
   /**
+   * \brief Set the command function to use when computing the prior.
+   *
+   * \param b The command function to use.
+   */
+  inline void setCommandOnlyFunction(const vpCommandOnlyFunction &b)
+  {
+    m_b = b;
+  }
+
+  /**
+   * \brief Set the command function to use when computing the prior.
+   *
+   * \param bx The command function to use.
+   */
+  inline void setCommandStateFunction(const vpCommandStateFunction &bx)
+  {
+    m_bx = bx;
+  }
+
+  /**
    * \brief Set the measurement mean function to use when computing a mean
    * in the measurement space.
    *
@@ -146,9 +166,20 @@ public:
    *
    * \param measResFunc The residual function to use.
    */
-  inline void setMeasurementResidualFunction(const vpResidualFunction &measResFunc)
+  inline void setMeasurementResidualFunction(const vpAddSubFunction &measResFunc)
   {
     m_measResFunc = measResFunc;
+  }
+
+  /**
+   * \brief Set the state addition function to use when computing a addition
+   * in the state space.
+   *
+   * \param stateResFunc The addition function to use.
+   */
+  inline void setStateAddFunction(const vpAddSubFunction &stateAddFunc)
+  {
+    m_stateAddFunction = stateAddFunc;
   }
 
   /**
@@ -168,7 +199,7 @@ public:
    *
    * \param stateResFunc The residual function to use.
    */
-  inline void setStateResidualFunction(const vpResidualFunction &stateResFunc)
+  inline void setStateResidualFunction(const vpAddSubFunction &stateResFunc)
   {
     m_stateResFunc = stateResFunc;
   }
@@ -291,10 +322,10 @@ private:
   vpCommandOnlyFunction m_b; /*!< Function that permits to compute the effect of the commands on the prior, without knowledge of the state.*/
   vpCommandStateFunction m_bx; /*!< Function that permits to compute the effect of the commands on the prior, with knowledge of the state.*/
   vpMeanFunction m_measMeanFunc; /*!< Function to compute a weighted mean in the measurement space.*/
-  vpResidualFunction m_measResFunc; /*!< Function to compute a substraction in the measurement space.*/
-  std::function<vpColVector(const vpColVector &, const vpColVector &)> m_stateAddFunction; /*!< Function to compute an addition in the state space.*/
+  vpAddSubFunction m_measResFunc; /*!< Function to compute a substraction in the measurement space.*/
+  vpAddSubFunction m_stateAddFunction; /*!< Function to compute an addition in the state space.*/
   vpMeanFunction m_stateMeanFunc; /*!< Function to compute a weighted mean in the state space.*/
-  vpResidualFunction m_stateResFunc; /*!< Function to compute a substraction in the state space.*/
+  vpAddSubFunction m_stateResFunc; /*!< Function to compute a substraction in the state space.*/
 
   /**
    * \brief Structure that stores the results of the unscented transform.
@@ -316,7 +347,7 @@ private:
    * \return vpUnscentedTransformResult The mean and covariance of the sigma points.
    */
   static vpUnscentedTransformResult unscentedTransform(const std::vector<vpColVector> &sigmaPoints, const std::vector<double> &wm,
-    const std::vector<double> &wc, const vpMatrix &cov, const vpResidualFunction &resFunc, const vpMeanFunction &meanFunc);
+    const std::vector<double> &wc, const vpMatrix &cov, const vpAddSubFunction &resFunc, const vpMeanFunction &meanFunc);
 };
 
 #endif

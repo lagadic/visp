@@ -41,7 +41,7 @@
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
 
 vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
-                       const vpResidualFunction &resFunc, const std::function<vpColVector(const vpColVector &, const vpColVector &)> &addFunc)
+                       const vpAddSubFunction &resFunc, const vpAddSubFunction &addFunc)
   : vpUKSigmaDrawerAbstract(n)
   , m_alpha(alpha)
   , m_beta(beta)

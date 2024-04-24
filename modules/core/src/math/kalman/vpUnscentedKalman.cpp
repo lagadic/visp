@@ -47,10 +47,10 @@ vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKS
   , m_b(nullptr)
   , m_bx(nullptr)
   , m_measMeanFunc(vpUnscentedKalman::simpleMean)
-  , m_measResFunc(simpleResidual)
-  , m_stateAddFunction(simpleAdd)
-  , m_stateMeanFunc(simpleMean)
-  , m_stateResFunc(simpleResidual)
+  , m_measResFunc(vpUnscentedKalman::simpleResidual)
+  , m_stateAddFunction(vpUnscentedKalman::simpleAdd)
+  , m_stateMeanFunc(vpUnscentedKalman::simpleMean)
+  , m_stateResFunc(vpUnscentedKalman::simpleResidual)
 { }
 
 void vpUnscentedKalman::init(const vpColVector &mu0, const vpMatrix &P0)
@@ -127,7 +127,7 @@ void vpUnscentedKalman::update(const vpColVector &z)
 
 vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints,
     const std::vector<double> &wm, const std::vector<double> &wc, const vpMatrix &cov,
-    const vpResidualFunction &resFunc, const vpMeanFunction &meanFunc
+    const vpAddSubFunction &resFunc, const vpMeanFunction &meanFunc
 )
 {
   vpUnscentedKalman::vpUnscentedTransformResult result;

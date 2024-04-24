@@ -49,7 +49,7 @@
 class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {
 public:
-  typedef vpUnscentedKalman::vpResidualFunction vpResidualFunction;
+  typedef vpUnscentedKalman::vpAddSubFunction vpAddSubFunction;
 
   /**
    * \brief Construct a new vpUKSigmaDrawerMerwe object.
@@ -61,8 +61,8 @@ public:
    * \param[in] kappa A third factor, whose value should be set to 3 - n for most problems.
    */
   vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
-                       const vpResidualFunction &resFunc = vpUnscentedKalman::simpleResidual,
-                       const std::function<vpColVector(const vpColVector &, const vpColVector &)> &addFunc = vpUnscentedKalman::simpleAdd);
+                       const vpAddSubFunction &resFunc = vpUnscentedKalman::simpleResidual,
+                       const vpAddSubFunction &addFunc = vpUnscentedKalman::simpleAdd);
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
@@ -90,7 +90,7 @@ protected:
   double m_beta;
   double m_kappa;
   double m_lambda;
-  vpResidualFunction m_resFunc;
-  std::function<vpColVector(const vpColVector &, const vpColVector &)> m_addFunc;
+  vpAddSubFunction m_resFunc;
+  vpAddSubFunction m_addFunc;
 };
 #endif
