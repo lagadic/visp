@@ -39,6 +39,7 @@
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpUKSigmaDrawerAbstract.h>
+#include <visp3/core/vpUnscentedKalman.h>
 
 /*!
   \class vpUKSigmaDrawerAbstract
@@ -48,6 +49,8 @@
 class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {
 public:
+  typedef vpUnscentedKalman::vpResidualFunction vpResidualFunction;
+
   /**
    * \brief Construct a new vpUKSigmaDrawerMerwe object.
    *
@@ -57,7 +60,9 @@ public:
    * \param[in] beta Another factor, which should be set to 2 if the problem is Gaussian.
    * \param[in] kappa A third factor, whose value should be set to 3 - n for most problems.
    */
-  vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa);
+  vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
+                       const vpResidualFunction &resFunc = vpUnscentedKalman::simpleResidual,
+                       const std::function<vpColVector(const vpColVector &, const vpColVector &)> &addFunc = vpUnscentedKalman::simpleAdd);
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
@@ -85,5 +90,7 @@ protected:
   double m_beta;
   double m_kappa;
   double m_lambda;
+  vpResidualFunction m_resFunc;
+  std::function<vpColVector(const vpColVector &, const vpColVector &)> m_addFunc;
 };
 #endif

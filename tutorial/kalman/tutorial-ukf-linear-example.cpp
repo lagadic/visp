@@ -43,42 +43,32 @@
 /**
  * \brief The process function, that updates the prior.
  *
- * \param[in] chi The sigma points.
+ * \param[in] chi A sigma point.
  * \param[in] dt The period.
- * \return std::vector<vpColVector> The sigma points projected in the future.
+ * \return vpColVector The sigma point projected in the future.
  */
-std::vector<vpColVector> fx(const std::vector<vpColVector> &chi, const double &dt)
+vpColVector fx(const vpColVector &chi, const double &dt)
 {
-  unsigned int nbPoints = chi.size();
-  std::vector<vpColVector> points;
-  for (unsigned int i = 0; i < nbPoints; ++i) {
-    vpColVector point(4);
-    point[0] = chi[i][1] * dt + chi[i][0];
-    point[1] = chi[i][1];
-    point[2] = chi[i][3] * dt + chi[i][2];
-    point[3] = chi[i][3];
-    points.push_back(point);
-  }
-  return points;
+  vpColVector point(4);
+  point[0] = chi[1] * dt + chi[0];
+  point[1] = chi[1];
+  point[2] = chi[3] * dt + chi[2];
+  point[3] = chi[3];
+  return point;
 }
 
 /**
  * \brief The measurement function, that project the prior in the measurement space.
  *
  * \param[in] chi The prior.
- * \return std::vector<vpColVector> The prior projected in the measurement space.
+ * \return vpColVector The prior projected in the measurement space.
  */
-std::vector<vpColVector> hx(const std::vector<vpColVector> &chi)
+vpColVector hx(const vpColVector &chi)
 {
-  unsigned int nbPoints = chi.size();
-  std::vector<vpColVector> points;
-  for (unsigned int i = 0; i < nbPoints; ++i) {
-    vpColVector point(2);
-    point[0] = chi[i][0];
-    point[1] = chi[i][2];
-    points.push_back(point);
-  }
-  return points;
+  vpColVector point(2);
+  point[0] = chi[0];
+  point[1] = chi[2];
+  return point;
 }
 
 int main(/*const int argc, const char *argv[]*/)
@@ -112,8 +102,8 @@ int main(/*const int argc, const char *argv[]*/)
   Q.insert(Q1d, 0, 0);
   Q.insert(Q1d, 2, 2);
   Q = Q * processVariance;
-  vpUnscentedKalman::process_function f = fx;
-  vpUnscentedKalman::measurement_function h = hx;
+  vpUnscentedKalman::vpProcessFunction f = fx;
+  vpUnscentedKalman::vpMeasurementFunction h = hx;
 
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, &drawer, f, h);

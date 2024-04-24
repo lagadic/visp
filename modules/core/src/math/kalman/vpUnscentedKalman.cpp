@@ -38,15 +38,20 @@
 
 #include <visp3/core/vpUnscentedKalman.h>
 
-vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const process_function &f, const measurement_function &h)
+vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
   : m_Q(Q)
   , m_R(R)
   , m_f(f)
   , m_h(h)
   , m_sigmaDrawer(drawer)
-{
-
-}
+  , m_b(nullptr)
+  , m_bx(nullptr)
+  , m_measMeanFunc(vpUnscentedKalman::simpleMean)
+  , m_measResFunc(simpleResidual)
+  , m_stateAddFunction(simpleAdd)
+  , m_stateMeanFunc(simpleMean)
+  , m_stateResFunc(simpleResidual)
+{ }
 
 void vpUnscentedKalman::init(const vpColVector &mu0, const vpMatrix &P0)
 {
@@ -54,13 +59,13 @@ void vpUnscentedKalman::init(const vpColVector &mu0, const vpMatrix &P0)
   m_Pest = P0;
 }
 
-void vpUnscentedKalman::filter(const vpColVector &z, const double &dt)
+void vpUnscentedKalman::filter(const vpColVector &z, const double &dt, const vpColVector &u)
 {
-  predict(dt);
+  predict(dt, u);
   update(z);
 }
 
-void vpUnscentedKalman::predict(const double &dt)
+void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
 {
   // Drawing the sigma points
   m_chi = m_sigmaDrawer->drawSigmaPoints(m_Xest, m_Pest);
@@ -71,51 +76,70 @@ void vpUnscentedKalman::predict(const double &dt)
   m_wc = weights.m_wc;
 
   // Computation of the prior based on the sigma points
-  m_Y = m_f(m_chi, dt);
+  unsigned int nbPoints = m_chi.size();
+  if (m_Y.size() != nbPoints) {
+    m_Y.resize(nbPoints);
+  }
+  for (unsigned int i = 0; i < nbPoints; ++i) {
+    vpColVector prior = m_f(m_chi[i], dt);
+    if (m_b) {
+      prior = m_stateAddFunction(prior, m_b(u, dt));
+    }
+    else if (m_bx) {
+      prior = m_stateAddFunction(prior, m_bx(u, m_chi[i], dt));
+    }
+    m_Y[i] = prior;
+  }
 
   // Computation of the mean and covariance of the prior
-  vpUnscentedTransformResult transformResults = unscentedTransform(m_Y, m_wm, m_wc, m_Q);
+  vpUnscentedTransformResult transformResults = unscentedTransform(m_Y, m_wm, m_wc, m_Q, m_stateResFunc, m_stateMeanFunc);
   m_mu = transformResults.m_mu;
   m_P = transformResults.m_P;
 }
 
 void vpUnscentedKalman::update(const vpColVector &z)
 {
-  m_Z = m_h(m_Y);
+  unsigned int nbPoints = m_chi.size();
+  if (m_Z.size() != nbPoints) {
+    m_Z.resize(nbPoints);
+  }
+  for (unsigned int i = 0; i < nbPoints; ++i) {
+    m_Z[i] = (m_h(m_Y[i]));
+  }
 
   // Computation of the mean and covariance of the prior expressed in the measurement space
-  vpUnscentedTransformResult transformResults = unscentedTransform(m_Z, m_wm, m_wc, m_R);
+  vpUnscentedTransformResult transformResults = unscentedTransform(m_Z, m_wm, m_wc, m_R, m_measResFunc, m_measMeanFunc);
   m_muz = transformResults.m_mu;
   m_Pz = transformResults.m_P;
 
   // Computation of the Kalman gain
-  vpMatrix Pxz = m_wc[0] * (m_Y[0] - m_mu) * (m_Z[0] - m_muz).transpose();
+  vpMatrix Pxz = m_wc[0] * m_stateResFunc(m_Y[0], m_mu) * m_measResFunc(m_Z[0], m_muz).transpose();
   unsigned int nbPts = m_wc.size();
   for (unsigned int i = 1; i < nbPts; ++i) {
-    Pxz += m_wc[i] * (m_Y[i] - m_mu) * (m_Z[i] - m_muz).transpose();
+    Pxz += m_wc[i] * m_stateResFunc(m_Y[i], m_mu) * m_measResFunc(m_Z[i], m_muz).transpose();
   }
   m_K = Pxz * m_Pz.inverseByCholesky();
 
   // Updating the estimate
-  m_Xest = m_mu + m_K * (z - m_muz);
+  m_Xest = m_stateAddFunction(m_mu, m_K * m_measResFunc(z, m_muz));
   m_Pest = m_P - m_K * m_Pz * m_K.transpose();
 }
 
-vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints, const vpColVector &wm, const vpColVector &wc, const vpMatrix &cov)
+vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints,
+    const std::vector<double> &wm, const std::vector<double> &wc, const vpMatrix &cov,
+    const vpResidualFunction &resFunc, const vpMeanFunction &meanFunc
+)
 {
   vpUnscentedKalman::vpUnscentedTransformResult result;
 
   // Computation of the mean
-  unsigned int nbSigmaPoints = wm.size();
-  result.m_mu = wm[0] * sigmaPoints[0];
-  for (unsigned int i = 1; i < nbSigmaPoints; ++i) {
-    result.m_mu += wm[i] * sigmaPoints[i];
-  }
+  result.m_mu = meanFunc(sigmaPoints, wm);
 
   // Computation of the covariance
   result.m_P = cov;
+  unsigned int nbSigmaPoints = sigmaPoints.size();
   for (unsigned int i = 0; i < nbSigmaPoints; ++i) {
-    vpColVector e = sigmaPoints[i] - result.m_mu;
+    vpColVector e = resFunc(sigmaPoints[i], result.m_mu);
     result.m_P += wc[i] * e*e.transpose();
   }
   return result;

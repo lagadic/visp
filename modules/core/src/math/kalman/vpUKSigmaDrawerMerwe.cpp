@@ -40,11 +40,14 @@
 
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
 
-vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa)
+vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
+                       const vpResidualFunction &resFunc, const std::function<vpColVector(const vpColVector &, const vpColVector &)> &addFunc)
   : vpUKSigmaDrawerAbstract(n)
   , m_alpha(alpha)
   , m_beta(beta)
   , m_kappa(kappa)
+  , m_resFunc(resFunc)
+  , m_addFunc(addFunc)
 {
   computeLambda();
 }
@@ -57,8 +60,8 @@ std::vector<vpColVector> vpUKSigmaDrawerMerwe::drawSigmaPoints(const vpColVector
   vpMatrix scaledCov = (static_cast<double>(m_n) + m_lambda) * covariance;
   vpMatrix cholesky = scaledCov.cholesky();
   for (unsigned int i = 0; i < m_n; ++i) {
-    sigmaPoints[i + 1] = mean + cholesky.getRow(i).transpose();
-    sigmaPoints[i + m_n + 1] = mean - cholesky.getRow(i).transpose();
+    sigmaPoints[i + 1] = m_addFunc(mean, cholesky.getRow(i).transpose());
+    sigmaPoints[i + m_n + 1] = m_resFunc(mean, cholesky.getRow(i).transpose());
   }
   return sigmaPoints;
 }

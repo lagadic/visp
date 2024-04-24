@@ -43,23 +43,18 @@
 /**
  * \brief The process function, that updates the prior.
  *
- * \param[in] chi The sigma points.
+ * \param[in] chi A sigma point.
  * \param[in] dt The period.
- * \return std::vector<vpColVector> The sigma points projected in the future.
+ * \return vpColVector The sigma points projected in the future.
  */
-std::vector<vpColVector> fx(const std::vector<vpColVector> &chi, const double &dt)
+vpColVector fx(const vpColVector &chi, const double &dt)
 {
-  unsigned int nbPoints = chi.size();
-  std::vector<vpColVector> points;
-  for (unsigned int i = 0; i < nbPoints; ++i) {
-    vpColVector point(4);
-    point[0] = chi[i][1] * dt + chi[i][0];
-    point[1] = chi[i][1];
-    point[2] = chi[i][3] * dt + chi[i][2];
-    point[3] = chi[i][3];
-    points.push_back(point);
-  }
-  return points;
+  vpColVector point(4);
+  point[0] = chi[1] * dt + chi[0];
+  point[1] = chi[1];
+  point[2] = chi[3] * dt + chi[2];
+  point[3] = chi[3];
+  return point;
 }
 
 /**
@@ -88,21 +83,16 @@ public:
    * \brief Convert the prior of the UKF into the measurement space.
    *
    * \param chi The prior.
-   * \return std::vector<vpColVector> The prior expressed in the measurement space.
+   * \return vpColVector The prior expressed in the measurement space.
    */
-  std::vector<vpColVector> state_to_measurement(const std::vector<vpColVector> &chi)
+  vpColVector state_to_measurement(const vpColVector &chi)
   {
-    std::vector<vpColVector> measures;
-    unsigned int nbPoints = chi.size();
-    for (unsigned int i = 0; i < nbPoints; ++i) {
-      vpColVector meas(2);
-      double dx = chi[i][0] - m_x;
-      double dy = chi[i][2] - m_y;
-      meas[0] = std::sqrt(dx * dx + dy * dy);
-      meas[1] = std::atan2(dy, dx);
-      measures.push_back(meas);
-    }
-    return measures;
+    vpColVector meas(2);
+    double dx = chi[0] - m_x;
+    double dy = chi[2] - m_y;
+    meas[0] = std::sqrt(dx * dx + dy * dy);
+    meas[1] = std::atan2(dy, dx);
+    return meas;
   }
 
   /**
@@ -229,10 +219,10 @@ int main(/*const int argc, const char *argv[]*/)
   X0[2] = 1100.; // y = 1100m
   X0[3] = 0.; // dy/dt = 0m/s
 
-  vpUnscentedKalman::process_function f = fx;
+  vpUnscentedKalman::vpProcessFunction f = fx;
   vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle);
   using std::placeholders::_1;
-  vpUnscentedKalman::measurement_function h = std::bind(&vpRadarStation::state_to_measurement, radar, _1);
+  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpRadarStation::state_to_measurement, radar, _1);
 
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, &drawer, f, h);
