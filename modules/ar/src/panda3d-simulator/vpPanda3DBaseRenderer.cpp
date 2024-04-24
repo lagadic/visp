@@ -45,7 +45,6 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRende
 
 void vpPanda3DBaseRenderer::initFramework(bool showWindow)
 {
-  load_prc_file_data("", "load-display p3tinydisplay");
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError,
     "Panda3D renderer: Reinitializing is not supported!");
@@ -209,7 +208,6 @@ void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
 vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
 {
   vpColVector pandaPos = PANDA_T_VISP * point;
-  std::cout <<"PANDA POS = " << pandaPos << std::endl;
   pandaPos /= pandaPos[3];
   return pandaPos;
 }

@@ -157,10 +157,6 @@ public:
     NodePath np = scene.attach_new_node(light);
     vpColVector posPanda = vpPanda3DBaseRenderer::vispPointToPanda(m_position);
     np.set_pos(posPanda[0], posPanda[1], posPanda[2]);
-    std::cout << "posPanda = " << posPanda << std::endl;
-    std::cout << np.get_pos() << std::endl;
-    std::cout << scene.get_mat() << std::endl;
-    std::cout << np.get_mat(scene) << std::endl;
     scene.set_light(np);
   }
 

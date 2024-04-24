@@ -99,7 +99,7 @@ int main(int argc, const char **argv)
   }
 
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
-  renderer.initFramework(true);
+  renderer.initFramework(false);
 
   std::cout << "Loading object " << modelPath << std::endl;
   NodePath object = renderer.loadObject(objectName, modelPath);
@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
     rgbRenderer->computeNearAndFarPlanesFromNode(objectName, near, far);
     // renderParams.setClippingDistance(near, far);
     renderer.setRenderParameters(renderParams);
-    std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
+    //std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
 
     const double beforeRender = vpTime::measureTimeMs();
     renderer.renderFrame();
