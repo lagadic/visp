@@ -34,6 +34,7 @@
 #if defined(VISP_HAVE_PANDA3D)
 
 #include "load_prc_file.h"
+#include <antialiasAttrib.h>
 
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
   1.0, 0.0, 0.0, 0.0,
@@ -79,6 +80,7 @@ void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> frame
 void vpPanda3DBaseRenderer::setupScene()
 {
   m_renderRoot = m_window->get_render().attach_new_node(m_name);
+  m_renderRoot.set_antialias(AntialiasAttrib::M_none);
 }
 
 void vpPanda3DBaseRenderer::setupCamera()

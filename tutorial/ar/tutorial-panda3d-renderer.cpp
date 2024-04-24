@@ -100,7 +100,7 @@ int main(int argc, const char **argv)
   }
 
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
-  renderer.initFramework(false);
+  renderer.initFramework(true);
 
   std::cout << "Loading object " << modelPath << std::endl;
   NodePath object = renderer.loadObject(objectName, modelPath);

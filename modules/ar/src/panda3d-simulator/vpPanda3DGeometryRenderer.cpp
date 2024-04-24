@@ -82,11 +82,10 @@ void main()
 )shader";
 
 const char *vpPanda3DGeometryRenderer::SHADER_FRAG_NORMAL_AND_DEPTH = R"shader(
-#version 140
+#version 120
 
 varying vec3 oNormal;
 varying float distToCamera;
-
 
 void main()
 {
@@ -203,6 +202,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   }
   else if (m_normalDepthTexture->get_component_type() == Texture::T_unsigned_byte) {
     unsigned char *data = (unsigned char *)(&(m_normalDepthTexture->get_ram_image().front()));
+    std::cout << "AAAAAAA" << std::endl;
     for (unsigned int i = 0; i < normals.getSize(); ++i) {
       normals.bitmap[i].B = (static_cast<float>(data[i * 4]) / 127.5f - 1.0);
       normals.bitmap[i].G = (static_cast<float>(data[i * 4 + 1]) / 127.5f - 1.0);
