@@ -33,6 +33,8 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <visp3/core/vpMath.h>
+
 #include "load_prc_file.h"
 #include <antialiasAttrib.h>
 
@@ -147,7 +149,7 @@ vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(NodePath &object)
   return vpHomogeneousMatrix(t, q) * PANDA_T_VISP;
 }
 
-void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far)
+void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &name, float &nearV, float &farV)
 {
   if (m_camera == nullptr) {
     throw vpException(vpException::notInitialized, "Cannot compute planes when the camera is not initialized");
@@ -158,8 +160,8 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   }
   LPoint3 minP, maxP;
   object.calc_tight_bounds(minP, maxP, m_cameraPath);
-  near = std::max(0.f, minP.get_y());
-  far = std::max(near, maxP.get_y());
+  nearV = vpMath::maximum<float>(0.f, minP.get_y());
+  farV = vpMath::maximum<float>(nearV, maxP.get_y());
 }
 
 NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const std::string &modelPath)

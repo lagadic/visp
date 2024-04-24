@@ -50,13 +50,18 @@ set(PANDA3D_INCLUDE_SEARCH_PATHS
 set(PANDA3D_LIBRARIES_SEARCH_PATHS
   $ENV{Panda3D_DIR}/lib
   $ENV{Panda3D_DIR}/built/lib
+  $ENV{Panda3D_DIR}/bin
   ${Panda3D_DIR}/lib
   ${Panda3D_DIR}/built/lib
+  ${Panda3D_DIR}/bin
   /usr/lib/panda3d
   /usr/local/lib/panda3d
   /usr/lib/x86_64-linux-gnu/panda3d
   /Library/Developer/Panda3D/lib
 )
+
+
+message(${Panda3D_DIR})
 
 set(PANDA3D_LIBS
   panda p3framework pandaexpress
@@ -70,8 +75,7 @@ set(PANDA3D_LIBS
 set(Panda3D_LIBRARIES "")
 set(ALL_LIBS_FOUND TRUE)
 foreach(lib_name ${PANDA3D_LIBS})
-  find_library(Panda3D_${lib_name}_LIBRARY ${lib_name} PATHS ${PANDA3D_LIBRARIES_SEARCH_PATHS})
-
+  find_library(Panda3D_${lib_name}_LIBRARY NAMES "lib${lib_name}" ${lib_name} PATHS ${PANDA3D_LIBRARIES_SEARCH_PATHS})
   if(NOT Panda3D_${lib_name}_LIBRARY)
     set(ALL_LIBS_FOUND FALSE)
   else()
@@ -82,7 +86,7 @@ foreach(lib_name ${PANDA3D_LIBS})
 endforeach()
 
 find_path(Panda3D_INCLUDE_DIRS panda.h PATHS ${PANDA3D_INCLUDE_SEARCH_PATHS})
-
+message(${Panda3D_INCLUDE_DIRS})
 include(FindPackageHandleStandardArgs)
 # Handle the QUIETLY and REQUIRED arguments and set the Panda3D_FOUND to TRUE
 # if all listed variables are TRUE

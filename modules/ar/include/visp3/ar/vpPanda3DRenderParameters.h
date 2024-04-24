@@ -80,16 +80,16 @@ public:
   /**
    * @brief Set the clipping distance. When a panda camera uses these render parameters, objects that are closer than "near" or further than "far" will be clipped.
    *
-   * @param near near clipping distance
-   * @param far far clipping distance
+   * @param nearV near clipping distance
+   * @param farV far clipping distance
    */
-  void setClippingDistance(double near, double far)
+  void setClippingDistance(double nearV, double farV)
   {
-    if (far < near) {
-      std::swap(near, far);
+    if (farV < nearV) {
+      std::swap(nearV, farV);
     }
-    m_clipNear = near;
-    m_clipFar = far;
+    m_clipNear = nearV;
+    m_clipFar = farV;
   }
 
   unsigned int getImageWidth() const { return m_width; }

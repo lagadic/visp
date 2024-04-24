@@ -21,8 +21,8 @@
 void displayNormals(const vpImage<vpRGBf> &normalsImage,
                     vpImage<vpRGBa> &normalDisplayImage)
 {
-#pragma omp parallel for simd
-  for (unsigned int i = 0; i < normalsImage.getSize(); ++i) {
+#pragma omp parallel for
+  for (int i = 0; i < normalsImage.getSize(); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
@@ -32,11 +32,11 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage,
   vpDisplay::flush(normalDisplayImage);
 }
 void displayDepth(const vpImage<float> &depthImage,
-                  vpImage<unsigned char> &depthDisplayImage, float near, float far)
+                  vpImage<unsigned char> &depthDisplayImage, float nearV, float farV)
 {
-#pragma omp parallel for simd
-  for (unsigned int i = 0; i < depthImage.getSize(); ++i) {
-    float val = std::max(0.f, (depthImage.bitmap[i] - near) / (far - near));
+#pragma omp parallel for
+  for (int i = 0; i < depthImage.getSize(); ++i) {
+    float val = std::max(0.f, (depthImage.bitmap[i] - nearV) / (farV - nearV));
     depthDisplayImage.bitmap[i] = static_cast<unsigned char>(val * 255.f);
   }
   vpDisplay::display(depthDisplayImage);
@@ -148,10 +148,10 @@ int main(int argc, const char **argv)
   bool firstFrame = true;
   std::vector<double> renderTime, fetchTime, displayTime;
   while (!end) {
-    float near = 0, far = 0;
+    float nearV = 0, farV = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
-    rgbRenderer->computeNearAndFarPlanesFromNode(objectName, near, far);
-    // renderParams.setClippingDistance(near, far);
+    rgbRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV);
+    renderParams.setClippingDistance(nearV, farV);
     renderer.setRenderParameters(renderParams);
     //std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
 
@@ -167,7 +167,7 @@ int main(int argc, const char **argv)
 
     displayNormals(normalsImage, normalDisplayImage);
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
-    displayDepth(depthImage, depthDisplayImage, near, far);
+    displayDepth(depthImage, depthDisplayImage, nearV, farV);
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
 
