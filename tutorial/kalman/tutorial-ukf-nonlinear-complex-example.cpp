@@ -169,6 +169,66 @@ vpColVector fx(const vpColVector &x, const double & /*dt*/)
 {
   return x;
 }
+
+/**
+ * \brief Compute the commands realising a turn at constant linear velocity.
+ *
+ * \param[in] v Constant linear velocity.
+ * \param[in] angleStart Starting angle (in degrees).
+ * \param[in] angleStop Stop angle (in degrees).
+ * \param[in] nbSteps Number of steps to perform the turn.
+ * \return std::vector<vpColVector> The corresponding list of commands.
+ */
+std::vector<vpColVector> generateTurnCommands(const double &v, const double &angleStart, const double &angleStop, const unsigned int &nbSteps)
+{
+  std::vector<vpColVector> cmds;
+  double dTheta = vpMath::rad(angleStop - angleStart) / static_cast<double>(nbSteps - 1);
+  for (unsigned int i = 0; i < nbSteps; ++i) {
+    double theta = angleStart + dTheta * static_cast<double>(i);
+    vpColVector cmd(2);
+    cmd[0] = v;
+    cmd[1] = theta;
+    cmds.push_back(cmd);
+  }
+  return cmds;
+}
+
+/**
+ * \brief Generate the list of commands for the simulation.
+ *
+ * @return std::vector<vpColVector> The list of commands to use in the simulation
+ */
+std::vector<vpColVector> generateCommands()
+{
+  std::vector<vpColVector> cmds;
+  // Starting by an straight line acceleration
+  unsigned int nbSteps = 30;
+  double dv = (1.1 - 0.001) / static_cast<double>(nbSteps - 1);
+  for (unsigned int i = 0; i < nbSteps; ++i) {
+    vpColVector cmd(2);
+    cmd[0] = 0.001 + static_cast<double>(i) * dv;
+    cmd[1] = 0.;
+    cmds.push_back(cmd);
+  }
+
+  // Left turn
+  double lastLinearVelocity = cmds[cmds.size() -1][0];
+  std::vector<vpColVector> leftTurnCmds = generateTurnCommands(lastLinearVelocity, 0, 2, 15);
+  cmds.insert(cmds.end(), leftTurnCmds.begin(), leftTurnCmds.end());
+  for (unsigned int i = 0; i < 100; ++i) {
+    cmds.push_back(cmds[cmds.size() -1]);
+  }
+
+  // Right turn
+  lastLinearVelocity = cmds[cmds.size() -1][0];
+  std::vector<vpColVector> rightTurnCmds = generateTurnCommands(lastLinearVelocity, 2, -2, 15);
+  cmds.insert(cmds.end(), rightTurnCmds.begin(), rightTurnCmds.end());
+  for (unsigned int i = 0; i < 200; ++i) {
+    cmds.push_back(cmds[cmds.size() -1]);
+  }
+
+  return cmds;
+}
 }
 
 /**
@@ -405,22 +465,21 @@ private:
 
 int main(/*const int argc, const char *argv[]*/)
 {
-  const double dt = 1.; // Period of 1s
+  const double dt = 0.1; // Period of 0.1s
   const double step = 10.; // Number of update of the robot position between two UKF filtering
   const double sigmaRange = 0.3; // Standard deviation of the range measurement: 0.3m
-  const double sigmaSteering = vpMath::rad(1); // Standard deviation of the steering angle: 1deg
   const double sigmaBearing = vpMath::rad(0.5); // Standard deviation of the bearing angle: 0.5deg
-  const double sigmaVel = 0.1; // Standard deviation of the velocity: 0.1m/s
   const double wheelbase = 0.5; // Wheelbase of 0.5m
   const std::vector<vpLandmarkMeasurements> landmarks = { vpLandmarkMeasurements(5, 10, sigmaRange, sigmaBearing)
                                                         , vpLandmarkMeasurements(10, 5, sigmaRange, sigmaBearing)
-                                                        , vpLandmarkMeasurements(15, 15, sigmaRange, sigmaBearing) }; // Vector of landmarks constituing the grid
+                                                        , vpLandmarkMeasurements(15, 15, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(20, 5, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(0, 30, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(50, 30, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing) }; // Vector of landmarks constituing the grid
   const unsigned int nbLandmarks = landmarks.size(); // Number of landmarks constituing the grid
-  const unsigned int nbCmds = 200;
-  std::vector<vpColVector> cmds;
-  for (unsigned int i = 0; i < nbCmds; ++i) {
-    cmds.push_back(vpColVector({ 1.1, 0.1 }));
-  }
+  std::vector<vpColVector> cmds = generateCommands();
+  const unsigned int nbCmds = cmds.size();
 
   // Initialize the attributes of the UKF
   vpUKSigmaDrawerMerwe drawer(3, 0.00001, 2., 0, stateResidual, stateAdd);
@@ -480,7 +539,7 @@ int main(/*const int argc, const char *argv[]*/)
   // Initialize the simulation
   vpColVector robot_pos = X0;
 
-  for (int i = 0; i < nbCmds; ++i) {
+  for (unsigned int i = 0; i < nbCmds; ++i) {
     robot_pos = robot.move(cmds[i], robot_pos, dt / step);
     if (i % static_cast<int>(step) == 0) {
       // Perform the measurement
