@@ -36,10 +36,10 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
-#version 140
+#version 120
 
-in vec3 p3d_Normal;
-in vec3 p3d_Vertex;
+attribute vec3 p3d_Normal;
+attribute vec3 p3d_Vertex;
 
 varying vec3 oNormal;
 uniform mat3 p3d_NormalMatrix;
@@ -62,9 +62,9 @@ void main()
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_WORLD = R"shader(
 
-#version 140
-in vec3 p3d_Normal;
-in vec3 p3d_Vertex;
+#version 120
+attribute vec3 p3d_Normal;
+attribute vec3 p3d_Vertex;
 uniform mat4 p3d_ModelViewMatrix;
 varying vec3 oNormal;
 varying float distToCamera;
