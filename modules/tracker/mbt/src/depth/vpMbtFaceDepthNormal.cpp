@@ -37,7 +37,7 @@
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/centroid.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -146,7 +146,7 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
                                                   unsigned int height,
                                                   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
@@ -443,7 +443,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   // Face centroid computed by the different methods
   vpColVector centroid_point(3);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_face_pcl(new pcl::PointCloud<pcl::PointXYZ>);
     point_cloud_face_pcl->reserve(point_cloud_face.size() / 3);
@@ -604,7 +604,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   // Face centroid computed by the different methods
   vpColVector centroid_point(3);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_face_pcl(new pcl::PointCloud<pcl::PointXYZ>);
     point_cloud_face_pcl->reserve(point_cloud_face.size() / 3);
@@ -635,7 +635,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
 
   return true;
 }
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
                                                      vpColVector &desired_features, vpColVector &desired_normal,
                                                      vpColVector &centroid_point)
@@ -991,7 +991,7 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbtFaceDepthNormal::computeNormalVisibility(float nx, float ny, float nz, const pcl::PointXYZ &centroid_point,
                                                    pcl::PointXYZ &face_normal)
 {

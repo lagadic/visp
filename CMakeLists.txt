@@ -678,6 +678,9 @@ if(USE_PCL)
   # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS and PCL_DEPS_LIBRARIES
   # that contains also VTK material location.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+  set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
+  # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
+  vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
 endif()
 
 # ----------------------------------------------------------------------------

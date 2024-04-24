@@ -42,7 +42,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS) \
-  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_VISUALIZATION)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>

@@ -304,7 +304,7 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
   u.unlock();
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Acquire data from Structure Core device.
   \param data_image        : Color image buffer or nullptr if not wanted.
@@ -988,7 +988,7 @@ void vpOccipitalStructure::getPointcloud(std::vector<vpColVector> &pointcloud)
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpOccipitalStructure::getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   ST::DepthFrame last_df = m_delegate.m_depthFrame;

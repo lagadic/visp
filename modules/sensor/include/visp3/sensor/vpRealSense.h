@@ -50,7 +50,7 @@
 
 #include <librealsense/rs.hpp>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/projection_matrix.h>
 #include <pcl/point_types.h>
 #endif
@@ -335,7 +335,7 @@ public:
   virtual ~vpRealSense();
 
   void acquire(std::vector<vpColVector> &pointcloud);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
@@ -343,7 +343,7 @@ public:
   void acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud);
   void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                std::vector<vpColVector> &pointcloud);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(vpImage<unsigned char> &grey, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
@@ -363,7 +363,7 @@ public:
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);

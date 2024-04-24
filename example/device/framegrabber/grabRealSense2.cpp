@@ -87,17 +87,19 @@ int main()
                                   (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).width);
     vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
     std::mutex mutex;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+#if defined(VISP_HAVE_PCL_VISUALIZATION)
     vpDisplayPCL pcl_viewer(color.getWidth() + 80, color.getHeight() + 70, "3D viewer " + vpTime::getDateTime());
     pcl_viewer.startThread(std::ref(mutex), pointcloud_color);
+#endif
 #endif
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX dc(color, 10, 10, "Color image");
-    vpDisplayX di(infrared, (int)color.getWidth() + 80, 10, "Infrared image");
-    vpDisplayX dd(depth_display, 10, (int)color.getHeight() + 70, "Depth image");
+    vpDisplayX di(infrared, static_cast<int>(color.getWidth()) + 80, 10, "Infrared image");
+    vpDisplayX dd(depth_display, 10, static_cast<int>(color.getHeight()) + 70, "Depth image");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI dc(color, 10, 10, "Color image");
     vpDisplayGDI di(infrared, color.getWidth() + 80, 10, "Infrared image");
@@ -107,14 +109,14 @@ int main()
     while (true) {
       double t = vpTime::measureTimeMs();
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
       {
         std::lock_guard<std::mutex> lock(mutex);
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud_color,
-                   (unsigned char *)infrared.bitmap);
+        rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth.bitmap), nullptr, pointcloud_color,
+                   reinterpret_cast<unsigned char *>(infrared.bitmap));
       }
 #else
-      rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, (unsigned char *)infrared.bitmap);
+      rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth.bitmap), nullptr, reinterpret_cast<unsigned char *>(infrared.bitmap));
 #endif
 
       vpImageConvert::createDepthHistogram(depth, depth_display);
