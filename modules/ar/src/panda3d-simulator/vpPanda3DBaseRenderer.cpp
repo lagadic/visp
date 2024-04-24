@@ -205,12 +205,24 @@ void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
   }
 }
 
+void vpPanda3DBaseRenderer::enableDebugLog()
+{
+  load_prc_file_data("", "gl-debug 1");
+  load_prc_file_data("", "notify-level-display spam");
+
+}
+
+
+
 vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
 {
   vpColVector pandaPos = PANDA_T_VISP * point;
   pandaPos /= pandaPos[3];
   return pandaPos;
 }
+
+
+
 
 void vpPanda3DBaseRenderer::printStructure()
 {

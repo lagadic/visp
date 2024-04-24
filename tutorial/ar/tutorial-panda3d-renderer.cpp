@@ -94,6 +94,7 @@ int main(int argc, const char **argv)
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
+  renderer.enableDebugLog();
   if (invertTexture) {
     renderer.setForcedInvertTextures(true);
   }

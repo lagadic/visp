@@ -226,6 +226,7 @@ public:
    */
   void setAbortOnPandaError(bool abort);
   void setForcedInvertTextures(bool invert);
+  void enableDebugLog();
 
   static vpColVector vispPointToPanda(const vpColVector &point);
 
