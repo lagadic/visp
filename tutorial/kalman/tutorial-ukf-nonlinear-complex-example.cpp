@@ -76,8 +76,11 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 // ViSP includes
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpGaussRand.h>
+#ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
+#endif
 
 namespace
 {
@@ -581,6 +584,7 @@ int main(/*const int argc, const char *argv[]*/)
   ukf.setStateMeanFunction(stateMean);
   ukf.setStateResidualFunction(stateResidual);
 
+#ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
   vpPlot plot(1);
   plot.initGraph(0, 2);
@@ -589,6 +593,7 @@ int main(/*const int argc, const char *argv[]*/)
   plot.setUnitY(0, "Position along y (m)");
   plot.setLegend(0, 0, "GT");
   plot.setLegend(0, 1, "Filtered");
+#endif
 
   // Initialize the simulation
   vpColVector robot_pos = X0;
@@ -602,13 +607,17 @@ int main(/*const int argc, const char *argv[]*/)
       // Use the UKF to filter the measurement
       ukf.filter(z, dt, cmds[i]);
 
+#ifdef VISP_HAVE_DISPLAY
       // Plot the filtered state
       vpColVector Xest = ukf.getXest();
       plot.plot(0, 1, Xest[0], Xest[1]);
+#endif
     }
 
+#ifdef VISP_HAVE_DISPLAY
     // Plot the ground truth
     plot.plot(0, 0, robot_pos[0], robot_pos[1]);
+#endif
   }
   std::cout << "Press Enter to quit..." << std::endl;
   std::cin.get();

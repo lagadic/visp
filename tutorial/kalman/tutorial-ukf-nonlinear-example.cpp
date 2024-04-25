@@ -63,8 +63,11 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 // ViSP includes
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpGaussRand.h>
+#ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
+#endif
 
 /**
  * \brief The process function, that updates the prior.
@@ -254,6 +257,7 @@ int main(/*const int argc, const char *argv[]*/)
   vpUnscentedKalman ukf(Q, R, &drawer, f, h);
   ukf.init(X0, P0);
 
+#ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
   vpPlot plot(4);
   plot.initGraph(0, 2);
@@ -283,6 +287,7 @@ int main(/*const int argc, const char *argv[]*/)
   plot.setUnitY(3, "Velocity (m/s)");
   plot.setLegend(3, 0, "GT");
   plot.setLegend(3, 1, "Filtered");
+#endif
 
   // Initialize the simulation
   vpColVector ac_pos(2);
@@ -303,6 +308,7 @@ int main(/*const int argc, const char *argv[]*/)
     ukf.filter(z, dt);
     vpColVector Xest = ukf.getXest();
 
+#ifdef VISP_HAVE_DISPLAY
     // Plot the ground truth, measurement and filtered state
     plot.plot(0, 0, i, gt_X[0]);
     plot.plot(0, 1, i, Xest[0]);
@@ -315,6 +321,7 @@ int main(/*const int argc, const char *argv[]*/)
 
     plot.plot(3, 0, i, gt_V[1]);
     plot.plot(3, 1, i, Xest[3]);
+#endif
 
     gt_Xprec = gt_X;
   }
