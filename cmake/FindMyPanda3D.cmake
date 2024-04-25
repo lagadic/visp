@@ -60,9 +60,6 @@ set(PANDA3D_LIBRARIES_SEARCH_PATHS
   /Library/Developer/Panda3D/lib
 )
 
-
-message(${Panda3D_DIR})
-
 set(PANDA3D_LIBS
   panda p3framework pandaexpress
   p3dtoolconfig p3dtool p3direct
