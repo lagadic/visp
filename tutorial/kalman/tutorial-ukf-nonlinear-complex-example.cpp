@@ -68,10 +68,10 @@ double normalizeAngle(const double &angle)
  */
 vpColVector measurementMean(const std::vector<vpColVector> &measurements, const std::vector<double> &wm)
 {
-  vpColVector mean(measurements[0].size(), 0.);
-  unsigned int nbPoints = measurements.size();
-  unsigned int sizeMeasurement = measurements[0].size();
-  unsigned int nbLandmarks = sizeMeasurement / 2;
+  const unsigned int nbPoints = measurements.size();
+  const unsigned int sizeMeasurement = measurements[0].size();
+  const unsigned int nbLandmarks = sizeMeasurement / 2;
+  vpColVector mean(sizeMeasurement, 0.);
   std::vector<double> sumCos(nbLandmarks, 0.);
   std::vector<double> sumSin(nbLandmarks, 0.);
   for (unsigned int i = 0; i < nbPoints; ++i) {
@@ -184,7 +184,7 @@ std::vector<vpColVector> generateTurnCommands(const double &v, const double &ang
   std::vector<vpColVector> cmds;
   double dTheta = vpMath::rad(angleStop - angleStart) / static_cast<double>(nbSteps - 1);
   for (unsigned int i = 0; i < nbSteps; ++i) {
-    double theta = angleStart + dTheta * static_cast<double>(i);
+    double theta = vpMath::rad(angleStart) + dTheta * static_cast<double>(i);
     vpColVector cmd(2);
     cmd[0] = v;
     cmd[1] = theta;
@@ -224,6 +224,21 @@ std::vector<vpColVector> generateCommands()
   std::vector<vpColVector> rightTurnCmds = generateTurnCommands(lastLinearVelocity, 2, -2, 15);
   cmds.insert(cmds.end(), rightTurnCmds.begin(), rightTurnCmds.end());
   for (unsigned int i = 0; i < 200; ++i) {
+    cmds.push_back(cmds[cmds.size() -1]);
+  }
+
+  // Left  turn again
+  lastLinearVelocity = cmds[cmds.size() -1][0];
+  leftTurnCmds = generateTurnCommands(lastLinearVelocity, -2, 0, 15);
+  cmds.insert(cmds.end(), leftTurnCmds.begin(), leftTurnCmds.end());
+  for (unsigned int i = 0; i < 150; ++i) {
+    cmds.push_back(cmds[cmds.size() -1]);
+  }
+
+  lastLinearVelocity = cmds[cmds.size() -1][0];
+  leftTurnCmds = generateTurnCommands(lastLinearVelocity, 0, 1, 25);
+  cmds.insert(cmds.end(), leftTurnCmds.begin(), leftTurnCmds.end());
+  for (unsigned int i = 0; i < 150; ++i) {
     cmds.push_back(cmds[cmds.size() -1]);
   }
 
@@ -466,7 +481,7 @@ private:
 int main(/*const int argc, const char *argv[]*/)
 {
   const double dt = 0.1; // Period of 0.1s
-  const double step = 10.; // Number of update of the robot position between two UKF filtering
+  const double step = 1.; // Number of update of the robot position between two UKF filtering
   const double sigmaRange = 0.3; // Standard deviation of the range measurement: 0.3m
   const double sigmaBearing = vpMath::rad(0.5); // Standard deviation of the bearing angle: 0.5deg
   const double wheelbase = 0.5; // Wheelbase of 0.5m
