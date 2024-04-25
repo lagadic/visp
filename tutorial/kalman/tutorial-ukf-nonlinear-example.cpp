@@ -69,6 +69,7 @@
 #include <visp3/gui/vpPlot.h>
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
  * \brief The process function, that updates the prior.
  *
@@ -329,3 +330,10 @@ int main(/*const int argc, const char *argv[]*/)
   std::cin.get();
   return 0;
 }
+#else
+int main()
+{
+  std::cout << "vpUnscentedKalman is only available if you compile ViSP in C++11 standard or higher." << std::endl;
+  return 0;
+}
+#endif

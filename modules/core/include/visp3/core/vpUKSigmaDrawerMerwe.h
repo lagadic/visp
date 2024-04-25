@@ -41,6 +41,7 @@
 #include <visp3/core/vpUKSigmaDrawerAbstract.h>
 #include <visp3/core/vpUnscentedKalman.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   \class vpUKSigmaDrawerAbstract
   \ingroup group_core_kalman
@@ -93,4 +94,5 @@ protected:
   vpAddSubFunction m_resFunc;
   vpAddSubFunction m_addFunc;
 };
+#endif
 #endif

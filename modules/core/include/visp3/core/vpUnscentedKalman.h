@@ -35,6 +35,8 @@
 #define _vpUnscentedKalman_h_
 
 #include <visp3/core/vpConfig.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpUKSigmaDrawerAbstract.h>
@@ -350,4 +352,5 @@ private:
     const std::vector<double> &wc, const vpMatrix &cov, const vpAddSubFunction &resFunc, const vpMeanFunction &meanFunc);
 };
 
+#endif
 #endif
