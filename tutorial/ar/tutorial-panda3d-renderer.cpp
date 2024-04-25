@@ -49,6 +49,7 @@ int main(int argc, const char **argv)
 {
   bool invertTexture = false;
   bool stepByStep = false;
+  bool debug = false;
   char *modelPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
@@ -58,6 +59,8 @@ int main(int argc, const char **argv)
      "Path to the model to load."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
      "Show frames step by step."},
+    {"-debug", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&debug,
+     "Show Opengl/Panda3D debug message."},
     {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
      "Print the help."},
     {(char *) nullptr, vpParseArgv::ARGV_END, (char *) nullptr, (char *) nullptr, (char *) nullptr} };
@@ -94,13 +97,16 @@ int main(int argc, const char **argv)
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
-  renderer.enableDebugLog();
+  if (debug) {
+    renderer.enableDebugLog();
+
+  }
   if (invertTexture) {
     renderer.setForcedInvertTextures(true);
   }
 
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
-  renderer.initFramework(true);
+  renderer.initFramework();
 
   std::cout << "Loading object " << modelPath << std::endl;
   NodePath object = renderer.loadObject(objectName, modelPath);

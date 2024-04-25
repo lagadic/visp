@@ -43,7 +43,7 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
 vpPanda3DRendererSet::~vpPanda3DRendererSet()
 { }
 
-void vpPanda3DRendererSet::initFramework(bool showWindow)
+void vpPanda3DRendererSet::initFramework()
 {
 
   // load_prc_file_data("", "load-display p3tinydisplay");
@@ -58,8 +58,12 @@ void vpPanda3DRendererSet::initFramework(bool showWindow)
   m_framework->open_framework();
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
-  int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
+  int flags = GraphicsPipe::BF_refuse_window;
   m_window = m_framework->open_window(winProps, flags);
+  if (m_window == nullptr) {
+    winProps.set_minimized(true);
+    m_window = m_framework->open_window(winProps, 0);
+  }
   if (m_window == nullptr) {
     throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
   }

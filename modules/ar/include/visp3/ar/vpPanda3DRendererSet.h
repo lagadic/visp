@@ -49,9 +49,8 @@ public:
   /**
    * @brief Initialize the framework and propagate the created panda3D framework to the subrenderers
    *
-   * @param showWindow Whether a window should be shown
    */
-  void initFramework(bool showWindow) vp_override;
+  void initFramework() vp_override;
 
   /**
    * @brief Set the pose of the camera, using the ViSP convention. This change is propagated to all subrenderers
@@ -115,7 +114,7 @@ public:
 
   void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
 
-  void addLight(const vpPanda3DLight& light) vp_override;
+  void addLight(const vpPanda3DLight &light) vp_override;
 
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 

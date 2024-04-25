@@ -70,7 +70,7 @@ public:
    *
    * @param showWindow whether the created window should be visible
    */
-  virtual void initFramework(bool showWindow);
+  virtual void initFramework();
 
   /**
    * @brief

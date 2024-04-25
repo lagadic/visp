@@ -46,7 +46,7 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 });
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
-void vpPanda3DBaseRenderer::initFramework(bool showWindow)
+void vpPanda3DBaseRenderer::initFramework()
 {
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError,
@@ -56,8 +56,13 @@ void vpPanda3DBaseRenderer::initFramework(bool showWindow)
   m_framework->open_framework();
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
-  int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
+  int flags = GraphicsPipe::BF_refuse_window;
   m_window = m_framework->open_window(winProps, flags);
+  // try and reopen with visible window
+  if (m_window == nullptr) {
+    winProps.set_minimized(true);
+    m_window = m_framework->open_window(winProps, 0);
+  }
   if (m_window == nullptr) {
     throw vpException(vpException::notInitialized,
     "Panda3D renderer: Could not create the requested window when performing initialization.");
