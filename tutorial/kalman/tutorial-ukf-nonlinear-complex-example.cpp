@@ -30,7 +30,46 @@
  *
 *****************************************************************************/
 
-//! \example tutorial-ukf-nonlinear-complex-example.cpp
+/** \example tutorial-ukf-nonlinear-complex-example.cpp
+ * Example of a complex non-linear use-case of the Unscented Kalman Filter (UKF).
+ * The system we are interested in is a 4-wheel robot, moving at a low velocity.
+ * As such, it can be modeled using a bicycle model.
+ *
+ * The state vector of the UKF is:
+ *  \f{eqnarray*}{
+        \textbf{x}[0] &=& x \\
+        \textbf{x}[1] &=& y \\
+        \textbf{x}[2] &=& \theta
+   \f}
+   where \f$ \theta \f$ is the heading of the robot.
+
+   The measurement \f$ \textbf{z} \f$ corresponds to the distance and relative orientation of the
+   robot with different landmarks. Be \f$ p_x^i \f$ and \f$ p_y^i \f$ the position of the \f$ i^{th} \f$ landmark
+   along the x and y axis, the measurement vector can be written as:
+   \f{eqnarray*}{
+        \textbf{z}[2i] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
+        \textbf{z}[2i+1] &=& \tan^{-1}{\frac{p_y^i - y}{p_x^i - x}} - \theta
+   \f}
+
+ * Some noise is added to the measurement vector to simulate measurements which are
+ * not perfect.
+
+   The mean of several angles must be computed in the Unscented Transform. The definition we chose to use
+   is the following:
+
+   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
+
+   As the Unscented Transform uses a weighted mean, the actual implementation of the weighted mean
+   of several angles is the following:
+
+   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
+
+   where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
+
+   Additionnally, the addition and substraction of angles must be carefully done, as the result
+   must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
+   the interval \f$[- \pi ; \pi ]\f$ .
+*/
 
 // UKF includes
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>

@@ -30,7 +30,33 @@
  *
 *****************************************************************************/
 
-//! \example tutorial-ukf-nonlinear-example.cpp
+/** \example tutorial-ukf-nonlinear-example.cpp
+ * Example of a simple non-linear use-case of the Unscented Kalman Filter (UKF).
+ * The system we are interested in is an aircraft flying in the sky and
+ * observed by a radar station.
+ * We consider the plan perpendicular to the ground and passing by both the radar
+ * station and the aircraft. The x-axis corresponds to the position on the ground
+ * and the y-axis to the altitude.
+ *
+ * The state vector of the UKF is:
+ *  \f{eqnarray*}{
+        \textbf{x}[0] &=& x \\
+        \textbf{x}[1] &=& \dot{x} \\
+        \textbf{x}[1] &=& y \\
+        \textbf{x}[2] &=& \dot{y}
+   \f}
+
+   The measurement \f$ \textbf{z} \f$ corresponds to the distance and angle between the ground and the aircraft
+   observed by the radar station. Be \f$ p_x \f$ and \f$ p_y \f$ the position of the radar station
+   along the x and y axis, the measurement vector can be written as:
+   \f{eqnarray*}{
+        \textbf{z}[0] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
+        \textbf{z}[1] &=& \tan^{-1}{\frac{y - p_y}{x - p_x}}
+   \f}
+
+ * Some noise is added to the measurement vector to simulate a sensor which is
+ * not perfect.
+*/
 
 // UKF includes
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>

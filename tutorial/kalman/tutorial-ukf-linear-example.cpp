@@ -30,7 +30,30 @@
  *
 *****************************************************************************/
 
-//! \example tutorial-ukf-linear-example.cpp
+/** \example tutorial-ukf-linear-example.cpp
+ * Example of a simple linear use-case of the Unscented Kalman Filter (UKF). Using a UKF
+ * in this case is not necessary, it is done for learning purpous only.
+ *
+ * The system we are interested in is a system moving on a 2D-plane.
+ *
+ * The state vector of the UKF is:
+ *  \f{eqnarray*}{
+        \textbf{x}[0] &=& x \\
+        \textbf{x}[1] &=& \dot{x} \\
+        \textbf{x}[1] &=& y \\
+        \textbf{x}[2] &=& \dot{y}
+   \f}
+
+ * The measurement \f$ \textbf{z} \f$ corresponds to the position along the x-axis
+ * and y-axis. The measurement vector can be written as:
+ * \f{eqnarray*}{
+        \textbf{z}[0] &=& x \\
+        \textbf{z}[1] &=& y
+   \f}
+
+ * Some noise is added to the measurement vector to simulate a sensor which is
+ * not perfect.
+*/
 
 // UKF includes
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
