@@ -71,7 +71,7 @@ void vpPanda3DBaseRenderer::initFramework()
   setupScene();
   setupCamera();
   setupRenderTarget();
-  m_window->get_display_region_3d()->set_camera(m_cameraPath);
+  //m_window->get_display_region_3d()->set_camera(m_cameraPath);
 }
 
 

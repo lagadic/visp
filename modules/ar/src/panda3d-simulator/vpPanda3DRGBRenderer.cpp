@@ -33,6 +33,65 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT = R"shader(
+#version 330
+
+in vec3 p3d_Normal;
+in vec4 p3d_Vertex;
+
+out vec3 oNormal;
+uniform mat3 p3d_NormalMatrix;
+uniform mat4 p3d_ModelViewMatrix;
+uniform mat4 p3d_ModelViewProjectionMatrix;
+
+void main()
+{
+  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
+  // View space is Z-up right handed, flip z and y
+  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
+  oNormal.yz = oNormal.zy;
+  oNormal.y = -oNormal.y;
+  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
+}
+)shader";
+
+const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
+#version 330
+
+in vec3 oNormal;
+
+out vec4 p3d_FragData;
+
+uniform struct {
+  vec4 ambient;
+} p3d_LightModel;
+
+uniform struct p3d_LightSourceParameters {
+  // Primary light color.
+  vec4 color;
+
+  // View-space position.  If w=0, this is a directional light, with the xyz
+  // being -direction.
+  vec4 position;
+
+  // constant, linear, quadratic attenuation in one vector
+  vec3 attenuation;
+
+} p3d_LightSource[4];
+
+void main()
+{
+  vec3 n = normalize(oNormal);
+  p3d_FragData = p3d_LightModel.ambient * vec4(1.f, 0.f, 0.f,0.f);
+  for(int i = 0; i < p3d_LightSource.length(); ++i) {
+    vec3 aFac = p3d_LightSource[i].attenuation;
+    float attenuation = 1.f / (aFac[0] + aFac[1] * dist, aFac[2] * dist * dist);
+    //p3d_FragData += p3d_LightSource[i].color;
+  }
+}
+)shader";
+
+
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 {
   I.resize(m_colorTexture->get_y_size(), m_colorTexture->get_x_size());
@@ -51,6 +110,11 @@ void vpPanda3DRGBRenderer::setupScene()
 {
   vpPanda3DBaseRenderer::setupScene();
   setLightableScene(m_renderRoot);
+  PT(Shader) shader;
+  shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
+                                    COOK_TORRANCE_VERT,
+                                    COOK_TORRANCE_FRAG);
+  m_renderRoot.set_shader(shader);
   //m_renderRoot.set_shader_auto();
 }
 

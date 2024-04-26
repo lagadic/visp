@@ -192,14 +192,14 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   // if (expectedSize != actualSize) {
   //   throw vpException(vpException::fatalError, "Expected %d bytes, but got %d bytes", expectedSize, actualSize);
   // }
-  std::stringstream ss;
-  ss << "Texture info:" << std::endl;
-  ss << "Has ram image: " << m_normalDepthTexture->has_ram_image() << std::endl;
-  ss << "Size (H x W): " <<  m_normalDepthTexture->get_y_size() << " x " << m_normalDepthTexture->get_x_size() << std::endl;
-  ss << "Number of channels: " << m_normalDepthTexture->get_num_components() << std::endl;
-  ss << "Bytes per channel: " << m_normalDepthTexture->get_component_width() << std::endl;
-  ss << "Channel type: " << m_normalDepthTexture->get_component_type() << std::endl;
-  std::cout << ss.str() << std::endl;
+  // std::stringstream ss;
+  // ss << "Texture info:" << std::endl;
+  // ss << "Has ram image: " << m_normalDepthTexture->has_ram_image() << std::endl;
+  // ss << "Size (H x W): " <<  m_normalDepthTexture->get_y_size() << " x " << m_normalDepthTexture->get_x_size() << std::endl;
+  // ss << "Number of channels: " << m_normalDepthTexture->get_num_components() << std::endl;
+  // ss << "Bytes per channel: " << m_normalDepthTexture->get_component_width() << std::endl;
+  // ss << "Channel type: " << m_normalDepthTexture->get_component_type() << std::endl;
+  // std::cout << ss.str() << std::endl;
 
   if (m_normalDepthTexture->get_component_type() == Texture::T_float) {
     float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));

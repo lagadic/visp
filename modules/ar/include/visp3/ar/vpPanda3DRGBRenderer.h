@@ -61,6 +61,9 @@ protected:
 private:
   Texture *m_colorTexture;
   GraphicsOutput *m_colorBuffer;
+  static const char* COOK_TORRANCE_VERT;
+  static const char* COOK_TORRANCE_FRAG;
+
 
 };
 
