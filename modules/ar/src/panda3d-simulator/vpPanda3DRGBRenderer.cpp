@@ -40,25 +40,32 @@ in vec3 p3d_Normal;
 in vec4 p3d_Vertex;
 
 out vec3 oNormal;
+out vec4 viewVertex;
+
 uniform mat3 p3d_NormalMatrix;
 uniform mat4 p3d_ModelViewMatrix;
 uniform mat4 p3d_ModelViewProjectionMatrix;
 
+in vec2 p3d_MultiTexCoord0;
+out vec2 texcoords;
+
+
 void main()
 {
   gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-  // View space is Z-up right handed, flip z and y
   oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-  oNormal.yz = oNormal.zy;
-  oNormal.y = -oNormal.y;
-  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
+  viewVertex = p3d_ModelViewMatrix * p3d_Vertex;
+  texcoords = p3d_MultiTexCoord0;
 }
 )shader";
 
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
 #version 330
 
+#define M_PI 3.1415926535897932384626433832795
+
 in vec3 oNormal;
+in vec4 viewVertex;
 
 out vec4 p3d_FragData;
 
@@ -79,14 +86,81 @@ uniform struct p3d_LightSourceParameters {
 
 } p3d_LightSource[4];
 
+uniform struct p3d_MaterialParameters {
+  vec4 ambient;
+  vec4 diffuse;
+  vec4 emission;
+  vec3 specular;
+  float shininess;
+
+  // These properties are new in 1.10.
+  vec4 baseColor;
+  float roughness;
+  float metallic;
+  float refractiveIndex;
+} p3d_Material;
+
+in vec2 texcoords;
+uniform sampler2D p3d_Texture0;
+
+
+float D(float roughness2, float hn)
+{
+  return (1.f / (M_PI * roughness2)) * pow(hn, (2.f / roughness2) - 2.f);
+}
+
+float G(float hn, float nv, float nl, float vh)
+{
+  return min(1.0, min((2.f * hn * nv) / vh, (2.f * hn * nl) / vh));
+}
+
+float computeF0(float ior)
+{
+  return pow(ior - 1.0, 2) / pow(ior + 1.0, 2.0);
+}
+float F(float F0, float vh)
+{
+  return F0 + (1.f - F0) * pow(1.f - vh, 5);
+}
+
+
 void main()
 {
-  vec3 n = normalize(oNormal);
-  p3d_FragData = p3d_LightModel.ambient * vec4(1.f, 0.f, 0.f,0.f);
+  vec3 n = normalize(oNormal); // normalized normal vector
+  vec3 v = normalize(-viewVertex.xyz); // normalized view vector
+  float nv = max(0.f, dot(n, v));
+  float roughness2 = pow(p3d_Material.roughness, 2);
+  float F0 = computeF0(p3d_Material.refractiveIndex);
+
+  p3d_FragData = p3d_LightModel.ambient * p3d_Material.ambient;
+
+
   for(int i = 0; i < p3d_LightSource.length(); ++i) {
+
+    vec3 lf = p3d_LightSource[i].position.xyz - (viewVertex.xyz * p3d_LightSource[i].position.w);
+    float lightDist = length(lf);
+    vec3 l = normalize(lf); // normalized light vector
+    vec3 h = normalize(l + v); // half way vector
+    float hn = dot(h, n);
+    float nl = max(0.f, dot(n, l));
+    float vh = max(0.f, dot(v, h));
+
     vec3 aFac = p3d_LightSource[i].attenuation;
-    float attenuation = 1.f / (aFac[0] + aFac[1] * dist, aFac[2] * dist * dist);
-    //p3d_FragData += p3d_LightSource[i].color;
+    float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);
+
+    float DV = D(roughness2, hn);
+    float GV = G(hn, nv, nl, vh);
+    float FV = F(F0, vh);
+
+    float rs = (DV * GV * FV) / (4.f * nl * nv);
+
+    float shininess = p3d_Material.shininess;
+    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (p3d_Material.diffuse + shininess * rs * vec4(p3d_Material.specular, 1.f));
+
+
+    //p3d_FragData.r = attenuation;
+    //p3d_FragData = diffuse;
+
   }
 }
 )shader";

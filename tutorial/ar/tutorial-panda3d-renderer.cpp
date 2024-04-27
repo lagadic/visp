@@ -116,7 +116,7 @@ int main(int argc, const char **argv)
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(200.0), vpColVector({ 0.0, 0.0, -5.0 }), vpColVector({ 1.0, 0.0, 0.0 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.2, -0.4 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
