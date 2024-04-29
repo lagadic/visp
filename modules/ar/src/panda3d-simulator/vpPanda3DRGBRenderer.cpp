@@ -48,7 +48,28 @@ uniform mat4 p3d_ModelViewProjectionMatrix;
 
 in vec2 p3d_MultiTexCoord0;
 out vec2 texcoords;
+out vec3 F0;
 
+uniform struct p3d_MaterialParameters {
+  vec4 ambient;
+  vec4 diffuse;
+  vec4 emission;
+  vec3 specular;
+  float shininess;
+
+  // These properties are new in 1.10.
+  vec4 baseColor;
+  float roughness;
+  float metallic;
+  float refractiveIndex;
+} p3d_Material;
+
+vec3 computeF0(float ior, float metallic, vec3 baseColor)
+{
+  float F0f = pow(abs((1.0 - ior) / (1.0 + ior)), 2.0);
+  vec3 F0 = vec3(F0f, F0f, F0f);
+  return mix(F0, baseColor, metallic);
+}
 
 void main()
 {
@@ -56,16 +77,22 @@ void main()
   oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
   viewVertex = p3d_ModelViewMatrix * p3d_Vertex;
   texcoords = p3d_MultiTexCoord0;
+  F0 = computeF0(p3d_Material.refractiveIndex, p3d_Material.metallic, p3d_Material.baseColor.xyz);
 }
 )shader";
 
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
 #version 330
 
+//#define HAS_TEXTURE 1
+//#define SPECULAR 1
+
 #define M_PI 3.1415926535897932384626433832795
+
 
 in vec3 oNormal;
 in vec4 viewVertex;
+in vec3 F0;
 
 out vec4 p3d_FragData;
 
@@ -101,8 +128,9 @@ uniform struct p3d_MaterialParameters {
 } p3d_Material;
 
 in vec2 texcoords;
+#ifdef HAS_TEXTURE
 uniform sampler2D p3d_Texture0;
-
+#endif
 
 float D(float roughness2, float hn)
 {
@@ -114,11 +142,9 @@ float G(float hn, float nv, float nl, float vh)
   return min(1.0, min((2.f * hn * nv) / vh, (2.f * hn * nl) / vh));
 }
 
-float computeF0(float ior)
-{
-  return pow(ior - 1.0, 2) / pow(ior + 1.0, 2.0);
-}
-float F(float F0, float vh)
+
+
+vec3 F(vec3 F0, float vh)
 {
   return F0 + (1.f - F0) * pow(1.f - vh, 5);
 }
@@ -130,8 +156,6 @@ void main()
   vec3 v = normalize(-viewVertex.xyz); // normalized view vector
   float nv = max(0.f, dot(n, v));
   float roughness2 = pow(p3d_Material.roughness, 2);
-  float F0 = computeF0(p3d_Material.refractiveIndex);
-
   p3d_FragData = p3d_LightModel.ambient * p3d_Material.ambient;
 
 
@@ -148,22 +172,40 @@ void main()
     vec3 aFac = p3d_LightSource[i].attenuation;
     float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);
 
-    float DV = D(roughness2, hn);
-    float GV = G(hn, nv, nl, vh);
-    float FV = F(F0, vh);
+    vec3 FV = clamp(F(F0, vh), 0.0, 1.0);
+    vec3 kd = (1.f - FV) * (1.f - p3d_Material.metallic);
+    #ifdef HAS_TEXTURE
+      vec4 diffuseColor = texture(p3d_Texture0, texcoords);
+    #else
+      vec4 diffuseColor = p3d_Material.baseColor;
+    #endif
 
-    float rs = (DV * GV * FV) / (4.f * nl * nv);
 
-    float shininess = p3d_Material.shininess;
-    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (p3d_Material.diffuse + shininess * rs * vec4(p3d_Material.specular, 1.f));
+    //diffuseColor.xyz = (1.f - FV) * (1.f - p3d_Material.metallic) * diffuseColor.xyz;
 
+    #ifdef SPECULAR
+      float DV = D(roughness2, hn);
+      float GV = G(hn, nv, nl, vh);
+      vec3 rs = (DV * GV * FV) / (4.f * nl * nv);
+      vec3 specularColor = rs * p3d_Material.specular;
+    #else
+      vec3 specularColor = vec3(0.0, 0.0, 0.0);
+    #endif
 
-    //p3d_FragData.r = attenuation;
-    //p3d_FragData = diffuse;
-
+    //p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (diffuseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
+    p3d_FragData = diffuseColor;
   }
 }
 )shader";
+
+void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
+{
+  NodePath objectInScene = object.copy_to(m_renderRoot);
+  objectInScene.set_name(object.get_name());
+  objectInScene.ls();
+  std::cout << objectInScene.has_texture() << std::endl;
+  setNodePose(objectInScene, vpHomogeneousMatrix());
+}
 
 
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
@@ -203,6 +245,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   fbp.set_float_color(false);
   fbp.set_depth_bits(16);
   fbp.set_rgba_bits(8, 8, 8, 8);
+  fbp.set_srgb_color(true);
 
 
   WindowProperties win_prop;

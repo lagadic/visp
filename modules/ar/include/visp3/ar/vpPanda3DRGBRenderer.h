@@ -54,6 +54,8 @@ public:
    */
   void getRender(vpImage<vpRGBa> &I) const;
 
+  void addNodeToScene(const NodePath &object) vp_override;
+
 protected:
   void setupScene() vp_override;
   void setupRenderTarget() vp_override;
@@ -61,8 +63,8 @@ protected:
 private:
   Texture *m_colorTexture;
   GraphicsOutput *m_colorBuffer;
-  static const char* COOK_TORRANCE_VERT;
-  static const char* COOK_TORRANCE_FRAG;
+  static const char *COOK_TORRANCE_VERT;
+  static const char *COOK_TORRANCE_FRAG;
 
 
 };

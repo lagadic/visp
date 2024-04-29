@@ -114,14 +114,14 @@ int main(int argc, const char **argv)
 
   renderer.addNodeToScene(object);
 
-  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
+  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.5));
   renderer.addLight(alight);
   vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.2, -0.4 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
   std::cout << "Setting camera pose" << std::endl;
-  renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.5, 0.0, 0.0, 0.0));
+  renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
 
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
