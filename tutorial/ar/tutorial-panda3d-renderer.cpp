@@ -44,12 +44,25 @@ void displayDepth(const vpImage<float> &depthImage,
 }
 
 
+void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpRGBa> &colorDiffuseOnly, vpImage<unsigned char> &lightDifference)
+{
+#pragma omp parallel for
+  for (int i = 0; i < colorImage.getSize(); ++i) {
+    float I1 = 0.299 * colorImage.bitmap[i].R + 0.587 * colorImage.bitmap[i].G * +0.114 * colorImage.bitmap[i].B;
+    float I2 = 0.299 * colorDiffuseOnly.bitmap[i].R + 0.587 * colorDiffuseOnly.bitmap[i].G * +0.114 * colorDiffuseOnly.bitmap[i].B;
+    lightDifference.bitmap[i] = static_cast<unsigned char>(abs(I1 - I2));
+  }
+  vpDisplay::display(lightDifference);
+  vpDisplay::flush(lightDifference);
+}
+
 
 int main(int argc, const char **argv)
 {
   bool invertTexture = false;
   bool stepByStep = false;
   bool debug = false;
+  bool showLightContrib = false;
   char *modelPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
@@ -58,6 +71,8 @@ int main(int argc, const char **argv)
     {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
      "Path to the model to load."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
+     "Show frames step by step."},
+    {"-specular", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&showLightContrib,
      "Show frames step by step."},
     {"-debug", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&debug,
      "Show Opengl/Panda3D debug message."},
@@ -80,7 +95,7 @@ int main(int argc, const char **argv)
   else {
     modelPath = "data/deformed_sphere.bam";
   }
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(600, 600, 320, 240), 480, 640, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
 
@@ -90,16 +105,20 @@ int main(int argc, const char **argv)
 
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS));
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer());
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer(false));
 
   renderer.addSubRenderer(geometryRenderer);
   renderer.addSubRenderer(cameraRenderer);
   renderer.addSubRenderer(rgbRenderer);
+  if (showLightContrib) {
+    renderer.addSubRenderer(rgbDiffuseRenderer);
+  }
+
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
   if (debug) {
     renderer.enableDebugLog();
-
   }
   if (invertTexture) {
     renderer.setForcedInvertTextures(true);
@@ -114,7 +133,7 @@ int main(int argc, const char **argv)
 
   renderer.addNodeToScene(object);
 
-  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.5));
+  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
   vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.2, -0.4 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
@@ -126,12 +145,14 @@ int main(int argc, const char **argv)
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
   vpImage<float> depthImage;
+  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+  vpImage<vpRGBa> colorImage(h, w);
+  vpImage<vpRGBa> colorDiffuseOnly(h, w);
+  vpImage<unsigned char> lightDifference(h, w);
 
-  vpImage<vpRGBa> colorImage(renderParams.getImageHeight(), renderParams.getImageWidth());
-  vpImage<vpRGBa> normalDisplayImage(renderParams.getImageHeight(), renderParams.getImageWidth());
-  vpImage<vpRGBa> cameraNormalDisplayImage(renderParams.getImageHeight(), renderParams.getImageWidth());
-
-  vpImage<unsigned char> depthDisplayImage(renderParams.getImageHeight(), renderParams.getImageWidth());
+  vpImage<vpRGBa> normalDisplayImage(h, w);
+  vpImage<vpRGBa> cameraNormalDisplayImage(h, w);
+  vpImage<unsigned char> depthDisplayImage(h, w);
 
 #if defined(VISP_HAVE_GTK)
   using DisplayCls = vpDisplayGTK;
@@ -146,9 +167,15 @@ int main(int argc, const char **argv)
 #endif
 
   DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in world space");
-  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, renderParams.getImageHeight() + 80, "normals in camera space");
-  DisplayCls dDepth(depthDisplayImage, renderParams.getImageWidth() + 80, 0, "depth");
-  DisplayCls dColor(colorImage, renderParams.getImageWidth() * 3 + 90, 0, "color");
+  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, h + 80, "normals in camera space");
+  DisplayCls dDepth(depthDisplayImage, w + 80, 0, "depth");
+  DisplayCls dColor(colorImage, w + 80, h + 80, "color");
+
+  DisplayCls dImageDiff;
+  if (showLightContrib) {
+    dImageDiff.init(lightDifference, w * 2 + 90, 0, "Specular/reflectance contribution");
+  }
+
   renderer.renderFrame();
   bool end = false;
   bool firstFrame = true;
@@ -163,17 +190,22 @@ int main(int argc, const char **argv)
 
     const double beforeRender = vpTime::measureTimeMs();
     renderer.renderFrame();
-
     const double beforeFetch = vpTime::measureTimeMs();
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage);
-    renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
+    renderer.getRenderer<vpPanda3DRGBRenderer>(rgbRenderer->getName())->getRender(colorImage);
+    if (showLightContrib) {
+      renderer.getRenderer<vpPanda3DRGBRenderer>(rgbDiffuseRenderer->getName())->getRender(colorDiffuseOnly);
+    }
 
     const double beforeConvert = vpTime::measureTimeMs();
 
     displayNormals(normalsImage, normalDisplayImage);
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
     displayDepth(depthImage, depthDisplayImage, nearV, farV);
+    if (showLightContrib) {
+      displayLightDifference(colorImage, colorDiffuseOnly, lightDifference);
+    }
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
 
@@ -199,11 +231,11 @@ int main(int argc, const char **argv)
       }
     }
     // if (firstFrame) {
-    //   renderParams.setImageResolution(renderParams.getImageHeight() * 0.5, renderParams.getImageWidth() * 0.5);
+    //   renderParams.setImageResolution(h * 0.5, w * 0.5);
     //   vpCameraParameters orig = renderParams.getCameraIntrinsics();
     //   vpCameraParameters newCam(orig.get_px() * 0.5, orig.get_py() * 0.5, orig.get_u0() * 0.5, orig.get_v0() * 0.5);
     //   renderParams.setCameraIntrinsics(newCam);
-    //   std::cout << renderParams.getImageHeight() << std::endl;
+    //   std::cout << h << std::endl;
     //   //dDepth.setDownScalingFactor(0.5);
     //   renderer.setRenderParameters(renderParams);
     // }

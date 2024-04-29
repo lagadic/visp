@@ -43,7 +43,9 @@
 class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer, public vpPanda3DLightableScene
 {
 public:
-  vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB") { }
+  vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB"), m_showSpeculars(true) { }
+  vpPanda3DRGBRenderer(bool showSpeculars) : vpPanda3DBaseRenderer(showSpeculars ? "RGB" : "RGB-diffuse"), m_showSpeculars(showSpeculars) { }
+
 
   /**
    * @brief Store the render resulting from calling renderFrame() into a vpImage.
@@ -59,8 +61,10 @@ public:
 protected:
   void setupScene() vp_override;
   void setupRenderTarget() vp_override;
+  virtual std::string makeFragmentShader(bool hasTexture, bool specular);
 
 private:
+  bool m_showSpeculars;
   Texture *m_colorTexture;
   GraphicsOutput *m_colorBuffer;
   static const char *COOK_TORRANCE_VERT;

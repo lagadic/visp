@@ -82,11 +82,7 @@ void main()
 )shader";
 
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
-#version 330
-
-//#define HAS_TEXTURE 1
-//#define SPECULAR 1
-
+// Version 330, specified when generating shader
 #define M_PI 3.1415926535897932384626433832795
 
 
@@ -146,7 +142,7 @@ float G(float hn, float nv, float nl, float vh)
 
 vec3 F(vec3 F0, float vh)
 {
-  return F0 + (1.f - F0) * pow(1.f - vh, 5);
+  return F0 + (vec3(1.f, 1.f, 1.f) - F0) * pow(1.f - vh, 5);
 }
 
 
@@ -172,8 +168,8 @@ void main()
     vec3 aFac = p3d_LightSource[i].attenuation;
     float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);
 
-    vec3 FV = clamp(F(F0, vh), 0.0, 1.0);
-    vec3 kd = (1.f - FV) * (1.f - p3d_Material.metallic);
+    vec3 FV = F(F0, vh);
+    vec3 kd = (1.f - p3d_Material.metallic) * (1.f - FV) * (1.f / M_PI);
     #ifdef HAS_TEXTURE
       vec4 diffuseColor = texture(p3d_Texture0, texcoords);
     #else
@@ -181,29 +177,49 @@ void main()
     #endif
 
 
-    //diffuseColor.xyz = (1.f - FV) * (1.f - p3d_Material.metallic) * diffuseColor.xyz;
 
     #ifdef SPECULAR
-      float DV = D(roughness2, hn);
-      float GV = G(hn, nv, nl, vh);
-      vec3 rs = (DV * GV * FV) / (4.f * nl * nv);
-      vec3 specularColor = rs * p3d_Material.specular;
+      vec3 specularColor = vec3(0.f, 0.f, 0.f);
+      if(nl > 0.f && nv > 0.f) {
+        float DV = D(roughness2, hn);
+        float GV = G(hn, nv, nl, vh);
+        vec3 rs = (DV * GV * FV) / (4.f * nl * nv);
+        specularColor = rs * p3d_Material.baseColor.rgb;
+      }
     #else
       vec3 specularColor = vec3(0.0, 0.0, 0.0);
     #endif
 
-    //p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (diffuseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
-    p3d_FragData = diffuseColor;
+    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (diffuseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
   }
 }
 )shader";
+
+std::string vpPanda3DRGBRenderer::makeFragmentShader(bool hasTexture, bool specular)
+{
+  std::stringstream ss;
+  ss << "#version 330" << std::endl;
+  if (hasTexture) {
+    ss << "#define HAS_TEXTURE 1" << std::endl;
+  }
+  if (specular) {
+    ss << "#define SPECULAR 1" << std::endl;
+  }
+  ss << vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG;
+  std::cout << ss.str() << std::endl;
+  return ss.str();
+}
 
 void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
 {
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
-  objectInScene.ls();
-  std::cout << objectInScene.has_texture() << std::endl;
+  PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
+                                    COOK_TORRANCE_VERT,
+                                    makeFragmentShader(false, m_showSpeculars));
+
+  objectInScene.set_shader(shader);
+
   setNodePose(objectInScene, vpHomogeneousMatrix());
 }
 
@@ -226,12 +242,6 @@ void vpPanda3DRGBRenderer::setupScene()
 {
   vpPanda3DBaseRenderer::setupScene();
   setLightableScene(m_renderRoot);
-  PT(Shader) shader;
-  shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                    COOK_TORRANCE_VERT,
-                                    COOK_TORRANCE_FRAG);
-  m_renderRoot.set_shader(shader);
-  //m_renderRoot.set_shader_auto();
 }
 
 void vpPanda3DRGBRenderer::setupRenderTarget()
