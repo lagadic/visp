@@ -17,6 +17,7 @@
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRendererSet.h>
+#include <visp3/ar/vpPanda3DCommonFilters.h>
 
 void displayNormals(const vpImage<vpRGBf> &normalsImage,
                     vpImage<vpRGBa> &normalDisplayImage)
@@ -63,6 +64,7 @@ int main(int argc, const char **argv)
   bool stepByStep = false;
   bool debug = false;
   bool showLightContrib = false;
+  bool showCanny = false;
   char *modelPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
@@ -74,6 +76,9 @@ int main(int argc, const char **argv)
      "Show frames step by step."},
     {"-specular", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&showLightContrib,
      "Show frames step by step."},
+    {"-canny", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&showCanny,
+     "Show frames step by step."},
+
     {"-debug", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&debug,
      "Show Opengl/Panda3D debug message."},
     {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
@@ -106,6 +111,8 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS));
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer());
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer(false));
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, true);
+
 
   renderer.addSubRenderer(geometryRenderer);
   renderer.addSubRenderer(cameraRenderer);
@@ -113,7 +120,9 @@ int main(int argc, const char **argv)
   if (showLightContrib) {
     renderer.addSubRenderer(rgbDiffuseRenderer);
   }
-
+  if (showCanny) {
+    renderer.addSubRenderer(grayscaleFilter);
+  }
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
@@ -149,6 +158,7 @@ int main(int argc, const char **argv)
   vpImage<vpRGBa> colorImage(h, w);
   vpImage<vpRGBa> colorDiffuseOnly(h, w);
   vpImage<unsigned char> lightDifference(h, w);
+  vpImage<unsigned char> cannyImage(h, w);
 
   vpImage<vpRGBa> normalDisplayImage(h, w);
   vpImage<vpRGBa> cameraNormalDisplayImage(h, w);
@@ -173,9 +183,12 @@ int main(int argc, const char **argv)
 
   DisplayCls dImageDiff;
   if (showLightContrib) {
-    dImageDiff.init(lightDifference, w * 2 + 90, 0, "Specular/reflectance contribution");
+    dImageDiff.init(lightDifference, w * 2 + 80, 0, "Specular/reflectance contribution");
   }
-
+  DisplayCls dCanny;
+  if (showCanny) {
+    dCanny.init(cannyImage, w * 2 + 80, h + 80, "Canny");
+  }
   renderer.renderFrame();
   bool end = false;
   bool firstFrame = true;
@@ -197,6 +210,9 @@ int main(int argc, const char **argv)
     if (showLightContrib) {
       renderer.getRenderer<vpPanda3DRGBRenderer>(rgbDiffuseRenderer->getName())->getRender(colorDiffuseOnly);
     }
+    if (showCanny) {
+      renderer.getRenderer<vpPanda3DLuminanceFilter>()->getRender(cannyImage);
+    }
 
     const double beforeConvert = vpTime::measureTimeMs();
 
@@ -206,6 +222,11 @@ int main(int argc, const char **argv)
     if (showLightContrib) {
       displayLightDifference(colorImage, colorDiffuseOnly, lightDifference);
     }
+    vpDisplay::display(cannyImage);
+    vpDisplay::flush(cannyImage);
+
+
+
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
 

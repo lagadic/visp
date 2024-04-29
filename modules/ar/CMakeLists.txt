@@ -195,7 +195,7 @@ if(USE_PANDA3D)
   set(PANDA3D_MODULE_SOURCES
     vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
     vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
-    vpPanda3DRendererSet.cpp
+    vpPanda3DRendererSet.cpp vpPanda3DPostProcessFilter.cpp vpPanda3DCommonFilters.cpp
   )
   foreach(panda_src_name ${PANDA3D_MODULE_SOURCES})
     vp_set_source_file_compile_flag(src/panda3d-simulator/${panda_src_name} ${PANDA3D_CXX_FLAGS})

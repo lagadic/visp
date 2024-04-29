@@ -56,7 +56,7 @@ class VISP_EXPORT vpPanda3DBaseRenderer
 {
 public:
   vpPanda3DBaseRenderer(const std::string &rendererName)
-    : m_name(rendererName), m_framework(nullptr), m_window(nullptr), m_camera(nullptr)
+    : m_name(rendererName), m_renderOrder(-100), m_framework(nullptr), m_window(nullptr), m_camera(nullptr)
   {
     setVerticalSyncEnabled(false);
   }
@@ -121,11 +121,27 @@ public:
       }
     }
 
-    // If renderer is already initialize, modify camera properties
+    // If renderer is already initialized, modify camera properties
     if (m_camera != nullptr) {
       m_renderParameters.setupPandaCamera(m_camera);
     }
   }
+
+  /**
+   * @brief Returns true if this renderer process 3D data and its scene root can be interacted with.
+   *
+   * This value could be false, if for instance it is redefined in a subclass that performs postprocessing on a texture.
+   */
+  virtual bool isRendering3DScene() const { return true; }
+
+  /**
+   * @brief Get the rendering order of this renderer.
+   * If a renderer A has a lower order value than B, it will be rendered before B.
+   * This is useful, if for instance, B is a postprocessing filter that depends on the result of B.
+   *
+   * @return int
+   */
+  int getRenderOrder() const { return m_renderOrder; }
 
   /**
    * @brief Set the camera's pose.
@@ -232,6 +248,8 @@ public:
 
   void printStructure();
 
+  virtual GraphicsOutput *getMainOutputBuffer() { return nullptr; }
+
 protected:
 
   /**
@@ -254,13 +272,14 @@ protected:
    */
   virtual void setupRenderTarget() { }
 
+
   const static vpHomogeneousMatrix VISP_T_PANDA; //! Homogeneous transformation matrix to convert from the Panda coordinate system (right-handed Z-up) to the ViSP coordinate system (right-handed Y-Down)
   const static vpHomogeneousMatrix PANDA_T_VISP; //! Inverse of VISP_T_PANDA
 
 
-
 protected:
   const std::string m_name; //! name of the renderer
+  int m_renderOrder; //! Rendering priority for this renderer and its buffers. A lower value will be rendered first. Should be used when calling make_output in setupRenderTarget()
   std::shared_ptr<PandaFramework> m_framework; //! Pointer to the active panda framework
   PT(WindowFramework) m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.
   vpPanda3DRenderParameters m_renderParameters; //! Rendering parameters

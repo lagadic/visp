@@ -78,7 +78,9 @@ void vpPanda3DRendererSet::initFramework()
 void vpPanda3DRendererSet::setCameraPose(const vpHomogeneousMatrix &wTc)
 {
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->setCameraPose(wTc);
+    if (renderer->isRendering3DScene()) {
+      renderer->setCameraPose(wTc);
+    }
   }
 }
 
@@ -87,13 +89,18 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getCameraPose()
   if (m_subRenderers.size() == 0) {
     throw vpException(vpException::fatalError, "cannot get the pose of an object if no subrenderer is present");
   }
+  if (!m_subRenderers[0]->isRendering3DScene()) {
+    throw vpException(vpException::fatalError, "This renderer set only contains a non-3D renderer.");
+  }
   return m_subRenderers[0]->getCameraPose();
 }
 
 void vpPanda3DRendererSet::setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo)
 {
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->setNodePose(name, wTo);
+    if (renderer->isRendering3DScene()) {
+      renderer->setNodePose(name, wTo);
+    }
   }
 }
 
@@ -107,6 +114,9 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(const std::string &name)
   if (m_subRenderers.size() == 0) {
     throw vpException(vpException::fatalError, "cannot get the pose of an object if no subrenderer is present");
   }
+  if (!m_subRenderers[0]->isRendering3DScene()) {
+    throw vpException(vpException::fatalError, "This renderer set only contains a non-3D renderer.");
+  }
   return m_subRenderers[0]->getNodePose(name);
 }
 
@@ -118,7 +128,9 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(NodePath &object)
 void vpPanda3DRendererSet::addNodeToScene(const NodePath &object)
 {
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    renderer->addNodeToScene(object);
+    if (renderer->isRendering3DScene()) {
+      renderer->addNodeToScene(object);
+    }
   }
 }
 
@@ -147,7 +159,19 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
       throw vpException(vpException::badValue, "Cannot have two subrenderers with the same name");
     }
   }
-  m_subRenderers.push_back(renderer);
+  std::vector<std::shared_ptr<vpPanda3DBaseRenderer>>::const_iterator it = m_subRenderers.begin();
+  while (it != m_subRenderers.end()) {
+    if ((*it)->getRenderOrder() > renderer->getRenderOrder()) {
+      break;
+    }
+    ++it;
+  }
+  m_subRenderers.insert(it, renderer);
+  for (const auto r: m_subRenderers) {
+    std::cout << r->getName() << " ";
+  }
+  std::cout << std::endl;
+
   renderer->setRenderParameters(m_renderParameters);
   if (m_framework != nullptr) {
     renderer->initFromParent(m_framework, m_window);

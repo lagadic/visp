@@ -81,6 +81,7 @@ public:
   void getRender(vpImage<float> &depth) const;
 
 
+  GraphicsOutput *getMainOutputBuffer() vp_override { return m_normalDepthBuffer; }
 
 protected:
   void setupScene() vp_override;

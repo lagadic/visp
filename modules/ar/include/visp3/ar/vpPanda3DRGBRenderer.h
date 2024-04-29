@@ -58,6 +58,8 @@ public:
 
   void addNodeToScene(const NodePath &object) vp_override;
 
+  GraphicsOutput *getMainOutputBuffer() vp_override { return m_colorBuffer; }
+
 protected:
   void setupScene() vp_override;
   void setupRenderTarget() vp_override;

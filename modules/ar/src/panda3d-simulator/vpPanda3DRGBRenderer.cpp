@@ -267,7 +267,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsStateGuardian *gsg = windowOutput->get_gsg();
   GraphicsPipe *pipe = windowOutput->get_pipe();
-  m_colorBuffer = engine->make_output(pipe, "Color Buffer", -100,
+  m_colorBuffer = engine->make_output(pipe, "Color Buffer", m_renderOrder,
                                       fbp, win_prop, flags,
                                       gsg, windowOutput);
   if (m_colorBuffer == nullptr) {

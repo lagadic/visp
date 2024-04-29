@@ -47,8 +47,10 @@ public:
   virtual ~vpPanda3DRendererSet();
 
   /**
-   * @brief Initialize the framework and propagate the created panda3D framework to the subrenderers
+   * @brief Initialize the framework and propagate the created panda3D framework to the subrenderers.
    *
+   * The subrenderers will be initialized in the order of their priority as defined by vpPanda3DBaseRenderer::getRenderOrder
+   * Thus, if a renderer B depends on A for its render, and if B.getRenderOrder() > A.getRenderOrder() it can rely on A being initialized when B.initFromParent is called (along with the setupCamera, setupRenderTarget).
    */
   void initFramework() vp_override;
 
@@ -110,12 +112,20 @@ public:
    */
   vpHomogeneousMatrix getNodePose(NodePath &object) vp_override;
 
+  /**
+   * \warn this method is not supported and will throw
+   */
   void addNodeToScene(const NodePath &object) vp_override;
 
   void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
 
   void addLight(const vpPanda3DLight &light) vp_override;
 
+  /**
+   * @brief Add a new subrenderer
+   *
+   * @param renderer
+   */
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 
   template<typename RendererType>
