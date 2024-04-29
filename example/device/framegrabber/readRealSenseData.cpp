@@ -81,7 +81,7 @@ void usage(const char *name, const char *badparam)
     << std::endl
     << "SYNOPSIS " << std::endl
     << "  " << name
-    << " [--i <directory>]"
+    << " [-i <directory>]"
     << " [-c]"
     << " [-b]"
     << " [-o]"
@@ -89,7 +89,7 @@ void usage(const char *name, const char *badparam)
     << " [--help,-h]"
     << std::endl;
   std::cout << "\nOPTIONS " << std::endl
-    << "  --i <directory>" << std::endl
+    << "  -i <directory>" << std::endl
     << "    Input folder that contains the data to read." << std::endl
     << std::endl
     << "  -c" << std::endl
@@ -191,8 +191,9 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
   }
 
   // Read color
-  if (vpIoTools::checkFilename(filename_color))
+  if (vpIoTools::checkFilename(filename_color)) {
     vpImageIo::read(I_color, filename_color);
+  }
 
   // Read raw depth
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);

@@ -60,7 +60,6 @@
 #endif
 
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -131,6 +130,10 @@ void usage(const char *name, const char *badparam, int fps)
     << std::endl
     << "  --help, -h" << std::endl
     << "    Display this helper message." << std::endl
+    << std::endl;
+  std::cout << "\nEXAMPLE " << std::endl
+    << "- Save aligned color + depth + point cloud in data folder" << std::endl
+    << "  " << name << " -s -a -c -d -p -b -o data" << std::endl
     << std::endl;
 
   if (badparam) {
@@ -439,10 +442,8 @@ public:
               }
             }
             else {
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
               pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
-#elif defined(VISP_HAVE_PCL)
-              throw(vpIoException(vpIoException::fatalError, "Cannot save as pcd files without PCL io module"));
 #endif
             }
           }
@@ -543,7 +544,6 @@ int main(int argc, const char *argv[])
 #endif
 
   vpImage<vpRGBa> I_color(height, width);
-  vpImage<unsigned char> I_gray(height, width);
   vpImage<unsigned char> I_depth(height, width);
   vpImage<uint16_t> I_depth_raw(height, width);
   vpImage<unsigned char> I_infrared(height, width);
@@ -553,22 +553,21 @@ int main(int argc, const char *argv[])
 #else
   vpDisplayGDI d1, d2, d3;
 #endif
-  d1.init(I_gray, 0, 0, "RealSense color stream");
-  d2.init(I_depth, I_gray.getWidth() + 80, 0, "RealSense depth stream");
-  d3.init(I_infrared, I_gray.getWidth() + 80, I_gray.getHeight() + 70, "RealSense infrared stream");
+  d1.init(I_color, 0, 0, "RealSense color stream");
+  d2.init(I_depth, I_color.getWidth() + 80, 0, "RealSense depth stream");
+  d3.init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
 
   while (true) {
     realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
-    vpImageConvert::convert(I_color, I_gray);
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    vpDisplay::display(I_gray);
+    vpDisplay::display(I_color);
     vpDisplay::display(I_depth);
-    vpDisplay::displayText(I_gray, 20, 20, "Click when ready.", vpColor::red);
-    vpDisplay::flush(I_gray);
+    vpDisplay::displayText(I_color, 20, 20, "Click when ready.", vpColor::red);
+    vpDisplay::flush(I_color);
     vpDisplay::flush(I_depth);
 
-    if (vpDisplay::getClick(I_gray, false)) {
+    if (vpDisplay::getClick(I_color, false)) {
       break;
     }
   }
@@ -683,23 +682,22 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-    vpImageConvert::convert(I_color, I_gray);
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    vpDisplay::display(I_gray);
+    vpDisplay::display(I_color);
     vpDisplay::display(I_depth);
     vpDisplay::display(I_infrared);
 
     if (!click_to_save) {
-      vpDisplay::displayText(I_gray, 20, 20, "Click to quit.", vpColor::red);
+      vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
     }
     else {
       std::stringstream ss;
       ss << "Images saved: " << nb_saves;
-      vpDisplay::displayText(I_gray, 20, 20, ss.str(), vpColor::red);
+      vpDisplay::displayText(I_color, 20, 20, ss.str(), vpColor::red);
     }
 
-    vpDisplay::flush(I_gray);
+    vpDisplay::flush(I_color);
     vpDisplay::flush(I_depth);
     vpDisplay::flush(I_infrared);
 
@@ -713,7 +711,7 @@ int main(int argc, const char *argv[])
     }
 
     vpMouseButton::vpMouseButtonType button;
-    if (vpDisplay::getClick(I_gray, button, false)) {
+    if (vpDisplay::getClick(I_color, button, false)) {
       if (!click_to_save) {
         save_queue.cancel();
         quit = true;
