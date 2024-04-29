@@ -46,7 +46,79 @@
 /*!
   \class vpUnscentedKalman
   \ingroup group_core_kalman
-  This class permits to use Unscented Kalman filter to tackle non-linear problems.
+  This class permits to use Unscented Kalman Filter (UKF) to tackle non-linear problems. Non-linearity
+  can arise in the process function \f$ f: \mathcal{R}^n \rightarrow \mathcal{R}^n \f$, which makes evolve the internal
+  state \f$ \textbf{x} \in \mathcal{R}^n \f$ of the UKF over time, or in the measurement function \f$ h: \mathcal{R}^n \rightarrow \mathcal{R}^m \f$,
+  which expresses the internal state of the UKF in the measurement space of dimension \f$ m \f$.
+
+  We will briefly explain the principles of the UKF and the maths behind the wheel. We refer the interested
+  readers to the [web-book](https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python) by R. Labbe, chapter 10,
+  for more details.
+
+  The UKF is performed in two steps. First, the prediction step, during which we draw the sigma points \f$ \chi \f$ and compute
+  their corresponding weights \f$ \textbf{w}^m \in \mathcal{R}^{2n + 1} \f$ and \f$ \textbf{w}^c \in \mathcal{R}^{2n + 1} \f$.
+  Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \f$ the process covariance matrix.
+  We have:
+
+  \f{eqnarray*}{
+      \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
+      \textbf{w}^m, \textbf{w}^c &=& weight-function(n, parameters)
+   \f}
+
+  There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
+  proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
+
+  Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$ to
+  project them forward in time, forming the new prior:
+
+  \f$ \mathcal{Y} = f( \chi , \Delta t) \f$
+
+  Then, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
+  and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
+
+  \f{eqnarray*}{
+      \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT(\mathcal{Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
+      \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m \mathcal{Y}_i \\
+      \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Y}_i - \boldsymbol{\mu}) (\mathcal{Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
+   \f}
+
+  where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
+
+  The second step is the update step. It is performed in the measurement space, so we must convert the sigma points of
+  the prior into measurements using the measurement function  \f$ h: \mathcal{R}^n \rightarrow \mathcal{R}^m \f$:
+
+  \f$ \mathcal{Z} = h(\mathcal{Y}) \f$
+
+  Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in \mathcal{R}^m \f$ and the
+  covariance \f$ \textbf{P}_z \in \mathcal{R}^{m x m} \f$ of these points:
+
+  \f{eqnarray*}{
+      \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT(\mathcal{Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
+      \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m \mathcal{Z}_i \\
+      \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Z}_i - \boldsymbol{\mu}_z) (\mathcal{Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
+   \f}
+
+  where \f$ \textbf{R} \f$ is the measurement covariance matrix.
+
+  Then, we compute the residual \f$ \textbf{y} \f$ of the measurement \f$ \textbf{z} \f$:
+
+  \f$ \textbf{Y} = \textbf{z} - \boldsymbol{\mu}_z \f$
+
+  To compute the Kalman's gain, we first need to compute the cross covariance of the state and the measurements:
+
+  \f$ \textbf{P}_{xy} = \sum_{i=0}^{2n} w_i^c (\mathcal{Y}_i - \boldsymbol{\mu})(\mathcal{Z}_i - \boldsymbol{\mu}_z)^T \f$
+
+  The Kalman's gain is then defined as:
+
+  \f$ \textbf{K} = \textbf{P}_{xz} \textbf{P}_z^{-1} \f$
+
+  Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new covariance \f$ \textbf{P} \f$:
+
+  \f{eqnarray*}{
+   \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
+   \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
+  \f}
+
 */
 class VISP_EXPORT vpUnscentedKalman
 {
@@ -283,11 +355,11 @@ public:
   }
 
   /**
-   * \brief Simple function to compute a mean, which just does \f$ \textbf{\mu} = \sum_{i} wm_i \textbf{vals}_i \f$
+   * \brief Simple function to compute a mean, which just does \f$ \boldsymbol{\mu} = \sum_{i} wm_i \textbf{vals}_i \f$
    *
    * \param[in] vals Vector containing all the vectors we must compute the mean.
    * \param[in] wm The correspond list of weights.
-   * \return vpColVector \f$ \textbf{\mu} = \sum_{i} wm_i \textbf{vals}_i \f$
+   * \return vpColVector \f$ \boldsymbol{\mu} = \sum_{i} wm_i \textbf{vals}_i \f$
    */
   inline static vpColVector simpleMean(const std::vector<vpColVector> &vals, const std::vector<double> &wm)
   {

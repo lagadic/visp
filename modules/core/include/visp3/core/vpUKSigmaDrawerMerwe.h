@@ -43,9 +43,9 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
-  \class vpUKSigmaDrawerAbstract
+  \class vpUKSigmaDrawerMerwe
   \ingroup group_core_kalman
-  This abstract class defines the interface to draw the sigma points for the Unscented Kalman filter.
+  This class defines a class to draw sigma points following the E. A. Wan and R. van der Merwe's method.
 */
 class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {
