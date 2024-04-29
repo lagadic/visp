@@ -46,6 +46,49 @@
   \class vpUKSigmaDrawerMerwe
   \ingroup group_core_kalman
   This class defines a class to draw sigma points following the E. A. Wan and R. van der Merwe's method.
+
+  The method has four parameters: \f$ n \f$, which is the dimension of the input, and \f$ \alpha \f$, \f$ \beta \f$ and
+  \f$ \kappa \f$, which are three reals. For notational convenience, we define \f$ \lambda = \alpha^2 (n - \kappa) - n \f$.
+
+  Be \f$ \boldsymbol{\mu} \in \mathcal{R}^n \f$ the mean and \f$ \boldsymbol{\Sigma} \in \mathcal{R}^{n x n} \f$ the covariance matrix of the
+  input of the algorithm. The algorithm will draw \f$ 2n + 1 \f$ sigma points \f$ \chi_i \in \mathcal{R}^n \f$ such as:
+
+  \f{eqnarray*}{
+    \chi_0 &=& \boldsymbol{\mu} \\
+    \chi_i &=& \begin{cases} \boldsymbol{\mu} + \left[ \sqrt{(n + \lambda) \boldsymbol{\Sigma}} \right]_i^T & i = 1 .. n \\
+                             \boldsymbol{\mu} - \left[ \sqrt{(n + \lambda) \boldsymbol{\Sigma}} \right]_{i - n}^T & i = n + 1 .. 2n
+               \end{cases}
+  \f}
+
+  where the subscript \f$ i \f$ denotes that we keep the \f$ i^{th} \f$ of the matrix.
+
+  Several definitions of the square root of a matrix exists. We decided to use the following definition: \f$ \textbf{L} \f$
+  is the square root of the matrix \f$ \boldsymbol{\Sigma} \f$ if \f$ \boldsymbol{\Sigma} \f$ can be written as:
+
+  \f$ \boldsymbol{\Sigma} = \textbf{L} \textbf{L}^T \f$
+
+  This definition is favored because it can be computed using the Cholesky's decomposition.
+
+  The computation of the weights that go along the sigma points is the following. The weight used for the
+  computation of the mean of \f$ \chi_0 \f$ is computed such as:
+
+  \f$ w_0^m = \frac{\lambda}{n + \lambda} \f$
+
+  The weight used for the computation of the mean of \f$ \chi_0 \f$ is computed such as:
+
+  \f$ w_0^c = \frac{\lambda}{n + \lambda} + 1 - \alpha^2 + \beta \f$
+
+  The weights for the other sigma points \f$ \chi_1 ... \chi_{2n} \f$ are the same for the mean and covariance
+  and are computed as follow:
+
+  \f$ w_i^m = w_i^c = \frac{1}{2(n + \lambda)}  i = 1..2n \f$
+
+  \b Note: the weights do not sum to one. Negative values can even be expected.
+
+  \b Additionnal \b note: the original author recommended to set \f$ \beta = 2 \f$ for Gaussian problems, \f$ \kappa = 3 - n \f$
+  and \f$ 0 \leq \alpha \leq 1 \f$, where a larger value for \f$ \alpha \f$ spreads the sigma points further from the mean,
+  which can be a problem for highly non-linear problems.
+
 */
 class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {
