@@ -672,25 +672,49 @@ If you have an issue that looks like:
                   from /usr/include/c++/11/bits/specfun.h:45,
                   from /usr/include/c++/11/cmath:1935,
                   from /usr/include/c++/11/math.h:36,
-                  from /home/sfelton/miniconda3/envs/wrapper3.9/include/python3.9/pyport.h:205,
-                  from /home/sfelton/miniconda3/envs/wrapper3.9/include/python3.9/Python.h:50,
-                  from /home/sfelton/.local/include/pybind11/detail/common.h:266,
-                  from /home/sfelton/.local/include/pybind11/attr.h:13,
-                  from /home/sfelton/.local/include/pybind11/detail/class.h:12,
-                  from /home/sfelton/.local/include/pybind11/pybind11.h:13,
-                  from /home/sfelton/software/visp_build/modules/python/bindings/src/robot.cpp:3:
+                  from /home/user/miniconda3/envs/wrapper3.9/include/python3.9/pyport.h:205,
+                  from /home/user/miniconda3/envs/wrapper3.9/include/python3.9/Python.h:50,
+                  from /home/user/.local/include/pybind11/detail/common.h:266,
+                  from /home/user/.local/include/pybind11/attr.h:13,
+                  from /home/user/.local/include/pybind11/detail/class.h:12,
+                  from /home/user/.local/include/pybind11/pybind11.h:13,
+                  from /home/user/software/visp_build/modules/python/bindings/src/robot.cpp:3:
   /usr/include/c++/11/type_traits: **In instantiation of ‘struct std::is_move_constructible<vpImage<double> >’:**
   /usr/include/c++/11/type_traits:152:12:   required from ‘struct std::__and_<std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> > >’
   /usr/include/c++/11/type_traits:157:12:   required from ‘struct std::__and_<std::__not_<std::__is_tuple_like<vpImage<double> > >, std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> > >’
   /usr/include/c++/11/type_traits:2209:11:   required by substitution of ‘template<class ... _Cond> using _Require = std::__enable_if_t<std::__and_< <template-parameter-1-1> >::value> [with _Cond = {std::__not_<std::__is_tuple_like<vpImage<double> > >, std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> >}]’
   /usr/include/c++/11/bits/move.h:196:5:   required by substitution of ‘template<class _Tp> std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = vpImage<double>]’
-  /home/sfelton/software/visp-sfelton/modules/core/include/visp3/core/vpImage.h:341:15:   required from ‘class vpImage<double>’
-  /home/sfelton/software/visp-sfelton/modules/core/include/visp3/core/vpImage.h:369:17:   required from here
+  /home/user/software/visp-user/modules/core/include/visp3/core/vpImage.h:341:15:   required from ‘class vpImage<double>’
+  /home/user/software/visp-user/modules/core/include/visp3/core/vpImage.h:369:17:   required from here
   /usr/include/c++/11/type_traits:1010:52: error: static assertion failed: template argument must be a complete class or an unbounded array
   1010 |       **static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),**
 \endverbatim
 
 You should delete the files in `modules/python/` of the **build** directory.
+
+
+If you have an error that looks like this:
+
+\verbatim
+/home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h: In instantiation of ‘pybind11::arg_v::arg_v(pybind11::arg&&, T&&, const char*) [with T = vpColVector (&)(const vpColVector&, const vpColVector&)]’:
+/home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h:1452:53:   required from ‘pybind11::arg_v::arg_v(const char*, T&&, const char*) [with T = vpColVector (&)(const vpColVector&, const vpColVector&)]’
+/home/user/visp_ws/visp_ukf/modules/python/bindings/src/core.cpp:20491:347:   required from here
+/home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h:1432:82: error: call of overloaded ‘cast(vpColVector (&)(const vpColVector&, const vpColVector&), pybind11::return_value_policy, <brace-enclosed initializer list>)’ is ambiguous
+ 1432 |         : arg(base), value(reinterpret_steal<object>(detail::make_caster<T>::cast(
+      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1433 |                          std::forward<T>(x), return_value_policy::automatic, {}))),
+      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/user/miniconda3/envs/visp-python11/include/pybind11/cast.h:15,
+                 from /home/user/miniconda3/envs/visp-python11/include/pybind11/attr.h:14,
+                 from /home/user/miniconda3/envs/visp-python11/include/pybind11/detail/class.h:12,
+                 from /home/user/miniconda3/envs/visp-python11/include/pybind11/pybind11.h:13,
+                 from /home/user/visp_ws/visp_ukf/modules/python/bindings/src/core.cpp:3:
+\endverbatim
+
+This is due to an argument that cannot have a default value. In the example above, this argument is **vpColVector (&)(const vpColVector&, const vpColVector&)** (converted from an std::function).
+To solve this, go to `modules/python/generator/visp_python_bindgen/generator_config.py`. Then, add a regular expression in the **FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS** list to match with this type.
+Here, we would add '^std::function' to exclude the std::function from being constructed with a default value.
+
 
 \subsubsection py_bindings_known_errors_import_dll ImportError: DLL load failed while importing _visp
 

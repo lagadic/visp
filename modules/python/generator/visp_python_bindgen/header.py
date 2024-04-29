@@ -77,15 +77,24 @@ class HeaderFile():
   def get_header_dependencies(self, headers: List['HeaderFile']) -> List['HeaderFile']:
     if len(self.depends) == 0:
       return []
+
+    user_required_headers = []
+    all_user_required_header_names = self.submodule.config.get('header_additional_dependencies')
+    if all_user_required_header_names is not None:
+      user_required_headers = all_user_required_header_names.get(self.path.name, [])
+
     header_deps = []
     for header in headers:
       if header == self:
         continue
       is_dependency = False
-      for d in self.depends:
-        if d in header.contains:
-          is_dependency = True
-          break
+      if header.path.name in user_required_headers:
+        is_dependency = True
+      else:
+        for d in self.depends:
+          if d in header.contains:
+            is_dependency = True
+            break
       if is_dependency:
         header_deps.append(header)
         upper_dependencies = header.get_header_dependencies(headers)

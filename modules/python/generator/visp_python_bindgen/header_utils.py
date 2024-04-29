@@ -93,8 +93,8 @@ class HeaderEnvironment():
   def __init__(self, data: ParsedData):
     self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
     # Step 2: resolve enumeration names that are possibly hidden behind typedefs
-    from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs
-    enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
+    from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs_to_enums
+    enum_reprs, _ = resolve_enums_and_typedefs_to_enums(data.namespace, self.mapping)
     for enum_repr in enum_reprs:
       for value in enum_repr.values:
         self.mapping[value.name] = enum_repr.name + '::' + value.name
@@ -110,8 +110,11 @@ class HeaderEnvironment():
         current_mapping[alias.alias] = get_type(alias.type, {}, current_mapping)
 
       for typedef in data.typedefs:
-        current_mapping[typedef.name] = scope + typedef.name
-
+        if not name_is_anonymous(typedef.type.typename):
+          current_mapping[typedef.name] = get_type(typedef.type, {}, current_mapping)
+          print(current_mapping[typedef.name])
+        else:
+          current_mapping[typedef.name] = scope + typedef.name
       for enum in data.enums:
         if not name_is_anonymous(enum.typename):
           enum_name = '::'.join([seg.name for seg in enum.typename.segments])

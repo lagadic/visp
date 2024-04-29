@@ -5,6 +5,9 @@
                       "vpDisplayException", "vpMatrixException"],
   "user_defined_headers": ["core.hpp"],
   "config_includes": ["core_image.json", "core_math.json"],
+  "header_additional_dependencies": {
+    "vpUKSigmaDrawerMerwe.h": ["vpUnscentedKalman.h"]
+  },
   "enums": {
     "vpMunkres::STEP_T": {
       "ignore": true
