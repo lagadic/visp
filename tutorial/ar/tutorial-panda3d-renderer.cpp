@@ -48,9 +48,9 @@ void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpR
 {
 #pragma omp parallel for
   for (int i = 0; i < colorImage.getSize(); ++i) {
-    float I1 = 0.299 * colorImage.bitmap[i].R + 0.587 * colorImage.bitmap[i].G * +0.114 * colorImage.bitmap[i].B;
-    float I2 = 0.299 * colorDiffuseOnly.bitmap[i].R + 0.587 * colorDiffuseOnly.bitmap[i].G * +0.114 * colorDiffuseOnly.bitmap[i].B;
-    lightDifference.bitmap[i] = static_cast<unsigned char>(abs(I1 - I2));
+    float I1 = 0.299 * colorImage.bitmap[i].R + 0.587 * colorImage.bitmap[i].G + 0.114 * colorImage.bitmap[i].B;
+    float I2 = 0.299 * colorDiffuseOnly.bitmap[i].R + 0.587 * colorDiffuseOnly.bitmap[i].G + 0.114 * colorDiffuseOnly.bitmap[i].B;
+    lightDifference.bitmap[i] = static_cast<unsigned char>(round(abs(I1 - I2)));
   }
   vpDisplay::display(lightDifference);
   vpDisplay::flush(lightDifference);
