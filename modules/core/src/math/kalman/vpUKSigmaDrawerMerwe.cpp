@@ -85,7 +85,7 @@ vpUKSigmaDrawerMerwe::vpSigmaPointsWeights vpUKSigmaDrawerMerwe::computeWeights(
   return weights;
 }
 #else
-vpUKSigmaDrawerMerwe_dummy()
+void vpUKSigmaDrawerMerwe_dummy()
 {
 
 }
