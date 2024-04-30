@@ -219,7 +219,7 @@ int main(/*const int argc, const char *argv[]*/)
   const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
 
   // Initialize the attributes of the UKF
-  vpUKSigmaDrawerMerwe drawer(4, 0.1, 2., -1.);
+  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.1, 2., -1.);
 
   vpMatrix R(2, 2, 0.); // The covariance of the noise introduced by the measurement
   R[0][0] = sigmaRange*sigmaRange;
@@ -255,7 +255,7 @@ int main(/*const int argc, const char *argv[]*/)
   vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpRadarStation::state_to_measurement, &radar, _1);
 
   // Initialize the UKF
-  vpUnscentedKalman ukf(Q, R, &drawer, f, h);
+  vpUnscentedKalman ukf(Q, R, drawer, f, h);
   ukf.init(X0, P0);
 
 #ifdef VISP_HAVE_DISPLAY

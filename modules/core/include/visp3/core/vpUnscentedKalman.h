@@ -193,7 +193,7 @@ public:
    * The argument is a point of a prior point and the return is its projection in the measurement
    * space.
    */
-  vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const vpProcessFunction &f, const vpMeasurementFunction &h);
+  vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::shared_ptr<vpUKSigmaDrawerAbstract> &drawer, const vpProcessFunction &f, const vpMeasurementFunction &h);
 
   /**
    * \brief Set the guess of the initial state and covariance.
@@ -392,7 +392,7 @@ private:
   vpMatrix m_K; /*!< The Kalman gain.*/
   vpProcessFunction m_f; /*!< Process model function, which projects the sigma points forward in time.*/
   vpMeasurementFunction m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
-  vpUKSigmaDrawerAbstract *m_sigmaDrawer; /*!< Object that permits to draw the sigma points.*/
+  std::shared_ptr<vpUKSigmaDrawerAbstract> m_sigmaDrawer; /*!< Object that permits to draw the sigma points.*/
   vpCommandOnlyFunction m_b; /*!< Function that permits to compute the effect of the commands on the prior, without knowledge of the state.*/
   vpCommandStateFunction m_bx; /*!< Function that permits to compute the effect of the commands on the prior, with knowledge of the state.*/
   vpMeanFunction m_measMeanFunc; /*!< Function to compute a weighted mean in the measurement space.*/

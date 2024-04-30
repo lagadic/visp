@@ -113,7 +113,7 @@ int main(/*const int argc, const char *argv[]*/)
   const double sigmaYmeas = 0.3; // Standard deviation of the measure along the y-axis
 
   // Initialize the attributes of the UKF
-  vpUKSigmaDrawerMerwe drawer(4, 0.3, 2., -1.);
+  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.3, 2., -1.);
   vpMatrix P0(4, 4); //  The initial guess of the process covariance
   P0.eye(4, 4);
   P0 = P0 * 10.;
@@ -133,7 +133,7 @@ int main(/*const int argc, const char *argv[]*/)
   vpUnscentedKalman::vpMeasurementFunction h = hx;
 
   // Initialize the UKF
-  vpUnscentedKalman ukf(Q, R, &drawer, f, h);
+  vpUnscentedKalman ukf(Q, R, drawer, f, h);
   ukf.init(vpColVector(4, 0.), P0);
 
 #ifdef VISP_HAVE_DISPLAY

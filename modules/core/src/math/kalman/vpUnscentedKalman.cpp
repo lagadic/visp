@@ -39,7 +39,7 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
+vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::shared_ptr<vpUKSigmaDrawerAbstract> &drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
   : m_Q(Q)
   , m_R(R)
   , m_f(f)
