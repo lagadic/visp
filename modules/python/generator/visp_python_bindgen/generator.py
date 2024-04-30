@@ -127,9 +127,6 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
   for header, header_deps in headers_with_deps:
     other_mappings = list(map(lambda h: h.environment.mapping, header_deps))
     header.environment.update_with_dependencies(other_mappings)
-    if 'vpUKSigmaDrawerMerwe' in str(header.path):
-      print(other_mappings)
-      print(header.environment.mapping)
 
   for submodule in submodules:
     submodule.set_headers_from_common_list(new_all_headers)
