@@ -355,7 +355,7 @@ public:
   vpMatrix choleskyByLapack() const;
 #endif
 
-    // Compute the exponential matrix of a square matrix
+  // Compute the exponential matrix of a square matrix
   vpMatrix expm() const;
 
   // operation A = A + B
