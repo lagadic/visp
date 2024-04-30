@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,12 +120,12 @@ vpColVector measurementMean(const std::vector<vpColVector> &measurements, const 
   for (unsigned int i = 0; i < nbPoints; ++i) {
     for (unsigned int j = 0; j < nbLandmarks; ++j) {
       mean[2*j] += wm[i] * measurements[i][2*j];
-      sumCos[j] += wm[i] * std::cos(measurements[i][2*j+1]);
-      sumSin[j] += wm[i] * std::sin(measurements[i][2*j+1]);
+      sumCos[j] += wm[i] * std::cos(measurements[i][(2*j)+1]);
+      sumSin[j] += wm[i] * std::sin(measurements[i][(2*j)+1]);
     }
   }
   for (unsigned int j = 0; j < nbLandmarks; ++j) {
-    mean[2*j+1] = std::atan2(sumSin[j], sumCos[j]);
+    mean[(2*j)+1] = std::atan2(sumSin[j], sumCos[j]);
   }
   return mean;
 }
@@ -472,7 +472,7 @@ public:
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].state_to_measurement(chi);
       measurements[2*i] = landmarkMeas[0];
-      measurements[2*i + 1] = landmarkMeas[1];
+      measurements[(2*i) + 1] = landmarkMeas[1];
     }
     return measurements;
   }
@@ -492,7 +492,7 @@ public:
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureGT(pos);
       measurements[2*i] = landmarkMeas[0];
-      measurements[2*i + 1] = landmarkMeas[1];
+      measurements[(2*i) + 1] = landmarkMeas[1];
     }
     return measurements;
   }
@@ -512,7 +512,7 @@ public:
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureWithNoise(pos);
       measurements[2*i] = landmarkMeas[0];
-      measurements[2*i + 1] = landmarkMeas[1];
+      measurements[(2*i) + 1] = landmarkMeas[1];
     }
     return measurements;
   }
