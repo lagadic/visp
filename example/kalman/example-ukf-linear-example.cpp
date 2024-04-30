@@ -108,18 +108,18 @@ int main(/*const int argc, const char *argv[]*/)
   gt_dX[1] = gt_dy;
   const double gt_vx = gt_dx / dt; // Ground truth velocity along x axis
   const double gt_vy = gt_dy / dt; // Ground truth velocity along y axis
-  const double processVariance = 0.02;
-  const double sigmaXmeas = 0.3; // Standard deviation of the measure along the x-axis
-  const double sigmaYmeas = 0.3; // Standard deviation of the measure along the y-axis
+  const double processVariance = 0.000004;
+  const double sigmaXmeas = 0.05; // Standard deviation of the measure along the x-axis
+  const double sigmaYmeas = 0.05; // Standard deviation of the measure along the y-axis
 
   // Initialize the attributes of the UKF
   std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.3, 2., -1.);
   vpMatrix P0(4, 4); //  The initial guess of the process covariance
   P0.eye(4, 4);
-  P0 = P0 * 10.;
+  P0 = P0 * 1.;
   vpMatrix R(2, 2); // The covariance of the noise introduced by the measurement
   R.eye(2, 2);
-  R = R * 0.5;
+  R = R * 0.01;
   vpMatrix Q(4, 4, 0.); // The covariance of the process
   vpMatrix Q1d(2, 2); // The covariance of a process whose states are {x, dx/dt} and for which the variance is 1
   Q1d[0][0] = std::pow(dt, 3) / 3.;
@@ -134,7 +134,7 @@ int main(/*const int argc, const char *argv[]*/)
 
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, drawer, f, h);
-  ukf.init(vpColVector(4, 0.), P0);
+  ukf.init(vpColVector({ 0., 0.75 * gt_vx, 0., 0.75 * gt_vy }), P0);
 
 #ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
@@ -173,13 +173,13 @@ int main(/*const int argc, const char *argv[]*/)
 #endif
 
   // Initialize measurement noise
-  vpGaussRand rngX(sigmaXmeas, 0., vpTime::measureTimeMicros());
-  vpGaussRand rngY(sigmaYmeas, 0., vpTime::measureTimeMicros() + 4221);
+  vpGaussRand rngX(sigmaXmeas, 0., 4224);
+  vpGaussRand rngY(sigmaYmeas, 0., 2112);
 
   // Main loop
   vpColVector gt_X(2, 0.);
   vpColVector z_prec(2, 0.);
-  for (int i = 0; i < 50; ++i) {
+  for (int i = 0; i < 100; ++i) {
     // Perform the measurement
     double x_meas = gt_X[0] + rngX();
     double y_meas = gt_X[1] + rngY();
