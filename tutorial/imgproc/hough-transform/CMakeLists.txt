@@ -2,7 +2,7 @@ project(tutorial-hough)
 
 cmake_minimum_required(VERSION 3.5)
 
-find_package(VISP REQUIRED visp_core visp_gui visp_imgproc)
+find_package(VISP REQUIRED visp_core visp_gui visp_imgproc visp_io)
 
 # set the list of source files
 set(tutorial_cpp

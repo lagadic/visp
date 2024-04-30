@@ -43,7 +43,7 @@ set(example_cpp
   geometric-features/manGeometricFeatures.cpp
   hello-world/CMake/HelloWorld.cpp
   image-manipulation/manDisplay.cpp
-  image-manipulation/manGrab1394-2.cpp
+  image-manipulation/manGrab1394.cpp
   image-manipulation/manGrabDirectShow.cpp
   image-manipulation/manGrabDisk.cpp
   image-manipulation/manGrabV4l2.cpp
