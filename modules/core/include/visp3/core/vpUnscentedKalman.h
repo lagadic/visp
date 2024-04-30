@@ -41,7 +41,8 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpUKSigmaDrawerAbstract.h>
 
-#include <functional>
+#include <functional> // std::function
+#include <memory> // std::shared_ptr
 
 /*!
   \class vpUnscentedKalman
