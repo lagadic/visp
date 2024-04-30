@@ -100,7 +100,7 @@ int main(int argc, const char **argv)
   else {
     modelPath = "data/deformed_sphere.bam";
   }
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(600, 600, 320, 240), 480, 640, 0.01, 10.0);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
 
@@ -144,7 +144,7 @@ int main(int argc, const char **argv)
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.2, -0.4 }), vpColVector({ 0.0, 0.0, 1.0 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.1, -0.1 }), vpColVector({ 0.0, 0.0, 2.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();

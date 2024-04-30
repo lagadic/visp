@@ -152,7 +152,14 @@ void main()
   vec3 v = normalize(-viewVertex.xyz); // normalized view vector
   float nv = max(0.f, dot(n, v));
   float roughness2 = pow(p3d_Material.roughness, 2);
-  p3d_FragData = p3d_LightModel.ambient * p3d_Material.ambient;
+
+  #ifdef HAS_TEXTURE
+    vec4 baseColor = texture(p3d_Texture0, texcoords);
+  #else
+    vec4 baseColor = p3d_Material.baseColor;
+  #endif
+  //p3d_FragData = vec4(0.0, 0.0, 0.0, 1.f);
+  p3d_FragData = p3d_LightModel.ambient * baseColor;
 
 
   for(int i = 0; i < p3d_LightSource.length(); ++i) {
@@ -170,13 +177,8 @@ void main()
 
     vec3 FV = F(F0, vh);
     vec3 kd = (1.f - p3d_Material.metallic) * (1.f - FV) * (1.f / M_PI);
-    #ifdef HAS_TEXTURE
-      vec4 diffuseColor = texture(p3d_Texture0, texcoords);
-    #else
-      vec4 diffuseColor = p3d_Material.baseColor;
-    #endif
 
-
+    vec4 diffuseColor = baseColor;
 
     #ifdef SPECULAR
       vec3 specularColor = vec3(0.f, 0.f, 0.f);
@@ -184,7 +186,7 @@ void main()
         float DV = D(roughness2, hn);
         float GV = G(hn, nv, nl, vh);
         vec3 rs = (DV * GV * FV) / (4.f * nl * nv);
-        specularColor = rs * p3d_Material.baseColor.rgb;
+        specularColor = rs * p3d_Material.specular;
       }
     #else
       vec3 specularColor = vec3(0.0, 0.0, 0.0);
@@ -205,6 +207,9 @@ std::string vpPanda3DRGBRenderer::makeFragmentShader(bool hasTexture, bool specu
   if (specular) {
     ss << "#define SPECULAR 1" << std::endl;
   }
+  else {
+    ss << "#undef SPECULAR" << std::endl;
+  }
   ss << vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG;
   std::cout << ss.str() << std::endl;
   return ss.str();
@@ -214,9 +219,10 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
 {
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
+  std::cout << "SHOW SPECULARS = " << m_showSpeculars << std::endl;
   PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                                     COOK_TORRANCE_VERT,
-                                    makeFragmentShader(false, m_showSpeculars));
+                                    makeFragmentShader(true, m_showSpeculars));
 
   objectInScene.set_shader(shader);
 
@@ -277,6 +283,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
   m_colorTexture = new Texture();
   fbp.setup_color_texture(m_colorTexture);
+  //m_colorTexture->set_format(Texture::Format::F_srgb_alpha);
   m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);
   m_colorBuffer->set_clear_color(LColor(0.f));
   m_colorBuffer->set_clear_color_active(true);

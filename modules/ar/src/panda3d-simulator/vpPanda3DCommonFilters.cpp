@@ -8,9 +8,9 @@ const char *vpPanda3DLuminanceFilter::FRAGMENT_SHADER = R"shader(
 
 in vec2 texcoords;
 
+uniform sampler2D p3d_Texture0;
 
 out vec4 p3d_FragData;
-uniform sampler2D p3d_Texture0;
 
 void main() {
   vec4 v = texture(p3d_Texture0, texcoords);
