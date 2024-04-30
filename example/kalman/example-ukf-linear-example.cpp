@@ -100,9 +100,9 @@ vpColVector hx(const vpColVector &chi)
 
 int main(/*const int argc, const char *argv[]*/)
 {
-  const double dt = 1.; // Period of 1s
-  const double gt_dx = 1.; // Ground truth displacement along x axis between two measurements
-  const double gt_dy = 0.5; // Ground truth displacement along x axis between two measurements
+  const double dt = 0.01; // Period of 1s
+  const double gt_dx = 0.01; // Ground truth displacement along x axis between two measurements
+  const double gt_dy = 0.005; // Ground truth displacement along x axis between two measurements
   vpColVector gt_dX(2); // Ground truth displacement between two measurements
   gt_dX[0] = gt_dx;
   gt_dX[1] = gt_dy;
