@@ -451,12 +451,12 @@ int main(/*const int argc, const char *argv[]*/)
     //! [Noisy_pose]
 
     //! [Update_plot]
+    // Plot the ground truth
+    plot.plot(0, 0, object_pos[0], object_pos[2]);
+
     // Plot the filtered state
     vpColVector Xest = ukf.getXest();
     plot.plot(0, 1, Xest[0], Xest[2]);
-
-    // Plot the ground truth
-    plot.plot(0, 0, object_pos[0], object_pos[2]);
 
     // Plot the noisy pose
     plot.plot(0, 2, wXnoisy, wZnoisy);

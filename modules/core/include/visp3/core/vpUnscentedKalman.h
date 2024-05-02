@@ -69,10 +69,11 @@
   There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
   proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
 
-  Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$ to
-  project them forward in time, forming the new prior:
+  Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$, the command function
+  \f$b( \textbf{u}, \Delta t )\f$ and the command function depending on the state \f$bx( \textbf{u}, \chi, \Delta t )\f$
+  to project them forward in time, forming the new prior:
 
-  \f$ \mathcal{Y} = f( \chi , \Delta t) \f$
+  \f$ \mathcal{Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
 
   Then, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
   and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
