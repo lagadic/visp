@@ -33,8 +33,9 @@
 /** \example tutorial-ukf.cpp
  * Tutorial on how to use the Unscented Kalman Filter (UKF) on a complex non-linear use-case.
  * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
- * The object revolves around a fixed point W whose coordinate frame is the world frame.
- * The scene is observed by a pinhole camera whose coordinate frame has the origin C.
+ * The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
+ * The scene is observed by a pinhole camera whose coordinate frame has the origin C and which is
+ * fixed to the ceiling.
  *
  * The state vector of the UKF is:
  *  \f{eqnarray*}{
@@ -92,9 +93,9 @@
 vpColVector fx(const vpColVector &x, const double & /*dt*/)
 {
   vpColVector x_kPlus1(4);
-  x_kPlus1[0] = x[0] * std::cos(x[3]) - x[2] * std::sin(x[3]); // wX
-  x_kPlus1[1] = x[1]; // wY
-  x_kPlus1[2] = x[0] * std::sin(x[3]) + x[2] * std::cos(x[3]); // wZ
+  x_kPlus1[0] = x[0] * std::cos(x[3]) - x[1] * std::sin(x[3]); // wX
+  x_kPlus1[1] = x[0] * std::sin(x[3]) + x[1] * std::cos(x[3]); // wY
+  x_kPlus1[2] = x[2]; // wZ
   x_kPlus1[3] = x[3]; // omega * dt
   return x_kPlus1;
 }
@@ -113,13 +114,13 @@ public:
    * \param[in] R The radius of the revolution around the world frame origin.
    * \param[in] w The pulsation of the motion.
    * \param[in] phi The phase of the motion.
-   * \param[in] wY The y-coordinate of the object in the world frame.
+   * \param[in] wZ The y-coordinate of the object in the world frame.
    */
-  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wY)
+  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ)
     : m_R(R)
     , m_w(w)
     , m_phi(phi)
-    , m_wY(wY)
+    , m_wZ(wZ)
   { }
 
   /**
@@ -132,8 +133,8 @@ public:
   {
     vpColVector wX(4, 1.);
     wX[0] = m_R * std::cos(m_w * t + m_phi);
-    wX[1] = m_wY;
-    wX[2] = m_R * std::sin(m_w * t + m_phi);
+    wX[1] = m_R * std::sin(m_w * t + m_phi);
+    wX[2] = m_wZ;
     return wX;
   }
 
@@ -141,7 +142,7 @@ private:
   double m_R; // Radius of the revolution around the world frame origin.
   double m_w; // Pulsation of the motion.
   double m_phi; // Phase of the motion.
-  const double m_wY; // The y-coordinate of the object in the world frame.
+  const double m_wZ; // The z-coordinate of the object in the world frame.
 };
 //! [Object_simulator]
 
@@ -201,7 +202,7 @@ public:
    * \brief Perfect measurement of the projection of the markers in the image when the object
    * is located at \b wX.
    *
-   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z.
+   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
    * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
    */
   vpColVector measureGT(const vpColVector &wX)
@@ -227,7 +228,7 @@ public:
    * \brief Noisy measurement of the projection of the markers in the image when the object
    * is located at \b wX.
    *
-   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z.
+   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
    * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
    */
   vpColVector measureWithNoise(const vpColVector &wX)
@@ -283,13 +284,13 @@ int main(/*const int argc, const char *argv[]*/)
   //! [Constants_for_simulation]
   const double dt = 0.001; // Period of 0.1s
   const double sigmaMeasurements = 2.; // Standard deviation of the measurements: 2 pixels
-  const double radius = 0.5; // Radius of revolution of 0.5m
+  const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
-  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0., -0.05, 1.})
-                                           , vpColVector({0.05, 0., -0.05, 1.})
-                                           , vpColVector({0.05, 0., 0.05, 1.})
-                                           , vpColVector({-0.05, 0., 0.05, 1.}) }; // Vector of the markers sticked on the object
+  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
+                                           , vpColVector({0.05, 0.05, 0., 1.})
+                                           , vpColVector({0.05, -0.05, 0., 1.})
+                                           , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
   const unsigned int nbMarkers = markers.size();
   std::vector<vpPoint> markersAsVpPoint;
   for (unsigned int i = 0; i < nbMarkers; ++i) {
@@ -300,8 +301,8 @@ int main(/*const int argc, const char *argv[]*/)
   const long seed = 42; // Seed for the random generator
   vpHomogeneousMatrix cMw; // Pose of the world frame with regard to the camera frame
   cMw[0][0] = 1.; cMw[0][1] = 0.; cMw[0][2] = 0.; cMw[0][3] = 0.2;
-  cMw[1][0] = 0.; cMw[1][1] = 0.; cMw[1][2] = -1.; cMw[1][3] = 0.3;
-  cMw[2][0] = 0.; cMw[2][1] = 1.; cMw[2][2] = 0.; cMw[2][3] = 1.;
+  cMw[1][0] = 0.; cMw[1][1] = -1.; cMw[1][2] = 0.; cMw[1][3] = 0.3;
+  cMw[2][0] = 0.; cMw[2][1] = 0.; cMw[2][2] = -1.; cMw[2][3] = 1.;
 
   vpHomogeneousMatrix wMo; // Pose of the object frame with regard to the world frame
   wMo[0][0] = 1.; wMo[0][1] = 0.; wMo[0][2] = 0.; wMo[0][3] = radius;
@@ -309,7 +310,7 @@ int main(/*const int argc, const char *argv[]*/)
   wMo[2][0] = 0.; wMo[2][1] = 0.; wMo[2][2] = 1.; wMo[2][3] = 0.2;
   vpRotationMatrix wRo; // Rotation between the object frame and world frame
   wMo.extract(wRo);
-  const double wY = wMo[1][3];
+  const double wZ = wMo[2][3];
   //! [Constants_for_simulation]
 
   //! [Camera_for_measurements]
@@ -352,8 +353,8 @@ int main(/*const int argc, const char *argv[]*/)
 
   vpColVector X0(4); // The initial guess for the state
   X0[0] = radius; // wX = radius m
-  X0[1] = 0.95 * wY; // Wrong estimation of the position along the y-axis: error of 5%
-  X0[2] = 0; // wZ = 0m
+  X0[1] = 0.; // wY = 0m
+  X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
   X0[3] = 0.75 * w * dt; // Wrong estimation of the pulsation: error of 25%
   //! [Initial_estimates]
 
@@ -377,7 +378,7 @@ int main(/*const int argc, const char *argv[]*/)
   plot.initGraph(0, 3);
   plot.setTitle(0, "Position of the robot wX");
   plot.setUnitX(0, "Position along x(m)");
-  plot.setUnitY(0, "Position along z (m)");
+  plot.setUnitY(0, "Position along y (m)");
   plot.setLegend(0, 0, "GT");
   plot.setLegend(0, 1, "Filtered");
   plot.setLegend(0, 2, "Measure");
@@ -412,7 +413,7 @@ int main(/*const int argc, const char *argv[]*/)
 
   //! [Init_simu]
   // Initialize the simulation
-  vpObjectSimulator object(radius, w, phi, wY);
+  vpObjectSimulator object(radius, w, phi, wZ);
   vpColVector object_pos = X0;
   //! [Init_simu]
 
@@ -447,19 +448,19 @@ int main(/*const int argc, const char *argv[]*/)
     vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
     vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
     double wXnoisy = wMo_noisy[0][3];
-    double wZnoisy = wMo_noisy[2][3];
+    double wYnoisy = wMo_noisy[1][3];
     //! [Noisy_pose]
 
     //! [Update_plot]
     // Plot the ground truth
-    plot.plot(0, 0, object_pos[0], object_pos[2]);
+    plot.plot(0, 0, object_pos[0], object_pos[1]);
 
     // Plot the filtered state
     vpColVector Xest = ukf.getXest();
-    plot.plot(0, 1, Xest[0], Xest[2]);
+    plot.plot(0, 1, Xest[0], Xest[1]);
 
     // Plot the noisy pose
-    plot.plot(0, 2, wXnoisy, wZnoisy);
+    plot.plot(0, 2, wXnoisy, wYnoisy);
     //! [Update_plot]
 
     //! [Update_renderer]

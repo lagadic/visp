@@ -6,9 +6,18 @@
 
 The Unscented Kalman Filter (UKF) is a version of the Kalman filter that handles non-linearities.
 
-In this tutorial, we will use a UKF to filter the 3D position of a simulated object, which revolves in a plane around
-a static point, with regard to a static camera. The object is supposed plane and having four markers sticked on
-its surface.
+In this tutorial, we will use a UKF to filter the 3D position of a simulated object, which revolves in a plane parallel
+to the ground around a static point, which is the origin of the world frame \f$ \mathcal{F}_W \f$. The coordinate frame
+attached to the object is denoted \f$ \mathcal{F}_O \f$. The object is observed by a static camera whose coordinate
+frame is denoted \f$ \mathcal{F}_C \f$. The object is supposed plane and having four markers sticked on its surface.
+
+The equations that describe the motion of the object in the world frame are the following:
+
+\f{eqnarray*}{
+  {}^W \textbf{X}_x &=& R cos(\omega t + \phi) \\
+  {}^W \textbf{X}_y &=& R sin(\omega t + \phi) \\
+  {}^W \textbf{X}_z &=& constant
+\f}
 
 \htmlonly <style>div.image img[src="img-tutorial-ukf-illustration.jpg"]{width:50%;}</style> \endhtmlonly
 \image html img-tutorial-ukf-illustration.jpg
@@ -16,7 +25,7 @@ its surface.
 \subsection tuto-ukf-intro-methods The maths beyond the Unscented Kalman Filter
 
 The maths beyond the Unscented Kalman Filter are explained in the documentation of the vpUnscentedKalman class.
-We will only recall briefly the important steps of the UKF.
+We will recall briefly the important steps of the UKF.
 
 Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n x n} \f$ the
 associated covariance matrix.
@@ -115,7 +124,7 @@ the 3D pose of the object expressed in the world frame, along with the pulsation
   \textbf{x}[3] &=& \omega \Delta t
 \f}
 
-The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
+The measurement \f$ \textbf{z} \f$ corresponds to the perspective projection of the different markers in the image.
 Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
 The measurement vector can be written as:
 
@@ -124,20 +133,35 @@ The measurement vector can be written as:
   \textbf{z}[2i+1] &=& v_i
 \f}
 
+Be \f$ \textbf{K}_{intr} \f$ the camera instrinsic parameters matrix defined by:
+
+\f$ \textbf{K}_{intr} = \begin{pmatrix}
+  p_x & 0   & u_0 \\
+  0   & p_y & v_0 \\
+  0   & 0   & 1
+  \end{pmatrix}
+\f$
+
+where \f$ (u_0, v0, 1)^T \f$ are the coordinates of the principal point and \f$ p_x \f$ (resp. \f$ p_y \f$) is the ratio
+between the focal lens of the camera and the width (resp. height) of a pixel.
+
+Be \f$ \boldsymbol{\pi} \f$ the projection matrix  that is, in the case of a perspective
+projection model, given by:
+
+\f$ \boldsymbol{\pi} = \begin{pmatrix}
+  1 & 0 & 0 & 0 \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 1 & 0
+  \end{pmatrix}
+\f$
+
 The perspective projection \f$ \textbf{p} = (u, v, 1)^T \f$ of a point \f$ {}^W\textbf{X} = ({}^WX_x, {}^WX_y, {}^WX_z, 1)^T \f$
 is given by:
 
 \f$ \textbf{p} = \textbf{K}_{intr} \boldsymbol{\pi} {}^C\textbf{M}_W {}^W\textbf{X} \f$
 
-where \f$ \textbf{K}_{intr} \f$ is the camera instrinsic parameters matrix and is defined by:
-
-\f$ TODO \f$
-
-where \f$ (u_0, v0, 1)^T \f$ are tje coordinates of the principal point and \f$ p_x \f$ (resp. \f$ p_y \f$) is the ratio
-between the focal lens of the and the width (resp. height) of a pixel. The projection matrix is, in the case of a perspective
-projection model given by:
-
-\f$ TODO \f$
+where \f$ {}^C\textbf{M}_W \f$ is the homogeneous matrix that expresses the pose of the world coordinate frame \f$ \mathcal{F}_W \f$
+with regard to the camera frame \f$ \mathcal{F}_C \f$.
 
 \subsubsection tuto-ukf-tutorial-explained-includes Details on the includes
 
@@ -159,7 +183,50 @@ of the object, expressed in the world frame, in a dedicated class.
 \subsubsection tuto-ukf-tutorial-explained-fx Details on the process function
 
 As mentionned before, the UKF relies on a process function which project in time the internal state of the UKF.
-As the process evolution is pretty simple, a simple function called here fx is enough:
+
+We want to express the internal state projected in the future \f$ \textbf{x}_{t + \Delta t} \f$ as a function of its
+previous state \f$ \textbf{x}_{t} \f$.
+
+As stated in the introduction, the equations of motion of the object are the following:
+
+\f{eqnarray*}{
+  {}^W \textbf{X}_x(t) &=& R cos(\omega t + \phi) \\
+  {}^W \textbf{X}_y(t) &=& R sin(\omega t + \phi) \\
+  {}^W \textbf{X}_z(t) &=& constant
+\f}
+
+Thus, we have:
+
+\f{eqnarray*}{
+  {}^WX_x( t + \Delta t) &=& R cos(\omega (t + \Delta t) + \phi) &=& R cos((\omega t + \phi) + \omega \Delta t )\\
+  {}^WX_y( t + \Delta t) &=& R sin(\omega (t + \Delta t) + \phi) &=& R sin((\omega t + \phi) + \omega \Delta t )\\
+  {}^WX_z( t + \Delta t) &=& constant
+\f}
+
+Which can be rewritten:
+\f{eqnarray*}{
+  {}^WX_x( t + \Delta t) &=& R cos((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) \\
+  {}^WX_y( t + \Delta t) &=& R sin((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t)\\
+  {}^WX_z( t + \Delta t) &=& constant
+\f}
+
+And can be finally written as:
+\f{eqnarray*}{
+  {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W \textbf{X}_x( t) cos(\omega \Delta t) - {}^W \textbf{X}_y(t) sin(\omega \Delta t) \\
+  {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W \textbf{X}_x( t) sin(\omega \Delta t) + {}^W \textbf{X}_y(t) cos(\omega \Delta t) \\
+  {}^WX_z( t + \Delta t) &=& constant
+\f}
+
+This motivates us to choose the following non-linear process function:
+
+\f{eqnarray*}{
+  \textbf{x}[0]_{t + \Delta t} &=& {}^WX_x (t + \Delta t) &=& \textbf{x}[0]_{t} cos(\textbf{x}[3]_{t}) - \textbf{x}[1]_{t} sin(\textbf{x}[3]_{t}) \\
+  \textbf{x}[1]_{t + \Delta t} &=& {}^WX_y (t + \Delta t) &=& \textbf{x}[0]_{t} sin(\textbf{x}[3]_{t}) + \textbf{x}[1]_{t} cos(\textbf{x}[3]_{t}) \\
+  \textbf{x}[2]_{t + \Delta t} &=& {}^WX_z (t + \Delta t) &=& \textbf{x}[2]_{t} \\
+  \textbf{x}[3]_{t + \Delta t} &=& \omega \Delta t &=& \textbf{x}[3]_{t}
+\f}
+
+As the process function is pretty simple, a simple function called here fx is enough:
 
 \snippet tutorial-ukf.cpp Process_function
 
