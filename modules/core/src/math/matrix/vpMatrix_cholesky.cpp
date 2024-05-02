@@ -116,9 +116,7 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #elif defined(VISP_HAVE_OPENCV)
   return inverseByCholeskyOpenCV();
 #else
-  throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
-                    "Cholesky. Install Lapack or "
-                    "OpenCV 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by Cholesky. Install Lapack or OpenCV 3rd party"));
 #endif
 }
 
