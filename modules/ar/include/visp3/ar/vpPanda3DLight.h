@@ -46,7 +46,9 @@
 #include "pointLight.h"
 
 /**
- * @brief Base class for a Light that can be added to a Panda3D scene.
+ * \ingroup group_ar_renderer_panda3d
+ *
+ * \brief Base class for a Light that can be added to a Panda3D scene.
  *
  * Note that modifying any object that inherits from this class
  * after the method addToScene has been called * will not update the rendered light.
@@ -92,6 +94,9 @@ protected:
 };
 
 /**
+ *
+ * \ingroup group_ar_renderer_panda3d
+ *
  * @brief Class representing an ambient light.
  *
  * Ambient light are not physically possible, but are used to emulate light coming from all directions.

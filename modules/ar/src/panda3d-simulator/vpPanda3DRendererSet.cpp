@@ -40,8 +40,6 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
   m_renderParameters = renderParameters;
 }
 
-vpPanda3DRendererSet::~vpPanda3DRendererSet()
-{ }
 
 void vpPanda3DRendererSet::initFramework()
 {

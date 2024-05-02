@@ -40,11 +40,28 @@
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 #include <visp3/ar/vpPanda3DLight.h>
 
+/**
+ * \ingroup group_ar_renderer_panda3d
+ *
+ * @brief Class that rendering multiple datatypes, in a single pass. A RendererSet contains multiple subrenderers, all inheriting from vpPanda3DBaseRenderer.
+ * The renderer set synchronizes all scene properties for the different subrenderers. This includes:
+ *  * The camera properties (intrinsics, resolution) and extrinsics
+ *  * The pose and properties of every object in the scene
+ *  * The pose and properties of lights, for subrenderers that are defined as lightable.
+ *
+ * The overall usage workflow is the following:
+ *  1. Create vpPanda3DRendererSet instance
+ *  2. Create the subrenderers (e.g, vpPanda3DGeometryRenderer)
+ *  3. Add the subrenderers to the set with addSubRenderer
+ *  4. Call renderFrame() on the rendererSet. Each subrenderer now has its output computed and ready to be retrieved
+ *  5. Retrieve relevant outputs in ViSP format with something similar to `rendererSet.getRenderer<RendererType>("MyRendererName").getRender(I)` where RendererType is the relevant subclass of vpPanda3DBaseRenderer and "MyRendererName" its name (see vpPanda3DBaseRenderer::getName)
+ */
 class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer, public vpPanda3DLightable
 {
 public:
   vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters);
-  virtual ~vpPanda3DRendererSet();
+
+  virtual ~vpPanda3DRendererSet() = default;
 
   /**
    * @brief Initialize the framework and propagate the created panda3D framework to the subrenderers.
@@ -122,12 +139,20 @@ public:
   void addLight(const vpPanda3DLight &light) vp_override;
 
   /**
-   * @brief Add a new subrenderer
+   * @brief Add a new subrenderer: This subrenderer should have a unique name, not present in the set.
    *
-   * @param renderer
+   * \throws if the subrenderer's name is already present in the set.
+   *
+   * @param renderer the renderer to add
    */
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 
+  /**
+   * @brief Retrieve the first subrenderer with the specified template type.
+   *
+   * @tparam RendererType  The type of the renderer to find
+   * @return std::shared_ptr<RendererType> Pointer to the first renderer match, nullptr if none is found.
+   */
   template<typename RendererType>
   std::shared_ptr<RendererType> getRenderer()
   {
@@ -139,7 +164,13 @@ public:
     }
     return nullptr;
   }
-
+  /**
+   * @brief Retrieve the subrenderer with the specified template type and the given name.
+   *
+   * @param name the name of the subrenderer to find
+   * @tparam RendererType  The type of the renderer to find
+   * @return std::shared_ptr<RendererType> Pointer to the renderer, nullptr if none is found.
+   */
   template<typename RendererType>
   std::shared_ptr<RendererType> getRenderer(const std::string &name)
   {

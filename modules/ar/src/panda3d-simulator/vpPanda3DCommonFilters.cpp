@@ -16,7 +16,6 @@ void main() {
   vec4 v = texture(p3d_Texture0, texcoords);
   p3d_FragData.b = 0.299 * v.r + 0.587 * v.g + 0.114 * v.b;
 }
-
 )shader";
 
 

@@ -377,6 +377,12 @@ in different ways. This will motivate us to continue the efforts.
   Renderer interfaces.
 */
 /*!
+  \ingroup group_ar_renderer
+  \defgroup group_ar_renderer_panda3d Panda3D Renderer
+  Modular renderer based on the Panda3D renderer.
+*/
+
+/*!
   \ingroup module_ar
   \defgroup group_ar_simulator Simulator
   Simulator interfaces.

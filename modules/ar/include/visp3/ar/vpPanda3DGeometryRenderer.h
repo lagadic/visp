@@ -40,6 +40,8 @@
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 
 /**
+ * \ingroup group_ar_renderer_panda3d
+ *
  * @brief Renderer that outputs object geometric information.
  *
  * This information may contain, depending on requested render type:

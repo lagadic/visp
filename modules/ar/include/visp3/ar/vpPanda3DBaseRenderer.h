@@ -43,7 +43,9 @@
 #include <pandaSystem.h>
 
 /**
- * @brief Base class for a panda3D renderer. This class handles basic functionalities,
+ * \ingroup group_ar_renderer_panda3d
+ *
+ * \brief Base class for a panda3D renderer. This class handles basic functionalities,
  * such as loading object, changing camera parameters.
  *
  * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overriden:
