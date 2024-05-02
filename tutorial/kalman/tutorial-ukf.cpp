@@ -32,8 +32,8 @@
 
 /** \example tutorial-ukf.cpp
  * Tutorial on how to use the Unscented Kalman Filter (UKF) on a complex non-linear use-case.
- * The system is a plate, whose coordinate frame origin is the point O, on which are sticked four markers.
- * The plate revolves around a fixed point W whose coordinate frame is the world frame.
+ * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
+ * The object revolves around a fixed point W whose coordinate frame is the world frame.
  * The scene is observed by a pinhole camera whose coordinate frame has the origin C.
  *
  * The state vector of the UKF is:
@@ -56,10 +56,6 @@
  * not perfect.
 */
 
-// UKF includes
-#include <visp3/core/vpUKSigmaDrawerMerwe.h>
-#include <visp3/core/vpUnscentedKalman.h>
-
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
@@ -67,6 +63,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+//! [Display_includes]
 #ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
 #include <visp3/gui/vpDisplayD3D.h>
@@ -75,9 +72,16 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
+//! [Display_includes]
 #include <visp3/vision/vpPose.h>
 
+//! [UKF_includes]
+#include <visp3/core/vpUKSigmaDrawerMerwe.h>
+#include <visp3/core/vpUnscentedKalman.h>
+//! [UKF_includes]
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+//! [Process_function]
 /**
  * \brief Process function that makes evolve the state model {\f$ {}^WX_x \f$, \f$ {}^WX_y \f$, \f$ {}^WX_z \f$, \f$ C = \omega \Delta t \f$}
  * over time.
@@ -94,22 +98,24 @@ vpColVector fx(const vpColVector &x, const double & /*dt*/)
   x_kPlus1[3] = x[3]; // omega * dt
   return x_kPlus1;
 }
+//! [Process_function]
 
+//! [Object_simulator]
 /**
- * \brief Class that simulates the moving plate.
+ * \brief Class that simulates the moving object.
  */
-class vpPlateSimulator
+class vpObjectSimulator
 {
 public:
   /**
-   * \brief Construct a new vpPlateSimulator object.
+   * \brief Construct a new vpObjectSimulator object.
    *
    * \param[in] R The radius of the revolution around the world frame origin.
    * \param[in] w The pulsation of the motion.
    * \param[in] phi The phase of the motion.
    * \param[in] wY The y-coordinate of the object in the world frame.
    */
-  vpPlateSimulator(const double &R, const double &w, const double &phi, const double &wY)
+  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wY)
     : m_R(R)
     , m_w(w)
     , m_phi(phi)
@@ -137,9 +143,11 @@ private:
   double m_phi; // Phase of the motion.
   const double m_wY; // The y-coordinate of the object in the world frame.
 };
+//! [Object_simulator]
 
+//! [Markers_class]
 /**
- * \brief Class that permits to convert the 3D position of the plate into measurements.
+ * \brief Class that permits to convert the 3D position of the object into measurements.
  */
 class vpMarkersMeasurements
 {
@@ -163,6 +171,7 @@ public:
     , m_rng(noise_stdev, 0., seed)
   { }
 
+  //! [Measurement_function]
   /**
    * \brief Convert the prior of the UKF into the measurement space.
    *
@@ -185,9 +194,11 @@ public:
     }
     return meas;
   }
+  //! [Measurement_function]
 
+  //! [GT_measurements]
   /**
-   * \brief Perfect measurement of the projection of the markers in the image when the plate
+   * \brief Perfect measurement of the projection of the markers in the image when the object
    * is located at \b wX.
    *
    * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z.
@@ -209,9 +220,11 @@ public:
     }
     return meas;
   }
+  //! [GT_measurements]
 
+  //! [Noisy_measurements]
   /**
-   * \brief Noisy measurement of the projection of the markers in the image when the plate
+   * \brief Noisy measurement of the projection of the markers in the image when the object
    * is located at \b wX.
    *
    * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z.
@@ -227,6 +240,7 @@ public:
     }
     return measurementsNoisy;
   }
+  //! [Noisy_measurements]
 
 private:
   vpCameraParameters m_cam; // The camera parameters
@@ -235,7 +249,9 @@ private:
   std::vector<vpColVector> m_markers; // The position of the markers in the object frame.
   vpGaussRand m_rng; // Noise simulator for the measurements
 };
+//! [Markers_class]
 
+//! [Pose_for_display]
 /**
  * \brief Compute the pose from the 3D coordinates of the markers and their coordinates in pixels
  * in the image.
@@ -260,9 +276,11 @@ vpHomogeneousMatrix computePose(std::vector<vpPoint> &point, const std::vector<v
   pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
   return cMo;
 }
+//! [Pose_for_display]
 
 int main(/*const int argc, const char *argv[]*/)
 {
+  //! [Constants_for_simulation]
   const double dt = 0.001; // Period of 0.1s
   const double sigmaMeasurements = 2.; // Standard deviation of the measurements: 2 pixels
   const double radius = 0.5; // Radius of revolution of 0.5m
@@ -292,16 +310,22 @@ int main(/*const int argc, const char *argv[]*/)
   vpRotationMatrix wRo; // Rotation between the object frame and world frame
   wMo.extract(wRo);
   const double wY = wMo[1][3];
+  //! [Constants_for_simulation]
 
+  //! [Camera_for_measurements]
   // Create a camera parameter container
   // Camera initialization with a perspective projection without distortion model
   double px = 600; double py = 600; double u0 = 320; double v0 = 240;
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
+  //! [Camera_for_measurements]
 
   // Initialize the attributes of the UKF
+  //! [Sigma_points_drawer]
   std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.001, 2., -1);
+  //! [Sigma_points_drawer]
 
+  //! [Covariance_measurements]
   vpMatrix R1landmark(2, 2, 0.); // The covariance of the noise introduced by the measurement with 1 landmark
   R1landmark[0][0] = sigmaMeasurements*sigmaMeasurements;
   R1landmark[1][1] = sigmaMeasurements*sigmaMeasurements;
@@ -309,12 +333,16 @@ int main(/*const int argc, const char *argv[]*/)
   for (unsigned int i = 0; i < nbMarkers; ++i) {
     R.insert(R1landmark, 2*i, 2*i);
   }
+  //! [Covariance_measurements]
 
+  //! [Covariance_process]
   const double processVariance = 0.000025; // Variance of the process of (0.005cm)^2
   vpMatrix Q; // The covariance of the process
   Q.eye(4);
   Q = Q * processVariance;
+  //! [Covariance_process]
 
+  //! [Initial_estimates]
   vpMatrix P0(4, 4); //  The initial guess of the process covariance
   P0.eye(4);
   P0[0][0] = 1.;
@@ -327,17 +355,22 @@ int main(/*const int argc, const char *argv[]*/)
   X0[1] = 0.95 * wY; // Wrong estimation of the position along the y-axis: error of 5%
   X0[2] = 0; // wZ = 0m
   X0[3] = 0.75 * w * dt; // Wrong estimation of the pulsation: error of 25%
+  //! [Initial_estimates]
 
+  //! [Init_functions]
   vpUnscentedKalman::vpProcessFunction f = fx;
   vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaMeasurements, seed);
-  vpPlateSimulator plate(radius, w, phi, wY);
   using std::placeholders::_1;
   vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpMarkersMeasurements::state_to_measurement, &markerMeas, _1);
+  //! [Init_functions]
 
+  //! [Init_UKF]
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, drawer, f, h);
   ukf.init(X0, P0);
+  //! [Init_UKF]
 
+  //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
   vpPlot plot(1);
@@ -353,7 +386,9 @@ int main(/*const int argc, const char *argv[]*/)
   plot.setColor(0, 1, vpColor::blue);
   plot.setColor(0, 2, vpColor::black);
 #endif
+  //! [Init_plot]
 
+  //! [Init_renderer]
   // Initialize the display
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
@@ -373,32 +408,65 @@ int main(/*const int argc, const char *argv[]*/)
   if (d != nullptr) {
     d->init(Idisp, 800, 50, "Projection of the markers");
   }
+  //! [Init_renderer]
 
+  //! [Init_simu]
   // Initialize the simulation
-  vpColVector plate_pos = X0;
+  vpObjectSimulator object(radius, w, phi, wY);
+  vpColVector object_pos = X0;
+  //! [Init_simu]
 
+  //! [Simu_loop]
   for (unsigned int i = 0; i < 200; ++i) {
-    plate_pos = plate.move(dt * static_cast<double>(i));
+    //! [Update_simu]
+    object_pos = object.move(dt * static_cast<double>(i));
+    //! [Update_simu]
 
+    //! [Update_measurement]
     // Perform the measurement
-    vpColVector z = markerMeas.measureWithNoise(plate_pos);
+    vpColVector z = markerMeas.measureWithNoise(object_pos);
+    //! [Update_measurement]
 
+    //! [Perform_filtering]
     // Use the UKF to filter the measurement
     ukf.filter(z, dt);
+    //! [Perform_filtering]
 
+    //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
+    //! [Noisy_pose]
+    // Prepare the pose computation:
+    // the image points corresponding to the noisy markers are needed
+    std::vector<vpImagePoint> ip;
+    for (unsigned int id = 0; id < nbMarkers; ++id) {
+      vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
+      ip.push_back(markerProjNoisy);
+    }
+
+    // Compute the pose using the noisy markers
+    vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
+    vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
+    double wXnoisy = wMo_noisy[0][3];
+    double wZnoisy = wMo_noisy[2][3];
+    //! [Noisy_pose]
+
+    //! [Update_plot]
     // Plot the filtered state
     vpColVector Xest = ukf.getXest();
     plot.plot(0, 1, Xest[0], Xest[2]);
 
     // Plot the ground truth
-    plot.plot(0, 0, plate_pos[0], plate_pos[2]);
+    plot.plot(0, 0, object_pos[0], object_pos[2]);
 
+    // Plot the noisy pose
+    plot.plot(0, 2, wXnoisy, wZnoisy);
+    //! [Update_plot]
+
+    //! [Update_renderer]
     // Display the projection of the markers
     vpDisplay::display(Idisp);
-    vpColVector zGT = markerMeas.measureGT(plate_pos);
+    vpColVector zGT = markerMeas.measureGT(object_pos);
     vpColVector zFilt = markerMeas.state_to_measurement(Xest);
-    std::vector<vpImagePoint> ip;
     for (unsigned int id = 0; id < nbMarkers; ++id) {
       vpImagePoint markerProjGT(zGT[2*id + 1], zGT[2*id]);
       vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
@@ -408,15 +476,7 @@ int main(/*const int argc, const char *argv[]*/)
 
       vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
       vpDisplay::displayCross(Idisp, markerProjNoisy, 5, vpColor::black);
-      ip.push_back(markerProjNoisy);
     }
-
-    // Compute the pose using the noisy markers
-    vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
-    vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
-    double wXnoisy = wMo_noisy[0][3];
-    double wZnoisy = wMo_noisy[2][3];
-    plot.plot(0, 2, wXnoisy, wZnoisy);
 
     vpImagePoint ipText(20, 20);
     vpDisplay::displayText(Idisp, ipText, std::string("GT"), vpColor::red);
@@ -426,14 +486,20 @@ int main(/*const int argc, const char *argv[]*/)
     vpDisplay::displayText(Idisp, ipText, std::string("Measured"), vpColor::black);
     vpDisplay::flush(Idisp);
     vpTime::wait(40);
+    //! [Update_renderer]
 #endif
+  //! [Update_displays]
   }
+  //! [Simu_loop]
   std::cout << "Press Enter to quit..." << std::endl;
   std::cin.get();
 
+  //! [Delete_renderer]
+  // Delete the renderer if it was allocated
   if (d != nullptr) {
     delete d;
   }
+  //! [Delete_renderer]
   return 0;
 }
 #else

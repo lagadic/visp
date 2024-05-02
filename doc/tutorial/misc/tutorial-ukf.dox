@@ -1,0 +1,122 @@
+/**
+  \page tutorial-ukf Tutorial: Using Unscented Kalman Filter to filter your data
+  \tableofcontents
+
+\section tuto-ukf-intro Introduction
+
+The Unscented Kalman Filter (UKF) is a version of the Kalman filter that handles non-linearities.
+
+In this tutorial, we will use a UKF to filter the 3D position of a simulated object, which revolves in a plane around
+a static point, with regard to a static camera. The object is supposed plane and having four markers sticked on
+its surface.
+
+\image html img-tutorialukf-illustration.jpg
+
+\subsection tuto-ukf-intro-methods Available methods
+
+
+
+\section tuto-ukf-tutorial Explanations about the tutorial
+
+\subsection tuto-ukf-tutorial-howtorun How to run the tutorial
+
+To see the different options of the tutorial, please run the following commands:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/kalman
+$ ./tutorial-ukf
+```
+
+The program does not take any argument. You should see something similar to the following image:
+
+\htmlonly <style>div.image img[src="img-tutorial-ukf-run.jpg"]{width:50%;}</style> \endhtmlonly
+\image html img-tutorial-ukf-run.jpg "Screenshot of the tutorial Graphical User Interface"
+
+Press `Return` to leave the program.
+
+\subsection tuto-ukf-tutorial-explained Detailed explanations about the UKF tutorial
+
+For this tutorial, we use the main program tutorial-ukf.cpp .
+
+\subsubsection tuto-ukf-tutorial-explained-includes Details on the includes
+
+\snippet tutorial-ukf.cpp Display_includes
+
+\snippet tutorial-ukf.cpp UKF_includes
+
+\subsubsection tuto-ukf-tutorial-explained-fx Details on the process function
+
+\snippet tutorial-ukf.cpp Process_function
+
+\subsubsection tuto-ukf-tutorial-explained-plate Details on the class simulating a moving object
+
+\snippet tutorial-ukf.cpp Object_simulator
+
+\subsubsection tuto-ukf-tutorial-explained-markers Details on the class simulating marker measurement
+
+\snippet tutorial-ukf.cpp Markers_class
+
+\snippet tutorial-ukf.cpp Measurement_function
+
+\snippet tutorial-ukf.cpp GT_measurements
+
+\snippet tutorial-ukf.cpp Noisy_measurements
+
+\subsubsection tuto-ukf-tutorial-explained-pose Details on the computation of the pose from noisy measurements
+
+\snippet tutorial-ukf.cpp Pose_for_display
+
+\subsubsection tuto-ukf-tutorial-explained-constants Details on the constants of the main loop
+
+\snippet tutorial-ukf.cpp Constants_for_simulation
+
+\snippet tutorial-ukf.cpp Camera_for_measurements
+
+\subsubsection tuto-ukf-tutorial-explained-initukf Details on the initialization of the UKF
+
+\snippet tutorial-ukf.cpp Sigma_points_drawer
+
+\snippet tutorial-ukf.cpp Covariance_measurements
+
+\snippet tutorial-ukf.cpp Covariance_process
+
+\snippet tutorial-ukf.cpp Initial_estimates
+
+\snippet tutorial-ukf.cpp Init_functions
+
+\snippet tutorial-ukf.cpp Init_UKF
+
+\subsubsection tuto-ukf-tutorial-explained-initgui Details on the initialization of the Graphical User Interface
+
+\snippet tutorial-ukf.cpp Init_plot
+
+\snippet tutorial-ukf.cpp Init_renderer
+
+\subsubsection tuto-ukf-tutorial-explained-initloop Details on the initialization of the loop
+
+\snippet tutorial-ukf.cpp Init_simu
+
+\subsubsection tuto-ukf-tutorial-explained-loop Details on the loop
+
+\snippet tutorial-ukf.cpp Simu_loop
+
+\snippet tutorial-ukf.cpp Update_simu
+
+\snippet tutorial-ukf.cpp Update_measurement
+
+\snippet tutorial-ukf.cpp Perform_filtering
+
+\snippet tutorial-ukf.cpp Update_displays
+
+\snippet tutorial-ukf.cpp Noisy_pose
+
+\snippet tutorial-ukf.cpp Update_plot
+
+\snippet tutorial-ukf.cpp Update_renderer
+
+\subsubsection tuto-ukf-tutorial-explained-cleaning Details on the cleaning at the end of the program
+
+\snippet tutorial-ukf.cpp Delete_renderer
+
+The program stops once the `Return` key is pressed.
+*/
