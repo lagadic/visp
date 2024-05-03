@@ -56,7 +56,19 @@ void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpR
   vpDisplay::display(lightDifference);
   vpDisplay::flush(lightDifference);
 }
+void displayCanny(const vpImage<vpRGBf> &cannyRawData,
+                  vpImage<unsigned char> &canny)
+{
+#pragma omp parallel for
+  for (int i = 0; i < cannyRawData.getSize(); ++i) {
+    vpRGBf &px = cannyRawData.bitmap[i];
+    //canny.bitmap[i] = 255 * (px.R * px.R + px.G * px.G > 0);
+    canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
+  }
 
+  vpDisplay::display(canny);
+  vpDisplay::flush(canny);
+}
 
 int main(int argc, const char **argv)
 {
@@ -106,12 +118,13 @@ int main(int argc, const char **argv)
 
   const std::string objectName = "object";
 
-  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS));
-
-  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS));
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer());
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::shared_ptr<vpPanda3DRGBRenderer>(new vpPanda3DRGBRenderer(false));
-  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, true);
+  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS);
+  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
+  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 20.f);
 
 
   renderer.addSubRenderer(geometryRenderer);
@@ -122,6 +135,9 @@ int main(int argc, const char **argv)
   }
   if (showCanny) {
     renderer.addSubRenderer(grayscaleFilter);
+    renderer.addSubRenderer(blurFilter);
+    renderer.addSubRenderer(cannyFilter);
+
   }
 
   renderer.setVerticalSyncEnabled(false);
@@ -144,17 +160,19 @@ int main(int argc, const char **argv)
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.1, -0.1 }), vpColVector({ 0.0, 0.0, 2.0 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.4, -0.1 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
 
+  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
+  vpImage<vpRGBf> cannyRawData;
   vpImage<float> depthImage;
-  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   vpImage<vpRGBa> colorImage(h, w);
   vpImage<vpRGBa> colorDiffuseOnly(h, w);
   vpImage<unsigned char> lightDifference(h, w);
@@ -211,7 +229,7 @@ int main(int argc, const char **argv)
       renderer.getRenderer<vpPanda3DRGBRenderer>(rgbDiffuseRenderer->getName())->getRender(colorDiffuseOnly);
     }
     if (showCanny) {
-      renderer.getRenderer<vpPanda3DLuminanceFilter>()->getRender(cannyImage);
+      renderer.getRenderer<vpPanda3DCanny>()->getRender(cannyRawData);
     }
 
     const double beforeConvert = vpTime::measureTimeMs();
@@ -222,10 +240,9 @@ int main(int argc, const char **argv)
     if (showLightContrib) {
       displayLightDifference(colorImage, colorDiffuseOnly, lightDifference);
     }
-    vpDisplay::display(cannyImage);
-    vpDisplay::flush(cannyImage);
-
-
+    if (showCanny) {
+      displayCanny(cannyRawData, cannyImage);
+    }
 
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);

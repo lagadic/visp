@@ -12,7 +12,7 @@
 class VISP_EXPORT vpPanda3DPostProcessFilter : public vpPanda3DBaseRenderer
 {
 public:
-  vpPanda3DPostProcessFilter(const std::string &name, const std::shared_ptr<vpPanda3DBaseRenderer> &inputRenderer, bool isOutput, std::string fragmentShader)
+  vpPanda3DPostProcessFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, std::string fragmentShader)
     : vpPanda3DBaseRenderer(name), m_inputRenderer(inputRenderer), m_isOutput(isOutput), m_fragmentShader(fragmentShader)
   {
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
@@ -22,8 +22,10 @@ public:
     return false;
   }
 
+  GraphicsOutput *getMainOutputBuffer() vp_override { return m_buffer; }
+
 protected:
-  void setupScene() vp_override;
+  virtual void setupScene() vp_override;
 
   void setupCamera() vp_override;
 
@@ -36,7 +38,7 @@ protected:
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram
   std::string m_fragmentShader;
-  PT(Shader) shader;
+  PT(Shader) m_shader;
   Texture *m_texture;
   GraphicsOutput *m_buffer;
 
