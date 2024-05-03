@@ -76,7 +76,7 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
     throw vpException(vpException::fatalError, "Could not create buffer");
   }
   m_buffers.push_back(m_buffer);
-  m_buffer->set_inverted(gsg->get_copy_texture_inverted());
+  //m_buffer->set_inverted(true);
   m_texture = new Texture();
   fbp.setup_color_texture(m_texture);
   m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_copy_ram : GraphicsOutput::RenderTextureMode::RTM_copy_texture);
@@ -114,5 +114,55 @@ void vpPanda3DPostProcessFilter::setRenderParameters(const vpPanda3DRenderParame
     }
   }
 }
+
+void vpPanda3DPostProcessFilter::getRenderBasic(vpImage<unsigned char> &I) const
+{
+  if (!m_isOutput) {
+    throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
+  }
+
+  I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
+  const unsigned numComponents = m_texture->get_num_components();
+  int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  unsigned char *data = (unsigned char *)(&(m_texture->get_ram_image().front()));
+  // Panda3D stores data upside down
+  data += rowIncrement * (I.getHeight() - 1);
+  rowIncrement = -rowIncrement;
+
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    data += rowIncrement;
+    unsigned char *colorRow = I[i];
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+      colorRow[j] = data[j * numComponents];
+    }
+  }
+}
+
+void vpPanda3DPostProcessFilter::getRenderBasic(vpImage<vpRGBf> &I) const
+{
+  if (!m_isOutput) {
+    throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
+  }
+
+  I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
+  const unsigned numComponents = m_texture->get_num_components();
+  int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  float *data = (float *)(&(m_texture->get_ram_image().front()));
+  // Panda3D stores data upside down
+  data += rowIncrement * (I.getHeight() - 1);
+  rowIncrement = -rowIncrement;
+
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    data += rowIncrement;
+    vpRGBf *colorRow = I[i];
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+      colorRow[j].B = data[j * numComponents];
+      colorRow[j].G = data[j * numComponents + 1];
+      colorRow[j].R = data[j * numComponents + 2];
+
+    }
+  }
+}
+
 
 #endif

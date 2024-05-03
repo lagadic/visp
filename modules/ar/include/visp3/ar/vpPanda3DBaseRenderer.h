@@ -243,12 +243,10 @@ public:
    * @param abort whether to abort (true) or display a message when an assertion fails.
    */
   void setAbortOnPandaError(bool abort);
-  void setForcedInvertTextures(bool invert);
   void enableDebugLog();
 
   static vpColVector vispPointToPanda(const vpColVector &point);
   static vpColVector vispVectorToPanda(const vpColVector &vec);
-
 
   void printStructure();
 

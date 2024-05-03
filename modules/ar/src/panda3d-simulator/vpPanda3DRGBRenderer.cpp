@@ -242,14 +242,25 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 {
   I.resize(m_colorTexture->get_y_size(), m_colorTexture->get_x_size());
   unsigned char *data = (unsigned char *)(&(m_colorTexture->get_ram_image().front()));
-  // BGRA order in panda3d
-  for (unsigned int i = 0; i < I.getSize(); ++i) {
-    I.bitmap[i].B = data[i * 4];
-    I.bitmap[i].G = data[i * 4 + 1];
-    I.bitmap[i].R = data[i * 4 + 2];
-    I.bitmap[i].A = data[i * 4 + 3];
+  int rowIncrement = I.getWidth() * 4;
+  // Panda3D stores the image using the OpenGL convention (origin is bottom left),
+  // while we store data with origin as upper left. We copy with a flip
+  data = data + rowIncrement * (I.getHeight() - 1);
+  rowIncrement = -rowIncrement;
+
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    data += rowIncrement;
+    vpRGBa *colorRow = I[i];
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+      // BGRA order in panda3d
+      colorRow[j].B = data[j * 4];
+      colorRow[j].G = data[j * 4 + 1];
+      colorRow[j].R = data[j * 4 + 2];
+      colorRow[j].A = data[j * 4 + 3];
+    }
   }
-  // memcpy(I.bitmap, data, sizeof(unsigned char) * I.getSize() * 4);
+
+
 }
 
 void vpPanda3DRGBRenderer::setupScene()
@@ -288,7 +299,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
     throw vpException(vpException::fatalError, "Could not create color buffer");
   }
   m_buffers.push_back(m_colorBuffer);
-  m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
+  //m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
   m_colorTexture = new Texture();
   fbp.setup_color_texture(m_colorTexture);
   //m_colorTexture->set_format(Texture::Format::F_srgb_alpha);

@@ -32,20 +32,7 @@ FrameBufferProperties vpPanda3DLuminanceFilter::getBufferProperties() const
 }
 void vpPanda3DLuminanceFilter::getRender(vpImage<unsigned char> &I) const
 {
-  if (!m_isOutput) {
-    throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
-  }
-  unsigned indexMultiplier = m_texture->get_num_components(); // we ask for only 8 bits image, but we may get an rgb image
-  I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
-  unsigned char *data = (unsigned char *)(&(m_texture->get_ram_image().front()));
-  if (indexMultiplier != 1) {
-    for (unsigned int i = 0; i < I.getSize(); ++i) {
-      I.bitmap[i] = data[i * indexMultiplier];
-    }
-  }
-  else {
-    memcpy(I.bitmap, &data[0], I.getSize() * sizeof(unsigned char));
-  }
+  vpPanda3DPostProcessFilter::getRenderBasic(I);
 }
 
 
@@ -101,20 +88,7 @@ FrameBufferProperties vpPanda3DGaussianBlur::getBufferProperties() const
 
 void vpPanda3DGaussianBlur::getRender(vpImage<unsigned char> &I) const
 {
-  if (!m_isOutput) {
-    throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
-  }
-  unsigned indexMultiplier = m_texture->get_num_components(); // we ask for only 8 bits image, but we may get an rgb image
-  I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
-  unsigned char *data = (unsigned char *)(&(m_texture->get_ram_image().front()));
-  if (indexMultiplier != 1) {
-    for (unsigned int i = 0; i < I.getSize(); ++i) {
-      I.bitmap[i] = data[i * indexMultiplier];
-    }
-  }
-  else {
-    memcpy(I.bitmap, &data[0], I.getSize() * sizeof(unsigned char));
-  }
+  vpPanda3DPostProcessFilter::getRenderBasic(I);
 }
 
 const char *vpPanda3DCanny::FRAGMENT_SHADER = R"shader(
@@ -204,17 +178,7 @@ FrameBufferProperties vpPanda3DCanny::getBufferProperties() const
 
 void vpPanda3DCanny::getRender(vpImage<vpRGBf> &I) const
 {
-  if (!m_isOutput) {
-    throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
-  }
-  unsigned indexMultiplier = m_texture->get_num_components(); // we ask for only 8 bits image, but we may get an rgb image
-  I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
-  float *data = (float *)(&(m_texture->get_ram_image().front()));
-  for (unsigned int i = 0; i < I.getSize(); ++i) {
-    I.bitmap[i].B = (data[i * 4]);
-    I.bitmap[i].G = (data[i * 4 + 1]);
-    I.bitmap[i].R = (data[i * 4 + 2]);
-  }
+  vpPanda3DPostProcessFilter::getRenderBasic(I);
 }
 
 #endif

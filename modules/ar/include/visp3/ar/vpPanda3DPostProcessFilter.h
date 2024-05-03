@@ -48,6 +48,10 @@ protected:
 
   void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
 
+  void getRenderBasic(vpImage<unsigned char> &I) const;
+  void getRenderBasic(vpImage<vpRGBf> &I) const;
+
+
   virtual FrameBufferProperties getBufferProperties() const = 0;
 
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;

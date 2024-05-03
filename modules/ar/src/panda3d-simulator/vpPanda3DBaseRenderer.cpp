@@ -204,16 +204,6 @@ void vpPanda3DBaseRenderer::setAbortOnPandaError(bool abort)
   }
 }
 
-void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
-{
-  if (invert) {
-    load_prc_file_data("", "copy-texture-inverted 1");
-  }
-  else {
-    load_prc_file_data("", "copy-texture-inverted 0");
-  }
-}
-
 void vpPanda3DBaseRenderer::enableDebugLog()
 {
   load_prc_file_data("", "gl-debug 1");

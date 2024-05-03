@@ -115,7 +115,6 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
 
 int main(int argc, const char **argv)
 {
-  bool invertTexture = false;
   bool stepByStep = false;
   bool debug = false;
   bool showLightContrib = false;
@@ -123,8 +122,6 @@ int main(int argc, const char **argv)
   char *modelPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
-    {"-invert", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&invertTexture,
-     "Whether to force Texture inversion. Use this if the model is upside down."},
     {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
      "Path to the model to load."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
@@ -167,7 +164,7 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
   std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
   std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
-  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 8.f);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
 
 
   renderer.addSubRenderer(geometryRenderer);
@@ -188,9 +185,7 @@ int main(int argc, const char **argv)
   if (debug) {
     renderer.enableDebugLog();
   }
-  if (invertTexture) {
-    renderer.setForcedInvertTextures(true);
-  }
+
 
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
   renderer.initFramework();
