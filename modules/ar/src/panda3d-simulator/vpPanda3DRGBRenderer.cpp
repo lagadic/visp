@@ -85,7 +85,6 @@ const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
 // Version 330, specified when generating shader
 #define M_PI 3.1415926535897932384626433832795
 
-
 in vec3 oNormal;
 in vec4 viewVertex;
 in vec3 F0;
@@ -138,8 +137,6 @@ float G(float hn, float nv, float nl, float vh)
   return min(1.0, min((2.f * hn * nv) / vh, (2.f * hn * nl) / vh));
 }
 
-
-
 vec3 F(vec3 F0, float vh)
 {
   return F0 + (vec3(1.f, 1.f, 1.f) - F0) * pow(1.f - vh, 5);
@@ -151,14 +148,16 @@ void main()
   vec3 n = normalize(oNormal); // normalized normal vector
   vec3 v = normalize(-viewVertex.xyz); // normalized view vector
   float nv = max(0.f, dot(n, v));
-  float roughness2 = pow(p3d_Material.roughness, 2);
+  float roughness2 = clamp(pow(p3d_Material.roughness, 2), 0.01, 0.99);
 
   #ifdef HAS_TEXTURE
     vec4 baseColor = texture(p3d_Texture0, texcoords);
+    vec4 ambientColor = baseColor;
   #else
+    vec4 ambientColor = p3d_Material.ambient;
     vec4 baseColor = p3d_Material.baseColor;
   #endif
-  //p3d_FragData = vec4(0.0, 0.0, 0.0, 1.f);
+
   p3d_FragData = p3d_LightModel.ambient * baseColor;
 
 
@@ -176,9 +175,8 @@ void main()
     float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);
 
     vec3 FV = F(F0, vh);
-    vec3 kd = (1.f - p3d_Material.metallic) * (1.f - FV) * (1.f / M_PI);
+    vec3 kd = (1.f - p3d_Material.metallic) *  (1.f - FV) * (1.f / M_PI);
 
-    vec4 diffuseColor = baseColor;
 
     #ifdef SPECULAR
       vec3 specularColor = vec3(0.f, 0.f, 0.f);
@@ -192,7 +190,7 @@ void main()
       vec3 specularColor = vec3(0.0, 0.0, 0.0);
     #endif
 
-    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (diffuseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
+    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (baseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
   }
 }
 )shader";
@@ -219,10 +217,12 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
 {
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
+  const RenderAttrib *textureAttrib = objectInScene.get_attrib(TextureAttrib::get_class_type());
+  bool hasTexture = textureAttrib != nullptr;
   std::cout << "SHOW SPECULARS = " << m_showSpeculars << std::endl;
   PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                                     COOK_TORRANCE_VERT,
-                                    makeFragmentShader(true, m_showSpeculars));
+                                    makeFragmentShader(hasTexture, m_showSpeculars));
 
   objectInScene.set_shader(shader);
 

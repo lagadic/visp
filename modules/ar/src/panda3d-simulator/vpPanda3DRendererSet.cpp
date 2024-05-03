@@ -38,6 +38,7 @@
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
+  load_prc_file_data("", "textures-power-2 none");
 }
 
 vpPanda3DRendererSet::~vpPanda3DRendererSet()
@@ -49,6 +50,7 @@ void vpPanda3DRendererSet::initFramework()
   // load_prc_file_data("", "load-display p3tinydisplay");
   // load_prc_file_data("", "color-bits 32 32 32");
   load_prc_file_data("", "gl-version 3 2");
+
 
 
   if (m_framework.use_count() > 0) {

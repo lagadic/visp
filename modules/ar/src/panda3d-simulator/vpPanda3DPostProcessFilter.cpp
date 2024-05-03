@@ -30,10 +30,11 @@ void vpPanda3DPostProcessFilter::setupScene()
     throw vpException(vpException::fatalError,
     "Cannot add a postprocess filter to a renderer that does not define getMainOutputBuffer()");
   }
-  shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
+  m_shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                         FILTER_VERTEX_SHADER,
                         m_fragmentShader);
-  m_renderRoot.set_shader(shader);
+  m_renderRoot.set_shader(m_shader);
+  m_renderRoot.set_shader_input("dp", LVector2f(1.0 / buffer->get_texture()->get_x_size(), 1.0 / buffer->get_texture()->get_y_size()));
   std::cout << m_fragmentShader << std::endl;
   m_renderRoot.set_texture(buffer->get_texture());
   m_renderRoot.set_attrib(LightRampAttrib::make_identity());
@@ -77,7 +78,6 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   m_buffers.push_back(m_buffer);
   m_buffer->set_inverted(gsg->get_copy_texture_inverted());
   m_texture = new Texture();
-  //fbp.setup_color_texture(m_texture);
   m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_copy_ram : GraphicsOutput::RenderTextureMode::RTM_copy_texture);
   m_buffer->set_clear_color(LColor(0.f));
   m_buffer->set_clear_color_active(true);
@@ -96,7 +96,10 @@ void vpPanda3DPostProcessFilter::setRenderParameters(const vpPanda3DRenderParame
   bool resize = previousH != params.getImageHeight() || previousW != params.getImageWidth();
 
   m_renderParameters = params;
-
+  if (m_window != nullptr) {
+    GraphicsOutput *buffer = m_inputRenderer->getMainOutputBuffer();
+    m_renderRoot.set_shader_input("dp", LVector2f(1.0 / buffer->get_texture()->get_x_size(), 1.0 / buffer->get_texture()->get_y_size()));
+  }
   if (resize) {
     for (GraphicsOutput *buffer: m_buffers) {
       //buffer->get_type().is_derived_from()
