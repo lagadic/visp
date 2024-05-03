@@ -11,6 +11,8 @@ This page references all the tutorials to use and contribute to ViSP.
 
 - \subpage tutorial_calib
 
+- \subpage tutorial_rendering
+
 - \subpage tutorial_tracking
 
 - \subpage tutorial_detection
@@ -83,6 +85,12 @@ This page introduces the user to the way to calibrate a camera.
 
 - \subpage tutorial-calibration-intrinsic <br>This tutorial explains how to calibrate intrinsic camera parameters.
 - \subpage tutorial-calibration-extrinsic <br>This tutorial explains how to get the camera eye-in-hand extrinsic transformation when the camera is mounted on a robot end-effector.
+*/
+
+/*! \page tutorial_rendering 3D rendering and augmented reality
+This page gives an introduction to using the 3D rendering tools integrated into ViSP.
+
+- \subpage tutorial-panda3d <br>This tutorial gives an overview of the rendering capabilities of the Panda3D wrapper.
 */
 
 /*! \page tutorial_tracking Tracking
