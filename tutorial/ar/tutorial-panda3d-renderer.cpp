@@ -130,7 +130,6 @@ int main(int argc, const char **argv)
      "Show frames step by step."},
     {"-canny", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&showCanny,
      "Show frames step by step."},
-
     {"-debug", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&debug,
      "Show Opengl/Panda3D debug message."},
     {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
@@ -150,7 +149,7 @@ int main(int argc, const char **argv)
     modelPath = modelPathCstr;
   }
   else {
-    modelPath = "data/deformed_sphere.bam";
+    modelPath = "data/suzanne.bam";
   }
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
@@ -158,13 +157,20 @@ int main(int argc, const char **argv)
 
   const std::string objectName = "object";
 
-  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS);
-  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
-  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
-  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
-  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
+  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer =
+    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS);
+  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer =
+    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer =
+    std::make_shared<vpPanda3DRGBRenderer>();
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer =
+    std::make_shared<vpPanda3DRGBRenderer>(false);
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter =
+    std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
+  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter =
+    std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter =
+    std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
 
 
   renderer.addSubRenderer(geometryRenderer);
@@ -197,11 +203,13 @@ int main(int argc, const char **argv)
   renderer.addNodeToScene(object);
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
-  // renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.2, 0.2, -0.2 }), vpColVector({ 0.0, 0.0, 2.0 }));
+  renderer.addLight(alight);
+
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.3, -0.4, -0.2 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
-  vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 0.0, -1.0, 0.0 }));
-  //renderer.addLight(dlight);
+
+  vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 1.0, 1.0, 0.0 }));
+  renderer.addLight(dlight);
 
   rgbRenderer->printStructure();
   std::cout << "Setting camera pose" << std::endl;

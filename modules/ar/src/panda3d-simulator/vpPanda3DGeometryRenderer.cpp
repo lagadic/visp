@@ -56,8 +56,8 @@ void main()
     gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
     // View space is Z-up right handed, flip z and y
     oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-    oNormal.yz = oNormal.zy;
-    oNormal.y = -oNormal.y;
+    // oNormal.yz = oNormal.zy;
+    // oNormal.y = -oNormal.y;
     vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
   distToCamera = -cs_position.z;
 }

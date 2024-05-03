@@ -46,7 +46,7 @@
  *
  * This information may contain, depending on requested render type:
  *
- * - Normals in the world frame or in the camera frame
+ * - Normals in the world frame or in the camera frame.
  * - Depth information
  */
 class VISP_EXPORT vpPanda3DGeometryRenderer : public vpPanda3DBaseRenderer
@@ -56,7 +56,7 @@ public:
   enum vpRenderType
   {
     WORLD_NORMALS, //! Surface normals in world space.
-    CAMERA_NORMALS, //! Surface normals in the frame of the camera
+    CAMERA_NORMALS, //! Surface normals in the frame of the camera. Z points towards the camera and y is up.
   };
 
   vpPanda3DGeometryRenderer(vpRenderType renderType);
