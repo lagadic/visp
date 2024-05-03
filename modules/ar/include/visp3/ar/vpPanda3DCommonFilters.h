@@ -10,7 +10,8 @@
 class vpPanda3DRGBRenderer;
 
 /**
- * @brief Class that implements an RGB to grayscale conversion.
+ * \ingroup group_ar_renderer_panda3d_filters
+ * \brief Class that implements an RGB to grayscale conversion.
  *
  */
 class VISP_EXPORT vpPanda3DLuminanceFilter : public vpPanda3DPostProcessFilter
@@ -25,7 +26,9 @@ private:
 };
 
 /**
- * @brief Class that implements a gaussian filter on a grayscale image.
+ *
+ * \ingroup group_ar_renderer_panda3d_filters
+ * \brief Class that implements a gaussian filter on a grayscale image.
  * The grayscale image should be contained in the blue channel of the image.
  *
  */
@@ -40,7 +43,16 @@ private:
   static const char *FRAGMENT_SHADER;
 };
 
-
+/**
+ * \ingroup group_ar_renderer_panda3d_filters
+ * \brief Implementation of canny filtering, using Sobel kernels.
+ *
+ * The results of the canny are filtered based on a threshold value (defined between 0 and 255), checking whether there is enough gradient information.
+ * The output of this image is a floating RGB image containing:
+ * - In the red channel, the value of the convolution with the sobel horizontal kernel
+ * - In the green channel, the value of the convolution with the sobel vertical kernel
+ * - In the blue channel, the angle (in radians) of the edge normal.
+ */
 class VISP_EXPORT vpPanda3DCanny : public vpPanda3DPostProcessFilter
 {
 public:

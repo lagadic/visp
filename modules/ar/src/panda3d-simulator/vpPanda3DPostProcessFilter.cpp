@@ -78,6 +78,7 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   m_buffers.push_back(m_buffer);
   m_buffer->set_inverted(gsg->get_copy_texture_inverted());
   m_texture = new Texture();
+  fbp.setup_color_texture(m_texture);
   m_buffer->add_render_texture(m_texture, m_isOutput ? GraphicsOutput::RenderTextureMode::RTM_copy_ram : GraphicsOutput::RenderTextureMode::RTM_copy_texture);
   m_buffer->set_clear_color(LColor(0.f));
   m_buffer->set_clear_color_active(true);

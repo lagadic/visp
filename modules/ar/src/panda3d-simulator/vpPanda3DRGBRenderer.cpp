@@ -209,7 +209,6 @@ std::string vpPanda3DRGBRenderer::makeFragmentShader(bool hasTexture, bool specu
     ss << "#undef SPECULAR" << std::endl;
   }
   ss << vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG;
-  std::cout << ss.str() << std::endl;
   return ss.str();
 }
 
@@ -217,9 +216,18 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
 {
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
-  const RenderAttrib *textureAttrib = objectInScene.get_attrib(TextureAttrib::get_class_type());
-  bool hasTexture = textureAttrib != nullptr;
-  std::cout << "SHOW SPECULARS = " << m_showSpeculars << std::endl;
+  TextureCollection txs = objectInScene.find_all_textures();
+  bool hasTexture = txs.size() > 0;
+  // gltf2bam and other tools may store some fallback textures. We shouldnt use them as they whiten the result
+  if (hasTexture) {
+    std::vector<std::string> fallbackNames { "pbr-fallback", "normal-fallback", "emission-fallback" };
+    unsigned numMatches = 0;
+    for (const std::string &fallbackName: fallbackNames) {
+      numMatches += static_cast<int>(txs.find_texture(fallbackName) != nullptr);
+    }
+    hasTexture = txs.size() > numMatches; // Some textures are not fallback textures
+  }
+
   PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                                     COOK_TORRANCE_VERT,
                                     makeFragmentShader(hasTexture, m_showSpeculars));

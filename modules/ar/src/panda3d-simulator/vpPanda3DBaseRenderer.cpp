@@ -229,7 +229,11 @@ vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
   pandaPos /= pandaPos[3];
   return pandaPos;
 }
-
+vpColVector vpPanda3DBaseRenderer::vispVectorToPanda(const vpColVector &point)
+{
+  vpColVector pandaPos = PANDA_T_VISP.getRotationMatrix() * point;
+  return pandaPos;
+}
 
 
 

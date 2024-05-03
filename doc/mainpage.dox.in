@@ -379,7 +379,22 @@ in different ways. This will motivate us to continue the efforts.
 /*!
   \ingroup group_ar_renderer
   \defgroup group_ar_renderer_panda3d Panda3D Renderer
-  Modular renderer based on the Panda3D renderer.
+  Modular renderers based on the Panda3D framework.
+*/
+/*!
+  \ingroup group_ar_renderer_panda3d
+  \defgroup group_ar_renderer_panda3d_3d 3D scene renderers
+  Classes that render a 3D scene.
+*/
+/*!
+  \ingroup group_ar_renderer_panda3d
+  \defgroup group_ar_renderer_panda3d_filters Image processing
+  Shader-based image processing and filtering.
+*/
+/*!
+  \ingroup group_ar_renderer_panda3d
+  \defgroup group_ar_renderer_panda3d_lighting Lighting related classes
+  Light and Lightable implementations.
 */
 
 /*!

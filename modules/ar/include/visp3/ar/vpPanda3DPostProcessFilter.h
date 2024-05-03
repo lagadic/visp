@@ -9,6 +9,20 @@
 #include "orthographicLens.h"
 
 
+/**
+ * \ingroup group_ar_renderer_panda3d_filters
+ * \brief Base class for postprocessing filters that map the result of a vpPanda3DBaseRenderer to a new image.
+ *
+ * Unlike 3D renderers, implementations of this class do not have access to 3D information
+ * (except if it is the result of the processed image).
+ *
+ * Implementation wise, the process is the following:
+ *
+ * - The output texture (retrieved through vpPanda3DBaseRenderer::getMainOutputBuffer) is blitted on a quad,
+ * that is placed perfectly in front of the camera.
+ * - A shader (given as an argument to the constructor) is applied to this quad.
+ * - The result is copied back to ram if required.
+ */
 class VISP_EXPORT vpPanda3DPostProcessFilter : public vpPanda3DBaseRenderer
 {
 public:
@@ -17,6 +31,7 @@ public:
   {
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
   }
+
   bool isRendering3DScene() const vp_override
   {
     return false;

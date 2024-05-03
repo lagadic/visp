@@ -1,6 +1,39 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 //! \example tutorial-panda3d-renderer.cpp
+
 #include <iostream>
 #include <visp3/core/vpConfig.h>
+
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_IO)
 
 #include <visp3/core/vpException.h>
@@ -62,11 +95,21 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
 #pragma omp parallel for
   for (int i = 0; i < cannyRawData.getSize(); ++i) {
     vpRGBf &px = cannyRawData.bitmap[i];
-    //canny.bitmap[i] = 255 * (px.R * px.R + px.G * px.G > 0);
-    canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
+    canny.bitmap[i] = 255 * (px.R * px.R + px.G * px.G > 0);
+    //canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
   }
 
   vpDisplay::display(canny);
+  for (unsigned int i = 0; i < canny.getHeight(); i += 8) {
+    for (unsigned int j = 0; j < canny.getWidth(); j += 8) {
+      bool valid = (pow(cannyRawData[i][j].R, 2.f) + pow(cannyRawData[i][j].G, 2.f)) > 0;
+      if (!valid) continue;
+      float angle = cannyRawData[i][j].B;
+      unsigned x = j + 10 * cos(angle);
+      unsigned y = i + 10 * sin(angle);
+      vpDisplay::displayArrow(canny, i, j, y, x, vpColor::green);
+    }
+  }
   vpDisplay::flush(canny);
 }
 
@@ -124,7 +167,7 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
   std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
   std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
-  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 20.f);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 8.f);
 
 
   renderer.addSubRenderer(geometryRenderer);
@@ -159,9 +202,11 @@ int main(int argc, const char **argv)
   renderer.addNodeToScene(object);
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
-  renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.0, 0.4, -0.1 }), vpColVector({ 0.0, 0.0, 1.0 }));
+  // renderer.addLight(alight);
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.2, 0.2, -0.2 }), vpColVector({ 0.0, 0.0, 2.0 }));
   renderer.addLight(plight);
+  vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 0.0, -1.0, 0.0 }));
+  //renderer.addLight(dlight);
 
   rgbRenderer->printStructure();
   std::cout << "Setting camera pose" << std::endl;

@@ -247,6 +247,8 @@ public:
   void enableDebugLog();
 
   static vpColVector vispPointToPanda(const vpColVector &point);
+  static vpColVector vispVectorToPanda(const vpColVector &vec);
+
 
   void printStructure();
 

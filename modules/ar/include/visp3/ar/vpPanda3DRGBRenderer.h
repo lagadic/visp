@@ -40,10 +40,42 @@
 #include <visp3/ar/vpPanda3DLight.h>
 #include <visp3/core/vpImage.h>
 
+/**
+ * \ingroup group_ar_renderer_panda3d_3d
+ * \brief Implementation of a traditional RGB renderer in Panda3D
+ *
+ * The lighting model follows a Cook-torrance BRDF.
+ *
+ * For each object, a specific Version of the cook-torrance shader is compiled: diffuse textures are supported, but normal/bump/roughness maps are not.
+ * This class will try to automatically detect whether an object has RGB textures.
+ *
+ * Specular highlights and reflections can be ignored, depending on the value of isShowingSpeculars.
+ *
+ * \warning if an object is detected as having image textures but it actually doesn't have any, the object may appear washed out.
+ *
+ * \note Most of the tested objects were in BAM format, Panda3D's own format.
+ * The following pipeline was used:
+ *  - Export to GLTF with Blender
+ *  - In a Python environment, install gltf2bam with `pip install panda3d-gltf`
+ *  - run gltf2bam path/to/yourObject.gltf path/to/yourObject.bam
+ *  - then, in the code, use `renderer.addNodeToScene("/path/to/yourObject.bam");`
+ *
+ */
 class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer, public vpPanda3DLightableScene
 {
 public:
+  /**
+   * \brief Default constructor. Initialize an RGB renderer with the normal rendering behavior showing speculars
+   *
+   */
   vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB"), m_showSpeculars(true) { }
+  /**
+   * \brief RGB renderer constructor allowing to specify
+   * whether specular highlights should be rendered or
+   * if only ambient/diffuse lighting should be considered.
+   *
+   * \param showSpeculars whether to render speculars
+   */
   vpPanda3DRGBRenderer(bool showSpeculars) : vpPanda3DBaseRenderer(showSpeculars ? "RGB" : "RGB-diffuse"), m_showSpeculars(showSpeculars) { }
 
 
@@ -59,6 +91,8 @@ public:
   void addNodeToScene(const NodePath &object) vp_override;
 
   GraphicsOutput *getMainOutputBuffer() vp_override { return m_colorBuffer; }
+
+  bool isShowingSpeculars() const { return m_showSpeculars; }
 
 protected:
   void setupScene() vp_override;
