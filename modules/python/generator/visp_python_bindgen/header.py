@@ -310,12 +310,14 @@ class HeaderFile():
       # Reference public base classes when creating pybind class binding
       base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases)))
-      class_template_str = ', '.join([name_cpp] + base_class_strs)
+      # py::class template contains the class, its holder type, and its base clases.
+      # The default holder type is std::unique_ptr. when the cpp function argument is a shared_ptr, Pybind will raise an error when calling the method.
+      py_class_template_str = ', '.join([name_cpp, f'std::shared_ptr<{name_cpp}>'] + base_class_strs)
       doc_param = [] if class_doc is None else [class_doc.documentation]
       buffer_protocol_arg = ['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else []
       cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + buffer_protocol_arg
 
-      class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
+      class_decl = f'\tpy::class_ {python_ident} = py::class_<{py_class_template_str}>({", ".join(cls_argument_strs)});'
 
       # Definitions
       # Skip constructors for classes that have pure virtual methods since they cannot be instantiated

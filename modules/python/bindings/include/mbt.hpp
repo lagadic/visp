@@ -42,7 +42,7 @@
 
 namespace py = pybind11;
 
-void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &pyMbGenericTracker)
+void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, std::shared_ptr<vpMbGenericTracker>, vpMbTracker> &pyMbGenericTracker)
 {
   pyMbGenericTracker.def("track", [](vpMbGenericTracker &self, std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {

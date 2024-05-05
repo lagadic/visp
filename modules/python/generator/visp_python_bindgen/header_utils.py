@@ -112,7 +112,6 @@ class HeaderEnvironment():
       for typedef in data.typedefs:
         if not name_is_anonymous(typedef.type.typename):
           current_mapping[typedef.name] = get_type(typedef.type, {}, current_mapping)
-          print(current_mapping[typedef.name])
         else:
           current_mapping[typedef.name] = scope + typedef.name
       for enum in data.enums:

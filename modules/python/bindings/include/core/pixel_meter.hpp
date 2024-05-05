@@ -44,7 +44,7 @@
 
 #include "core/utils.hpp"
 
-void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
+void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion, std::shared_ptr<vpPixelMeterConversion>> &pyPM)
 {
   pyPM.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &us, const py::array_t<double> &vs) {
     py::buffer_info bufu = us.request(), bufv = vs.request();
@@ -107,7 +107,7 @@ Example usage:
 )doc", py::arg("cam"), py::arg("us"), py::arg("vs"));
 }
 
-void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
+void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion, std::shared_ptr<vpMeterPixelConversion>> &pyMP)
 {
   pyMP.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &xs, const py::array_t<double> &ys) {
     py::buffer_info bufx = xs.request(), bufy = ys.request();
