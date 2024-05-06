@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-/** \example tutorial-ukf-nonlinear-example.cpp
+/** \example ukf-nonlinear-example.cpp
  * Example of a simple non-linear use-case of the Unscented Kalman Filter (UKF).
  * The system we are interested in is an aircraft flying in the sky and
  * observed by a radar station.

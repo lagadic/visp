@@ -6,9 +6,9 @@ find_package(VISP REQUIRED visp_core visp_gui)
 
 set(example_cpp)
 
-list(APPEND example_cpp example-ukf-linear-example.cpp)
-list(APPEND example_cpp example-ukf-nonlinear-example.cpp)
-list(APPEND example_cpp example-ukf-nonlinear-complex-example.cpp)
+list(APPEND example_cpp ukf-linear-example.cpp)
+list(APPEND example_cpp ukf-nonlinear-example.cpp)
+list(APPEND example_cpp ukf-nonlinear-complex-example.cpp)
 
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})

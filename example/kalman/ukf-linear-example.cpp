@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-/** \example tutorial-ukf-linear-example.cpp
+/** \example ukf-linear-example.cpp
  * Example of a simple linear use-case of the Unscented Kalman Filter (UKF). Using a UKF
  * in this case is not necessary, it is done for learning purpous only.
  *

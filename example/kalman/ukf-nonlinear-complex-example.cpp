@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-/** \example tutorial-ukf-nonlinear-complex-example.cpp
+/** \example ukf-nonlinear-complex-example.cpp
  * Example of a complex non-linear use-case of the Unscented Kalman Filter (UKF).
  * The system we are interested in is a 4-wheel robot, moving at a low velocity.
  * As such, it can be modeled using a bicycle model.
