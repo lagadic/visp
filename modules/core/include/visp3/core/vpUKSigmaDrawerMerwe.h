@@ -45,7 +45,8 @@
 /*!
   \class vpUKSigmaDrawerMerwe
   \ingroup group_core_kalman
-  This class defines a class to draw sigma points following the E. A. Wan and R. van der Merwe's method.
+  This class defines a class to draw sigma points following the E. A. Wan and R. van der Merwe's method proposed in
+  \cite Merwe00.
 
   The method has four parameters: \f$ n \f$, which is the dimension of the input, and \f$ \alpha \f$, \f$ \beta \f$ and
   \f$ \kappa \f$, which are three reals. For notational convenience, we define \f$ \lambda = \alpha^2 (n - \kappa) - n \f$.

@@ -414,7 +414,8 @@ int main(/*const int argc, const char *argv[]*/)
   //! [Init_simu]
   // Initialize the simulation
   vpObjectSimulator object(radius, w, phi, wZ);
-  vpColVector object_pos = X0;
+  vpColVector object_pos(4, 0.);
+  object_pos[3] = 1.;
   //! [Init_simu]
 
   //! [Simu_loop]

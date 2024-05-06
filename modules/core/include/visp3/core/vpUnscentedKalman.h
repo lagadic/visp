@@ -58,7 +58,7 @@
 
   The UKF is performed in two steps. First, the prediction step, during which we draw the sigma points \f$ \chi \f$ and compute
   their corresponding weights \f$ \textbf{w}^m \in \mathcal{R}^{2n + 1} \f$ and \f$ \textbf{w}^c \in \mathcal{R}^{2n + 1} \f$.
-  Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \f$ the process covariance matrix.
+  Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n\text{ x }n} \f$ the process covariance matrix.
   We have:
 
   \f{eqnarray*}{
@@ -69,8 +69,9 @@
   There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
   proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
 
-  Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$, the command function
-  \f$b( \textbf{u}, \Delta t )\f$ and the command function depending on the state \f$bx( \textbf{u}, \chi, \Delta t )\f$
+  Be \f$ \textbf{u} \f$ the vector containing the known commands sent to the system, if any. Then, we pass each sigma
+  point through the process function \f$ f(\chi, \Delta t) \f$, the command function
+  \f$ b( \textbf{u}, \Delta t ) \f$ and the command function depending on the state \f$ bx( \textbf{u}, \chi, \Delta t ) \f$
   to project them forward in time, forming the new prior:
 
   \f$ \mathcal{Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
@@ -92,7 +93,7 @@
   \f$ \mathcal{Z} = h(\mathcal{Y}) \f$
 
   Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in \mathcal{R}^m \f$ and the
-  covariance \f$ \textbf{P}_z \in \mathcal{R}^{m x m} \f$ of these points:
+  covariance \f$ \textbf{P}_z \in \mathcal{R}^{m\text{ x }m} \f$ of these points:
 
   \f{eqnarray*}{
       \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT(\mathcal{Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
@@ -104,7 +105,7 @@
 
   Then, we compute the residual \f$ \textbf{y} \f$ of the measurement \f$ \textbf{z} \f$:
 
-  \f$ \textbf{Y} = \textbf{z} - \boldsymbol{\mu}_z \f$
+  \f$ \textbf{y} = \textbf{z} - \boldsymbol{\mu}_z \f$
 
   To compute the Kalman's gain, we first need to compute the cross covariance of the state and the measurements:
 

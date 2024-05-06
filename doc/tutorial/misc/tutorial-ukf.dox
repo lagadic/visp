@@ -19,6 +19,9 @@ The equations that describe the motion of the object in the world frame are the 
   {}^W \textbf{X}_z &=& constant
 \f}
 
+where \f$ \omega \f$ and \f$ \phi \f$ are respectively the pulsation and the phase of the motion, while \f$ R \f$ is the
+radius of the revolution around the origin of the world frame.
+
 \htmlonly <style>div.image img[src="img-tutorial-ukf-illustration.jpg"]{width:50%;}</style> \endhtmlonly
 \image html img-tutorial-ukf-illustration.jpg
 
@@ -27,12 +30,12 @@ The equations that describe the motion of the object in the world frame are the 
 The maths beyond the Unscented Kalman Filter are explained in the documentation of the vpUnscentedKalman class.
 We will recall briefly the important steps of the UKF.
 
-Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n x n} \f$ the
+Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n\text{ x }n} \f$ the
 associated covariance matrix.
 
-The first step of the UKF is the prediction step. During this step, some particular points called sigma points and denoted
-\f$ \chi \f$ are drawn, along with associated weights \f$ \textbf{w}^m \f$ for the computation of the mean and \f$ \textbf{w}^c \f$
-for the computation of the covariance:
+The first step of the UKF is the prediction step. During this step, some particular points called sigma points, denoted
+\f$ \chi \f$, are drawn along with associated weights \f$ \textbf{w}^m \f$ for the computation of the mean and
+\f$ \textbf{w}^c \f$ for the computation of the covariance:
 
 \f{eqnarray*}{
   \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
@@ -40,9 +43,9 @@ for the computation of the covariance:
 \f}
 
 There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
-proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
+proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe in \cite Merwe00.
 
-Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$, the command function
+Be \f$ \textbf{u} \f$ the vector containing the known commands sent to the system, if any. Then, we pass each sigma point through the process function \f$ f(\chi, \Delta t) \f$, the command function
 \f$b( \textbf{u}, \Delta t )\f$ and the command function depending on the state \f$bx( \textbf{u}, \chi, \Delta t )\f$
 to project them forward in time, forming the new prior:
 
@@ -65,7 +68,7 @@ the prior into measurements using the measurement function  \f$ h: \mathcal{R}^n
 \f$ \mathcal{Z} = h(\mathcal{Y}) \f$
 
 Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in \mathcal{R}^m \f$ and the
-covariance \f$ \textbf{P}_z \in \mathcal{R}^{m x m} \f$ of these points:
+covariance \f$ \textbf{P}_z \in \mathcal{R}^{m\text{ x }m} \f$ of these points:
 
 \f{eqnarray*}{
     \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT(\mathcal{Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
@@ -77,7 +80,7 @@ where \f$ \textbf{R} \f$ is the measurement covariance matrix.
 
 Then, we compute the residual \f$ \textbf{y} \f$ of the measurement \f$ \textbf{z} \f$:
 
-\f$ \textbf{Y} = \textbf{z} - \boldsymbol{\mu}_z \f$
+\f$ \textbf{y} = \textbf{z} - \boldsymbol{\mu}_z \f$
 
 To compute the Kalman's gain, we first need to compute the cross covariance of the state and the measurements:
 
@@ -115,7 +118,7 @@ Press `Return` to leave the program.
 \subsection tuto-ukf-tutorial-explained Detailed explanations about the UKF tutorial
 
 For this tutorial, we use the main program tutorial-ukf.cpp . The internal state of the UKF is
-the 3D pose of the object expressed in the world frame, along with the pulsation \f$ \omega \f$ of the motion:
+the 3D position of the object expressed in the world frame, along with the pulsation \f$ \omega \f$ of the motion:
 
 \f{eqnarray*}{
   \textbf{x}[0] &=& {}^WX_x \\
@@ -175,7 +178,7 @@ To be able to use the UKF, we use the following includes:
 
 \subsubsection tuto-ukf-tutorial-explained-plate Details on the class simulating a moving object
 
-To make simpler the main loop of the program, we decided to implement a class for updating the 3D position
+To make simpler the main loop of the program, we decided to implement a class that will update the 3D position
 of the object, expressed in the world frame, in a dedicated class.
 
 \snippet tutorial-ukf.cpp Object_simulator
@@ -190,9 +193,9 @@ previous state \f$ \textbf{x}_{t} \f$.
 As stated in the introduction, the equations of motion of the object are the following:
 
 \f{eqnarray*}{
-  {}^W \textbf{X}_x(t) &=& R cos(\omega t + \phi) \\
-  {}^W \textbf{X}_y(t) &=& R sin(\omega t + \phi) \\
-  {}^W \textbf{X}_z(t) &=& constant
+  {}^W X_x(t) &=& R cos(\omega t + \phi) \\
+  {}^W X_y(t) &=& R sin(\omega t + \phi) \\
+  {}^W X_z(t) &=& constant
 \f}
 
 Thus, we have:
@@ -212,8 +215,8 @@ Which can be rewritten:
 
 And can be finally written as:
 \f{eqnarray*}{
-  {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W \textbf{X}_x( t) cos(\omega \Delta t) - {}^W \textbf{X}_y(t) sin(\omega \Delta t) \\
-  {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W \textbf{X}_x( t) sin(\omega \Delta t) + {}^W \textbf{X}_y(t) cos(\omega \Delta t) \\
+  {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W X_x( t) cos(\omega \Delta t) - {}^W X_y(t) sin(\omega \Delta t) \\
+  {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W X_x( t) sin(\omega \Delta t) + {}^W X_y(t) cos(\omega \Delta t) \\
   {}^WX_z( t + \Delta t) &=& constant
 \f}
 
@@ -262,8 +265,8 @@ measurement process:
 \subsubsection tuto-ukf-tutorial-explained-pose Details on the computation of the pose from noisy measurements
 
 The method <code>computePose</code> compute the 3D pose of an object from the 3D coordinates along with their projection
-in the image of a plane surface. Here, we use it to convert the noisy measurements in a noisy 3D pose, in order to
-compare the 3D position estimated by the UKF with regard to the pose we would have if we computed the pose directly
+in the image. Here, we use it to convert the noisy measurements in a noisy 3D pose, in order to
+compare the 3D position estimated by the UKF with regard to the 3D position we would have if we computed the pose directly
 from the noisy measurements.
 
 \snippet tutorial-ukf.cpp Pose_for_display
@@ -297,7 +300,7 @@ generate camera parameters for a simulated camera as follow:
 
 To initialize the UKF, we need an object that will be able to compute the sigma points and their associated weights. To
 do so, we must create an instance of a class inheriting from the class vpUKSigmaDrawerAbstract. In our case, we decided
-to use the method proposed by  E. A. Wan and R. van der Merwe and implemented in the vpUKSigmaDrawerMerwe class:
+to use the method proposed by  E. A. Wan and R. van der Merwe in \cite Merwe00 and implemented in the vpUKSigmaDrawerMerwe class:
 
 \snippet tutorial-ukf.cpp Sigma_points_drawer
 
@@ -316,7 +319,7 @@ prediction step:
 
 \snippet tutorial-ukf.cpp Covariance_process
 
-The UKF needs the an estimate of the intial state \f$ \textbf{x}_0 \f$ and of its covariance \f$ \textbf{P}_0 \f$:
+The UKF needs an estimate of the intial state \f$ \textbf{x}_0 \f$ and of its covariance \f$ \textbf{P}_0 \f$:
 
 \snippet tutorial-ukf.cpp Initial_estimates
 
@@ -339,37 +342,67 @@ If some commands are known to have an effect on the internal state, it would be 
 
 If the measurement space cannot use the standard addition and substraction, it would be necessary to write other methods:
 - a method permitting to substract two measurement vectors (see vpUnscentedKalman::setMeasurementResidualFunction),
-- and a method permitting to compute the mean of several state vectors (see vpUnscentedKalman::setMeasurementMeanFunction).
+- and a method permitting to compute the mean of several measurement vectors (see vpUnscentedKalman::setMeasurementMeanFunction).
 
 \subsubsection tuto-ukf-tutorial-explained-initgui Details on the initialization of the Graphical User Interface
 
+If ViSP has been compiled with any of the third-party graphical libraries, we first begin by initializing the
+plot that will display the object x and y coordinates expressed in the world frame:
+
 \snippet tutorial-ukf.cpp Init_plot
+
+Then, we initialize the simple renderer that displays what the camera sees:
 
 \snippet tutorial-ukf.cpp Init_renderer
 
 \subsubsection tuto-ukf-tutorial-explained-initloop Details on the initialization of the loop
 
+For the initialization of the loop, we initialize an instance of the vpObjectSimulator class that
+simulates the moving object. Then, we initialize the current ground-truth 3D position of the object expressed in the
+world frame, which is the frame in which the internal state of the UKF is expressed, as a null homogeneous coordinates
+vector.
+
 \snippet tutorial-ukf.cpp Init_simu
 
 \subsubsection tuto-ukf-tutorial-explained-loop Details on the loop
 
+The main loop of the program is the following:
+
 \snippet tutorial-ukf.cpp Simu_loop
+
+First, we update the ground-truth 3D position of the object based on the simulated time using the following line:
 
 \snippet tutorial-ukf.cpp Update_simu
 
+Then, we update the measurement by projecting the 3D position of the markers attached to the object in the image and add
+some noise to the projections using the following line:
+
 \snippet tutorial-ukf.cpp Update_measurement
+
+Then, we use the Unscented Kalman Filter to filter the noisy measurements:
 
 \snippet tutorial-ukf.cpp Perform_filtering
 
+Finally, we update the plot and renderer:
+
 \snippet tutorial-ukf.cpp Update_displays
+
+First, we compute the noisy pose using the noisy measurements of the markers, to be able to plot the
+noisy 3D position of the object:
 
 \snippet tutorial-ukf.cpp Noisy_pose
 
+Then, we update the plot by plotting the new ground truth, filtered and noisy 3D positions:
+
 \snippet tutorial-ukf.cpp Update_plot
+
+Finally, we update the renderer that displays the projection in the image of the markers:
 
 \snippet tutorial-ukf.cpp Update_renderer
 
 \subsubsection tuto-ukf-tutorial-explained-cleaning Details on the cleaning at the end of the program
+
+Finally, we clean the allocated memory for the renderer:
 
 \snippet tutorial-ukf.cpp Delete_renderer
 
