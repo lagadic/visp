@@ -321,6 +321,34 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
 
   return A;
 }
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using OpenCV library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByOpenCV() const
+{
+  cv::Mat M(rowNum, colNum, CV_64F);
+  memcpy(M.data, this->data, (size_t)(8 * M.rows * M.cols));
+  std::size_t bytes_per_row = sizeof(double)*rowNum;
+  bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, rowNum, nullptr, bytes_per_row, rowNum);
+  if (!result) {
+    throw(vpMatrixException(vpMatrixException::fatalError, "Could not compute the Cholesky's decomposition of the input matrix."));
+  }
+  vpMatrix L(rowNum, colNum);
+  memcpy(L.data, M.data, (size_t)(8 * M.rows * M.cols));
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
+}
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)

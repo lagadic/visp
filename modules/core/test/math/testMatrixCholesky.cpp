@@ -102,9 +102,9 @@ bool testCholeskyDecomposition(const vpMatrix &M, const vpMatrix &gtResult, cons
   areEqual = equal(M, LLt);
 
   if ((!areEqual) && verbose) {
-    std::cout << "Failed: L matrices differ." << std::endl;
-    std::cout << "Result =\n" << result << std::endl;
-    std::cout << "GT =\n" << gtResult << std::endl;
+    std::cout << "Failed: LL^T differ from M." << std::endl;
+    std::cout << "LL^T =\n" << LLt << std::endl;
+    std::cout << "GT M =\n" << M << std::endl;
   }
   if (areEqual && verbose) {
     std::cout << "Test " << title << " succeeded" << std::endl;
@@ -141,6 +141,14 @@ TEST_CASE("3 x 3 input", "[cholesky]")
     CHECK(testCholeskyDecomposition(M, gtL, L, "Test Cholesky's decomposition using Eigen3", true));
   }
 #endif
+
+#if defined(VISP_HAVE_OPENCV)
+  SECTION("OPENCV")
+  {
+    vpMatrix L = M.choleskyByOpenCV();
+    CHECK(testCholeskyDecomposition(M, gtL, L, "Test Cholesky's decomposition using OpenCV", true));
+  }
+#endif
 }
 
 TEST_CASE("4 x 4 input", "[cholesky]")
@@ -170,6 +178,14 @@ TEST_CASE("4 x 4 input", "[cholesky]")
   {
     vpMatrix L = M.choleskyByEigen3();
     CHECK(testCholeskyDecomposition(M, gtL, L, "Test Cholesky's decomposition using Eigen3", true));
+  }
+#endif
+
+#if defined(VISP_HAVE_OPENCV)
+  SECTION("OPENCV")
+  {
+    vpMatrix L = M.choleskyByOpenCV();
+    CHECK(testCholeskyDecomposition(M, gtL, L, "Test Cholesky's decomposition using OpenCV", true));
   }
 #endif
 }
