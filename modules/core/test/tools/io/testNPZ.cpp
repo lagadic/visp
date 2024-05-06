@@ -35,8 +35,11 @@
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpEndian.h>
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) && \
+  (defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
+  defined(VISP_LITTLE_ENDIAN)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
@@ -46,7 +49,6 @@ namespace
 {
 std::string createTmpDir()
 {
-#if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   std::string username;
   vpIoTools::getUserName(username);
 
@@ -77,7 +79,11 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
     visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
     visp::cnpy::NpyArray arr_string_data = npz_data[identifier];
-    const std::string read_string = std::string(arr_string_data.data<char>());
+    std::vector<char> vec_arr_string_data = arr_string_data.as_vec<char>();
+    // For null-terminated character handling, see:
+    // https://stackoverflow.com/a/8247804
+    // https://stackoverflow.com/a/45491652
+    const std::string read_string = std::string(vec_arr_string_data.begin(), vec_arr_string_data.end());
     CHECK(save_string == read_string);
   }
 
@@ -104,7 +110,6 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
   REQUIRE(vpIoTools::remove(directory_filename));
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
-#endif
 }
 
 // https://en.cppreference.com/w/cpp/types/integer
