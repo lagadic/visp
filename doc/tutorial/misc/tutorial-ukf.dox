@@ -185,12 +185,12 @@ of the object, expressed in the world frame, in a dedicated class.
 
 \subsubsection tuto-ukf-tutorial-explained-fx Details on the process function
 
-As mentionned before, the UKF relies on a process function which project in time the internal state of the UKF.
+As mentionned in \ref tuto-ukf-intro-methods, the UKF relies on a process function which project in time the internal state of the UKF.
 
 We want to express the internal state projected in the future \f$ \textbf{x}_{t + \Delta t} \f$ as a function of its
 previous state \f$ \textbf{x}_{t} \f$.
 
-As stated in the introduction, the equations of motion of the object are the following:
+As stated in the \ref tuto-ukf-intro, the equations of motion of the object are the following:
 
 \f{eqnarray*}{
   {}^W X_x(t) &=& R cos(\omega t + \phi) \\
