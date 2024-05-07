@@ -437,7 +437,8 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   cdg[0] = 0.0;
   cdg[1] = 0.0;
   cdg[2] = 0.0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = (*it);
     cdg[0] += P.get_oX();
     cdg[1] += P.get_oY();
@@ -450,8 +451,8 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   c3d.clear();
   /* translate the 3D points wrt cog */
-  std::list<vpPoint>::const_iterator listp_end = listP.end();
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
+  std::list<vpPoint>::const_iterator listp_end_decl2 = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end_decl2; ++it) {
     P = (*it);
     P.set_oX(P.get_oX() - cdg[0]);
     P.set_oY(P.get_oY() - cdg[1]);

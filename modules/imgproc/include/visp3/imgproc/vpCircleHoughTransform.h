@@ -454,7 +454,7 @@ public:
     {
       std::stringstream txt;
       txt << "Hough Circle Transform Configuration:\n";
-      txt <<  "\tFiltering + gradient operators = " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType) << "\n";
+      txt <<  "\tFiltering + gradient operators = " << vpImageFilter::vpCannyFiltAndGradTypeToStr(m_filteringAndGradientType) << "\n";
       txt <<  "\tGaussian filter kernel size = " << m_gaussianKernelSize << "\n";
       txt <<  "\tGaussian filter standard deviation = " << m_gaussianStdev << "\n";
       txt <<  "\tGradient filter kernel size = " << m_gradientFilterKernelSize << "\n";
@@ -545,9 +545,9 @@ public:
      */
     friend inline void from_json(const nlohmann::json &j, vpCircleHoughTransformParameters &params)
     {
-      std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType);
+      std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType);
       filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-      params.m_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(filteringAndGradientName);
+      params.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
 
       params.m_gaussianKernelSize = j.value("gaussianKernelSize", params.m_gaussianKernelSize);
       if ((params.m_gaussianKernelSize % 2) != 1) {
@@ -626,7 +626,7 @@ public:
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = nlohmann::json {
-          {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
+          {"filteringAndGradientType", vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType)},
           {"gaussianKernelSize", params.m_gaussianKernelSize},
           {"gaussianStdev", params.m_gaussianStdev},
           {"gradientFilterKernelSize", params.m_gradientFilterKernelSize},

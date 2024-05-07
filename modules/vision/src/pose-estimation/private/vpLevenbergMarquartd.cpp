@@ -777,7 +777,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
     (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-    (*njev)++;
+    ++(*njev);
 
     if (iflag < 0) {
       /*
@@ -983,7 +983,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
       iflag = 1;
       (*ptr_fcn)(m, n, wa2, wa4, fjac, ldfjac, iflag);
 
-      (*nfev)++;
+      ++(*nfev);
 
       if (iflag < 0) {
         // termination, normal ou imposee par l'utilisateur.

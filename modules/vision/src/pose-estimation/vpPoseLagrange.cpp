@@ -200,19 +200,9 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     }
 #endif
 
-    // --comment:   vpColVector sv
-    // --comment:   vpMatrix v
     e.svd(x1, ata); // destructif sur e
     // calcul du vecteur propre de E correspondant a la valeur propre min.
-    /* calcul de SVmax  */
     imin = 0;
-    // --comment: FC : Pourquoi calculer SVmax ??????
-    // --comment:     double  svm = 0.0;
-    // --comment:    for (i=0;i<x1.getRows(); ++i)
-    // --comment:    {
-    // --comment:      if (x1[i] > svm) { svm = x1[i]; imin = i; }
-    // --comment:    }
-    // --comment:    svm *= EPS;  /* pour le rang  */
 
     unsigned int v_x1_rows = x1.getRows();
     for (i = 0; i < v_x1_rows; ++i) {
@@ -249,8 +239,6 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
   std::cout << "end (CLagrange.cc)Lagrange(...) " << std::endl;
 #endif
 }
-
-// --comment: undefine EPS
 
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
 {
@@ -317,10 +305,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     r1[1] = n2;
     r1[2] = (-b * c) / n2;
   }
-  // --comment: double norm eq r1[0] mult r1[0] plus r1[1] mult r1[1] plus r1[2] mult r1[2]
-  // --comment: double crossprod eq r1[0] mult r3[0] plus r1[1] mult r3[1] plus r1[2] mult r3[2]
-  // --comment: print "r1 norm = 1 ?  %lf, r1^T r3 = 0 ?  %lf\n" norm crossprod
-  // --comment: r2 unit vector orthogonal to r3 and r1
+
   r2 = vpColVector::crossProd(r3, r1);
 
   vpHomogeneousMatrix fMo;
@@ -418,6 +403,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   s = (X2[0] * X2[0]) + (X2[1] * X2[1]) + (X2[2] * X2[2]); // To avoid a Coverity copy/past error
 
   if (s < 1e-10) {
+    /*
     //      std::cout << "Points that produce an error: " << std::endl;
     //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
     //      != listP.end(); ++it)
@@ -427,6 +413,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     //                  << (*it).get_oX() << " " << (*it).get_oY() << " " <<
     //                  (*it).get_oZ() << std::endl;
     //      }
+    */
     throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation "
                       "(planar plane case)"));
   }
@@ -437,11 +424,6 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   } /* X2^T X2 = 1  */
 
   calculTranslation(A, B, nl, 3, 3, X1, X2);
-
-  // --comment: if err diff OK
-  // --comment: cout "in (vpCalculPose_plan.cc)CalculTranslation returns "
-  // --comment: PrintError err
-  // --comment: return err
 
   vpHomogeneousMatrix cMf;
   /* X1 x X2 */
@@ -461,7 +443,6 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
 #if (DEBUG_LEVEL1)
   std::cout << "end vpCalculPose::PoseLagrangePlan(...) " << std::endl;
 #endif
-  // --comment: return OK
 }
 
 void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
@@ -536,10 +517,6 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 #endif
 
     lagrange(a, b, X1, X2);
-    //  if err not eq OK
-    //    cout "in (CLagrange.cc)Lagrange returns "
-    //    PrintError err
-    //    return err
 
 #if (DEBUG_LEVEL2)
     {
@@ -563,6 +540,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     s = (X2[0] * X2[0]) + (X2[1] * X2[1]) + (X2[2] * X2[2]); // To avoid a Coverity copy/past error
 
     if (s < 1e-10) {
+      /*
       //      std::cout << "Points that produce an error: " << std::endl;
       //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
       //      != listP.end(); ++it)
@@ -573,6 +551,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       //                  (*it).get_oZ() << std::endl;
       //      }
       // vpERROR_TRACE(" division par zero " ) ;
+      */
       throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation (non "
                         "planar plane case)"));
     }

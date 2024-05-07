@@ -617,7 +617,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
     // A circle is a particular ellipse. Going from x for circle to K for ellipse
     // using inverse normalization to go back to pixel values
     double ratio = vm / um;
-    m_K[0] = (m_K[1] = 1.0 / (um * um));
+    m_K[0] = (m_K[1] = (1.0 / (um * um)));
     m_K[2] = 0.0;
     m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
     m_K[4] = -(ratio + (x[1] / 2.0)) / um;
@@ -746,7 +746,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
       // A circle is a particular ellipse. Going from x for circle to K for ellipse
       // using inverse normalization to go back to pixel values
       double ratio = vm / um;
-      m_K[0] = (m_K[1] = 1.0 / (um * um));
+      m_K[0] = (m_K[1] = (1.0 / (um * um)));
       m_K[2] = 0.0;
       m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
       m_K[4] = -(ratio + (x[1] / 2.0)) / um;

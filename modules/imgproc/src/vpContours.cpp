@@ -158,15 +158,18 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
   vpImagePoint i1j1(-1, -1);
 
   // --comment: find i1j1 3.1
-  while (trace.m_direction != dir.m_direction) {
+  bool activepixel_ij_neg = true;
+  while ((trace.m_direction != dir.m_direction) && activepixel_ij_neg) {
     vpImagePoint activePixel = trace.active(I, ij);
 
     if ((activePixel.get_i() >= 0) && (activePixel.get_j() >= 0)) {
       i1j1 = activePixel;
-      break;
+      activepixel_ij_neg = false;
+      // break
     }
-
-    trace = trace.clockwise();
+    else {
+      trace = trace.clockwise();
+    }
   }
 
   if ((i1j1.get_i() < 0) || (i1j1.get_j() < 0)) {
@@ -179,7 +182,8 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
 
   bool checked[8] = { false, false, false, false, false, false, false, false };
 
-  while (true) {
+  bool i4j4_eq_ij_and_i3j3_eq_i1j1 = false;
+  while (i4j4_eq_ij_and_i3j3_eq_i1j1 == false) {
     if (!fromTo(i3j3, i2j2, dir)) {
       throw vpException(vpException::fatalError, "i3j3 == i2j2");
     }
@@ -192,26 +196,31 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
       checked[cpt] = false;
     }
 
-    while (true) {
+    bool i4j4_ij_neg = true;
+    while (true && i4j4_ij_neg) {
       i4j4 = trace.active(I, i3j3); //(3.3)
       if ((i4j4.get_i() >= 0) && (i4j4.get_j() >= 0)) {
-        break;
+        i4j4_ij_neg = false;
+        //break
       }
-
-      checked[static_cast<int>(trace.m_direction)] = true;
-      trace = trace.counterClockwise();
+      else {
+        checked[static_cast<int>(trace.m_direction)] = true;
+        trace = trace.counterClockwise();
+      }
     }
 
     addContourPoint(I, border, i3j3, checked, nbd);
 
     if ((i4j4 == ij) && (i3j3 == i1j1)) {
       //(3.5)
-      break;
+      i4j4_eq_ij_and_i3j3_eq_i1j1 = true;
+      // break
     }
-
-    //(3.5)
-    i2j2 = i3j3;
-    i3j3 = i4j4;
+    else {
+      //(3.5)
+      i2j2 = i3j3;
+      i3j3 = i4j4;
+    }
   }
 }
 
