@@ -32,13 +32,17 @@
 
 /** \example ukf-nonlinear-example.cpp
  * Example of a simple non-linear use-case of the Unscented Kalman Filter (UKF).
+ *
  * The system we are interested in is an aircraft flying in the sky and
- * observed by a radar station.
+ * observed by a radar station. Its velocity is not completely constant: a Gaussian
+ * noise is added to the velocity to simulate the effect of wind on the motion of the
+ * aircraft.
+ *
  * We consider the plan perpendicular to the ground and passing by both the radar
  * station and the aircraft. The x-axis corresponds to the position on the ground
  * and the y-axis to the altitude.
  *
- * The state vector of the UKF is:
+ * The state vector of the UKF corresponds to a constant velocity model and can be written as:
  *  \f{eqnarray*}{
         \textbf{x}[0] &=& x \\
         \textbf{x}[1] &=& \dot{x} \\
@@ -56,6 +60,22 @@
 
  * Some noise is added to the measurement vector to simulate a sensor which is
  * not perfect.
+ *
+ * The mean of several angles must be computed in the Unscented Transform. The definition we chose to use
+   is the following:
+
+   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
+
+   As the Unscented Transform uses a weighted mean, the actual implementation of the weighted mean
+   of several angles is the following:
+
+   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
+
+   where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
+
+   Additionnally, the addition and substraction of angles must be carefully done, as the result
+   must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
+   the interval \f$[- \pi ; \pi ]\f$ .
 */
 
 // UKF includes
@@ -70,6 +90,8 @@
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+namespace
+{
 /**
  * \brief The process function, that updates the prior.
  *
@@ -85,6 +107,65 @@ vpColVector fx(const vpColVector &chi, const double &dt)
   point[2] = chi[3] * dt + chi[2];
   point[3] = chi[3];
   return point;
+}
+
+/**
+ * \brief Normalize the \b angle in the interval [-Pi; Pi].
+ *
+ * \param[in] angle Angle to normalize.
+ * \return double Normalized angle.
+ */
+double normalizeAngle(const double &angle)
+{
+  double angleIn0to2pi = vpMath::modulo(angle, 2. * M_PI);
+  double angleInMinPiPi = angleIn0to2pi;
+  if (angleInMinPiPi > M_PI) {
+    // Substract 2 PI to be in interval [-Pi; Pi]
+    angleInMinPiPi -= 2. * M_PI;
+  }
+  return angleInMinPiPi;
+}
+
+/**
+ * \brief Compute the weighted mean of measurement vectors.
+ *
+ * \param[in] measurements The measurement vectors, such as measurements[i][0] = range and
+ * measurements[i][1] = elevation_angle.
+ * \param[in] wm The associated weights.
+ * \return vpColVector
+ */
+vpColVector measurementMean(const std::vector<vpColVector> &measurements, const std::vector<double> &wm)
+{
+  const unsigned int nbPoints = measurements.size();
+  const unsigned int sizeMeasurement = measurements[0].size();
+  vpColVector mean(sizeMeasurement, 0.);
+  double sumCos(0.);
+  double sumSin(0.);
+  for (unsigned int i = 0; i < nbPoints; ++i) {
+    mean[0] += wm[i] * measurements[i][0];
+    sumCos += wm[i] * std::cos(measurements[i][1]);
+    sumSin += wm[i] * std::sin(measurements[i][1]);
+  }
+
+  mean[1] = std::atan2(sumSin, sumCos);
+
+  return mean;
+}
+
+/**
+ * \brief Compute the substraction between two vectors expressed in the measurement space,
+ * such as v[0] = range ; v[1] = elevation_angle
+ *
+ * \param[in] meas Measurement to which we must substract something.
+ * \param[in] toSubstract The something we must substract.
+ * \return vpColVector \b meas - \b toSubstract .
+ */
+vpColVector measurementResidual(const vpColVector &meas, const vpColVector &toSubstract)
+{
+  vpColVector res = meas - toSubstract;
+  res[1] = normalizeAngle(res[1]);
+  return res;
+}
 }
 
 /**
@@ -105,8 +186,8 @@ public:
   vpRadarStation(const double &x, const double &y, const double &range_std, const double &elev_angle_std)
     : m_x(x)
     , m_y(y)
-    , m_rngRange(range_std, 0., vpTime::measureTimeMicros())
-    , m_rngElevAngle(elev_angle_std, 0., vpTime::measureTimeMicros() + 4221)
+    , m_rngRange(range_std, 0., 4224)
+    , m_rngElevAngle(elev_angle_std, 0., 2112)
   { }
 
   /**
@@ -217,6 +298,11 @@ int main(/*const int argc, const char *argv[]*/)
   const double dt = 3.; // Period of 3s
   const double sigmaRange = 5; // Standard deviation of the range measurement: 5m
   const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
+  const double stdevAircraftVelocity = 0.2; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
+  const double gt_X_init = -500.; // Ground truth initial position along the X-axis, in meters
+  const double gt_Y_init = 1000.; // Ground truth initial position along the Y-axis, in meters
+  const double gt_dX_init = 100.; // Ground truth initial velocity along the X-axis, in meters
+  const double gt_dY_init = 5.; // Ground truth initial velocity along the Y-axis, in meters
 
   // Initialize the attributes of the UKF
   std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.1, 2., -1.);
@@ -244,10 +330,10 @@ int main(/*const int argc, const char *argv[]*/)
   P0[3][3] = std::pow(30, 2);
 
   vpColVector X0(4);
-  X0[0] = 0.; // x = 0m
-  X0[1] = 90.; // dx/dt = 90m/s
-  X0[2] = 1100.; // y = 1100m
-  X0[3] = 0.; // dy/dt = 0m/s
+  X0[0] = 0.9 * gt_X_init; // x, i.e. 10% of error with regard to ground truth
+  X0[1] = 0.9 * gt_dX_init; // dx/dt, i.e. 10% of error with regard to ground truth
+  X0[2] = 0.9 * gt_Y_init; // y, i.e. 10% of error with regard to ground truth
+  X0[3] = 0.9 * gt_dY_init; // dy/dt, i.e. 10% of error with regard to ground truth
 
   vpUnscentedKalman::vpProcessFunction f = fx;
   vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle);
@@ -257,6 +343,8 @@ int main(/*const int argc, const char *argv[]*/)
   // Initialize the UKF
   vpUnscentedKalman ukf(Q, R, drawer, f, h);
   ukf.init(X0, P0);
+  ukf.setMeasurementMeanFunction(measurementMean);
+  ukf.setMeasurementResidualFunction(measurementResidual);
 
 #ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
@@ -292,12 +380,12 @@ int main(/*const int argc, const char *argv[]*/)
 
   // Initialize the simulation
   vpColVector ac_pos(2);
-  ac_pos[0] = 0.;
-  ac_pos[1] = 1000.;
+  ac_pos[0] = gt_X_init;
+  ac_pos[1] = gt_Y_init;
   vpColVector ac_vel(2);
-  ac_vel[0] = 100.;
-  ac_vel[1] = 5.;
-  vpACSimulator ac(ac_pos, ac_vel, 0.02);
+  ac_vel[0] = gt_dX_init;
+  ac_vel[1] = gt_dY_init;
+  vpACSimulator ac(ac_pos, ac_vel, stdevAircraftVelocity);
   vpColVector gt_Xprec = ac_pos;
   for (int i = 0; i < 500; ++i) {
     // Perform the measurement
