@@ -380,7 +380,7 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
   u.resize(3);
 
   theta = getTheta();
-  // --comment: if (theta == 0)
+  // --comment: if theta equals 0
   if (std::fabs(theta) <= std::numeric_limits<double>::epsilon()) {
     u = 0;
     return;
@@ -478,7 +478,7 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
   vpColVector b_hat_sin_2 = b_hat * std::sin(b_2);
   double c = 2 * std::acos((std::cos(a_2) * std::cos(b_2)) - (vpColVector::dotProd(a_hat_sin_2, b_hat_sin_2)));
   vpColVector d = ((std::sin(a_2) * std::cos(b_2) * a_hat) + (std::cos(a_2) * std::sin(b_2) * b_hat)) +
-    std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat);
+    (std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat));
   d = (c * d) / std::sin(c / 2);
 
   return vpThetaUVector(d);

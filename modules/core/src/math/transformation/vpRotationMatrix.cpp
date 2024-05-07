@@ -240,7 +240,7 @@ R:
  */
 vpRotationMatrix &vpRotationMatrix::operator,(double val)
 {
-  m_index++;
+  ++m_index;
   if (m_index >= size()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot set rotation matrix out of bounds. It has only %d elements while you try to initialize "

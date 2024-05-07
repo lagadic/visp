@@ -128,8 +128,8 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
 
   unsigned int sv_size = sv.size();
   for (unsigned int i = 0; i < sv_size; ++i) {
-    if (sv[i] > (maxsv * svThreshold)) {
-      rank_out++;
+    if (sv[i] >(maxsv * svThreshold)) {
+      ++rank_out;
     }
   }
 
@@ -4999,17 +4999,17 @@ vpColVector vpMatrix::getCol(unsigned int j) const { return getCol(j, 0, rowNum)
     std::cout << "Row vector: \n" << rv << std::endl;
   }
   \endcode
-  It produces the following output:
-  \code
-  [4,4]=
-    0  1  2  3
-    4  5  6  7
-    8  9 10 11
-    12 13 14 15
-  Row vector:
-  4  5  6  7
-  \endcode
- */
+It produces the following output :
+\code
+[4, 4] =
+0  1  2  3
+4  5  6  7
+8  9 10 11
+12 13 14 15
+Row vector :
+4  5  6  7
+\endcode
+*/
 vpRowVector vpMatrix::getRow(unsigned int i) const { return getRow(i, 0, colNum); }
 
 /*!
@@ -6088,8 +6088,8 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
 
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; ++i) {
-    if (sv[i] > (maxsv * svThreshold)) {
-      rank++;
+    if (sv[i] >(maxsv * svThreshold)) {
+      ++rank;
     }
   }
 
@@ -6103,7 +6103,7 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
         for (unsigned int i = 0; i < v_rows; ++i) {
           kerAt[k][i] = V[i][j];
         }
-        k++;
+        ++k;
       }
     }
   }
@@ -6157,8 +6157,8 @@ unsigned int vpMatrix::nullSpace(vpMatrix &kerA, double svThreshold) const
 
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; ++i) {
-    if (sv[i] > (maxsv * svThreshold)) {
-      rank++;
+    if (sv[i] >(maxsv * svThreshold)) {
+      ++rank;
     }
   }
 
@@ -6170,7 +6170,7 @@ unsigned int vpMatrix::nullSpace(vpMatrix &kerA, double svThreshold) const
         for (unsigned int i = 0; i < nbcol; ++i) {
           kerA[i][k] = V[i][j];
         }
-        k++;
+        ++k;
       }
     }
   }
@@ -6234,8 +6234,8 @@ unsigned int vpMatrix::nullSpace(vpMatrix &kerA, int dim) const
   double maxsv = sv[0];
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; ++i) {
-    if (sv[i] > (maxsv * 1e-6)) {
-      rank++;
+    if (sv[i] >(maxsv * 1e-6)) {
+      ++rank;
     }
   }
   return (nbcol - rank);
@@ -6463,8 +6463,8 @@ double vpMatrix::cond(double svThreshold) const
   // Compute the rank of the matrix
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; ++i) {
-    if (sv[i] > (maxsv * svThreshold)) {
-      rank++;
+    if (sv[i] >(maxsv * svThreshold)) {
+      ++rank;
     }
   }
 

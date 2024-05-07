@@ -154,8 +154,8 @@ void usage(const std::string &softName, int gaussianKernelSize, float gaussianSt
     << std::endl;
   std::cout << "\t-f, --filter <filterName>" << std::endl
     << "\t\tPermits to choose the type of filter to apply to compute the gradient." << std::endl
-    << "\t\tAvailable values: " << vpImageFilter::vpCannyFilteringAndGradientTypeList("<", " | ", ">") << std::endl
-    << "\t\tDefault: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(filteringType) << std::endl
+    << "\t\tAvailable values: " << vpImageFilter::vpGetCannyFiltAndGradTypes("<", " | ", ">") << std::endl
+    << "\t\tDefault: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(filteringType) << std::endl
     << std::endl;
   std::cout << "\t-r, --ratio <lowerThreshRatio upperThreshRatio>" << std::endl
     << "\t\tPermits to set the lower and upper thresholds ratio of the vpCanny class." << std::endl
@@ -209,7 +209,7 @@ int main(int argc, const char *argv[])
       i++;
     }
     else if ((argv_str == "-f" || argv_str == "--filter") && i + 1 < argc) {
-      opt_filteringType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(std::string(argv[i + 1]));
+      opt_filteringType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(std::string(argv[i + 1]));
       i++;
     }
     else if ((argv_str == "-r" || argv_str == "--ratio") && i + 2 < argc) {
@@ -234,7 +234,7 @@ int main(int argc, const char *argv[])
   }
 
   std::string configAsTxt("Canny Configuration:\n");
-  configAsTxt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFilteringAndGradientTypeToString(opt_filteringType) + "\n";
+  configAsTxt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFiltAndGradTypeToStr(opt_filteringType) + "\n";
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   configAsTxt += "\tGaussian filter kernel size = " + std::to_string(opt_gaussianKernelSize) + "\n";
   configAsTxt += "\tGaussian filter standard deviation = " + std::to_string(opt_gaussianStdev) + "\n";

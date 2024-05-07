@@ -110,7 +110,7 @@ private:
    * Then, compute the x-axis and y-axis gradients of the image.
    * \param[in] I : The image we want to compute the gradients.
    */
-  void performFilteringAndGradientComputation(const vpImage<unsigned char> &I);
+  void computeFilteringAndGradient(const vpImage<unsigned char> &I);
 
   /**
    * \brief Step 3: Edge thining.
@@ -214,9 +214,9 @@ public:
    */
   friend inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
   {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
+    std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
     filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-    detector.m_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(filteringAndGradientName);
+    detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
     detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
     detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
     detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
@@ -234,7 +234,7 @@ public:
    */
   friend inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
   {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
+    std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
     j = nlohmann::json {
             {"filteringAndGradientType", filteringAndGradientName},
             {"gaussianSize", detector.m_gaussianKernelSize},

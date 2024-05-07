@@ -171,7 +171,7 @@ vpCannyEdgeDetection::initGradientFilters()
   }
   else {
     std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType);
+    errMsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_filteringAndGradientType);
     errMsg += "\" has not been implemented yet\n";
     throw vpException(vpException::notImplementedError, errMsg);
   }
@@ -209,7 +209,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 
   // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
   if (!m_areGradientAvailable) {
-    performFilteringAndGradientComputation(I);
+    computeFilteringAndGradient(I);
   }
   m_areGradientAvailable = false; // Reset for next call
 
@@ -238,7 +238,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 }
 
 void
-vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsigned char> &I)
+vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &I)
 {
   if ((m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
       || (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)) {
@@ -254,7 +254,7 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
   }
   else {
     std::string errmsg("Currently, the filtering operation \"");
-    errmsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType);
+    errmsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_filteringAndGradientType);
     errmsg += "\" is not handled.";
     throw(vpException(vpException::notImplementedError, errmsg));
   }
@@ -273,7 +273,7 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
  * \param[out] dColGradBeta : The offset along the column attached to the beta weight.
  */
 void
-getInterpolationWeightsAndOffsets(const float &gradientOrientation,
+getInterpolWeightsAndOffsets(const float &gradientOrientation,
                                   float &alpha, float &beta,
                                   int &dRowGradAlpha, int &dRowGradBeta,
                                   int &dColGradAlpha, int &dColGradBeta
@@ -380,43 +380,56 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
   int nbRows = m_dIx.getRows();
   int nbCols = m_dIx.getCols();
 
+  bool ignore_current_pixel = false;
+  bool grad_lower_threshold = false;
   for (int row = 0; row < nbRows; ++row) {
     for (int col = 0; col < nbCols; ++col) {
+      // reset the checks
+      ignore_current_pixel = false;
+      grad_lower_threshold = false;
+
       if (mp_mask != nullptr) {
         if (!(*mp_mask)[row][col]) {
           // The mask tells us to ignore the current pixel
-          continue;
+          ignore_current_pixel = true;
+          // continue
         }
       }
+      // continue if the mask does not tell us to ignore the current pixel
+      if (ignore_current_pixel == false) {
 
-      // Computing the gradient orientation and magnitude
-      float grad = getManhattanGradient(m_dIx, m_dIy, row, col);
+        // Computing the gradient orientation and magnitude
+        float grad = getManhattanGradient(m_dIx, m_dIy, row, col);
 
-      if (grad < lowerThreshold) {
-        // The gradient is lower than minimum threshold => ignoring the point
-        continue;
-      }
+        if (grad < lowerThreshold) {
+          // The gradient is lower than minimum threshold => ignoring the point
+          grad_lower_threshold = true;
+          // continue
+        }
+        if (grad_lower_threshold == false) {
+          //
+          // Getting the offset along the horizontal and vertical axes
+          // depending on the gradient orientation
+          int dRowAlphaPlus = 0, dRowBetaPlus = 0;
+          int dColAphaPlus = 0, dColBetaPlus = 0;
+          float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, row, col);
+          float alpha = 0.f, beta = 0.f;
+          getInterpolWeightsAndOffsets(gradientOrientation, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+          int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
+          int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
+          float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
+          float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaPlus, col + dColBetaPlus);
+          float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaMinus, col + dColAphaMinus);
+          float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaMinus, col + dColBetaMinus);
+          float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
+          float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
 
-      // Getting the offset along the horizontal and vertical axes
-      // depending on the gradient orientation
-      int dRowAlphaPlus = 0, dRowBetaPlus = 0;
-      int dColAphaPlus = 0, dColBetaPlus = 0;
-      float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, row, col);
-      float alpha = 0.f, beta = 0.f;
-      getInterpolationWeightsAndOffsets(gradientOrientation, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
-      int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
-      int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
-      float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
-      float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaPlus, col + dColBetaPlus);
-      float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaMinus, col + dColAphaMinus);
-      float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaMinus, col + dColBetaMinus);
-      float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
-      float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
-
-      if ((grad >= gradPlus) && (grad >= gradMinus)) {
-        // Keeping the edge point that has the highest gradient
-        std::pair<unsigned int, unsigned int> bestPixel(row, col);
-        m_edgeCandidateAndGradient[bestPixel] = grad;
+          if ((grad >= gradPlus) && (grad >= gradMinus)) {
+            // Keeping the edge point that has the highest gradient
+            std::pair<unsigned int, unsigned int> bestPixel(row, col);
+            m_edgeCandidateAndGradient[bestPixel] = grad;
+          }
+        }
       }
     }
   }
@@ -426,7 +439,8 @@ void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
   std::map<std::pair<unsigned int, unsigned int>, float>::iterator it;
-  for (it = m_edgeCandidateAndGradient.begin(); it != m_edgeCandidateAndGradient.end(); ++it) {
+  std::map<std::pair<unsigned int, unsigned int>, float>::iterator m_edgeCandidateAndGradient_end = m_edgeCandidateAndGradient.end();
+  for (it = m_edgeCandidateAndGradient.begin(); it != m_edgeCandidateAndGradient_end; ++it) {
     if (it->second >= upperThreshold) {
       m_edgePointsCandidates[it->first] = STRONG_EDGE;
     }
@@ -440,7 +454,8 @@ void
 vpCannyEdgeDetection::performEdgeTracking()
 {
   std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator it;
-  for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates.end(); ++it) {
+  std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator m_edgePointsCandidates_end = m_edgePointsCandidates.end();
+  for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
     if (it->second == STRONG_EDGE) {
       m_edgeMap[it->first.first][it->first.second] = 255;
     }
@@ -459,36 +474,46 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   int nbRows = m_dIx.getRows();
   int nbCols = m_dIx.getCols();
   m_edgePointsCandidates[coordinates] = ON_CHECK;
+  bool test_row = false;
+  bool test_col = false;
+  bool test_drdc = false;
+  bool edge_in_image_limit = false;
   for (int dr = -1; (dr <= 1) && (!hasFoundStrongEdge); ++dr) {
     for (int dc = -1; (dc <= 1) && (!hasFoundStrongEdge); ++dc) {
+      // reset the check for the edge on image limit
+      edge_in_image_limit = false;
+
       int idRow = dr + static_cast<int>(coordinates.first);
       idRow = std::max<int>(idRow, 0); // Avoid getting negative pixel ID
       int idCol = dc + static_cast<int>(coordinates.second);
       idCol = std::max<int>(idCol, 0); // Avoid getting negative pixel ID
 
       // Checking if we are still looking for an edge in the limit of the image
-      if (((idRow < 0) || (idRow >= nbRows))
-          || ((idCol < 0) || (idCol >= nbCols))
-          || ((dr == 0) && (dc == 0))
-          ) {
-        continue;
+      test_row = (idRow < 0) || (idRow >= nbRows);
+      test_col = (idCol < 0) || (idCol >= nbCols);
+      test_drdc = (dr == 0) && (dc == 0);
+      if (test_row || test_col || test_drdc) {
+        edge_in_image_limit = true;
+        // the continue is replaced by the test
       }
+      if (edge_in_image_limit == false) {
 
-      try {
-        std::pair<unsigned int, unsigned int> key_candidate(idRow, idCol);
-        // Checking if the 8-neighbor point is in the list of edge candidates
-        EdgeType type_candidate = m_edgePointsCandidates.at(key_candidate);
-        if (type_candidate == STRONG_EDGE) {
-          // The 8-neighbor point is a strong edge => the weak edge becomes a strong edge
-          hasFoundStrongEdge = true;
+        try {
+          std::pair<unsigned int, unsigned int> key_candidate(idRow, idCol);
+          // Checking if the 8-neighbor point is in the list of edge candidates
+          EdgeType type_candidate = m_edgePointsCandidates.at(key_candidate);
+          if (type_candidate == STRONG_EDGE) {
+            // The 8-neighbor point is a strong edge => the weak edge becomes a strong edge
+            hasFoundStrongEdge = true;
+          }
+          else if (type_candidate == WEAK_EDGE) {
+            // Checking if the WEAK_EDGE neighbor has a STRONG_EDGE neighbor
+            hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
+          }
         }
-        else if (type_candidate == WEAK_EDGE) {
-          // Checking if the WEAK_EDGE neighbor has a STRONG_EDGE neighbor
-          hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
+        catch (...) {
+          // continue - nothing to do
         }
-      }
-      catch (...) {
-        continue;
       }
     }
   }

@@ -165,7 +165,7 @@ float transferValue(int v, std::vector<int> &clippedHist)
 {
   int clippedHistLength = static_cast<int>(clippedHist.size());
   int hMin = clippedHistLength - 1;
-  for (int i = 0; i < hMin; ++i) {
+  for (int i = 0; i<hMin; ++i) {
     if (clippedHist[i] != 0) {
       hMin = i;
     }
@@ -351,7 +351,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
               t1 = (wx * t10) + ((1.0f - wx) * t11);
             }
 
-            float t = (r0 == r1) ? t0 : (wy * t0) + ((1.0f - wy) * t1);
+            float t = (r0 == r1) ? t0 : ((wy * t0) + ((1.0f - wy) * t1));
             I2[y][x] = std::max<unsigned char>(0, std::min<unsigned char>(255, fastRound(t * 255.0f)));
           }
         }
@@ -435,7 +435,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         int v = fastRound((I1[y][x] / 255.0f) * bins);
         int w = std::min<int>(static_cast<int>(I1.getWidth()), xMax) - xMin;
         int n = h * w;
-        int limit = static_cast<int>((slope * n) / bins + 0.5f);
+        int limit = static_cast<int>(((slope * n) / bins) + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
     }
@@ -460,7 +460,7 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
 
   I2.resize(I1.getHeight(), I1.getWidth());
   unsigned int size = I2.getWidth() * I2.getHeight();
-  unsigned char *ptrStart = (unsigned char *)(I2.bitmap);
+  unsigned char *ptrStart = reinterpret_cast<unsigned char *>(I2.bitmap);
   unsigned char *ptrEnd = ptrStart + (size * 4);
   unsigned char *ptrCurrent = ptrStart;
 

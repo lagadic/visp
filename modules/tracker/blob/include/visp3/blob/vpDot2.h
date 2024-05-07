@@ -221,7 +221,7 @@ public:
   double getGrayLevelPrecision() const;
 
   double getHeight() const;
-  double getMaxSizeSearchDistancePrecision() const;
+  double getMaxSizeSearchDistPrecision() const;
 
   /*!
    * \return The mean gray level value of the dot.
@@ -345,15 +345,17 @@ public:
    */
   inline void setGrayLevelMax(const unsigned int &max)
   {
-    if (max > 255)
+    if (max > 255) {
       this->gray_level_max = 255;
-    else
+    }
+    else {
       this->gray_level_max = max;
+    }
   };
 
   void setGrayLevelPrecision(const double &grayLevelPrecision);
   void setHeight(const double &height);
-  void setMaxSizeSearchDistancePrecision(const double &maxSizeSearchDistancePrecision);
+  void setMaxSizeSearchDistPrecision(const double &maxSizeSearchDistancePrecision);
   void setSizePrecision(const double &sizePrecision);
   void setWidth(const double &width);
 

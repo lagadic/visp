@@ -583,15 +583,15 @@ vpColVector vpColVector::invSort(const vpColVector &v)
   unsigned int i = 0;
   while (nb_permutation != 0) {
     nb_permutation = 0;
-    for (unsigned int j = v.getRows() - 1; j >= (i + 1); j--) {
+    for (unsigned int j = v.getRows() - 1; j >= (i + 1); --j) {
       if (tab[j] > tab[j - 1]) {
         double tmp = tab[j];
         tab[j] = tab[j - 1];
         tab[j - 1] = tmp;
-        nb_permutation++;
+        ++nb_permutation;
       }
     }
-    i++;
+    ++i;
   }
 
   return tab;
@@ -608,15 +608,15 @@ vpColVector vpColVector::sort(const vpColVector &v)
   unsigned int i = 0;
   while (nb_permutation != 0) {
     nb_permutation = 0;
-    for (unsigned int j = v.getRows() - 1; j >= (i + 1); j--) {
+    for (unsigned int j = v.getRows() - 1; j >= (i + 1); --j) {
       if (tab[j] < tab[j - 1]) {
         double tmp = tab[j];
         tab[j] = tab[j - 1];
         tab[j - 1] = tmp;
-        nb_permutation++;
+        ++nb_permutation;
       }
     }
-    i++;
+    ++i;
   }
 
   return tab;
