@@ -175,8 +175,7 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       u[2] = i*4 + 2;
       u.normalize();
       double theta = vpMath::rad(5*i + 2);
-      std::vector<double> vec { theta*u[0], theta*u[1], theta*u[2] };
-      vpThetaUVector tu(vec[0], vec[1], vec[2]);
+      vpThetaUVector tu(std::vector<double>{ theta *u[0], theta *u[1], theta *u[2] });
       // std::cout << "theta=" << tu.getTheta() << " ; u=" << tu.getU().transpose() << std::endl;
 
       vpTranslationVector trans(i*4 + 10, i*4 + 20, i*4 + 30);
