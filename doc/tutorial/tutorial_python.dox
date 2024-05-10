@@ -3,4 +3,7 @@
 This page introduces the user to the way to exploit ViSP with Python.
 
 - \subpage tutorial-install-python-bindings <br>In this tutorial you will learn how to install ViSP Python bindings.
+
+- \subpage tutorial-read-write-NPZ-format <br>In this tutorial you will learn how to use NumPy NPY/NPZ file format
+to read and save large arrays of data.
 */
