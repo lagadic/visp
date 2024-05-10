@@ -650,7 +650,9 @@ int main(int argc, const char *argv[])
 #else
   std::vector<vpColVector> pointCloud;
 #endif
+  std::vector<double> vec_delta_time;
   while (!quit) {
+    double start = vpTime::measureTimeMs();
     if (use_aligned_stream) {
 #ifdef USE_REALSENSE2
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
@@ -697,10 +699,6 @@ int main(int argc, const char *argv[])
       vpDisplay::displayText(I_color, 20, 20, ss.str(), vpColor::red);
     }
 
-    vpDisplay::flush(I_color);
-    vpDisplay::flush(I_depth);
-    vpDisplay::flush(I_infrared);
-
     if (save && !click_to_save) {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy = pointCloud->makeShared();
@@ -709,6 +707,16 @@ int main(int argc, const char *argv[])
       save_queue.push(I_color, I_depth_raw, pointCloud, I_infrared);
 #endif
     }
+
+    double delta_time = vpTime::measureTimeMs() - start;
+    vec_delta_time.push_back(delta_time);
+    std::ostringstream oss_time;
+    oss_time << delta_time << " ms ; fps=" << 1000/delta_time;
+    vpDisplay::displayText(I_color, 40, 20, oss_time.str(), vpColor::red);
+
+    vpDisplay::flush(I_color);
+    vpDisplay::flush(I_depth);
+    vpDisplay::flush(I_infrared);
 
     vpMouseButton::vpMouseButtonType button;
     if (vpDisplay::getClick(I_color, button, false)) {
@@ -740,6 +748,14 @@ int main(int argc, const char *argv[])
       }
     }
   }
+
+  double mean_vec_delta_time = vpMath::getMean(vec_delta_time);
+  double median_vec_delta_time = vpMath::getMedian(vec_delta_time);
+  double std_vec_delta_time = vpMath::getStdev(vec_delta_time);
+  std::cout << "Acquisition time, mean=" << mean_vec_delta_time << " ms ; median="
+    << median_vec_delta_time << " ms ; std=" << std_vec_delta_time << " ms" << std::endl;
+  std::cout << "FPS, mean=" << 1000/mean_vec_delta_time << " fps ; median="
+    << 1000/median_vec_delta_time << " fps" << std::endl;
 
   storage_thread.join();
 

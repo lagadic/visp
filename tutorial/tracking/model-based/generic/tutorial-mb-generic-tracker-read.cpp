@@ -92,7 +92,11 @@ int main(int argc, char *argv[])
   std::cout << "Color mode? " << (channel > 1) << std::endl;
 
   visp::cnpy::NpyArray arr_camera_name = npz_data["camera_name"];
-  const std::string camera_name = std::string(arr_camera_name.data<char>());
+  // For null-terminated character handling, see:
+  // https://stackoverflow.com/a/8247804
+  // https://stackoverflow.com/a/45491652
+  std::vector<char> vec_arr_camera_name = arr_camera_name.as_vec<char>();
+  const std::string camera_name = std::string(vec_arr_camera_name.begin(), vec_arr_camera_name.end());
   std::cout << "Camera name: " << camera_name << std::endl;
 
   visp::cnpy::NpyArray arr_px = npz_data["cam_px"];
