@@ -33,7 +33,7 @@
  /*!
    \example saveRealSenseData.cpp
 
-   \brief Example that show how to save realsense data that can be replayed with readRealSenseData.cpp
+   \brief Example that shows how to save realsense data that can be replayed with readRealSenseData.cpp
  */
 
 #include <iostream>
@@ -69,12 +69,12 @@
 #include <visp3/sensor/vpRealSense.h>
 #include <visp3/sensor/vpRealSense2.h>
 
- // Priority to libRealSense2
+// Priority to libRealSense2
 #if defined(VISP_HAVE_REALSENSE2)
 #define USE_REALSENSE2
 #endif
 
-#define GETOPTARGS "so:acdpiCf:bh"
+#define GETOPTARGS "se:o:acdpzijCf:bvh"
 
 namespace
 {
@@ -83,20 +83,27 @@ void usage(const char *name, const char *badparam, int fps)
   std::cout << "\nSYNOPSIS " << std::endl
     << "  " << name
     << " [-s]"
+    << " [-e <filename pattern (e.g. %06d)>]"
     << " [-a]"
     << " [-c]"
     << " [-d]"
     << " [-p]"
     << " [-b]"
+    << " [-z]"
     << " [-i]"
+    << " [-j]"
     << " [-C]"
     << " [-f <fps>]"
+    << " [-v]"
     << " [-o <directory>]"
     << " [--help,-h]"
     << std::endl;
   std::cout << "\nOPTIONS " << std::endl
     << "  -s" << std::endl
     << "    Flag to enable data saving." << std::endl
+    << std::endl
+    << "  -e <pattern>" << std::endl
+    << "    Filename pattern when saving data." << std::endl
     << std::endl
     << "  -a" << std::endl
     << "    Color and depth are aligned." << std::endl
@@ -109,14 +116,21 @@ void usage(const char *name, const char *badparam, int fps)
     << std::endl
     << "  -p" << std::endl
     << "    Add point cloud stream to saved data when -s option is enabled." << std::endl
-    << "    By default, the point cloud is saved in Point Cloud Data file format (.PCD extension file)." << std::endl
-    << "    You can also use -b option to save the point cloud in binary format." << std::endl
+    << "    By default (if available), the point cloud is saved in Point Cloud Data file format (.PCD extension file)."
+    << std::endl
+    << "    You can also use the -z option to save the point cloud in .npz (NumPy)." << std::endl
     << std::endl
     << "  -b" << std::endl
-    << "    Point cloud stream is saved in binary format." << std::endl
+    << "    Force depth and pointcloud to be saved in (little-endian) binary format." << std::endl
+    << std::endl
+    << "  -z" << std::endl
+    << "    Pointcloud is saved in NPZ format." << std::endl
     << std::endl
     << "  -i" << std::endl
     << "    Add infrared stream to saved data when -s option is enabled." << std::endl
+    << std::endl
+    << "  -j" << std::endl
+    << "    Save image data using JPEG format (otherwise PNG is used)." << std::endl
     << std::endl
     << "  -C" << std::endl
     << "    Trigger one shot data saver after each user click." << std::endl
@@ -124,6 +138,10 @@ void usage(const char *name, const char *badparam, int fps)
     << "  -f <fps>" << std::endl
     << "    Set camera framerate." << std::endl
     << "    Default: " << fps << std::endl
+    << std::endl
+    << "  -v" << std::endl
+    << "    Display depth using a cumulative histogram." << std::endl
+    << "    Warning: this operation is time consuming" << std::endl
     << std::endl
     << "  -o <directory>" << std::endl
     << "    Output directory that will host saved data." << std::endl
@@ -133,7 +151,9 @@ void usage(const char *name, const char *badparam, int fps)
     << std::endl;
   std::cout << "\nEXAMPLE " << std::endl
     << "- Save aligned color + depth + point cloud in data folder" << std::endl
-    << "  " << name << " -s -a -c -d -p -b -o data" << std::endl
+    << "  " << name << " -s -a -c -d -p -o data" << std::endl
+    << "- Save color + IR + depth + point cloud in NPZ format in data folder" << std::endl
+    << "  " << name << " -s -c -d -i -p -z -o data" << std::endl
     << std::endl;
 
   if (badparam) {
@@ -141,9 +161,10 @@ void usage(const char *name, const char *badparam, int fps)
   }
 }
 
-bool getOptions(int argc, const char *argv[], bool &save, std::string &output_directory, bool &use_aligned_stream,
-                bool &save_color, bool &save_depth, bool &save_pointcloud, bool &save_infrared, bool &click_to_save,
-                int &stream_fps, bool &save_pointcloud_binary_format)
+bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, std::string &output_directory,
+                bool &use_aligned_stream, bool &save_color, bool &save_depth, bool &save_pointcloud,
+                bool &save_infrared, bool &click_to_save, int &stream_fps, bool &save_pcl_npz_format,
+                bool &save_force_binary_format, bool &save_jpeg, bool &depth_hist_visu)
 {
   const char *optarg;
   const char **argv1 = (const char **)argv;
@@ -153,6 +174,9 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &output_di
     switch (c) {
     case 's':
       save = true;
+      break;
+    case 'e':
+      pattern = optarg;
       break;
     case 'o':
       output_directory = optarg;
@@ -172,14 +196,23 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &output_di
     case 'i':
       save_infrared = true;
       break;
+    case 'j':
+      save_jpeg = true;
+      break;
     case 'C':
       click_to_save = true;
       break;
     case 'f':
       stream_fps = atoi(optarg);
       break;
+    case 'v':
+      depth_hist_visu = true;
+      break;
+    case 'z':
+      save_pcl_npz_format = true;
+      break;
     case 'b':
-      save_pointcloud_binary_format = true;
+      save_force_binary_format = true;
       break;
 
     case 'h':
@@ -206,6 +239,7 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &output_di
   return true;
 }
 
+// Code adapted from: https://stackoverflow.com/a/37146523
 class vpFrameQueue
 {
 public:
@@ -225,20 +259,35 @@ public:
   }
 
   // Push data to save in the queue (FIFO)
-  void push(const vpImage<vpRGBa> &colorImg, const vpImage<uint16_t> &depthImg,
+  void push(const std::unique_ptr<vpImage<vpRGBa>> &ptr_colorImg,
+            const std::unique_ptr<vpImage<uint16_t>> &ptr_depthImg,
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             const pcl::PointCloud<pcl::PointXYZ>::Ptr &pointCloud,
 #else
-            const std::vector<vpColVector> &pointCloud,
+            const std::unique_ptr<std::vector<vpColVector>> &ptr_pointCloud,
 #endif
-            const vpImage<unsigned char> &infraredImg)
+            const std::unique_ptr<vpImage<unsigned char>> &ptr_infraredImg)
   {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    m_queueColor.push(colorImg);
-    m_queueDepth.push(depthImg);
-    m_queuePointCloud.push(pointCloud);
-    m_queueInfrared.push(infraredImg);
+    if (ptr_colorImg) {
+      m_queueColor.push(*ptr_colorImg);
+    }
+    if (ptr_depthImg) {
+      m_queueDepth.push(*ptr_depthImg);
+    }
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+    if (pointCloud) {
+      m_queuePointCloud.push(pointCloud);
+    }
+#else
+    if (ptr_pointCloud) {
+      m_queuePointCloud.push(*ptr_pointCloud);
+    }
+#endif
+    if (ptr_infraredImg) {
+      m_queueInfrared.push(*ptr_infraredImg);
+    }
 
     // Pop extra data in the queue
     while (m_queueColor.size() > m_maxQueueSize) {
@@ -264,17 +313,19 @@ public:
   }
 
   // Pop the image to save from the queue (FIFO)
-  void pop(vpImage<vpRGBa> &colorImg, vpImage<uint16_t> &depthImg,
+  void pop(std::unique_ptr<vpImage<vpRGBa>> &ptr_colorImg,
+           std::unique_ptr<vpImage<uint16_t>> &ptr_depthImg,
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
            pcl::PointCloud<pcl::PointXYZ>::Ptr &pointCloud,
 #else
-           std::vector<vpColVector> &pointCloud,
+           std::unique_ptr<std::vector<vpColVector>> &ptr_pointCloud,
 #endif
-           vpImage<unsigned char> &infraredImg)
+           std::unique_ptr<vpImage<unsigned char>> &ptr_infraredImg)
   {
     std::unique_lock<std::mutex> lock(m_mutex);
 
-    while (m_queueColor.empty() || m_queueDepth.empty() || m_queuePointCloud.empty() || m_queueInfrared.empty()) {
+    // Since we push all 4 data at a time, there should be no situation where a queue size is different from the others
+    while (m_queueColor.empty() && m_queueDepth.empty() && m_queuePointCloud.empty() && m_queueInfrared.empty()) {
       if (m_cancelled) {
         throw vpCancelled_t();
       }
@@ -286,15 +337,35 @@ public:
       }
     }
 
-    colorImg = m_queueColor.front();
-    depthImg = m_queueDepth.front();
-    pointCloud = m_queuePointCloud.front();
-    infraredImg = m_queueInfrared.front();
+    if (!m_queueColor.empty()) {
+      ptr_colorImg = std::make_unique<vpImage<vpRGBa>>(m_queueColor.front());
+      m_queueColor.pop();
+    }
+    if (!m_queueDepth.empty()) {
+      ptr_depthImg = std::make_unique<vpImage<uint16_t>>(m_queueDepth.front());
+      m_queueDepth.pop();
+    }
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+    if (!m_queuePointCloud.empty()) {
+      pointCloud = m_queuePointCloud.front();
+      m_queuePointCloud.pop();
+    }
+#else
+    if (!m_queuePointCloud.empty()) {
+      ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(m_queuePointCloud.front());
+      m_queuePointCloud.pop();
+    }
+#endif
+    if (!m_queueInfrared.empty()) {
+      ptr_infraredImg = std::make_unique<vpImage<unsigned char>>(m_queueInfrared.front());
+      m_queueInfrared.pop();
+    }
+  }
 
-    m_queueColor.pop();
-    m_queueDepth.pop();
-    m_queuePointCloud.pop();
-    m_queueInfrared.pop();
+  bool empty()
+  {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_queueColor.empty() && m_queueDepth.empty() && m_queuePointCloud.empty() && m_queueInfrared.empty();
   }
 
   void setMaxQueueSize(const size_t max_queue_size) { m_maxQueueSize = max_queue_size; }
@@ -317,8 +388,9 @@ private:
 class vpStorageWorker
 {
 public:
-  vpStorageWorker(vpFrameQueue &queue, const std::string &directory, bool save_color, bool save_depth, bool save_pointcloud,
-                bool save_infrared, bool save_pointcloud_binary_format,
+  vpStorageWorker(vpFrameQueue &queue, const std::string &save_pattern, const std::string &directory, bool save_color,
+                  bool save_depth, bool save_pointcloud, bool save_infrared, bool save_pcl_npz_format,
+                  bool save_force_binary_format, bool save_jpeg,
                 int
 #ifndef VISP_HAVE_PCL
                     width
@@ -329,9 +401,9 @@ public:
                     height
 #endif
   )
-    : m_queue(queue), m_directory(directory), m_cpt(0), m_save_color(save_color), m_save_depth(save_depth),
-    m_save_pointcloud(save_pointcloud), m_save_infrared(save_infrared),
-    m_save_pointcloud_binary_format(save_pointcloud_binary_format)
+    : m_queue(queue), m_save_pattern(save_pattern), m_directory(directory), m_cpt(0), m_save_color(save_color), m_save_depth(save_depth),
+    m_save_pointcloud(save_pointcloud), m_save_infrared(save_infrared), m_save_pcl_npz_format(save_pcl_npz_format),
+    m_save_force_binary_format(save_force_binary_format), m_save_jpeg(save_jpeg)
 #ifndef VISP_HAVE_PCL
     ,
     m_size_height(height), m_size_width(width)
@@ -342,67 +414,108 @@ public:
   void run()
   {
     try {
-      vpImage<vpRGBa> colorImg;
-      vpImage<uint16_t> depthImg;
+      std::unique_ptr<vpImage<vpRGBa>> ptr_colorImg;
+      std::unique_ptr<vpImage<uint16_t>> ptr_depthImg;
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-      pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud;
+      pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_pointCloud;
 #else
-      std::vector<vpColVector> pointCloud;
+      std::unique_ptr<std::vector<vpColVector>> ptr_pointCloud;
 #endif
-      vpImage<unsigned char> infraredImg;
+      std::unique_ptr<vpImage<unsigned char>> ptr_infraredImg;
+
+      std::vector<float> vec_pcl;
 
       char buffer[FILENAME_MAX];
+      std::string image_filename_ext = m_save_jpeg ? ".jpg" : ".png";
       for (;;) {
-        m_queue.pop(colorImg, depthImg, pointCloud, infraredImg);
+        m_queue.pop(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 
         if (!m_directory.empty()) {
+          std::string current_time = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
           std::stringstream ss;
 
-          if (m_save_color) {
-            ss << m_directory << "/color_image_%04d.jpg";
+          if (m_save_color && ptr_colorImg) {
+            ss << m_directory << "/color_image_" << m_save_pattern << image_filename_ext;
             snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
 
             std::string filename_color = buffer;
-            vpImageIo::write(colorImg, filename_color);
+            vpImageIo::write(*ptr_colorImg, filename_color);
           }
 
-          if (m_save_depth) {
+          if (m_save_depth && ptr_depthImg) {
             ss.str("");
-            ss << m_directory << "/depth_image_%04d.bin";
-            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
-            std::string filename_depth = buffer;
 
-            std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
-            if (file_depth.is_open()) {
-              unsigned int height = depthImg.getHeight(), width = depthImg.getWidth();
-              vpIoTools::writeBinaryValueLE(file_depth, height);
-              vpIoTools::writeBinaryValueLE(file_depth, width);
+            if (m_save_force_binary_format) {
+              ss << m_directory << "/depth_image_" << m_save_pattern << ".bin";
+              snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
+              std::string filename_depth = buffer;
 
-              uint16_t value;
-              for (unsigned int i = 0; i < height; i++) {
-                for (unsigned int j = 0; j < width; j++) {
-                  value = depthImg[i][j];
-                  vpIoTools::writeBinaryValueLE(file_depth, value);
+              std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
+              if (file_depth.is_open()) {
+                unsigned int height = ptr_depthImg->getHeight(), width = ptr_depthImg->getWidth();
+                vpIoTools::writeBinaryValueLE(file_depth, height);
+                vpIoTools::writeBinaryValueLE(file_depth, width);
+
+                uint16_t value;
+                for (unsigned int i = 0; i < height; i++) {
+                  for (unsigned int j = 0; j < width; j++) {
+                    value = (*ptr_depthImg)[i][j];
+                    vpIoTools::writeBinaryValueLE(file_depth, value);
+                  }
                 }
               }
             }
+            else {
+              ss << m_directory << "/depth_image_" << m_save_pattern << ".npz";
+              snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
+              std::string filename_depth = buffer;
+
+              // Write Npz headers
+              std::vector<char> vec_filename(filename_depth.begin(), filename_depth.end());
+              // Null-terminated character is handled at reading
+              // For null-terminated character handling, see:
+              // https://stackoverflow.com/a/8247804
+              // https://stackoverflow.com/a/45491652
+              visp::cnpy::npz_save(filename_depth, "filename", &vec_filename[0], { vec_filename.size() }, "w");
+
+              std::vector<char> vec_current_time(current_time.begin(), current_time.end());
+              visp::cnpy::npz_save(filename_depth, "timestamp", &vec_current_time, { vec_current_time.size() }, "a");
+
+              unsigned int height = ptr_depthImg->getHeight();
+              unsigned int width = ptr_depthImg->getWidth();
+              unsigned int channel = 1;
+              visp::cnpy::npz_save(filename_depth, "height", &height, { 1 }, "a");
+              visp::cnpy::npz_save(filename_depth, "width", &width, { 1 }, "a");
+              visp::cnpy::npz_save(filename_depth, "channel", &channel, { 1 }, "a");
+
+              // Write data
+              std::vector<uint16_t> I_depth_raw_vec(ptr_depthImg->bitmap, ptr_depthImg->bitmap + ptr_depthImg->getSize());
+              visp::cnpy::npz_save(filename_depth, "data", I_depth_raw_vec.data(), { height, width }, "a");
+            }
           }
 
-          if (m_save_pointcloud) {
+          if (m_save_pointcloud && ptr_pointCloud) {
             ss.str("");
-            ss << m_directory << "/point_cloud_%04d" << (m_save_pointcloud_binary_format ? ".bin" : ".pcd");
+            std::string pcl_extension = m_save_force_binary_format ? ".bin" : (m_save_pcl_npz_format ? ".npz" : ".pcd");
+            ss << m_directory << "/point_cloud_" << m_save_pattern << pcl_extension;
             snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
             std::string filename_point_cloud = buffer;
 
-            if (m_save_pointcloud_binary_format) {
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+            uint32_t width = ptr_pointCloud->width;
+            uint32_t height = ptr_pointCloud->height;
+#else
+            uint32_t width = m_size_width;
+            uint32_t height = m_size_height;
+#endif
+
+            if (m_save_force_binary_format) {
               std::ofstream file_pointcloud(filename_point_cloud.c_str(), std::ios::out | std::ios::binary);
 
               if (file_pointcloud.is_open()) {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-                uint32_t width = pointCloud->width;
-                uint32_t height = pointCloud->height;
-                // true if pointcloud does not contain NaN or Inf, not handled currently
-                char is_dense = pointCloud->is_dense;
+                // true if ptr_pointCloud does not contain NaN or Inf, not handled currently
+                char is_dense = ptr_pointCloud->is_dense;
 
                 vpIoTools::writeBinaryValueLE(file_pointcloud, height);
                 vpIoTools::writeBinaryValueLE(file_pointcloud, width);
@@ -410,7 +523,7 @@ public:
 
                 for (uint32_t i = 0; i < height; i++) {
                   for (uint32_t j = 0; j < width; j++) {
-                    pcl::PointXYZ pt = (*pointCloud)(j, i);
+                    pcl::PointXYZ pt = (*ptr_pointCloud)(j, i);
 
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.x);
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.y);
@@ -418,10 +531,8 @@ public:
                   }
                 }
 #else
-                uint32_t width = m_size_width;
-                uint32_t height = m_size_height;
                 // to be consistent with PCL version
-                char is_dense = 1;
+                const char is_dense = 1;
 
                 vpIoTools::writeBinaryValueLE(file_pointcloud, height);
                 vpIoTools::writeBinaryValueLE(file_pointcloud, width);
@@ -429,9 +540,9 @@ public:
 
                 for (uint32_t i = 0; i < height; i++) {
                   for (uint32_t j = 0; j < width; j++) {
-                    float x = (float)pointCloud[i * width + j][0];
-                    float y = (float)pointCloud[i * width + j][1];
-                    float z = (float)pointCloud[i * width + j][2];
+                    float x = (float)(*ptr_pointCloud)[i * width + j][0];
+                    float y = (float)(*ptr_pointCloud)[i * width + j][1];
+                    float z = (float)(*ptr_pointCloud)[i * width + j][2];
 
                     vpIoTools::writeBinaryValueLE(file_pointcloud, x);
                     vpIoTools::writeBinaryValueLE(file_pointcloud, y);
@@ -441,6 +552,47 @@ public:
 #endif
               }
             }
+            else if (m_save_pcl_npz_format) {
+              // Write Npz headers
+              std::vector<char> vec_filename(filename_point_cloud.begin(), filename_point_cloud.end());
+              // Null-terminated character is handled at reading
+              // For null-terminated character handling, see:
+              // https://stackoverflow.com/a/8247804
+              // https://stackoverflow.com/a/45491652
+              visp::cnpy::npz_save(filename_point_cloud, "filename", &vec_filename[0], { vec_filename.size() }, "w");
+
+              std::vector<char> vec_current_time(current_time.begin(), current_time.end());
+              visp::cnpy::npz_save(filename_point_cloud, "timestamp", &vec_current_time, { vec_current_time.size() }, "a");
+
+              const uint32_t channels = 3;
+              visp::cnpy::npz_save(filename_point_cloud, "height", &height, { 1 }, "a");
+              visp::cnpy::npz_save(filename_point_cloud, "width", &width, { 1 }, "a");
+              visp::cnpy::npz_save(filename_point_cloud, "channel", &channels, { 1 }, "a");
+
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+              // can probably be optimized by assuming channel=1 and use data of type XYZ
+              // but this should probably not work with the Python script for display
+              for (uint32_t i = 0; i < height; i++) {
+                for (uint32_t j = 0; j < width; j++) {
+                  pcl::PointXYZ pt = (*ptr_pointCloud)(j, i);
+                  vec_pcl[channels * (i*width + j) + 0] = pt.x;
+                  vec_pcl[channels * (i*width + j) + 1] = pt.y;
+                  vec_pcl[channels * (i*width + j) + 2] = pt.z;
+                }
+              }
+#else
+              vec_pcl.resize(height * width * channels);
+              for (uint32_t i = 0; i < height; i++) {
+                for (uint32_t j = 0; j < width; j++) {
+                  vec_pcl[channels * (i*width + j) + 0] = (*ptr_pointCloud)[i*width + j][0];
+                  vec_pcl[channels * (i*width + j) + 1] = (*ptr_pointCloud)[i*width + j][1];
+                  vec_pcl[channels * (i*width + j) + 2] = (*ptr_pointCloud)[i*width + j][2];
+                }
+              }
+#endif
+              // Write data
+              visp::cnpy::npz_save(filename_point_cloud, "data", vec_pcl.data(), { height, width, channels }, "a");
+            }
             else {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
               pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
@@ -448,13 +600,13 @@ public:
             }
           }
 
-          if (m_save_infrared) {
+          if (m_save_infrared && ptr_infraredImg) {
             ss.str("");
-            ss << m_directory << "/infrared_image_%04d.jpg";
+            ss << m_directory << "/infrared_image_" << m_save_pattern << image_filename_ext;
             snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
 
             std::string filename_infrared = buffer;
-            vpImageIo::write(infraredImg, filename_infrared);
+            vpImageIo::write(*ptr_infraredImg, filename_infrared);
           }
 
           m_cpt++;
@@ -468,13 +620,16 @@ public:
 
 private:
   vpFrameQueue &m_queue;
+  std::string m_save_pattern;
   std::string m_directory;
   unsigned int m_cpt;
   bool m_save_color;
   bool m_save_depth;
   bool m_save_pointcloud;
   bool m_save_infrared;
-  bool m_save_pointcloud_binary_format;
+  bool m_save_pcl_npz_format;
+  bool m_save_force_binary_format;
+  bool m_save_jpeg;
 #ifndef VISP_HAVE_PCL
   int m_size_height;
   int m_size_width;
@@ -485,6 +640,7 @@ private:
 int main(int argc, const char *argv[])
 {
   bool save = false;
+  std::string save_pattern = "%04d";
   std::string output_directory = vpTime::getDateTime("%Y_%m_%d_%H.%M.%S");
   std::string output_directory_custom = "";
   bool use_aligned_stream = false;
@@ -494,11 +650,15 @@ int main(int argc, const char *argv[])
   bool save_infrared = false;
   bool click_to_save = false;
   int stream_fps = 30;
-  bool save_pointcloud_binary_format = false;
+  bool save_pcl_npz_format = false;
+  bool save_force_binary_format = false;
+  bool save_jpeg = false;
+  bool depth_hist_visu = false;
 
   // Read the command line options
-  if (!getOptions(argc, argv, save, output_directory_custom, use_aligned_stream, save_color, save_depth,
-                  save_pointcloud, save_infrared, click_to_save, stream_fps, save_pointcloud_binary_format)) {
+  if (!getOptions(argc, argv, save, save_pattern, output_directory_custom, use_aligned_stream, save_color, save_depth,
+                  save_pointcloud, save_infrared, click_to_save, stream_fps, save_pcl_npz_format,
+                  save_force_binary_format, save_jpeg, depth_hist_visu)) {
     return EXIT_FAILURE;
   }
 
@@ -506,18 +666,22 @@ int main(int argc, const char *argv[])
     output_directory = output_directory_custom + "/" + output_directory;
 
 #ifndef VISP_HAVE_PCL
-  save_pointcloud_binary_format = true;
+  save_pcl_npz_format = !save_force_binary_format ? true : false;
 #endif
 
   std::cout << "save: " << save << std::endl;
+  std::cout << "save_pattern: " << save_pattern << std::endl;
   std::cout << "output_directory: " << output_directory << std::endl;
   std::cout << "use_aligned_stream: " << use_aligned_stream << std::endl;
   std::cout << "save_color: " << save_color << std::endl;
   std::cout << "save_depth: " << save_depth << std::endl;
   std::cout << "save_pointcloud: " << save_pointcloud << std::endl;
   std::cout << "save_infrared: " << save_infrared << std::endl;
+  std::cout << "save_jpeg: " << save_jpeg << std::endl;
   std::cout << "stream_fps: " << stream_fps << std::endl;
-  std::cout << "save_pointcloud_binary_format: " << save_pointcloud_binary_format << std::endl;
+  std::cout << "depth_hist_visu: " << depth_hist_visu << std::endl;
+  std::cout << "save_pcl_npz_format: " << save_pcl_npz_format << std::endl;
+  std::cout << "save_force_binary_format: " << save_force_binary_format << std::endl;
   std::cout << "click_to_save: " << click_to_save << std::endl;
 
   int width = 640, height = 480;
@@ -558,12 +722,19 @@ int main(int argc, const char *argv[])
   d3.init(I_infrared, I_color.getWidth() + 80, I_color.getHeight() + 70, "RealSense infrared stream");
 
   while (true) {
+    double start = vpTime::measureTimeMs();
     realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
     vpDisplay::display(I_color);
     vpDisplay::display(I_depth);
+
+    double delta_time = vpTime::measureTimeMs() - start;
+    std::ostringstream oss_time;
+    oss_time << delta_time << " ms ; fps=" << 1000/delta_time;
+    vpDisplay::displayText(I_color, 40, 20, oss_time.str(), vpColor::red);
     vpDisplay::displayText(I_color, 20, 20, "Click when ready.", vpColor::red);
+
     vpDisplay::flush(I_color);
     vpDisplay::flush(I_depth);
 
@@ -630,8 +801,8 @@ int main(int argc, const char *argv[])
   }
 
   vpFrameQueue save_queue;
-  vpStorageWorker storage(std::ref(save_queue), std::cref(output_directory), save_color, save_depth, save_pointcloud,
-                        save_infrared, save_pointcloud_binary_format, width, height);
+  vpStorageWorker storage(std::ref(save_queue), save_pattern, std::cref(output_directory), save_color, save_depth,
+    save_pointcloud, save_infrared, save_pcl_npz_format, save_force_binary_format, save_jpeg, width, height);
   std::thread storage_thread(&vpStorageWorker::run, &storage);
 
 #ifdef USE_REALSENSE2
@@ -645,11 +816,18 @@ int main(int argc, const char *argv[])
 
   int nb_saves = 0;
   bool quit = false;
+  // If PCL is available, always use PCL datatype even if we will save in NPZ or BIN file format
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud(new pcl::PointCloud<pcl::PointXYZ>);
 #else
   std::vector<vpColVector> pointCloud;
 #endif
+
+  std::unique_ptr<vpImage<vpRGBa>> ptr_colorImg;
+  std::unique_ptr<vpImage<uint16_t>> ptr_depthImg;
+  std::unique_ptr<std::vector<vpColVector>> ptr_pointCloud;
+  std::unique_ptr<vpImage<unsigned char>> ptr_infraredImg;
+
   std::vector<double> vec_delta_time;
   while (!quit) {
     double start = vpTime::measureTimeMs();
@@ -684,7 +862,18 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-    vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+    if (depth_hist_visu) {
+      vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+    }
+    else {
+      // Seems like sometimes using createDepthHistogram takes lots of time?
+      // so we simply perform bit shift from uint16_t to uint8_t
+      for (unsigned int i = 0; i < I_depth_raw.getRows(); i++) {
+        for (unsigned int j = 0; j < I_depth_raw.getCols(); j++) {
+          I_depth[i][j] = I_depth_raw[i][j] >> 8;
+        }
+      }
+    }
 
     vpDisplay::display(I_color);
     vpDisplay::display(I_depth);
@@ -700,11 +889,27 @@ int main(int argc, const char *argv[])
     }
 
     if (save && !click_to_save) {
+      if (save_color) {
+        ptr_colorImg = std::make_unique<vpImage<vpRGBa>>(I_color);
+      }
+      if (save_depth) {
+        ptr_depthImg = std::make_unique<vpImage<uint16_t>>(I_depth_raw);
+      }
+      if (save_infrared) {
+        ptr_infraredImg = std::make_unique<vpImage<unsigned char>>(I_infrared);
+      }
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-      pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy = pointCloud->makeShared();
-      save_queue.push(I_color, I_depth_raw, pointCloud_copy, I_infrared);
+      pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy;
+      if (save_pointcloud) {
+        pointCloud_copy = pointCloud->makeShared();
+      }
+      save_queue.push(ptr_colorImg, ptr_depthImg, pointCloud_copy, ptr_infraredImg);
 #else
-      save_queue.push(I_color, I_depth_raw, pointCloud, I_infrared);
+      if (save_pointcloud) {
+        ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
+      }
+      save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
     }
 
@@ -721,19 +926,37 @@ int main(int argc, const char *argv[])
     vpMouseButton::vpMouseButtonType button;
     if (vpDisplay::getClick(I_color, button, false)) {
       if (!click_to_save) {
-        save_queue.cancel();
+        save = false;
         quit = true;
+        save_queue.cancel();
       }
       else {
         switch (button) {
         case vpMouseButton::button1:
           if (save) {
             nb_saves++;
+
+            if (save_color) {
+              ptr_colorImg = std::make_unique<vpImage<vpRGBa>>(I_color);
+            }
+            if (save_depth) {
+              ptr_depthImg = std::make_unique<vpImage<uint16_t>>(I_depth_raw);
+            }
+            if (save_infrared) {
+              ptr_infraredImg = std::make_unique<vpImage<unsigned char>>(I_infrared);
+            }
+
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-            pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy = pointCloud->makeShared();
-            save_queue.push(I_color, I_depth_raw, pointCloud_copy, I_infrared);
+            pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy;
+            if (save_pointcloud) {
+              pointCloud_copy = pointCloud->makeShared();
+            }
+            save_queue.push(ptr_colorImg, ptr_depthImg, pointCloud_copy, ptr_infraredImg);
 #else
-            save_queue.push(I_color, I_depth_raw, pointCloud, I_infrared);
+            if (save_pointcloud) {
+              ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
+            }
+            save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
           }
           break;
@@ -741,8 +964,9 @@ int main(int argc, const char *argv[])
         case vpMouseButton::button2:
         case vpMouseButton::button3:
         default:
-          save_queue.cancel();
+          save = false;
           quit = true;
+          save_queue.cancel();
           break;
         }
       }
