@@ -35,10 +35,11 @@
 #include <visp3/core/vpConfig.h>
 #include <iostream>
 
-// Check if cxx11 or higher
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) \
+// Check if cxx14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))) \
     && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
+#include <memory>
 #include <complex>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
@@ -209,7 +210,7 @@ int main()
 #else
 int main()
 {
-  std::cerr << "This tutorial requires C++ version >= C++11." << std::endl;
+  std::cerr << "This tutorial requires C++ version >= C++14." << std::endl;
   std::cerr << "This tutorial requires display (X11 or GDI) capability." << std::endl;
   return EXIT_FAILURE;
 }

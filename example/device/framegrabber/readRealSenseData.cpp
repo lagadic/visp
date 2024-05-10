@@ -312,7 +312,6 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       point_cloud->is_dense = (is_dense != 0);
       point_cloud->resize((size_t)width * height);
 
-      float x = 0.0f, y = 0.0f, z = 0.0f;
       for (uint32_t i = 0; i < height; i++) {
         for (uint32_t j = 0; j < width; j++) {
           point_cloud->points[(size_t)(i * width + j)].x = pcl_data_ptr[(size_t)(i * width + j)*3 + 0];
@@ -335,7 +334,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
 
   return true;
 }
-      } // Namespace
+} // Namespace
 
 int main(int argc, const char *argv[])
 {
@@ -379,7 +378,7 @@ int main(int argc, const char *argv[])
     std::string output_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
     vpIoTools::makeDirectory(output_directory);
     writer.setFileName(output_directory + "/" + pattern + ".png");
-}
+  }
 
   int cpt_frame = 0;
   bool quit = false;

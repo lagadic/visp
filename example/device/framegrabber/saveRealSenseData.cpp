@@ -595,7 +595,7 @@ public:
             }
             else {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
-              pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
+              pcl::io::savePCDFileBinary(filename_point_cloud, *ptr_pointCloud);
 #endif
             }
           }

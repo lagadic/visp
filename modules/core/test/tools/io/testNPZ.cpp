@@ -165,6 +165,44 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     }
   }
 
+  SECTION("Read/Save std::vector<vpHomogeneousMatrix>")
+  {
+    std::vector<vpHomogeneousMatrix> vec_homogeneousMatrix_save;
+    for (size_t i = 0; i < 7; i++) {
+      vpColVector u(3);
+      u[0] = i*4 + 0;
+      u[1] = i*4 + 1;
+      u[2] = i*4 + 2;
+      u.normalize();
+      double theta = vpMath::rad(5*i + 2);
+      std::vector<double> vec { theta*u[0], theta*u[1], theta*u[2] };
+      vpThetaUVector tu(vec[0], vec[1], vec[2]);
+      // std::cout << "theta=" << tu.getTheta() << " ; u=" << tu.getU().transpose() << std::endl;
+
+      vpTranslationVector trans(i*4 + 10, i*4 + 20, i*4 + 30);
+      vpHomogeneousMatrix cMo(trans, tu);
+      // std::cout << "cMo:\n" << cMo << std::endl;
+      vec_homogeneousMatrix_save.push_back(cMo);
+    }
+
+    const std::string identifier = "std::vector<vpHomogeneousMatrix>";
+    visp::cnpy::npz_save(npz_filename, identifier, &vec_homogeneousMatrix_save[0],
+      { vec_homogeneousMatrix_save.size() }, "a"); // append
+
+    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+    std::vector<vpHomogeneousMatrix> vec_homogeneousMatrix_read = arr_vec_data.as_vec<vpHomogeneousMatrix>();
+
+    REQUIRE(vec_homogeneousMatrix_save.size() == vec_homogeneousMatrix_read.size());
+    for (size_t i = 0; i < vec_homogeneousMatrix_save.size(); i++) {
+      // std::cout << "cMo save:\n" << vec_homogeneousMatrix_save[i]
+      //   << "\ncMo read:\n" << vec_homogeneousMatrix_read[i] << std::endl;
+      CHECK(vec_homogeneousMatrix_save[i] == vec_homogeneousMatrix_read[i]);
+    }
+  }
+
   REQUIRE(vpIoTools::remove(directory_filename));
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
 }
