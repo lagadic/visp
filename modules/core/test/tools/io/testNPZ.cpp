@@ -44,6 +44,7 @@
 #include <catch.hpp>
 
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpImage.h>
 
 namespace
 {
@@ -78,6 +79,8 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     visp::cnpy::npz_save(npz_filename, identifier, &vec_save_string[0], { vec_save_string.size() }, "w");
 
     visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+
     visp::cnpy::NpyArray arr_string_data = npz_data[identifier];
     std::vector<char> vec_arr_string_data = arr_string_data.as_vec<char>();
     // For null-terminated character handling, see:
@@ -99,12 +102,66 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     const std::string identifier = "Array";
     visp::cnpy::npz_save(npz_filename, identifier, &save_vec[0], { height, width, channels }, "a"); // append
     visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+
     visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
     std::vector<int> read_vec = arr_vec_data.as_vec<int>();
 
     REQUIRE(save_vec.size() == read_vec.size());
     for (size_t i = 0; i < read_vec.size(); i++) {
       CHECK(save_vec[i] == read_vec[i]);
+    }
+  }
+
+  SECTION("Read/Save vpImage<vpRGBa>")
+  {
+    vpImage<vpRGBa> I_save(11, 17);
+    for (unsigned int i = 0; i < I_save.getRows(); i++) {
+      for (unsigned int j = 0; j < I_save.getCols(); j++) {
+        I_save[i][j].R = 4 * (i*I_save.getCols() + j) + 0;
+        I_save[i][j].G = 4 * (i*I_save.getCols() + j) + 1;
+        I_save[i][j].B = 4 * (i*I_save.getCols() + j) + 2;
+        I_save[i][j].A = 4 * (i*I_save.getCols() + j) + 3;
+      }
+    }
+
+    const std::string identifier = "vpImage<vpRGBa>";
+    visp::cnpy::npz_save(npz_filename, identifier, &I_save.bitmap[0], { I_save.getRows(), I_save.getCols() }, "a"); // append
+
+    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+    const bool copy_data = false;
+    vpImage<vpRGBa> I_read(arr_vec_data.data<vpRGBa>(), arr_vec_data.shape[0], arr_vec_data.shape[1], copy_data);
+
+    CHECK(I_save.getSize() == I_read.getSize());
+    CHECK(I_save == I_read);
+  }
+
+  SECTION("Read/Save std::vector<vpColVector>")
+  {
+    std::vector<vpColVector> vec_colVector_save;
+    for (size_t i = 0; i < 7; i++) {
+      vpColVector vector(3);
+      vector[0] = i*3 + 0;
+      vector[1] = i*3 + 1;
+      vector[2] = i*3 + 2;
+      vec_colVector_save.push_back(vector);
+    }
+
+    const std::string identifier = "std::vector<vpColVector>";
+    visp::cnpy::npz_save(npz_filename, identifier, &vec_colVector_save[0], { vec_colVector_save.size() }, "a"); // append
+
+    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+    std::vector<vpColVector> vec_colVector_read = arr_vec_data.as_vec<vpColVector>();
+
+    REQUIRE(vec_colVector_save.size() == vec_colVector_read.size());
+    for (size_t i = 0; i < vec_colVector_save.size(); i++) {
+      CHECK(vec_colVector_save[i] == vec_colVector_read[i]);
     }
   }
 
@@ -126,6 +183,7 @@ TEMPLATE_LIST_TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[BasicTypes][list
   visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "w");
 
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+  REQUIRE(npz_data.find(identifier) != npz_data.end());
   visp::cnpy::NpyArray arr_data = npz_data[identifier];
   TestType read_data = *arr_data.data<TestType>();
   CHECK(save_data == read_data);
@@ -134,6 +192,7 @@ TEMPLATE_LIST_TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[BasicTypes][list
   visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "a"); // append
 
   npz_data = visp::cnpy::npz_load(npz_filename);
+  REQUIRE(npz_data.find(identifier) != npz_data.end());
   arr_data = npz_data[identifier];
   read_data = *arr_data.data<TestType>();
   CHECK(save_data == read_data);
