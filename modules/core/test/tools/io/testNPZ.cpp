@@ -43,6 +43,7 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#include <type_traits>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImage.h>
 
@@ -92,113 +93,125 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
   SECTION("Read/Save multi-dimensional array")
   {
+    const std::string identifier = "Array";
     size_t height = 5, width = 7, channels = 3;
-    std::vector<int> save_vec;
-    save_vec.reserve(height*width*channels);
-    for (size_t i = 0; i < height*width*channels; i++) {
-      save_vec.push_back(i);
+    std::vector<int> save_vec_copy;
+    {
+      std::vector<int> save_vec;
+      save_vec.reserve(height*width*channels);
+      for (size_t i = 0; i < height*width*channels; i++) {
+        save_vec.push_back(i);
+      }
+
+      visp::cnpy::npz_save(npz_filename, identifier, &save_vec[0], { height, width, channels }, "a"); // append
+      save_vec_copy = save_vec;
     }
 
-    const std::string identifier = "Array";
-    visp::cnpy::npz_save(npz_filename, identifier, &save_vec[0], { height, width, channels }, "a"); // append
-    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
-    REQUIRE(npz_data.find(identifier) != npz_data.end());
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
 
-    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
-    std::vector<int> read_vec = arr_vec_data.as_vec<int>();
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      std::vector<int> read_vec = arr_vec_data.as_vec<int>();
 
-    REQUIRE(save_vec.size() == read_vec.size());
-    for (size_t i = 0; i < read_vec.size(); i++) {
-      CHECK(save_vec[i] == read_vec[i]);
+      REQUIRE(save_vec_copy.size() == read_vec.size());
+      for (size_t i = 0; i < read_vec.size(); i++) {
+        CHECK(save_vec_copy[i] == read_vec[i]);
+      }
     }
   }
 
   SECTION("Read/Save vpImage<vpRGBa>")
   {
-    vpImage<vpRGBa> I_save(11, 17);
-    for (unsigned int i = 0; i < I_save.getRows(); i++) {
-      for (unsigned int j = 0; j < I_save.getCols(); j++) {
-        I_save[i][j].R = 4 * (i*I_save.getCols() + j) + 0;
-        I_save[i][j].G = 4 * (i*I_save.getCols() + j) + 1;
-        I_save[i][j].B = 4 * (i*I_save.getCols() + j) + 2;
-        I_save[i][j].A = 4 * (i*I_save.getCols() + j) + 3;
-      }
-    }
+    // REQUIRE(std::is_trivially_copyable_v<vpRGBa> == true); // false
+    // REQUIRE(std::is_trivial_v<vpRGBa> == true); // false
 
     const std::string identifier = "vpImage<vpRGBa>";
-    visp::cnpy::npz_save(npz_filename, identifier, &I_save.bitmap[0], { I_save.getRows(), I_save.getCols() }, "a"); // append
+    vpImage<vpRGBa> I_save_copy;
+    {
+      vpImage<vpRGBa> I_save(11, 17);
+      for (unsigned int i = 0; i < I_save.getRows(); i++) {
+        for (unsigned int j = 0; j < I_save.getCols(); j++) {
+          I_save[i][j].R = 4 * (i*I_save.getCols() + j) + 0;
+          I_save[i][j].G = 4 * (i*I_save.getCols() + j) + 1;
+          I_save[i][j].B = 4 * (i*I_save.getCols() + j) + 2;
+          I_save[i][j].A = 4 * (i*I_save.getCols() + j) + 3;
+        }
+      }
 
-    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
-    REQUIRE(npz_data.find(identifier) != npz_data.end());
-
-    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
-    const bool copy_data = false;
-    vpImage<vpRGBa> I_read(arr_vec_data.data<vpRGBa>(), arr_vec_data.shape[0], arr_vec_data.shape[1], copy_data);
-
-    CHECK(I_save.getSize() == I_read.getSize());
-    CHECK(I_save == I_read);
-  }
-
-  SECTION("Read/Save std::vector<vpColVector>")
-  {
-    std::vector<vpColVector> vec_colVector_save;
-    for (size_t i = 0; i < 7; i++) {
-      vpColVector vector(3);
-      vector[0] = i*3 + 0;
-      vector[1] = i*3 + 1;
-      vector[2] = i*3 + 2;
-      vec_colVector_save.push_back(vector);
+      visp::cnpy::npz_save(npz_filename, identifier, &I_save.bitmap[0], { I_save.getRows(), I_save.getCols() }, "a"); // append
+      I_save_copy = I_save;
     }
 
-    const std::string identifier = "std::vector<vpColVector>";
-    visp::cnpy::npz_save(npz_filename, identifier, &vec_colVector_save[0], { vec_colVector_save.size() }, "a"); // append
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
 
-    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
-    REQUIRE(npz_data.find(identifier) != npz_data.end());
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      const bool copy_data = false;
+      vpImage<vpRGBa> I_read(arr_vec_data.data<vpRGBa>(), arr_vec_data.shape[0], arr_vec_data.shape[1], copy_data);
 
-    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
-    std::vector<vpColVector> vec_colVector_read = arr_vec_data.as_vec<vpColVector>();
-
-    REQUIRE(vec_colVector_save.size() == vec_colVector_read.size());
-    for (size_t i = 0; i < vec_colVector_save.size(); i++) {
-      CHECK(vec_colVector_save[i] == vec_colVector_read[i]);
+      CHECK(I_save_copy.getSize() == I_read.getSize());
+      CHECK(I_save_copy == I_read);
     }
   }
 
-  SECTION("Read/Save std::vector<vpHomogeneousMatrix>")
+  SECTION("Read/Save std::complex<double>")
   {
-    std::vector<vpHomogeneousMatrix> vec_homogeneousMatrix_save;
-    for (size_t i = 0; i < 7; i++) {
-      vpColVector u(3);
-      u[0] = i*4 + 0;
-      u[1] = i*4 + 1;
-      u[2] = i*4 + 2;
-      u.normalize();
-      double theta = vpMath::rad(5*i + 2);
-      vpThetaUVector tu(std::vector<double>{ theta *u[0], theta *u[1], theta *u[2] });
-      // std::cout << "theta=" << tu.getTheta() << " ; u=" << tu.getU().transpose() << std::endl;
+    // https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable
+    REQUIRE(std::is_trivially_copyable_v<std::complex<double>> == true);
+    // https://en.cppreference.com/w/cpp/types/is_trivial
+    // REQUIRE(std::is_trivial_v<std::complex<double>> == true); // false
 
-      vpTranslationVector trans(i*4 + 10, i*4 + 20, i*4 + 30);
-      vpHomogeneousMatrix cMo(trans, tu);
-      // std::cout << "cMo:\n" << cMo << std::endl;
-      vec_homogeneousMatrix_save.push_back(cMo);
+    const std::string identifier = "std::complex<double>";
+    std::complex<double> complex_data_copy;
+    {
+      std::complex<double> complex_data(99, 3.14);
+      visp::cnpy::npz_save(npz_filename, identifier, &complex_data, { 1 }, "a"); // append
+      complex_data_copy = complex_data;
     }
 
-    const std::string identifier = "std::vector<vpHomogeneousMatrix>";
-    visp::cnpy::npz_save(npz_filename, identifier, &vec_homogeneousMatrix_save[0],
-      { vec_homogeneousMatrix_save.size() }, "a"); // append
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
 
-    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
-    REQUIRE(npz_data.find(identifier) != npz_data.end());
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      std::complex<double> complex_data_read = *arr_vec_data.data<std::complex<double>>();
 
-    visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
-    std::vector<vpHomogeneousMatrix> vec_homogeneousMatrix_read = arr_vec_data.as_vec<vpHomogeneousMatrix>();
+      CHECK(complex_data_copy.real() == complex_data_read.real());
+      CHECK(complex_data_copy.imag() == complex_data_read.imag());
+    }
+  }
 
-    REQUIRE(vec_homogeneousMatrix_save.size() == vec_homogeneousMatrix_read.size());
-    for (size_t i = 0; i < vec_homogeneousMatrix_save.size(); i++) {
-      // std::cout << "cMo save:\n" << vec_homogeneousMatrix_save[i]
-      //   << "\ncMo read:\n" << vec_homogeneousMatrix_read[i] << std::endl;
-      CHECK(vec_homogeneousMatrix_save[i] == vec_homogeneousMatrix_read[i]);
+  SECTION("Read/Save std::vector<std::complex<double>>")
+  {
+    const std::string identifier = "std::vector<std::complex<double>>";
+    std::vector<std::complex<double>> vec_complex_data_copy;
+    {
+      std::vector<std::complex<double>> vec_complex_data;
+      std::complex<double> complex_data(99, 3.14);
+      vec_complex_data.push_back(complex_data);
+
+      complex_data.real(-77.12);
+      complex_data.imag(-100.95);
+      vec_complex_data.push_back(complex_data);
+
+      visp::cnpy::npz_save(npz_filename, identifier, &vec_complex_data[0], { vec_complex_data.size() }, "a"); // append
+      vec_complex_data_copy = vec_complex_data;
+    }
+
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      std::vector<std::complex<double>> vec_complex_data_read = arr_vec_data.as_vec<std::complex<double>>();
+
+      REQUIRE(vec_complex_data_copy.size() == vec_complex_data_read.size());
+      for (size_t i = 0; i < vec_complex_data_copy.size(); i++) {
+        CHECK(vec_complex_data_copy[i].real() == vec_complex_data_read[i].real());
+        CHECK(vec_complex_data_copy[i].imag() == vec_complex_data_read[i].imag());
+      }
     }
   }
 
@@ -216,23 +229,32 @@ TEMPLATE_LIST_TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[BasicTypes][list
   std::string npz_filename = directory_filename + "/test_npz_read_write.npz";
 
   const std::string identifier = "data";
-  TestType save_data = std::numeric_limits<TestType>::min();
-  visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "w");
+  TestType save_data_copy;
+  {
+    TestType save_data = std::numeric_limits<TestType>::min();
+    visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "w");
+    save_data_copy = save_data;
+  }
+  {
+    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+    visp::cnpy::NpyArray arr_data = npz_data[identifier];
+    TestType read_data = *arr_data.data<TestType>();
+    CHECK(save_data_copy == read_data);
+  }
 
-  visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
-  REQUIRE(npz_data.find(identifier) != npz_data.end());
-  visp::cnpy::NpyArray arr_data = npz_data[identifier];
-  TestType read_data = *arr_data.data<TestType>();
-  CHECK(save_data == read_data);
-
-  save_data = std::numeric_limits<TestType>::max();
-  visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "a"); // append
-
-  npz_data = visp::cnpy::npz_load(npz_filename);
-  REQUIRE(npz_data.find(identifier) != npz_data.end());
-  arr_data = npz_data[identifier];
-  read_data = *arr_data.data<TestType>();
-  CHECK(save_data == read_data);
+  {
+    TestType save_data = std::numeric_limits<TestType>::max();
+    visp::cnpy::npz_save(npz_filename, identifier, &save_data, { 1 }, "a"); // append
+    save_data_copy = save_data;
+  }
+  {
+    visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+    REQUIRE(npz_data.find(identifier) != npz_data.end());
+    visp::cnpy::NpyArray arr_data = npz_data[identifier];
+    TestType read_data = *arr_data.data<TestType>();
+    CHECK(save_data_copy == read_data);
+  }
 
   REQUIRE(vpIoTools::remove(directory_filename));
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
