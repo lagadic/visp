@@ -123,8 +123,9 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
   SECTION("Read/Save vpImage<vpRGBa>")
   {
-    // REQUIRE(std::is_trivially_copyable_v<vpRGBa> == true); // false
-    // REQUIRE(std::is_trivial_v<vpRGBa> == true); // false
+    // CHECK(std::is_trivially_copyable<vpRGBa>::value == true); // false
+    // CHECK(std::is_trivial<vpRGBa>::value == true); // false
+    CHECK(sizeof(vpRGBa) == (4 * sizeof(unsigned char)));
 
     const std::string identifier = "vpImage<vpRGBa>";
     vpImage<vpRGBa> I_save_copy;
@@ -158,10 +159,13 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
   SECTION("Read/Save std::complex<double>")
   {
+    // Handling of std::complex<>?
+    //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.cpp#L40-L42
+    //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.h#L129
     // https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable
-    REQUIRE(std::is_trivially_copyable_v<std::complex<double>> == true);
+    CHECK(std::is_trivially_copyable<std::complex<double>>::value == true);
     // https://en.cppreference.com/w/cpp/types/is_trivial
-    // REQUIRE(std::is_trivial_v<std::complex<double>> == true); // false
+    // CHECK(std::is_trivial<std::complex<double>>::value == true); // false
 
     const std::string identifier = "std::complex<double>";
     std::complex<double> complex_data_copy;
@@ -211,6 +215,66 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       for (size_t i = 0; i < vec_complex_data_copy.size(); i++) {
         CHECK(vec_complex_data_copy[i].real() == vec_complex_data_read[i].real());
         CHECK(vec_complex_data_copy[i].imag() == vec_complex_data_read[i].imag());
+      }
+    }
+  }
+
+  SECTION("Read/Save vpHomogeneousMatrix")
+  {
+    const std::string identifier = "vpHomogeneousMatrix";
+    vpHomogeneousMatrix cMo_save_copy;
+    {
+      vpHomogeneousMatrix cMo_save(vpTranslationVector(10, 20, 30), vpThetaUVector(1, 2, 3));
+      // std::cout << "cMo_save:\n" << cMo_save << std::endl;
+
+      visp::cnpy::npz_save(npz_filename, identifier, &cMo_save.data[0], { cMo_save.getRows(), cMo_save.getCols() }, "a"); // append
+      cMo_save_copy = cMo_save;
+    }
+
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      vpHomogeneousMatrix cMo_read(arr_vec_data.as_vec<double>());
+      // std::cout << "cMo_read:\n" << cMo_read << std::endl;
+
+      CHECK(cMo_save_copy == cMo_read);
+    }
+  }
+
+  SECTION("Read/Save std::vector<vpHomogeneousMatrix>")
+  {
+    const std::string identifier = "std::vector<vpHomogeneousMatrix>";
+    std::vector<vpHomogeneousMatrix> vec_cMo_save_copy;
+    {
+      std::vector<double> vec_cMo_save;
+      for (size_t i = 0; i < 5; i++) {
+        vpHomogeneousMatrix cMo_save(vpTranslationVector(1+10*i, 2+20*i, 3+30*i), vpThetaUVector(0.1+i, 0.2+i, 0.3+i));
+        vec_cMo_save_copy.push_back(cMo_save);
+        vec_cMo_save.insert(vec_cMo_save.end(), cMo_save.data, cMo_save.data+cMo_save.size());
+        // std::cout << "cMo_save:\n" << cMo_save << std::endl;
+      }
+
+      visp::cnpy::npz_save(npz_filename, identifier, &vec_cMo_save[0], { vec_cMo_save.size()/16, 16 }, "a"); // append
+    }
+
+    {
+      visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+      REQUIRE(npz_data.find(identifier) != npz_data.end());
+
+      visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
+      std::vector<double> vec_cMo_read = arr_vec_data.as_vec<double>();
+      REQUIRE(vec_cMo_save_copy.size() == arr_vec_data.shape[0]);
+
+      for (size_t i = 0; i < arr_vec_data.shape[0]; i++) {
+        std::vector<double>::const_iterator first = vec_cMo_read.begin() + i*arr_vec_data.shape[1];
+        std::vector<double>::const_iterator last = first + arr_vec_data.shape[1];
+        std::vector<double> subvec_cMo_read(first, last);
+
+        vpHomogeneousMatrix cMo_read(subvec_cMo_read);
+        // std::cout << "cMo_read:\n" << cMo_read << std::endl;
+        CHECK(vec_cMo_save_copy[i] == cMo_read);
       }
     }
   }
