@@ -101,7 +101,7 @@ public:
   void setRectangle(const vpRectOriented &rectangle);
 
 private:
-  vpXmlParserRectOriented(const vpXmlParserRectOriented &);            // noncopyable
+  vpXmlParserRectOriented(const vpXmlParserRectOriented &ro);            // noncopyable
   vpXmlParserRectOriented &operator=(const vpXmlParserRectOriented &); //
 
   // PIMPL idiom

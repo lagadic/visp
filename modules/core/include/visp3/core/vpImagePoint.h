@@ -161,10 +161,11 @@ public:
    */
   inline bool inSegment(const vpImagePoint &start, const vpImagePoint &end) const
   {
-    return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
-            (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
-      ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
-       (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
+    bool cond11 = ((end.get_j() >= start.get_j()) && (end.get_j() >= this->j) && (this->j >= start.get_j()));
+    bool cond12 = ((end.get_j() <= start.get_j()) && (end.get_j() <= this->j) && (this->j <= start.get_j()));
+    bool cond21 = ((end.get_i() >= start.get_i()) && (end.get_i() >= this->i) && (this->i >= start.get_i()));
+    bool cond22 = ((end.get_i() <= start.get_i()) && (end.get_i() <= this->i) && (this->i <= start.get_i()));
+    return (cond11 || cond12) && (cond21 || cond22);
   }
 
   /*!
@@ -216,15 +217,15 @@ public:
   {
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
-      double j_ = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
+      double j_ = (end.get_j() > this->j ? (this->j + 1) : (this->j - 1));
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-      return { end.get_i() - line_slope * (end.get_j() - j_), j_ };
+      return { end.get_i() - (line_slope * (end.get_j() - j_)), j_ };
 #else
       return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j_), j_);
 #endif
     }
     else {
-      double i_ = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
+      double i_ = (end.get_i() > this->i ? (this->i + 1) : (this->i - 1));
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
       return { i_, end.get_j() - ((end.get_i() - i_) / line_slope) };
 #else

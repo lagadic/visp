@@ -53,6 +53,7 @@
 */
 template <class type> class vpListElement
 {
+  /*
   // private:
   //  vpListElement(const vpListElement &)
   //    : prev(nullptr), next(nullptr), val()
@@ -64,7 +65,7 @@ template <class type> class vpListElement
   //    throw vpException(vpException::functionNotImplementedError,"Not
   //    implemented!"); return *this;
   //  }
-
+  */
 public:
   vpListElement() : prev(nullptr), next(nullptr), val() { };
   vpListElement<type> *prev; ///! pointer to the previous element in the list
@@ -226,12 +227,12 @@ template <class type> vpList<type>::~vpList()
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElement(void) { return (nb); }
+template <class type> unsigned int vpList<type>::nbElement(void) { return nb; }
 
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElements(void) { return (nb); }
+template <class type> unsigned int vpList<type>::nbElements(void) { return nb; }
 
 /*!
   \brief position the current element on the next one
@@ -395,8 +396,9 @@ template <class type> void vpList<type>::addRight(const type &v)
     cur = first;
   }
   else {
-    if (outside())
+    if (outside()) {
       std::cout << "vpList: outside with addRight " << std::endl;
+    }
   }
   cur->next->prev = x;
   x->next = cur->next;
@@ -426,15 +428,16 @@ template <class type> void vpList<type>::addLeft(const type &v)
     cur = last;
   }
   else {
-    if (outside())
+    if (outside()) {
       std::cout << "vpList: outside with addLeft " << std::endl;
+    }
   }
   x->next = cur;
   x->prev = cur->prev;
   cur->prev->next = x;
   cur->prev = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -456,15 +459,16 @@ template <class type> void vpList<type>::addRight(type &v)
     cur = first;
   }
   else {
-    if (outside())
+    if (outside()) {
       std::cout << "vpList: outside with addRight " << std::endl;
+    }
   }
   cur->next->prev = x;
   x->next = cur->next;
   x->prev = cur;
   cur->next = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -487,15 +491,16 @@ template <class type> void vpList<type>::addLeft(type &v)
     cur = last;
   }
   else {
-    if (outside())
+    if (outside()) {
       std::cout << "vpList: outside with addLeft " << std::endl;
+    }
   }
   x->next = cur;
   x->prev = cur->prev;
   cur->prev->next = x;
   cur->prev = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -610,7 +615,7 @@ template <class type> void vpList<type>::suppress(void)
     delete x;
   }
 
-  nb--;
+  --nb;
 }
 
 /*!
@@ -695,7 +700,7 @@ template <class type> void vpList<type>::display()
   while (!outside()) {
     std::cout << k << " ---> " << value() << std::endl;
     next();
-    k++;
+    ++k;
   }
   std::cout << std::endl << std::endl;
 }

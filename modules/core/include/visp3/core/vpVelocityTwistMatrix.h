@@ -175,8 +175,8 @@ public:
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
-  vpVelocityTwistMatrix(const vpRotationMatrix &R);
-  vpVelocityTwistMatrix(const vpThetaUVector &thetau);
+  explicit vpVelocityTwistMatrix(const vpRotationMatrix &R);
+  explicit vpVelocityTwistMatrix(const vpThetaUVector &thetau);
 
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);

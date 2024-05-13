@@ -67,56 +67,6 @@ public:
    */
   class vpCircleHoughTransformParameters
   {
-  private:
-    // // Filtering + gradient operators to use
-    vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Permits to choose the filtering +
-                                                                                    gradient operators to use.*/
-
-    // // Gaussian smoothing attributes
-    int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image.
-                                   Must be an odd number.*/
-    float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
-
-    // // Gradient computation attributes
-    int m_gradientFilterKernelSize; /*!< Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.*/
-
-    // // Edge detection attributes
-    float m_lowerCannyThresh; /*!< The lower threshold for the Canny operator. Values lower than this value are rejected.
-                               A negative value makes the algorithm compute the lower threshold automatically.*/
-    float m_upperCannyThresh; /*!< The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
-                               A negative value makes the algorithm compute the upper and lower thresholds automatically.*/
-    int m_edgeMapFilteringNbIter; /*!< Number of iterations of 8-neighbor connectivity filtering to apply to the edge map*/
-    vpImageFilter::vpCannyBackendType m_cannyBackendType; /*!< Permits to choose the backend used to compute the edge map.*/
-    float m_lowerCannyThreshRatio; /*!< The ratio of the upper threshold the lower threshold must be equal to.
-                                        It is used only if the user asks to compute the Canny thresholds.*/
-    float m_upperCannyThreshRatio; /*!< The ratio of pixels whose absolute gradient Gabs is lower or equal to define
-                                        the upper threshold. It is used only if the user asks to compute the Canny thresholds.*/
-
-    // // Center candidates computation attributes
-    std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
-    std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
-    float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
-    float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
-    int m_dilatationKernelSize; /*!< Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.*/
-    int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
-                                    center candidate such as it is the barycenter of the window. Must be odd.*/
-    float m_centerMinThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
-    int m_expectedNbCenters; /*!< Expected number of different centers in the image. If negative, all candidates centers
-                                  are kept, otherwise only up to this number are kept.*/
-
-    // // Circle candidates computation attributes
-    float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
-    float m_circlePerfectness; /*!< The threshold for the colinearity between the gradient of a point
-                                    and the radius it would form with a center candidate to be able to vote.
-                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`. */
-    float m_circleVisibilityRatioThresh; /*!< Visibility ratio threshold: minimum ratio of the circle must be visible in order to keep a circle candidate.*/
-    bool m_recordVotingPoints; /*!< If true, the edge-map points having voted for each circle will be stored.*/
-
-    // // Circle candidates merging attributes
-    float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
-    float m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
-
-    friend class vpCircleHoughTransform;
   public:
     /**
      * \brief Construct a new vpCircleHoughTransformParameters object with default parameters.
@@ -479,7 +429,8 @@ public:
       txt <<  "\tCircle probability threshold = " << m_circleProbaThresh << "\n";
       txt <<  "\tCircle visibility ratio threshold = " << m_circleVisibilityRatioThresh << "\n";
       txt <<  "\tCircle perfectness threshold = " << m_circlePerfectness << "\n";
-      txt <<  "\tRecord voting points = " + (m_recordVotingPoints ? std::string("true") : std::string("false")) << "\n";
+      txt <<  "\tRecord voting points = ";
+      txt << (m_recordVotingPoints ? std::string("true") : std::string("false")) << "\n";
       txt <<  "\tCenters minimum distance = " << m_centerMinDist << "\n";
       txt <<  "\tRadius difference merging threshold = " << m_mergingRadiusDiffThresh << "\n";
       return txt.str();
@@ -651,6 +602,57 @@ public:
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
     }
 #endif
+
+  private:
+    // // Filtering + gradient operators to use
+    vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Permits to choose the filtering +
+                                                                                    gradient operators to use.*/
+
+    // // Gaussian smoothing attributes
+    int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image.
+                                   Must be an odd number.*/
+    float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+
+    // // Gradient computation attributes
+    int m_gradientFilterKernelSize; /*!< Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.*/
+
+    // // Edge detection attributes
+    float m_lowerCannyThresh; /*!< The lower threshold for the Canny operator. Values lower than this value are rejected.
+                               A negative value makes the algorithm compute the lower threshold automatically.*/
+    float m_upperCannyThresh; /*!< The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
+                               A negative value makes the algorithm compute the upper and lower thresholds automatically.*/
+    int m_edgeMapFilteringNbIter; /*!< Number of iterations of 8-neighbor connectivity filtering to apply to the edge map*/
+    vpImageFilter::vpCannyBackendType m_cannyBackendType; /*!< Permits to choose the backend used to compute the edge map.*/
+    float m_lowerCannyThreshRatio; /*!< The ratio of the upper threshold the lower threshold must be equal to.
+                                        It is used only if the user asks to compute the Canny thresholds.*/
+    float m_upperCannyThreshRatio; /*!< The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+                                        the upper threshold. It is used only if the user asks to compute the Canny thresholds.*/
+
+    // // Center candidates computation attributes
+    std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
+    std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
+    float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
+    float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
+    int m_dilatationKernelSize; /*!< Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.*/
+    int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
+                                    center candidate such as it is the barycenter of the window. Must be odd.*/
+    float m_centerMinThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+    int m_expectedNbCenters; /*!< Expected number of different centers in the image. If negative, all candidates centers
+                                  are kept, otherwise only up to this number are kept.*/
+
+    // // Circle candidates computation attributes
+    float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
+    float m_circlePerfectness; /*!< The threshold for the colinearity between the gradient of a point
+                                    and the radius it would form with a center candidate to be able to vote.
+                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`. */
+    float m_circleVisibilityRatioThresh; /*!< Visibility ratio threshold: minimum ratio of the circle must be visible in order to keep a circle candidate.*/
+    bool m_recordVotingPoints; /*!< If true, the edge-map points having voted for each circle will be stored.*/
+
+    // // Circle candidates merging attributes
+    float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
+    float m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
+
+    friend class vpCircleHoughTransform;
   };
 
   /**
@@ -663,7 +665,7 @@ public:
    * from a \b vpCircleHoughTransformParameters object.
    * \param[in] algoParams The parameters of the Circle Hough Transform.
    */
-  vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams);
+  explicit vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams);
 
   /**
    * \brief Destroy the vp Circle Hough Transform object
@@ -945,7 +947,7 @@ public:
   void setCirclePerfectness(const float &circle_perfectness)
   {
     m_algoParams.m_circlePerfectness = circle_perfectness;
-    if (m_algoParams.m_circlePerfectness <= 0 || m_algoParams.m_circlePerfectness > 1) {
+    if ((m_algoParams.m_circlePerfectness <= 0) || (m_algoParams.m_circlePerfectness > 1)) {
       throw vpException(vpException::badValue, "Circle perfectness must be in the interval ] 0; 1].");
     }
   }
