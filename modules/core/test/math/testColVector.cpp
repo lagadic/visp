@@ -147,7 +147,7 @@ int main()
       M[i][0] = i;
       bench[i] = i;
     }
-    if (test("M", M, bench) == false)
+    if (test("M", vpColVector(M), bench) == false)
       return EXIT_FAILURE;
     vpColVector v;
     v = M;
@@ -159,7 +159,7 @@ int main()
     vpColVector z1(bench);
     if (test("z1", z1, bench) == false)
       return EXIT_FAILURE;
-    vpColVector z2 = bench;
+    vpColVector z2 = vpColVector(bench);
     if (test("z2", z2, bench) == false)
       return EXIT_FAILURE;
   }
@@ -191,7 +191,7 @@ int main()
     vpColVector y1(bench2);
     if (test("y1", y1, bench1) == false)
       return EXIT_FAILURE;
-    vpColVector y2 = bench2;
+    vpColVector y2 = vpColVector(bench2);
     if (test("y2", y2, bench1) == false)
       return EXIT_FAILURE;
   }

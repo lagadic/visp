@@ -373,7 +373,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
       std::cout << "From vpRotationMatrix to vpRzyzVector " << std::endl;
       vpRzyzVector rzyz_final;
       rzyz_final.buildFrom(R);
-      CHECK(test("rzyz", rzyz_final, rzyz));
+      CHECK(test("rzyz", rzyz_final, vpColVector(rzyz)));
       std::cout << rzyz_final << std::endl;
     }
     SECTION("Conversion from and to rzyx vector")
@@ -388,7 +388,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
       std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl;
       vpRzyxVector rzyx_final;
       rzyx_final.buildFrom(R);
-      bool ret = test("rzyx", rzyx_final, rzyx);
+      bool ret = test("rzyx", rzyx_final, vpColVector(rzyx));
       if (ret == false) {
         // Euler angle representation is not unique
         std::cout << "Rzyx vector differ. Test rotation matrix..." << std::endl;
