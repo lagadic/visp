@@ -301,8 +301,8 @@ int main(/*const int argc, const char *argv[]*/)
   const double stdevAircraftVelocity = 0.2; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
   const double gt_X_init = -500.; // Ground truth initial position along the X-axis, in meters
   const double gt_Y_init = 1000.; // Ground truth initial position along the Y-axis, in meters
-  const double gt_dX_init = 100.; // Ground truth initial velocity along the X-axis, in meters
-  const double gt_dY_init = 5.; // Ground truth initial velocity along the Y-axis, in meters
+  const double gt_vX_init = 100.; // Ground truth initial velocity along the X-axis, in meters
+  const double gt_vY_init = 5.; // Ground truth initial velocity along the Y-axis, in meters
 
   // Initialize the attributes of the UKF
   std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.1, 2., -1.);
@@ -331,9 +331,9 @@ int main(/*const int argc, const char *argv[]*/)
 
   vpColVector X0(4);
   X0[0] = 0.9 * gt_X_init; // x, i.e. 10% of error with regard to ground truth
-  X0[1] = 0.9 * gt_dX_init; // dx/dt, i.e. 10% of error with regard to ground truth
+  X0[1] = 0.9 * gt_vX_init; // dx/dt, i.e. 10% of error with regard to ground truth
   X0[2] = 0.9 * gt_Y_init; // y, i.e. 10% of error with regard to ground truth
-  X0[3] = 0.9 * gt_dY_init; // dy/dt, i.e. 10% of error with regard to ground truth
+  X0[3] = 0.9 * gt_vY_init; // dy/dt, i.e. 10% of error with regard to ground truth
 
   vpUnscentedKalman::vpProcessFunction f = fx;
   vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle);
@@ -383,8 +383,8 @@ int main(/*const int argc, const char *argv[]*/)
   ac_pos[0] = gt_X_init;
   ac_pos[1] = gt_Y_init;
   vpColVector ac_vel(2);
-  ac_vel[0] = gt_dX_init;
-  ac_vel[1] = gt_dY_init;
+  ac_vel[0] = gt_vX_init;
+  ac_vel[1] = gt_vY_init;
   vpACSimulator ac(ac_pos, ac_vel, stdevAircraftVelocity);
   vpColVector gt_Xprec = ac_pos;
   for (int i = 0; i < 500; ++i) {
