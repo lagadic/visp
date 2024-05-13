@@ -501,29 +501,47 @@ class HeaderFile():
         logging.error(error_generating_overloads)
         raise RuntimeError('Error generating overloads:\n' + '\n'.join(error_generating_overloads))
 
+      # Generate members
+
+      # Publicist "pattern": expose protected attributes to python via a derived class.
+      # See: https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+      use_publicist = cls_config['use_publicist']
+      publicist_name = f'Publicist{name_python}'
+      publicist_str = None
+      if use_publicist:
+        publicist_str = f'class {publicist_name}: public {name_cpp} {{\n'
+        publicist_str += 'public:\n'
+
+
       field_dict = {}
       for field in cls.fields:
         if field.name in cls_config['ignored_attributes']:
           logging.info(f'Ignoring field in class/struct {name_cpp}: {field.name}')
           continue
-        if field.access == 'public':
+        if field.access == 'public' or (field.access == 'protected' and use_publicist):
           if is_unsupported_argument_type(field.type):
             continue
 
           field_type = get_type(field.type, owner_specs, header_env.mapping)
-          logging.info(f'Found field in class/struct {name_cpp}: {field_type} {field.name}')
-
           field_name_python = field.name.lstrip('m_')
+          logging.info(f'Found field in class/struct {name_cpp}: {field_type} {field.name}')
 
           def_str = 'def_'
           def_str += 'readonly' if field.type.const else 'readwrite'
           if field.static:
             def_str += '_static'
 
-          field_str = f'{python_ident}.{def_str}("{field_name_python}", &{name_cpp}::{field.name});'
+          field_exposing_class = name_cpp if field.access == 'public' else publicist_name
+
+          if field.access == 'protected':
+            publicist_str += f'\tusing {name_cpp}::{field.name};\n'
+
+          field_str = f'{python_ident}.{def_str}("{field_name_python}", &{field_exposing_class}::{field.name});'
           field_dict[field_name_python] = field_str
 
-      classs_binding_defs = ClassBindingDefinitions(field_dict, methods_dict)
+      if use_publicist:
+        publicist_str += '};'
+      classs_binding_defs = ClassBindingDefinitions(field_dict, methods_dict, publicist_str)
       bindings_container.add_bindings(SingleObjectBindings(class_def_names, class_decl, classs_binding_defs, GenerationObjectType.Class))
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])

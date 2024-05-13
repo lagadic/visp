@@ -3,6 +3,10 @@
     "vpFeatureException.h"
   ],
   "classes": {
+    "vpBasicFeature": {
+      "trampoline": "PyBasicFeature",
+      "use_publicist": true
+    },
     "vpGenericFeature": {
       "methods": [
         {
