@@ -1,0 +1,124 @@
+/**
+\page tutorial-npz Tutorial: Read / Save arrays of data from / to NPZ file format
+
+\tableofcontents
+
+\section tuto-npz-intro Introduction
+
+\note
+Please refer to the <a href="tutorial-read-write-NPZ-format.html">Python tutorial</a> for a short overview of the NPZ
+format from a Python point of view.
+
+
+The NPY / NPZ ("a zip file containing multiple NPY files") file format is a "standard binary file format in NumPy",
+appropriate for binary serialization of large chunks of data.
+A description of the NPY format is available
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html">here</a>.
+
+The C++ implementation of this binary format relies on the <a href="https://github.com/rogersce/cnpy">rogersce/cnpy</a>
+library, available under the MIT license. Additional example code can be found directly from the
+<a href="https://github.com/rogersce/cnpy/blob/master/example1.cpp">rogersce/cnpy repository</a>.
+
+
+\subsection tuto-npz-intro-comparison Comparison with some other file formats
+
+The NPZ binary format is intended to provide a quick and efficient mean to read/save large arrays of data, mostly for
+debugging purpose. While the first and direct option for saving data would be to use file text, the choice of the NPZ
+format presents the following advantages:
+  - it is a binary format, that is the resulting file size will be smaller compared to a plain text file (especially
+with floating-point numbers),
+  - it provides exact floating-point representation, that is there is no need to bother with floating-point precision
+(see for instance the <a href="https://en.cppreference.com/w/cpp/io/manip/setprecision">setprecision</a> or
+<a href="https://en.cppreference.com/w/cpp/io/manip/fixed">std::hexfloat</a> functions),
+  - it provides some basic compatibility with the NumPy NPZ format
+(<a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> and
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.savez.html">numpy.savez</a>),
+  - large arrays of data can be easily appended, with support for multi-dimensional arrays.
+
+On the other hand, the main disadvantages are:
+  - it is a non-human readable format, suitable for saving large arrays of data, but not for easy debugging,
+  - saving `string` data is not direct, since it must be treated as vector of `char` data,
+  - the current implementation only works on little-endian platform (which is the major endianness nowadays).
+
+You can refer to this Wikipedia page for an exhaustive comparison of
+<a href="https://en.wikipedia.org/wiki/Comparison_of_data-serialization_formats">data-serialization formats</a>.
+
+
+\section tuto-npz-hands-on Hands-on
+
+\subsection tuto-npz-hands-on-save-string How to save/read string data
+
+Saving C++ `std::string` data can be achieved the following way:
+  - create a `string` object and convert it to a `vector<char>` object:
+  \snippet tutorial-npz.cpp Save_string_init
+  - add and save the data to the `.npz` file, the identifier is the variable name and the `"w"` means `write`
+(`"a"` means `append` to the archive):
+  \snippet tutorial-npz.cpp Save_string_save
+
+
+Reading back the data can be done easily:
+  - load the data:
+  \snippet tutorial-npz.cpp Read_string_load
+  - the identifier is then needed,
+  - a conversion from `vector<char>` to `std::string` object is required:
+  \snippet tutorial-npz.cpp Read_string
+
+
+\note
+In the previous example, there is no need to save a "null-terminated" character since it is handled at reading using
+a specific constructor which uses iterators to the begenning and ending of the `string` data.
+Additional information can be found <a href="https://stackoverflow.com/a/45491652">here</a>.
+The other approach would consist to
+  - append the null character "\0" to the vector: "vec_save_string.push_back(`\0`);"
+  - and uses the constructor that accepts a pointer of data: "std::string read_string(arr_string_data.data<char>());"
+
+
+\subsection tuto-npz-hands-on-save-basic How to save basic data types
+
+Saving C++ basic data type such as `int32_t`, `float` or even `std::complex<double>` is straightforward:
+
+\snippet tutorial-npz.cpp Save_basic_types
+
+Reading back the data can be done easily:
+
+\snippet tutorial-npz.cpp Read_basic_types
+
+
+\subsection tuto-npz-hands-on-save-img How to save a vpImage
+
+Finally, one of the advantages of the `NPZ` is the possibility to save multi-dimensional arrays easily.
+As an example, we will save first a `vpImage<vpRGBa>`.
+
+Following code shows how to read an image:
+
+\snippet tutorial-npz.cpp Save_image_read
+
+Then, saving a color image can be achieved as easily as:
+
+\snippet tutorial-npz.cpp Save_image
+
+We have passed the address to the bitmap array, that is a vector of `vpRGBa`. The shape of the array is thus
+"height x width" since all basic elements of the bitmap are already of `vpRGBa` type (4 `unsigned char` elements).
+
+Reading back the image is done with:
+
+\snippet tutorial-npz.cpp Read_image
+
+The `vpImage` constructor accepting a `vpRGBa` pointer is used, with the appropriate image height and width values.
+
+Finally, the image is displayed.
+
+
+\subsection tuto-npz-hands-on-save-multi How to save a multi-dimensional array
+
+Similarly, the following code shows how to save a multi-dimensional array with a shape corresponding to `{H x W x 3}`:
+
+\snippet tutorial-npz.cpp Save_multi_array
+
+Finally, the image can be read back and displayed with:
+
+\snippet tutorial-npz.cpp Read_multi_array
+
+A specific conversion from `RGB` to `RGBa` must be done for compatibility with the ViSP `vpRGBa` format.
+
+*/

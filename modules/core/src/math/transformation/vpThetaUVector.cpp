@@ -101,7 +101,7 @@ vpThetaUVector::vpThetaUVector(double tux, double tuy, double tuz) : vpRotationV
 /*!
   Build a \f$\theta {\bf u}\f$ vector from a vector of 3 angles in radian.
 */
-vpThetaUVector::vpThetaUVector(const std::vector<double> &tu) { buildFrom(tu); }
+vpThetaUVector::vpThetaUVector(const std::vector<double> &tu) : vpRotationVector(3) { buildFrom(tu); }
 
 /*!
   Converts an homogeneous matrix into a \f$\theta {\bf u}\f$ vector.
