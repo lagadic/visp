@@ -156,12 +156,12 @@ public:
     CANNY_COUNT_FILTERING = 2 //! Number of supported backends
   } vpCannyFilteringAndGradientType;
 
-  static std::string vpCannyFilteringAndGradientTypeList(const std::string &pref = "<", const std::string &sep = " , ",
+  static std::string vpGetCannyFiltAndGradTypes(const std::string &pref = "<", const std::string &sep = " , ",
                                                          const std::string &suf = ">");
 
-  static std::string vpCannyFilteringAndGradientTypeToString(const vpCannyFilteringAndGradientType &type);
+  static std::string vpCannyFiltAndGradTypeToStr(const vpCannyFilteringAndGradientType &type);
 
-  static vpCannyFilteringAndGradientType vpCannyFilteringAndGradientTypeFromString(const std::string &name);
+  static vpCannyFilteringAndGradientType vpCannyFiltAndGradTypeFromStr(const std::string &name);
 
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, const unsigned int &gaussianFilterSize,
                     const float &thresholdCanny, const unsigned int &apertureSobel);
@@ -305,7 +305,7 @@ public:
       }
       else {
         std::string errMsg = "[vpImageFilter::computePartialDerivatives] Filtering + gradient method \"";
-        errMsg += vpCannyFilteringAndGradientTypeToString(filteringType);
+        errMsg += vpCannyFiltAndGradTypeToStr(filteringType);
         errMsg += "\" is not implemented yet\n";
         throw(vpException(vpException::notImplementedError, errMsg));
       }

@@ -74,10 +74,13 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
     }
 
     vpHomogeneousMatrix cMoPrev = cMo;
+    /*
     // --comment: while((int)((residu_1 - r)*1e12) !=0)
     // --comment: while(std::fabs((residu_1 - r)*1e12) >
     // --comment: std::numeric_limits < double > :: epsilon())
-    while (std::fabs(residu_1 - r) > vvsEpsilon) {
+    */
+    bool iter_gt_vvsitermax = false;
+    while ((std::fabs(residu_1 - r) > vvsEpsilon) && (iter_gt_vvsitermax == false)) {
       residu_1 = r;
 
       // Compute the interaction matrix and the error
@@ -127,7 +130,8 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
 
       if (iter> vvsIterMax) {
-        break;
+        iter_gt_vvsitermax = true;
+        // break
       }
       else {
         ++iter;
@@ -184,7 +188,8 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
     w = 1;
 
     //  --comment: while (residu_1 - r) times 1e12 diff 0
-    while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
+    bool iter_gt_vvsitermax = false;
+    while ((std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) && (iter_gt_vvsitermax == false)) {
       residu_1 = r;
 
       // Compute the interaction matrix and the error
@@ -242,7 +247,8 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
       if (iter > vvsIterMax) {
-        break;
+        iter_gt_vvsitermax = true;
+        // break
       }
       else {
         ++iter;

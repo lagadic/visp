@@ -360,34 +360,35 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
     if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
       quit = true;
     }
-
-    //read in the variable name
-    uint16_t name_len = *(uint16_t *)&local_header[26];
-    std::string varname(name_len, ' ');
-    size_t vname_res = fread(&varname[0], sizeof(char), name_len, fp);
-    if (vname_res != name_len) {
-      throw std::runtime_error("npz_load: failed fread");
-    }
-
-    //erase the lagging .npy
-    varname.erase(varname.end()-4, varname.end());
-
-    //read in the extra field
-    uint16_t extra_field_len = *(uint16_t *)&local_header[28];
-    if (extra_field_len > 0) {
-      std::vector<char> buff(extra_field_len);
-      size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, fp);
-      if (efield_res != extra_field_len) {
+    else {
+      //read in the variable name
+      uint16_t name_len = *(uint16_t *)&local_header[26];
+      std::string varname(name_len, ' ');
+      size_t vname_res = fread(&varname[0], sizeof(char), name_len, fp);
+      if (vname_res != name_len) {
         throw std::runtime_error("npz_load: failed fread");
       }
+
+      //erase the lagging .npy
+      varname.erase(varname.end()-4, varname.end());
+
+      //read in the extra field
+      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
+      if (extra_field_len > 0) {
+        std::vector<char> buff(extra_field_len);
+        size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, fp);
+        if (efield_res != extra_field_len) {
+          throw std::runtime_error("npz_load: failed fread");
+        }
+      }
+
+      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
+      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
+      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
+
+      if (compr_method == 0) { arrays[varname] = load_the_npy_file(fp); }
+      else { arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes); }
     }
-
-    uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-    uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-    uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
-
-    if (compr_method == 0) { arrays[varname] = load_the_npy_file(fp); }
-    else { arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes); }
   }
 
   fclose(fp);
@@ -423,33 +424,34 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
     if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
       quit = true;
     }
-
-    //read in the variable name
-    uint16_t name_len = *(uint16_t *)&local_header[26];
-    std::string vname(name_len, ' ');
-    size_t vname_res = fread(&vname[0], sizeof(char), name_len, fp);
-    if (vname_res != name_len) {
-      throw std::runtime_error("npz_load: failed fread");
-    }
-    vname.erase(vname.end()-4, vname.end()); //erase the lagging .npy
-
-    //read in the extra field
-    uint16_t extra_field_len = *(uint16_t *)&local_header[28];
-    fseek(fp, extra_field_len, SEEK_CUR); //skip past the extra field
-
-    uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-    uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-    uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
-
-    if (vname == varname) {
-      NpyArray array = (compr_method == 0) ? load_the_npy_file(fp) : load_the_npz_array(fp, compr_bytes, uncompr_bytes);
-      fclose(fp);
-      return array;
-    }
     else {
-        //skip past the data
-      uint32_t size = *(uint32_t *)&local_header[22];
-      fseek(fp, size, SEEK_CUR);
+      //read in the variable name
+      uint16_t name_len = *(uint16_t *)&local_header[26];
+      std::string vname(name_len, ' ');
+      size_t vname_res = fread(&vname[0], sizeof(char), name_len, fp);
+      if (vname_res != name_len) {
+        throw std::runtime_error("npz_load: failed fread");
+      }
+      vname.erase(vname.end()-4, vname.end()); //erase the lagging .npy
+
+      //read in the extra field
+      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
+      fseek(fp, extra_field_len, SEEK_CUR); //skip past the extra field
+
+      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
+      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
+      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
+
+      if (vname == varname) {
+        NpyArray array = (compr_method == 0) ? load_the_npy_file(fp) : load_the_npz_array(fp, compr_bytes, uncompr_bytes);
+        fclose(fp);
+        return array;
+      }
+      else {
+          //skip past the data
+        uint32_t size = *(uint32_t *)&local_header[22];
+        fseek(fp, size, SEEK_CUR);
+      }
     }
   }
 
@@ -2119,16 +2121,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-  }
+}
 
-  /**
-   * @brief Return a upper-case version of the string \b input .
-   * Numbers and special characters stay the same
-   *
-   * @param input The input string for which we want to ensure that all the characters are in upper case.
-   * @return std::string A upper-case version of the string \b input, where
-   * numbers and special characters stay the same
-   */
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2140,16 +2142,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-  }
+}
 
-  /*!
-    Returns the absolute path using realpath() on Unix systems or
-    GetFullPathName() on Windows systems. \return According to realpath()
-    manual, returns an absolute pathname that names the same file, whose
-    resolution does not involve '.', '..', or symbolic links for Unix systems.
-    According to GetFullPathName() documentation, retrieves the full path of the
-    specified file for Windows systems.
-   */
+/*!
+  Returns the absolute path using realpath() on Unix systems or
+  GetFullPathName() on Windows systems. \return According to realpath()
+  manual, returns an absolute pathname that names the same file, whose
+  resolution does not involve '.', '..', or symbolic links for Unix systems.
+  According to GetFullPathName() documentation, retrieves the full path of the
+  specified file for Windows systems.
+ */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

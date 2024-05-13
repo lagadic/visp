@@ -187,6 +187,7 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-synthetic-blenderproc <br> This tutorial shows you how to easily generate synthetic data from the 3D model of an object and obtain various modalities. This data can then be used to train a neural network for your own task.
 - \subpage tutorial-spc <br> This tutorial shows you how to monitor if a signal is "in control" using Statistical Process Control methods.
 - \subpage tutorial-ukf <br> This tutorial shows you how to use an Unscented Kalman Filter to filter data when the model and/or measurements are non-linear.
+- \subpage tutorial-npz <br> This tutorial shows you how to read / save arrays of data from / to NPZ file format, a binary format compatible with the NumPy library.
 */
 
 /*! \page tutorial_munkres Munkres Assignment Algorithm

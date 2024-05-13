@@ -27,6 +27,7 @@ int main(int argc, const char **argv)
   int color_id = -1;
   unsigned int thickness = 2;
   bool align_frame = false;
+  bool opt_verbose = false;
 
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   bool display_off = true;
@@ -66,6 +67,9 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--z_aligned") {
       align_frame = true;
     }
+    else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+      opt_verbose = true;
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--tag_size <tag_size in m> (default: 0.053)]"
@@ -81,7 +85,7 @@ int main(int argc, const char **argv)
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off] [--color <color id>] [--thickness <line thickness>]";
 #endif
-      std::cout << " [--help]" << std::endl;
+      std::cout << " [--verbose,-v] [--help,-h]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -219,6 +223,11 @@ int main(int argc, const char **argv)
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
           vpDisplay::displayText(I_color2, 35 + i * 15, 20, ss.str(), vpColor::red);
+
+          if (opt_verbose) {
+            std::cout << "cMo[" << i << "]: \n" << cMo_vec[i] << std::endl;
+            std::cout << "cMo[" << i << "] using depth: \n" << cMo << std::endl;
+          }
         }
       }
       //! [Pose from depth map]

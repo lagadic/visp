@@ -598,7 +598,7 @@ vpTranslationVector &vpTranslationVector::operator<<(double val)
  */
 vpTranslationVector &vpTranslationVector::operator,(double val)
 {
-  m_index++;
+  ++m_index;
   if (m_index >= size()) {
     throw(vpException(
       vpException::dimensionError,

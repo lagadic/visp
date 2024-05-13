@@ -46,6 +46,7 @@ visp_add_subdirectory(imgproc/flood-fill                   REQUIRED_DEPS visp_co
 visp_add_subdirectory(imgproc/hough-transform              REQUIRED_DEPS visp_core visp_gui visp_imgproc)
 visp_add_subdirectory(kalman                               REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(mean-drift                           REQUIRED_DEPS visp_core visp_gui)
+visp_add_subdirectory(misc/npz                             REQUIRED_DEPS visp_core visp_gui visp_io)
 visp_add_subdirectory(munkres                              REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(robot/flir-ptu                       REQUIRED_DEPS visp_core visp_robot visp_sensor visp_vision visp_gui visp_vs visp_visual_features visp_detection)
 visp_add_subdirectory(robot/pioneer                        REQUIRED_DEPS visp_core visp_robot visp_vs visp_gui)

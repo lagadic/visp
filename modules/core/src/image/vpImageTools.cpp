@@ -1117,9 +1117,10 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
   for (int i = 0; i < size_; ++i) {
-    if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
-        (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
-        (v_low <= value[i]) && (value[i] <= v_high)) {
+    bool check_h_low_high_hue = (h_low <= hue[i]) && (hue[i] <= h_high);
+    bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
+    bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
+    if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
       mask[i] = 255;
       ++cpt_in_range;
     }
@@ -1170,9 +1171,10 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
   for (int i = 0; i < size_; ++i) {
-    if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
-        (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
-        (v_low <= value[i]) && (value[i] <= v_high)) {
+    bool check_h_low_high_hue = (h_low <= hue[i]) && (hue[i] <= h_high);
+    bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
+    bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
+    if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
       mask[i] = 255;
       ++cpt_in_range;
     }

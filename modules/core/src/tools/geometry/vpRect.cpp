@@ -237,6 +237,7 @@ bool vpRect::operator==(const vpRect &r) const
  */
 bool vpRect::operator!=(const vpRect &r) const
 {
+  /*
   // --comment: return (top != r.top || left != r.left || width != r.width || height !=
   // --comment: r.height);
   // --comment:  return (std::fabs(top-r.top) >
@@ -247,6 +248,7 @@ bool vpRect::operator!=(const vpRect &r) const
   // --comment:          std::fabs(width)*std::numeric_limits<double>::epsilon()
   // --comment:          || std::fabs(height-r.height) >
   // --comment:          std::fabs(height)*std::numeric_limits<double>::epsilon()
+  */
   return !(*this == r);
 }
 

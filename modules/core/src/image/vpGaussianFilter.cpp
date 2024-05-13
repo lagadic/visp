@@ -46,14 +46,13 @@ public:
     : m_funcPtrGray(nullptr), m_funcPtrRGBa(nullptr), m_deinterleave(deinterleave)
   {
     const float epsilon = 0.001f;
-    {
-      const size_t channels = 1;
-      m_funcPtrGray = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
-    {
-      const size_t channels = 4;
-      m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
+
+    const size_t channels_1 = 1;
+    m_funcPtrGray = SimdGaussianBlurInit(width, height, channels_1, &sigma, &epsilon);
+
+    const size_t channels_4 = 4;
+    m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels_4, &sigma, &epsilon);
+
     if (m_deinterleave) {
       m_red.resize(height, width);
       m_green.resize(height, width);

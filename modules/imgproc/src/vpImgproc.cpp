@@ -258,7 +258,7 @@ void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 
     // Merge the result in I
     unsigned int size = I.getWidth() * I.getHeight();
-    unsigned char *ptrStart = (unsigned char *)I.bitmap;
+    unsigned char *ptrStart = reinterpret_cast<unsigned char *>(I.bitmap);
     unsigned char *ptrEnd = ptrStart + (size * 4);
     unsigned char *ptrCurrent = ptrStart;
 
@@ -286,15 +286,15 @@ void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 
     unsigned int size = I.getWidth() * I.getHeight();
     // Convert from RGBa to HSV
-    vpImageConvert::RGBaToHSV((unsigned char *)I.bitmap, (unsigned char *)hue.bitmap,
-                              (unsigned char *)saturation.bitmap, (unsigned char *)value.bitmap, size);
+    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap), reinterpret_cast<unsigned char *>(hue.bitmap),
+                              reinterpret_cast<unsigned char *>(saturation.bitmap), reinterpret_cast<unsigned char *>(value.bitmap), size);
 
     // Histogram equalization on the value plane
     vp::equalizeHistogram(value);
 
     // Convert from HSV to RGBa
-    vpImageConvert::HSVToRGBa((unsigned char *)hue.bitmap, (unsigned char *)saturation.bitmap,
-                              (unsigned char *)value.bitmap, (unsigned char *)I.bitmap, size);
+    vpImageConvert::HSVToRGBa(reinterpret_cast<unsigned char *>(hue.bitmap), reinterpret_cast<unsigned char *>(saturation.bitmap),
+                              reinterpret_cast<unsigned char *>(value.bitmap), reinterpret_cast<unsigned char *>(I.bitmap), size);
   }
 }
 
@@ -667,14 +667,14 @@ void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorH
       std::vector<unsigned char> saturation(size);
       std::vector<unsigned char> value(size);
 
-      vpImageConvert::RGBaToHSV((unsigned char *)I.bitmap, &hue.front(), &saturation.front(), &value.front(), size);
+      vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap), &hue.front(), &saturation.front(), &value.front(), size);
       vpImage<unsigned char> I_hue(&hue.front(), height, width);
       vpImage<unsigned char> I_saturation(&saturation.front(), height, width);
       vpImage<unsigned char> I_value(&value.front(), height, width);
 
       gammaCorrection(I_value, gamma, method, p_mask);
 
-      vpImageConvert::HSVToRGBa(I_hue.bitmap, I_saturation.bitmap, I_value.bitmap, (unsigned char *)I.bitmap, size);
+      vpImageConvert::HSVToRGBa(I_hue.bitmap, I_saturation.bitmap, I_value.bitmap, reinterpret_cast<unsigned char *>(I.bitmap), size);
     }
     else if (colorHandling == GAMMA_RGB) {
       vpImage<unsigned char> pR, pG, pB, pa;
@@ -820,7 +820,7 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
   // Convert RGB to HSV
   vpImage<double> hueImage(I.getHeight(), I.getWidth()), saturationImage(I.getHeight(), I.getWidth()),
     valueImage(I.getHeight(), I.getWidth());
-  vpImageConvert::RGBaToHSV((unsigned char *)I.bitmap, hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap,
+  vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap), hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap,
                             size);
 
   // Find min and max Saturation and Value
@@ -853,7 +853,7 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
   }
 
   // Convert HSV to RGBa
-  vpImageConvert::HSVToRGBa(hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap, (unsigned char *)(I.bitmap),
+  vpImageConvert::HSVToRGBa(hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap, reinterpret_cast<unsigned char *>(I.bitmap),
                             size);
 }
 

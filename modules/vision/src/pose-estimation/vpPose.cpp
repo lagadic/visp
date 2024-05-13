@@ -104,7 +104,7 @@ void vpPose::addPoints(const std::vector<vpPoint> &lP)
   npt = static_cast<unsigned int>(listP.size());
 }
 
-void vpPose::setDistanceToPlaneForCoplanarityTest(double d) { distanceToPlaneForCoplanarityTest = d; }
+void vpPose::setDistToPlaneForCoplanTest(double d) { distanceToPlaneForCoplanarityTest = d; }
 
 void vpPose::setDementhonSvThreshold(const double &svThresh)
 {
@@ -252,7 +252,8 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
   double D = sqrt(vpMath::sqr(a) + vpMath::sqr(b) + vpMath::sqr(c));
 
-  for (it = shuffled_listP.begin(); it != shuffled_listP.end(); ++it) {
+  std::vector<vpPoint>::const_iterator shuffled_listp_end_decl2 = shuffled_listP.end();
+  for (it = shuffled_listP.begin(); it != shuffled_listp_end_decl2; ++it) {
     P1 = *it;
     double dist = ((a * P1.get_oX()) + (b * P1.get_oY()) + (c * P1.get_oZ()) + d) / D;
 

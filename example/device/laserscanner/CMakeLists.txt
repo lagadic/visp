@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(example-device-laserscanner)
 
-find_package(VISP REQUIRED visp_core visp_sensor visp_io)
+find_package(VISP REQUIRED visp_core visp_gui visp_sensor visp_io)
 
 set(example_cpp
   SickLDMRS-Acq.cpp

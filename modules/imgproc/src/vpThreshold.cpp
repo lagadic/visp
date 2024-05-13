@@ -264,27 +264,29 @@ int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
   float max_sigma_b = 0.0f;
   int threshold = 0;
 
-  for (int cpt = 0; cpt < 256; ++cpt) {
+  bool w_f_eq_nul = false;
+  for (int cpt = 0; (cpt < 256) && (w_f_eq_nul == false); ++cpt) {
     w_B += hist[cpt];
-    if (vpMath::nul(w_B, std::numeric_limits<float>::epsilon())) {
-      continue;
-    }
+    bool w_b_eq_nul = vpMath::nul(w_B, std::numeric_limits<float>::epsilon());
+    if (w_b_eq_nul == false) {
 
-    w_F = static_cast<int>(imageSize) - w_B;
-    if (vpMath::nul(w_F, std::numeric_limits<float>::epsilon())) {
-      break;
-    }
+      w_F = static_cast<int>(imageSize) - w_B;
+      w_f_eq_nul = vpMath::nul(w_F, std::numeric_limits<float>::epsilon());
+      if (w_f_eq_nul == false) {
 
-    // Mean Background / Foreground
-    float mu_B = sum_ip_all[cpt] / static_cast<float>(w_B);
-    float mu_F = (mu_T - sum_ip_all[cpt]) / static_cast<float>(w_F);
-    // If there is a case where (w_B * w_F) exceed FLT_MAX, normalize
-    // histogram
-    float sigma_b_sqr = w_B * w_F * (mu_B - mu_F) * (mu_B - mu_F);
+      // Mean Background / Foreground
+        float mu_B = sum_ip_all[cpt] / static_cast<float>(w_B);
+        float mu_F = (mu_T - sum_ip_all[cpt]) / static_cast<float>(w_F);
+        // If there is a case where (w_B * w_F) exceed FLT_MAX, normalize
+        // histogram
+        float sigma_b_sqr = w_B * w_F * (mu_B - mu_F) * (mu_B - mu_F);
 
-    if (sigma_b_sqr >= max_sigma_b) {
-      threshold = cpt;
-      max_sigma_b = sigma_b_sqr;
+        if (sigma_b_sqr >= max_sigma_b) {
+          threshold = cpt;
+          max_sigma_b = sigma_b_sqr;
+        }
+      }
+      // else exit the loop
     }
   }
 
@@ -318,8 +320,8 @@ int computeThresholdTriangle(vpHistogram &hist)
   }
 
   // First / last index when hist(cpt) == 0
-  left_bound = left_bound > 0 ? left_bound - 1 : left_bound;
-  right_bound = right_bound < static_cast<int>(hist.getSize()) - 1 ? right_bound + 1 : right_bound;
+  left_bound = left_bound > 0 ? (left_bound - 1) : left_bound;
+  right_bound = right_bound < (static_cast<int>(hist.getSize()) - 1) ? (right_bound + 1) : right_bound;
 
   // Use the largest bound
   bool flip = false;

@@ -527,7 +527,7 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // --comment: ossFixed <<std::fixed
+  // --comment: could be used ossFixed << std::fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part

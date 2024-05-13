@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(example-math)
 
-find_package(VISP REQUIRED visp_core visp_io)
+find_package(VISP REQUIRED visp_core visp_gui visp_io)
 
 set(example_cpp
   exponentialMap.cpp

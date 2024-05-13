@@ -647,7 +647,7 @@ double vpDot2::getEllipsoidShapePrecision() const { return ellipsoidShapePrecisi
   [0.05,1]. 1 means full precision, whereas values close to 0 show a very bad
   precision.
 */
-double vpDot2::getMaxSizeSearchDistancePrecision() const { return maxSizeSearchDistancePrecision; }
+double vpDot2::getMaxSizeSearchDistPrecision() const { return maxSizeSearchDistancePrecision; }
 
 /*!
   Return the distance between the two center of dots.
@@ -818,7 +818,7 @@ void vpDot2::setEllipsoidShapePrecision(const double &precision)
   - Values higher than 1 are brought back to 1.
 
 */
-void vpDot2::setMaxSizeSearchDistancePrecision(const double &precision)
+void vpDot2::setMaxSizeSearchDistPrecision(const double &precision)
 {
   double epsilon = 0.05;
   if (maxSizeSearchDistancePrecision < epsilon) {
@@ -1320,6 +1320,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
   if ((std::fabs(ellipsoidShape_precision) > std::numeric_limits<double>::epsilon()) && compute_moment) {
     // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 15
 
+    /*
     // -comment: mu11 = m11 - m00 * xg * yg = m11 - m00 * m10/m00 * m01/m00
     // -comment:      = m11 - m10 * m01 / m00
     // -comment: mu20 = m20 - m00 * xg^2 = m20 - m00 * m10/m00 * m10/m00
@@ -1330,7 +1331,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
     // -comment: a1^2 = 2 / m00 * (mu02 + mu20 + sqrt( (mu20 - mu02)^2 + 4mu11^2) )
     //
     // -comment: a2^2 = 2 / m00 * (mu02 + mu20 - sqrt( (mu20 - mu02)^2 + 4mu11^2) )
-
+    */
     // we compute parameters of the estimated ellipse
     double tmp1 = (((m01 * m01) - (m10 * m10)) / m00) + (m20 - m02);
     double tmp2 = m11 - ((m10 * m01) / m00);
@@ -1400,22 +1401,24 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
           (static_cast<double>(u) > area.getRight()) ||
           (static_cast<double>(v) < area.getTop()) ||
           (static_cast<double>(v) > area.getBottom())) {
-        continue;
+        // continue
       }
-      if (!this->hasReverseLevel(I, u, v)) {
+      else {
+        if (!this->hasReverseLevel(I, u, v)) {
 #ifdef DEBUG
-        printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
-               "%g): %d not in [%u, %u]\n",
-               u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
+          printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
+                 "%g): %d not in [%u, %u]\n",
+                 u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
-        ++nb_bad_points;
-      }
-      if (graphics) {
-        for (unsigned int t = 0; t < thickness; ++t) {
-          ip.set_u(u + t);
-          ip.set_v(v);
+          ++nb_bad_points;
+        }
+        if (graphics) {
+          for (unsigned int t = 0; t < thickness; ++t) {
+            ip.set_u(u + t);
+            ip.set_v(v);
 
-          vpDisplay::displayPoint(I, ip, vpColor::green);
+            vpDisplay::displayPoint(I, ip, vpColor::green);
+          }
         }
       }
     }
@@ -1783,7 +1786,7 @@ bool vpDot2::findFirstBorder(const vpImage<unsigned char> &I, const unsigned int
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
-    if ((getWidth() > 0) && ((border_u - u) > ((getWidth() / getMaxSizeSearchDistancePrecision()) + epsilon))) {
+    if ((getWidth() > 0) && ((border_u - u) > ((getWidth() / getMaxSizeSearchDistPrecision()) + epsilon))) {
       vpDEBUG_TRACE(3,
                     "The found dot (%d, %d, %d) has a greater width than the "
                     "required one",
@@ -2198,8 +2201,8 @@ void vpDot2::getGridSize(unsigned int &gridWidth, unsigned int &gridHeight)
   // contained in the dot. We gent this here if the dot is a perfect disc.
   // More accurate criterium to define the grid should be implemented if
   // necessary
-  gridWidth = static_cast<unsigned int>((getWidth() * getMaxSizeSearchDistancePrecision()) / sqrt(2.));
-  gridHeight = static_cast<unsigned int>((getHeight() * getMaxSizeSearchDistancePrecision()) / sqrt(2.0));
+  gridWidth = static_cast<unsigned int>((getWidth() * getMaxSizeSearchDistPrecision()) / sqrt(2.));
+  gridHeight = static_cast<unsigned int>((getHeight() * getMaxSizeSearchDistPrecision()) / sqrt(2.0));
 
   if (gridWidth == 0) {
     gridWidth = 1;

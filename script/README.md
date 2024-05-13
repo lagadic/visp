@@ -68,6 +68,28 @@ This script uses `clang-format` to format ViSP source code. It should be used ca
     $ clang-format -i <path to file.[h,cpp]>
     ```
 
+## make-coverage-report.sh
+
+Script that runs the same coverage pipeline as the GitHub CI and generates an HTML report in the build folder. This makes it easier to have an up to date coverage when writing tests locally.
+
+The script is working for Ubuntu and needs `lcov` tool.
+
+- To install `lcov` on Ubuntu like OS:
+
+  ```console
+  $ sudo apt-get install lcov gcovr
+  ```
+
+- To run the script
+
+  ```console
+  $ cd $VISP_WS
+  $ git clone https://github.com/lagadic/visp
+  $ ./visp/script/make-coverage-report.sh visp-build
+  ```
+
+- Results are available in `visp-build/coverage/index.html`.
+
 ## LonLatCamPosesVisualizer.py
 
 This Python script allows displaying camera poses sampled from longitude / latitude coordinates and using a method for regularly sampled points on a sphere.
@@ -124,24 +146,14 @@ Following video shows the camera poses outputed by the ViSP model-based tracker 
 
 [![Cube+cylinder tracking using ViSP MBT](https://user-images.githubusercontent.com/8035162/180662930-605b2c42-bbb5-4bd6-9fe6-b2a1af3a04e7.png)](https://user-images.githubusercontent.com/8035162/180662750-02fccaff-74bd-411c-8258-06910edc6fde.mp4 "Cube+cylinder tracking using ViSP MBT")
 
-## make-coverage-report.sh
+## PlotRGBIrDepthData.py
 
-Script that runs the same coverage pipeline as the GitHub CI and generates an HTML report in the build folder. This makes it easier to have an up to date coverage when writing tests locally.
+This Python script allows displaying RGB/Infrared/Depth/Pointcloud data saved using the example/device/framegrabber/saveRealSenseData.cpp sample.
+It contains sample code to learn how to manipulate NumPy NPZ format, such as multi-dimensional array and display them with Matplotlib.
 
-The script is working for Ubuntu and needs `lcov` tool.
+Simply run the following command with the correct folder path:
 
-- To install `lcov` on Ubuntu like OS:
 
-  ```console
-  $ sudo apt-get install lcov gcovr
-  ```
-
-- To run the script
-
-  ```console
-  $ cd $VISP_WS
-  $ git clone https://github.com/lagadic/visp
-  $ ./visp/script/make-coverage-report.sh visp-build
-  ```
-
-- Results are available in `visp-build/coverage/index.html`.
+```console
+python3 PlotRGBIrDepthData.py -i <folder>
+```

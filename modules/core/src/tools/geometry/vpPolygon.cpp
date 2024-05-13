@@ -398,8 +398,9 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
   }
 
   bool test = false;
-  switch (method) {
-  case PnPolySegmentIntersection: {
+  // comment: previous implementation: switch method
+  // case PnPolySegmentIntersection:
+  if (method == PnPolySegmentIntersection) {
     vpImagePoint infPoint(100000, 100000); // take a point at 'infinity'
     // we add random since it appears that sometimes infPoint may cause a degenerated case (so relaunch and
     // hope that result will be different).
@@ -417,28 +418,29 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
       // If the points are the same we continue without trying to found
       // an intersection
       if (ip1 == ip2) {
-        continue;
+        // continue
       }
+      else {
 
-      try {
-        intersection = testIntersectionSegments(ip1, ip2, ip, infPoint);
-      }
-      catch (...) {
-        return isInside(ip);
-      }
+        try {
+          intersection = testIntersectionSegments(ip1, ip2, ip, infPoint);
+        }
+        catch (...) {
+          return isInside(ip);
+        }
 
-      if (intersection) {
-        oddNbIntersections = !oddNbIntersections;
+        if (intersection) {
+          oddNbIntersections = !oddNbIntersections;
+        }
       }
     }
 
     test = oddNbIntersections;
   }
-                                break;
-
-                                  // Reference: http://alienryderflex.com/polygon/
-  case PnPolyRayCasting:
-  default: {
+  else {
+    // Reference: http://alienryderflex.com/polygon/
+    // comment: case PnPolyRayCasting
+    // comment: default
     bool oddNodes = false;
     size_t v_corners_size = _corners.size();
     for (size_t i = 0, j = (v_corners_size - 1); i < v_corners_size; ++i) {
@@ -451,8 +453,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     }
 
     test = oddNodes;
-  }
-         break;
+    // comment: }
+    // comment: break
   }
 
   return test;

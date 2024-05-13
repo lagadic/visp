@@ -451,7 +451,7 @@ void vpHistogram::equalize(const vpImage<unsigned char> &I, vpImage<unsigned cha
   // Construct the look-up table
   unsigned char lut[256];
   for (unsigned int x = minValue; x <= maxValue; ++x) {
-    lut[x] = vpMath::round((cdf[x] - cdfMin) / static_cast<double>(nbPixels - cdfMin) * 255.0);
+    lut[x] = vpMath::round(((cdf[x] - cdfMin) / static_cast<double>(nbPixels - cdfMin)) * 255.0);
   }
 
   Iout = I;
@@ -589,24 +589,25 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
     if ((prev_slope > 0) && (next_slope == 0)) {
       sum_level += i + 1;
       ++cpt;
-      continue;
+      // continue;
     }
+    else {
+      // Peak detection
+      if ((prev_slope > 0) && (next_slope < 0)) {
+        sum_level += i;
+        ++cpt;
 
-    // Peak detection
-    if ((prev_slope > 0) && (next_slope < 0)) {
-      sum_level += i;
-      ++cpt;
+        unsigned int level = sum_level / cpt;
+        p.set(static_cast<unsigned char>(level), m_histogram[level]);
+        peaks.push_back(p);
 
-      unsigned int level = sum_level / cpt;
-      p.set(static_cast<unsigned char>(level), m_histogram[level]);
-      peaks.push_back(p);
+        ++nbpeaks;
+      }
 
-      ++nbpeaks;
+      prev_slope = next_slope;
+      sum_level = 0;
+      cpt = 0;
     }
-
-    prev_slope = next_slope;
-    sum_level = 0;
-    cpt = 0;
   }
   if (prev_slope > 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
@@ -713,14 +714,16 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   for (unsigned i = 0; i < (m_size - 1); ++i) {
     int next_slope = static_cast<int>(m_histogram[i + 1]) - static_cast<int>(m_histogram[i]); // Next histogram inclination
     if (next_slope == 0) {
-      continue;
+      // continue
     }
+    else {
     // Peak detection
-    if ((prev_slope > 0) && (next_slope < 0)) {
-      peak[nbpeaks++] = static_cast<unsigned char>(i);
-    }
+      if ((prev_slope > 0) && (next_slope < 0)) {
+        peak[nbpeaks++] = static_cast<unsigned char>(i);
+      }
 
-    prev_slope = next_slope;
+      prev_slope = next_slope;
+    }
   }
   if (prev_slope > 0) {
     peak[nbpeaks++] = static_cast<unsigned char>(m_size - 1);
@@ -798,11 +801,13 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
       mini = m_histogram[i];
       nbmini = 1;
       sumindmini = i;
-      continue;
+      // continue
     }
-    if (m_histogram[i] == mini) {
-      sumindmini += i;
-      ++nbmini;
+    else {
+      if (m_histogram[i] == mini) {
+        sumindmini += i;
+        ++nbmini;
+      }
     }
   }
 
@@ -860,24 +865,25 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
     if ((prev_slope < 0) && (next_slope == 0)) {
       sum_level += i + 1;
       ++cpt;
-      continue;
+      // continue
     }
-
+    else {
     // Valey detection
-    if ((prev_slope < 0) && (next_slope > 0)) {
-      sum_level += i;
-      ++cpt;
+      if ((prev_slope < 0) && (next_slope > 0)) {
+        sum_level += i;
+        ++cpt;
 
-      unsigned int level = sum_level / cpt;
-      p.set(static_cast<unsigned char>(level), m_histogram[level]);
-      valey.push_back(p);
+        unsigned int level = sum_level / cpt;
+        p.set(static_cast<unsigned char>(level), m_histogram[level]);
+        valey.push_back(p);
 
-      ++nbvaley;
+        ++nbvaley;
+      }
+
+      prev_slope = next_slope;
+      sum_level = 0;
+      cpt = 0;
     }
-
-    prev_slope = next_slope;
-    sum_level = 0;
-    cpt = 0;
   }
   if (prev_slope < 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
@@ -930,11 +936,13 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
       mini = m_histogram[i];
       nbmini = 1;
       sumindmini = i;
-      continue;
+      // continue
     }
-    if (m_histogram[i] == mini) {
-      sumindmini += i;
-      ++nbmini;
+    else {
+      if (m_histogram[i] == mini) {
+        sumindmini += i;
+        ++nbmini;
+      }
     }
   }
 
@@ -1041,11 +1049,13 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
         mini = m_histogram[i];
         nbmini = 1;
         sumindmini = i;
-        continue;
+        // continue
       }
-      if (m_histogram[i] == mini) {
-        sumindmini += i;
-        ++nbmini;
+      else {
+        if (m_histogram[i] == mini) {
+          sumindmini += i;
+          ++nbmini;
+        }
       }
     }
     if (nbmini == 0) {
@@ -1102,11 +1112,13 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
         mini = m_histogram[i];
         nbmini = 1;
         sumindmini = i;
-        continue;
+        // continue
       }
-      if (m_histogram[i] == mini) {
-        sumindmini += i;
-        ++nbmini;
+      else {
+        if (m_histogram[i] == mini) {
+          sumindmini += i;
+          ++nbmini;
+        }
       }
     }
     if (nbmini == 0) {
