@@ -310,6 +310,13 @@ class HeaderFile():
       # Reference public base classes when creating pybind class binding
       base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases)))
+
+      # Add trampoline class if defined
+      # Trampoline classes allow classes defined in Python to override virtual methods declared in C++
+      # For now (and probably forever?) trampolines should be defined by hand.
+      trampoline_name = cls_config['trampoline']
+      if trampoline_name is not None:
+        base_class_strs.append(trampoline_name)
       # py::class template contains the class, its holder type, and its base clases.
       # The default holder type is std::unique_ptr. when the cpp function argument is a shared_ptr, Pybind will raise an error when calling the method.
       py_class_template_str = ', '.join([name_cpp, f'std::shared_ptr<{name_cpp}>'] + base_class_strs)
@@ -354,7 +361,7 @@ class HeaderFile():
       operators, basic_methods = split_methods_with_config(non_constructors, lambda m: get_name(m.name) in cpp_operator_names)
 
       # Constructors definitions
-      if not contains_pure_virtual_methods:
+      if not contains_pure_virtual_methods or trampoline_name is not None:
         for method, method_config in constructors:
           method_name = get_name(method.name)
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
