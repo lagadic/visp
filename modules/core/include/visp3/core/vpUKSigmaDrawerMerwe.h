@@ -104,6 +104,8 @@ public:
    * the further the sigma points are spread from the mean.
    * \param[in] beta Another factor, which should be set to 2 if the problem is Gaussian.
    * \param[in] kappa A third factor, whose value should be set to 3 - n for most problems.
+   * \param[in] resFunc Residual function expressed in the state space.
+   * \param[in] addFunc Addition function expressed in the state space.
    */
   vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
                        const vpAddSubFunction &resFunc = vpUnscentedKalman::simpleResidual,
@@ -131,12 +133,13 @@ protected:
     m_lambda = m_alpha * m_alpha * (m_n + m_kappa) - m_n;
   }
 
-  double m_alpha;
-  double m_beta;
-  double m_kappa;
-  double m_lambda;
-  vpAddSubFunction m_resFunc;
-  vpAddSubFunction m_addFunc;
+  double m_alpha; /*!< A factor, which should be a real in the interval [0; 1]. The larger alpha is,
+                       the further the sigma points are spread from the mean.*/
+  double m_beta; /*!< Another factor, which should be set to 2 if the problem is Gaussian.*/
+  double m_kappa; /*!< A third factor, whose value should be set to 3 - n for most problems.*/
+  double m_lambda; /*!< \f$ \alpha^2 (n + \kappa) - n \f$, where \f$ n \f$ is the size of the state vector.*/
+  vpAddSubFunction m_resFunc; /*!< Residual function expressed in the state space.*/
+  vpAddSubFunction m_addFunc; /*!< Addition function expressed in the state space.*/
 };
 #endif
 #endif
