@@ -393,6 +393,7 @@ int main(/*const int argc, const char *argv[]*/)
   // Initialize the display
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
+#ifdef VISP_HAVE_DISPLAY
   vpDisplay *d = nullptr;
 #if defined(VISP_HAVE_X11)
   d = new vpDisplayX;
@@ -409,10 +410,11 @@ int main(/*const int argc, const char *argv[]*/)
   if (d != nullptr) {
     d->init(Idisp, 800, 50, "Projection of the markers");
   }
-  //! [Init_renderer]
+#endif
+//! [Init_renderer]
 
-  //! [Init_simu]
-  // Initialize the simulation
+//! [Init_simu]
+// Initialize the simulation
   vpObjectSimulator object(radius, w, phi, wZ);
   vpColVector object_pos(4, 0.);
   object_pos[3] = 1.;
@@ -498,10 +500,12 @@ int main(/*const int argc, const char *argv[]*/)
 
   //! [Delete_renderer]
   // Delete the renderer if it was allocated
+#ifdef VISP_HAVE_DISPLAY
   if (d != nullptr) {
     delete d;
   }
-  //! [Delete_renderer]
+#endif
+//! [Delete_renderer]
   return 0;
 }
 #else
