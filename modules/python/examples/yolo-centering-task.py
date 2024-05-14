@@ -8,7 +8,8 @@ from visp.core import ImageRGBa
 from visp.robot import ImageSimulator
 from visp.visual_features import BasicFeature, FeaturePoint
 from visp.vs import Servo
-from visp.gui import DisplayOpenCV
+from visp.gui import DisplayX
+
 
 try:
   from ultralytics import YOLO
@@ -20,6 +21,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import animation
+import argparse
 
 plt.rcParams['text.usetex'] = True
 
@@ -99,19 +101,25 @@ class VSPlot(object):
     plt.close()
 
 if __name__ == '__main__':
+  parser = argparse.ArgumentParser('Centering task using a YOLO network')
+  parser.add_argument('--scene', type=str, help='Path to the scene')
+  parser.add_argument('--class-id', type=int, help='COCO class id of the object to track (e.g, 2 for a car)')
+  args = parser.parse_args()
+
   h, w = 480, 640
   Z = 5.0
+
   cam = CameraParameters(px=600, py=600, u0=w / 2.0, v0=h / 2.0)
   detection_model = YOLO('yolov8n.pt')
   # Initialize simulator
-  scene_image = np.asarray(Image.open('/mnt/d/Downloads/car-img.jpg'))
+  scene_image = np.asarray(Image.open(args.scene))
   scene_image = np.concatenate((scene_image, np.ones_like(scene_image[..., 0:1]) * 255), axis=-1)
   scene_image = ImageRGBa(scene_image)
   simulator = get_simulator(scene_image)
 
   plotter = VSPlot()
 
-  cTw = HomogeneousMatrix(-1.0, 0.5, Z, 0.0, 0.0, 0.0)
+  cTw = HomogeneousMatrix(-2.0, 0.5, Z, 0.0, 0.0, 0.0)
   I = ImageRGBa(h, w)
   Idisp = ImageRGBa(h, w)
 
@@ -130,12 +138,15 @@ if __name__ == '__main__':
   task.setLambda(0.5)
   task.setCameraDoF(ColVector([0, 0, 0, 1, 1, 0]))
   task.setServo(Servo.ServoType.EYEINHAND_CAMERA)
-  task.setInteractionMatrixType(Servo.ServoIteractionMatrixType.DESIRED)
+  task.setInteractionMatrixType(Servo.ServoIteractionMatrixType.CURRENT)
   prev_v = ColVector(6, 0.0)
-  target_class = 2 # Car
+  target_class = args.class_id # Car
 
-  d = DisplayOpenCV()
+  d = DisplayX()
   d.init(I)
+  Display.display(I)
+  Display.flush(I)
+  _ = detection_model(np.array(I.numpy()[..., 2::-1]))
   error_norm = 1e10
   # Servoing loop
   while error_norm > 5e-6:
@@ -164,8 +175,8 @@ if __name__ == '__main__':
     Display.display(I)
     sd.display(cam, I, Color.green)
     s.display(cam, I, Color.red)
-    Display.getImage(I, Idisp)
     Display.flush(I)
+    Display.getImage(I, Idisp)
     plotter.on_iter(Idisp, v, error, cTw)
 
     # Move robot/update simulator
