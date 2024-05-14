@@ -117,13 +117,13 @@ public:
   //! one.
   vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) { }
   vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
-  vpRowVector(const vpMatrix &M);
+  explicit vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
-  vpRowVector(const std::vector<double> &v);
-  vpRowVector(const std::vector<float> &v);
+  explicit vpRowVector(const std::vector<double> &v);
+  explicit vpRowVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+  explicit vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
 
   /*!
@@ -141,7 +141,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   std::ostream &cppPrint(std::ostream &os, const std::string &matrixName = "A", bool octet = false) const;
@@ -178,7 +180,7 @@ public:
    */
   vpRowVector extract(unsigned int c, unsigned int rowsize) const
   {
-    if (c >= colNum || c + rowsize > colNum) {
+    if ((c >= colNum) || ((c + rowsize) > colNum)) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (1x%d) row vector from a (1x%d) "
                         "row vector starting at index %d",
@@ -270,11 +272,12 @@ public:
     */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify)
   {
-    if (nrows != 1)
+    if (nrows != 1) {
       throw(vpException(vpException::fatalError,
                         "Cannot resize a row vector to a (%dx%d) dimension "
                         "vector that has more than one row",
                         nrows, ncols));
+    }
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
 

@@ -206,17 +206,17 @@ public:
    * Constructor that initialize a column vector from a 3-dim (Euler or
    * \f$\theta {\bf u}\f$) or 4-dim (quaternion) rotation vector.
    */
-  vpColVector(const vpRotationVector &v);
+  explicit vpColVector(const vpRotationVector &v);
 
   /*!
    * Constructor that initialize a column vector from a 6-dim pose vector.
    */
-  vpColVector(const vpPoseVector &p);
+  explicit vpColVector(const vpPoseVector &p);
 
   /*!
    * Constructor that initialize a column vector from a 3-dim translation vector.
    */
-  vpColVector(const vpTranslationVector &t);
+  explicit vpColVector(const vpTranslationVector &t);
 
   /*!
    * Constructor that creates a column vector from a m-by-1 matrix `M`.
@@ -224,7 +224,7 @@ public:
    * \exception vpException::dimensionError If the matrix is not a m-by-1
    * matrix.
    */
-  vpColVector(const vpMatrix &M);
+  explicit vpColVector(const vpMatrix &M);
 
   /*!
    * Constructor that takes column `j` of matrix `M`.
@@ -234,12 +234,12 @@ public:
   /*!
    * Constructor that creates a column vector from a std vector of double.
    */
-  vpColVector(const std::vector<double> &v);
+  explicit vpColVector(const std::vector<double> &v);
 
   /*!
    * Constructor that creates a column vector from a std vector of float.
    */
-  vpColVector(const std::vector<float> &v);
+  explicit vpColVector(const std::vector<float> &v);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
@@ -366,7 +366,7 @@ public:
    */
   vpColVector extract(unsigned int r, unsigned int colsize) const
   {
-    if (r >= rowNum || r + colsize > rowNum) {
+    if ((r >= rowNum) || ((r + colsize) > rowNum)) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (%dx1) column vector from a (%dx1) "
                         "column vector starting at index %d",

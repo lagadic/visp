@@ -192,9 +192,9 @@ public:
     dg = dg > 255. ? 255. : dg;
     db = db > 255. ? 255. : db;
 
-    r = (unsigned char)dr;
-    g = (unsigned char)dg;
-    b = (unsigned char)db;
+    r = static_cast<unsigned char>(dr);
+    g = static_cast<unsigned char>(dg);
+    b = static_cast<unsigned char>(db);
   }
   static void YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsigned int width, unsigned int height);
   static void YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned int width, unsigned int height);

@@ -91,7 +91,7 @@ public:
     Returns the bottom coordinate of the rectangle.
     \sa getRight()
   */
-  inline double getBottom() const { return (this->top + this->height - 1.0); }
+  inline double getBottom() const { return ((this->top + this->height) - 1.0); }
 
   /*!
     Returns the bottom-left position of the rectangle.
@@ -132,8 +132,8 @@ public:
   */
   inline void getCenter(double &x, double &y) const
   {
-    x = this->left + this->width / 2.0 - 0.5;
-    y = this->top + this->height / 2.0 - 0.5;
+    x = (this->left + (this->width / 2.0)) - 0.5;
+    y = (this->top + (this->height / 2.0)) - 0.5;
   }
 
   /*!
@@ -149,8 +149,8 @@ public:
   inline vpImagePoint getCenter() const
   {
     vpImagePoint center;
-    center.set_u(this->left + this->width / 2.0 - 0.5);
-    center.set_v(this->top + this->height / 2.0 - 0.5);
+    center.set_u((this->left + (this->width / 2.0)) - 0.5);
+    center.set_v((this->top + (this->height / 2.0)) - 0.5);
     return center;
   }
 
@@ -173,7 +173,7 @@ public:
     Returns the right coordinate of the rectangle.
     \sa getLeft()
   */
-  inline double getRight() const { return (this->left + this->width - 1.0); }
+  inline double getRight() const { return ((this->left + this->width) - 1.0); }
 
   /*!
     Returns the size of the rectangle.
@@ -246,7 +246,7 @@ public:
     left = x1;
     top = y1;
 
-    if (width <= 0 || height <= 0) {
+    if ((width <= 0) || (height <= 0)) {
       *this = vpRect();
     }
 
@@ -282,7 +282,7 @@ public:
 
     \sa setTop()
   */
-  inline void setBottom(double pos) { this->height = pos - this->top + 1.0; }
+  inline void setBottom(double pos) { this->height = (pos - this->top) + 1.0; }
 
   /*!
     Sets the bottom-right position of the rectangle. Will never change
@@ -292,8 +292,8 @@ public:
   */
   inline void setBottomRight(const vpImagePoint &bottomRight)
   {
-    this->height = bottomRight.get_v() - this->top + 1.0;
-    this->width = bottomRight.get_u() - this->left + 1.0;
+    this->height = (bottomRight.get_v() - this->top) + 1.0;
+    this->width = (bottomRight.get_u() - this->left) + 1.0;
   }
 
   /*!
@@ -386,8 +386,8 @@ public:
   */
   inline void moveCenter(double x, double y)
   {
-    this->left = x - this->width / 2 + 0.5;
-    this->top = y - this->height / 2 + 0.5;
+    this->left = (x - (this->width / 2)) + 0.5;
+    this->top = (y - (this->height / 2)) + 0.5;
   }
 
   /*!
@@ -398,8 +398,8 @@ public:
   */
   inline void moveCenter(const vpImagePoint &center)
   {
-    this->left = center.get_u() - this->width / 2 + 0.5;
-    this->top = center.get_v() - this->height / 2 + 0.5;
+    this->left = (center.get_u() - (this->width / 2)) + 0.5;
+    this->top = (center.get_v() - (this->height / 2)) + 0.5;
   }
 
 private:

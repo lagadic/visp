@@ -215,7 +215,7 @@ public:
     rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
 #endif
   {
-    if (r > 0 && c > 0) {
+    if ((r > 0) && (c > 0)) {
       if ((r * c) != vec.size()) {
         throw(vpException(vpException::dimensionError,
                           "Cannot initialize vpArray(%d, %d) from std::vector(%d). Wrong dimension", r, c, vec.size()));
@@ -273,7 +273,7 @@ public:
   explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
     : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
   {
-    if (nrows * ncols != static_cast<unsigned int>(list.size())) {
+    if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
       std::ostringstream oss;
       oss << "Cannot create a vpArray2D of size (" << nrows << ", " << ncols << ") with a list of size " << list.size();
       throw vpException(vpException::dimensionError, oss.str());
@@ -294,7 +294,7 @@ public:
 
     resize(nrows, ncols, false, false);
     auto it = lists.begin();
-    for (unsigned int i = 0; i < rowNum; i++, ++it) {
+    for (unsigned int i = 0; i < rowNum; ++i, ++it) {
       std::copy(it->begin(), it->end(), rowPtrs[i]);
     }
   }
@@ -314,7 +314,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   /** @name Inherited functionalities from vpArray2D */
@@ -352,19 +354,20 @@ public:
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
-      if (flagNullify && this->data != nullptr) {
+      if (flagNullify && (this->data != nullptr)) {
         memset(this->data, 0, this->dsize * sizeof(Type));
       }
     }
     else {
-      bool recopy = !flagNullify && recopy_; // priority to flagNullify
-      const bool recopyNeeded = (ncols != this->colNum && this->colNum > 0 && ncols > 0 && (!flagNullify || recopy));
+      bool recopy = (!flagNullify) && recopy_; // priority to flagNullify
+      bool colcond = (ncols != this->colNum) && (this->colNum > 0) && (ncols > 0);
+      const bool recopyNeeded = colcond && ((!flagNullify) || recopy);
       Type *copyTmp = nullptr;
       unsigned int rowTmp = 0, colTmp = 0;
 
       // Recopy case per case is required if number of cols has changed;
       // structure of Type array is not the same in this case.
-      if (recopyNeeded && this->data != nullptr) {
+      if (recopyNeeded && (this->data != nullptr)) {
         copyTmp = new Type[this->dsize];
         memcpy(copyTmp, this->data, sizeof(Type) * this->dsize);
         rowTmp = this->rowNum;
@@ -404,11 +407,10 @@ public:
       }
 
       // Update rowPtrs
-      {
-        Type **t_ = rowPtrs;
-        for (unsigned int i = 0; i < dsize; i += ncols) {
-          *t_++ = this->data + i;
-        }
+
+      Type **t_ = rowPtrs;
+      for (unsigned int i = 0; i < dsize; i += ncols) {
+        *t_++ = this->data + i;
       }
 
       this->rowNum = nrows;
@@ -416,16 +418,16 @@ public:
 
       // Recopy of this->data array values or nullify
       if (flagNullify) {
-        memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
+        memset(this->data, 0, static_cast<size_t>(this->dsize) * sizeof(Type));
       }
-      else if (recopyNeeded && this->rowPtrs != nullptr) {
+      else if (recopyNeeded && (this->rowPtrs != nullptr)) {
         // Recopy...
         unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
         unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
         for (unsigned int i = 0; i < this->rowNum; ++i) {
           for (unsigned int j = 0; j < this->colNum; ++j) {
             if ((minRow > i) && (minCol > j)) {
-              (*this)[i][j] = copyTmp[i * colTmp + j];
+              (*this)[i][j] = copyTmp[(i * colTmp) + j];
             }
             else {
               (*this)[i][j] = 0;
@@ -447,7 +449,7 @@ public:
       return;
     }
 
-    if (nrows * ncols != dsize) {
+    if ((nrows * ncols) != dsize) {
       std::ostringstream oss;
       oss << "Cannot reshape array of total size " << dsize << " into shape (" << nrows << ", " << ncols << ")";
       throw vpException(vpException::dimensionError, oss.str());
@@ -483,13 +485,14 @@ public:
   */
   void insert(const vpArray2D<Type> &A, unsigned int r, unsigned int c)
   {
-    if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
-      if (A.colNum == colNum && data != nullptr && A.data != nullptr && A.data != data) {
-        memcpy(data + r * colNum, A.data, sizeof(Type) * A.size());
+    if (((r + A.getRows()) <= rowNum) && ((c + A.getCols()) <= colNum)) {
+      if ((A.colNum == colNum) && (data != nullptr) && (A.data != nullptr) && (A.data != data)) {
+        memcpy(data + (r * colNum), A.data, sizeof(Type) * A.size());
       }
-      else if (data != nullptr && A.data != nullptr && A.data != data) {
-        for (unsigned int i = r; i < (r + A.getRows()); ++i) {
-          memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(Type) * A.colNum);
+      else if ((data != nullptr) && (A.data != nullptr) && (A.data != data)) {
+        unsigned int a_rows = A.getRows();
+        for (unsigned int i = r; i < (r + a_rows); ++i) {
+          memcpy(data + (i * colNum) + c, A.data + ((i - r) * A.colNum), sizeof(Type) * A.colNum);
         }
       }
     }
@@ -521,8 +524,8 @@ public:
   vpArray2D<Type> &operator=(const vpArray2D<Type> &A)
   {
     resize(A.rowNum, A.colNum, false, false);
-    if (data != nullptr && A.data != nullptr && data != A.data) {
-      memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
+    if ((data != nullptr) && (A.data != nullptr) && (data != A.data)) {
+      memcpy(data, A.data, static_cast<size_t>(rowNum) * static_cast<size_t>(colNum) * sizeof(Type));
     }
     return *this;
   }
@@ -575,7 +578,7 @@ public:
 
     resize(nrows, ncols, false, false);
     auto it = lists.begin();
-    for (unsigned int i = 0; i < rowNum; i++, ++it) {
+    for (unsigned int i = 0; i < rowNum; ++i, ++it) {
       std::copy(it->begin(), it->end(), rowPtrs[i]);
     }
 
@@ -599,20 +602,22 @@ public:
     */
   friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
-    if (A.data == nullptr || A.size() == 0) {
+    if ((A.data == nullptr) || (A.size() == 0)) {
       return s;
     }
     std::ios_base::fmtflags original_flags = s.flags();
 
     s.precision(10);
-    for (unsigned int i = 0; i < A.getRows(); ++i) {
-      for (unsigned int j = 0; j < A.getCols() - 1; ++j) {
+    unsigned int a_rows = A.getRows();
+    unsigned int a_cols = A.getCols();
+    for (unsigned int i = 0; i < a_rows; ++i) {
+      for (unsigned int j = 0; j < (a_cols - 1); ++j) {
         s << A[i][j] << "  ";
       }
       // We don't add "  " after the last row element
-      s << A[i][A.getCols() - 1];
+      s << A[i][a_cols - 1];
       // We don't add a \n char on the end of the last array line
-      if (i < A.getRows() - 1) {
+      if (i < (a_rows - 1)) {
         s << std::endl;
       }
     }
@@ -704,7 +709,7 @@ public:
       file >> rows;
       file >> cols;
 
-      if (rows >= (std::numeric_limits<unsigned int>::max)() || cols >= (std::numeric_limits<unsigned int>::max)()) {
+      if ((rows >= std::numeric_limits<unsigned int>::max()) || (cols >= std::numeric_limits<unsigned int>::max())) {
         throw vpException(vpException::badValue, "Array exceed the max size.");
       }
 
@@ -736,14 +741,14 @@ public:
       }
 
       unsigned int rows, cols;
-      file.read((char *)&rows, sizeof(unsigned int));
-      file.read((char *)&cols, sizeof(unsigned int));
+      file.read(reinterpret_cast<char *>(&rows), sizeof(unsigned int));
+      file.read(reinterpret_cast<char *>(&cols), sizeof(unsigned int));
       A.resize(rows, cols);
 
       Type value;
       for (unsigned int i = 0; i < rows; ++i) {
         for (unsigned int j = 0; j < cols; ++j) {
-          file.read((char *)&value, sizeof(Type));
+          file.read(reinterpret_cast<char *>(&value), sizeof(Type));
           A[i][j] = value;
         }
       }
@@ -784,12 +789,12 @@ public:
 
     while (getline(file, line)) {
       if (inheader) {
-        if (rows == 0 && line.compare(0, 5, "rows:") == 0) {
+        if ((rows == 0) && (line.compare(0, 5, "rows:") == 0)) {
           std::stringstream ss(line);
           ss >> subs;
           ss >> rows;
         }
-        else if (cols == 0 && line.compare(0, 5, "cols:") == 0) {
+        else if ((cols == 0) && (line.compare(0, 5, "cols:") == 0)) {
           std::stringstream ss(line);
           ss >> subs;
           ss >> cols;
@@ -805,20 +810,20 @@ public:
         // if i == 0, we just got out of the header: initialize matrix
         // dimensions
         if (i == 0) {
-          if (rows == 0 || cols == 0) {
+          if ((rows == 0) || (cols == 0)) {
             file.close();
             return false;
           }
           A.resize(rows, cols);
           // get indentation level which is common to all lines
-          lineStart = (unsigned int)line.find("[") + 1;
+          lineStart = static_cast<unsigned int>(line.find("[")) + 1;
         }
         std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
         j = 0;
         while (getline(ss, subs, ',')) {
           A[i][j++] = atof(subs.c_str());
         }
-        i++;
+        ++i;
       }
     }
 
@@ -876,7 +881,7 @@ public:
         if (header[i] == '\n') {
           file << "# ";
         }
-        i++;
+        ++i;
       }
       file << std::endl;
       file << A.getRows() << "\t" << A.getCols() << std::endl;
@@ -885,19 +890,21 @@ public:
     else {
       int headerSize = 0;
       while (header[headerSize] != '\0') {
-        headerSize++;
+        ++headerSize;
       }
-      file.write(header, (size_t)headerSize + (size_t)1);
+      file.write(header, static_cast<size_t>(headerSize)+static_cast<size_t>(1));
       unsigned int matrixSize;
       matrixSize = A.getRows();
-      file.write((char *)&matrixSize, sizeof(unsigned int));
+      file.write(reinterpret_cast<char *>(&matrixSize), sizeof(unsigned int));
       matrixSize = A.getCols();
-      file.write((char *)&matrixSize, sizeof(unsigned int));
+      file.write(reinterpret_cast<char *>(&matrixSize), sizeof(unsigned int));
       Type value;
-      for (unsigned int i = 0; i < A.getRows(); ++i) {
-        for (unsigned int j = 0; j < A.getCols(); ++j) {
+      unsigned int a_rows = A.getRows();
+      unsigned int a_cols = A.getCols();
+      for (unsigned int i = 0; i < a_rows; ++i) {
+        for (unsigned int j = 0; j < a_cols; ++j) {
           value = A[i][j];
-          file.write((char *)&value, sizeof(Type));
+          file.write(reinterpret_cast<char *>(&value), sizeof(Type));
         }
       }
     }
@@ -973,14 +980,14 @@ public:
             checkIndent = false;
           }
         }
-        if (header[i] == '\n' || (inIndent && header[i] == ' ')) {
+        if ((header[i] == '\n') || (inIndent && (header[i] == ' '))) {
           inIndent = true;
         }
         else {
           inIndent = false;
         }
       }
-      i++;
+      ++i;
     }
 
     if (i != 0) {
@@ -995,9 +1002,11 @@ public:
 
     file << "data: " << std::endl;
     unsigned int j;
-    for (i = 0; i < A.getRows(); ++i) {
+    unsigned int a_rows = A.getRows();
+    unsigned int a_cols = A.getCols();
+    for (i = 0; i < a_rows; ++i) {
       file << indent << "- [";
-      for (j = 0; j < A.getCols() - 1; ++j) {
+      for (j = 0; j < (a_cols - 1); ++j) {
         file << A[i][j] << ", ";
       }
       file << A[i][j] << "]" << std::endl;
@@ -1080,12 +1089,12 @@ template <class Type> Type vpArray2D<Type>::getMinValue() const
 {
   Type *dataptr = data;
   Type min = *dataptr;
-  dataptr++;
-  for (unsigned int i = 0; i < dsize - 1; ++i) {
+  ++dataptr;
+  for (unsigned int i = 0; i < (dsize - 1); ++i) {
     if (*dataptr < min) {
       min = *dataptr;
     }
-    dataptr++;
+    ++dataptr;
   }
   return min;
 }
@@ -1097,12 +1106,12 @@ template <class Type> Type vpArray2D<Type>::getMaxValue() const
 {
   Type *dataptr = data;
   Type max = *dataptr;
-  dataptr++;
-  for (unsigned int i = 0; i < dsize - 1; ++i) {
+  ++dataptr;
+  for (unsigned int i = 0; i < (dsize - 1); ++i) {
     if (*dataptr > max) {
       max = *dataptr;
     }
-    dataptr++;
+    ++dataptr;
   }
   return max;
 }
@@ -1115,7 +1124,7 @@ template <class Type> Type vpArray2D<Type>::getMaxValue() const
 */
 template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<Type> &m) const
 {
-  if (m.getRows() != rowNum || m.getCols() != colNum) {
+  if ((m.getRows() != rowNum) || (m.getCols() != colNum)) {
     throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
   }
 
@@ -1149,20 +1158,22 @@ template <class Type> vpArray2D<Type> vpArray2D<Type>::conv2(const vpArray2D<Typ
 
 template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode)
 {
-  if (M.getRows() * M.getCols() == 0 || kernel.getRows() * kernel.getCols() == 0)
+  if (((M.getRows() * M.getCols()) == 0) || ((kernel.getRows() * kernel.getCols()) == 0)) {
     return;
+  }
 
   if (mode == "valid") {
-    if (kernel.getRows() > M.getRows() || kernel.getCols() > M.getCols())
+    if ((kernel.getRows() > M.getRows()) || (kernel.getCols() > M.getCols())) {
       return;
+    }
   }
 
   vpArray2D<Type> M_padded, res_same;
 
-  if (mode == "full" || mode == "same") {
+  if ((mode == "full") || (mode == "same")) {
     const unsigned int pad_x = kernel.getCols() - 1;
     const unsigned int pad_y = kernel.getRows() - 1;
-    M_padded.resize(M.getRows() + 2 * pad_y, M.getCols() + 2 * pad_x, true, false);
+    M_padded.resize(M.getRows() + (2 * pad_y), M.getCols() + (2 * pad_x), true, false);
     M_padded.insert(M, pad_y, pad_x);
 
     if (mode == "same") {
@@ -1175,17 +1186,21 @@ template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, cons
   }
   else if (mode == "valid") {
     M_padded = M;
-    res.resize(M.getRows() - kernel.getRows() + 1, M.getCols() - kernel.getCols() + 1);
+    res.resize((M.getRows() - kernel.getRows()) + 1, (M.getCols() - kernel.getCols()) + 1);
   }
   else {
     return;
   }
 
   if (mode == "same") {
-    for (unsigned int i = 0; i < res_same.getRows(); ++i) {
-      for (unsigned int j = 0; j < res_same.getCols(); ++j) {
-        for (unsigned int k = 0; k < kernel.getRows(); ++k) {
-          for (unsigned int l = 0; l < kernel.getCols(); ++l) {
+    unsigned int res_same_rows = res_same.getRows();
+    unsigned int res_same_cols = res_same.getCols();
+    unsigned int kernel_rows = kernel.getRows();
+    unsigned int kernel_cols = kernel.getCols();
+    for (unsigned int i = 0; i < res_same_rows; ++i) {
+      for (unsigned int j = 0; j < res_same_cols; ++j) {
+        for (unsigned int k = 0; k < kernel_rows; ++k) {
+          for (unsigned int l = 0; l < kernel_cols; ++l) {
             res_same[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
           }
         }
@@ -1194,16 +1209,21 @@ template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, cons
 
     const unsigned int start_i = kernel.getRows() / 2;
     const unsigned int start_j = kernel.getCols() / 2;
-    for (unsigned int i = 0; i < M.getRows(); ++i) {
-      memcpy(res.data + i * M.getCols(), res_same.data + (i + start_i) * res_same.getCols() + start_j,
+    unsigned int m_rows = M.getRows();
+    for (unsigned int i = 0; i < m_rows; ++i) {
+      memcpy(res.data + (i * M.getCols()), res_same.data + ((i + start_i) * res_same.getCols()) + start_j,
              sizeof(Type) * M.getCols());
     }
   }
   else {
-    for (unsigned int i = 0; i < res.getRows(); ++i) {
-      for (unsigned int j = 0; j < res.getCols(); ++j) {
-        for (unsigned int k = 0; k < kernel.getRows(); ++k) {
-          for (unsigned int l = 0; l < kernel.getCols(); ++l) {
+    unsigned int res_rows = res.getRows();
+    unsigned int res_cols = res.getCols();
+    unsigned int kernel_rows = kernel.getRows();
+    unsigned int kernel_cols = kernel.getCols();
+    for (unsigned int i = 0; i < res_rows; ++i) {
+      for (unsigned int j = 0; j < res_cols; ++j) {
+        for (unsigned int k = 0; k < kernel_rows; ++k) {
+          for (unsigned int l = 0; l < kernel_cols; ++l) {
             res[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
           }
         }
@@ -1226,9 +1246,11 @@ template<class Type> void vpArray2D<Type>::insert(const vpArray2D<Type> &A, cons
   if (((r + B.getRows()) <= A.getRows()) && ((c + B.getCols()) <= A.getCols())) {
     C.resize(A.getRows(), A.getCols(), false, false);
 
-    for (unsigned int i = 0; i < A.getRows(); ++i) {
-      for (unsigned int j = 0; j < A.getCols(); ++j) {
-        if (i >= r && i < (r + B.getRows()) && j >= c && j < (c + B.getCols())) {
+    unsigned int a_rows = A.getRows();
+    unsigned int a_cols = A.getCols();
+    for (unsigned int i = 0; i < a_rows; ++i) {
+      for (unsigned int j = 0; j < a_cols; ++j) {
+        if ((i >= r) && (i < (r + B.getRows())) && (j >= c) && (j < (c + B.getCols()))) {
           C[i][j] = B[i - r][j - c];
         }
         else {
@@ -1245,11 +1267,12 @@ template<class Type> void vpArray2D<Type>::insert(const vpArray2D<Type> &A, cons
 
 template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type> &A) const
 {
-  if (A.rowNum != rowNum || A.colNum != colNum) {
+  if ((A.rowNum != rowNum) || (A.colNum != colNum)) {
     return false;
   }
 
-  for (unsigned int i = 0; i < A.size(); ++i) {
+  unsigned int a_size = A.size();
+  for (unsigned int i = 0; i < a_size; ++i) {
     if (data[i] != A.data[i]) {
       return false;
     }
@@ -1263,11 +1286,12 @@ template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type> &A)
  */
 template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double> &A) const
 {
-  if (A.rowNum != rowNum || A.colNum != colNum) {
+  if ((A.rowNum != rowNum) || (A.colNum != colNum)) {
     return false;
   }
 
-  for (unsigned int i = 0; i < A.size(); ++i) {
+  unsigned int a_size = A.size();
+  for (unsigned int i = 0; i < a_size; ++i) {
     if (fabs(data[i] - A.data[i]) > std::numeric_limits<double>::epsilon()) {
       return false;
     }
@@ -1281,11 +1305,12 @@ template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double> &A
  */
 template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) const
 {
-  if (A.rowNum != rowNum || A.colNum != colNum) {
+  if ((A.rowNum != rowNum) || (A.colNum != colNum)) {
     return false;
   }
 
-  for (unsigned int i = 0; i < A.size(); ++i) {
+  unsigned int a_size = A.size();
+  for (unsigned int i = 0; i < a_size; ++i) {
     if (fabsf(data[i] - A.data[i]) > std::numeric_limits<float>::epsilon()) {
       return false;
     }

@@ -59,7 +59,7 @@ private:
   //! Eye method unavailable
   void eye(unsigned int m, unsigned int n);
   //! Copy constructor unavailable
-  vpSubMatrix(const vpSubMatrix & /* m */);
+  vpSubMatrix(const vpSubMatrix &m /* m */);
 
 protected:
   unsigned int pRowNum;

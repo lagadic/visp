@@ -39,8 +39,8 @@
 
 */
 
-#ifndef vpXMLPARSERHOMOGENEOUSMATRIX_H
-#define vpXMLPARSERHOMOGENEOUSMATRIX_H
+#ifndef VP_XMLPARSERHOMOGENEOUSMATRIX_H
+#define VP_XMLPARSERHOMOGENEOUSMATRIX_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -164,7 +164,7 @@ public:
   void setHomogeneousMatrixName(const std::string &name);
 
 private:
-  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &);            // noncopyable
+  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &hm);            // noncopyable
   vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &); //
 
   // PIMPL idiom

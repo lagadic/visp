@@ -125,7 +125,7 @@ int main()
       M[0][i] = i;
       bench[i] = i;
     }
-    if (test("M", M, bench) == false)
+    if (test("M", vpRowVector(M), bench) == false)
       return err;
     vpRowVector v;
     v = M;
@@ -137,7 +137,7 @@ int main()
     vpRowVector z1(bench);
     if (test("z1", z1, bench) == false)
       return err;
-    vpRowVector z2 = bench;
+    vpRowVector z2 = vpRowVector(bench);
     if (test("z2", z2, bench) == false)
       return err;
   }
@@ -168,7 +168,7 @@ int main()
     vpRowVector y1(bench2);
     if (test("y1", y1, bench1) == false)
       return err;
-    vpRowVector y2 = bench2;
+    vpRowVector y2 = vpRowVector(bench2);
     if (test("y2", y2, bench1) == false)
       return err;
   }

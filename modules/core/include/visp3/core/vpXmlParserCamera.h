@@ -191,7 +191,7 @@ public:
   void setWidth(unsigned int width);
 
 private:
-  vpXmlParserCamera(const vpXmlParserCamera &);            // noncopyable
+  vpXmlParserCamera(const vpXmlParserCamera &c);            // noncopyable
   vpXmlParserCamera &operator=(const vpXmlParserCamera &); //
 
   // PIMPL idiom

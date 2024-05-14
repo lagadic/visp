@@ -217,7 +217,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   //-------------------------------------------------
@@ -269,7 +271,7 @@ public:
   //---------------------------------
   /** @name Assignment operators */
   //@{
-  vpMatrix &operator<<(double *);
+  vpMatrix &operator<<(double *p);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
