@@ -46,7 +46,7 @@ from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousM
 from visp.core import ImageGray, ImageUInt16
 from visp.io import ImageIo
 from visp.mbt import MbGenericTracker, MbTracker
-from visp.gui import DisplayOpenCV
+from visp.display_utils import get_display
 from visp.core import Color
 from visp.core import PixelMeterConversion
 
@@ -208,11 +208,11 @@ if __name__ == '__main__':
     tracker.setCameraTransformationMatrix('Camera2', depth_M_color)
 
   # Initialize displays
-  dI = DisplayOpenCV()
+  dI = get_display()
   dI.init(I, 0, 0, 'Color image')
 
   I_depth = None if args.disable_depth else ImageGray()
-  dDepth = DisplayOpenCV()
+  dDepth = get_display()
   if not args.disable_depth:
     ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
     dDepth.init(I_depth,  I.getWidth(), 0, 'Depth')

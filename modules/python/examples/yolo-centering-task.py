@@ -8,7 +8,7 @@ from visp.core import ImageRGBa
 from visp.robot import ImageSimulator
 from visp.visual_features import BasicFeature, FeaturePoint
 from visp.vs import Servo
-from visp.gui import DisplayX
+from visp.display_utils import get_display
 
 
 try:
@@ -142,7 +142,7 @@ if __name__ == '__main__':
   prev_v = ColVector(6, 0.0)
   target_class = args.class_id # Car
 
-  d = DisplayX()
+  d = get_display()
   d.init(I)
   Display.display(I)
   Display.flush(I)
