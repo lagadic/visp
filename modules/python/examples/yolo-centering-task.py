@@ -48,7 +48,7 @@ class VSPlot(object):
     self.I = []
 
   def on_iter(self, Idisp: ImageRGBa, v: ColVector, error: ColVector, cTw: HomogeneousMatrix) -> None:
-    self.I.append(Idisp)
+    self.I.append(Idisp.numpy().copy())
     self.v.append(v.numpy()[3:5].flatten())
     self.error.append(error.numpy().flatten())
     self.r.append(PoseVector(cTw).numpy()[3:5].flatten())
@@ -59,7 +59,7 @@ class VSPlot(object):
     self.r = np.asarray(self.r)[1:]
 
 
-    fig, axs = plt.subplots(2, 2, figsize=(15, 15 * (self.I[0].getHeight() / self.I[0].getWidth())))
+    fig, axs = plt.subplots(2, 2, figsize=(15, 15 * (self.I[0].shape[0] / self.I[0].shape[1])))
     axs = [axs[0][0], axs[0][1], axs[1][0],axs[1][1]]
     titles = ['I', 'Feature error', 'Velocity', 'Pose']
     legends = [
@@ -94,8 +94,8 @@ class VSPlot(object):
         artists[3][j].set_data(xs, self.r[:i, j])
       return artists
 
-    anim = animation.FuncAnimation(fig, animate, frames=len(self.v), interval=30, blit=False, repeat=False)
-    writervideo = animation.FFMpegWriter(fps=30)
+    anim = animation.FuncAnimation(fig, animate, frames=len(self.v), blit=False, repeat=False)
+    writervideo = animation.FFMpegWriter(fps=20)
     anim.save('exp.mp4', writer=writervideo)
     plt.savefig('exp.pdf')
     plt.close()
@@ -149,7 +149,7 @@ if __name__ == '__main__':
   _ = detection_model(np.array(I.numpy()[..., 2::-1]))
   error_norm = 1e10
   # Servoing loop
-  while error_norm > 5e-6:
+  while error_norm > 5e-7:
     start = time.time()
     # Data acquisition
     simulator.getImage(I, cam)
@@ -173,8 +173,8 @@ if __name__ == '__main__':
 
     # Display and logging
     Display.display(I)
-    sd.display(cam, I, Color.green)
-    s.display(cam, I, Color.red)
+    sd.display(cam, I, Color.darkBlue, thickness=2)
+    s.display(cam, I, Color.darkRed, thickness=2)
     Display.flush(I)
     Display.getImage(I, Idisp)
     plotter.on_iter(Idisp, v, error, cTw)
