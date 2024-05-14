@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 /*!
-  \file manGrab1394-2.cpp
+  \file manGrab1394.cpp
 
   \brief Images grabbing example with the vp1394TwoGrabber class.
 
  */
  /*!
-   \example manGrab1394-2.cpp
+   \example manGrab1394.cpp
 
    \brief Images grabbing example with the vp1394TwoGrabber class.
 
@@ -76,7 +76,7 @@ int main()
         g.acquire(I[camera]);
       }
     }
-    delete [] I;
+    delete[] I;
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
