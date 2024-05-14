@@ -69,7 +69,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
@@ -107,7 +107,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -124,12 +125,17 @@ int main()
 
     vpImage<unsigned char> I;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-    g.acquire(I);
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -163,6 +169,7 @@ int main()
     vpDisplay::flush(I);
 
     vpRobotAfma6 robot;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
 
     vpCameraParameters cam;
     // Update camera parameters
@@ -211,9 +218,10 @@ int main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       // Acquire a new image from the camera
-      g.acquire(I);
+      rs.acquire(I);
 
       // Display this image
       vpDisplay::display(I);
@@ -278,6 +286,11 @@ int main()
       // point, we have 2 errors (along x and y axis).  This error is
       // expressed in meters in the camera frame
       flog << (task.getError()).t() << std::endl;
+
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
       vpDisplay::flush(I);
 
       //      vpTRACE("\t\t || s - s* || = %f ", ( task.getError()
@@ -289,7 +302,8 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
