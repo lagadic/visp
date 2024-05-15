@@ -400,7 +400,7 @@ python_type_aliases = {
   "_visp.": "visp.",
   "visp._visp.": "visp."
 }
-
+autodoc_type_aliases = python_type_aliases
 
 autodoc_excludes = [
 '__weakref__',  '__doc__', '__module__', '__dict__',
