@@ -244,23 +244,18 @@ class HeaderFile():
       logging.info(f'Parsing subnamespace {namespace_prefix + sub_ns}')
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
-  def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment) -> SingleObjectBindings:
+  def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment, owner='submodule') -> None:
     '''
     Generate the bindings for a single class:
     This method will generate one Python class per template instanciation.
     If the class has no template argument, then a single python class is generated
 
     If it is templated, the mapping (template argument types => Python class name) must be provided in the JSON config file
+    Subclasses are also generated
     '''
-    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict) -> str:
+    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict) -> None:
       '''
       Generate the bindings of a single class, handling a potential template specialization.
-      The handled information is:
-        - The inheritance of this class
-        - Its public fields that are not pointers
-        - Its constructors
-        - Most of its operators
-        - Its public methods
       '''
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
@@ -317,12 +312,13 @@ class HeaderFile():
       trampoline_name = cls_config['trampoline']
       if trampoline_name is not None:
         base_class_strs.append(trampoline_name)
+
       # py::class template contains the class, its holder type, and its base clases.
       # The default holder type is std::unique_ptr. when the cpp function argument is a shared_ptr, Pybind will raise an error when calling the method.
       py_class_template_str = ', '.join([name_cpp, f'std::shared_ptr<{name_cpp}>'] + base_class_strs)
       doc_param = [] if class_doc is None else [class_doc.documentation]
       buffer_protocol_arg = ['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else []
-      cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + buffer_protocol_arg
+      cls_argument_strs = [owner, f'"{name_python}"'] + doc_param + buffer_protocol_arg
 
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{py_class_template_str}>({", ".join(cls_argument_strs)});'
 
@@ -551,11 +547,20 @@ class HeaderFile():
       classs_binding_defs = ClassBindingDefinitions(field_dict, methods_dict, publicist_str)
       bindings_container.add_bindings(SingleObjectBindings(class_def_names, class_decl, classs_binding_defs, GenerationObjectType.Class))
 
-    name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+      for subclass in cls.classes:
+        if subclass.class_decl.access != 'public':
+          continue
+        if name_is_anonymous(subclass.class_decl.typename):
+          logging.warning(f'Class {name_cpp} has a subclass that is hidden behind a typedef that was not generated!')
+          continue
+        self.generate_class(bindings_container, subclass, header_env, python_ident)
+
+
+    name_cpp_no_template = get_name(cls.class_decl.typename)
     logging.info(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
-      return ''
+      return
 
     cls_config = self.submodule.get_class_config(name_cpp_no_template)
 
@@ -569,10 +574,9 @@ class HeaderFile():
     if len(set(refs_or_ptr_fields).difference(set(acknowledged_pointer_fields))) > 0:
       self.submodule.report.add_pointer_or_ref_holder(name_cpp_no_template, refs_or_ptr_fields)
 
-
     if cls.class_decl.template is None:
       name_python = name_cpp_no_template.replace('vp', '')
-      return generate_class_with_potiental_specialization(name_python, {}, cls_config)
+      generate_class_with_potiental_specialization(name_python, {}, cls_config)
     else:
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         logging.warning(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
