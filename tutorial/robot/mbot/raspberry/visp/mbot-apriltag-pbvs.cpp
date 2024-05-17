@@ -2,7 +2,7 @@
 #include <visp3/core/vpSerial.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpUnicycle.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -46,7 +46,7 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
-#if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_DISPLAY)
     }
     else if (std::string(argv[i]) == "--display_on") {
       display_on = true;
@@ -69,7 +69,7 @@ int main(int argc, const char **argv)
         " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
         " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
         " [--display_tag]";
-#if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_DISPLAY)
       std::cout << " [--display_on] [--save_image]";
 #endif
       std::cout << " [--serial_off] [--help]" << std::endl;
@@ -104,9 +104,9 @@ int main(int argc, const char **argv)
 
     vpDisplay *d = nullptr;
     vpImage<vpRGBa> O;
-#ifdef VISP_HAVE_X11
+#ifdef VISP_HAVE_DISPLAY
     if (display_on) {
-      d = new vpDisplayX(I);
+      d = vpDisplayFactory::displayFactory(I);
     }
 #endif
 
