@@ -160,5 +160,5 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2)
   double Z1 = P1.cP[2] / P1.cP[3];
   double Z2 = P2.cP[2] / P2.cP[3];
 
-  s.buildFrom(x1, y1, Z1, x2, y2, Z2);
+  s.build(x1, y1, Z1, x2, y2, Z2);
 }

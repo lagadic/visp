@@ -152,7 +152,7 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w, unsigned int h
 
   findPose();
 
-  cMf.buildFrom(0, 0, cMo[2][3], 0, 0, 0);
+  cMf.build(0, 0, cMo[2][3], 0, 0, 0);
 }
 
 void vpPlotGraph::findPose()
@@ -1319,7 +1319,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 
     double anglei = diffi * 360 / width_;
     double anglej = diffj * 360 / width_;
-    mov.buildFrom(0, 0, 0, vpMath::rad(anglei), vpMath::rad(-anglej), 0);
+    mov.build(0, 0, 0, vpMath::rad(anglei), vpMath::rad(-anglej), 0);
     changed = true;
   }
 
@@ -1328,7 +1328,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 
   if (old_iPz != vpImagePoint(-1, -1) && blockedz) {
     double diffi = iP.get_i() - old_iPz.get_i();
-    mov.buildFrom(0, 0, diffi * 0.01, 0, 0, 0);
+    mov.build(0, 0, diffi * 0.01, 0, 0, 0);
     changed = true;
   }
 

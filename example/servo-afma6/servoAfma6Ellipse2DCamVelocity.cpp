@@ -167,7 +167,7 @@ int main()
     f >> n11;
     f >> n02;
     f.close();
-    cd.buildFrom(x, y, n20, n11, n02);
+    cd.build(x, y, n20, n11, n02);
     cd.setABC(0, 0, 10);
 
     task.setServo(vpServo::EYEINHAND_CAMERA);

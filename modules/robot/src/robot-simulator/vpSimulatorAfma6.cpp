@@ -320,7 +320,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
   vpRotationMatrix eRc(_erc);
 
   m_mutex_eMc.lock();
-  this->_eMc.buildFrom(_etc, eRc);
+  this->_eMc.build(_etc, eRc);
   m_mutex_eMc.unlock();
 
   setToolType(tool);
@@ -2066,7 +2066,7 @@ void vpSimulatorAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
   vpHomogeneousMatrix cMe;
   vpAfma6::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -2440,7 +2440,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
     cdMc = cdMo_ * get_cMo().inverse();
     cdMc.extract(cdRc);
     cdMc.extract(cdTc);
-    cdTUc.buildFrom(cdRc);
+    cdTUc.build(cdRc);
 
     // compute v,w and velocity
     v = -lambda * cdRc.t() * cdTc;

@@ -178,7 +178,7 @@ int main(int argc, const char **argv)
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -223,7 +223,7 @@ int main(int argc, const char **argv)
       // new point position
       point.track(cMo);
       vpFeatureBuilder::create(p, point); // retrieve x,y and Z of the vpPoint structure
-      pd.buildFrom(0, 0, 1);              // Since vpServo::MEAN interaction matrix is
+      pd.build(0, 0, 1);              // Since vpServo::MEAN interaction matrix is
                                           // used, we need to update the desired feature at
                                           // each iteration
 
@@ -239,7 +239,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

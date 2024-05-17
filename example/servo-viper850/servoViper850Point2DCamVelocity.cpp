@@ -96,7 +96,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -164,7 +165,7 @@ int main()
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -214,7 +215,8 @@ int main()
 
         // Apply the computed camera velocities to the robot
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Tracking failed... Stop the robot." << std::endl;
         v = 0;
         // Stop robot
@@ -262,7 +264,8 @@ int main()
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

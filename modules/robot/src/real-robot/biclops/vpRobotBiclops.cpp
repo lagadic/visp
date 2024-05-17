@@ -431,7 +431,7 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   cMe = vpBiclops::get_cMe();
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }

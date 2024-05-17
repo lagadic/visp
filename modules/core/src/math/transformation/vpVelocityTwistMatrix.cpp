@@ -114,10 +114,10 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : v
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
 {
   if (full) {
-    buildFrom(M);
+    build(M);
   }
   else {
-    buildFrom(M.getRotationMatrix());
+    build(M.getRotationMatrix());
   }
 }
 
@@ -138,7 +138,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool 
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau)
   : vpArray2D<double>(6, 6)
 {
-  buildFrom(t, thetau);
+  build(t, thetau);
 }
 
 /*!
@@ -155,7 +155,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(6, 6)
 {
-  buildFrom(thetau);
+  build(thetau);
 }
 
 /*!
@@ -174,7 +174,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpA
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
   : vpArray2D<double>(6, 6)
 {
-  buildFrom(t, R);
+  build(t, R);
 }
 
 /*!
@@ -188,7 +188,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(6, 6) { buildFrom(R); }
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(6, 6) { build(R); }
 
 /*!
 
@@ -210,7 +210,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(double tx, double ty, double tz, do
 {
   vpTranslationVector t(tx, ty, tz);
   vpThetaUVector tu(tux, tuy, tuz);
-  buildFrom(t, tu);
+  build(t, tu);
 }
 
 /*!
@@ -328,6 +328,108 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   return c;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated You should use build(const vpRotationMatrix &) instead.
+  Build a velocity twist transformation block diagonal matrix from a rotation
+  matrix R.
+
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & {\bf 0}_{3\times 3} \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+
+  \param R : Rotation matrix.
+
+*/
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
+{
+  build(R);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpTranslationVector &, const vpRotationMatrix &) instead.
+  Build a velocity twist transformation matrix from a translation vector
+  \e t and a rotation matrix \e R.
+
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & [{\bf t}]_\times \; {\bf R}
+  \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+
+  \param t : Translation vector.
+
+  \param R : Rotation matrix.
+
+*/
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+{
+  build(t, R);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpTranslationVector &, const vpThetaUVector &) instead.
+  Initialize a velocity twist transformation matrix from a translation vector
+  \e t and a rotation vector with \f$\theta u \f$ parametrization.
+
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & [{\bf t}]_\times \; {\bf R}
+  \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+
+  \param t : Translation vector.
+
+  \param thetau : \f$\theta {\bf u}\f$ rotation vector used to create rotation
+  matrix \f${\bf R}\f$.
+
+*/
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
+{
+  build(t, thetau);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpThetaUVector &) instead.
+  Initialize a velocity twist transformation matrix from a rotation vector
+  with \f$\theta u \f$ parametrization.
+
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & {\bf 0}_{3\times 3} \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+
+  \param thetau : \f$\theta {\bf u}\f$ rotation vector used to create rotation
+  matrix \f${\bf R}\f$.
+
+*/
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
+{
+  build(thetau);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpHomogeneousMatrix &, bool) instead.
+  Initialize a velocity twist transformation matrix from an homogeneous matrix
+  \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
+  \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
+
+  \param M : Homogeneous matrix \f$M\f$ used to initialize the velocity twist
+  transformation matrix.
+  \param full : Boolean used to indicate which matrix should be filled.
+  - When set to true, use the complete velocity skew transformation :
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & [{\bf t}]_\times \; {\bf R}
+  \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+  - When set to false, use the block diagonal velocity skew transformation:
+  \f[ {\bf V} = \left[\begin{array}{cc} {\bf R} & {\bf 0}_{3\times 3} \\
+  {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
+
+*/
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
+{
+  build(M, full);
+  return *this;
+}
+#endif
+
 /*!
 
   Build a velocity twist transformation block diagonal matrix from a rotation
@@ -339,7 +441,7 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpRotationMatrix &R)
 {
   for (unsigned int i = 0; i < 3; ++i) {
     for (unsigned int j = 0; j < 3; ++j) {
@@ -365,7 +467,7 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpTranslationVector &t, const vpRotationMatrix &R)
 {
   vpMatrix skewaR = t.skew(t) * R;
 
@@ -395,9 +497,9 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpTranslationVector &t, const vpThetaUVector &thetau)
 {
-  buildFrom(t, vpRotationMatrix(thetau));
+  build(t, vpRotationMatrix(thetau));
   return *this;
 }
 
@@ -413,9 +515,9 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpThetaUVector &thetau)
 {
-  buildFrom(vpRotationMatrix(thetau));
+  build(vpRotationMatrix(thetau));
   return *this;
 }
 
@@ -437,13 +539,13 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &the
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpHomogeneousMatrix &M, bool full)
 {
   if (full) {
-    buildFrom(M.getTranslationVector(), M.getRotationMatrix());
+    build(M.getTranslationVector(), M.getRotationMatrix());
   }
   else {
-    buildFrom(M.getRotationMatrix());
+    build(M.getRotationMatrix());
   }
 
   return *this;
@@ -460,7 +562,7 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::inverse() const
   vpTranslationVector RtT;
   RtT = -(R.t() * T);
 
-  Wi.buildFrom(RtT, R.t());
+  Wi.build(RtT, R.t());
 
   return Wi;
 }

@@ -62,7 +62,7 @@
 
   This class allows to compute a quaternion from a rotation matrix
   using either vpQuaternionVector(const vpRotationMatrix &) constructor
-  or buildFrom() method.
+  or build() method.
 
   It also defines common operations on a quaternion such as:
   - multiplication (scalar and quaternion)
@@ -115,11 +115,19 @@ public:
   explicit vpQuaternionVector(const vpColVector &q);
   explicit vpQuaternionVector(const std::vector<double> &q);
 
-  vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
-  vpQuaternionVector buildFrom(const vpRotationMatrix &R);
-  vpQuaternionVector buildFrom(const vpThetaUVector &tu);
-  vpQuaternionVector buildFrom(const vpColVector &q);
-  vpQuaternionVector buildFrom(const std::vector<double> &q);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
+  vp_deprecated vpQuaternionVector buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpQuaternionVector buildFrom(const vpThetaUVector &tu);
+  vp_deprecated vpQuaternionVector buildFrom(const vpColVector &q);
+  vp_deprecated vpQuaternionVector buildFrom(const std::vector<double> &q);
+#endif
+  vpQuaternionVector &build(const double &qx, const double &qy, const double &qz, const double &qw);
+  vpQuaternionVector &build(const vpRotationMatrix &R);
+  vpQuaternionVector &build(const vpThetaUVector &tu);
+  vpQuaternionVector &build(const vpColVector &q);
+  vpQuaternionVector &build(const std::vector<double> &q);
+
   void set(double x, double y, double z, double w);
 
   const double &x() const;

@@ -152,7 +152,7 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
     u[1] = xc[4];
     u[2] = xc[5];
 
-    rd.buildFrom(u[0], u[1], u[2]);
+    rd.build(u[0], u[1], u[2]);
     /* a partir de l'axe de rotation, calcul de la matrice de rotation. */
     // --comment: rot_mat of u rd
 

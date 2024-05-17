@@ -166,7 +166,7 @@ int main(int argc, const char **argv)
     vpHomogeneousMatrix cdMc;
     cdMc = cdMo * cMo.inverse();
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.buildFrom(cdMc);
+    tu.build(cdMc);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -195,7 +195,7 @@ int main(int argc, const char **argv)
 
       // new rotation to achieve
       cdMc = cdMo * cMo.inverse();
-      tu.buildFrom(cdMc);
+      tu.build(cdMc);
 
       // compute the control law
       v = task.computeControlLaw();
@@ -209,7 +209,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

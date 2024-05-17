@@ -244,10 +244,10 @@ int main(int argc, const char **argv)
     // from this displacement, we extract the rotation cdRc represented by
     // the angle theta and the rotation axis u
     vpFeatureThetaU tuz(vpFeatureThetaU::cdRc);
-    tuz.buildFrom(cdMc);
+    tuz.build(cdMc);
     // And the translations
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
-    t.buildFrom(cdMc);
+    t.build(cdMc);
 
     // This visual has to be regulated to zero
 
@@ -301,8 +301,8 @@ int main(int argc, const char **argv)
       vpFeatureBuilder::create(p, P);
 
       cdMc = cdMo * cMo.inverse();
-      tuz.buildFrom(cdMc);
-      t.buildFrom(cdMc);
+      tuz.build(cdMc);
+      t.build(cdMc);
 
       // compute the control law: v = -lambda L^+(s-sd)
       v = task.computeControlLaw();
@@ -318,7 +318,8 @@ int main(int argc, const char **argv)
     // Final camera location
     std::cout << "Final camera location: \n" << cMo << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_SUCCESS;
   }

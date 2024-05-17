@@ -164,7 +164,7 @@ int main(int argc, const char **argv)
     vpFeatureBuilder::create(s_x, cam, cog);
 
     // Create the desired x* visual feature
-    s_xd.buildFrom(0, 0, Z_d);
+    s_xd.build(0, 0, Z_d);
 
     // Add the point feature
     task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
@@ -173,8 +173,8 @@ int main(int argc, const char **argv)
     vpFeatureDepth s_Z, s_Z_d;
 
     std::cout << "Z " << Z << std::endl;
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
-    s_Z_d.buildFrom(0, 0, Z_d, 0);                 // The value of s* is 0 with Z=1 meter
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
+    s_Z_d.build(0, 0, Z_d, 0);                 // The value of s* is 0 with Z=1 meter
 
     // Add the feature
     task.addFeature(s_Z, s_Z_d);
@@ -233,7 +233,7 @@ int main(int argc, const char **argv)
         s_x.set_Z(Z);
 
         // Update log(Z/Z*) feature
-        s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Z_d));
+        s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Z_d));
 
         std::cout << "cog: " << detector.getCog(0) << " Z: " << Z << std::endl;
 

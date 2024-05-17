@@ -97,7 +97,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -164,7 +165,7 @@ int main()
     p.set_Z(1);
     vpTRACE("sets the desired position of the visual feature ");
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     vpTRACE("define the task");
     vpTRACE("\t we want an eye-in-hand control law");
@@ -277,7 +278,8 @@ int main()
     std::cout << "Display task information: " << std::endl;
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

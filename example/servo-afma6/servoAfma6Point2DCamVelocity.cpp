@@ -163,7 +163,7 @@ int main()
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law

@@ -240,14 +240,14 @@ int main()
     // The second feature is the depth of the current square center relative
     // to the depth of the desired square center.
     vpFeatureDepth logZ;
-    logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+    logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
     // The last three features are the rotations thetau between the current
     // pose and the desired pose.
     vpHomogeneousMatrix cdMc;
     cdMc = cMod * cMo.inverse();
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.buildFrom(cdMc);
+    tu.build(cdMc);
 
     vpTRACE("define the task");
     vpTRACE("\t we want an eye-in-hand control law");
@@ -326,11 +326,11 @@ int main()
           pointd[i].display(I, cam, vpColor::red);
 
         // Update the second feature
-        logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+        logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
         // Update the last three features
         cdMc = cMod * cMo.inverse();
-        tu.buildFrom(cdMc);
+        tu.build(cdMc);
 
         // Adaptive gain
         double gain;

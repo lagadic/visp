@@ -143,7 +143,7 @@ frame.
 The desired position of the feature is set to (0,0). The depth of the point \c cdMo[2][3] is required to compute the
 feature position.
 \code
-  s_xd.buildFrom(0, 0, cdMo[2][3]);
+  s_xd.build(0, 0, cdMo[2][3]);
 \endcode
 
 Finally only the position of the feature along x is added to the task.
@@ -167,12 +167,12 @@ Then, we get the current \c Z and desired \c Zd depth of the target.
 From these values, we are able to initialize the current depth feature:
 
 \code
-  s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd));
+  s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd));
 \endcode
 
 and also the desired one:
 \code
-  s_Zd.buildFrom(0, 0, Zd, 0);
+  s_Zd.build(0, 0, Zd, 0);
 \endcode
 
 Finally, we add the feature to the task:
@@ -204,7 +204,7 @@ Based on these new coordinates, we update the point visual feature \c s_x:
 and also the depth visual feature:
 \code
       Z = point.get_Z() ;
-      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd)) ;
+      s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd)) ;
 \endcode
 
 We also update the task with the values of the velocity twist matrix \c cVe and the robot jacobian \c eJe:

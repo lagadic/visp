@@ -35,6 +35,7 @@
 #ifndef vpForceTwistMatrix_h
 #define vpForceTwistMatrix_h
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -144,7 +145,7 @@ int main()
   vpHomogeneousMatrix sMp;
   // ... sMp need here to be initialized
 
-  sFp.buildFrom(sMp);
+  sFp.build(sMp);
 
   // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
   vpColVector p_H(6);
@@ -177,14 +178,22 @@ public:
   explicit vpForceTwistMatrix(const vpRotationMatrix &R);
   explicit vpForceTwistMatrix(const vpThetaUVector &thetau);
 
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
 
-  vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
-  vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
+#endif
+  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpForceTwistMatrix &build(const vpHomogeneousMatrix &M, bool full = true);
 
-  // Basic initialisation (identity)
+  vpForceTwistMatrix &build(const vpThetaUVector &thetau);
+  vpForceTwistMatrix &build(const vpRotationMatrix &R);
+
+// Basic initialisation (identity)
   void eye();
 
   vpForceTwistMatrix operator*(const vpForceTwistMatrix &F) const;

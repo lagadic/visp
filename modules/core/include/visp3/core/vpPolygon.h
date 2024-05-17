@@ -37,6 +37,7 @@
 #include <list>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -110,7 +111,8 @@ protected:
   vpRect _bbox;
 
 public:
-  enum PointInPolygonMethod {
+  enum PointInPolygonMethod
+  {
     PnPolySegmentIntersection, /*!< Legacy Point In Polygon test. */
     PnPolyRayCasting           /*!< Point In Polygon test using ray casting method
                                   (faster). */
@@ -124,10 +126,16 @@ public:
 
   vpPolygon &operator=(const vpPolygon &poly);
 
-  void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
-  void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
-  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
+  vp_deprecated void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
+  vp_deprecated void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
                  const bool create_convex_hull = false);
+#endif
+  vpPolygon &build(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &build(const std::list<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &build(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                 const bool &create_convex_hull = false);
 
   unsigned int getSize() const;
   void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,

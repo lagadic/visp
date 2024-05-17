@@ -39,6 +39,7 @@
   \brief Class that consider the particular case of rotation matrix
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoseVector.h>
@@ -131,14 +132,24 @@ public:
   explicit vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
-  vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
-  vpRotationMatrix buildFrom(const vpThetaUVector &v);
-  vpRotationMatrix buildFrom(const vpPoseVector &p);
-  vpRotationMatrix buildFrom(const vpRzyzVector &v);
-  vpRotationMatrix buildFrom(const vpRxyzVector &v);
-  vpRotationMatrix buildFrom(const vpRzyxVector &v);
-  vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
+  vp_deprecated vpRotationMatrix buildFrom(const vpThetaUVector &v);
+  vp_deprecated vpRotationMatrix buildFrom(const vpPoseVector &p);
+  vp_deprecated vpRotationMatrix buildFrom(const vpRzyzVector &v);
+  vp_deprecated vpRotationMatrix buildFrom(const vpRxyzVector &v);
+  vp_deprecated vpRotationMatrix buildFrom(const vpRzyxVector &v);
+  vp_deprecated vpRotationMatrix buildFrom(const vpQuaternionVector &q);
+  vp_deprecated vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
+#endif
+  vpRotationMatrix &build(const vpHomogeneousMatrix &M);
+  vpRotationMatrix &build(const vpThetaUVector &v);
+  vpRotationMatrix &build(const vpPoseVector &p);
+  vpRotationMatrix &build(const vpRzyzVector &v);
+  vpRotationMatrix &build(const vpRxyzVector &v);
+  vpRotationMatrix &build(const vpRzyxVector &v);
+  vpRotationMatrix &build(const vpQuaternionVector &q);
+  vpRotationMatrix &build(const double &tux, const double &tuy, const double &tuz);
 
   void eye();
 

@@ -141,7 +141,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     bench1 = r1.toStdVector();
     CHECK(test("r1", r1, bench1));
 
-    r1.buildFrom(bench3);
+    r1.build(bench3);
     CHECK(test("r1", r1, bench3));
 
     vpThetaUVector r2 = r1;
@@ -176,7 +176,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     bench1 = r1.toStdVector();
     CHECK(test("r1", r1, bench1));
 
-    r1.buildFrom(bench3);
+    r1.build(bench3);
     CHECK(test("r1", r1, bench3));
 
     vpRxyzVector r2 = r1;
@@ -210,7 +210,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     bench1 = r1.toStdVector();
     CHECK(test("r1", r1, bench1));
 
-    r1.buildFrom(bench3);
+    r1.build(bench3);
     CHECK(test("r1", r1, bench3));
 
     vpRzyxVector r2 = r1;
@@ -244,7 +244,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     bench1 = r1.toStdVector();
     CHECK(test("r1", r1, bench1));
 
-    r1.buildFrom(bench3);
+    r1.build(bench3);
     CHECK(test("r1", r1, bench3));
 
     vpRzyzVector r2 = r1;
@@ -278,7 +278,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     bench1 = r1.toStdVector();
     CHECK(test("r1", r1, bench1));
 
-    r1.buildFrom(bench3);
+    r1.build(bench3);
     CHECK(test("r1", r1, bench3));
 
     vpQuaternionVector r2 = r1;
@@ -307,7 +307,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
     for (int i = -10; i < 10; i++) {
       for (int j = -10; j < 10; j++) {
         vpThetaUVector tu(vpMath::rad(90 + i), vpMath::rad(170 + j), vpMath::rad(45));
-        tu.buildFrom(vpRotationMatrix(tu)); // put some coherence into rotation convention
+        tu.build(vpRotationMatrix(tu)); // put some coherence into rotation convention
 
         std::cout << "Initialization " << std::endl;
 
@@ -319,7 +319,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
         std::cout << "u=" << u << std::endl;
 
         std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl;
-        R.buildFrom(tu);
+        R.build(tu);
 
         std::cout << "Matrix R";
         CHECK(R.isARotationMatrix());
@@ -331,20 +331,20 @@ TEST_CASE("Common rotation operations", "[rotation]")
         CHECK(q.magnitude() == Approx(1.0).margin(1e-4));
         std::cout << q << std::endl;
 
-        R.buildFrom(q);
+        R.build(q);
         CHECK(R.isARotationMatrix());
         std::cout << "From vpQuaternionVector to vpRotationMatrix  " << std::endl;
 
         std::cout << "From vpRotationMatrix to vpRxyzVector " << std::endl;
-        vpRxyzVector RxyzBuildFromR(R);
-        std::cout << RxyzBuildFromR << std::endl;
+        vpRxyzVector RxyzbuildR(R);
+        std::cout << RxyzbuildR << std::endl;
 
         std::cout << "From vpRxyzVector to vpThetaUVector " << std::endl;
         std::cout << "  use From vpRxyzVector to vpRotationMatrix " << std::endl;
         std::cout << "  use From vpRotationMatrix to vpThetaUVector " << std::endl;
 
-        vpThetaUVector tuBuildFromEu;
-        tuBuildFromEu.buildFrom(R);
+        vpThetaUVector tubuildEu;
+        tubuildEu.build(R);
 
         std::cout << std::endl;
         std::cout << "result : should equivalent to the first one " << std::endl;
@@ -352,7 +352,7 @@ TEST_CASE("Common rotation operations", "[rotation]")
         double theta2;
         vpColVector u2;
 
-        tuBuildFromEu.extract(theta2, u2);
+        tubuildEu.extract(theta2, u2);
         std::cout << "theta=" << vpMath::deg(theta2) << std::endl;
         std::cout << "u=" << u2 << std::endl;
 
@@ -368,11 +368,11 @@ TEST_CASE("Common rotation operations", "[rotation]")
       std::cout << "Initialization vpRzyzVector " << std::endl;
       std::cout << rzyz << std::endl;
       std::cout << "From vpRzyzVector to vpRotationMatrix  " << std::endl;
-      R.buildFrom(rzyz);
+      R.build(rzyz);
       CHECK(R.isARotationMatrix());
       std::cout << "From vpRotationMatrix to vpRzyzVector " << std::endl;
       vpRzyzVector rzyz_final;
-      rzyz_final.buildFrom(R);
+      rzyz_final.build(R);
       CHECK(test("rzyz", rzyz_final, vpColVector(rzyz)));
       std::cout << rzyz_final << std::endl;
     }
@@ -382,12 +382,12 @@ TEST_CASE("Common rotation operations", "[rotation]")
       std::cout << "Initialization vpRzyxVector " << std::endl;
       std::cout << rzyx << std::endl;
       std::cout << "From vpRzyxVector to vpRotationMatrix  " << std::endl;
-      R.buildFrom(rzyx);
+      R.build(rzyx);
       CHECK(R.isARotationMatrix());
       std::cout << R << std::endl;
       std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl;
       vpRzyxVector rzyx_final;
-      rzyx_final.buildFrom(R);
+      rzyx_final.build(R);
       bool ret = test("rzyx", rzyx_final, vpColVector(rzyx));
       if (ret == false) {
         // Euler angle representation is not unique

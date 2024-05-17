@@ -204,7 +204,7 @@ int main()
     vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0),
                      vpMath::rad(0)); // No rotations
     vpRotationMatrix cRo(cro);        // Build the rotation matrix
-    cMo.buildFrom(cto, cRo);          // Build the homogeneous matrix
+    cMo.build(cto, cRo);          // Build the homogeneous matrix
 
     // sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];

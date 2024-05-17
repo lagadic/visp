@@ -340,7 +340,7 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
   }
   }
   vpRotationMatrix eRc(erc);
-  this->eMc.buildFrom(etc, eRc);
+  this->eMc.build(etc, eRc);
 #endif // VISP_HAVE_VIPER850_DATA
 
   setToolType(tool);

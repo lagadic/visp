@@ -493,18 +493,18 @@ vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double
 /*!
   Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(M); }
+vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { build(M); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}\f$ angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(tu); }
+vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3), m_index(0) { build(tu); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a pose vector.
  */
-vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(p); }
+vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3), m_index(0) { build(p); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,z) \f$ Euler angle
@@ -512,20 +512,20 @@ vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3,
  */
 vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3), m_index(0)
 {
-  buildFrom(euler);
+  build(euler);
 }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(x,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rxyz); }
+vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3), m_index(0) { build(Rxyz); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,x) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rzyx); }
+vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3), m_index(0) { build(Rzyx); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a matrix that contains values corresponding to a rotation matrix.
@@ -538,13 +538,13 @@ vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3),
  */
 vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray2D<double>(3, 3), m_index(0)
 {
-  buildFrom(tux, tuy, tuz);
+  build(tux, tuy, tuz);
 }
 
 /*!
   Construct a 3-by-3 rotation matrix from quaternion angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(q); }
+vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { build(q); }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
@@ -650,7 +650,9 @@ void vpRotationMatrix::printVector()
   std::cout << std::endl;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const vpThetaUVector &) instead.
   Transform a \f$ \theta {\bf u}\f$ angle representation into a rotation
   matrix.
 
@@ -660,6 +662,105 @@ void vpRotationMatrix::printVector()
   \theta} \; [u]_\times \f]
 */
 vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
+{
+  build(v);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
+  Build a rotation matrix from an homogeneous matrix.
+*/
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpHomogeneousMatrix &M)
+{
+  build(M);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpPoseVector &) instead.
+  Build a rotation matrix from a pose vector.
+
+  \sa build(const vpThetaUVector &)
+*/
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpPoseVector &p)
+{
+  return build(p);
+}
+
+/*!
+  \deprecated You should use build(const vpRzyzVector &) instead.
+  Transform a vector representing the Euler angle
+  into a rotation matrix.
+  Rzyz(\f$ \phi, \theta , \psi \f$) =  Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta
+  \f$) Rot(\f$ z,\psi \f$)
+
+*/
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyzVector &v)
+{
+  build(v);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpRxyzVector &) instead.
+  Transform a vector representing the Rxyz angle into a rotation
+  matrix.
+  Rxyz(\f$ \phi,\theta, \psi \f$) = Rot(\f$ x, \psi \f$) Rot(\f$ y, \theta \f$
+  ) Rot(\f$ z,\phi \f$)
+
+*/
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpRxyzVector &v)
+{
+  build(v);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpRzyxVector &) instead.
+  Transform a vector representing the Rzyx angle
+  into a rotation matrix.
+  Rxyz(\f$ \phi, \theta , \psi \f$) =
+  Rot(\f$ z, \psi \f$) Rot(\f$ y, \theta \f$)Rot(\f$ x, \phi \f$)
+*/
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
+{
+  build(v);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const double &, const double &, const double &) instead.
+  Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
+  \theta u_y, \theta u_z)^T\f$ angle representation.
+ */
+vpRotationMatrix vpRotationMatrix::buildFrom(double tux, double tuy, double tuz)
+{
+  build(tux, tuy, tuz);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpQuaternionVector &) instead.
+  Construct a 3-by-3 rotation matrix from a quaternion representation.
+ */
+vpRotationMatrix vpRotationMatrix::buildFrom(const vpQuaternionVector &q)
+{
+  build(q);
+  return *this;
+}
+#endif
+
+/*!
+  Transform a \f$ \theta {\bf u}\f$ angle representation into a rotation
+  matrix.
+
+  The rotation is computed using :
+  \f[
+  R = \cos{ \theta} \; {I}_{3} + (1 - \cos{ \theta}) \; u u^{T} + \sin{
+  \theta} \; [u]_\times \f]
+*/
+vpRotationMatrix &vpRotationMatrix::build(const vpThetaUVector &v)
 {
   double theta, si, co, sinc, mcosc;
   vpRotationMatrix R;
@@ -692,7 +793,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 /*!
   Build a rotation matrix from an homogeneous matrix.
 */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpHomogeneousMatrix &M)
+vpRotationMatrix &vpRotationMatrix::build(const vpHomogeneousMatrix &M)
 {
   for (unsigned int i = 0; i < 3; ++i) {
     for (unsigned int j = 0; j < 3; ++j) {
@@ -706,12 +807,12 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpHomogeneousMatrix &M)
 /*!
   Build a rotation matrix from a pose vector.
 
-  \sa buildFrom(const vpThetaUVector &)
+  \sa build(const vpThetaUVector &)
 */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpPoseVector &p)
+vpRotationMatrix &vpRotationMatrix::build(const vpPoseVector &p)
 {
   vpThetaUVector tu(p);
-  return buildFrom(tu);
+  return build(tu);
 }
 
 /*!
@@ -721,7 +822,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpPoseVector &p)
   \f$) Rot(\f$ z,\psi \f$)
 
 */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyzVector &v)
+vpRotationMatrix &vpRotationMatrix::build(const vpRzyzVector &v)
 {
   double c0, c1, c2, s0, s1, s2;
 
@@ -753,7 +854,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyzVector &v)
   ) Rot(\f$ z,\phi \f$)
 
 */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpRxyzVector &v)
+vpRotationMatrix &vpRotationMatrix::build(const vpRxyzVector &v)
 {
   double c0, c1, c2, s0, s1, s2;
 
@@ -783,7 +884,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRxyzVector &v)
   Rxyz(\f$ \phi, \theta , \psi \f$) =
   Rot(\f$ z, \psi \f$) Rot(\f$ y, \theta \f$)Rot(\f$ x, \phi \f$)
 */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
+vpRotationMatrix &vpRotationMatrix::build(const vpRzyxVector &v)
 {
   double c0, c1, c2, s0, s1, s2;
 
@@ -813,17 +914,17 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix vpRotationMatrix::buildFrom(double tux, double tuy, double tuz)
+vpRotationMatrix &vpRotationMatrix::build(const double &tux, const double &tuy, const double &tuz)
 {
   vpThetaUVector tu(tux, tuy, tuz);
-  buildFrom(tu);
+  build(tu);
   return *this;
 }
 
 /*!
   Construct a 3-by-3 rotation matrix from a quaternion representation.
  */
-vpRotationMatrix vpRotationMatrix::buildFrom(const vpQuaternionVector &q)
+vpRotationMatrix &vpRotationMatrix::build(const vpQuaternionVector &q)
 {
   double a = q.w();
   double b = q.x();
@@ -869,7 +970,7 @@ vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
 vpThetaUVector vpRotationMatrix::getThetaUVector()
 {
   vpThetaUVector tu;
-  tu.buildFrom(*this);
+  tu.build(*this);
   return tu;
 }
 

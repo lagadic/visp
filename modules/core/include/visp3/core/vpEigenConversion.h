@@ -50,12 +50,12 @@ VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst
 
 template <typename Type> void eigen2visp(const Eigen::Quaternion<Type> &src, vpQuaternionVector &dst)
 {
-  dst.buildFrom(src.x(), src.y(), src.z(), src.w());
+  dst.build(src.x(), src.y(), src.z(), src.w());
 }
 
 template <typename Type> void eigen2visp(const Eigen::AngleAxis<Type> &src, vpThetaUVector &dst)
 {
-  dst.buildFrom(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(2));
+  dst.build(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(2));
 }
 
 VISP_EXPORT void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst);

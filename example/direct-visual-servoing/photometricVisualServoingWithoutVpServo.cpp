@@ -298,7 +298,7 @@ int main(int argc, const char **argv)
 
     // camera desired position
     vpHomogeneousMatrix cMo;
-    cMo.buildFrom(0, 0, 1.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(20));
+    cMo.build(0, 0, 1.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(20));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -354,13 +354,13 @@ int main(int argc, const char **argv)
     vpFeatureLuminance sI;
     sI.init(I.getHeight(), I.getWidth(), Z);
     sI.setCameraParameters(cam);
-    sI.buildFrom(I);
+    sI.build(I);
 
     // desired visual feature built from the image
     vpFeatureLuminance sId;
     sId.init(I.getHeight(), I.getWidth(), Z);
     sId.setCameraParameters(cam);
-    sId.buildFrom(Id);
+    sId.build(Id);
 
     // Matrice d'interaction, Hessien, erreur,...
     vpMatrix Lsd;      // matrice d'interaction a la position desiree
@@ -432,7 +432,7 @@ int main(int argc, const char **argv)
       }
 #endif
       // Compute current visual feature
-      sI.buildFrom(I);
+      sI.build(I);
 
       // compute current error
       sI.error(sId, error);

@@ -49,36 +49,36 @@ vpThetaUVector::vpThetaUVector() : vpRotationVector(3) { }
 /*! Copy constructor. */
 vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) { }
 /*! Copy constructor from a 3-dimension vector. */
-vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3) { buildFrom(tu); }
+vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3) { build(tu); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
 */
-vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix &M) : vpRotationVector(3) { buildFrom(M); }
+vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix &M) : vpRotationVector(3) { build(M); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from a pose vector.
 */
-vpThetaUVector::vpThetaUVector(const vpPoseVector &p) : vpRotationVector(3) { buildFrom(p); }
+vpThetaUVector::vpThetaUVector(const vpPoseVector &p) : vpRotationVector(3) { build(p); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from a rotation matrix.
 */
-vpThetaUVector::vpThetaUVector(const vpRotationMatrix &R) : vpRotationVector(3) { buildFrom(R); }
+vpThetaUVector::vpThetaUVector(const vpRotationMatrix &R) : vpRotationVector(3) { build(R); }
 
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-x representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRzyxVector &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
+vpThetaUVector::vpThetaUVector(const vpRzyxVector &rzyx) : vpRotationVector(3) { build(rzyx); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-z representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRzyzVector &rzyz) : vpRotationVector(3) { buildFrom(rzyz); }
+vpThetaUVector::vpThetaUVector(const vpRzyzVector &rzyz) : vpRotationVector(3) { build(rzyz); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from an Euler x-y-z representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3) { buildFrom(rxyz); }
+vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3) { build(rxyz); }
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from a quaternion representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3) { buildFrom(q); }
+vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3) { build(q); }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radians.
@@ -96,22 +96,123 @@ vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3
   tu: 0  1.570796327  3.141592654
   \endcode
 */
-vpThetaUVector::vpThetaUVector(double tux, double tuy, double tuz) : vpRotationVector(3) { buildFrom(tux, tuy, tuz); }
+vpThetaUVector::vpThetaUVector(double tux, double tuy, double tuz) : vpRotationVector(3) { build(tux, tuy, tuz); }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from a vector of 3 angles in radian.
 */
-vpThetaUVector::vpThetaUVector(const std::vector<double> &tu) : vpRotationVector(3) { buildFrom(tu); }
+vpThetaUVector::vpThetaUVector(const std::vector<double> &tu) : vpRotationVector(3) { build(tu); }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
   Converts an homogeneous matrix into a \f$\theta {\bf u}\f$ vector.
 */
 vpThetaUVector vpThetaUVector::buildFrom(const vpHomogeneousMatrix &M)
 {
+  build(M);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpPoseVector &) instead.
+  Converts a pose vector into a \f$\theta {\bf u}\f$ vector copying
+  the \f$\theta {\bf u}\f$ values contained in the pose vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpPoseVector &p)
+{
+  build(p);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpRotationMatrix &) instead.
+  Converts a rotation matrix into a \f$\theta {\bf u}\f$ vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
+{
+  build(R);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpRzyxVector &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-x representation vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpRzyxVector &rzyx)
+{
+  build(rzyx);
+  return *this;
+}
+/*!
+  \deprecated You should use build(const vpRzyzVector &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-z representation vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpRzyzVector &rzyz)
+{
+  build(rzyz);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpRxyzVector &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from an Euler x-y-z representation vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpRxyzVector &rxyz)
+{
+  build(rxyz);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpQuaternionVector &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from a quaternion representation vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpQuaternionVector &q)
+{
+  build(q);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const std::vector<double> &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from a 3-dim vectors.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const std::vector<double> &tu)
+{
+  build(tu);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpColVector &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from a 3-dim vector.
+*/
+vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
+{
+  build(tu);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const double &, const double &, const double &) instead.
+  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
+*/
+void vpThetaUVector::buildFrom(double tux, double tuy, double tuz)
+{
+  build(tux, tuy, tuz);
+}
+#endif
+
+/*!
+  Converts an homogeneous matrix into a \f$\theta {\bf u}\f$ vector.
+*/
+vpThetaUVector &vpThetaUVector::build(const vpHomogeneousMatrix &M)
+{
   vpRotationMatrix R;
 
   M.extract(R);
-  buildFrom(R);
+  build(R);
 
   return *this;
 }
@@ -119,7 +220,7 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpHomogeneousMatrix &M)
   Converts a pose vector into a \f$\theta {\bf u}\f$ vector copying
   the \f$\theta {\bf u}\f$ values contained in the pose vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpPoseVector &p)
+vpThetaUVector &vpThetaUVector::build(const vpPoseVector &p)
 {
   for (unsigned int i = 0; i < 3; ++i) {
     data[i] = p[i + 3];
@@ -131,7 +232,7 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpPoseVector &p)
 /*!
   Converts a rotation matrix into a \f$\theta {\bf u}\f$ vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
+vpThetaUVector &vpThetaUVector::build(const vpRotationMatrix &R)
 {
   double s, c, theta;
 
@@ -210,49 +311,49 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
 /*!
   Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-x representation vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpRzyxVector &rzyx)
+vpThetaUVector &vpThetaUVector::build(const vpRzyxVector &rzyx)
 {
   vpRotationMatrix R(rzyx);
 
-  buildFrom(R);
+  build(R);
   return *this;
 }
 /*!
   Build a \f$\theta {\bf u}\f$ vector from an Euler z-y-z representation vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpRzyzVector &rzyz)
+vpThetaUVector &vpThetaUVector::build(const vpRzyzVector &rzyz)
 {
   vpRotationMatrix R(rzyz);
 
-  buildFrom(R);
+  build(R);
   return *this;
 }
 /*!
   Build a \f$\theta {\bf u}\f$ vector from an Euler x-y-z representation vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpRxyzVector &rxyz)
+vpThetaUVector &vpThetaUVector::build(const vpRxyzVector &rxyz)
 {
   vpRotationMatrix R(rxyz);
 
-  buildFrom(R);
+  build(R);
   return *this;
 }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from a quaternion representation vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpQuaternionVector &q)
+vpThetaUVector &vpThetaUVector::build(const vpQuaternionVector &q)
 {
   vpRotationMatrix R(q);
 
-  buildFrom(R);
+  build(R);
   return *this;
 }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from a 3-dim vectors.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const std::vector<double> &tu)
+vpThetaUVector &vpThetaUVector::build(const std::vector<double> &tu)
 {
   if (tu.size() != 3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
@@ -268,7 +369,7 @@ vpThetaUVector vpThetaUVector::buildFrom(const std::vector<double> &tu)
 /*!
   Build a \f$\theta {\bf u}\f$ vector from a 3-dim vector.
 */
-vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
+vpThetaUVector &vpThetaUVector::build(const vpColVector &tu)
 {
   if (tu.size() != 3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
@@ -278,6 +379,17 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
     data[i] = tu[i];
   }
 
+  return *this;
+}
+
+/*!
+  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
+*/
+vpThetaUVector &vpThetaUVector::build(const double &tux, const double &tuy, const double &tuz)
+{
+  data[0] = tux;
+  data[1] = tuy;
+  data[2] = tuz;
   return *this;
 }
 
@@ -451,16 +563,6 @@ vpColVector vpThetaUVector::getU() const
     u[i] = data[i] / theta;
   }
   return u;
-}
-
-/*!
-  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
-*/
-void vpThetaUVector::buildFrom(double tux, double tuy, double tuz)
-{
-  data[0] = tux;
-  data[1] = tuy;
-  data[2] = tuz;
 }
 
 /*!
