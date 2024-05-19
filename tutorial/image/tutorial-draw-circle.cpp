@@ -1,6 +1,5 @@
 //! \example tutorial-draw-circle.cpp
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImageDraw.h>
 
@@ -11,10 +10,10 @@ int main()
 
   try {
     {
-#if defined(VISP_HAVE_X11)
-      vpDisplayX d(I, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_GDI)
-      vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
+#if defined(VISP_HAVE_DISPLAY)
+      vpDisplay *d = vpDisplayFactory::displayFactory(I, vpDisplay::SCALE_AUTO);
+#else
+      std::cout << "No gui available to display gray level image..." << std::endl;
 #endif
 
       vpDisplay::setTitle(I, "Gray image");
@@ -25,9 +24,9 @@ int main()
       // i.e. does not modify I
       vpDisplay::displayCircle(I, circle, vpColor::red, false, 2);
       //! [Circle display]
+      vpDisplay::setTitle(I, "Display a red circle on gray level image overlay");
       vpDisplay::flush(I);
-      vpDisplay::setTitle(I, "Overlay");
-      std::cout << "Result of displaying a red circle on overlay on the display..." << std::endl;
+      std::cout << "Result of displaying a red circle on a gray level image overlay..." << std::endl;
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I);
 
@@ -38,11 +37,17 @@ int main()
       vpImageDraw::drawCircle(I, circle2, 255, 2);
       //! [Circle draw uchar]
       vpDisplay::display(I);
-      vpDisplay::flush(I);
-      vpDisplay::setTitle(I, "Modification of a uchar image");
-      std::cout << "Result of the modification of a uchar image..." << std::endl;
+      vpDisplay::setTitle(I, "Display circle by modifying a gray level image");
+      std::cout << "Result of displaying a circle by modifying a gray level image..." << std::endl;
       std::cout << "A click to continue..." << std::endl;
+      vpDisplay::flush(I);
       vpDisplay::getClick(I);
+
+#if defined(VISP_HAVE_DISPLAY)
+      if (d) {
+        delete d;
+      }
+#endif
     }
 
     {
@@ -53,19 +58,23 @@ int main()
       vpImageDraw::drawCircle(I_rgb, circle3, vpColor::blue, 2);
       //! [Circle draw color]
 
-#if defined(VISP_HAVE_X11)
-      vpDisplayX d_rgb(I_rgb, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_GDI)
-      vpDisplayGDI d_rgb(I_rgb, vpDisplay::SCALE_AUTO);
+#if defined(VISP_HAVE_DISPLAY)
+      vpDisplay *d = vpDisplayFactory::displayFactory(I_rgb, vpDisplay::SCALE_AUTO);
+#else
+      std::cout << "No gui available to display color image..." << std::endl;
 #endif
 
-      vpDisplay::setTitle(I_rgb, "Color image");
       vpDisplay::display(I_rgb);
+      vpDisplay::setTitle(I_rgb, "Display blue circle on a modified color image");
       vpDisplay::flush(I_rgb);
-      vpDisplay::setTitle(I, "Modification of a vpRGBa image");
-      std::cout << "Result of the modification of a vpRGBa image..." << std::endl;
+      std::cout << "Result of displaying a blue circle on a modified color image..." << std::endl;
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I_rgb);
+#if defined(VISP_HAVE_DISPLAY)
+      if (d) {
+        delete d;
+      }
+#endif
     }
   }
   catch (const vpException &e) {

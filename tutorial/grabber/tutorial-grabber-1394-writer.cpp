@@ -50,14 +50,15 @@ int main(int argc, char **)
       vpDisplay::display(I);
       vpDisplay::flush(I);
 
-      if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I, false)) {
         break;
+      }
 #endif
     }
 
-    if (save)
+    if (save) {
       writer.close();
-
+    }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

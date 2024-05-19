@@ -26,13 +26,13 @@ int main(int argc, const char **argv)
   bool save_image = false; // Only possible if display_on = true
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
@@ -41,38 +41,37 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--display_tag") {
+    else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
 #if defined(VISP_HAVE_DISPLAY)
     }
-    else if (std::string(argv[i]) == "--display_on") {
+    else if (std::string(argv[i]) == "--display-on") {
       display_on = true;
     }
-    else if (std::string(argv[i]) == "--save_image") {
+    else if (std::string(argv[i]) == "--save-image") {
       save_image = true;
 #endif
     }
-    else if (std::string(argv[i]) == "--serial_off") {
+    else if (std::string(argv[i]) == "--serial-off") {
       serial_off = true;
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--input <camera input>] [--tag_size <tag_size in m>]"
-        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-        " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
-        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-        " [--display_tag]";
+        << " [--input <camera input>] [--tag-size <tag size in m>]"
+        " [--quad-decimate <quad decimate>] [--nthreads <nb>]"
+        " [--intrinsic <intrinsic file>] [--camera-name <camera name>]"
+        " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
+        " [--display-tag]";
 #if defined(VISP_HAVE_DISPLAY)
-      std::cout << " [--display_on] [--save_image]";
+      std::cout << " [--display-on] [--save-image]";
 #endif
-      std::cout << " [--serial_off] [--help]" << std::endl;
+      std::cout << " [--serial-off] [--help]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -243,7 +242,7 @@ int main(int argc, const char **argv)
         }
       }
       else {
-     // stop the robot
+        // stop the robot
         if (!serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
           //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
@@ -258,8 +257,9 @@ int main(int argc, const char **argv)
         vpDisplay::getImage(I, O);
         vpImageIo::write(O, "image.png");
       }
-      if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I, false)) {
         break;
+      }
     }
 
     if (!serial_off) {
@@ -271,8 +271,9 @@ int main(int argc, const char **argv)
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
-    if (display_on)
+    if (display_on) {
       delete d;
+    }
     if (!serial_off) {
       delete serial;
     }
