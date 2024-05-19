@@ -51,8 +51,8 @@
   The method has four parameters: \f$ n \f$, which is the dimension of the input, and \f$ \alpha \f$, \f$ \beta \f$ and
   \f$ \kappa \f$, which are three reals. For notational convenience, we define \f$ \lambda = \alpha^2 (n - \kappa) - n \f$.
 
-  Be \f$ \boldsymbol{\mu} \in \mathcal{R}^n \f$ the mean and \f$ \boldsymbol{\Sigma} \in \mathcal{R}^{n x n} \f$ the covariance matrix of the
-  input of the algorithm. The algorithm will draw \f$ 2n + 1 \f$ sigma points \f$ \chi_i \in \mathcal{R}^n \f$ such as:
+  Be \f$ \boldsymbol{\mu} \in {R}^n \f$ the mean and \f$ \boldsymbol{\Sigma} \in {R}^{n x n} \f$ the covariance matrix of the
+  input of the algorithm. The algorithm will draw \f$ 2n + 1 \f$ sigma points \f$ \chi_i \in {R}^n \f$ such as:
 
   \f{eqnarray*}{
     \chi_0 &=& \boldsymbol{\mu} \\
@@ -110,6 +110,11 @@ public:
   vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
                        const vpAddSubFunction &resFunc = vpUnscentedKalman::simpleResidual,
                        const vpAddSubFunction &addFunc = vpUnscentedKalman::simpleAdd);
+
+  /**
+   * Destructor that does nothing.
+   */
+  virtual ~vpUKSigmaDrawerMerwe() { }
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
