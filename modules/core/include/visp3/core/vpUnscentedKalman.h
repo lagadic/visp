@@ -48,8 +48,8 @@
   \class vpUnscentedKalman
   \ingroup group_core_kalman
   This class permits to use Unscented Kalman Filter (UKF) to tackle non-linear problems. Non-linearity
-  can arise in the process function \f$ f: \mathcal{R}^n \rightarrow \mathcal{R}^n \f$, which makes evolve the internal
-  state \f$ \textbf{x} \in \mathcal{R}^n \f$ of the UKF over time, or in the measurement function \f$ h: \mathcal{R}^n \rightarrow \mathcal{R}^m \f$,
+  can arise in the process function \f$ f: {R}^n \rightarrow {R}^n \f$, which makes evolve the internal
+  state \f$ \textbf{x} \in {R}^n \f$ of the UKF over time, or in the measurement function \f$ h: {R}^n \rightarrow {R}^m \f$,
   which expresses the internal state of the UKF in the measurement space of dimension \f$ m \f$.
 
   We will briefly explain the principles of the UKF and the maths behind the wheel. We refer the interested
@@ -57,8 +57,8 @@
   for more details.
 
   The UKF is performed in two steps. First, the prediction step, during which we draw the sigma points \f$ \chi \f$ and compute
-  their corresponding weights \f$ \textbf{w}^m \in \mathcal{R}^{2n + 1} \f$ and \f$ \textbf{w}^c \in \mathcal{R}^{2n + 1} \f$.
-  Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n\text{ x }n} \f$ the process covariance matrix.
+  their corresponding weights \f$ \textbf{w}^m \in {R}^{2n + 1} \f$ and \f$ \textbf{w}^c \in {R}^{2n + 1} \f$.
+  Be \f$ \textbf{x} \in {R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in {R}^{n\text{ x }n} \f$ the process covariance matrix.
   We have:
 
   \f{eqnarray*}{
@@ -74,31 +74,31 @@
   \f$ b( \textbf{u}, \Delta t ) \f$ and the command function depending on the state \f$ bx( \textbf{u}, \chi, \Delta t ) \f$
   to project them forward in time, forming the new prior:
 
-  \f$ \mathcal{Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
+  \f$ {Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
 
   Then, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
   and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
 
   \f{eqnarray*}{
-      \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT(\mathcal{Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
-      \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m \mathcal{Y}_i \\
-      \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Y}_i - \boldsymbol{\mu}) (\mathcal{Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
+      \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
+      \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
+      \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
    \f}
 
   where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
 
   The second step is the update step. It is performed in the measurement space, so we must convert the sigma points of
-  the prior into measurements using the measurement function  \f$ h: \mathcal{R}^n \rightarrow \mathcal{R}^m \f$:
+  the prior into measurements using the measurement function  \f$ h: {R}^n \rightarrow {R}^m \f$:
 
-  \f$ \mathcal{Z} = h(\mathcal{Y}) \f$
+  \f$ {Z} = h({Y}) \f$
 
-  Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in \mathcal{R}^m \f$ and the
-  covariance \f$ \textbf{P}_z \in \mathcal{R}^{m\text{ x }m} \f$ of these points:
+  Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in {R}^m \f$ and the
+  covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
 
   \f{eqnarray*}{
-      \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT(\mathcal{Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
-      \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m \mathcal{Z}_i \\
-      \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Z}_i - \boldsymbol{\mu}_z) (\mathcal{Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
+      \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
+      \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
+      \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
    \f}
 
   where \f$ \textbf{R} \f$ is the measurement covariance matrix.
@@ -109,7 +109,7 @@
 
   To compute the Kalman's gain, we first need to compute the cross covariance of the state and the measurements:
 
-  \f$ \textbf{P}_{xy} = \sum_{i=0}^{2n} w_i^c (\mathcal{Y}_i - \boldsymbol{\mu})(\mathcal{Z}_i - \boldsymbol{\mu}_z)^T \f$
+  \f$ \textbf{P}_{xy} = \sum_{i=0}^{2n} w_i^c ({Y}_i - \boldsymbol{\mu})({Z}_i - \boldsymbol{\mu}_z)^T \f$
 
   The Kalman's gain is then defined as:
 
@@ -252,7 +252,7 @@ public:
    * \brief Set the state addition function to use when computing a addition
    * in the state space.
    *
-   * \param stateResFunc The addition function to use.
+   * \param stateAddFunc The addition function to use.
    */
   inline void setStateAddFunction(const vpAddSubFunction &stateAddFunc)
   {

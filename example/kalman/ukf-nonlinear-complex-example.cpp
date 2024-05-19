@@ -375,7 +375,7 @@ public:
    * \param[in] x The position along the x-axis of the landmark.
    * \param[in] y The position along the y-axis of the landmark.
    * \param[in] range_std The standard deviation of the range measurements.
-   * \param[in] elev_angle_std The standard deviation of the relative angle measurements.
+   * \param[in] rel_angle_std The standard deviation of the relative angle measurements.
    */
   vpLandmarkMeasurements(const double &x, const double &y, const double &range_std, const double &rel_angle_std)
     : m_x(x)

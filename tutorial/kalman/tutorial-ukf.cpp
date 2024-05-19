@@ -411,10 +411,10 @@ int main(/*const int argc, const char *argv[]*/)
     d->init(Idisp, 800, 50, "Projection of the markers");
   }
 #endif
-//! [Init_renderer]
+  //! [Init_renderer]
 
-//! [Init_simu]
-// Initialize the simulation
+  //! [Init_simu]
+  // Initialize the simulation
   vpObjectSimulator object(radius, w, phi, wZ);
   vpColVector object_pos(4, 0.);
   object_pos[3] = 1.;
@@ -422,9 +422,10 @@ int main(/*const int argc, const char *argv[]*/)
 
   //! [Simu_loop]
   for (unsigned int i = 0; i < 200; ++i) {
-    //! [Update_simu]
+    //! [Update obj pose]
+    // Update object pose
     object_pos = object.move(dt * static_cast<double>(i));
-    //! [Update_simu]
+    //! [Update obj pose]
 
     //! [Update_measurement]
     // Perform the measurement
@@ -492,7 +493,7 @@ int main(/*const int argc, const char *argv[]*/)
     vpTime::wait(40);
     //! [Update_renderer]
 #endif
-  //! [Update_displays]
+    //! [Update_displays]
   }
   //! [Simu_loop]
   std::cout << "Press Enter to quit..." << std::endl;

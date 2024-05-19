@@ -7,9 +7,9 @@
 The Unscented Kalman Filter (UKF) is a version of the Kalman filter that handles non-linearities.
 
 In this tutorial, we will use a UKF to filter the 3D position of a simulated object, which revolves in a plane parallel
-to the ground around a static point, which is the origin of the world frame \f$ \mathcal{F}_W \f$. The coordinate frame
-attached to the object is denoted \f$ \mathcal{F}_O \f$. The object is observed by a static camera whose coordinate
-frame is denoted \f$ \mathcal{F}_C \f$. The object is supposed plane and having four markers sticked on its surface.
+to the ground around a static point, which is the origin of the world frame \f$ {F}_W \f$. The coordinate frame
+attached to the object is denoted \f$ {F}_O \f$. The object is observed by a static camera whose coordinate
+frame is denoted \f$ {F}_C \f$. The object is supposed plane and having four markers sticked on its surface.
 
 The equations that describe the motion of the object in the world frame are the following:
 
@@ -22,7 +22,8 @@ The equations that describe the motion of the object in the world frame are the 
 where \f$ \omega \f$ and \f$ \phi \f$ are respectively the pulsation and the phase of the motion, while \f$ R \f$ is the
 radius of the revolution around the origin of the world frame.
 
-\htmlonly <style>div.image img[src="img-tutorial-ukf-illustration.jpg"]{width:50%;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="img-tutorial-ukf-illustration.jpg"]{width:50%;}</style>
+\endhtmlonly
 \image html img-tutorial-ukf-illustration.jpg
 
 \subsection tuto-ukf-intro-methods The maths beyond the Unscented Kalman Filter
@@ -30,7 +31,7 @@ radius of the revolution around the origin of the world frame.
 The maths beyond the Unscented Kalman Filter are explained in the documentation of the vpUnscentedKalman class.
 We will recall briefly the important steps of the UKF.
 
-Be \f$ \textbf{x} \in \mathcal{R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in \mathcal{R}^{n\text{ x }n} \f$ the
+Be \f$ \textbf{x} \in {R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in {R}^{n\text{ x }n} \f$ the
 associated covariance matrix.
 
 The first step of the UKF is the prediction step. During this step, some particular points called sigma points, denoted
@@ -49,31 +50,31 @@ Be \f$ \textbf{u} \f$ the vector containing the known commands sent to the syste
 \f$b( \textbf{u}, \Delta t )\f$ and the command function depending on the state \f$bx( \textbf{u}, \chi, \Delta t )\f$
 to project them forward in time, forming the new prior:
 
-\f$ \mathcal{Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
+\f$ {Y} = f( \chi , \Delta t ) + b( \textbf{u}, \Delta t ) + bx( \textbf{u}, \chi, \Delta t )  \f$
 
 Finally, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
 and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
 
 \f{eqnarray*}{
-    \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT(\mathcal{Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
-    \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m \mathcal{Y}_i \\
-    \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Y}_i - \boldsymbol{\mu}) (\mathcal{Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
+    \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
+    \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
+    \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
  \f}
 
 where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
 
 The second step of the UKF is to update the internal state based on new measurements. It is performed in the measurement space, so we must convert the sigma points of
-the prior into measurements using the measurement function  \f$ h: \mathcal{R}^n \rightarrow \mathcal{R}^m \f$:
+the prior into measurements using the measurement function  \f$ h: {R}^n \rightarrow {R}^m \f$:
 
-\f$ \mathcal{Z} = h(\mathcal{Y}) \f$
+\f$ {Z} = h({Y}) \f$
 
-Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in \mathcal{R}^m \f$ and the
-covariance \f$ \textbf{P}_z \in \mathcal{R}^{m\text{ x }m} \f$ of these points:
+Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in {R}^m \f$ and the
+covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
 
 \f{eqnarray*}{
-    \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT(\mathcal{Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
-    \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m \mathcal{Z}_i \\
-    \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c (\mathcal{Z}_i - \boldsymbol{\mu}_z) (\mathcal{Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
+    \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
+    \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
+    \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
 \f}
 
 where \f$ \textbf{R} \f$ is the measurement covariance matrix.
@@ -84,7 +85,7 @@ Then, we compute the residual \f$ \textbf{y} \f$ of the measurement \f$ \textbf{
 
 To compute the Kalman's gain, we first need to compute the cross covariance of the state and the measurements:
 
-\f$ \textbf{P}_{xy} = \sum_{i=0}^{2n} w_i^c (\mathcal{Y}_i - \boldsymbol{\mu})(\mathcal{Z}_i - \boldsymbol{\mu}_z)^T \f$
+\f$ \textbf{P}_{xy} = \sum_{i=0}^{2n} w_i^c ({Y}_i - \boldsymbol{\mu})({Z}_i - \boldsymbol{\mu}_z)^T \f$
 
 The Kalman's gain is then defined as:
 
@@ -110,7 +111,8 @@ $ ./tutorial-ukf
 
 The program does not take any argument. You should see something similar to the following image:
 
-\htmlonly <style>div.image img[src="img-tutorial-ukf-run.jpg"]{width:50%;}</style> \endhtmlonly
+\htmlonly <style>div.image img[src="img-tutorial-ukf-run.jpg"]{width:50%;}</style>
+\endhtmlonly
 \image html img-tutorial-ukf-run.jpg "Screenshot of the tutorial Graphical User Interface"
 
 Press `Return` to leave the program.
@@ -145,7 +147,7 @@ Be \f$ \textbf{K}_{intr} \f$ the camera instrinsic parameters matrix defined by:
   \end{pmatrix}
 \f$
 
-where \f$ (u_0, v0, 1)^T \f$ are the coordinates of the principal point and \f$ p_x \f$ (resp. \f$ p_y \f$) is the ratio
+where \f$ (u_0, v_0, 1)^T \f$ are the coordinates of the principal point and \f$ p_x \f$ (resp. \f$ p_y \f$) is the ratio
 between the focal lens of the camera and the width (resp. height) of a pixel.
 
 Be \f$ \boldsymbol{\pi} \f$ the projection matrix  that is, in the case of a perspective
@@ -163,8 +165,8 @@ is given by:
 
 \f$ \textbf{p} = \textbf{K}_{intr} \boldsymbol{\pi} {}^C\textbf{M}_W {}^W\textbf{X} \f$
 
-where \f$ {}^C\textbf{M}_W \f$ is the homogeneous matrix that expresses the pose of the world coordinate frame \f$ \mathcal{F}_W \f$
-with regard to the camera frame \f$ \mathcal{F}_C \f$.
+where \f$ {}^C\textbf{M}_W \f$ is the homogeneous matrix that expresses the pose of the world coordinate frame \f$ {F}_W \f$
+with regard to the camera frame \f$ {F}_C \f$.
 
 \subsubsection tuto-ukf-tutorial-explained-includes Details on the includes
 
@@ -229,7 +231,7 @@ This motivates us to choose the following non-linear process function:
   \textbf{x}[3]_{t + \Delta t} &=& \omega \Delta t &=& \textbf{x}[3]_{t}
 \f}
 
-As the process function is pretty simple, a simple function called here fx is enough:
+As the process function is pretty simple, a simple function called here `fx()` is enough:
 
 \snippet tutorial-ukf.cpp Process_function
 
@@ -240,7 +242,7 @@ The measurements of the projection of the markers in the image are handled by th
 \snippet tutorial-ukf.cpp Markers_class
 
 It takes as input the camera parameters <code>cam</code>, the homogeneous matrix expressing the pose of the world frame
-\f$ \mathcal{F}_W \f$ with regard to the camera frame \f$ \mathcal{F}_C \f$ <code>cMw</code>, the rotation matrix that
+\f$ {F}_W \f$ with regard to the camera frame \f$ {F}_C \f$ <code>cMw</code>, the rotation matrix that
 expresses the rotation between the object frame and world frame <code>wRo</code> and the homogeneous coordinates of the
 markers expressed in the object frame <code>markers</code> to be able to convert the 3D position of the object in the
 world frame \f$ {}^W \textbf{X} \f$ into 3D positions of the markers in the camera frame \f$ {}^C \textbf{X}^i \f$, where
@@ -372,7 +374,7 @@ The main loop of the program is the following:
 
 First, we update the ground-truth 3D position of the object based on the simulated time using the following line:
 
-\snippet tutorial-ukf.cpp Update_simu
+\snippet tutorial-ukf.cpp Update obj pose
 
 Then, we update the measurement by projecting the 3D position of the markers attached to the object in the image and add
 some noise to the projections using the following line:
