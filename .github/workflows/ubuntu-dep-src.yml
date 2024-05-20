@@ -73,6 +73,7 @@ jobs:
       run: |
         pwd
         echo "GIT_CLONE_PROTECTION_ACTIVE=false" >> $GITHUB_ENV
+        export GIT_CLONE_PROTECTION_ACTIVE=false
         git clone --recursive --depth 1 https://github.com/Kitware/VTK.git ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
