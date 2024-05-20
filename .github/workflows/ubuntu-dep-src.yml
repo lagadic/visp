@@ -68,8 +68,11 @@ jobs:
         echo $OpenBLAS_HOME
 
     - name: Build VTK from source
+      # We set GIT_CLONE_PROTECTION_ACTIVE=false to avoid the issue described in
+      # https://github.com/git-lfs/git-lfs/issues/5749
       run: |
         pwd
+        echo "GIT_CLONE_PROTECTION_ACTIVE=false" >> $GITHUB_ENV
         git clone --recursive --depth 1 https://github.com/Kitware/VTK.git ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
