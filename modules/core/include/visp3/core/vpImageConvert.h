@@ -65,6 +65,7 @@
 #endif
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
+#include <mutex>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>

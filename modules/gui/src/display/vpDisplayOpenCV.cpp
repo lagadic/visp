@@ -89,13 +89,13 @@ unsigned int vpDisplayOpenCV::m_nbWindows = 0;
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 
 */
@@ -124,13 +124,13 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 
 */
@@ -156,13 +156,13 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
@@ -188,13 +188,13 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
