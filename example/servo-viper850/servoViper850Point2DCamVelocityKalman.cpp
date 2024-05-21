@@ -99,7 +99,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -207,7 +208,7 @@ int main()
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -281,7 +282,8 @@ int main()
         if (iter == 0) {
           err_1 = 0;
           dedt_mes = 0;
-        } else {
+        }
+        else {
           vpMatrix J1 = task.getTaskJacobian();
           dedt_mes = (err - err_1) / (Tv)-J1 * vm;
           err_1 = err;
@@ -315,7 +317,8 @@ int main()
         vpTime::wait(t_0, 1000. * Tloop);
         // Release the ring buffer used for the last image to start a new acq
         g.enqueue(frame);
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Tracking failed... Stop the robot." << std::endl;
         v = 0;
         // Stop robot
@@ -363,7 +366,8 @@ int main()
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

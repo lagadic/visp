@@ -101,7 +101,9 @@ vpTriangle &vpTriangle::operator=(const vpTriangle &tri)
   return *this;
 };
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const vpImagePoint &, const vpImagePoint &, const vpImagePoint &) instead.
   Initialise the triangle thanks to the three 2D points \f$ iP1 \f$, \f$ iP2
   \f$ and \f$ iP3 \f$
 
@@ -111,7 +113,22 @@ vpTriangle &vpTriangle::operator=(const vpTriangle &tri)
 */
 void vpTriangle::buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
 {
+  build(iP1, iP2, iP3);
+}
+#endif
+
+/*!
+  Initialise the triangle thanks to the three 2D points \f$ iP1 \f$, \f$ iP2
+  \f$ and \f$ iP3 \f$
+
+  \param iP1 : The first apex of the triangle.
+  \param iP2 : The first apex of the triangle.
+  \param iP3 : The first apex of the triangle.
+*/
+vpTriangle &vpTriangle::build(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
+{
   init(iP1, iP2, iP3);
+  return *this;
 }
 
 void vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)

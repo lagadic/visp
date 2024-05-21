@@ -294,7 +294,7 @@ public:
     auto posvel = m_telemetry.get()->position_velocity_ned();
     vpQuaternionVector q { quat.x, quat.y, quat.z, quat.w };
     vpTranslationVector t { posvel.position.north_m, posvel.position.east_m, posvel.position.down_m };
-    ned_M_frd.buildFrom(t, q);
+    ned_M_frd.build(t, q);
   }
 
   void getPosition(float &ned_north, float &ned_east, float &ned_down, float &ned_yaw) const

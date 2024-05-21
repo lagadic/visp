@@ -209,7 +209,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(logdirname);
-      } catch (...) {
+      }
+      catch (...) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
         return EXIT_FAILURE;
@@ -256,8 +257,8 @@ int main(int argc, const char **argv)
     std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "Test program for target motion compensation using a Kalman "
-                 "filter "
-              << std::endl;
+      "filter "
+      << std::endl;
     std::cout << "Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << "Task : servo a point \n" << std::endl;
 
@@ -268,11 +269,11 @@ int main(int argc, const char **argv)
       break;
     case K_VELOCITY:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-                << "with constant velocity modelization (see -K option)\n";
+        << "with constant velocity modelization (see -K option)\n";
       break;
     case K_ACCELERATION:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-                << "with constant acceleration modelization (see -K option)\n";
+        << "with constant acceleration modelization (see -K option)\n";
       break;
     }
     std::cout << "-------------------------------------------------------" << std::endl;
@@ -303,7 +304,7 @@ int main(int argc, const char **argv)
 
     // Sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // Define the task
     // - we want an eye-in-hand control law
@@ -432,7 +433,8 @@ int main(int argc, const char **argv)
         err_1 = 0;
         dedt_mes = 0;
         dedt_filt = 0;
-      } else {
+      }
+      else {
         err_1 = err_0;
         err_0 = err;
 
@@ -515,7 +517,8 @@ int main(int argc, const char **argv)
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

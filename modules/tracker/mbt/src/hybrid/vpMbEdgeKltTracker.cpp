@@ -836,7 +836,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
         L_true = L;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (L * cVo * oJo);
         }
       }

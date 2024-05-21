@@ -199,7 +199,7 @@ int main(int argc, const char **argv)
     cdMc = cdMo * cMo.inverse();
 
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.buildFrom(cdMc);
+    tu.build(cdMc);
 
     // sets the desired rotation (always zero !)
     // since s is the rotation that the camera has to achieve
@@ -237,7 +237,7 @@ int main(int argc, const char **argv)
       vpFeatureBuilder::create(Z, point);
 
       cdMc = cdMo * cMo.inverse();
-      tu.buildFrom(cdMc);
+      tu.build(cdMc);
 
       // compute the control law
       v = task.computeControlLaw();
@@ -251,7 +251,8 @@ int main(int argc, const char **argv)
     task.print();
     std::cout << "Final camera location:\n " << cMo << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_SUCCESS;
   }

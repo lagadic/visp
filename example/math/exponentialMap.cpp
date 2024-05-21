@@ -62,7 +62,7 @@ int main()
 
     // Build a ThetaU rotation vector from a Rxyz vector
     vpThetaUVector tu;
-    tu.buildFrom(rxyz);
+    tu.build(rxyz);
 
     vpColVector v(6); // Velocity vector [t, thetaU]^t
 

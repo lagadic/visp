@@ -49,6 +49,7 @@ class vpTranslationVector;
 class vpThetaUVector;
 class vpRowVector;
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
@@ -199,13 +200,23 @@ public:
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
-  vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
-  vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
+  vp_deprecated vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
+  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
   //  convert a translation and a rotation matrix into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
+  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
+#endif
+
+  vpPoseVector &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
+  // convert an homogeneous matrix in a pose
+  vpPoseVector &build(const vpHomogeneousMatrix &M);
+  //  convert a translation and a "thetau" vector into a pose
+  vpPoseVector &build(const vpTranslationVector &tv, const vpThetaUVector &tu);
+  //  convert a translation and a rotation matrix into a pose
+  vpPoseVector &build(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
   void extract(vpRotationMatrix &R) const;
   void extract(vpThetaUVector &tu) const;

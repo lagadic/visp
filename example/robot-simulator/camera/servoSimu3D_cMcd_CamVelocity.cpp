@@ -220,11 +220,11 @@ int main(int argc, const char **argv)
 
     // Build the 3D translation feature: ctc*
     vpFeatureTranslation t(vpFeatureTranslation::cMcd);
-    t.buildFrom(cMcd);
+    t.build(cMcd);
 
     // Build the 3D rotation feature: thetaU_cRc*
     vpFeatureThetaU tu(vpFeatureThetaU::cRcd); // current feature
-    tu.buildFrom(cMcd);
+    tu.build(cMcd);
 
     // Sets the desired rotation (always zero !)  since s is the
     // rotation that the camera has to achieve. Here s* = (0, 0)^T
@@ -264,8 +264,8 @@ int main(int argc, const char **argv)
       cMcd = cMo * cdMo.inverse();
 
       // Update the current visual features
-      t.buildFrom(cMcd);
-      tu.buildFrom(cMcd);
+      t.build(cMcd);
+      tu.build(cMcd);
 
       // Compute the control law
       v = task.computeControlLaw();

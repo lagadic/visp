@@ -146,7 +146,7 @@ void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame, vpC
     vpRotationMatrix wRc;
     this->wMc_.extract(wRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(wRc);
+    rxyz.build(wRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->wMc_[i][3]; // translation x,y,z

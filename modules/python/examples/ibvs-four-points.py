@@ -278,7 +278,7 @@ if __name__ == '__main__':
     if not args.no_plot:
       for f in x:
         p = FeaturePoint()
-        p.buildFrom(f.get_x(), f.get_y(), f.get_Z())
+        p.build(f.get_x(), f.get_y(), f.get_Z())
         xplot.append(p)
 
       if iter == 0:

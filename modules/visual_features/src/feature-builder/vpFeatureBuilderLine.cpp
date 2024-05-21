@@ -222,7 +222,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, c
       theta += 2 * M_PI;
     }
 
-    s.buildFrom(rho, theta);
+    s.build(rho, theta);
   } catch (...) {
     vpERROR_TRACE("Error caught");
     throw;

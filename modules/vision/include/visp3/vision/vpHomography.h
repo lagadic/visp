@@ -184,7 +184,8 @@ public:
   //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
 
-  //! Construction from translation and rotation and a plane
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+//! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
@@ -192,6 +193,15 @@ public:
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
+#endif
+//! Construction from translation and rotation and a plane
+  vpHomography &build(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation and a plane
+  vpHomography &build(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation  and a plane
+  vpHomography &build(const vpPoseVector &arb, const vpPlane &bP);
+  //! Construction from homogeneous matrix and a plane
+  vpHomography &build(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   /*!
    * Transform an homography from pixel space to calibrated domain.

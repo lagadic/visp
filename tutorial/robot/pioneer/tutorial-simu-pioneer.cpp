@@ -64,14 +64,14 @@ int main()
 
     vpFeaturePoint s_x, s_xd;
     vpFeatureBuilder::create(s_x, point);
-    s_xd.buildFrom(0, 0, cdMo[2][3]);
+    s_xd.build(0, 0, cdMo[2][3]);
     task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
 
     vpFeatureDepth s_Z, s_Zd;
     double Z = point.get_Z();
     double Zd = cdMo[2][3];
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
-    s_Zd.buildFrom(0, 0, Zd, 0);
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+    s_Zd.build(0, 0, Zd, 0);
     task.addFeature(s_Z, s_Zd);
 
 #ifdef VISP_HAVE_DISPLAY
@@ -102,7 +102,7 @@ int main()
       vpFeatureBuilder::create(s_x, point);
 
       Z = point.get_Z();
-      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+      s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
 
       robot.get_cVe(cVe);
       task.set_cVe(cVe);

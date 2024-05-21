@@ -164,12 +164,24 @@ double vpFeatureLuminance::get_Z() const { return Z; }
 
 void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam) { cam = _cam; }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated You should use build(vpImage<unsigned char> &) instead.
+  Build a luminance feature directly from the image
+*/
+
+void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
+{
+  build(I);
+}
+#endif
+
 /*!
 
   Build a luminance feature directly from the image
 */
 
-void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
+vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
 {
   unsigned int l = 0;
   double Ix, Iy;
@@ -180,40 +192,37 @@ void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
   if (firstTimeIn == 0) {
     firstTimeIn = 1;
     l = 0;
-    for (unsigned int i = bord; i < nbr - bord; i++) {
+    for (unsigned int i = bord; i < (nbr - bord); ++i) {
       //   cout << i << endl ;
-      for (unsigned int j = bord; j < nbc - bord; j++) {
+      for (unsigned int j = bord; j < (nbc - bord); ++j) {
         double x = 0, y = 0;
         vpPixelMeterConversion::convertPoint(cam, j, i, x, y);
 
         pixInfo[l].x = x;
         pixInfo[l].y = y;
-
         pixInfo[l].Z = Z;
 
-        l++;
+        ++l;
       }
     }
   }
 
   l = 0;
-  for (unsigned int i = bord; i < nbr - bord; i++) {
-    //   cout << i << endl ;
-    for (unsigned int j = bord; j < nbc - bord; j++) {
-      // cout << dim_s <<" " <<l <<"  " <<i << "  " << j <<endl ;
+  for (unsigned int i = bord; i < (nbr - bord); ++i) {
+    for (unsigned int j = bord; j < (nbc - bord); ++j) {
       Ix = px * vpImageFilter::derivativeFilterX(I, i, j);
       Iy = py * vpImageFilter::derivativeFilterY(I, i, j);
 
       // Calcul de Z
-
       pixInfo[l].I = I[i][j];
       s[l] = I[i][j];
       pixInfo[l].Ix = Ix;
       pixInfo[l].Iy = Iy;
 
-      l++;
+      ++l;
     }
   }
+  return *this;
 }
 
 /*!

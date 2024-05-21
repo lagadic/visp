@@ -320,7 +320,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
   for (std::map<std::string, vpHomogeneousMatrix>::const_iterator it = m_mapOfCameraTransformationMatrix.begin();
     it != m_mapOfCameraTransformationMatrix.end(); ++it) {
     vpVelocityTwistMatrix cVo;
-    cVo.buildFrom(it->second);
+    cVo.build(it->second);
     mapOfVelocityTwist[it->first] = cVo;
   }
 
@@ -363,7 +363,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         L_true = m_L;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (m_L * (cVo * oJo));
         }
       }
@@ -375,7 +375,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity) {
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
 
           vpMatrix K; // kernel
           unsigned int rank = (m_L * cVo).kernel(K);
@@ -6042,7 +6042,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
         L_true = m_L;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (m_L * cVo * oJo);
         }
       }
@@ -6054,7 +6054,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
         // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity) {
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
 
           vpMatrix K; // kernel
           unsigned int rank = (m_L * cVo).kernel(K);

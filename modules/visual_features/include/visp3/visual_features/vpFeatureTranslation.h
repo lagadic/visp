@@ -39,6 +39,7 @@
   \brief class that defines the translation visual feature.
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
@@ -104,7 +105,7 @@
  *   -I_3 \;\; [^{c}t_o]_\times] \f]
  *
  * To initialize the feature \f$(t_x, t_y, t_z)\f$ you may use member
- * functions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
+ * functions like set_Tx(), set_Ty(), set_Tz(), or also build()
  * functions.
  *
  * The interaction() method allows to compute the interaction matrix
@@ -138,7 +139,7 @@
  *
  *   // Creation of the current visual feature s
  *   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
- *   s.buildFrom(cdMc); // Initialization of the current feature s=(tx,ty,tz)
+ *   s.build(cdMc); // Initialization of the current feature s=(tx,ty,tz)
  *
  *   // Set eye-in-hand control law.
  *   // The computed velocities will be expressed in the camera frame
@@ -157,7 +158,7 @@
  *     // ... cdMc need here to be initialized from for example a pose estimation.
  *
  *     // Update the current 3D translation visual feature
- *     s.buildFrom(cdMc);
+ *     s.build(cdMc);
  *
  *     // compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -192,7 +193,7 @@
  *
  *   // Creation of the current feature s
  *   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
- *   s.buildFrom(cdMc); // Initialization of the feature
+ *   s.build(cdMc); // Initialization of the feature
  *
  *   // Creation of the desired feature s*. By default this feature is
  *   // initialized to zero
@@ -230,14 +231,14 @@
  *
  *   // Creation of the desired visual feature s*
  *   vpFeatureTranslation s_star(vpFeatureTranslation::cMo);
- *   s_star.buildFrom(cdMo); // Initialization of the desired feature s*=(tx*,ty*,tz*)
+ *   s_star.build(cdMo); // Initialization of the desired feature s*=(tx*,ty*,tz*)
  *
  *   vpHomogeneousMatrix cMo;
  *   // ... cMo need here to be computed.
  *
  *   // Creation of the current visual feature s
  *   vpFeatureTranslation s(vpFeatureTranslation::cMo);
- *   s.buildFrom(cMo); // Initialization of the current feature s=(tx,ty,tz)
+ *   s.build(cMo); // Initialization of the current feature s=(tx,ty,tz)
  *
  *   // Set eye-in-hand control law.
  *   // The computed velocities will be expressed in the camera frame
@@ -256,7 +257,7 @@
  *     // ... cMo need here to be computed from for example a pose estimation.
  *
  *     // Update the current 3D translation visual feature
- *     s.buildFrom(cMo);
+ *     s.build(cMo);
  *
  *     // compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -295,9 +296,14 @@ public:
   // cdMc is the displacement that the camera has to realize
   vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
   void buildFrom(const vpHomogeneousMatrix &f2Mf1);
+#endif
+  // build from an homogeneous matrix
+  // cdMc is the displacement that the camera has to realize
+  vpFeatureTranslation &build(const vpHomogeneousMatrix &f2Mf1);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

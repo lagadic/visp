@@ -92,8 +92,8 @@
  *   vpFeatureTranslation s_t(vpFeatureTranslation::cdMc);
  *   vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
  *   // Set the initial values of the current visual feature s = (c*_t_c, ThetaU)
- *   s_t.buildFrom(cdMc);
- *   s_tu.buildFrom(cdMc);
+ *   s_t.build(cdMc);
+ *   s_tu.build(cdMc);
  *
  *   // Build the desired visual feature s* = (0,0)
  *   vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero
@@ -125,8 +125,8 @@
  *     // ... cdMc is here the result of a pose estimation
  *
  *     // Update the current visual feature s
- *     s_t.buildFrom(cdMc);  // Update translation visual feature
- *     s_tu.buildFrom(cdMc); // Update ThetaU visual feature
+ *     s_t.build(cdMc);  // Update translation visual feature
+ *     s_tu.build(cdMc); // Update ThetaU visual feature
  *
  *     v = task.computeControlLaw(); // Compute camera velocity skew
  *     error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
@@ -1037,7 +1037,7 @@ public:
    */
   void set_cVe(const vpHomogeneousMatrix &cMe)
   {
-    cVe.buildFrom(cMe);
+    cVe.build(cMe);
     init_cVe = true;
   }
 
@@ -1059,7 +1059,7 @@ public:
    */
   void set_cVf(const vpHomogeneousMatrix &cMf)
   {
-    cVf.buildFrom(cMf);
+    cVf.build(cMf);
     init_cVf = true;
   }
 
@@ -1081,7 +1081,7 @@ public:
    */
   void set_fVe(const vpHomogeneousMatrix &fMe)
   {
-    fVe.buildFrom(fMe);
+    fVe.build(fMe);
     init_fVe = true;
   }
 

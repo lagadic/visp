@@ -261,7 +261,7 @@ int main(int argc, const char **argv)
     // from this displacement, we extract the rotation cdRc represented by
     // the angle theta and the rotation axis u
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.buildFrom(cdMc);
+    tu.build(cdMc);
     // This visual has to be regulated to zero
 
     // sets the desired rotation (always zero !)
@@ -313,7 +313,7 @@ int main(int argc, const char **argv)
       vpFeatureBuilder::create(p, point);
 
       cdMc = cdMo * cMo.inverse();
-      tu.buildFrom(cdMc);
+      tu.build(cdMc);
 
       // there is no feature for logZ, we explicitly build
       // the related interaction matrix") ;
@@ -340,7 +340,8 @@ int main(int argc, const char **argv)
     // Final camera location
     std::cout << cMo << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

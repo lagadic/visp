@@ -244,8 +244,8 @@ if __name__ == '__main__':
 
     # Compute current features
     cd_T_c = cd_T_w * c_T_w.inverse()
-    t.buildFrom(cd_T_c)
-    tu.buildFrom(cd_T_c)
+    t.build(cd_T_c)
+    tu.build(cd_T_c)
 
     # Begin just for point trajectory display, compute the coordinates of the points in the image plane
     for i in range(len(wX)):

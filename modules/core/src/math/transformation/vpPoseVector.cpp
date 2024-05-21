@@ -100,7 +100,7 @@ vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double t
 */
 vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu) : vpArray2D<double>(6, 1)
 {
-  buildFrom(tv, tu);
+  build(tv, tu);
 }
 
 /*!
@@ -117,7 +117,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &
 */
 vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R) : vpArray2D<double>(6, 1)
 {
-  buildFrom(tv, R);
+  build(tv, R);
 }
 
 /*!
@@ -130,7 +130,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix
   initialize the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 1) { buildFrom(M); }
+vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 1) { build(M); }
 
 /*!
 
@@ -158,7 +158,9 @@ void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, 
   (*this)[5] = tuz;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const double &, const double &, const double &, const double &, const double &, const double &) instead.
   Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
   from 3 translations and 3 \f$ \theta \bf{u}\f$ angles.
 
@@ -175,6 +177,83 @@ void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, 
   \sa set()
 */
 vpPoseVector vpPoseVector::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
+{
+  build(tx, ty, tz, tux, tuy, tuz);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$ from
+  an homogeneous matrix \f$ \bf M \f$.
+
+  \param M : Homogeneous matrix \f$ \bf M \f$ from which translation \f$
+  \bf t \f$ and \f$\theta \bf u \f$ vectors are extracted to initialize
+  the pose vector.
+
+  \return The build pose vector.
+
+*/
+vpPoseVector vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
+{
+  build(M);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpTranslationVector &, const vpThetaUVector &) instead.
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
+  from a translation vector \f$ \bf t \f$ and a \f$\theta \bf u\f$
+  vector.
+
+  \param tv : Translation vector \f$ \bf t \f$.
+  \param tu : \f$\theta \bf u\f$ rotation  vector.
+
+  \return The build pose vector.
+*/
+vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu)
+{
+  build(tv, tu);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpTranslationVector &, const vpRotationMatrix &) instead.
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
+  from a translation vector \f$ \bf t \f$ and a rotation matrix \f$
+  \bf R \f$.
+
+  \param tv : Translation vector \f$ \bf t \f$.
+
+  \param R : Rotation matrix \f$ \bf R \f$ from which \f$\theta \bf
+  u\f$ vector is extracted to initialise the pose vector.
+
+  \return The build pose vector.
+*/
+vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R)
+{
+  build(tv, R);
+  return *this;
+}
+#endif
+
+/*!
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
+  from 3 translations and 3 \f$ \theta \bf{u}\f$ angles.
+
+  Translations are expressed in meters, while rotations in radians.
+
+  \param tx,ty,tz : Translations \f$[t_x, t_y, t_z]^\top\f$
+  respectively along the x, y and z axis (in meters).
+
+  \param tux,tuy,tuz : Rotations \f$[\theta u_x, \theta u_y, \theta
+  u_z]^\top\f$ respectively around the x, y and z axis (in radians).
+
+  \return The build pose vector.
+
+  \sa set()
+*/
+vpPoseVector &vpPoseVector::build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -197,13 +276,13 @@ vpPoseVector vpPoseVector::buildFrom(double tx, double ty, double tz, double tux
   \return The build pose vector.
 
 */
-vpPoseVector vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
+vpPoseVector &vpPoseVector::build(const vpHomogeneousMatrix &M)
 {
   vpRotationMatrix R;
   M.extract(R);
   vpTranslationVector tv;
   M.extract(tv);
-  buildFrom(tv, R);
+  build(tv, R);
   return *this;
 }
 
@@ -218,7 +297,7 @@ vpPoseVector vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
 
   \return The build pose vector.
 */
-vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu)
+vpPoseVector &vpPoseVector::build(const vpTranslationVector &tv, const vpThetaUVector &tu)
 {
   for (unsigned int i = 0; i < 3; ++i) {
     (*this)[i] = tv[i];
@@ -240,12 +319,12 @@ vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThet
 
   \return The build pose vector.
 */
-vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R)
+vpPoseVector &vpPoseVector::build(const vpTranslationVector &tv, const vpRotationMatrix &R)
 {
   vpThetaUVector tu;
-  tu.buildFrom(R);
+  tu.build(R);
 
-  buildFrom(tv, tu);
+  build(tv, tu);
   return *this;
 }
 
@@ -274,12 +353,12 @@ void vpPoseVector::extract(vpThetaUVector &tu) const
 void vpPoseVector::extract(vpQuaternionVector &q) const
 {
   vpRotationMatrix R((*this)[3], (*this)[4], (*this)[5]);
-  q.buildFrom(R);
+  q.build(R);
 }
 /*!
   Extract the rotation as a rotation matrix.
 */
-void vpPoseVector::extract(vpRotationMatrix &R) const { R.buildFrom((*this)[3], (*this)[4], (*this)[5]); }
+void vpPoseVector::extract(vpRotationMatrix &R) const { R.build((*this)[3], (*this)[4], (*this)[5]); }
 /*!
   Return the translation vector that corresponds to the translation part of
   the pose vector.

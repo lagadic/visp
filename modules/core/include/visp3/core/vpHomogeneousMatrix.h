@@ -51,6 +51,7 @@ class vpPoint;
 #include <fstream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
@@ -210,13 +211,22 @@ public:
   explicit vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
 
-  void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
-  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
-  void buildFrom(const vpPoseVector &p);
-  void buildFrom(const std::vector<float> &v);
-  void buildFrom(const std::vector<double> &v);
-  void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vp_deprecated void buildFrom(const vpPoseVector &p);
+  vp_deprecated void buildFrom(const std::vector<float> &v);
+  vp_deprecated void buildFrom(const std::vector<double> &v);
+  vp_deprecated void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#endif
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vpHomogeneousMatrix &build(const vpPoseVector &p);
+  vpHomogeneousMatrix &build(const std::vector<float> &v);
+  vpHomogeneousMatrix &build(const std::vector<double> &v);
+  vpHomogeneousMatrix &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);

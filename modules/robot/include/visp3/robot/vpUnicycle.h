@@ -70,7 +70,7 @@ public:
   vpVelocityTwistMatrix get_cVe() const
   {
     vpVelocityTwistMatrix cVe;
-    cVe.buildFrom(cMe_);
+    cVe.build(cMe_);
     return cVe;
   }
 

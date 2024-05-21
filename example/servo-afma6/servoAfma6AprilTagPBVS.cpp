@@ -192,8 +192,8 @@ int main(int argc, char **argv)
     cdMc = cdMo * cMo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    t.buildFrom(cdMc);
-    tu.buildFrom(cdMc);
+    t.build(cdMc);
+    tu.build(cdMc);
 
     vpFeatureTranslation td(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
         if (first_time) {
           // Introduce security wrt tag positioning in order to avoid PI rotation
           std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
-          v_oMo[1].buildFrom(0, 0, 0, 0, 0, M_PI);
+          v_oMo[1].build(0, 0, 0, 0, 0, M_PI);
           for (size_t i = 0; i < 2; i++) {
             v_cdMc[i] = cdMo * v_oMo[i] * cMo.inverse();
           }
@@ -285,8 +285,8 @@ int main(int argc, char **argv)
 
         // Update visual features
         cdMc = cdMo * oMo * cMo.inverse();
-        t.buildFrom(cdMc);
-        tu.buildFrom(cdMc);
+        t.build(cdMc);
+        tu.build(cdMc);
 
         if (opt_task_sequencing) {
           if (!servo_started) {
