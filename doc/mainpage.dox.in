@@ -717,6 +717,11 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_vision_keypoints Keypoints detection, matching and classifiers
   Keypoints detection and matching algorithms but also classifiers.
 */
+/*!
+  \ingroup module_vision
+  \defgroup group_vision_plane Plane estimation
+  Plane estimation algorithms.
+*/
 /*******************************************
  * Module vs
  *******************************************/

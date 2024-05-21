@@ -193,7 +193,7 @@ public:
   vpForceTwistMatrix &build(const vpThetaUVector &thetau);
   vpForceTwistMatrix &build(const vpRotationMatrix &R);
 
-// Basic initialisation (identity)
+  // Basic initialisation (identity)
   void eye();
 
   vpForceTwistMatrix operator*(const vpForceTwistMatrix &F) const;
