@@ -131,16 +131,6 @@
 */
 class vpTraceOutput
 {
-private:
-  const char *currentFile; // Name of the file to use in the displays
-  const char *currentFunc; // Name of the function to use in the displays
-  int currentLine;         // Line to use in the displays
-
-  // if true, output to std::cerr/stderr else std::cout/stdout
-  bool err;
-  // string to display before anything else
-  const char *header;
-
 public:
   /*!
     Constructor.
@@ -242,6 +232,16 @@ public:
       fflush(stdout);
     }
   }
+private:
+  const char *currentFile; // Name of the file to use in the displays
+  const char *currentFunc; // Name of the function to use in the displays
+  int currentLine;         // Line to use in the displays
+
+  // if true, output to std::cerr/stderr else std::cout/stdout
+  bool err;
+  // string to display before anything else
+  const char *header;
+
 };
 
 /* ------------------------------------------------------------------------- */

@@ -141,7 +141,7 @@ struct vpDirection
   {
     vpDirection direction;
     int directionSize = LAST_DIRECTION;
-    direction.m_direction = vpDirectionType(((int)m_direction + 1) % directionSize);
+    direction.m_direction = vpDirectionType((static_cast<int>(m_direction) + 1) % directionSize);
 
     return direction;
   }
@@ -153,8 +153,8 @@ struct vpDirection
   vpDirection counterClockwise()
   {
     vpDirection direction;
-    int directionSize = (int)LAST_DIRECTION;
-    int idx = vpMath::modulo((int)m_direction - 1, directionSize);
+    int directionSize = static_cast<int>(LAST_DIRECTION);
+    int idx = vpMath::modulo(static_cast<int>(m_direction) - 1, directionSize);
     direction.m_direction = vpDirectionType(idx);
 
     return direction;
@@ -168,10 +168,10 @@ struct vpDirection
    */
   vpImagePoint active(const vpImage<int> &I, const vpImagePoint &point)
   {
-    int yy = (int)(point.get_i() + m_diry[(int)m_direction]);
-    int xx = (int)(point.get_j() + m_dirx[(int)m_direction]);
+    int yy = static_cast<int>(point.get_i() + m_diry[static_cast<int>(m_direction)]);
+    int xx = static_cast<int>(point.get_j() + m_dirx[static_cast<int>(m_direction)]);
 
-    if (xx < 0 || xx >= (int)I.getWidth() || yy < 0 || yy >= (int)I.getHeight()) {
+    if ((xx < 0) || (xx >= static_cast<int>(I.getWidth())) || (yy < 0) || (yy >= static_cast<int>(I.getHeight()))) {
       return vpImagePoint(-1, -1);
     }
 
@@ -225,7 +225,7 @@ struct vpContour
   /*!
    * Constructor of a given contour type.
    */
-  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
+  explicit vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
 
   /*!
    * Copy constructor.
@@ -235,7 +235,8 @@ struct vpContour
   {
 
     // Copy the underlying contours
-    for (std::vector<vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+    std::vector<vpContour *>::const_iterator contour_m_children_end = contour.m_children.end();
+    for (std::vector<vpContour *>::const_iterator it = contour.m_children.begin(); it != contour_m_children_end;
          ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
@@ -248,7 +249,8 @@ struct vpContour
    */
   virtual ~vpContour()
   {
-    for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+    std::vector<vpContour *>::iterator m_children_end = m_children.end();
+    for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children_end; ++it) {
       (*it)->m_parent = nullptr;
       if (*it != nullptr) {
         delete *it;
@@ -266,7 +268,8 @@ struct vpContour
 
     if (m_parent == nullptr) {
       // We are a root or an uninitialized contour so delete everything
-      for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+      std::vector<vpContour *>::iterator m_children_end = m_children.end();
+      for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children_end; ++it) {
         (*it)->m_parent = nullptr;
         if (*it != nullptr) {
           delete *it;
@@ -281,7 +284,8 @@ struct vpContour
     }
 
     m_children.clear();
-    for (std::vector<vpContour *>::const_iterator it = other.m_children.begin(); it != other.m_children.end(); ++it) {
+    std::vector<vpContour *>::const_iterator other_m_children_end = other.m_children.end();
+    for (std::vector<vpContour *>::const_iterator it = other.m_children.begin(); it != other_m_children_end; ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
       m_children.push_back(copy);

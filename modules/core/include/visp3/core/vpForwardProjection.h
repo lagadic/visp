@@ -193,6 +193,16 @@ public:
   void track(const vpHomogeneousMatrix &cMo);
   //@}
 
+
+public:
+  /** @name Public Attributes Inherited from vpForwardProjection */
+  //@{
+  /*!
+   * Feature coordinates expressed in the object frame.
+   */
+  vpColVector oP;
+  //@}
+
 protected:
   /** @name Protected Member Functions Inherited from vpForwardProjection */
   //@{
@@ -203,15 +213,6 @@ protected:
    * - in the image plane: \e p.
    */
   virtual void init() = 0;
-  //@}
-
-public:
-  /** @name Public Attributes Inherited from vpForwardProjection */
-  //@{
-  /*!
-   * Feature coordinates expressed in the object frame.
-   */
-  vpColVector oP;
   //@}
 
 private:

@@ -83,7 +83,7 @@ public:
   //! Copy constructor.
   vpTracker(const vpTracker &tracker);
   //! Destructor.
-  virtual ~vpTracker() { ; }
+  virtual ~vpTracker() { }
 
   /** @name Public Member Functions Inherited from vpTracker */
   //@{

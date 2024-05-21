@@ -53,18 +53,6 @@
  */
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
-private:
-  //! Eye method unavailable
-  void eye(unsigned int n);
-  //! Eye method unavailable
-  void eye(unsigned int m, unsigned int n);
-  //! Copy constructor unavailable
-  vpSubMatrix(const vpSubMatrix &m /* m */);
-
-protected:
-  unsigned int pRowNum;
-  unsigned int pColNum;
-  vpMatrix *parent;
 
 public:
   //! Default constructor
@@ -88,6 +76,19 @@ public:
   vpSubMatrix &operator=(const vpMatrix &B);
   //! Operation such as subA = x
   vpSubMatrix &operator=(const double &x);
+
+protected:
+  unsigned int pRowNum;
+  unsigned int pColNum;
+  vpMatrix *parent;
+
+private:
+  //! Eye method unavailable
+  void eye(unsigned int n);
+  //! Eye method unavailable
+  void eye(unsigned int m, unsigned int n);
+  //! Copy constructor unavailable
+  vpSubMatrix(const vpSubMatrix &m /* m */);
 };
 
 #endif

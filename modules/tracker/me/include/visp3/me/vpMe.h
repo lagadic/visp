@@ -135,31 +135,6 @@ public:
     NORMALIZED_THRESHOLD = 1
   } vpLikelihoodThresholdType;
 
-private:
-  vpLikelihoodThresholdType m_likelihood_threshold_type; //!< Likelihood threshold type
-  //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
-  double m_threshold;
-  double m_thresholdMarginRatio; //!< The ratio of the initial contrast to use to initialize the contrast threshold of the vpMeSite.
-  double m_minThreshold; //!< The minimum moving-edge threshold in grey level used when the contrast threshold of the vpMeSites is automatically computed.
-  bool m_useAutomaticThreshold; //!< Set to true if the user wants to automatically compute the vpMeSite contrast thresholds, false if the user wants to use a global threshold.
-  double m_mu1;       //!< Contrast continuity parameter (left boundary)
-  double m_mu2;       //!< Contrast continuity parameter (right boundary)
-  double m_min_samplestep;
-  unsigned int m_anglestep;
-  int m_mask_sign;
-  unsigned int m_range; //! Seek range - on both sides of the reference pixel
-  double m_sample_step; //! Distance between sampled points in pixels
-  int m_ntotal_sample;
-  int m_points_to_track; //!< Expected number of points to track
-  //! Convolution masks' size in pixels (masks are square)
-  unsigned int m_mask_size;
-  //! The number of convolution masks available for tracking ; defines resolution
-  unsigned int m_mask_number;
-  //! Strip: defines a "security strip" such that when seeking extremities
-  //! cannot return a new extremity which is too close to the frame borders
-  int m_strip;
-  vpMatrix *m_mask; //!< Array of matrices defining the different masks (one for every angle step).
-
 public:
   /*!
    * Default constructor.
@@ -195,8 +170,9 @@ public:
    */
   void checkSamplestep(double &sample_step)
   {
-    if (sample_step < m_min_samplestep)
+    if (sample_step < m_min_samplestep) {
       sample_step = m_min_samplestep;
+    }
   }
 
   /*!
@@ -518,6 +494,31 @@ public:
    */
   void setLikelihoodThresholdType(const vpLikelihoodThresholdType likelihood_threshold_type) { m_likelihood_threshold_type = likelihood_threshold_type; }
 
+private:
+  vpLikelihoodThresholdType m_likelihood_threshold_type; //!< Likelihood threshold type
+  //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
+  double m_threshold;
+  double m_thresholdMarginRatio; //!< The ratio of the initial contrast to use to initialize the contrast threshold of the vpMeSite.
+  double m_minThreshold; //!< The minimum moving-edge threshold in grey level used when the contrast threshold of the vpMeSites is automatically computed.
+  bool m_useAutomaticThreshold; //!< Set to true if the user wants to automatically compute the vpMeSite contrast thresholds, false if the user wants to use a global threshold.
+  double m_mu1;       //!< Contrast continuity parameter (left boundary)
+  double m_mu2;       //!< Contrast continuity parameter (right boundary)
+  double m_min_samplestep;
+  unsigned int m_anglestep;
+  int m_mask_sign;
+  unsigned int m_range; //! Seek range - on both sides of the reference pixel
+  double m_sample_step; //! Distance between sampled points in pixels
+  int m_ntotal_sample;
+  int m_points_to_track; //!< Expected number of points to track
+  //! Convolution masks' size in pixels (masks are square)
+  unsigned int m_mask_size;
+  //! The number of convolution masks available for tracking ; defines resolution
+  unsigned int m_mask_number;
+  //! Strip: defines a "security strip" such that when seeking extremities
+  //! cannot return a new extremity which is too close to the frame borders
+  int m_strip;
+  vpMatrix *m_mask; //!< Array of matrices defining the different masks (one for every angle step).
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /*!
    * @brief Convert a vpMe object to a JSON representation.
@@ -619,7 +620,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     assert((mus.size() == 2));
     me.setMu1(mus[0]);
     me.setMu2(mus[1]);
-  }
+}
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
   me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));

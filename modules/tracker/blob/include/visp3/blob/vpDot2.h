@@ -162,10 +162,10 @@ public:
   {
     vpRect bbox;
 
-    bbox.setRect(this->bbox_u_min, this->bbox_v_min, this->bbox_u_max - this->bbox_u_min + 1,
-                 this->bbox_v_max - this->bbox_v_min + 1);
+    bbox.setRect(this->bbox_u_min, this->bbox_v_min, (this->bbox_u_max - this->bbox_u_min) + 1,
+                 (this->bbox_v_max - this->bbox_v_min) + 1);
 
-    return (bbox);
+    return bbox;
   };
 
   /*!
@@ -192,7 +192,7 @@ public:
    * \return The list of all the images points on the dot
    * border. This list is update after a call to track().
    */
-  std::list<vpImagePoint> getEdges() const { return (this->ip_edges_list); };
+  std::list<vpImagePoint> getEdges() const { return this->ip_edges_list; };
 
   /*!
    * Get the percentage of sampled points that are considered non conform
@@ -284,12 +284,15 @@ public:
    */
   void setEllipsoidBadPointsPercentage(const double &percentage = 0.0)
   {
-    if (percentage < 0.)
+    if (percentage < 0.) {
       allowedBadPointsPercentage_ = 0.;
-    else if (percentage > 1.)
+    }
+    else if (percentage > 1.) {
       allowedBadPointsPercentage_ = 1.;
-    else
+    }
+    else {
       allowedBadPointsPercentage_ = percentage;
+    }
   }
 
   void setEllipsoidShapePrecision(const double &ellipsoidShapePrecision);
@@ -329,10 +332,12 @@ public:
    */
   inline void setGrayLevelMin(const unsigned int &min)
   {
-    if (min > 255)
+    if (min > 255) {
       this->gray_level_min = 255;
-    else
+    }
+    else {
       this->gray_level_min = min;
+    }
   };
 
   /*!
@@ -364,6 +369,13 @@ public:
 
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
                               std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar = nullptr);
+
+  // Static funtions
+  static void display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
+                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
+                      unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
+                      vpColor color = vpColor::red, unsigned int thickness = 1);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
@@ -520,13 +532,6 @@ private:
   unsigned int firstBorder_u;
   unsigned int firstBorder_v;
 
-  // Static funtions
-public:
-  static void display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
-                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
-                      vpColor color = vpColor::red, unsigned int thickness = 1);
 };
 
 #endif
