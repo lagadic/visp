@@ -68,12 +68,12 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
     }
   }
   else {
-    for (int cpt1 = -1; cpt1 <= 1; cpt1++) {
-      for (int cpt2 = -1; cpt2 <= 1; cpt2++) {
+    for (int cpt1 = -1; cpt1 <= 1; ++cpt1) {
+      for (int cpt2 = -1; cpt2 <= 1; ++cpt2) {
         // Everything except the current position
-        if (cpt1 != 0 || cpt2 != 0) {
-          if (I[(int)i + cpt1][(int)j + cpt2] == currValue) {
-            listOfNeighbors.push(vpImagePoint((int)i + cpt1, (int)j + cpt2));
+        if ((cpt1 != 0) || (cpt2 != 0)) {
+          if (I[static_cast<int>(i) + cpt1][static_cast<int>(j) + cpt2] == currValue) {
+            listOfNeighbors.push(vpImagePoint(static_cast<int>(i) + cpt1, static_cast<int>(j) + cpt2));
           }
         }
       }
@@ -87,8 +87,8 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
   // Visit the neighbors
   while (!listOfNeighbors.empty()) {
     vpImagePoint imPt = listOfNeighbors.front();
-    unsigned int i = (unsigned int)imPt.get_i();
-    unsigned int j = (unsigned int)imPt.get_j();
+    unsigned int i = static_cast<unsigned int>(imPt.get_i());
+    unsigned int j = static_cast<unsigned int>(imPt.get_j());
     listOfNeighbors.pop();
 
     if (I_copy[i][j]) {
@@ -114,8 +114,9 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
 
   vpImage<unsigned char> I_copy(I.getHeight() + 2, I.getWidth() + 2);
   // Copy and add border
-  for (unsigned int i = 0; i < I_copy.getHeight(); i++) {
-    if (i == 0 || i == I_copy.getHeight() - 1) {
+  unsigned int i_copy_height = I_copy.getHeight();
+  for (unsigned int i = 0; i < i_copy_height; ++i) {
+    if ((i == 0) || (i == (I_copy.getHeight() - 1))) {
       memset(I_copy[i], 0, sizeof(unsigned char) * I_copy.getWidth());
     }
     else {
@@ -130,13 +131,15 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
   int current_label = 1;
   std::queue<vpImagePoint> listOfNeighbors;
 
-  for (unsigned int cpt1 = 0; cpt1 < I.getHeight(); cpt1++) {
+  unsigned int i_height = I.getHeight();
+  for (unsigned int cpt1 = 0; cpt1 < i_height; ++cpt1) {
     unsigned int i = cpt1 + 1;
 
-    for (unsigned int cpt2 = 0; cpt2 < I.getWidth(); cpt2++) {
+    unsigned int i_width = I.getWidth();
+    for (unsigned int cpt2 = 0; cpt2 < i_width; ++cpt2) {
       unsigned int j = cpt2 + 1;
 
-      if (I_copy[i][j] && labels_copy[i][j] == 0) {
+      if (I_copy[i][j] && (labels_copy[i][j] == 0)) {
         // Get all the neighbors relative to the current position
         getNeighbors(I_copy, listOfNeighbors, i, j, connexity);
 
@@ -147,12 +150,12 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
         visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label, connexity);
 
         // Increment label
-        current_label++;
+        ++current_label;
       }
     }
   }
-
-  for (unsigned int i = 0; i < labels.getHeight(); i++) {
+  unsigned int labels_height = labels.getHeight();
+  for (unsigned int i = 0; i < labels_height; ++i) {
     memcpy(labels[i], labels_copy[i + 1] + 1, sizeof(int) * labels.getWidth());
   }
 

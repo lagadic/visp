@@ -80,7 +80,7 @@ bool vpHistogramValey::operator==(const vpHistogramValey &v) const
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v)
 {
 
-  s << (int)v.getLevel() << " " << v.getValue();
+  s << static_cast<int>(v.getLevel()) << " " << v.getValue();
 
   return s;
 }

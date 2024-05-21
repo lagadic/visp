@@ -47,7 +47,7 @@
 
 #include <ST/CaptureSession.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/common_headers.h>
 #endif
 
@@ -297,7 +297,7 @@ public:
                vpColVector *acceleration_data = nullptr, vpColVector *gyroscope_data = nullptr, bool undistorted = true,
                double *ts = nullptr);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
                unsigned char *const data_infrared = nullptr, vpColVector *acceleration_data = nullptr,
@@ -354,7 +354,7 @@ protected:
   vpCameraParameters m_visible_camera_parameters, m_depth_camera_parameters;
 
   void getPointcloud(std::vector<vpColVector> &pointcloud);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif

@@ -64,6 +64,17 @@
 #include <windows.h>
 #endif
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
+#include <mutex>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpImageException.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+
+#include <pcl/pcl_config.h>
+#include <pcl/point_types.h>
+#include <pcl/point_cloud.h>
+#endif
+
 /*!
   \class vpImageConvert
 
@@ -134,8 +145,21 @@ public:
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
 #endif
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
+  static int depthToPointCloud(const vpImage<uint16_t> &depth_raw,
+                               float depth_scale, const vpCameraParameters &cam_depth,
+                               pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
+                               std::mutex *pointcloud_mutex = nullptr,
+                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+  static int depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
+                               float depth_scale, const vpCameraParameters &cam_depth,
+                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
+                               std::mutex *pointcloud_mutex = nullptr,
+                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+#endif
+
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
-                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
+                      vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
 
   static void merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G, const vpImage<unsigned char> *B,
                     const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa);
@@ -169,9 +193,9 @@ public:
     dg = dg > 255. ? 255. : dg;
     db = db > 255. ? 255. : db;
 
-    r = (unsigned char)dr;
-    g = (unsigned char)dg;
-    b = (unsigned char)db;
+    r = static_cast<unsigned char>(dr);
+    g = static_cast<unsigned char>(dg);
+    b = static_cast<unsigned char>(db);
   }
   static void YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsigned int width, unsigned int height);
   static void YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned int width, unsigned int height);
@@ -233,18 +257,18 @@ public:
   static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                         unsigned int size);
   static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                        unsigned char *rgba, unsigned int size);
+                        unsigned char *rgba, unsigned int size, bool h_full = true);
   static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value, unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                        unsigned int size);
+                        unsigned int size, bool h_full = true);
 
   static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
                        unsigned int size);
   static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                       unsigned char *rgb, unsigned int size);
+                       unsigned char *rgb, unsigned int size, bool h_full = true);
   static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                       unsigned int size);
+                       unsigned int size, bool h_full = true);
 
   static void demosaicBGGRToRGBaBilinear(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height,
                                          unsigned int nThreads = 0);
@@ -291,8 +315,12 @@ private:
 
   static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                       unsigned int size, unsigned int step);
+  static void HSV2RGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value, unsigned char *rgba,
+                      unsigned int size, unsigned int step, bool h_full);
   static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size,
                       unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+                      unsigned int size, unsigned int step, bool h_full);
 
 private:
   static bool YCbCrLUTcomputed;

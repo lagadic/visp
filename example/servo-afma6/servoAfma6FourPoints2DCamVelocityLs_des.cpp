@@ -68,7 +68,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -87,7 +87,7 @@
 // Exception
 #include <visp3/core/vpException.h>
 
-#define L 0.05 // to deal with a 10cm by 10cm square
+#define L 0.06 // to deal with a 12cm by 12cm square
 
 int main()
 {
@@ -110,7 +110,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -128,11 +129,17 @@ int main()
     vpImage<unsigned char> I;
     int i;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
 #elif defined(HAVE_OPENCV_HIGHGUI)
@@ -140,8 +147,6 @@ int main()
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
-
-    g.acquire(I);
 
     vpDisplay::display(I);
     vpDisplay::flush(I);
@@ -199,7 +204,7 @@ int main()
     vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0),
                      vpMath::rad(0)); // No rotations
     vpRotationMatrix cRo(cro);        // Build the rotation matrix
-    cMo.buildFrom(cto, cRo);          // Build the homogeneous matrix
+    cMo.build(cto, cRo);          // Build the homogeneous matrix
 
     // sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];
@@ -237,9 +242,10 @@ int main()
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
 
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       // Acquire a new image from the camera
-      g.acquire(I);
+      rs.acquire(I);
 
       // Display this image
       vpDisplay::display(I);
@@ -302,6 +308,10 @@ int main()
       // expressed in meters in the camera frame
       flog << (task.getError()).t() << std::endl;
 
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
       // Flush the display
       vpDisplay::flush(I);
     }
@@ -312,7 +322,8 @@ int main()
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;

@@ -41,6 +41,7 @@
   \brief class that defines the ThetaU visual feature
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -110,7 +111,7 @@
  *
  * To initialize the feature \f$(\theta u_x, \theta u_y, \theta u_z)\f$
  * you may use vpFeatureThetaU member functions like set_TUx(),
- * set_TUy(), set_TUz(), or also buildFrom() functions.
+ * set_TUy(), set_TUz(), or also build() functions.
  *
  * Depending on the choice of the visual feature representation, the
  * interaction() method allows to compute the interaction matrix \f$
@@ -149,7 +150,7 @@
  *   // in angle/axis parametrization between the current camera frame
  *   // and the desired camera frame
  *   vpFeatureThetaU s(vpFeatureThetaU::cRcd);
- *   s.buildFrom(cMcd); // Initialization of the feature
+ *   s.build(cMcd); // Initialization of the feature
  *
  *   // Set eye-in-hand control law.
  *   // The computed velocities will be expressed in the camera frame
@@ -165,7 +166,7 @@
  *     // ... cMcd need here to be initialized from for example a pose estimation.
  *
  *     // Update the current ThetaU visual feature
- *     s.buildFrom(cMcd);
+ *     s.build(cMcd);
  *
  *     // compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -201,7 +202,7 @@
  *
  *   // Creation of the current feature s
  *   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
- *   s.buildFrom(cdMc); // Initialization of the feature
+ *   s.build(cdMc); // Initialization of the feature
  *
  *   // Creation of the desired feature s*. By default this feature is
  *   // initialized to zero
@@ -251,11 +252,18 @@ public:
   vpFeatureThetaU(vpRotationMatrix &R, vpFeatureThetaURotationRepresentationType r);
   vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotationRepresentationType r);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(vpThetaUVector &tu);
   // build from a rotation matrix
   void buildFrom(const vpRotationMatrix &R);
   // build from an homogeneous matrix
   void buildFrom(const vpHomogeneousMatrix &M);
+#endif
+  vpFeatureThetaU &build(const vpThetaUVector &tu);
+  // build from a rotation matrix
+  vpFeatureThetaU &build(const vpRotationMatrix &R);
+  // build from an homogeneous matrix
+  vpFeatureThetaU &build(const vpHomogeneousMatrix &M);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

@@ -85,10 +85,10 @@
  *
  *   bool status = detector.detect(I);
  *   if (status) {
- *     for(size_t i=0; i < detector.getNbObjects(); i++) {
+ *     for(size_t i=0; i < detector.getNbObjects(); ++i) {
  *       std::cout << "Tag code " << i << ":" << std::endl;
  *       std::vector<vpImagePoint> p = detector.getPolygon(i);
- *       for(size_t j=0; j < p.size(); j++)
+ *       for(size_t j=0; j < p.size(); ++j)
  *         std::cout << "  Point " << j << ": " << p[j] << std::endl;
  *       std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
  *     }
@@ -133,7 +133,7 @@
  *
  *   bool status = detector.detect(I, tagSize, cam, cMo);
  *   if (status) {
- *     for(size_t i=0; i < detector.getNbObjects(); i++) {
+ *     for(size_t i=0; i < detector.getNbObjects(); ++i) {
  *       std::cout << "Tag number " << i << ":" << std::endl;
  *       std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
  *       std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
@@ -181,7 +181,7 @@
  *
  *   bool status = detector.detect(I);
  *   if (status) {
- *     for(size_t i=0; i < detector.getNbObjects(); i++) {
+ *     for(size_t i=0; i < detector.getNbObjects(); ++i) {
  *       std::cout << "Tag code " << i << ":" << std::endl;
  *       std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
  *       if (detector.getMessage(i) == std::string("36h11 id: 0")) {

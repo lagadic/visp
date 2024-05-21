@@ -132,7 +132,7 @@ static void custom_stbi_write_mem(void *context, void *data, int size)
   char *dst = (char *)c->context;
   char *src = (char *)data;
   int cur_pos = c->last_pos;
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; ++i) {
     dst[cur_pos++] = src[i];
   }
   c->last_pos = cur_pos;

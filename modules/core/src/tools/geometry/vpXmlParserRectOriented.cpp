@@ -133,8 +133,9 @@ public:
       root_node = doc.append_child("config");
     }
     else if (!append) {
-      if (!vpIoTools::remove(filename))
+      if (!vpIoTools::remove(filename)) {
         throw vpException(vpException::ioError, "Cannot remove existing xml file");
+      }
 
       root_node = doc.append_child(pugi::node_declaration);
       root_node.append_attribute("version") = "1.0";

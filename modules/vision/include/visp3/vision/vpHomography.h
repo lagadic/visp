@@ -122,7 +122,7 @@
  *   // camera frame a
  *   vpPoint Pa[4];
  *   std::vector<double> xa(4), ya(4); // Coordinates in pixels of the points in frame a
- *   for(int i=0 ; i < 4 ; i++) {
+ *   for(int i=0 ; i < 4 ; ++i) {
  *     Pa[i] = Po[i]; Pa[i].project(aMo); // Project the points from object frame to camera frame a
  *     vpMeterPixelConversion::convertPoint(cam,
  *                                         Pa[i].get_x(), Pa[i].get_y(),
@@ -133,7 +133,7 @@
  *   // camera frame b
  *   vpPoint Pb[4];
  *   std::vector<double> xb(4), yb(4); // Coordinates in pixels of the points in frame b
- *   for(int i=0 ; i < 4 ; i++) {
+ *   for(int i=0 ; i < 4 ; ++i) {
  *     Pb[i] = Po[i]; Pb[i].project(bMo); // Project the points from object frame to camera frame a
  *   }
  *
@@ -148,7 +148,7 @@
  *   // Compute the coordinates of the points in frame b using the ground
  *   // truth homography and the coordinates of the points in frame a
  *   vpHomography bHa = aHb.inverse();
- *   for(int i = 0; i < 4 ; i++){
+ *   for(int i = 0; i < 4 ; ++i){
  *     double inv_z = 1. / (bHa[2][0] * xa[i] + bHa[2][1] * ya[i] + bHa[2][2]);
  *
  *     xb[i] = (bHa[0][0] * xa[i] + bHa[0][1] * ya[i] + bHa[0][2]) * inv_z;
@@ -184,7 +184,8 @@ public:
   //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
 
-  //! Construction from translation and rotation and a plane
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+//! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
@@ -192,6 +193,15 @@ public:
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
+#endif
+//! Construction from translation and rotation and a plane
+  vpHomography &build(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation and a plane
+  vpHomography &build(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation  and a plane
+  vpHomography &build(const vpPoseVector &arb, const vpPlane &bP);
+  //! Construction from homogeneous matrix and a plane
+  vpHomography &build(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   /*!
    * Transform an homography from pixel space to calibrated domain.
@@ -611,7 +621,6 @@ public:
                      double weights_threshold = 0.4, unsigned int niter = 4, bool normalization = true);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! build the homography from aMb and Rb
   static void build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   static void computeDisplacement(const vpHomography &aHb, const vpColVector &nd, vpRotationMatrix &aRb,

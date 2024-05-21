@@ -1,5 +1,6 @@
 /*! \example tutorial-grabber-realsense.cpp */
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -156,6 +157,26 @@ int main(int argc, const char *argv[])
     g.acquire(I);
 
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;
+
+    vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+    vpXmlParserCamera p;
+    std::string output_folder = vpIoTools::getParent(opt_seqname);
+    if (!vpIoTools::checkDirectory(output_folder)) {
+      try {
+        std::cout << "Create output folder: " << output_folder << std::endl;
+        vpIoTools::makeDirectory(output_folder);
+      }
+      catch (const vpException &e) {
+        std::cout << e.getStringMessage();
+        return EXIT_FAILURE;
+      }
+    }
+    std::string cam_filename = output_folder + "/camera.xml";
+
+    std::cout << "Save camera intrinsics in: " << cam_filename << std::endl;
+    if (p.save(cam, cam_filename, "camera")) {
+      std::cout << "Cannot save camera parameters in " << cam_filename << std::endl;
+    }
 
     vpDisplay *d = nullptr;
     if (opt_display) {

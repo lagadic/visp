@@ -70,7 +70,7 @@ int main()
 
       // Creation of the current feature s
       vpFeatureThetaU s(vpFeatureThetaU::cdRc);
-      s.buildFrom(tu_cdRc);
+      s.build(tu_cdRc);
       s.print();
       task.addFeature(s); // Add current ThetaU feature
 

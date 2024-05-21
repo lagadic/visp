@@ -205,8 +205,9 @@ vpRobotViper650::vpRobotViper650(bool verbose) : vpViper650(), vpRobot()
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
-    //  vpERROR_TRACE("Error caught") ;
+  }
+  catch (...) {
+ //  vpERROR_TRACE("Error caught") ;
     throw;
   }
   m_positioningVelocity = m_defaultPositioningVelocity;
@@ -702,9 +703,10 @@ vpRobot::vpRobotStateType vpRobotViper650::setRobotState(vpRobot::vpRobotStateTy
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       Try(PrimitiveSTOP_Viper650());
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     this->powerOn();
     break;
@@ -776,22 +778,25 @@ void vpRobotViper650::powerOn(void)
     if (EStopStatus == ESTOP_AUTO) {
       m_controlMode = AUTO;
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_MANUAL) {
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
       m_controlMode = MANUAL;
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_ACTIVATED) {
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       m_controlMode = ESTOP;
       if (firsttime) {
         std::cout << "Emergency stop is activated! \n"
-                  << "Check the emergency stop button and push the yellow "
-                     "button before continuing."
-                  << std::endl;
+          << "Check the emergency stop button and push the yellow "
+          "button before continuing."
+          << std::endl;
         firsttime = false;
       }
       fprintf(stdout, "Remaining time %us  \r", nitermax - i);
       fflush(stdout);
       CAL_Wait(1);
-    } else {
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
@@ -900,7 +905,7 @@ void vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpViper650::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -943,7 +948,8 @@ void vpRobotViper650::get_eJe(vpMatrix &eJe)
 
   try {
     vpViper650::get_eJe(q, eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -976,7 +982,8 @@ void vpRobotViper650::get_fJe(vpMatrix &fJe)
 
   try {
     vpViper650::get_fJe(q, fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1153,8 +1160,9 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
       destination.rad2deg();
       Try(PrimitiveMOVE_J_Viper650(destination.data, m_positioningVelocity));
       Try(WaitState_Viper650(ETAT_ATTENTE_VIPER650, 1000));
-    } else {
-      // Cartesian position is out of range
+    }
+    else {
+   // Cartesian position is out of range
       error = -1;
     }
 
@@ -1209,8 +1217,9 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
       std::cout << " : Joint position out of range.\n";
     else
       std::cout << " : Cartesian position leads to a joint position out of "
-                   "range.\n";
-  } else if (TryStt < 0)
+      "range.\n";
+  }
+  else if (TryStt < 0)
     std::cout << " : Unknown error (see Fabien).\n";
   else if (error == -1)
     std::cout << "Position out of range.\n";
@@ -1300,7 +1309,8 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, doubl
     position[5] = pos6;
 
     setPosition(frame, position);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1456,7 +1466,7 @@ void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(fRc);
+    rxyz.build(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1673,7 +1683,8 @@ void vpRobotViper650::setVelocity(const vpRobot::vpControlFrameType frame, const
     if (std::fabs(getMaxRotationVelocity() - getMaxRotationVelocityJoint6()) < std::numeric_limits<double>::epsilon()) {
       for (unsigned int i = 0; i < 6; i++)
         vel_max[i] = getMaxRotationVelocity();
-    } else {
+    }
+    else {
       for (unsigned int i = 0; i < 5; i++)
         vel_max[i] = getMaxRotationVelocity();
       vel_max[5] = getMaxRotationVelocityJoint6();
@@ -1736,12 +1747,14 @@ void vpRobotViper650::setVelocity(const vpRobot::vpControlFrameType frame, const
         if (axisInJoint[i])
           std::cout << "\nWarning: Velocity control stopped: axis " << i + 1 << " on joint limit!" << std::endl;
       }
-    } else {
+    }
+    else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != nullptr) {
         // The statement is in TryString, but we need to check the validity
         printf(" Error sentence %s\n", TryString); // Print the TryString
-      } else {
+      }
+      else {
         printf("\n");
       }
     }
@@ -1883,7 +1896,7 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
       vpRotationMatrix cRc;
       cMc.extract(cRc);
       vpThetaUVector thetaU;
-      thetaU.buildFrom(cRc);
+      thetaU.build(cRc);
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame
@@ -1901,7 +1914,8 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
                         "vpRobotViper650::getVelocity() not implemented in end-effector"));
     }
     }
-  } else {
+  }
+  else {
     m_first_time_getvel = false;
   }
 
@@ -2200,7 +2214,8 @@ void vpRobotViper650::move(const std::string &filename)
     this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
     this->setPositioningVelocity(10);
     this->setPosition(vpRobot::ARTICULAR_FRAME, q);
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 }
@@ -2266,7 +2281,8 @@ void vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
       return;
     }
     }
-  } else {
+  }
+  else {
     m_first_time_getdis = false;
   }
 
@@ -2545,5 +2561,5 @@ void vpRobotViper650::closeGripper() const
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotViper650.cpp.o) has
 // no symbols
-void dummy_vpRobotViper650(){};
+void dummy_vpRobotViper650() { };
 #endif

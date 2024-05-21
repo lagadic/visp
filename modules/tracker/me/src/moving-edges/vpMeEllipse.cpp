@@ -40,7 +40,7 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeEllipse.h>
 
-// #define VP_ME_ELLIPSE_REGULAR_SAMPLING
+// --comment: define the VP_ME_ELLIPSE_REGULAR_SAMPLING flag
 #ifndef VP_ME_ELLIPSE_REGULAR_SAMPLING
 #define VP_ME_ELLIPSE_TWO_CONCENTRIC_CIRCLES
 #endif
@@ -190,7 +190,7 @@ void vpMeEllipse::computeAbeFromNij()
     m_e = 0.0; // case n20 = n02 and n11 = 0 : circle, e undefined
     m_ce = 1.0;
     m_se = 0.0;
-    m_a = (m_b = 2.0 * sqrt(m_n20));         // = sqrt(2.0*(n20+n02))
+    m_a = (m_b = (2.0 * sqrt(m_n20)));         // = sqrt(2.0*(n20+n02))
   }
   else {                             // real ellipse
     m_e = atan2(2.0 * m_n11, num) / 2.0; // e in [-Pi/2 ; Pi/2]
@@ -211,7 +211,7 @@ void vpMeEllipse::computeKiFromNij()
   m_K[2] = -m_n11;
   m_K[3] = (m_n11 * m_vc) - (m_n02 * m_uc);
   m_K[4] = (m_n11 * m_uc) - (m_n20 * m_vc);
-  m_K[5] = (m_n02 * m_uc * m_uc) + (m_n20 * m_vc * m_vc) - (2.0 * m_n11 * m_uc * m_vc) + (4.0 * ((m_n11 * m_n11) - (m_n20 * m_n02)));
+  m_K[5] = (((m_n02 * m_uc * m_uc) + (m_n20 * m_vc * m_vc)) - (2.0 * m_n11 * m_uc * m_vc)) + (4.0 * ((m_n11 * m_n11) - (m_n20 * m_n02)));
 }
 
 void vpMeEllipse::computeNijFromAbe()
@@ -226,7 +226,7 @@ void vpMeEllipse::getParameters()
   // Equations below from Chaumette PhD and TRO 2004 paper
   double num = (m_K[0] * m_K[1]) - (m_K[2] * m_K[2]); // > 0 for an ellipse
   if (num <= 0) {
-    throw(vpException(vpException::fatalError, "The points do not belong to an ellipse! num: %f", num));
+    throw(vpTrackingException(vpTrackingException::fatalError, "The points do not belong to an ellipse! num: %f", num));
   }
 
   m_uc = ((m_K[2] * m_K[4]) - (m_K[1] * m_K[3])) / num;
@@ -263,7 +263,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   // Warning: similar code in vpMbtMeEllipse::sample()
   if (!m_me) {
-    throw(vpException(vpException::fatalError, "Moving edges on ellipse not initialized"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Moving edges on ellipse not initialized"));
   }
   // Delete old lists
   m_meList.clear();
@@ -331,7 +331,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 {
   if (!m_me) {
-    throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }
   unsigned int nb_pts_added = 0;
   int nbrows = static_cast<int>(I.getHeight());
@@ -493,7 +493,7 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       pix.init(iP.get_i(), iP.get_j(), theta);
       pix.setDisplay(m_selectDisplay);
       pix.setState(vpMeSite::NO_SUPPRESSION);
-      //pix.setContrastThreshold(pix1.getContrastThreshold(), *m_me);
+      // --comment: pix dot setContrastThreshold of pix1 dot getContrastThreshold() comma *m_me
       double convolution = pix.convolution(I, m_me);
       double contrastThreshold = fabs(convolution) * marginRatio;
       pix.setContrastThreshold(contrastThreshold, *m_me);
@@ -574,8 +574,8 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 
   if (m_meList.size() != m_angleList.size()) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent in vpMeEllipse::plugHoles(): nb MEs %ld, nb ang %ld",
-                      m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent in vpMeEllipse::plugHoles(): nb MEs %ld, nb ang %ld",
+                              m_meList.size(), m_angleList.size()));
   }
 
   if (vpDEBUG_ENABLE(3)) {
@@ -617,7 +617,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
     // A circle is a particular ellipse. Going from x for circle to K for ellipse
     // using inverse normalization to go back to pixel values
     double ratio = vm / um;
-    m_K[0] = (m_K[1] = 1.0 / (um * um));
+    m_K[0] = (m_K[1] = (1.0 / (um * um)));
     m_K[2] = 0.0;
     m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
     m_K[4] = -(ratio + (x[1] / 2.0)) / um;
@@ -654,7 +654,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
     vpMatrix KerA;
     unsigned int dim = A.nullSpace(KerA, 1);
     if (dim > 1) { // case with less than 5 independent points
-      throw(vpException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
+      throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
     }
     unsigned int nbRows = m_K.getRows();
     for (unsigned int i = 0; i < nbRows; ++i) {
@@ -746,7 +746,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
       // A circle is a particular ellipse. Going from x for circle to K for ellipse
       // using inverse normalization to go back to pixel values
       double ratio = vm / um;
-      m_K[0] = (m_K[1] = 1.0 / (um * um));
+      m_K[0] = (m_K[1] = (1.0 / (um * um)));
       m_K[2] = 0.0;
       m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
       m_K[4] = -(ratio + (x[1] / 2.0)) / um;
@@ -845,7 +845,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
       }
       unsigned int dim = DA.nullSpace(KerDA, 1);
       if (dim > 1) { // case with less than 5 independent points
-        throw(vpException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
+        throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
       }
 
 
@@ -953,8 +953,8 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 
   if (m_meList.size() != m_angleList.size()) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent in vpMeEllipse::leastSquareRobust(): nb MEs %ld, nb ang %ld",
-                      m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent in vpMeEllipse::leastSquareRobust(): nb MEs %ld, nb ang %ld",
+                              m_meList.size(), m_angleList.size()));
   }
 
   //  Manage the list so that all new angles belong to [0;2Pi]
@@ -1078,8 +1078,8 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 
   if ((m_meList.size() != numberOfGoodPoints) || (m_angleList.size() != numberOfGoodPoints)) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent at the end of vpMeEllipse::leastSquareRobust(): nb goog MEs %d and %ld, nb ang %ld",
-                      numberOfGoodPoints, m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent at the end of vpMeEllipse::leastSquareRobust(): nb goog MEs %d and %ld, nb ang %ld",
+                              numberOfGoodPoints, m_meList.size(), m_angleList.size()));
   }
 
   // set extremities of the angle list
@@ -1332,7 +1332,7 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
 
     // Stop in case of failure after resample
     if (m_numberOfGoodPoints <= minNbGoodPoints) {
-      throw(vpException(vpTrackingException::notEnoughPointError, "Impossible to track the ellipse, not enough features"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Impossible to track the ellipse, not enough features"));
     }
   }
 

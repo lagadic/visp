@@ -96,8 +96,8 @@ int main()
   M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
   std::cout << "M:" << std::endl;
-  for (unsigned int i = 0; i < M.getRows(); i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+  for (unsigned int i = 0; i < M.getRows(); ++i) {
+    for (unsigned int j = 0; j < M.getCols(); ++j) {
       std::cout << M[i][j] << " ";
     }
     std::cout << std::endl;
@@ -217,7 +217,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   //-------------------------------------------------
@@ -269,7 +271,7 @@ public:
   //---------------------------------
   /** @name Assignment operators */
   //@{
-  vpMatrix &operator<<(double *);
+  vpMatrix &operator<<(double *p);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
@@ -346,6 +348,16 @@ public:
 #endif
 #if defined(VISP_HAVE_OPENCV)
   double detByLUOpenCV() const;
+#endif
+  vpMatrix cholesky() const;
+#if defined(VISP_HAVE_EIGEN3)
+  vpMatrix choleskyByEigen3() const;
+#endif
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix choleskyByLapack() const;
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  vpMatrix choleskyByOpenCV() const;
 #endif
 
   // Compute the exponential matrix of a square matrix

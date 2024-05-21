@@ -530,7 +530,7 @@ void vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpAfma4::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -1034,7 +1034,7 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(fRc);
+    rxyz.build(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1220,7 +1220,7 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
 
     // Transform the velocities from camera to end-effector frame
     vpVelocityTwistMatrix eVc;
-    eVc.buildFrom(this->_eMc);
+    eVc.build(this->_eMc);
     joint_vel = eJe_inverse * eVc * velocity;
 
     //     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1],

@@ -1095,7 +1095,10 @@ macro(vp_add_subdirectories lst subdir)
         file(GLOB __subdirs RELATIVE "${__path}/${subdir}" "${__path}/${subdir}/*")
         foreach(__s ${__subdirs})
           if(EXISTS "${__path}/${subdir}/${__s}/CMakeLists.txt")
-            add_subdirectory("${__path}/${subdir}/${__s}" "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+            # Add subdir only if ut doesn't exist
+            if(NOT EXISTS "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+              add_subdirectory("${__path}/${subdir}/${__s}" "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+            endif()
           endif()
         endforeach()
       endif()
@@ -2001,7 +2004,7 @@ macro(vp_git_describe var_name path)
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
     if(NOT GIT_RESULT EQUAL 0)
-      execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
+      execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "v[0-9].[0-9].[0-9]*"
         WORKING_DIRECTORY "${path}"
         OUTPUT_VARIABLE ${var_name}
         RESULT_VARIABLE GIT_RESULT

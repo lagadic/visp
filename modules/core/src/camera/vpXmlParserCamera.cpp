@@ -379,7 +379,7 @@ public:
     double kdu = cam_tmp.get_kdu();
     std::vector<double> distortion_coeffs;
     vpXmlCodeSequenceType back = SEQUENCE_OK;
-    int validation = 0;
+    unsigned int validation = 0;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
       // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
@@ -507,7 +507,7 @@ public:
         int check = validation / 32;
         int j = 0;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; ++i) {
           int bit = check % 2; // if bit == 1 => the corresponding distortion coefficient is present.
           if (!bit)
             fixed_distortion_coeffs.push_back(0.);

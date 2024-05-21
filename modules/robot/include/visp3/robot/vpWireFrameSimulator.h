@@ -154,7 +154,8 @@ public:
   /*!
       Type of scene used to display the object at the current position.
     */
-  typedef enum {
+  typedef enum
+  {
     THREE_PTS,   //!< A 40cm by 40cm plate with 3 points at coordinates (0,0,0),
                  //!< (0.1,0,0), (0,0.1,0). Each point is represented by a
                  //!< circle with 2cm radius.
@@ -205,7 +206,8 @@ public:
      current position.
       - D_OUTIL will display a tool which is attached to the camera.
     */
-  typedef enum {
+  typedef enum
+  {
     D_STANDARD, //!<  The object displayed at the desired position is the same
                 //!<  than the scene object defined in vpSceneObject.
     D_CIRCLE,   //!<  The object displayed at the desired position is a circle.
@@ -546,7 +548,7 @@ public:
     this->camMf = rotz * cam_Mf;
     vpTranslationVector T;
     this->camMf.extract(T);
-    this->camMf2.buildFrom(0, 0, T[2], 0, 0, 0);
+    this->camMf2.build(0, 0, T[2], 0, 0, 0);
     f2Mf = camMf2.inverse() * this->camMf;
     extCamChanged = true;
   }

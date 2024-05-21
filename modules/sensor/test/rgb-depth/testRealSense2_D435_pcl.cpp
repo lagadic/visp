@@ -42,115 +42,55 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS) \
-  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
-
-#include <mutex>
-#include <thread>
-
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_VISUALIZATION)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayPCL.h>
 #include <visp3/sensor/vpRealSense2.h>
-
-namespace
-{
-// Global variables
-pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
-bool cancelled = false, update_pointcloud = false;
-
-class ViewerWorker
-{
-public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
-
-  void run()
-  {
-    std::string date = vpTime::getDateTime();
-    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer " + date));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
-
-    viewer->setBackgroundColor(0, 0, 0);
-    viewer->initCameraParameters();
-    viewer->setPosition(640 + 80, 480 + 80);
-    viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-    viewer->setSize(640, 480);
-
-    bool init = true;
-    bool local_update = false, local_cancelled = false;
-    while (!local_cancelled) {
-      {
-        std::unique_lock<std::mutex> lock(m_mutex, std::try_to_lock);
-
-        if (lock.owns_lock()) {
-          local_update = update_pointcloud;
-          update_pointcloud = false;
-          local_cancelled = cancelled;
-
-          if (local_update) {
-            if (m_colorMode) {
-              local_pointcloud_color = pointcloud_color->makeShared();
-            }
-            else {
-              local_pointcloud = pointcloud->makeShared();
-            }
-          }
-        }
-      }
-
-      if (local_update && !local_cancelled) {
-        local_update = false;
-
-        if (init) {
-          if (m_colorMode) {
-            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                                                     "RGB sample cloud");
-          }
-          else {
-            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-          }
-          init = false;
-        }
-        else {
-          if (m_colorMode) {
-            viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-          }
-          else {
-            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-          }
-        }
-      }
-
-      viewer->spinOnce(5);
-    }
-
-    std::cout << "End of point cloud display thread" << std::endl;
-  }
-
-private:
-  bool m_colorMode;
-  std::mutex &m_mutex;
-};
-} // namespace
 
 int main(int argc, char *argv[])
 {
-  bool pcl_color = false;
-  bool show_infrared2 = false;
+  bool opt_pcl_color = false;
+  bool opt_show_infrared2 = false;
+  bool display_helper = false;
+
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pcl_color") {
-      pcl_color = true;
+    if (std::string(argv[i]) == "--pcl-color") {
+      opt_pcl_color = true;
     }
-    else if (std::string(argv[i]) == "--show_infrared2") {
-      show_infrared2 = true;
+    else if (std::string(argv[i]) == "--show-infrared2") {
+      opt_show_infrared2 = true;
+    }
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+      display_helper = true;
+    }
+    else {
+      display_helper = true;
+      std::cout << "\nERROR" << std::endl;
+      std::cout << "  Wrong command line option." << std::endl;
+    }
+    if (display_helper) {
+      std::cout << "\nSYNOPSIS " << std::endl
+        << "  " << argv[0]
+        << " [--pcl-color]"
+        << " [--show-infrared2]"
+        << " [--help,-h]"
+        << std::endl;
+      std::cout << "\nOPTIONS " << std::endl
+        << "  --pcl-color" << std::endl
+        << "    Enable textured point cloud visualization." << std::endl
+        << std::endl
+        << "  --show-infrared2" << std::endl
+        << "    Display also the infrared2 stream." << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "    Display this helper message." << std::endl
+        << std::endl;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -175,16 +115,22 @@ int main(int argc, char *argv[])
   vpDisplayGDI d1, d2, d3, d4;
 #endif
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth(), 0, "Depth");
-  d3.init(infrared1, 0, color.getHeight() + 100, "Infrared left");
-  if (show_infrared2) {
+  d2.init(depth_color, color.getWidth() + 80, 0, "Depth");
+  d3.init(infrared1, 0, color.getHeight() + 70, "Infrared left");
+  if (opt_show_infrared2) {
     d4.init(infrared2, color.getWidth(), color.getHeight() + 100, "Infrared right");
   }
 
   std::mutex mutex;
-  ViewerWorker viewer_pointcloud(pcl_color, mutex);
-  std::thread viewer_thread(&ViewerWorker::run, &viewer_pointcloud);
-
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+  vpDisplayPCL pcl_viewer(color.getWidth() + 80, color.getHeight() + 70, "3D viewer " + vpTime::getDateTime());
+  if (opt_pcl_color) {
+    pcl_viewer.startThread(std::ref(mutex), pointcloud_color);
+  }
+  else {
+    pcl_viewer.startThread(std::ref(mutex), pointcloud);
+  }
   std::vector<double> time_vector;
   vpChrono chrono;
   while (true) {
@@ -192,18 +138,16 @@ int main(int argc, char *argv[])
     {
       std::lock_guard<std::mutex> lock(mutex);
 
-      if (pcl_color) {
+      if (opt_pcl_color) {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
                    nullptr, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
+                   opt_show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
       }
       else {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
                    nullptr, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
+                   opt_show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
       }
-
-      update_pointcloud = true;
     }
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
@@ -230,12 +174,6 @@ int main(int argc, char *argv[])
       break;
     }
   }
-
-  {
-    std::lock_guard<std::mutex> lock(mutex);
-    cancelled = true;
-  }
-  viewer_thread.join();
 
   std::cout << "Acquisition - Mean time: " << vpMath::getMean(time_vector)
     << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;

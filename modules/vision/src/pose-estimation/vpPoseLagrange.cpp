@@ -51,9 +51,10 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
     unsigned int i, j;
 
     vpMatrix ct(3, nl);
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < nl; j++)
+    for (i = 0; i < 3; ++i) {
+      for (j = 0; j < nl; ++j) {
         ct[i][j] = b[j][i + nc3];
+      }
     }
 
     vpMatrix c;
@@ -80,16 +81,18 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 
     vpColVector X2(nc3);
     vpMatrix CTB(nc1, nc3);
-    for (i = 0; i < nc1; i++) {
-      for (j = 0; j < nc3; j++)
+    for (i = 0; i < nc1; ++i) {
+      for (j = 0; j < nc3; ++j) {
         CTB[i][j] = ctb[i][j];
+      }
     }
 
-    for (j = 0; j < nc3; j++)
+    for (j = 0; j < nc3; ++j) {
       X2[j] = x2[j];
+    }
 
     vpColVector sv;           // C^T A X1 + C^T B X2)
-    sv = cta * x1 + CTB * X2; // C^T A X1 + C^T B X2)
+    sv = (cta * x1) + (CTB * X2); // C^T A X1 + C^T B X2)
 
 #if (DEBUG_LEVEL2)
     std::cout << "sv " << sv.t();
@@ -102,8 +105,9 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
     std::cout << "x3 " << X3.t();
 #endif
 
-    for (i = 0; i < nc1; i++)
+    for (i = 0; i < nc1; ++i) {
       x2[i + nc3] = X3[i];
+    }
   }
   catch (...) {
 
@@ -122,7 +126,7 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 //      ou A est de dimension nl x nc1 et B nl x nc2
 //*********************************************************************
 
-//#define EPS 1.e-5
+// --comment: define EPS at 1.e-5
 
 static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 {
@@ -196,23 +200,16 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     }
 #endif
 
-    //   vpColVector sv ;
-    //    vpMatrix v ;
     e.svd(x1, ata); // destructif sur e
     // calcul du vecteur propre de E correspondant a la valeur propre min.
-    /* calcul de SVmax  */
     imin = 0;
-    // FC : Pourquoi calculer SVmax ??????
-    //     double  svm = 0.0;
-    //    for (i=0;i<x1.getRows();i++)
-    //    {
-    //      if (x1[i] > svm) { svm = x1[i]; imin = i; }
-    //    }
-    //    svm *= EPS;  /* pour le rang  */
 
-    for (i = 0; i < x1.getRows(); i++)
-      if (x1[i] < x1[imin])
+    unsigned int v_x1_rows = x1.getRows();
+    for (i = 0; i < v_x1_rows; ++i) {
+      if (x1[i] < x1[imin]) {
         imin = i;
+      }
+    }
 
 #if (DEBUG_LEVEL1)
     {
@@ -220,8 +217,10 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
       std::cout << " i_min " << imin << std::endl;
     }
 #endif
-    for (i = 0; i < x1.getRows(); i++)
+    unsigned int x1_rows = x1.getRows();
+    for (i = 0; i < x1_rows; ++i) {
       x1[i] = ata[i][imin];
+    }
 
     x2 = -(r * x1); // X_2 = - (B^T B)^(-1) B^T A X_1
 
@@ -241,8 +240,6 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 #endif
 }
 
-//#undef EPS
-
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
 {
 #if (DEBUG_LEVEL1)
@@ -252,7 +249,9 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   double a, b, c, d;
 
   // Checking if coplanar has already been called and if the plan coefficients have been given
-  if ((p_isPlan != nullptr) && (p_a != nullptr) && (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr)) {
+  bool p_isplan_and_p_a_no_null = (p_isPlan != nullptr) && (p_a != nullptr);
+  bool p_b_p_c_p_d_no_null = (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr);
+  if (p_isplan_and_p_a_no_null && p_b_p_c_p_d_no_null) {
     if (*p_isPlan) {
       // All the pointers towards the plan coefficients are different from nullptr => using them in the rest of the method
       a = *p_a;
@@ -281,7 +280,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     d = -d;
   }
   // to have (a,b,c) as a unit vector if it was not the case
-  double n = 1.0 / sqrt(a * a + b * b + c * c); // Not possible to have a NaN...
+  double n = 1.0 / sqrt((a * a) + (b * b) + (c * c)); // Not possible to have a NaN...
   a *= n;
   b *= n;
   c *= n;
@@ -294,31 +293,29 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   r3[1] = b;
   r3[2] = c;
   // build r1 as a unit vector orthogonal to r3
-  double n1 = sqrt(1.0 - a * a);
-  double n2 = sqrt(1.0 - b * b);
+  double n1 = sqrt(1.0 - (a * a));
+  double n2 = sqrt(1.0 - (b * b));
   if (n1 >= n2) {
     r1[0] = n1;
-    r1[1] = -a * b / n1;
-    r1[2] = -a * c / n1;
+    r1[1] = (-a * b) / n1;
+    r1[2] = (-a * c) / n1;
   }
   else {
-    r1[0] = -a * b / n2;
+    r1[0] = (-a * b) / n2;
     r1[1] = n2;
-    r1[2] = -b * c / n2;
+    r1[2] = (-b * c) / n2;
   }
-  // double norm = r1[0]*r1[0] + r1[1]*r1[1] + r1[2]*r1[2];
-  // double crossprod = r1[0]*r3[0] + r1[1]*r3[1] + r1[2]*r3[2];
-  // printf("r1 norm = 1 ?  %lf, r1^T r3 = 0 ?  %lf\n",norm, crossprod);
-  // r2 unit vector orthogonal to r3 and r1
+
   r2 = vpColVector::crossProd(r3, r1);
 
   vpHomogeneousMatrix fMo;
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     fMo[0][i] = r1[i];
     fMo[1][i] = r2[i];
     fMo[2][i] = r3[i];
   }
-  fMo[0][3] = fMo[1][3] = 0.0;
+  fMo[0][3] = 0.0;
+  fMo[1][3] = 0.0;
   fMo[2][3] = d;
 
   // std::cout << "fMo : "  << std::endl << fMo  << std::endl;
@@ -330,7 +327,8 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   vpMatrix B(nl, 6);
   vpPoint P;
 
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
 
     // Transform each point in plane Z = 0
@@ -386,24 +384,26 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
 #endif
 
   if (X2[5] < 0.0) { /* to obtain Zo > 0  */
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i) {
       X1[i] = -X1[i];
-    for (unsigned int i = 0; i < 6; i++)
+    }
+    for (unsigned int i = 0; i < 6; ++i) {
       X2[i] = -X2[i];
+    }
   }
   double s = 0.0;
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     s += (X1[i] * X2[i]);
   }
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     X2[i] -= (s * X1[i]);
   } /* X1^T X2 = 0  */
 
-  // s = 0.0;
-  // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-  s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
+  // --comment: s equals 0.0
+  s = (X2[0] * X2[0]) + (X2[1] * X2[1]) + (X2[2] * X2[2]); // To avoid a Coverity copy/past error
 
   if (s < 1e-10) {
+    /*
     //      std::cout << "Points that produce an error: " << std::endl;
     //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
     //      != listP.end(); ++it)
@@ -413,35 +413,29 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     //                  << (*it).get_oX() << " " << (*it).get_oY() << " " <<
     //                  (*it).get_oZ() << std::endl;
     //      }
+    */
     throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation "
                       "(planar plane case)"));
   }
 
   s = 1.0 / sqrt(s);
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     X2[i] *= s;
   } /* X2^T X2 = 1  */
 
   calculTranslation(A, B, nl, 3, 3, X1, X2);
 
-  // if (err != OK)
-  {
-    // std::cout << "in (vpCalculPose_plan.cc)CalculTranslation returns " ;
-    // PrintError(err) ;
-    //    return err ;
-  }
   vpHomogeneousMatrix cMf;
   /* X1 x X2 */
   cMf[0][2] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
   cMf[1][2] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
   cMf[2][2] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
   /* calcul de la matrice de passage  */
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     cMf[i][0] = X1[i];
     cMf[i][1] = X2[i];
     cMf[i][3] = X2[i + 3];
   }
-  // std::cout << "cMf : "  << std::endl << cMf  << std::endl;
 
   // Apply the transform to go back to object frame
   cMo = cMf * fMo;
@@ -449,7 +443,6 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
 #if (DEBUG_LEVEL1)
   std::cout << "end vpCalculPose::PoseLagrangePlan(...) " << std::endl;
 #endif
-  //  return(OK);
 }
 
 void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
@@ -476,7 +469,8 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     vpPoint P;
     i = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    std::list<vpPoint>::const_iterator listp_end = listP.end();
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
       a[k][0] = -P.get_oX();
       a[k][1] = 0.0;
@@ -523,12 +517,6 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 #endif
 
     lagrange(a, b, X1, X2);
-    //  if (err != OK)
-    {
-        //      std::cout << "in (CLagrange.cc)Lagrange returns " ;
-        //    PrintError(err) ;
-        //    return err ;
-    }
 
 #if (DEBUG_LEVEL2)
     {
@@ -542,18 +530,17 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       X2 *= -1;
     }
     s = 0.0;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; ++i) {
       s += (X1[i] * X2[i]);
     }
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; ++i) {
       X2[i] -= (s * X1[i]);
     } /* X1^T X2 = 0  */
 
-    // s = 0.0;
-    // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-    s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
+    s = (X2[0] * X2[0]) + (X2[1] * X2[1]) + (X2[2] * X2[2]); // To avoid a Coverity copy/past error
 
     if (s < 1e-10) {
+      /*
       //      std::cout << "Points that produce an error: " << std::endl;
       //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
       //      != listP.end(); ++it)
@@ -564,12 +551,13 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       //                  (*it).get_oZ() << std::endl;
       //      }
       // vpERROR_TRACE(" division par zero " ) ;
+      */
       throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation (non "
                         "planar plane case)"));
     }
 
     s = 1.0 / sqrt(s);
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; ++i) {
       X2[i] *= s;
     } /* X2^T X2 = 1  */
 
@@ -579,7 +567,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     calculTranslation(a, b, nl, 3, 6, X1, X2);
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; ++i) {
       cMo[i][0] = X1[i];
       cMo[i][1] = X2[i];
       cMo[i][2] = X2[i + 3];

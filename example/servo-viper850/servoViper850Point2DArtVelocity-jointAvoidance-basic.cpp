@@ -218,7 +218,7 @@ int main()
     p.set_Z(1);
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // Define the task
     // - we want an eye-in-hand control law
@@ -351,7 +351,8 @@ int main()
 
         e2 = (kernelJ1 * a0);
         // cout << "e2 " << e2.t() ;
-      } else {
+      }
+      else {
         e2 = 0;
       }
       //  std::cout << "e2: " << e2.t() << std::endl;
@@ -395,7 +396,8 @@ int main()
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

@@ -62,7 +62,7 @@ public:
   virtual ~vpGaussianFilter();
 
 private:
-  vpGaussianFilter(const vpGaussianFilter &);
+  vpGaussianFilter(const vpGaussianFilter &gf);
   vpGaussianFilter &operator=(const vpGaussianFilter &);
 
   // PIMPL idiom

@@ -37,7 +37,7 @@ project(example-tracking)
 
 cmake_minimum_required(VERSION 3.5)
 
-find_package(VISP REQUIRED visp_core visp_io visp_gui)
+find_package(VISP REQUIRED visp_core visp_blob visp_io visp_gui visp_mbt visp_me visp_tt visp_tt_mi)
 
 set(example_cpp
   mbtEdgeKltTracking.cpp

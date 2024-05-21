@@ -109,7 +109,7 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
 }
 
 state_t track(std::map<std::string, const vpImage<unsigned char> *> mapOfImages,
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> mapOfPointclouds,
 #else
   std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds,
@@ -124,7 +124,7 @@ state_t track(std::map<std::string, const vpImage<unsigned char> *> mapOfImages,
 
   // Track the object
   try {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
     tracker.track(mapOfImages, mapOfPointclouds);
 #else
     tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
@@ -243,7 +243,7 @@ int main(int argc, const char **argv)
     vpImage<uint16_t> I_depth_raw(height, width);
     std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformations;
     std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
     std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> mapOfPointclouds;
     pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
 #else
@@ -368,7 +368,7 @@ int main(int argc, const char **argv)
     // wait for a tag detection
     while (state != state_quit) {
       if (opt_use_depth) {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
         realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointcloud, nullptr);
 #else
         realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointcloud, nullptr,
@@ -381,7 +381,7 @@ int main(int argc, const char **argv)
 
         mapOfImages["Camera1"] = &I_gray;
         mapOfImages["Camera2"] = &I_depth;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
         mapOfPointclouds["Camera2"] = pointcloud;
 #else
         mapOfPointclouds["Camera2"] = &pointcloud;
@@ -412,7 +412,7 @@ int main(int argc, const char **argv)
 
       if (state == state_tracking) {
         if (opt_use_depth) {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
           state = track(mapOfImages, mapOfPointclouds, I_gray, I_depth, depth_M_color, tracker,
             opt_projection_error_threshold, cMo);
 #else

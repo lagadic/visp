@@ -424,7 +424,7 @@ int main(int argc, const char **argv)
 
       // Compute the position of the external view which is fixed in the
       // object frame
-      camoMf.buildFrom(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
+      camoMf.build(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
       camoMf = camoMf * (sim.get_fMo().inverse());
 
       if (opt_plot) {

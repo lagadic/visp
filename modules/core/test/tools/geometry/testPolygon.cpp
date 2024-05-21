@@ -166,7 +166,7 @@ int main(int argc, const char **argv)
     vec1.push_back(vpImagePoint(380, 300));
     vec1.push_back(vpImagePoint(280, 280));
     vpPolygon p1;
-    p1.buildFrom(vec1);
+    p1.build(vec1);
 
     std::vector<vpImagePoint> vec2;
     vec2.push_back(vpImagePoint(20, 20));

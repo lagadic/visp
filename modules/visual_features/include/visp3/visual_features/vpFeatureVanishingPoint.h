@@ -39,6 +39,7 @@
  * point visual feature (Z coordinate in 3D space is infinity)
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -79,7 +80,10 @@ public:
 public:
   vpFeatureVanishingPoint();
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(double x, double y);
+#endif
+  vpFeatureVanishingPoint &build(const double &x, const double &y);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

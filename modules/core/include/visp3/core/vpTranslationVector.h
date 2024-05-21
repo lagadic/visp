@@ -39,6 +39,7 @@
  * \brief Class that consider the case of a translation vector.
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
@@ -122,10 +123,16 @@ public:
   explicit vpTranslationVector(const vpPoseVector &p);
   explicit vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(double tx, double ty, double tz);
-  vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
-  vpTranslationVector buildFrom(const vpPoseVector &p);
-  vpTranslationVector buildFrom(const vpColVector &v);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpTranslationVector buildFrom(double tx, double ty, double tz);
+  vp_deprecated vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
+  vp_deprecated vpTranslationVector buildFrom(const vpPoseVector &p);
+  vp_deprecated vpTranslationVector buildFrom(const vpColVector &v);
+#endif
+  vpTranslationVector &build(const double &tx, const double &ty, const double &tz);
+  vpTranslationVector &build(const vpHomogeneousMatrix &M);
+  vpTranslationVector &build(const vpPoseVector &p);
+  vpTranslationVector &build(const vpColVector &v);
 
   double frobeniusNorm() const;
 

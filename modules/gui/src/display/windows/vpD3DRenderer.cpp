@@ -287,9 +287,9 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
 void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         vpRGBa val = I[i][j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -300,10 +300,10 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, u
     }
   }
   else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         vpRGBa val = I[i_][j * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -324,9 +324,9 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, u
 void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         unsigned char val = I[i][j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -337,10 +337,10 @@ void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBu
     }
   }
   else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         unsigned char val = I[i_][j * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -367,10 +367,10 @@ void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *i
   int w = j_max - j_min;
 
   if (m_rscale == 1) {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = i_min + i;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][j_min + j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -381,10 +381,10 @@ void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *i
     }
   }
   else {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -411,10 +411,10 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
   int w = j_max - j_min;
 
   if (m_rscale == 1) {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = i_min + i;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         vpRGBa val = I[i_][j_min + j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -425,10 +425,10 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
     }
   }
   else {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         vpRGBa val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -834,8 +834,8 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
 
       if (topLeftScaled.get_i() >= 0 && topLeftScaled.get_j() + widthScaled < m_rwidth &&
           topLeftScaled.get_i() + heightScaled < m_rheight && topLeftScaled.get_j() >= 0) {
-        for (int x = 0; x < rectW; x++) {
-          for (int y = 0; y < rectH; y++)
+        for (int x = 0; x < rectW; ++x) {
+          for (int y = 0; y < rectH; ++y)
             setBufferPixel(buf, pitch, x, y, color);
         }
       }
@@ -1133,7 +1133,7 @@ void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pit
   unsigned int j = I.getWidth();
 
   unsigned int k = 0;
-  for (unsigned int i = 0; i < I.getHeight() * I.getWidth(); i++) {
+  for (unsigned int i = 0; i < I.getHeight() * I.getWidth(); ++i) {
     // go to the next line
     if (j == 0) {
       k += pitch - (I.getWidth() * 4);

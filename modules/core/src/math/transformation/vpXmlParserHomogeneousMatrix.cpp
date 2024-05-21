@@ -132,11 +132,13 @@ public:
       }
 
       if (prop == CODE_XML_M) {
-        if (SEQUENCE_OK == read_matrix(node, name))
+        if (SEQUENCE_OK == read_matrix(node, name)) {
           nbM++;
+        }
       }
-      else
+      else {
         back = SEQUENCE_ERROR;
+      }
     }
 
     if (nbM == 0) {
@@ -213,8 +215,8 @@ public:
     }
     else {
       this->m_M = M_tmp;
-      // std::cout << "Convert in Homogeneous Matrix:"<< std::endl;
-      // std::cout << this-> M << std::endl;
+      // --comment: std::cout << "Convert in Homogeneous Matrix:"<< std::endl;
+      // --comment: std::cout << this-> M << std::endl;
       this->m_name = M_name_tmp;
     }
     return back;
@@ -299,15 +301,15 @@ public:
     }
 
     // Create the Homogeneous matrix
-    M.buildFrom(tx_, ty_, tz_, tux_, tuy_, tuz_);
+    M.build(tx_, ty_, tz_, tux_, tuy_, tuz_);
 
-    //  std::cout << "Read values from file:" << std::endl;
-    //  std::cout << "tx:" << tx_<< std::endl;
-    //  std::cout << "ty:" << ty_<< std::endl;
-    //  std::cout << "tz:" << tz_<< std::endl;
-    //  std::cout << "tux:" << tux_<< std::endl;
-    //  std::cout << "tuy:" << tuy_<< std::endl;
-    //  std::cout << "tuz:" << tuz_<< std::endl;
+    //  --comment: std::cout << "Read values from file:" << std::endl;
+    //  --comment: std::cout << "tx:" << tx_<< std::endl;
+    //  --comment: std::cout << "ty:" << ty_<< std::endl;
+    //  --comment: std::cout << "tz:" << tz_<< std::endl;
+    //  --comment: std::cout << "tux:" << tux_<< std::endl;
+    //  --comment: std::cout << "tuy:" << tuy_<< std::endl;
+    //  --comment: std::cout << "tuz:" << tuz_<< std::endl;
 
     return back;
   }
@@ -375,8 +377,9 @@ public:
         prop = CODE_XML_OTHER;
       }
       if (prop == CODE_XML_M) {
-        if (SEQUENCE_OK == read_matrix(node, name))
+        if (SEQUENCE_OK == read_matrix(node, name)) {
           nbM++;
+        }
       }
     }
 

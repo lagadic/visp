@@ -124,7 +124,7 @@ public:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
+    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
       apriltag_detector_add_family(m_td, m_tf);
     }
@@ -193,7 +193,7 @@ public:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
+    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
       apriltag_detector_add_family(m_td, m_tf);
     }
@@ -278,8 +278,8 @@ public:
 
   void convertHomogeneousMatrix(const apriltag_pose_t &pose, vpHomogeneousMatrix &cMo)
   {
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int i = 0; i < 3; ++i) {
+      for (unsigned int j = 0; j < 3; ++j) {
         cMo[i][j] = MATD_EL(pose.R, i, j);
       }
       cMo[i][3] = MATD_EL(pose.t, i, 0);
@@ -298,8 +298,8 @@ public:
       return false;
     }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 ||
-        m_tagFamily == TAG_STANDARD52h13) {
+    if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
+        (m_tagFamily == TAG_STANDARD52h13)) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled."
         << std::endl;
       return false;
@@ -308,9 +308,9 @@ public:
 
     const bool computePose = (cMo_vec != nullptr);
 
-    image_u8_t im = {/*.width =*/(int32_t)I.getWidth(),
-      /*.height =*/(int32_t)I.getHeight(),
-      /*.stride =*/(int32_t)I.getWidth(),
+    image_u8_t im = {/*.width =*/static_cast<int32_t>(I.getWidth()),
+      /*.height =*/static_cast<int32_t>(I.getHeight()),
+      /*.stride =*/static_cast<int32_t>(I.getWidth()),
       /*.buf =*/I.bitmap };
 
     if (m_detections) {
@@ -326,12 +326,13 @@ public:
     messages.resize(static_cast<size_t>(nb_detections));
     m_tagsId.resize(static_cast<size_t>(nb_detections));
 
-    for (int i = 0; i < zarray_size(m_detections); i++) {
+    int zarray_size_m_detections = zarray_size(m_detections);
+    for (int i = 0; i < zarray_size_m_detections; ++i) {
       apriltag_detection_t *det;
       zarray_get(m_detections, i, &det);
 
       std::vector<vpImagePoint> polygon;
-      for (int j = 0; j < 4; j++) {
+      for (int j = 0; j < 4; ++j) {
         polygon.push_back(vpImagePoint(det->p[j][1], det->p[j][0]));
       }
       polygons[static_cast<size_t>(i)] = polygon;
@@ -346,13 +347,13 @@ public:
         vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
         vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
 
-        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[1][1], (int)det->p[1][0], Ox,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[0][1]), static_cast<int>(det->p[0][0]), static_cast<int>(det->p[1][1]), static_cast<int>(det->p[1][0]), Ox,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[3][1], (int)det->p[3][0], Oy,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[0][1]), static_cast<int>(det->p[0][0]), static_cast<int>(det->p[3][1]), static_cast<int>(det->p[3][0]), Oy,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[1][1], (int)det->p[1][0], (int)det->p[2][1], (int)det->p[2][0], Ox2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[1][1]), static_cast<int>(det->p[1][0]), static_cast<int>(det->p[2][1]), static_cast<int>(det->p[2][0]), Ox2,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[2][1], (int)det->p[2][0], (int)det->p[3][1], (int)det->p[3][0], Oy2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[2][1]), static_cast<int>(det->p[2][0]), static_cast<int>(det->p[3][1]), static_cast<int>(det->p[3][0]), Oy2,
                                thickness);
       }
 
@@ -382,7 +383,8 @@ public:
   void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
                      const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < cMo_vec.size(); i++) {
+    size_t cmo_vec_size = cMo_vec.size();
+    for (size_t i = 0; i < cmo_vec_size; ++i) {
       const vpHomogeneousMatrix &cMo = cMo_vec[i];
       vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
     }
@@ -391,7 +393,8 @@ public:
   void displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
                      const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < cMo_vec.size(); i++) {
+    size_t cmo_vec_size = cMo_vec.size();
+    for (size_t i = 0; i < cmo_vec_size; ++i) {
       const vpHomogeneousMatrix &cMo = cMo_vec[i];
       vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
     }
@@ -400,7 +403,8 @@ public:
   void displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < tagsCorners.size(); i++) {
+    size_t tagscorners_size = tagsCorners.size();
+    for (size_t i = 0; i < tagscorners_size; ++i) {
       const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
       const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
       const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
@@ -409,21 +413,22 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
 
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
-                             Ox, thickness);
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy, thickness);
-      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
-                             Ox2, thickness);
-      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()),
+                                                                                       Ox, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+                                                                                       Oy, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()), static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()),
+                                                                                       Ox2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+                                                                                       Oy2, thickness);
     }
   }
 
   void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < tagsCorners.size(); i++) {
+    size_t tagscorners_size = tagsCorners.size();
+    for (size_t i = 0; i < tagscorners_size; ++i) {
       const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
       const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
       const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
@@ -432,14 +437,14 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
 
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
-                             Ox, thickness);
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy, thickness);
-      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
-                             Ox2, thickness);
-      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()),
+                                                                                       Ox, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+                                                                                       Oy, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()), static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()),
+                                                                                       Ox2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+                                                                                       Oy2, thickness);
     }
   }
 
@@ -455,8 +460,8 @@ public:
       return false;
     }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 ||
-        m_tagFamily == TAG_STANDARD52h13) {
+    if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
+        (m_tagFamily == TAG_STANDARD52h13)) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled."
         << std::endl;
       return false;
@@ -467,7 +472,7 @@ public:
     zarray_get(m_detections, static_cast<int>(tagIndex), &det);
 
     int nb_detections = zarray_size(m_detections);
-    if (tagIndex >= (size_t)nb_detections) {
+    if (tagIndex >= static_cast<size_t>(nb_detections)) {
       return false;
     }
 
@@ -478,8 +483,8 @@ public:
     // Under the hood, we use aligned frames everywhere and transform the pose according to the option.
 
     vpHomogeneousMatrix cMo_homography_ortho_iter;
-    if (m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION ||
-        m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+    if ((m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION) ||
+        (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
       double fx = cam.get_px(), fy = cam.get_py();
       double cx = cam.get_u0(), cy = cam.get_v0();
 
@@ -497,8 +502,8 @@ public:
     }
 
     vpHomogeneousMatrix cMo_homography;
-    if (m_poseEstimationMethod == HOMOGRAPHY || m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS ||
-        m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+    if ((m_poseEstimationMethod == HOMOGRAPHY) || (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS) ||
+        (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
       double fx = cam.get_px(), fy = cam.get_py();
       double cx = cam.get_u0(), cy = cam.get_v0();
 
@@ -557,8 +562,8 @@ public:
 
     pose.addPoints(pts);
 
-    if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS &&
-        m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
+    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) &&
+        (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
       if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
         vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
 
@@ -594,7 +599,7 @@ public:
       }
     }
 
-    if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
+    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
       // Compute final pose using VVS
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
@@ -610,7 +615,7 @@ public:
         matd_t *p[4] = { matd_create_data(3, 1, data_p0), matd_create_data(3, 1, data_p1),
                         matd_create_data(3, 1, data_p2), matd_create_data(3, 1, data_p3) };
         matd_t *v[4];
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; ++i) {
           double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
                              1 };
           v[i] = matd_create_data(3, 1, data_v);
@@ -624,7 +629,7 @@ public:
         double err2;
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; ++i) {
           matd_destroy(p[i]);
           matd_destroy(v[i]);
         }
@@ -701,10 +706,12 @@ public:
     }
     matd_destroy(pose2.R);
 
-    if (err1)
+    if (err1) {
       *err1 = err_1;
-    if (err2)
+    }
+    if (err2) {
       *err2 = err_2;
+    }
   }
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
@@ -1019,7 +1026,8 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
       default_size = it->second; // Default size
     }
   }
-  for (size_t i = 0; i < tagsId.size(); i++) {
+  size_t tagsid_size = tagsId.size();
+  for (size_t i = 0; i < tagsid_size; ++i) {
     std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
     double tagSize = default_size; // Default size
     if (it == tagsSize.end()) {

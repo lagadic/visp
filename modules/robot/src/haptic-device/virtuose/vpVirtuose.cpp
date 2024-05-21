@@ -50,8 +50,8 @@
  */
 vpVirtuose::vpVirtuose()
   : m_virtContext(nullptr), m_ip_port("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
-    m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
-    m_is_init(false), m_period(0.001f), m_njoints(6)
+  m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
+  m_is_init(false), m_period(0.001f), m_njoints(6)
 {
   virtAPIVersion(&m_apiMajorVersion, &m_apiMinorVersion);
   std::cout << "API version: " << m_apiMajorVersion << "." << m_apiMinorVersion << std::endl;
@@ -137,7 +137,7 @@ vpColVector vpVirtuose::getArticularPosition() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  float articular_position_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  float articular_position_[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
   if (virtGetArticularPosition(m_virtContext, articular_position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -160,7 +160,7 @@ vpColVector vpVirtuose::getArticularVelocity() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  float articular_velocity_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  float articular_velocity_[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
   if (virtGetArticularSpeed(m_virtContext, articular_velocity_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -196,7 +196,8 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
   if (virtGetAvatarPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetAvatarPosition: error code %d", err));
-  } else {
+  }
+  else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
     for (int i = 0; i < 4; i++)
@@ -204,7 +205,7 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.buildFrom(translation, thetau);
+    position.build(translation, thetau);
 
     return position;
   }
@@ -230,7 +231,8 @@ vpPoseVector vpVirtuose::getBaseFrame() const
   if (virtGetBaseFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetBaseFrame: error code %d", err));
-  } else {
+  }
+  else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
     for (int i = 0; i < 4; i++)
@@ -238,7 +240,7 @@ vpPoseVector vpVirtuose::getBaseFrame() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.buildFrom(translation, thetau);
+    position.build(translation, thetau);
 
     return position;
   }
@@ -389,7 +391,8 @@ vpPoseVector vpVirtuose::getObservationFrame() const
   if (virtGetObservationFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetObservationFrame: error code %d", err));
-  } else {
+  }
+  else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
     for (int i = 0; i < 4; i++)
@@ -397,7 +400,7 @@ vpPoseVector vpVirtuose::getObservationFrame() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.buildFrom(translation, thetau);
+    position.build(translation, thetau);
   }
   return position;
 }
@@ -422,7 +425,8 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
   if (virtGetPhysicalPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetPhysicalPosition: error code %d", err));
-  } else {
+  }
+  else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
     for (int i = 0; i < 4; i++)
@@ -430,7 +434,7 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.buildFrom(translation, thetau);
+    position.build(translation, thetau);
   }
   return position;
 }
@@ -478,7 +482,8 @@ vpPoseVector vpVirtuose::getPosition() const
   if (virtGetPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetPosition: error code %d", err));
-  } else {
+  }
+  else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
     for (int i = 0; i < 4; i++)
@@ -486,7 +491,7 @@ vpPoseVector vpVirtuose::getPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.buildFrom(translation, thetau);
+    position.build(translation, thetau);
   }
   return position;
 }
@@ -567,7 +572,7 @@ void vpVirtuose::init()
     }
 
     // Update number of joints
-    float articular_position_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float articular_position_[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     if (virtGetArticularPosition(m_virtContext, articular_position_)) {
       int err = virtGetErrorCode(m_virtContext);
@@ -1017,7 +1022,8 @@ void vpVirtuose::startPeriodicFunction()
   if (virtStartLoop(m_virtContext)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling startLoop: error code %d", err));
-  } else
+  }
+  else
     std::cout << "Haptic loop open." << std::endl;
 }
 
@@ -1033,11 +1039,12 @@ void vpVirtuose::stopPeriodicFunction()
   if (virtStopLoop(m_virtContext)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling stopLoop: error code %d", err));
-  } else
+  }
+  else
     std::cout << "Haptic loop closed." << std::endl;
 }
 
 #else
 // Work around to avoid warning
-void dummy_vpVirtuose(){};
+void dummy_vpVirtuose() { };
 #endif

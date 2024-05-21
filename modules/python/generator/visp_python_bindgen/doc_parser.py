@@ -89,10 +89,8 @@ def to_cstring(s: str) -> str:
   current_char = 0
   result = ''
   while current_char < len(s):
-    result += f'''R"doc(
-{s[current_char: min((current_char + per_string_limit), len(s))]})doc"
-
-'''
+    result += f'''R"doc({s[current_char: min((current_char + per_string_limit), len(s))]})doc"
+  '''
     current_char += per_string_limit
   return result
 

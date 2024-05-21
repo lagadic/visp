@@ -116,9 +116,7 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #elif defined(VISP_HAVE_OPENCV)
   return inverseByCholeskyOpenCV();
 #else
-  throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
-                                             "Cholesky. Install Lapack or "
-                                             "OpenCV 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by Cholesky. Install Lapack or OpenCV 3rd party"));
 #endif
 }
 
@@ -204,14 +202,70 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
       throw vpMatrixException::badValue;
     }
 
-    for (unsigned int i = 0; i < A.getRows(); i++)
-      for (unsigned int j = 0; j < A.getCols(); j++)
+    for (unsigned int i = 0; i < A.getRows(); ++i)
+      for (unsigned int j = 0; j < A.getCols(); ++j)
         if (i > j)
           A[i][j] = A[j][i];
 
     return A;
   }
 #endif
+}
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Lapack library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByLapack()const
+{
+  vpMatrix L = *this;
+#if defined(VISP_HAVE_GSL)
+  gsl_matrix cholesky;
+  cholesky.size1 = rowNum;
+  cholesky.size2 = colNum;
+  cholesky.tda = cholesky.size2;
+  cholesky.data = L.data;
+  cholesky.owner = 0;
+  cholesky.block = 0;
+
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 3)
+  gsl_linalg_cholesky_decomp1(&cholesky);
+#else
+  gsl_linalg_cholesky_decomp(&cholesky);
+#endif
+#else
+  if (rowNum != colNum) {
+    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
+                            rowNum, colNum));
+  }
+
+  integer rowNum_ = (integer)this->getRows();
+  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer info;
+  dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
+  L = L.transpose(); // For an unknown reason, dpotrf seems to return the transpose of L
+  if (info < 0) {
+    std::stringstream errMsg;
+    errMsg << "The " << -info << "th argument has an illegal value" << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
+  else if (info > 0) {
+    std::stringstream errMsg;
+    errMsg << "The leading minor of order" << info << "is not positive definite." << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
+#endif
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
 }
 #endif
 
@@ -266,5 +320,62 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
   memcpy(A.data, Minv.data, (size_t)(8 * Minv.rows * Minv.cols));
 
   return A;
+}
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using OpenCV library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByOpenCV() const
+{
+  cv::Mat M(rowNum, colNum, CV_64F);
+  memcpy(M.data, this->data, (size_t)(8 * M.rows * M.cols));
+  std::size_t bytes_per_row = sizeof(double)*rowNum;
+  bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, rowNum, nullptr, bytes_per_row, rowNum);
+  if (!result) {
+    throw(vpMatrixException(vpMatrixException::fatalError, "Could not compute the Cholesky's decomposition of the input matrix."));
+  }
+  vpMatrix L(rowNum, colNum);
+  memcpy(L.data, M.data, (size_t)(8 * M.rows * M.cols));
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
+}
+#endif
+
+#if defined(VISP_HAVE_EIGEN3)
+#include <Eigen/Dense>
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Eigen3 library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByEigen3() const
+{
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  Eigen::MatrixXd A(nbRows, nbCols);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      A(r, c) = (*this)[r][c];
+    }
+  }
+  Eigen::MatrixXd L = A.llt().matrixL();
+  vpMatrix Lvisp(L.rows(), L.cols(), 0.);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c <= r; ++c) {
+      Lvisp[r][c] = L(r, c);
+    }
+  }
+  return Lvisp;
 }
 #endif

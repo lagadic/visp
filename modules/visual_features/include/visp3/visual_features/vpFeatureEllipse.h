@@ -39,6 +39,7 @@
  * \brief Class that defines 2D ellipse visual feature
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
@@ -71,9 +72,12 @@ public:
   //! basic constructor
   vpFeatureEllipse(double x, double y, double n20, double n11, double n02);
 
-  // void buildFrom(const vpEllipse &p) ;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(double x, double y, double n20, double n11, double n02);
   void buildFrom(double x, double y, double n20, double n11, double n02, double A, double B, double C);
+#endif
+  vpFeatureEllipse &build(const double &x, const double &y, const double &n20, const double &n11, const double &n02);
+  vpFeatureEllipse &build(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &A, const double &B, const double &C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

@@ -1,0 +1,139 @@
+/**
+  \page tutorial-hsv-segmentation-pcl Tutorial: Point cloud segmentation using HSV color scale
+  \tableofcontents
+
+\section hsv_pcl_intro Introduction
+
+This tutorial follows \ref tutorial-hsv-segmentation-live.
+
+To run this tutorial you will need:
+- a Realsense camera like a D435 device
+- ViSP build with librealsense and PCL libraries as 3rd parties
+
+We suppose here that you already set the HSV low/high ranges using the range tuner tool explained in
+\ref tutorial-hsv-range-tuner.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `tutorial/segmentation/color` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
+
+\section hsv_pcl_segmentation Point cloud segmentation
+
+In \ref tutorial-hsv-segmentation-intro the pipeline to achieve the HSV color segmentation was to:
+- load or acquire an RGB image
+- convert from RGB to HSV channels using vpImageConvert::RGBaToHSV()
+- create a mask with HSV values that are in the low/high HSV ranges using vpImageTools::inRange()
+- using the mask and the RGB image create a segmented image using vpImageTools::inMask()
+
+To extend this pipeline to create a point cloud that contains only the 3D points that are in the mask you need a RGB-D
+device. In our case we will consider a Realsense camera. The pipeline becomes:
+- configure the realsense grabber to acquire color and depth aligned images
+\snippet tutorial-hsv-segmentation-pcl.cpp Config RS2 RGB and depth
+- get depth scale associated to the depth images and device intrisics
+\snippet tutorial-hsv-segmentation-pcl.cpp Get RS2 intrinsics
+- grab color and depth aligned images
+\snippet tutorial-hsv-segmentation-pcl.cpp Grab color and depth
+- convert from RGB to HSV channels using vpImageConvert::RGBaToHSV()
+\snippet tutorial-hsv-segmentation-pcl.cpp RGB to HSV
+- create a mask with pixels that are in the low/high HSV ranges using vpImageTools::inRange()
+\snippet tutorial-hsv-segmentation-pcl.cpp Create mask
+- create the point cloud object. Note here the `Z_min` and `Z_max` variables, which are used further in the code
+  to remove 3D points that are too close or too far from the camera
+\snippet tutorial-hsv-segmentation-pcl.cpp Allocate point cloud
+- using the mask and the depth image update the point cloud using vpImageConvert::depthToPointCloud().
+  The corresponding point cloud is available in `pointcloud` variable.
+\snippet tutorial-hsv-segmentation-pcl.cpp Update point cloud
+- to know the size of the point cloud use
+\snippet tutorial-hsv-segmentation-pcl.cpp Get point cloud size
+  Instead, you can also use the value returned by vpImageConvert::depthToPointCloud() to get the point cloud size.
+.
+
+All these steps are implemented in tutorial-hsv-segmentation-pcl.cpp
+
+To run this tutorial
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/segmentation/color
+$ ./tutorial-hsv-segmentation-pcl --hsv-thresholds calib/hsv-thresholds.yml
+\endverbatim
+
+In the next section we show how to display the point cloud.
+
+\section hsv_pcl-viewer Point could viewer
+
+In tutorial-hsv-segmentation-pcl-viewer.cpp you will find an extension of the previous code with the introduction
+of vpDisplayPCL class that allows to visualize the point cloud in 3D with optionally additional texture information
+taken from the color image.
+
+To add the point cloud viewer feature:
+- Fisrt you need to include vpDisplayPCL header
+\snippet tutorial-hsv-segmentation-pcl-viewer.cpp Include vpDisplayPCL header
+- Then, we declare two pcl objects for textured and untextured point clouds respectively
+\snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create point cloud
+- Since the point cloud viewer will run in a separate thread, to avoid concurrent access to `pointcloud` or
+  `pointcloud_color` objects, we introduce a mutex, declare the PCL viewer object and launch the viewer thread, either
+  for textured or untextured point clouds
+\snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create pcl viewer object
+- In the `while()` loop we update the point cloud using the mutex shared with the pcl viewer
+\snippet tutorial-hsv-segmentation-pcl-viewer.cpp Update point cloud with mutex protection
+.
+To run this tutorial
+- Learn the color of the object from which you want to extract the corresponding point cloud
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/segmentation/color
+$ ./tutorial-hsv-range-tuner --hsv-thresholds calib/hsv-thresholds.yml
+\endverbatim
+- Visualize to corresponding point cloud
+\verbatim
+$ ./tutorial-hsv-segmentation-pcl-viewer --hsv-thresholds calib/hsv-thresholds.yml --texture
+\endverbatim
+  At this point, you should see something similar to the following video, where the top left image corresponds to the
+  live stream provided by a Realsense D435 camera, the top right image to the HSV yellow color segmentation, and the
+  bottom right image to the PCL point cloud viewer used to visualize the textured point cloud corresponding to the
+  yellow pixels in real time.
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jUHVZwybq-s?si=FVKhzmK-V-i8gUM7" frameborder="0" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
+\section hsv_pcl_issue Known issue
+\subsection hsv_pcl_issue_segfault Segfault in PCL viewer
+
+There is a known issue related to the call to PCLVisualizer::spinOnce() function that is used in vpDisplayPCL class.
+This issue is reported in https://github.com/PointCloudLibrary/pcl/issues/5237 and occurs with PCL 1.12.1 and
+VTK 9.1 on Ubuntu 22.04.
+
+The workaround consists in installing the lastest PCL release.
+
+- First uninstall `libpcl-dev` package
+\verbatim
+$ sudo apt remove libpcl-dev
+\endverbatim
+
+- Then download and install latest PCL release from source. In our case we installed PCL 1.14.0 on Ubuntu 22.04 with:
+\verbatim
+$ mkdir -p $VISP_WS/3rdparty/pcl
+$ cd $VISP_WS/3rdparty/pcl
+$ git clone --branch pcl-1.14.0 https://github.com/PointCloudLibrary/pcl pcl-1.14.0
+$ mkdir pcl-1.14.0/build
+$ cd pcl-1.14.0/build
+$ make -j$(nproc)
+$ sudo make install
+\endverbatim
+
+- Finally, create a fresh ViSP configuration and build.
+  \warning It could be nice to create a backup of the `visp-build` folder before removing it.
+
+\verbatim
+$ cd $VISP_WS
+$ rm -rf visp-build
+$ mkdir visp-build && cd visp-build
+$ cmake ../visp
+$ make -j$(nproc)
+\endverbatim
+
+\section hsv_pcl_next Next tutorial
+
+You are now ready to see how to continue with \ref tutorial-grabber.
+
+*/

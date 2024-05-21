@@ -44,7 +44,7 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
 #include <mutex>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -64,7 +64,7 @@
 
 namespace
 {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
 // Global variables
 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
@@ -231,7 +231,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
 int main(int argc, char *argv[])
 {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   bool pcl_color = false;
 #endif
   bool show_info = false;
@@ -240,14 +240,14 @@ int main(int argc, char *argv[])
     if (std::string(argv[i]) == "--show_info") {
       show_info = true;
     }
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
     else if (std::string(argv[i]) == "--pcl_color") {
       pcl_color = true;
     }
 #endif
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--show_info]"
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
         << " [--pcl_color]"
 #endif
         << " [--help] [-h]"
@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
   d3.init(infrared, 0, color.getHeight() + 100, "Infrared");
 
   std::vector<vpColVector> pointcloud_colvector;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   std::mutex mutex;
   ViewerWorker viewer_colvector(false, mutex);
   std::thread viewer_colvector_thread(&ViewerWorker::run, &viewer_colvector);
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrame(infrared_frame, (unsigned char *)infrared_raw.bitmap);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
     getPointcloud(depth_frame, pointcloud_colvector);
 
     {
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
   d2.close(depth_color);
   d3.close(infrared);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   {
     std::lock_guard<std::mutex> lock(mutex);
     cancelled = true;
@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
   d2.init(depth_color, color.getWidth(), 0, "Depth");
   d3.init(infrared, 0, color.getHeight() + 100, "Infrared");
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   cancelled = false;
   ViewerWorker viewer(pcl_color, mutex);
   std::thread viewer_thread(&ViewerWorker::run, &viewer);
@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
   while (vpTime::measureTimeMs() - t_begin < 10000) {
     double t = vpTime::measureTimeMs();
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
     {
       std::lock_guard<std::mutex> lock(mutex);
 
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
       break;
   }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   {
     std::lock_guard<std::mutex> lock(mutex);
     cancelled = true;
@@ -541,7 +541,7 @@ int main(int argc, char *argv[])
     << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 #endif
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
   // Pointcloud acquisition using std::vector<vpColVector> + visualization
   // See issue #355
   ViewerWorker viewer_colvector2(false, mutex);

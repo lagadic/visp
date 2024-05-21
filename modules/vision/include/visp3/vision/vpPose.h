@@ -354,7 +354,7 @@ public:
   /*!
    * Set distance threshold to consider that when a point belongs to a plane.
    */
-  void setDistanceToPlaneForCoplanarityTest(double d);
+  void setDistToPlaneForCoplanTest(double d);
 
   /*!
    * Set virtual visual servoing gain.

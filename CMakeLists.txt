@@ -678,6 +678,9 @@ if(USE_PCL)
   # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS and PCL_DEPS_LIBRARIES
   # that contains also VTK material location.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+  set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
+  # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
+  vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -1740,9 +1743,18 @@ status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
 status("    Use Afma6:"              USE_AFMA6        THEN "yes" ELSE "no")
+if(USE_AFMA6)
+status("    \\- Data:"               AFMA6_DATA_FOUND THEN "yes (in ${AFMA6_DATA_PATH})" ELSE "no")
+endif()
 status("    Use Franka:"             USE_FRANKA       THEN "yes (ver ${Franka_VERSION})" ELSE "no")
 status("    Use Viper650:"           USE_VIPER650     THEN "yes" ELSE "no")
+if(USE_VIPER650)
+status("    \\- Data:"               VIPER650_DATA_FOUND THEN "yes (in ${VIPER650_DATA_PATH})" ELSE "no")
+endif()
 status("    Use Viper850:"           USE_VIPER850     THEN "yes" ELSE "no")
+if(USE_VIPER850)
+status("    \\- Data:"               VIPER850_DATA_FOUND THEN "yes (in ${VIPER850_DATA_PATH})" ELSE "no")
+endif()
 status("    Use ur_rtde:"            USE_UR_RTDE      THEN "yes (ver ${ur_rtde_VERSION})" ELSE "no")
 status("    Use Kinova Jaco:"        USE_JACOSDK      THEN "yes" ELSE "no")
 status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")

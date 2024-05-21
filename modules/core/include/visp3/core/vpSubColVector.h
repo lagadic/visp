@@ -56,7 +56,7 @@ class VISP_EXPORT vpSubColVector : public vpColVector
 {
 private:
   //! Copy constructor unavailable
-  vpSubColVector(const vpSubColVector & /* m */);
+  vpSubColVector(const vpSubColVector &v /* m */);
 
 protected:
   //! Number of row of parent vpColVector at initialization

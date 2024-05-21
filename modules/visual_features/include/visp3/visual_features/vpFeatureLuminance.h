@@ -34,6 +34,7 @@
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -95,7 +96,10 @@ public:
   //! Destructor.
   virtual ~vpFeatureLuminance() vp_override;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(vpImage<unsigned char> &I);
+#endif
+  vpFeatureLuminance &build(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

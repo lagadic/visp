@@ -168,7 +168,7 @@ int main(int argc, const char **argv)
     std::cout << "Point coordinates in the camera frame: " << point.cP.t();
 
     vpFeaturePoint3D p;
-    p.buildFrom(point);
+    p.build(point);
 
     // sets the desired position of the point
     vpFeaturePoint3D pd;
@@ -202,7 +202,7 @@ int main(int argc, const char **argv)
 
       // new point position
       point.track(cMo);
-      p.buildFrom(point);
+      p.build(point);
       //   std::cout << p.cP.t() ;
       //   std::cout << (p.get_s()).t() ;
 
@@ -217,7 +217,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

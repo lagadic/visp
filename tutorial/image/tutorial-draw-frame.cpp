@@ -23,11 +23,11 @@ int main()
     std::string axisName[3] = {"x", "y", "z"};
     double px = 600; double py = 600;
     double u0 = 320; double v0 = 240;
- 
+
     // Create a camera parameter container
     vpCameraParameters cam;
- 
-    // Camera initialization with a perspective projection without distortion model 
+
+    // Camera initialization with a perspective projection without distortion model
     cam.initPersProjWithoutDistortion(px,py,u0,v0);
 
     for(unsigned int idAxis = 0; idAxis < 3; idAxis ++)
@@ -41,7 +41,7 @@ int main()
         tOffset++;
         r[idAxis] = vpMath::rad(theta);
         vpHomogeneousMatrix cMo;
-        cMo.buildFrom(t, vpRotationMatrix(r));
+        cMo.build(t, vpRotationMatrix(r));
         std::stringstream ss_name;
         ss_name << "cMo_";
         ss_name << static_cast<int>(theta);
@@ -53,7 +53,7 @@ int main()
         //! [frame]
       }
     }
-    
+
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);

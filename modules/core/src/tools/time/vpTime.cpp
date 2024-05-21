@@ -174,19 +174,20 @@ int wait(double t0, double t)
   double timeCurrent, timeToWait;
   timeCurrent = measureTimeMs();
 
-  timeToWait = t0 + t - timeCurrent;
+  timeToWait = t0 + (t - timeCurrent);
 
-  if (timeToWait <= 0.) // no need to wait
-    return (1);
+  if (timeToWait <= 0.) { // no need to wait
+    return 1;
+  }
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((useconds_t)((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
+      usleep(static_cast<useconds_t>((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
     }
     // Blocking loop to have an accurate waiting
     do {
       timeCurrent = measureTimeMs();
-      timeToWait = t0 + t - timeCurrent;
+      timeToWait = t0 + (t - timeCurrent);
 
     } while (timeToWait > 0.);
 
@@ -224,18 +225,19 @@ void wait(double t)
 {
   double timeToWait = t;
 
-  if (timeToWait <= 0.) // no need to wait
+  if (timeToWait <= 0.) { // no need to wait
     return;
+  }
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     double t0 = measureTimeMs();
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((useconds_t)((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
+      usleep(static_cast<useconds_t>((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
     }
     // Blocking loop to have an accurate waiting
     do {
       double timeCurrent = measureTimeMs();
-      timeToWait = t0 + t - timeCurrent;
+      timeToWait = t0 + (t - timeCurrent);
 
     } while (timeToWait > 0.);
 
@@ -270,7 +272,7 @@ void wait(double t)
 void sleepMs(double t)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  usleep((useconds_t)(t * 1000));
+  usleep(static_cast<useconds_t>(t * 1000));
 #elif defined(_WIN32)
 #if !defined(WINRT_8_0)
   Sleep((DWORD)(t));

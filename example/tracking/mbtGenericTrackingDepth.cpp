@@ -722,12 +722,12 @@ int main(int argc, const char **argv)
       // Test to set an initial pose
 #if USE_SMALL_DATASET
       if (frame_index == 20) {
-        c1Mo.buildFrom(0.07734634051, 0.08993639906, 0.342344402, -2.708409543, 0.0669276477, -0.3798958303);
-        c2Mo.buildFrom(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
+        c1Mo.build(0.07734634051, 0.08993639906, 0.342344402, -2.708409543, 0.0669276477, -0.3798958303);
+        c2Mo.build(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
 #else
       if (frame_index == 50) {
-        c1Mo.buildFrom(0.09280663035, 0.09277655672, 0.330415149, -2.724431817, 0.0293932671, 0.02027966377);
-        c2Mo.buildFrom(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
+        c1Mo.build(0.09280663035, 0.09277655672, 0.330415149, -2.724431817, 0.0293932671, 0.02027966377);
+        c2Mo.build(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
 #endif
         std::cout << "Test set pose" << std::endl;
         dynamic_cast<vpMbGenericTracker *>(tracker)->setPose(I, I_depth, c1Mo, c2Mo);
@@ -812,7 +812,7 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-      }
+    }
 
     std::cout << "\nFinal poses, c1Mo:\n" << c1Mo << "\nc2Mo:\n" << c2Mo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
@@ -827,12 +827,12 @@ int main(int argc, const char **argv)
     tracker = nullptr;
 
     return EXIT_SUCCESS;
-      }
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-    }
+}
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

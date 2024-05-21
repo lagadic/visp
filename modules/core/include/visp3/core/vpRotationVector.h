@@ -127,7 +127,8 @@ public:
   vpRotationVector &operator=(const vpRotationVector &v)
   {
     resize(v.size(), 1);
-    for (unsigned int i = 0; i < v.size(); i++) {
+    unsigned int v_size = v.size();
+    for (unsigned int i = 0; i < v_size; ++i) {
       data[i] = v.data[i];
     }
     return *this;

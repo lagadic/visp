@@ -74,7 +74,7 @@ class vpPoseVector;
  *   v[0] = -1; v[1] = -2.1; v[2] = -3;
  *
  *   std::cout << "v:" << std::endl;
- *   for (unsigned int i = 0; i < v.size(); i++) {
+ *   for (unsigned int i = 0; i < v.size(); ++i) {
  *     std::cout << v[i] << std::endl;
  *   }
  * }
@@ -206,17 +206,17 @@ public:
    * Constructor that initialize a column vector from a 3-dim (Euler or
    * \f$\theta {\bf u}\f$) or 4-dim (quaternion) rotation vector.
    */
-  vpColVector(const vpRotationVector &v);
+  explicit vpColVector(const vpRotationVector &v);
 
   /*!
    * Constructor that initialize a column vector from a 6-dim pose vector.
    */
-  vpColVector(const vpPoseVector &p);
+  explicit vpColVector(const vpPoseVector &p);
 
   /*!
    * Constructor that initialize a column vector from a 3-dim translation vector.
    */
-  vpColVector(const vpTranslationVector &t);
+  explicit vpColVector(const vpTranslationVector &t);
 
   /*!
    * Constructor that creates a column vector from a m-by-1 matrix `M`.
@@ -224,7 +224,7 @@ public:
    * \exception vpException::dimensionError If the matrix is not a m-by-1
    * matrix.
    */
-  vpColVector(const vpMatrix &M);
+  explicit vpColVector(const vpMatrix &M);
 
   /*!
    * Constructor that takes column `j` of matrix `M`.
@@ -234,12 +234,12 @@ public:
   /*!
    * Constructor that creates a column vector from a std vector of double.
    */
-  vpColVector(const std::vector<double> &v);
+  explicit vpColVector(const std::vector<double> &v);
 
   /*!
    * Constructor that creates a column vector from a std vector of float.
    */
-  vpColVector(const std::vector<float> &v);
+  explicit vpColVector(const std::vector<float> &v);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
@@ -288,7 +288,7 @@ public:
    * int main()
    * {
    *   vpColVector v(3);
-   *   for (unsigned int i=0; i<v.size(); i++)
+   *   for (unsigned int i=0; i<v.size(); ++i)
    *     v[i] = i;
    *   v.cppPrint(std::cout, "v");
    * }
@@ -316,7 +316,7 @@ public:
    * {
    *   std::ofstream ofs("log.csv", std::ofstream::out);
    *   vpColVector v(3);
-   *   for (unsigned int i=0; i<v.size(); i++)
+   *   for (unsigned int i=0; i<v.size(); ++i)
    *     v[i] = i;
    *
    *   v.csvPrint(ofs);
@@ -357,7 +357,7 @@ public:
    *
    * \code
    * vpColVector v1;
-   * for (unsigned int i=0; i<4; i++)
+   * for (unsigned int i=0; i<4; ++i)
    *   v1.stack(i);
    * // v1 is equal to [0 1 2 3]^T
    * vpColVector v2 = v1.extract(1, 3);
@@ -366,7 +366,7 @@ public:
    */
   vpColVector extract(unsigned int r, unsigned int colsize) const
   {
-    if (r >= rowNum || r + colsize > rowNum) {
+    if ((r >= rowNum) || ((r + colsize) > rowNum)) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (%dx1) column vector from a (%dx1) "
                         "column vector starting at index %d",
@@ -429,7 +429,7 @@ public:
    * {
    *   vpColVector v(4);
    *   int val = 0;
-   *   for(size_t i=0; i<v.getRows(); i++) {
+   *   for(size_t i=0; i<v.getRows(); ++i) {
    *     v[i] = val++;
    *   }
    *   std::cout << "v: " << v.t() << std::endl;
@@ -459,12 +459,12 @@ public:
    * int main()
    * {
    *   vpColVector v(4);
-   *   for (unsigned int i=0; i < v.size(); i++)
+   *   for (unsigned int i=0; i < v.size(); ++i)
    *     v[i] = i;
    *   std::cout << "v: " << v.t() << std::endl;
    *
    *   vpColVector w(2);
-   *   for (unsigned int i=0; i < w.size(); i++)
+   *   for (unsigned int i=0; i < w.size(); ++i)
    *     w[i] = i+10;
    *   std::cout << "w: " << w.t() << std::endl;
    *
@@ -491,7 +491,7 @@ public:
    * int main()
    * {
    *   vpColVector v(3);
-   *   for (unsigned int i=0; i<v.size(); i++)
+   *   for (unsigned int i=0; i<v.size(); ++i)
    *     v[i] = i;
    *   std::cout << "v = "; v.maplePrint(std::cout);
    * }
@@ -520,7 +520,7 @@ public:
    * int main()
    * {
    *   vpColVector v(3);
-   *   for (unsigned int i=0; i<v.size(); i++)
+   *   for (unsigned int i=0; i<v.size(); ++i)
    *     v[i] = i;
    *   std::cout << "v = "; v.matlabPrint(std::cout);
    * }
@@ -862,7 +862,7 @@ public:
    * int main()
    * {
    *   vpColVector A, B(5);
-   *   for (unsigned int i=0; i<B.size(); i++)
+   *   for (unsigned int i=0; i<B.size(); ++i)
    *     B[i] = i;
    *   A << B;
    *   std::cout << "A: " << A.t() << std::endl;
@@ -887,7 +887,7 @@ public:
    *   size_t n = 5;
    *   vpColVector A(n);
    *   double *B = new double [n];
-   *   for (unsigned int i = 0; i < n; i++)
+   *   for (unsigned int i = 0; i < n; ++i)
    *     B[i] = i;
    *   A << B;
    *   std::cout << "A: " << A.t() << std::endl;
@@ -993,8 +993,8 @@ public:
    * {
    *   int var=0;
    *   vpMatrix mat(3, 4);
-   *   for (int i = 0; i < 3; i++)
-   *     for (int j = 0; j < 4; j++)
+   *   for (int i = 0; i < 3; ++i)
+   *     for (int j = 0; j < 4; ++j)
    *       mat[i][j] = ++var;
    *   std::cout << "mat: \n" << mat << std::endl;
    *
@@ -1369,12 +1369,12 @@ public:
    * int main()
    * {
    *   vpColVector v(4);
-   *   for (unsigned int i=0; i < v.size(); i++)
+   *   for (unsigned int i=0; i < v.size(); ++i)
    *     v[i] = i;
    *   std::cout << "v: " << v.t() << std::endl;
    *
    *   vpColVector w(2);
-   *   for (unsigned int i=0; i < w.size(); i++)
+   *   for (unsigned int i=0; i < w.size(); ++i)
    *     w[i] = i+10;
    *   std::cout << "w: " << w.t() << std::endl;
    *

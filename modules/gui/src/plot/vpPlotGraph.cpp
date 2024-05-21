@@ -89,7 +89,7 @@ void vpPlotGraph::initGraph(unsigned int nbCurve)
 
   vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
 
-  for (unsigned int i = 0; i < curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; ++i) {
     (curveList + i)->color = colors[i % 6];
     (curveList + i)->curveStyle = vpPlotCurve::line;
     (curveList + i)->pointListx.clear();
@@ -152,7 +152,7 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w, unsigned int h
 
   findPose();
 
-  cMf.buildFrom(0, 0, cMo[2][3], 0, 0, 0);
+  cMf.build(0, 0, cMo[2][3], 0, 0, 0);
 }
 
 void vpPlotGraph::findPose()
@@ -173,7 +173,7 @@ void vpPlotGraph::findPose()
 
   // Instead of pose computation we use an approximation
   double Z = 0;
-  for (unsigned int i = 0; i < 4; i++) {
+  for (unsigned int i = 0; i < 4; ++i) {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
     Z = vpMath::maximum(Z, point_[i].get_oX() / x);
     Z = vpMath::maximum(Z, point_[i].get_oY() / y);
@@ -384,14 +384,14 @@ void vpPlotGraph::displayTitle(vpImage<unsigned char> &I)
 void vpPlotGraph::displayLegend(vpImage<unsigned char> &I)
 {
   size_t offsetj = 0;
-  for (unsigned int i = 0; i < curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; ++i) {
     size_t offset = epsj * (curveList + i)->legend.size();
     offsetj = vpMath::maximum(offset, offsetj);
   }
   if (offsetj > dWidth)
     offsetj = dWidth;
 
-  for (unsigned int i = 0; i < curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; ++i) {
     vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() + i * 5 * epsi, dTopLeft.get_j() + dWidth - offsetj),
                            (curveList + i)->legend.c_str(), (curveList + i)->color);
   }
@@ -536,7 +536,7 @@ void vpPlotGraph::replot(vpImage<unsigned char> &I)
 {
   clearGraphZone(I);
   displayGrid(I);
-  for (unsigned int i = 0; i < curveNbr; i++)
+  for (unsigned int i = 0; i < curveNbr; ++i)
     (curveList + i)->plotList(I, xorg, yorg, zoomx, zoomy);
   vpDisplay::flushROI(I, graphZone);
 }
@@ -870,7 +870,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   pt[5].setWorldCoordinates(ptXorg, ptYorg, w_zval);
 
   vpImagePoint iP[6];
-  for (unsigned int i = 0; i < 6; i++) {
+  for (unsigned int i = 0; i < 6; ++i) {
     pt[i].track(cMo);
     double u = 0.0, v = 0.0;
     vpMeterPixelConversion::convertPoint(cam, pt[i].get_x(), pt[i].get_y(), u, v);
@@ -1192,7 +1192,7 @@ void vpPlotGraph::replot3D(vpImage<unsigned char> &I)
   clearGraphZone(I);
   displayGrid3D(I);
 
-  for (unsigned int i = 0; i < curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; ++i) {
     std::list<double>::const_iterator it_ptListx = (curveList + i)->pointListx.begin();
     std::list<double>::const_iterator it_ptListy = (curveList + i)->pointListy.begin();
     std::list<double>::const_iterator it_ptListz = (curveList + i)->pointListz.begin();
@@ -1319,7 +1319,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 
     double anglei = diffi * 360 / width_;
     double anglej = diffj * 360 / width_;
-    mov.buildFrom(0, 0, 0, vpMath::rad(anglei), vpMath::rad(-anglej), 0);
+    mov.build(0, 0, 0, vpMath::rad(anglei), vpMath::rad(-anglej), 0);
     changed = true;
   }
 
@@ -1328,7 +1328,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 
   if (old_iPz != vpImagePoint(-1, -1) && blockedz) {
     double diffi = iP.get_i() - old_iPz.get_i();
-    mov.buildFrom(0, 0, diffi * 0.01, 0, 0, 0);
+    mov.build(0, 0, diffi * 0.01, 0, 0, 0);
     changed = true;
   }
 

@@ -8,7 +8,7 @@
 ViSP 3.x.x (Version in development)
   - Contributors:
     . Fabien Spindler, Romain Lagneau, Pierre Perraud, Florent Lamiraux, Samuel Felton, François Chaumette,
-      Souriya Trinh
+      Souriya Trinh, Olivier Roussel
   - New classes
     . vpPololu and vpRobotPololuPtu to control respectively a servo motor using a pololu maestro board or a 3D printed
       2 dof pan-tilt unit. Visual servoing example provided in example/servo-pololu-ptu. Tests available in
@@ -16,6 +16,7 @@ ViSP 3.x.x (Version in development)
     . vpStatisticalTestAbstract, vpStatisticalTestEWMA, vpStatisticalTestHinkley, vpStatisticalTestMeanAdjustedCUSUM
       vpStatisticalTestShewhart and vpStatisticalTestSigma: classes implementing Statistical Control Process methods to
       detect mean drift / jump of a signal
+    . vpDisplayPCL to display a point cloud using PCL 3rdparty
   - Deprecated
     . vpPlanarObjectDetector, vpFernClassifier deprecated classes are removed
     . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
@@ -23,6 +24,7 @@ ViSP 3.x.x (Version in development)
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
+    . New specific documentation for Python bindings in https://visp-doc.inria.fr/doxygen/visp-python-daily/
     . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04 and 22.04. Corresponding images are also available
       ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
     . OpenCV 2.4.8 is the minimal supported version
@@ -31,6 +33,10 @@ ViSP 3.x.x (Version in development)
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
     . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
     . Eliminate the use of pthread in favour of std::thread
+    . RGB or RGBa to/from HSV conversion optimization in vpImageConvert class
+    . New vpImageTools::inRange() functions to ease binary mask computation by thresholding HSV channels
+    . New tutorials in tutorial/segmentation/color folder to show how to use HSV color segmentation to
+      extract the corresponding point cloud
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -43,6 +49,14 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-spc.html
     . New tutorial: Installing ViSP Python bindings
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-python-bindings.html
+    . New tutorial: Introduction to color segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-intro.html
+    . New tutorial: HSV low/high range tuner tool
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-range-tuner.html
+    . New tutorial: Live color segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-live.html
+    . New tutorial: Point cloud segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-pcl.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -54,7 +68,9 @@ ViSP 3.x.x (Version in development)
     . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
     . [#1320] Broken links in the documentation
+    . [#1337] The pose of the automatic datageneration pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
+    . [#1370] encountered compilation errors while building the ViSP library
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

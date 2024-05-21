@@ -169,10 +169,12 @@ public:
       va_list args;
       va_start(args, format);
 
-      if (err)
+      if (err) {
         std::cerr << "(L" << level << ") ";
-      else
+      }
+      else {
         std::cout << "(L" << level << ") ";
+      }
 
       // calls display with it
       display(format, args);

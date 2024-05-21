@@ -81,11 +81,11 @@ const char *vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM] = {
   - reset the bus attached to the first camera found on the bus.
 
   Current camera settings can be changed using setCamera() to select the
-active camera on the bus and than setVideoMode() or setFramerate() to fix the
-active camera settings. The list of supported video modes and framerates is
+  active camera on the bus and than setVideoMode() or setFramerate() to fix the
+  active camera settings. The list of supported video modes and framerates is
   available using respectively getVideoModeSupported() and
   getFramerateSupported(). To change the ring buffer size use
-setRingBufferSize().
+  setRingBufferSize().
 
   \param reset : If "true", reset the bus attached to the first
   camera found. Bus reset may help to make firewire working if the
@@ -95,22 +95,22 @@ setRingBufferSize().
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \sa setCamera(), setVideoMode(), setFramerate()
@@ -511,7 +511,6 @@ void vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType &videomode)
 
   Query the available active camera video modes.
 
-
   \param videomodes : The list of supported camera video modes.
 
   \return The number of supported camera modes, 0 if an error occurs.
@@ -587,8 +586,9 @@ bool vp1394TwoGrabber::isVideoModeSupported(vp1394TwoVideoModeType videomode)
 
   // parse the video modes to check with the desired
   for (unsigned i = 0; i < _videomodes.num; i++) {
-    if ((vp1394TwoVideoModeType)_videomodes.modes[i] == videomode)
+    if ((vp1394TwoVideoModeType)_videomodes.modes[i] == videomode) {
       return true;
+    }
   }
   return false;
 }

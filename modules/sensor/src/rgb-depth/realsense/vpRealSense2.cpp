@@ -470,7 +470,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 }
 #endif // #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Acquire data from RealSense device.
   \param data_image : Color image buffer or nullptr if not wanted.
@@ -882,7 +882,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_depthScale <= std::numeric_limits<float>::epsilon()) {
@@ -1419,27 +1419,45 @@ bool vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> 
 std::string vpRealSense2::getProductLine()
 {
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  if (!m_init) { // If pipe is not already created, create it. Otherwise, we have already determined the product line
-    rs2::pipeline *pipe = new rs2::pipeline;
-    rs2::pipeline_profile *pipelineProfile = new rs2::pipeline_profile;
-    *pipelineProfile = pipe->start();
+  // With previous code, example/device/framegrabber/grabRealSense2.cpp does not work with D455
+  // Error: Frame didn't arrive within 15000
+  // Following code from:
+  // https://github.com/IntelRealSense/librealsense/blob/4673a37d981164af8eeb8e296e430fc1427e008d/unit-tests/live/memory/test-extrinsics.cpp#L119
 
-    rs2::device dev = pipelineProfile->get_device();
+  // Reset product line info
+  m_product_line = "unknown";
 
-#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-    // Query device product line D400/SR300/L500/T200
-    m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
-#endif
-
-    pipe->stop();
-    delete pipe;
-    delete pipelineProfile;
+  rs2::context ctx;
+  auto list = ctx.query_devices();
+  if (list.size() > 0) {
+    // Only one plugged sensor supported
+    auto dev = list.front();
+    auto sensors = dev.query_sensors();
+    if (dev.supports(RS2_CAMERA_INFO_PRODUCT_LINE)) {
+      m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+    }
   }
 
   return m_product_line;
 #else
   return (std::string("unknown"));
 #endif
+}
+
+/*!
+ * Alias for the &operator<< operator.
+ * Return sensor information such as:
+ *   - device info
+ *   - supported options
+ *   - stream profiles
+ *   - intrinsics / extrinsics
+ *   - [...]
+ */
+std::string vpRealSense2::getSensorInfo()
+{
+  std::ostringstream oss;
+  oss << *this;
+  return oss.str();;
 }
 
 namespace

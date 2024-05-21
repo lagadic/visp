@@ -185,7 +185,8 @@ vpCircleHoughTransform::initGradientFilters()
       for (unsigned int c = 0; c < nbCols; ++c) {
         filter[r][c] = filter[r][c] * scale;
       }
-    }};
+    }
+    };
 #endif
 
   if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
@@ -211,7 +212,7 @@ vpCircleHoughTransform::initGradientFilters()
   }
   else {
     std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_algoParams.m_filteringAndGradientType);
     errMsg += "\" has not been implemented yet\n";
     throw vpException(vpException::notImplementedError, errMsg);
   }
@@ -255,7 +256,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   auto hasBetterProba
     = [](std::pair<size_t, float> a, std::pair<size_t, float> b) {
     return (a.second > b.second);
-  };
+    };
 #endif
   std::sort(v_id_proba.begin(), v_id_proba.end(), hasBetterProba);
 
@@ -452,7 +453,7 @@ vpCircleHoughTransform::computeGradients(const vpImage<unsigned char> &I)
   }
   else {
     std::string errMsg("[computeGradients] The filtering + gradient operators \"");
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_algoParams.m_filteringAndGradientType);
     errMsg += "\" is not implemented (yet).";
     throw(vpException(vpException::notImplementedError, errMsg));
   }
@@ -697,19 +698,19 @@ vpCircleHoughTransform::computeCenterCandidates()
                  const int &offsetX, const int &offsetY,
                  const int &nbCols, const int &nbRows,
                  vpImage<float> &accum, bool &hasToStop) {
-              if (((x - offsetX) < 0) ||
-                  ((x - offsetX) >= nbCols) ||
-                  ((y - offsetY) < 0) ||
-                  ((y - offsetY) >= nbRows)
-                  ) {
-                hasToStop = true;
-              }
-              else {
-                float dx = (x_orig - static_cast<float>(x));
-                float dy = (y_orig - static_cast<float>(y));
-                accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
-              }
-            };
+                   if (((x - offsetX) < 0) ||
+                       ((x - offsetX) >= nbCols) ||
+                       ((y - offsetY) < 0) ||
+                       ((y - offsetY) >= nbRows)
+                       ) {
+                     hasToStop = true;
+                   }
+                   else {
+                     float dx = (x_orig - static_cast<float>(x));
+                     float dy = (y_orig - static_cast<float>(y));
+                     accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+                   }
+              };
 #endif
 
             updateAccumulator(x1, y1, x_low, y_low,
@@ -746,9 +747,9 @@ vpCircleHoughTransform::computeCenterCandidates()
   int nbVotes = -1;
   std::vector<std::pair<std::pair<float, float>, float> > peak_positions_votes;
 
-  for (int y = 0; y < nbRowsAccum; y++) {
+  for (int y = 0; y < nbRowsAccum; ++y) {
     int left = -1;
-    for (int x = 0; x < nbColsAccum; x++) {
+    for (int x = 0; x < nbColsAccum; ++x) {
       if ((centersAccum[y][x] >= m_algoParams.m_centerMinThresh)
           && (vpMath::equal(centersAccum[y][x], centerCandidatesMaxima[y][x]))
           && (centersAccum[y][x] > centersAccum[y][x + 1])
@@ -828,8 +829,8 @@ vpCircleHoughTransform::computeCenterCandidates()
         }
         // Computing the distance with the peak of insterest
         std::pair<float, float> position_candidate = peak_positions_votes[idCandidate].first;
-        float squared_distance = (position.first - position_candidate.first) * (position.first - position_candidate.first)
-          + (position.second - position_candidate.second) * (position.second - position_candidate.second);
+        float squared_distance = ((position.first - position_candidate.first) * (position.first - position_candidate.first))
+          + ((position.second - position_candidate.second) * (position.second - position_candidate.second));
 
         // If the peaks are similar, update the barycenter peak between them and corresponding votes
         if (squared_distance < squared_distance_max) {
@@ -854,8 +855,8 @@ vpCircleHoughTransform::computeCenterCandidates()
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     auto sortingCenters = [](const std::pair<std::pair<float, float>, float> &position_vote_a,
                              const std::pair<std::pair<float, float>, float> &position_vote_b) {
-      return position_vote_a.second > position_vote_b.second;
-    };
+                               return position_vote_a.second > position_vote_b.second;
+      };
 #endif
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
@@ -863,7 +864,7 @@ vpCircleHoughTransform::computeCenterCandidates()
     nbPeaks = static_cast<unsigned int>(merged_peaks_position_votes.size());
     int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : static_cast<int>(nbPeaks));
     nbPeaksToKeep = std::min<int>(nbPeaksToKeep, static_cast<int>(nbPeaks));
-    for (int i = 0; i < nbPeaksToKeep; i++) {
+    for (int i = 0; i < nbPeaksToKeep; ++i) {
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].first);
       m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].second));
     }
@@ -991,7 +992,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         r_effective = weigthedSumRadius / votes;
       }
       return r_effective;
-    };
+      };
 #endif
 
     // Merging similar candidates
@@ -1041,7 +1042,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         ++idCandidate;
       }
 
-      if ((votes_effective > m_algoParams.m_centerMinThresh) && (votes_effective >= m_algoParams.m_circleVisibilityRatioThresh * 2.f * M_PIf * r_effective)) {
+      if ((votes_effective > m_algoParams.m_centerMinThresh) && (votes_effective >= (m_algoParams.m_circleVisibilityRatioThresh * 2.f * M_PIf * r_effective))) {
         // Only the circles having enough votes and being visible enough are considered
         v_r_effective.push_back(r_effective);
         v_votes_effective.push_back(votes_effective);

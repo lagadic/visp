@@ -105,8 +105,8 @@ private:
     vpTranslationVector cte; // meters
     vpRxyzVector cre;        // radian
     cte.set(0, 0, -l);
-    cre.buildFrom(vpMath::rad(90.), 0, vpMath::rad(90.));
-    cMe_.buildFrom(cte, vpRotationMatrix(cre));
+    cre.build(vpMath::rad(90.), 0, vpMath::rad(90.));
+    cMe_.build(cte, vpRotationMatrix(cre));
   }
 
   /*!

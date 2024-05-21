@@ -64,7 +64,7 @@ void vpSubRowVector::init(vpRowVector &v, const unsigned int &offset, const unsi
                       "vector from an empty parent  row vector"));
   }
 
-  if (offset + ncols <= v.getCols()) {
+  if ((offset + ncols) <= v.getCols()) {
     data = v.data + offset;
 
     rowNum = 1;
@@ -73,12 +73,14 @@ void vpSubRowVector::init(vpRowVector &v, const unsigned int &offset, const unsi
     m_pColNum = v.getCols();
     m_parent = &v;
 
-    if (rowPtrs)
+    if (rowPtrs) {
       free(rowPtrs);
+    }
 
     rowPtrs = (double **)malloc(1 * sizeof(double *));
-    for (unsigned int i = 0; i < 1; i++)
+    for (unsigned int i = 0; i < 1; ++i) {
       rowPtrs[i] = v.data + i + offset;
+    }
 
     dsize = colNum;
   }
@@ -122,8 +124,9 @@ vpSubRowVector &vpSubRowVector::operator=(const vpSubRowVector &B)
   }
   m_pColNum = B.m_pColNum;
   m_parent = B.m_parent;
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     data[i] = B[i];
+  }
 
   return *this;
 }
@@ -141,8 +144,9 @@ vpSubRowVector &vpSubRowVector::operator=(const vpRowVector &B)
                       colNum, B.getCols()));
   }
 
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     data[i] = B[i];
+  }
 
   return *this;
 }
@@ -160,8 +164,9 @@ vpSubRowVector &vpSubRowVector::operator=(const vpMatrix &B)
                       colNum, B.getRows(), B.getCols()));
   }
 
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     data[i] = B[i][1];
+  }
   return *this;
 }
 
@@ -171,7 +176,8 @@ vpSubRowVector &vpSubRowVector::operator=(const vpMatrix &B)
  */
 vpSubRowVector &vpSubRowVector::operator=(const double &x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     data[i] = x;
+  }
   return *this;
 }

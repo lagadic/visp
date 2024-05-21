@@ -59,4 +59,3 @@ endif()
 mark_as_advanced(
   VIPER650_DATA_PATH
 )
-

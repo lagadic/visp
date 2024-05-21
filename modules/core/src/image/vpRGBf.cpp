@@ -96,9 +96,9 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
     vpERROR_TRACE("Bad vector dimension");
     throw(vpException(vpException::dimensionError, "Bad vector dimension"));
   }
-  R = (float)v[0];
-  G = (float)v[1];
-  B = (float)v[2];
+  R = static_cast<float>(v[0]);
+  G = static_cast<float>(v[1]);
+  B = static_cast<float>(v[2]);
   return *this;
 }
 
@@ -109,12 +109,15 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
 */
 bool vpRGBf::operator==(const vpRGBf &v) const
 {
-  if (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon())
+  if (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon()) {
     return false;
-  if (std::fabs(G - v.G) > std::numeric_limits<float>::epsilon())
+  }
+  if (std::fabs(G - v.G) > std::numeric_limits<float>::epsilon()) {
     return false;
-  if (std::fabs(B - v.B) > std::numeric_limits<float>::epsilon())
+  }
+  if (std::fabs(B - v.B) > std::numeric_limits<float>::epsilon()) {
     return false;
+  }
 
   return true;
 }
@@ -125,9 +128,9 @@ bool vpRGBf::operator==(const vpRGBf &v) const
 */
 bool vpRGBf::operator!=(const vpRGBf &v) const
 {
-  return (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon() ||
-          std::fabs(G - v.G) > std::numeric_limits<float>::epsilon() ||
-          std::fabs(B - v.B) > std::numeric_limits<float>::epsilon());
+  return ((std::fabs(R - v.R) > std::numeric_limits<float>::epsilon()) ||
+          (std::fabs(G - v.G) > std::numeric_limits<float>::epsilon()) ||
+          (std::fabs(B - v.B) > std::numeric_limits<float>::epsilon()));
 }
 
 /*!
@@ -138,9 +141,9 @@ bool vpRGBf::operator!=(const vpRGBf &v) const
 vpColVector vpRGBf::operator-(const vpRGBf &v) const
 {
   vpColVector n(3); // new color
-  n[0] = (double)R - (double)v.R;
-  n[1] = (double)G - (double)v.G;
-  n[2] = (double)B - (double)v.B;
+  n[0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[2] = static_cast<double>(B) - static_cast<double>(v.B);
   return n;
 }
 
@@ -217,16 +220,16 @@ vpColVector vpRGBf::operator*(double v) const
 
 bool vpRGBf::operator<(const vpRGBf &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 < gray2);
 }
 
 bool vpRGBf::operator>(const vpRGBf &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 > gray2);
 }

@@ -137,7 +137,7 @@ void vpPtu46::computeMGD(const vpColVector &q, vpPoseVector &r) const
   vpHomogeneousMatrix fMc;
 
   computeMGD(q, fMc);
-  r.buildFrom(fMc.inverse());
+  r.build(fMc.inverse());
 
   return;
 }
@@ -169,10 +169,10 @@ void vpPtu46::init() { return; }
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 & /* constant */)
 {
   os << "Geometric parameters: " << std::endl
-     << "L: "
-     << "\t" << vpPtu46::L << std::endl
-     << "h: "
-     << "\t" << vpPtu46::h << std::endl;
+    << "L: "
+    << "\t" << vpPtu46::L << std::endl
+    << "h: "
+    << "\t" << vpPtu46::h << std::endl;
 
   return os;
 }
@@ -192,7 +192,7 @@ void vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!

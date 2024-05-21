@@ -182,7 +182,7 @@ void vpPlot::initNbGraph(unsigned int nbGraph)
     break;
   }
 
-  for (unsigned int i = 0; i < graphNbr; i++) {
+  for (unsigned int i = 0; i < graphNbr; ++i) {
     graphList[i].title.clear();
     graphList[i].unitx.clear();
     graphList[i].unity.clear();
@@ -252,7 +252,7 @@ void vpPlot::setColor(unsigned int graphNum, unsigned int curveNum, vpColor colo
 */
 void vpPlot::displayGrid()
 {
-  for (unsigned int i = 0; i < graphNbr; i++)
+  for (unsigned int i = 0; i < graphNbr; ++i)
     graphList[i].displayGrid(I);
 }
 
@@ -450,7 +450,7 @@ void vpPlot::navigate()
   while (b != vpMouseButton::button3) {
     if (!blocked) {
       vpDisplay::getPointerPosition(I, iP);
-      for (unsigned int i = 0; i < graphNbr; i++) {
+      for (unsigned int i = 0; i < graphNbr; ++i) {
         if (iP.inRectangle((graphList + i)->graphZone)) {
           iblocked = i;
           break;
@@ -486,7 +486,7 @@ void vpPlot::getPixelValue(bool block)
   else
     vpDisplay::getPointerPosition(I, iP);
 
-  for (unsigned int i = 0; i < graphNbr; i++) {
+  for (unsigned int i = 0; i < graphNbr; ++i) {
     if ((graphList + i)->getPixelValue(I, iP))
       break;
   }
@@ -557,7 +557,7 @@ void vpPlot::setLegend(unsigned int graphNum, unsigned int curveNum, const std::
 */
 void vpPlot::resetPointList(unsigned int graphNum)
 {
-  for (unsigned int i = 0; i < (graphList + graphNum)->curveNbr; i++)
+  for (unsigned int i = 0; i < (graphList + graphNum)->curveNbr; ++i)
     (graphList + graphNum)->resetPointList(i);
 }
 
@@ -585,7 +585,7 @@ void vpPlot::setThickness(unsigned int graphNum, unsigned int curveNum, unsigned
 */
 void vpPlot::setGraphThickness(unsigned int graphNum, unsigned int thickness)
 {
-  for (unsigned int curveNum = 0; curveNum < (graphList + graphNum)->curveNbr; curveNum++)
+  for (unsigned int curveNum = 0; curveNum < (graphList + graphNum)->curveNbr; ++curveNum)
     (graphList + graphNum)->setCurveThickness(curveNum, thickness);
 }
 
@@ -660,7 +660,7 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
 
   fichier << title_prefix << (graphList + graphNum)->title << std::endl;
 
-  for (ind = 0; ind < (graphList + graphNum)->curveNbr; ind++) {
+  for (ind = 0; ind < (graphList + graphNum)->curveNbr; ++ind) {
     vec_iter_pointListx[ind] = (graphList + graphNum)->curveList[ind].pointListx.begin();
     vec_iter_pointListy[ind] = (graphList + graphNum)->curveList[ind].pointListy.begin();
     vec_iter_pointListz[ind] = (graphList + graphNum)->curveList[ind].pointListz.begin();
@@ -671,7 +671,7 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
 
   while (end == false) {
     end = true;
-    for (ind = 0; ind < (graphList + graphNum)->curveNbr; ind++) {
+    for (ind = 0; ind < (graphList + graphNum)->curveNbr; ++ind) {
       //      if (!(graphList+graphNum)->curveList[ind].pointListx.outside()
       //          &&
       //          !(graphList+graphNum)->curveList[ind].pointListy.outside()

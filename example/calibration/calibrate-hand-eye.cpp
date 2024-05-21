@@ -75,7 +75,7 @@ int main()
     erc[1] = vpMath::rad(-10); // -10 deg
     erc[2] = vpMath::rad(25);  // 25 deg
 
-    eMc.buildFrom(etc, erc);
+    eMc.build(etc, erc);
     std::cout << "Simulated hand-eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
@@ -86,8 +86,8 @@ int main()
       v_c = 0;
       if (i == 0) {
         // Initialize first poses
-        cMo[0].buildFrom(0, 0, 0.5, 0, 0, 0); // z=0.5 m
-        wMe[0].buildFrom(0, 0, 0, 0, 0, 0);   // Id
+        cMo[0].build(0, 0, 0.5, 0, 0, 0); // z=0.5 m
+        wMe[0].build(0, 0, 0, 0, 0, 0);   // Id
       }
       else if (i == 1)
         v_c[3] = M_PI / 8;

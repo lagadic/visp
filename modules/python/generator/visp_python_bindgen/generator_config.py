@@ -97,6 +97,7 @@ IMMUTABLE_CONTAINERS_REGEXS = [
 Specific argument regexs for which having default arguments is specifically forbidden
 '''
 FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS = [
+  '^std::function',
   '^std::ostream',
   '^std::initializer_list',
   '^rs2::',

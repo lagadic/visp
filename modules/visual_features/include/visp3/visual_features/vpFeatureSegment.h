@@ -39,6 +39,7 @@
  * \brief class that defines the Segment visual feature
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRGBa.h>
@@ -67,8 +68,12 @@ public:
   // empty constructor
   explicit vpFeatureSegment(bool normalized = false);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // change values of the segment
   void buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2);
+#endif
+// change values of the segment
+  vpFeatureSegment &build(const double &x1, const double &y1, const double &Z1, const double &x2, const double &y2, const double &Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;

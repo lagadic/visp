@@ -53,7 +53,7 @@
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
   : vpArray2D<double>(4, 4)
 {
-  buildFrom(t, q);
+  build(t, q);
   (*this)[3][3] = 1.;
 }
 
@@ -78,7 +78,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu)
   : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(t, tu);
+  build(t, tu);
   (*this)[3][3] = 1.;
 }
 
@@ -99,7 +99,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpR
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(p[0], p[1], p[2], p[3], p[4], p[5]);
+  build(p[0], p[1], p[2], p[3], p[4], p[5]);
   (*this)[3][3] = 1.;
 }
 
@@ -123,7 +123,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -144,7 +144,7 @@ M:
   */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(v);
+  build(v);
   (*this)[3][3] = 1.;
 }
 
@@ -197,7 +197,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
   }
   else if (list.size() == 16) {
     std::copy(list.begin(), list.end(), data);
-    for (size_t i = 12; i < 15; i++) {
+    for (size_t i = 12; i < 15; ++i) {
       if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
         throw(vpException(vpException::fatalError,
                           "Cannot initialize homogeneous matrix. "
@@ -263,7 +263,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -284,7 +284,7 @@ M:
   */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(v);
+  build(v);
   (*this)[3][3] = 1.;
 }
 
@@ -296,50 +296,199 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray
 vpHomogeneousMatrix::vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(tx, ty, tz, tux, tuy, tuz);
+  build(tx, ty, tz, tux, tuy, tuz);
   (*this)[3][3] = 1.;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use instead build(const vpTranslationVector &, const vpThetaUVector &)
   Build an homogeneous matrix from a translation vector
   and a \f$\theta {\bf u}\f$ rotation vector.
  */
 void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu)
 {
+  build(t, tu);
+}
+
+/*!
+  \deprecated You should use instead build(const vpTranslationVector &, const vpRotationMatrix &)
+  Build an homogeneous matrix from a translation vector
+  and a rotation matrix.
+ */
+void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+{
+  build(t, R);
+}
+
+/*!
+  \deprecated You should use instead build(const vpPoseVector &)
+  Build an homogeneous matrix from a pose vector.
+ */
+void vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
+{
+  build(p);
+}
+
+/*!
+  \deprecated You should use instead build(const vpTranslationVector &t, const vpQuaternionVector &q)
+  Build an homogeneous matrix from a translation vector
+  and a quaternion rotation vector.
+ */
+void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q)
+{
+  build(t, q);
+}
+
+/*!
+  \deprecated You should use instead build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz)
+  Build an homogeneous matrix from a translation vector \f${\bf t}=(t_x, t_y,
+  t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$
+  rotation vector.
+ */
+void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
+{
+  build(tx, ty, tz, tux, tuy, tuz);
+}
+
+/*!
+  \deprecated You should use instead build(const std::vector<float> &)
+
+  Build an homogeneous matrix from a vector of float.
+  \param v : Vector of 12 or 16 values corresponding to the values of the
+homogeneous matrix.
+
+  The following example shows how to use this function:
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  std::vector<float> v(12, 0);
+  v[1]  = -1.; // ry=-90
+  v[4]  =  1.; // rx=90
+  v[10] = -1.; // rz=-90
+  v[3]  = 0.3; // tx
+  v[7]  = 0.4; // ty
+  v[11] = 0.5; // tz
+
+  std::cout << "v: ";
+  for(unsigned int i=0; i<v.size(); ++i)
+    std::cout << v[i] << " ";
+  std::cout << std::endl;
+
+  vpHomogeneousMatrix M;
+  M.build(v);
+  std::cout << "M:\n" << M << std::endl;
+}
+  \endcode
+
+  It produces the following printings:
+  \code
+v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+M:
+0  -1  0  0.3000000119
+1  0  0  0.400000006
+0  0  -1  0.5
+0  0  0  1
+  \endcode
+  */
+void vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
+{
+  build(v);
+}
+
+/*!
+  \deprecated You should use instead build(const std::vector<double> &)
+  Build an homogeneous matrix from a vector of double.
+  \param v : Vector of 12 or 16 values corresponding to the values of the
+homogeneous matrix.
+
+  The following example shows how to use this function:
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  std::vector<double> v(12, 0);
+  v[1]  = -1.; // ry=-90
+  v[4]  =  1.; // rx=90
+  v[10] = -1.; // rz=-90
+  v[3]  = 0.3; // tx
+  v[7]  = 0.4; // ty
+  v[11] = 0.5; // tz
+
+  std::cout << "v: ";
+  for(unsigned int i=0; i<v.size(); ++i)
+    std::cout << v[i] << " ";
+  std::cout << std::endl;
+
+  vpHomogeneousMatrix M;
+  M.build(v);
+  std::cout << "M:\n" << M << std::endl;
+}
+  \endcode
+
+  It produces the following printings:
+  \code
+v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+M:
+0  -1  0  0.3
+1  0  0  0.4
+0  0  -1  0.5
+0  0  0  1
+  \endcode
+  */
+void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
+{
+  build(v);
+}
+#endif
+
+/*!
+  Build an homogeneous matrix from a translation vector
+  and a \f$\theta {\bf u}\f$ rotation vector.
+ */
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const vpTranslationVector &t, const vpThetaUVector &tu)
+{
   insert(tu);
   insert(t);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a translation vector
   and a rotation matrix.
  */
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const vpTranslationVector &t, const vpRotationMatrix &R)
 {
   insert(R);
   insert(t);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a pose vector.
  */
-void vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const vpPoseVector &p)
 {
   vpTranslationVector tv(p[0], p[1], p[2]);
   vpThetaUVector tu(p[3], p[4], p[5]);
 
   insert(tu);
   insert(tv);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a translation vector
   and a quaternion rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const vpTranslationVector &t, const vpQuaternionVector &q)
 {
   insert(t);
   insert(q);
+  return *this;
 }
 
 /*!
@@ -347,13 +496,14 @@ void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuater
   t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$
   rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz);
   vpTranslationVector t(tx, ty, tz);
 
   insert(R);
   insert(t);
+  return *this;
 }
 
 /*!
@@ -376,12 +526,12 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
   vpHomogeneousMatrix M;
-  M.buildFrom(v);
+  M.build(v);
   std::cout << "M:\n" << M << std::endl;
 }
   \endcode
@@ -396,14 +546,16 @@ M:
 0  0  0  1
   \endcode
   */
-void vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const std::vector<float> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<float> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
-    this->data[i] = (double)v[i];
+  for (unsigned int i = 0; i < 12; ++i) {
+    this->data[i] = static_cast<double>(v[i]);
+  }
+  return *this;
 }
 
 /*!
@@ -426,12 +578,12 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
   vpHomogeneousMatrix M;
-  M.buildFrom(v);
+  M.build(v);
   std::cout << "M:\n" << M << std::endl;
 }
   \endcode
@@ -446,14 +598,16 @@ M:
 0  0  0  1
   \endcode
   */
-void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
+vpHomogeneousMatrix &vpHomogeneousMatrix::build(const std::vector<double> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<double> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     this->data[i] = v[i];
+  }
+  return *this;
 }
 
 /*!
@@ -463,8 +617,8 @@ void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -503,7 +657,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M)
 
   R = R1 * R2;
 
-  T = R1 * T2 + T1;
+  T = (R1 * T2) + T1;
 
   p.insert(T);
   p.insert(R);
@@ -553,8 +707,8 @@ vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
 
   p = 0.0;
 
-  for (unsigned int j = 0; j < 4; j++) {
-    for (unsigned int i = 0; i < 4; i++) {
+  for (unsigned int j = 0; j < 4; ++j) {
+    for (unsigned int i = 0; i < 4; ++i) {
       p[i] += rowPtrs[i][j] * v[j];
     }
   }
@@ -584,14 +738,14 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
   v[2] = bP.get_Z();
   v[3] = bP.get_W();
 
-  v1[0] = (*this)[0][0] * v[0] + (*this)[0][1] * v[1] + (*this)[0][2] * v[2] + (*this)[0][3] * v[3];
-  v1[1] = (*this)[1][0] * v[0] + (*this)[1][1] * v[1] + (*this)[1][2] * v[2] + (*this)[1][3] * v[3];
-  v1[2] = (*this)[2][0] * v[0] + (*this)[2][1] * v[1] + (*this)[2][2] * v[2] + (*this)[2][3] * v[3];
-  v1[3] = (*this)[3][0] * v[0] + (*this)[3][1] * v[1] + (*this)[3][2] * v[2] + (*this)[3][3] * v[3];
+  v1[0] = ((*this)[0][0] * v[0]) + ((*this)[0][1] * v[1]) + ((*this)[0][2] * v[2]) + ((*this)[0][3] * v[3]);
+  v1[1] = ((*this)[1][0] * v[0]) + ((*this)[1][1] * v[1]) + ((*this)[1][2] * v[2]) + ((*this)[1][3] * v[3]);
+  v1[2] = ((*this)[2][0] * v[0]) + ((*this)[2][1] * v[1]) + ((*this)[2][2] * v[2]) + ((*this)[2][3] * v[3]);
+  v1[3] = ((*this)[3][0] * v[0]) + ((*this)[3][1] * v[1]) + ((*this)[3][2] * v[2]) + ((*this)[3][3] * v[3]);
 
   v1 /= v1[3];
 
-  //  v1 = M*v ;
+  //  --comment: v1 equals M multiplied by v
   aP.set_X(v1[0]);
   aP.set_Y(v1[1]);
   aP.set_Z(v1[2]);
@@ -618,9 +772,9 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
 vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t) const
 {
   vpTranslationVector t_out;
-  t_out[0] = (*this)[0][0] * t[0] + (*this)[0][1] * t[1] + (*this)[0][2] * t[2] + (*this)[0][3];
-  t_out[1] = (*this)[1][0] * t[0] + (*this)[1][1] * t[1] + (*this)[1][2] * t[2] + (*this)[1][3];
-  t_out[2] = (*this)[2][0] * t[0] + (*this)[2][1] * t[1] + (*this)[2][2] * t[2] + (*this)[2][3];
+  t_out[0] = (((*this)[0][0] * t[0]) + ((*this)[0][1] * t[1]) + ((*this)[0][2] * t[2])) + (*this)[0][3];
+  t_out[1] = (((*this)[1][0] * t[0]) + ((*this)[1][1] * t[1]) + ((*this)[1][2] * t[2])) + (*this)[1][3];
+  t_out[2] = (((*this)[2][0] * t[0]) + ((*this)[2][1] * t[1]) + ((*this)[2][2] * t[2])) + (*this)[2][3];
 
   return t_out;
 }
@@ -737,7 +891,7 @@ N:
  */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator,(double val)
 {
-  m_index++;
+  ++m_index;
   if (m_index >= size()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize "
@@ -772,7 +926,8 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
  */
 bool vpHomogeneousMatrix::isValid() const
 {
-  for (unsigned int i = 0; i < size(); i++) {
+  unsigned int l_size = size();
+  for (unsigned int i = 0; i < l_size; ++i) {
     if (vpMath::isNaN(data[i])) {
       return false;
     }
@@ -786,9 +941,11 @@ bool vpHomogeneousMatrix::isValid() const
 */
 void vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       R[i][j] = (*this)[i][j];
+    }
+  }
 }
 
 /*!
@@ -807,7 +964,7 @@ void vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
 {
   vpRotationMatrix R;
   (*this).extract(R);
-  tu.buildFrom(R);
+  tu.build(R);
 }
 
 /*!
@@ -817,7 +974,7 @@ void vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 {
   vpRotationMatrix R;
   (*this).extract(R);
-  q.buildFrom(R);
+  q.build(R);
 }
 
 /*!
@@ -825,9 +982,11 @@ void vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 */
 void vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = R[i][j];
+    }
+  }
 }
 
 /*!
@@ -902,10 +1061,18 @@ void vpHomogeneousMatrix::eye()
   (*this)[2][2] = 1;
   (*this)[3][3] = 1;
 
-  (*this)[0][1] = (*this)[0][2] = (*this)[0][3] = 0;
-  (*this)[1][0] = (*this)[1][2] = (*this)[1][3] = 0;
-  (*this)[2][0] = (*this)[2][1] = (*this)[2][3] = 0;
-  (*this)[3][0] = (*this)[3][1] = (*this)[3][2] = 0;
+  (*this)[0][1] = 0;
+  (*this)[0][2] = 0;
+  (*this)[0][3] = 0;
+  (*this)[1][0] = 0;
+  (*this)[1][2] = 0;
+  (*this)[1][3] = 0;
+  (*this)[2][0] = 0;
+  (*this)[2][1] = 0;
+  (*this)[2][3] = 0;
+  (*this)[3][0] = 0;
+  (*this)[3][1] = 0;
+  (*this)[3][2] = 0;
 }
 
 /*!
@@ -945,8 +1112,8 @@ void vpHomogeneousMatrix::save(const std::string &filename) const
 void vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (!f.fail()) {
-    for (unsigned int i = 0; i < 4; i++) {
-      for (unsigned int j = 0; j < 4; j++) {
+    for (unsigned int i = 0; i < 4; ++i) {
+      for (unsigned int j = 0; j < 4; ++j) {
         f >> (*this)[i][j];
       }
     }
@@ -997,8 +1164,9 @@ void vpHomogeneousMatrix::print() const
 void vpHomogeneousMatrix::convert(std::vector<float> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
-    M[i] = (float)(this->data[i]);
+  for (unsigned int i = 0; i < 12; ++i) {
+    M[i] = static_cast<float>(this->data[i]);
+  }
 }
 
 /*!
@@ -1008,8 +1176,9 @@ void vpHomogeneousMatrix::convert(std::vector<float> &M)
 void vpHomogeneousMatrix::convert(std::vector<double> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     M[i] = this->data[i];
+  }
 }
 
 /*!
@@ -1073,12 +1242,14 @@ Last column:
  */
 vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 {
-  if (j >= getCols())
+  if (j >= getCols()) {
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));
+  }
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
-  for (unsigned int i = 0; i < nb_rows; i++)
+  for (unsigned int i = 0; i < nb_rows; ++i) {
     c[i] = (*this)[i][j];
+  }
   return c;
 }
 
@@ -1094,14 +1265,15 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
 
   vpColVector p_bar(3, 0.0);
   vpColVector q_bar(3, 0.0);
-  for (size_t i = 0; i < p.size(); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  size_t p_size = p.size();
+  for (size_t i = 0; i < p_size; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       p_bar[j] += p.at(i).oP[j];
       q_bar[j] += q.at(i).oP[j];
     }
   }
 
-  for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int j = 0; j < 3; ++j) {
     p_bar[j] /= N;
     q_bar[j] /= N;
   }
@@ -1109,8 +1281,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
   vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
   vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
 
-  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p_size); ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       pc[i][j] = p.at(i).oP[j] - p_bar[j];
       qc[i][j] = q.at(i).oP[j] - q_bar[j];
     }
@@ -1131,7 +1303,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
     R = U * Vt;
   }
 
-  const vpColVector t = p_bar - R * q_bar;
+  const vpColVector t = p_bar - (R * q_bar);
 
   return vpHomogeneousMatrix(vpTranslationVector(t), vpRotationMatrix(R));
 }
@@ -1150,7 +1322,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix meanR(3, 3);
   vpColVector meanT(3);
   vpRotationMatrix R;
-  for (size_t i = 0; i < vec_M.size(); i++) {
+  size_t vec_m_size = vec_M.size();
+  for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
     meanR += (vpMatrix)R;
     meanT += (vpColVector)vec_M[i].getTranslationVector();
@@ -1169,7 +1342,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   else {
     vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0;
+    D[0][0] = 1.0;
+    D[1][1] = 1.0;
     D[2][2] = -1;
     meanR = U * D * V.t();
   }
@@ -1216,7 +1390,7 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
     from_json(j, *asArray);
   }
 
-  if (getCols() != 4 && getRows() != 4) {
+  if ((getCols() != 4) && (getRows() != 4)) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 4x4 matrix");
   }
   if (!isAnHomogeneousMatrix()) {

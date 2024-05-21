@@ -64,17 +64,17 @@ void fillHoles(vpImage<unsigned char> &I
   //  - no more connexity option
   vpImage<unsigned char> mask(I.getHeight() + 2, I.getWidth() + 2, 255);
   // Copy I to mask + add border padding + complement
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       mask[i + 1][j + 1] = 255 - I[i][j];
     }
   }
 
   vpImage<unsigned char> marker(I.getHeight() + 2, I.getWidth() + 2, 0);
   // Create marker with 255 1-pixel border
-  for (unsigned int i = 0; i < marker.getHeight(); i++) {
+  for (unsigned int i = 0; i < marker.getHeight(); ++i) {
     if (i == 0 || i == marker.getHeight() - 1) {
-      for (unsigned int j = 0; j < marker.getWidth(); j++) {
+      for (unsigned int j = 0; j < marker.getWidth(); ++j) {
         marker[i][j] = 255;
       }
     }
@@ -87,8 +87,8 @@ void fillHoles(vpImage<unsigned char> &I
   vpImage<unsigned char> I_reconstruct;
   reconstruct(marker, mask, I_reconstruct, connexity);
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       I[i][j] = 255 - I_reconstruct[i + 1][j + 1];
     }
   }
@@ -96,7 +96,8 @@ void fillHoles(vpImage<unsigned char> &I
   // Create flood fill mask
   vpImage<unsigned char> flood_fill_mask(I.getHeight() + 2, I.getWidth() + 2, 0);
   // Copy I to mask + add border padding
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
+  unsigned int i_height = I.getHeight();
+  for (unsigned int i = 0; i < i_height; ++i) {
     memcpy(flood_fill_mask[i + 1] + 1, I[i], sizeof(unsigned char) * I.getWidth());
   }
 
@@ -105,7 +106,8 @@ void fillHoles(vpImage<unsigned char> &I
 
   // Get current mask
   vpImage<unsigned char> mask(I.getHeight(), I.getWidth());
-  for (unsigned int i = 0; i < mask.getHeight(); i++) {
+  unsigned int mask_height = mask.getHeight();
+  for (unsigned int i = 0; i < mask_height; ++i) {
     memcpy(mask[i], flood_fill_mask[i + 1] + 1, sizeof(unsigned char) * mask.getWidth());
   }
 
@@ -119,7 +121,7 @@ void fillHoles(vpImage<unsigned char> &I
 void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
                  vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
 {
-  if (marker.getHeight() != mask.getHeight() || marker.getWidth() != mask.getWidth()) {
+  if ((marker.getHeight() != mask.getHeight()) || (marker.getWidth() != mask.getWidth())) {
     std::cerr << "marker.getHeight() != mask.getHeight() || "
       "marker.getWidth() != mask.getWidth()"
       << std::endl;
@@ -134,22 +136,27 @@ void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned ch
   vpImage<unsigned char> h_k = marker;
   h_kp1 = h_k;
 
+  bool h_kp1_eq_h_k = false;
   do {
     // Dilatation
     vpImageMorphology::dilatation<unsigned char>(h_kp1, connexity);
 
     // Keep min
-    for (unsigned int i = 0; i < h_kp1.getHeight(); i++) {
-      for (unsigned int j = 0; j < h_kp1.getWidth(); j++) {
+    unsigned int h_kp1_height = h_kp1.getHeight();
+    unsigned int h_kp1_width = h_kp1.getWidth();
+    for (unsigned int i = 0; i < h_kp1_height; ++i) {
+      for (unsigned int j = 0; j < h_kp1_width; ++j) {
         h_kp1[i][j] = std::min<unsigned char>(h_kp1[i][j], mask[i][j]);
       }
     }
 
     if (h_kp1 == h_k) {
-      break;
+      h_kp1_eq_h_k = true;
+      // break
     }
-
-    h_k = h_kp1;
-  } while (true);
+    else {
+      h_k = h_kp1;
+    }
+  } while (h_kp1_eq_h_k == false);
 }
 };

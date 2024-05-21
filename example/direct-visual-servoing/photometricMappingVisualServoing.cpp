@@ -338,7 +338,7 @@ int main(int argc, const char **argv)
         double noiseDivTo = 16.0;
         to[0] = random.uniform(-scenew / noiseDivTo, scenew / noiseDivTo);
         to[1] = random.uniform(-sceneh / noiseDivTo, sceneh / noiseDivTo);
-        const vpColVector from = cdMo.getTranslationVector() + positionNoise;
+        const vpColVector from = vpColVector(cdMo.getTranslationVector()) + positionNoise;
         vpRotationMatrix Rrot(0.0, 0.0, vpMath::rad(random.uniform(-10, 10)));
         vpHomogeneousMatrix dbMo = vpMath::lookAt(from, to, Rrot * vpColVector({ 0.0, 1.0, 0.0 }));
         sim.setCameraPosition(dbMo);
@@ -398,7 +398,7 @@ int main(int argc, const char **argv)
 
     // camera desired position
     vpHomogeneousMatrix cMo;
-    cMo.buildFrom(0.0, 0, Z + 0.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(5));
+    cMo.build(0.0, 0, Z + 0.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(5));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 

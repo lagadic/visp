@@ -94,7 +94,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -182,10 +183,10 @@ int main()
     // sets the desired position of the visual feature
     vpFeaturePoint pd[4];
 
-    pd[0].buildFrom(-L, -L, D);
-    pd[1].buildFrom(L, -L, D);
-    pd[2].buildFrom(L, L, D);
-    pd[3].buildFrom(-L, L, D);
+    pd[0].build(-L, -L, D);
+    pd[1].build(L, -L, D);
+    pd[2].build(L, L, D);
+    pd[3].build(-L, L, D);
 
     // We want to see a point on a point
     std::cout << std::endl;
@@ -237,7 +238,8 @@ int main()
           cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      } catch (...) {
+      }
+      catch (...) {
         flog.close(); // Close the log file
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
@@ -306,7 +308,8 @@ int main()
     task.print();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
