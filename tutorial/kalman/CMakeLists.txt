@@ -35,13 +35,13 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-project(tutorial-meandrift)
+project(tutorial-kalman)
 
 find_package(VISP REQUIRED visp_core visp_gui)
 
 set(tutorial_cpp)
 
-list(APPEND tutorial_cpp tutorial-meandrift.cpp)
+list(APPEND tutorial_cpp tutorial-ukf.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

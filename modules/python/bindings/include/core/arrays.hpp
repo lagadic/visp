@@ -218,7 +218,7 @@ const char *numpy_fn_doc_nonwritable = R"doc(
 )doc";
 
 template<typename T>
-void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
+void bindings_vpArray2D(py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>> &pyArray2D)
 {
   pyArray2D.def_buffer(&get_buffer_info<T, vpArray2D>);
 
@@ -239,10 +239,10 @@ Construct a 2D ViSP array by **copying** a 2D numpy array.
 
 )doc", py::arg("np_array"));
 
-  define_get_item_2d_array<py::class_<vpArray2D<T>>, vpArray2D<T>, T>(pyArray2D);
+  define_get_item_2d_array<py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>>, vpArray2D<T>, T>(pyArray2D);
 }
 
-void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
+void bindings_vpMatrix(py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D<double>> &pyMatrix)
 {
   pyMatrix.def_buffer(&get_buffer_info<vpMatrix>);
 
@@ -268,11 +268,11 @@ Construct a matrix by **copying** a 2D numpy array.
   add_print_helper(pyMatrix, &vpMatrix::matlabPrint, "strMatlab", matlab_str_help);
   add_cpp_print_helper(pyMatrix, &vpMatrix::cppPrint);
 
-  define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
+  define_get_item_2d_array<py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
 
 
-void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &pyRotationMatrix)
+void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, std::shared_ptr<vpRotationMatrix>, vpArray2D<double>> &pyRotationMatrix)
 {
 
   pyRotationMatrix.def_buffer(&get_buffer_info<vpRotationMatrix>);
@@ -296,10 +296,10 @@ If it is not a rotation matrix, an exception will be raised.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_2d_array<py::class_<vpRotationMatrix, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
+  define_get_item_2d_array<py::class_<vpRotationMatrix, std::shared_ptr<vpRotationMatrix>, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
 }
 
-void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<double>> &pyHomogeneousMatrix)
+void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, std::shared_ptr<vpHomogeneousMatrix>, vpArray2D<double>> &pyHomogeneousMatrix)
 {
   pyHomogeneousMatrix.def_buffer(get_buffer_info<vpHomogeneousMatrix>);
   pyHomogeneousMatrix.def("numpy", [](vpHomogeneousMatrix &self) -> np_array_cf<double> {
@@ -323,12 +323,12 @@ If it is not a homogeneous matrix, an exception will be raised.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_2d_array<py::class_<vpHomogeneousMatrix, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
+  define_get_item_2d_array<py::class_<vpHomogeneousMatrix, std::shared_ptr<vpHomogeneousMatrix>, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
 }
 
 
 
-void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<double>> &pyTranslationVector)
+void bindings_vpTranslationVector(py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>> &pyTranslationVector)
 {
   pyTranslationVector.def_buffer(&get_buffer_info<vpTranslationVector>);
 
@@ -349,11 +349,11 @@ Construct a Translation vector by **copying** a 1D numpy array of size 3.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpTranslationVector, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
+  define_get_item_1d_array<py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
 }
 
 
-void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
+void bindings_vpColVector(py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>> &pyColVector)
 {
   pyColVector.def_buffer(&get_buffer_info<vpColVector>);
 
@@ -373,7 +373,7 @@ Construct a column vector by **copying** a 1D numpy array.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpColVector, vpArray2D<double>>, vpColVector, double>(pyColVector);
+  define_get_item_1d_array<py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
 
   add_print_helper(pyColVector, &vpColVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyColVector, &vpColVector::maplePrint, "strMaple", maple_str_help);
@@ -382,7 +382,7 @@ Construct a column vector by **copying** a 1D numpy array.
 
 }
 
-void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
+void bindings_vpRowVector(py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>> &pyRowVector)
 {
   pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
   pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
@@ -400,7 +400,7 @@ Construct a row vector by **copying** a 1D numpy array.
 :param np_array: The numpy 1D array to copy.
 
 )doc", py::arg("np_array"));
-  define_get_item_1d_array<py::class_<vpRowVector, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  define_get_item_1d_array<py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
   add_print_helper(pyRowVector, &vpRowVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyRowVector, &vpRowVector::maplePrint, "strMaple", maple_str_help);
   add_print_helper(pyRowVector, &vpRowVector::matlabPrint, "strMatlab", matlab_str_help);

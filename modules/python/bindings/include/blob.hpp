@@ -43,7 +43,7 @@
 
 namespace py = pybind11;
 
-void bindings_vpDot2(py::class_<vpDot2, vpTracker> &pyDot2)
+void bindings_vpDot2(py::class_<vpDot2, std::shared_ptr<vpDot2>, vpTracker> &pyDot2)
 {
   pyDot2.def_static("defineDots", [](std::vector<vpDot2> &dots,
                                      const std::string &dotFile,

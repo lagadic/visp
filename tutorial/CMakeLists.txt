@@ -44,6 +44,7 @@ visp_add_subdirectory(imgproc/contrast-sharpening          REQUIRED_DEPS visp_co
 visp_add_subdirectory(imgproc/count-coins                  REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(imgproc/flood-fill                   REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(imgproc/hough-transform              REQUIRED_DEPS visp_core visp_gui visp_imgproc)
+visp_add_subdirectory(kalman                               REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(mean-drift                           REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(misc/npz                             REQUIRED_DEPS visp_core visp_gui visp_io)
 visp_add_subdirectory(munkres                              REQUIRED_DEPS visp_core visp_gui)

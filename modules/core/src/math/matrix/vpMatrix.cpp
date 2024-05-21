@@ -6283,6 +6283,20 @@ double vpMatrix::det(vpDetMethod method) const
   return det;
 }
 
+vpMatrix vpMatrix::cholesky() const
+{
+#if defined(VISP_HAVE_EIGEN3)
+  return choleskyByEigen3();
+#elif defined(VISP_HAVE_LAPACK)
+  return choleskyByLapack();
+#elif defined(VISP_HAVE_OPENCV)
+  return choleskyByOpenCV();
+#else
+  throw(vpException(vpException::fatalError, "Cannot compute matrix Chloesky decomposition. "
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
+
 /*!
 
   Compute the exponential matrix of a square matrix.

@@ -45,6 +45,9 @@ Module-level options
     "ignored_headers": ["vpGEMM.h", "vpDebug.h"],
     "ignored_classes": ["vpException", "vpImageException"],
     "user_defined_headers": ["core.hpp"],
+    "header_additional_dependencies": {
+      "vpUKSigmaDrawerMerwe.h": ["vpUnscentedKalman.h"]
+    },
     "enums": {},
     "classes": {},
     "functions": {}
@@ -74,6 +77,11 @@ Module-level options
      - Paths to user-defined bindings that will be called when generating the overall bindings
        (see class options and :ref:`Custom binding`). These paths are relative to the **modules/python/bindings/include** folder.
        If a file does not exist, an error will be raised at compile time.
+   * - :code:`header_additional_dependencies`
+     - Dictionary of header name to list of header names
+     - Forcefully specify that a header (defined as a key of the dictionary) depends on all the headers listed as the values.
+       This is helpful if your header depends on typedefs defined in other non-related (i.e., not linked by inheritance) files.
+       In the example above, vpUKSigmaDrawerMerwe uses a typedef from vpUnscentedKalman, but the link is not seen by the generator.
    * - :code:`enums`
      - Dictionary
      - Mapping from C++ enum name to an :ref:`enum configuration <Enum options>`.

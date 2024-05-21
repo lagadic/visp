@@ -77,15 +77,24 @@ class HeaderFile():
   def get_header_dependencies(self, headers: List['HeaderFile']) -> List['HeaderFile']:
     if len(self.depends) == 0:
       return []
+
+    user_required_headers = []
+    all_user_required_header_names = self.submodule.config.get('header_additional_dependencies')
+    if all_user_required_header_names is not None:
+      user_required_headers = all_user_required_header_names.get(self.path.name, [])
+
     header_deps = []
     for header in headers:
       if header == self:
         continue
       is_dependency = False
-      for d in self.depends:
-        if d in header.contains:
-          is_dependency = True
-          break
+      if header.path.name in user_required_headers:
+        is_dependency = True
+      else:
+        for d in self.depends:
+          if d in header.contains:
+            is_dependency = True
+            break
       if is_dependency:
         header_deps.append(header)
         upper_dependencies = header.get_header_dependencies(headers)
@@ -301,12 +310,14 @@ class HeaderFile():
       # Reference public base classes when creating pybind class binding
       base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases)))
-      class_template_str = ', '.join([name_cpp] + base_class_strs)
+      # py::class template contains the class, its holder type, and its base clases.
+      # The default holder type is std::unique_ptr. when the cpp function argument is a shared_ptr, Pybind will raise an error when calling the method.
+      py_class_template_str = ', '.join([name_cpp, f'std::shared_ptr<{name_cpp}>'] + base_class_strs)
       doc_param = [] if class_doc is None else [class_doc.documentation]
       buffer_protocol_arg = ['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else []
       cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + buffer_protocol_arg
 
-      class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
+      class_decl = f'\tpy::class_ {python_ident} = py::class_<{py_class_template_str}>({", ".join(cls_argument_strs)});'
 
       # Definitions
       # Skip constructors for classes that have pure virtual methods since they cannot be instantiated

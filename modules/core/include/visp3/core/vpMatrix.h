@@ -349,6 +349,16 @@ public:
 #if defined(VISP_HAVE_OPENCV)
   double detByLUOpenCV() const;
 #endif
+  vpMatrix cholesky() const;
+#if defined(VISP_HAVE_EIGEN3)
+  vpMatrix choleskyByEigen3() const;
+#endif
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix choleskyByLapack() const;
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  vpMatrix choleskyByOpenCV() const;
+#endif
 
   // Compute the exponential matrix of a square matrix
   vpMatrix expm() const;
