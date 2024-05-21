@@ -371,14 +371,18 @@ void vpHomography::build()
   }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
-  \brief Compute aHb such that
-
-  \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
-  { ^b{\bf n}^T}
-  \f]
-  //note d => -d verifier
-*/
+ * Compute \f$ ^a{\bf H}_b \f$ homography such that
+ *
+ * \f[ ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
+ * { ^b{\bf n}^T}
+ * \f]
+ *
+ * \param[out] aHb : Computed homography.
+ * \param[in] aMb : Homogeneous transformation from frame a to frame b.
+ * \param[in] bP : Plane at frame b.
+ */
 void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 {
   const unsigned int nbCols = 3, nbRows = 3;
@@ -405,6 +409,7 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, cons
     }
   }
 }
+#endif
 
 double vpHomography::det() const
 {

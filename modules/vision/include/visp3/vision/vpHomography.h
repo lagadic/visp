@@ -621,7 +621,6 @@ public:
                      double weights_threshold = 0.4, unsigned int niter = 4, bool normalization = true);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! build the homography from aMb and Rb
   static void build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   static void computeDisplacement(const vpHomography &aHb, const vpColVector &nd, vpRotationMatrix &aRb,

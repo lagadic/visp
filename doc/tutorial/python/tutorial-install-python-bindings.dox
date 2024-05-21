@@ -713,7 +713,11 @@ In file included from /home/user/miniconda3/envs/visp-python11/include/pybind11/
 
 This is due to an argument that cannot have a default value. In the example above, this argument is **vpColVector (&)(const vpColVector&, const vpColVector&)** (converted from an std::function).
 To solve this, go to `modules/python/generator/visp_python_bindgen/generator_config.py`. Then, add a regular expression in the **FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS** list to match with this type.
-Here, we would add '^std::function' to exclude the std::function from being constructed with a default value.
+Here, we would add
+\verbatim
+^std::function
+\endverbatim
+to exclude the `std::function` from being constructed with a default value.
 
 
 \subsubsection py_bindings_known_errors_import_dll ImportError: DLL load failed while importing _visp

@@ -54,7 +54,7 @@
 
 /*!
  * \class vpPlaneEstimation
- * \ingroup group_vision
+ * \ingroup group_vision_plane
  *
  * \note This class is only available with c++17 enabled.
  */
