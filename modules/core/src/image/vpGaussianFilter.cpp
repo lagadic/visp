@@ -38,6 +38,10 @@
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageConvert.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpGaussianFilter::Impl
 {
@@ -147,7 +151,9 @@ void vpGaussianFilter::apply(const vpImage<unsigned char> &I, vpImage<unsigned c
   \param[out] I_blur : output blurred color image.
 */
 void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) { m_impl->apply(I, I_blur); }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
  // Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
 void dummy_vpGaussianFilter() { };

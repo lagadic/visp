@@ -31,13 +31,13 @@
  * Exceptions that can be emitted by the vpImage class and its derivatives.
  */
 
-#ifndef _vpImageException_h_
-#define _vpImageException_h_
-
 /*!
  * \file vpImageException.h
  * \brief error that can be emitted by the vpImage class and its derivatives
  */
+
+#ifndef _vpImageException_h_
+#define _vpImageException_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -45,7 +45,10 @@
 #include <iostream>
 #include <string>
 
-
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpImageException
  * \ingroup group_core_debug
@@ -90,5 +93,7 @@ public:
    */
   explicit vpImageException(int id) : vpException(id) { }
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

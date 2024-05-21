@@ -81,6 +81,10 @@
 
 #define LABEL_XML_ADDITIONAL_INFO "additional_information"
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserCamera::Impl
 {
@@ -1227,7 +1231,9 @@ void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling) { m_impl-
 void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling) { m_impl->setSubsampling_height(subsampling); }
 
 void vpXmlParserCamera::setWidth(unsigned int width) { m_impl->setWidth(width); }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has no symbols
 void dummy_vpXmlParserCamera() { };

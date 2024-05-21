@@ -66,8 +66,13 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 namespace vp
+#else
+namespace visp
+#endif
 {
+
 void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
                const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {
@@ -159,4 +164,5 @@ void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const u
     }
   }
 }
-};
+
+} // namespace

@@ -53,6 +53,11 @@
 #include <optional>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpMeEllipse
  * \ingroup module_me
@@ -588,5 +593,9 @@ protected:
    */
   void updateTheta();
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

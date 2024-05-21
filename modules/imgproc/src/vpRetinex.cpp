@@ -33,10 +33,10 @@
 /* Retinex_.java Using ImageJ Gaussian Filter
  * Retinex filter algorithm based on the plugin for GIMP.
  *
- *@author Jimenez-Hernandez Francisco <jimenezf@fi.uaemex.mx>
- *Developed at Birmingham University, School of Dentistry. Supervised by
- *Gabriel Landini
- *@version 1.0
+ * @author Jimenez-Hernandez Francisco <jimenezf@fi.uaemex.mx>
+ * Developed at Birmingham University, School of Dentistry. Supervised by
+ * Gabriel Landini
+ * @version 1.0
  *
  * 8 July 2010
  *
@@ -88,6 +88,13 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+namespace vp
+#else
+namespace visp
+#endif
+{
+
 #define MAX_RETINEX_SCALES 8
 
 std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale)
@@ -106,20 +113,20 @@ std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale
     int i;
 
     switch (level) {
-    case vp::RETINEX_UNIFORM:
+    case RETINEX_UNIFORM:
       for (i = 0; i < scaleDiv; ++i) {
         scales[static_cast<size_t>(i)] = 2.0 + (i * size_step);
       }
       break;
 
-    case vp::RETINEX_LOW:
+    case RETINEX_LOW:
       size_step = std::log(scale - 2.0) / static_cast<double>(scaleDiv);
       for (i = 0; i < scaleDiv; ++i) {
         scales[static_cast<size_t>(i)] = 2.0 + std::pow(10.0, (i * size_step) / std::log(10.0));
       }
       break;
 
-    case vp::RETINEX_HIGH:
+    case RETINEX_HIGH:
       size_step = std::log(scale - 2.0) / static_cast<double>(scaleDiv);
       for (i = 0; i < scaleDiv; ++i) {
         scales[static_cast<size_t>(i)] = scale - std::pow(10.0, (i * size_step) / std::log(10.0));
@@ -239,8 +246,6 @@ void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dyna
   }
 }
 
-namespace vp
-{
 void retinex(vpImage<vpRGBa> &I, int scale, int scaleDiv, int level, const double dynamic, int kernelSize)
 {
   // Assert scale
@@ -266,6 +271,7 @@ void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale, int scal
                  int kernelSize)
 {
   I2 = I1;
-  vp::retinex(I2, scale, scaleDiv, level, dynamic, kernelSize);
+  retinex(I2, scale, scaleDiv, level, dynamic, kernelSize);
 }
-};
+
+} // namespace

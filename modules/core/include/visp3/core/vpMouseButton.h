@@ -31,11 +31,15 @@
  * Color definition.
  */
 
-#ifndef vpMouseButton_h
-#define vpMouseButton_h
+#ifndef _vpMouseButton_h_
+#define _vpMouseButton_h_
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpMouseButton
   \ingroup group_gui_display
@@ -44,12 +48,15 @@
 class VISP_EXPORT vpMouseButton
 {
 public:
-  typedef enum {
+  typedef enum
+  {
     button1 = 1, /*!< Mouse left button. */
     button2 = 2, /*!< Mouse middle button, or roll. */
     button3 = 3, /*!< Mouse right button. */
     none = 0     /*!< No button. */
   } vpMouseButtonType;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

@@ -36,15 +36,20 @@
   \brief  class that defines what is a circle
 */
 
-#ifndef vpCircle_hh
-#define vpCircle_hh
+#ifndef _vpCircle_h_
+#define _vpCircle_h_
 
 #include <math.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpCircle
  * \ingroup group_core_geometry
@@ -133,9 +138,6 @@ public:
   static void computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho,
                                        const double &theta, double &i, double &j);
 
-protected:
-  void init() vp_override;
-
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -165,6 +167,11 @@ public:
   vp_deprecated double get_mu02() const { return p[4]; }
   //@}
 #endif
-};
+protected:
+  void init() vp_override;
 
+};
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

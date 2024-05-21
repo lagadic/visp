@@ -40,6 +40,10 @@
 #include <stdexcept>
 #include <visp3/core/vpEndian.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 namespace vpEndian
 {
 /*!
@@ -64,7 +68,8 @@ uint32_t swap32bits(uint32_t val)
 */
 float swapFloat(float f)
 {
-  union {
+  union
+  {
     float f;
     unsigned char b[4];
   } dat1, dat2;
@@ -83,7 +88,8 @@ float swapFloat(float f)
 */
 double swapDouble(double d)
 {
-  union {
+  union
+  {
     double d;
     unsigned char b[8];
   } dat1, dat2;
@@ -116,3 +122,6 @@ uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char *const ptr)
 #endif
 }
 } // namespace vpEndian
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

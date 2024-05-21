@@ -54,6 +54,10 @@ void vpSAT(int &c)
 }
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
   Destination rgba memory area has to be allocated before.
@@ -1662,3 +1666,6 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
     rgb += 9 * width;
   }
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

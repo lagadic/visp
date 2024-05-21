@@ -31,14 +31,16 @@
  * Morphology tools.
  */
 
-#ifndef _vpImageMorphology_h_
-#define _vpImageMorphology_h_
-
 /*!
   \file vpImageMorphology.h
   \brief Various mathematical morphology tools, erosion, dilatation...
 
 */
+
+#ifndef _vpImageMorphology_h_
+#define _vpImageMorphology_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMatrix.h>
@@ -48,6 +50,10 @@
 #include <math.h>
 #include <string.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpImageMorphology
 
@@ -73,33 +79,6 @@ public:
                       right, up, down, and the 4 pixels located on the
                     diagonal) */
   } vpConnexityType;
-
-private:
-  /**
-   * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
-   * grid.
-   *
-   * \tparam T Either a class such as vpRGBa or a type such as double, unsigned char ...
-   * \param[out] I The image we want to modify.
-   * \param[in] null_value The value that is padded to the input image to manage the borders.
-   * \param[in] operation The operation to apply to its elements on a 3x3 grid.
-   * \param[in] connexity Either a 4-connexity, if we want to take into account only the horizontal
-   * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
-   */
-  template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
-
-  /**
-   * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
-   * grid.
-   *
-   * \tparam T Any type such as double, unsigned char ...
-   * \param[out] I The image we want to modify.
-   * \param[in] operation The operation to apply to its elements on a the grid.
-   * \param[in] size Size of the kernel of the operation.
-   */
-  template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
 
 public:
   template <class Type>
@@ -159,6 +138,34 @@ public:
   }
   //@}
 #endif
+
+private:
+  /**
+   * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
+   * grid.
+   *
+   * \tparam T Either a class such as vpRGBa or a type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] null_value The value that is padded to the input image to manage the borders.
+   * \param[in] operation The operation to apply to its elements on a 3x3 grid.
+   * \param[in] connexity Either a 4-connexity, if we want to take into account only the horizontal
+   * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
+   */
+  template <typename T>
+  static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
+
+  /**
+   * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
+   * grid.
+   *
+   * \tparam T Any type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] operation The operation to apply to its elements on a the grid.
+   * \param[in] size Size of the kernel of the operation.
+   */
+  template <typename T>
+  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
+
 };
 
 /*!
@@ -529,6 +536,9 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, operation, size);
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 
 /*

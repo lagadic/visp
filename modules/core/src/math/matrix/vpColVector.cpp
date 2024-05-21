@@ -57,6 +57,10 @@
 #include <Simd/SimdLib.h>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
   if (getRows() != v.getRows()) {
@@ -1012,3 +1016,6 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 
 double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

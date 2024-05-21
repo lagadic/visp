@@ -45,6 +45,11 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpDiskGrabber
  *
@@ -268,5 +273,9 @@ public:
    */
   void setStep(long step) { m_image_step = step; }
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

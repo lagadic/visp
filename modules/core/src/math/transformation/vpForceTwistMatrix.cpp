@@ -34,13 +34,6 @@
  *
 *****************************************************************************/
 
-#include <assert.h>
-#include <sstream>
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpForceTwistMatrix.h>
-
 /*!
   \file vpForceTwistMatrix.cpp
 
@@ -48,6 +41,18 @@
   particular case of twist transformation matrix that allows to
   transform a force/torque skew from one frame to an other.
 */
+
+#include <assert.h>
+#include <sstream>
+
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpForceTwistMatrix.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 /*!
   Copy operator.
@@ -788,3 +793,6 @@ int vpForceTwistMatrix::print(std::ostream &s, unsigned int length, char const *
 void vpForceTwistMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(ENABLE_VISP_NAMESPACE)
+  }
+#endif

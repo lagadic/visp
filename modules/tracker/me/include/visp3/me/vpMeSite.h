@@ -44,6 +44,11 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/me/vpMe.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpMeSite
  * \ingroup module_me
@@ -391,5 +396,9 @@ private:
   vpMeSiteDisplayType m_selectDisplay; //!< Display selector
   vpMeSiteState m_state; //!< Site state
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

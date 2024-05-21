@@ -73,6 +73,11 @@ extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *l
 #include <string.h>
 #endif
 #endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*---------------------------------------------------------------------
 
 SVD related functions
@@ -464,5 +469,8 @@ void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
   w_ = svd.singularValues();
   V_ = svd.matrixV();
   U_ = svd.matrixU();
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

@@ -31,26 +31,49 @@
  * Provide some simple operation on column vectors.
  */
 
+/*!
+ * \file vpColVector.h
+ * \brief definition of column vector class as well
+ * as a set of operations on these vector
+ */
+
 #ifndef _vpColVector_h_
 #define _vpColVector_h_
+
+#include <visp3/core/vpConfig.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+class vpColVector;
+}
+#endif
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#if defined(ENABLE_VISP_NAMESPACE)
+void to_json(nlohmann::json &j, const visp::vpColVector &pose);
+void from_json(const nlohmann::json &j, visp::vpColVector &pose);
+#endif
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+class vpMatrix;
+class vpRowVector;
+class vpRotationVector;
+class vpTranslationVector;
+class vpPoseVector;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoseVector.h>
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
-
-class vpMatrix;
-class vpRowVector;
-class vpRotationVector;
-class vpTranslationVector;
-class vpPoseVector;
-
-/*!
- * \file vpColVector.h
- * \brief definition of column vector class as well
- * as a set of operations on these vector
- */
 
 /*!
  * \class vpColVector
@@ -159,7 +182,11 @@ class vpPoseVector;
  * {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
  * \endcode
  */
-class VISP_EXPORT vpColVector : public vpArray2D<double>
+class VISP_EXPORT
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+vpColVector: public vpArray2D<double>
 {
   friend class vpMatrix;
 
@@ -270,7 +297,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   /*!
@@ -1332,7 +1361,7 @@ public:
    * @param j : Resulting json object.
    * @param v : The object to convert.
    */
-  friend void to_json(nlohmann::json &j, const vpColVector &v);
+  friend void ::to_json(nlohmann::json &j, const vpColVector &v);
 
   /*!
    * Retrieve a vpColVector object from a JSON representation.
@@ -1340,7 +1369,7 @@ public:
    * @param j : JSON representation to convert.
    * @param v : Converted object.
    */
-  friend void from_json(const nlohmann::json &j, vpColVector &v);
+  friend void ::from_json(const nlohmann::json &j, vpColVector &v);
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -1446,6 +1475,10 @@ public:
 #endif
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \relates vpColVector
  * Allows to multiply a scalar by a column vector.
@@ -1454,24 +1487,42 @@ public:
 VISP_EXPORT
 #endif
 vpColVector operator*(const double &x, const vpColVector &v);
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-inline void to_json(nlohmann::json &j, const vpColVector &v)
+inline void to_json(nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+const visp::vpColVector &v
+#else
+const vpColVector &v
+#endif
+)
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace visp;
+#endif
   const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
-inline void from_json(const nlohmann::json &j, vpColVector &v)
+inline void from_json(const nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+visp::vpColVector &v
+#else
+vpColVector &v
+#endif
+)
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace visp;
+#endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   from_json(j, *asArray);
   if (v.getCols() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
   }
 }
-
-
 #endif
-
 #endif

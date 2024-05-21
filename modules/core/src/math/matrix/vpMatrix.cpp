@@ -62,6 +62,10 @@
 #include <Simd/SimdLib.h>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #include <gsl/gsl_eigen.h>
@@ -499,8 +503,8 @@ void vpMatrix::transpose(vpMatrix &At) const
     // https://stackoverflow.com/a/21548079
     const int tileSize = 32;
     for (unsigned int i = 0; i < rowNum; i += tileSize) {
-      for (unsigned int j = 0; j < colNum; j++) {
-        for (unsigned int b = 0; b < static_cast<unsigned int>(tileSize) && i + b < rowNum; b++) {
+      for (unsigned int j = 0; j < colNum; ++j) {
+        for (unsigned int b = 0; ((b < static_cast<unsigned int>(tileSize)) && ((i + b) < rowNum)); ++b) {
           At[j][i + b] = (*this)[i + b][j];
         }
       }
@@ -4995,10 +4999,10 @@ vpColVector vpMatrix::getCol(unsigned int j) const { return getCol(j, 0, rowNum)
 
     A.print(std::cout, 4);
 
-    vpRowVector rv = A.getRow(1);
-    std::cout << "Row vector: \n" << rv << std::endl;
+vpRowVector rv = A.getRow(1);
+std::cout << "Row vector: \n" << rv << std::endl;
   }
-  \endcode
+\endcode
 It produces the following output :
 \code
 [4, 4] =
@@ -6722,3 +6726,6 @@ void vpMatrix::setIdentity(const double &val)
 }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

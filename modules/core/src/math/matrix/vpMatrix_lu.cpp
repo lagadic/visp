@@ -74,6 +74,10 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*--------------------------------------------------------------------
   LU Decomposition  related functions
 -------------------------------------------------------------------- */
@@ -623,5 +627,8 @@ double vpMatrix::detByLUEigen3() const
                                                                                         this->getCols());
 
   return M.determinant();
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

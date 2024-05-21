@@ -44,6 +44,12 @@
 #include <visp3/gui/vpPlotCurve.h>
 
 #if defined(VISP_HAVE_DISPLAY)
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 vpPlotCurve::vpPlotCurve()
   : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(), pointListx(), pointListy(),
   pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
@@ -114,8 +120,12 @@ void vpPlotCurve::plotList(const vpImage<unsigned char> &I, double xorg, double 
   }
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpPlotCurve.cpp.o) has no symbols
 void dummy_vpPlotCurve() { };
 #endif
 #endif

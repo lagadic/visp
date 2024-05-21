@@ -32,8 +32,19 @@
  * frame to an other.
  */
 
-#ifndef vpForceTwistMatrix_h
-#define vpForceTwistMatrix_h
+#ifndef _vpForceTwistMatrix_h_
+#define _vpForceTwistMatrix_h_
+
+#include <visp3/core/vpConfig.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+class vpMatrix;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -41,6 +52,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpForceTwistMatrix
 
@@ -235,6 +250,8 @@ public:
   vp_deprecated void setIdentity();
   //@}
 #endif
-};
-
+  };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

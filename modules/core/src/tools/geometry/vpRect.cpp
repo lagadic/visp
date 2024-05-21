@@ -42,6 +42,10 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRect.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Constructs a default rectangle with the \e top, \e left corner set to (0,0)
   and \e width and \e height set to 1.
@@ -271,3 +275,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)
   os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
   return os;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -39,6 +39,11 @@
 #include <iostream>
 #include <string>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpPoseException
  * \ingroup group_vision_pose
@@ -88,5 +93,9 @@ public:
    */
   explicit vpPoseException(int id) : vpException(id) { }
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

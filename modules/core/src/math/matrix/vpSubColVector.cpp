@@ -41,6 +41,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpSubColVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 //! Default constructor that creates an empty vector.
 vpSubColVector::vpSubColVector() : vpColVector(), m_pRowNum(0), m_parent(nullptr) { }
 
@@ -247,3 +251,6 @@ vpSubColVector &vpSubColVector::operator=(const vpPoseVector &p)
   memcpy(data, p.data, rowNum * sizeof(double));
   return *this;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

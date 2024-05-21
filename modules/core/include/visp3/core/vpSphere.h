@@ -36,15 +36,21 @@
  * \brief forward projection of a sphere
  */
 
-#ifndef vpSphere_hh
-#define vpSphere_hh
+#ifndef _vpSphere_h_
+#define _vpSphere_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
 #include <math.h>
 #include <visp3/core/vpForwardProjection.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpSphere
  * \ingroup group_core_geometry
@@ -115,9 +121,6 @@ public:
 
   void setWorldCoordinates(double oX, double oY, double oZ, double R);
 
-protected:
-  void init() vp_override;
-
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -147,6 +150,11 @@ public:
   vp_deprecated double get_mu02() const { return p[4]; }
   //@}
 #endif
-};
+protected:
+  void init() vp_override;
 
+};
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

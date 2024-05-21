@@ -31,20 +31,25 @@
  * Forward projection.
  */
 
-#ifndef vpForwardProjection_H
-#define vpForwardProjection_H
-
 /*!
  * \file vpForwardProjection.h
  * \brief  class that defines what is a generic geometric feature
  */
 
+#ifndef _vpForwardProjection_H_
+#define _vpForwardProjection_H_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTracker.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpForwardProjection
  * \brief Class that defines what is a generic geometric feature.
@@ -193,6 +198,16 @@ public:
   void track(const vpHomogeneousMatrix &cMo);
   //@}
 
+
+public:
+  /** @name Public Attributes Inherited from vpForwardProjection */
+  //@{
+  /*!
+   * Feature coordinates expressed in the object frame.
+   */
+  vpColVector oP;
+  //@}
+
 protected:
   /** @name Protected Member Functions Inherited from vpForwardProjection */
   //@{
@@ -205,17 +220,10 @@ protected:
   virtual void init() = 0;
   //@}
 
-public:
-  /** @name Public Attributes Inherited from vpForwardProjection */
-  //@{
-  /*!
-   * Feature coordinates expressed in the object frame.
-   */
-  vpColVector oP;
-  //@}
-
 private:
   vpForwardProjectionDeallocatorType deallocate;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

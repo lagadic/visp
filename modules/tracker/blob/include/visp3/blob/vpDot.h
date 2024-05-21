@@ -58,6 +58,11 @@
 #pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpDot
  *
@@ -414,4 +419,7 @@ public:
                       vpColor color = vpColor::red, unsigned int thickness = 1);
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

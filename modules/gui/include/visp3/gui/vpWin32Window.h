@@ -37,11 +37,12 @@
  *
 *****************************************************************************/
 
+#ifndef vpWin32Window_HH
+#define vpWin32Window_HH
+
 #include <visp3/core/vpConfig.h>
 
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
-#ifndef vpWin32Window_HH
-#define vpWin32Window_HH
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -53,6 +54,11 @@
 #include <visp3/gui/vpGDIRenderer.h>
 #include <visp3/gui/vpWin32Renderer.h>
 #include <windows.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 // ViSP-defined messages for window's callback function
 #define vpWM_GETCLICK WM_USER + 1
@@ -134,6 +140,9 @@ public:
   friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif
 #endif

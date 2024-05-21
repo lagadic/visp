@@ -51,6 +51,11 @@
 #include <optional>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /**
  * \ingroup group_hough_transform
  * \brief Class that permits to detect 2D circles in a image using
@@ -1281,4 +1286,9 @@ protected:
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the final circles.*/
   std::vector<std::vector<std::pair<unsigned int, unsigned int> > > m_finalCirclesVotingPoints; /*!< Points that voted for each final circle.*/
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif

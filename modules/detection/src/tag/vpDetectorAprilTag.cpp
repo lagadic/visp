@@ -60,6 +60,11 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/vision/vpPose.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpDetectorAprilTag::Impl
 {
@@ -1202,6 +1207,10 @@ void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has

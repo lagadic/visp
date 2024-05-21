@@ -49,6 +49,10 @@
 
 #if defined(VISP_HAVE_PNG)
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a PNG file.
@@ -598,4 +602,9 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
   fclose(file);
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif

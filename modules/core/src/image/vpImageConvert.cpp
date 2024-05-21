@@ -30,8 +30,7 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert.cpp
@@ -47,14 +46,20 @@
 
 
 #include <visp3/core/vpConfig.h>
-// image
+
+#ifndef VISP_SKIP_BAYER_CONVERSION
 #include "private/vpBayerConversion.h"
+#endif
 #include "private/vpImageConvert_impl.h"
 #if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.h>
 #endif
 #include <visp3/core/vpImageConvert.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 bool vpImageConvert::YCbCrLUTcomputed = false;
 int vpImageConvert::vpCrr[256];
 int vpImageConvert::vpCgb[256];
@@ -1133,7 +1138,7 @@ void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned
     *(++pt_output) = *(++pt_input); // R
     *(++pt_output) = *(++pt_input); // G
     *(++pt_output) = *(++pt_input); // B
-    pt_input++;
+    ++pt_input;
   }
 #endif
 }
@@ -1273,7 +1278,7 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
   while (pt_input != pt_end) {
     *pt_output = static_cast<unsigned char>((0.2126 * (*pt_input)) + (0.7152 * (*(pt_input + 1))) + (0.0722 * (*(pt_input + 2))));
     pt_input += 4;
-    pt_output++;
+    ++pt_output;
   }
 #endif
 }
@@ -1321,12 +1326,12 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsign
 
   while (pt_input != pt_end) {
     unsigned char p = *pt_input;
-    *(pt_output) = p;                         // R
+    *pt_output = p;                         // R
     *(pt_output + 1) = p;                     // G
     *(pt_output + 2) = p;                     // B
     *(pt_output + 3) = vpRGBa::alpha_default; // A
 
-    pt_input++;
+    ++pt_input;
     pt_output += 4;
   }
 #endif
@@ -1353,11 +1358,11 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned
 
   while (pt_input != pt_end) {
     unsigned char p = *pt_input;
-    *(pt_output) = p;     // R
+    *pt_output = p;     // R
     *(pt_output + 1) = p; // G
     *(pt_output + 2) = p; // B
 
-    pt_input++;
+    ++pt_input;
     pt_output += 3;
   }
 #endif
@@ -1972,7 +1977,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
       if ((tabChannel[j]->getHeight() != height) || (tabChannel[j]->getWidth() != width)) {
         tabChannel[j]->resize(height, width);
       }
-      dst = (unsigned char *)tabChannel[j]->bitmap;
+      dst = static_cast<unsigned char *>(tabChannel[j]->bitmap);
 
       input = (unsigned char *)src.bitmap + j;
       i = 0;
@@ -1982,16 +1987,16 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
         for (; i < n; i += 4) {
           *dst = *input;
           input += 4;
-          dst++;
+          ++dst;
+          *dst = *input;
+          input += 4;
+          ++dst;
           *dst = *input;
           input += 4;
           dst++;
           *dst = *input;
           input += 4;
-          dst++;
-          *dst = *input;
-          input += 4;
-          dst++;
+          ++dst;
         }
         n += 3;
       }
@@ -1999,7 +2004,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
       for (; i < n; ++i) {
         *dst = *input;
         input += 4;
-        dst++;
+        ++dst;
       }
     }
   }
@@ -2132,7 +2137,7 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, un
 }
 
 // Bilinear
-
+#ifndef VISP_SKIP_BAYER_CONVERSION
 /*!
   Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing
   method.
@@ -2422,3 +2427,8 @@ void vpImageConvert::demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rg
 {
   demosaicRGGBToRGBaMalvarTpl(rggb, rgba, width, height, nThreads);
 }
+#endif // VISP_SKIP_BAYER_CONVERSION
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

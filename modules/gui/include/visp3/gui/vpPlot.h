@@ -44,6 +44,12 @@
 #include <visp3/gui/vpPlotGraph.h>
 
 #if defined(VISP_HAVE_DISPLAY)
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpPlot
  * \ingroup group_gui_plotter
@@ -192,6 +198,10 @@ private:
   void initNbGraph(unsigned int nbGraph);
   void displayGrid();
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 
 #endif

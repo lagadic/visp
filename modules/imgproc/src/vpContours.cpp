@@ -70,8 +70,13 @@
 #include <map>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+namespace vp
+#else
+namespace visp
+#endif
 {
+
 bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direction)
 {
   if (from == to) {
@@ -131,7 +136,7 @@ bool crossesEastBorder(const vpImage<int> &I, bool checked[8], const vpImagePoin
   return (I[i][j] != 0) && ((static_cast<unsigned int>(point.get_j()) == (I.getWidth() - 1)) || b);
 }
 
-void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint &point, bool checked[8], int nbd)
+void addContourPoint(vpImage<int> &I, vpContour *border, const vpImagePoint &point, bool checked[8], int nbd)
 {
   border->m_points.push_back(vpImagePoint(point.get_i() - 1, point.get_j() - 1)); // remove 1-pixel padding
 
@@ -147,7 +152,7 @@ void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint 
   } // Otherwise leave it alone
 }
 
-void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vp::vpContour *border, int nbd)
+void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vpContour *border, int nbd)
 {
   vpDirection dir;
   if (!fromTo(ij, i2j2, dir)) {
@@ -234,25 +239,22 @@ bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
   return ((I[i][j] >= 1) && ((j == (I.getWidth() - 1)) || (I[i][j + 1] == 0)));
 }
 
-void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contour_list)
+void getContoursList(const vpContour &root, int level, vpContour &contour_list)
 {
   if ((level > 0) && (level < std::numeric_limits<int>::max())) {
-    vp::vpContour *contour_node = new vp::vpContour;
+    vpContour *contour_node = new vpContour;
     contour_node->m_contourType = root.m_contourType;
     contour_node->m_points = root.m_points;
 
     contour_list.m_children.push_back(contour_node);
   }
 
-  std::vector<vp::vpContour *>::const_iterator root_m_children_end = root.m_children.end();
-  for (std::vector<vp::vpContour *>::const_iterator it = root.m_children.begin(); it != root_m_children_end; ++it) {
+  std::vector<vpContour *>::const_iterator root_m_children_end = root.m_children.end();
+  for (std::vector<vpContour *>::const_iterator it = root.m_children.begin(); it != root_m_children_end; ++it) {
     getContoursList(**it, level + 1, contour_list);
   }
 }
-} // namespace
 
-namespace vp
-{
 void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours, unsigned char grayValue)
 {
   if (I.getSize() == 0) {
@@ -325,7 +327,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
   // Background contour
   // By default the root contour is a hole contour
-  vpContour *root = new vpContour(vp::CONTOUR_HOLE);
+  vpContour *root = new vpContour(CONTOUR_HOLE);
 
   std::map<int, vpContour *> borderMap;
   borderMap[lnbd] = root;
@@ -348,16 +350,16 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
           //(1) (a)
           ++nbd;
           from.set_j(from.get_j() - 1);
-          border->m_contourType = vp::CONTOUR_OUTER;
+          border->m_contourType = CONTOUR_OUTER;
           borderPrime = borderMap[lnbd];
 
           // Table 1
           switch (borderPrime->m_contourType) {
-          case vp::CONTOUR_OUTER:
+          case CONTOUR_OUTER:
             border->setParent(borderPrime->m_parent);
             break;
 
-          case vp::CONTOUR_HOLE:
+          case CONTOUR_HOLE:
             border->setParent(borderPrime);
             break;
 
@@ -375,15 +377,15 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
           borderPrime = borderMap[lnbd];
           from.set_j(from.get_j() + 1);
-          border->m_contourType = vp::CONTOUR_HOLE;
+          border->m_contourType = CONTOUR_HOLE;
 
           // Table 1
           switch (borderPrime->m_contourType) {
-          case vp::CONTOUR_OUTER:
+          case CONTOUR_OUTER:
             border->setParent(borderPrime);
             break;
 
-          case vp::CONTOUR_HOLE:
+          case CONTOUR_HOLE:
             border->setParent(borderPrime->m_parent);
             break;
 
@@ -469,4 +471,5 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
   delete root;
   root = nullptr;
 }
-};
+
+} // namespace

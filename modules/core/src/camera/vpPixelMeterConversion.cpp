@@ -43,6 +43,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * Convert ellipse parameters (ie ellipse center and normalized centered moments)
  * from pixels \f$(u_c, v_c, n_{{20}_p}, n_{{11}_p}, n_{{02}_p})\f$
@@ -335,4 +339,7 @@ void vpPixelMeterConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   y = objectPoints_vec[0].y;
 }
 
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
+}
 #endif

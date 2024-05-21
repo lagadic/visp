@@ -36,11 +36,13 @@
  *
 *****************************************************************************/
 
+
+#ifndef vpGDIRenderer_HH
+#define vpGDIRenderer_HH
+
 #include <visp3/core/vpConfig.h>
 
 #if (defined(VISP_HAVE_GDI))
-#ifndef vpGDIRenderer_HH
-#define vpGDIRenderer_HH
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -55,6 +57,11 @@
 #include <visp3/gui/vpWin32Renderer.h>
 
 #include <visp3/core/vpMath.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
@@ -130,6 +137,10 @@ private:
   // converst a vpImage<unsigned char> into a HBITMAP .
   void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif
 #endif

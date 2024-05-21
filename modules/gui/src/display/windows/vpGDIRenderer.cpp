@@ -44,6 +44,11 @@
 
 #include <visp3/gui/vpGDIRenderer.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
   Constructor.
 */
@@ -1027,8 +1032,12 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 
   delete[] imBuffer;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpGDIRenderer.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpGDIRenderer.cpp.o) has no symbols
 void dummy_vpGDIRenderer() { };
 #endif

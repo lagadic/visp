@@ -52,6 +52,10 @@
 #include <math.h>
 #include <visp3/core/vpDebug.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Initialize the rotation matrix as identity.
 
@@ -1138,3 +1142,6 @@ void vpRotationMatrix::orthogonalize()
 void vpRotationMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -33,16 +33,20 @@
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
  */
 
-#include <math.h>
-
-#include <visp3/core/vpRxyzVector.h>
-
 /*!
   \file vpRxyzVector.cpp
   \brief class that consider the case of the  Rxyz angle parameterization for
   the rotation : Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
+#include <math.h>
+
+#include <visp3/core/vpRxyzVector.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRxyzVector::vpRxyzVector() : vpRotationVector(3) { }
 
@@ -320,5 +324,8 @@ vpRxyzVector &vpRxyzVector::operator=(const std::initializer_list<double> &list)
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

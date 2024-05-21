@@ -39,7 +39,11 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 namespace vp
+#else
+namespace visp
+#endif
 {
 
 void fillHoles(vpImage<unsigned char> &I
@@ -102,7 +106,7 @@ void fillHoles(vpImage<unsigned char> &I
   }
 
   // Perform flood fill
-  vp::floodFill(flood_fill_mask, vpImagePoint(0, 0), 0, 255);
+  floodFill(flood_fill_mask, vpImagePoint(0, 0), 0, 255);
 
   // Get current mask
   vpImage<unsigned char> mask(I.getHeight(), I.getWidth());
@@ -159,4 +163,5 @@ void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned ch
     }
   } while (h_kp1_eq_h_k == false);
 }
-};
+
+} // namespace

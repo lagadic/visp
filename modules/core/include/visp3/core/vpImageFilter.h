@@ -31,13 +31,13 @@
  * Various image tools, convolution, ...
  */
 
+/*!
+ * \file vpImageFilter.h
+ * \brief  Various image filter, convolution, etc...
+ */
+
 #ifndef _vpImageFilter_h_
 #define _vpImageFilter_h_
-
- /*!
-  * \file vpImageFilter.h
-  * \brief  Various image filter, convolution, etc...
-  */
 
 #include <fstream>
 #include <iostream>
@@ -59,6 +59,10 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpImageFilter
  *
@@ -68,70 +72,6 @@
  */
 class VISP_EXPORT vpImageFilter
 {
-private:
-  /**
-   * \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
-   * \b I with 0s.
-   *
-   * @tparam ImageType Any numerical type (int, float, ...)
-   * @param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
-   * @param height The desired height.
-   * @param width The desired width.
-   * @param I The image that must be resized and potentially initialized.
-   */
-  template<typename ImageType>
-  static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int height, const unsigned int width, vpImage<ImageType> &I)
-  {
-    if (p_mask == nullptr) {
-      // Just need to resize the output image, values will be computed and overwrite what is inside the image
-      I.resize(height, width);
-    }
-    else {
-      // Need to reset the image because some points will not be computed
-      I.resize(height, width, static_cast<ImageType>(0));
-    }
-  }
-
-/**
-   * \brief Indicates if the boolean mask is true at the desired coordinates.
-   *
-   * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.
-   * \param[in] r The row index in the boolean mask.
-   * \param[in] c The column index in the boolean mask.
-   * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
-   * \return false False otherwise.
-   */
-  static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
-  {
-    bool computeVal = true;
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-    if (p_mask != nullptr)
-#else
-    if (p_mask != NULL)
-#endif
-    {
-      computeVal = (*p_mask)[r][c];
-    }
-    return computeVal;
-  }
-
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
-  // Helper to apply the scale to the raw values of the filters
-  template <typename FilterType>
-  static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
-  {
-    const unsigned int nbRows = filter.getRows();
-    const unsigned int nbCols = filter.getCols();
-    for (unsigned int r = 0; r < nbRows; ++r) {
-      for (unsigned int c = 0; c < nbCols; ++c) {
-        filter[r][c] = filter[r][c] * scale;
-      }
-    }
-  }
-#endif
-
 public:
   //! Canny filter backends for the edge detection operations
   typedef enum vpCannyBackendType
@@ -259,7 +199,8 @@ public:
             for (unsigned int c = 0; c < nbCols; ++c) {
               filter[r][c] = filter[r][c] * scale;
             }
-          }};
+          }
+          };
 #endif
 
         // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
@@ -1693,6 +1634,73 @@ public:
   static float median(const vpImage<unsigned char> &Isrc);
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
-};
 
+private:
+  /**
+   * \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
+   * \b I with 0s.
+   *
+   * @tparam ImageType Any numerical type (int, float, ...)
+   * @param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
+   * @param height The desired height.
+   * @param width The desired width.
+   * @param I The image that must be resized and potentially initialized.
+   */
+  template<typename ImageType>
+  static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int height, const unsigned int width, vpImage<ImageType> &I)
+  {
+    if (p_mask == nullptr) {
+      // Just need to resize the output image, values will be computed and overwrite what is inside the image
+      I.resize(height, width);
+    }
+    else {
+      // Need to reset the image because some points will not be computed
+      I.resize(height, width, static_cast<ImageType>(0));
+    }
+  }
+
+/**
+   * \brief Indicates if the boolean mask is true at the desired coordinates.
+   *
+   * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.
+   * \param[in] r The row index in the boolean mask.
+   * \param[in] c The column index in the boolean mask.
+   * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
+   * \return false False otherwise.
+   */
+  static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
+  {
+    bool computeVal = true;
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    if (p_mask != nullptr)
+#else
+    if (p_mask != NULL)
+#endif
+    {
+      computeVal = (*p_mask)[r][c];
+    }
+    return computeVal;
+  }
+
+// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+// and not __cplusplus == 199711L
+#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+  // Helper to apply the scale to the raw values of the filters
+  template <typename FilterType>
+  static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+  {
+    const unsigned int nbRows = filter.getRows();
+    const unsigned int nbCols = filter.getCols();
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }
+  }
+#endif
+
+};
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

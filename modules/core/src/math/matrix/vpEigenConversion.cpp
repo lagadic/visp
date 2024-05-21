@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpEigenConversion.h>
 
-namespace vp
+namespace VISP_EIGEN_CONVERSION_NAMESPACE
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */

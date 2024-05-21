@@ -34,6 +34,10 @@
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpMath.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 vpImageCircle::vpImageCircle()
   : m_center()
   , m_radius(0.)
@@ -1164,3 +1168,6 @@ float vpImageCircle::get_n11() const
 {
   return 0.;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

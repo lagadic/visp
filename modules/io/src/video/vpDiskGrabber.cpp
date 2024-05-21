@@ -33,6 +33,11 @@
 
 #include <visp3/io/vpDiskGrabber.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 vpDiskGrabber::vpDiskGrabber()
   : m_image_number(0), m_image_number_next(0), m_image_step(1), m_number_of_zero(0), m_directory("/tmp"),
   m_base_name("I"), m_extension("pgm"), m_use_generic_name(false), m_generic_name("empty")
@@ -247,3 +252,7 @@ void vpDiskGrabber::setGenericName(const std::string &generic_name)
   m_generic_name = generic_name;
   m_use_generic_name = true;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

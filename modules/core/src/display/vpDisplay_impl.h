@@ -37,6 +37,10 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPoint.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 template <class Type> void vp_display_close(vpImage<Type> &I)
 {
   if (I.display != nullptr) {
@@ -724,3 +728,6 @@ template <class Type> unsigned int vp_display_get_down_scaling_factor(const vpIm
     return 1;
   }
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

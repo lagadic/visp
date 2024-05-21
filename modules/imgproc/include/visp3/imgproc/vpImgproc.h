@@ -45,10 +45,17 @@
 #include <visp3/core/vpImageMorphology.h>
 #include <visp3/imgproc/vpContours.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#define VISP_IMGPROC_NAMESPACE vp
+#else
+#define VISP_IMGPROC_NAMESPACE visp
+#endif
+
+namespace VISP_IMGPROC_NAMESPACE
+{
+
 #define USE_OLD_FILL_HOLE 0
 
-namespace vp
-{
 /*!
  * Retinex level that allows to specifies distribution
  * of the Gaussian blurring kernel sizes for scale division values > 2.
@@ -126,7 +133,7 @@ VISP_EXPORT std::string vpGammaMethodList(const std::string &pref = "<", const s
                                             const std::string &suf = ">");
 
 /**
- * \brief Cast a \b vp::vpGammaMethod into a string, to know its name.
+ * \brief Cast a \b vpGammaMethod into a string, to know its name.
  *
  * \param[in] type The type that must be casted into a string.
  * \return std::string The corresponding name.
@@ -134,10 +141,10 @@ VISP_EXPORT std::string vpGammaMethodList(const std::string &pref = "<", const s
 VISP_EXPORT std::string vpGammaMethodToString(const vpGammaMethod &type);
 
 /**
- * \brief Cast a string into a \b vp::vpGammaMethod.
+ * \brief Cast a string into a \b vpGammaMethod.
  *
  * \param[in] name The name of the backend.
- * \return vp::vpGammaMethod The corresponding enumeration value.
+ * \return vpGammaMethod The corresponding enumeration value.
  */
 VISP_EXPORT vpGammaMethod vpGammaMethodFromString(const std::string &name);
 
@@ -164,7 +171,7 @@ VISP_EXPORT std::string vpGammaColorHandlingList(const std::string &pref = "<", 
                                             const std::string &suf = ">");
 
 /**
- * \brief Cast a \b vp::vpGammaColorHandling into a string, to know its name.
+ * \brief Cast a \b vpGammaColorHandling into a string, to know its name.
  *
  * \param[in] type The type that must be casted into a string.
  * \return std::string The corresponding name.
@@ -172,10 +179,10 @@ VISP_EXPORT std::string vpGammaColorHandlingList(const std::string &pref = "<", 
 VISP_EXPORT std::string vpGammaColorHandlingToString(const vpGammaColorHandling &type);
 
 /**
- * \brief Cast a string into a \b vp::vpGammaColorHandling.
+ * \brief Cast a string into a \b vpGammaColorHandling.
  *
  * \param[in] name The name of the backend.
- * \return vp::vpGammaColorHandling The corresponding enumeration value.
+ * \return vpGammaColorHandling The corresponding enumeration value.
  */
 VISP_EXPORT vpGammaColorHandling vpGammaColorHandlingFromString(const std::string &name);
 
@@ -363,7 +370,7 @@ VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = vp::GAMMA_MANUAL,
+VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = GAMMA_MANUAL,
                                  const vpImage<bool> *p_mask = nullptr);
 
 /*!
@@ -383,7 +390,7 @@ VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, 
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const float &gamma,
-                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -398,8 +405,8 @@ VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsig
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
-                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = GAMMA_RGB,
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -416,8 +423,8 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const v
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const float &gamma,
-                                 const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
-                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+                                 const vpGammaColorHandling &colorHandling = GAMMA_RGB,
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_retinex
@@ -648,9 +655,10 @@ VISP_EXPORT void reconstruct(const vpImage<unsigned char> &marker, const vpImage
  * \param backgroundValue : Value to set to the background.
  * \param foregroundValue : Value to set to the foreground.
  */
-VISP_EXPORT unsigned char autoThreshold(vpImage<unsigned char> &I, const vp::vpAutoThresholdMethod &method,
+VISP_EXPORT unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                                         const unsigned char backgroundValue = 0,
                                         const unsigned char foregroundValue = 255);
-} // namespace vp
+
+} // namespace
 
 #endif

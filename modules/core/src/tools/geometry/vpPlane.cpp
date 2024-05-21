@@ -43,6 +43,10 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Copy operator.
 */
@@ -389,3 +393,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p)
 {
   return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << "," << p.getD() << ") ");
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -45,6 +45,11 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 void vpHomography::hartleyNormalization(const std::vector<double> &x, const std::vector<double> &y,
@@ -308,3 +313,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     aHb = aHbn;
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

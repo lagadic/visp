@@ -42,6 +42,10 @@
 
 #include <visp3/core/vpThetaUVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 const double vpThetaUVector::minimum = 0.0001;
 
 /*! Default constructor that initialize all the 3 angles to zero. */
@@ -614,5 +618,8 @@ vpThetaUVector &vpThetaUVector::operator=(const std::initializer_list<double> &l
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

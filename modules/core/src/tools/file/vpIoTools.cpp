@@ -486,6 +486,10 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -497,6 +501,9 @@ const char vpIoTools::separator =
 '\\';
 #else
 '/';
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
+}
 #endif
 
 namespace
@@ -538,6 +545,10 @@ std::string &rtrim(std::string &s)
 }
 } // namespace
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
@@ -2121,16 +2132,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2142,16 +2153,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 
@@ -2693,3 +2704,6 @@ bool vpIoTools::parseBoolean(std::string input)
    Remove leading and trailing whitespaces from a string.
  */
 std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

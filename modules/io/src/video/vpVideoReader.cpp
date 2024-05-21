@@ -45,6 +45,11 @@
 #include <iostream>
 #include <limits> // numeric_limits
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
   Basic constructor.
 */
@@ -906,3 +911,7 @@ bool vpVideoReader::isVideoFormat() const
     return false;
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

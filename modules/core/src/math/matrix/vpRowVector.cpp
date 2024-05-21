@@ -51,6 +51,10 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 //! Copy operator.   Allow operation such as A = v
 vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 {
@@ -769,7 +773,7 @@ v: 0  10  11  3
  */
 void vpRowVector::insert(unsigned int i, const vpRowVector &v)
 {
-  if ( (i + v.size()) > this->size()) {
+  if ((i + v.size()) > this->size()) {
     throw(vpException(vpException::dimensionError,
                       "Unable to insert (1x%d) row vector in (1x%d) row "
                       "vector at position (%d)",
@@ -1067,7 +1071,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
       }
       else {
         assert(maxAfter > 1);
-        s.width( static_cast<std::streamsize> (maxAfter));
+        s.width(static_cast<std::streamsize> (maxAfter));
         s << ".0";
       }
     }
@@ -1366,3 +1370,6 @@ std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
   os << "]" << std::endl;
   return os;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

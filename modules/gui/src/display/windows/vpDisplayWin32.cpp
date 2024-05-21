@@ -43,6 +43,11 @@
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/gui/vpDisplayWin32.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 const int vpDisplayWin32::MAX_INIT_DELAY = 5000;
 
 /*!
@@ -919,7 +924,12 @@ unsigned int vpDisplayWin32::getScreenHeight()
   getScreenSize(width, height);
   return height;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpDisplayWin32.cpp.o) has no symbols
 void dummy_vpDisplayWin32() { };
 #endif

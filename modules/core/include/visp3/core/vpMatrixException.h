@@ -40,6 +40,10 @@
 #include <iostream>
 #include <string>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpMatrixException
  * \ingroup group_core_debug
@@ -99,5 +103,7 @@ public:
    */
   explicit vpMatrixException(int id) : vpException(id) { }
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

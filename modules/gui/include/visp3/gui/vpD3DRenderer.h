@@ -31,14 +31,13 @@
  * D3D renderer for windows 32 display
  */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef VPD3DRENDERER_HH
+#define VPD3DRENDERER_HH
 
 #include <visp3/core/vpConfig.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if (defined(VISP_HAVE_D3D9))
-
-#ifndef VPD3DRENDERER_HH
-#define VPD3DRENDERER_HH
 
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
@@ -49,6 +48,11 @@
 #include <windows.h>
 
 #include <iostream>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 /*!
  * \class vpD3DRenderer.h
@@ -189,5 +193,10 @@ private:
   unsigned int supPowerOf2(unsigned int n);
 };
 #endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif
 #endif

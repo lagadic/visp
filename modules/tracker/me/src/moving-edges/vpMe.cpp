@@ -41,6 +41,11 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/me/vpMe.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
@@ -498,3 +503,7 @@ void vpMe::setMaskSize(const unsigned int &mask_size)
   m_mask_size = mask_size;
   initMask();
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

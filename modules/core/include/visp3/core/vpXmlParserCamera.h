@@ -38,14 +38,18 @@
 
 */
 
-#ifndef vpXMLPARSERCAMERA_H
-#define vpXMLPARSERCAMERA_H
+#ifndef _vpXMLPARSERCAMERA_H_
+#define _vpXMLPARSERCAMERA_H_
 
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpCameraParameters.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpXmlParserCamera
 
@@ -198,5 +202,8 @@ private:
   class Impl;
   Impl *m_impl;
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

@@ -41,7 +41,10 @@
 // Modifications done in this file should be reported in all vpDisplay_*.cpp
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
-
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Close the display attached to I.
 */
@@ -1326,3 +1329,6 @@ void vpDisplay::setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy)
   \param I : Image associated to the display window.
 */
 unsigned int vpDisplay::getDownScalingFactor(const vpImage<vpRGBa> &I) { return vp_display_get_down_scaling_factor(I); }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

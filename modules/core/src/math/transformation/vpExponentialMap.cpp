@@ -38,6 +38,10 @@
 
 #include <visp3/core/vpExponentialMap.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
 
   Compute the exponential map. The inverse function is inverse().  The
@@ -285,3 +289,6 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
 
   return v;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

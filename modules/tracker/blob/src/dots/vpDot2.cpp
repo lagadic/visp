@@ -54,6 +54,11 @@
 #include <math.h>
 #include <visp3/blob/vpDot2.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /******************************************************************************
  *
  *      CONSTRUCTORS AND DESTRUCTORS
@@ -2506,3 +2511,7 @@ void vpDot2::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const st
   documentation) to the stream \e os, and returns a reference to the stream.
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot2 &d) { return (os << "(" << d.getCog() << ")"); }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

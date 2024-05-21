@@ -53,6 +53,10 @@
 #include <thread>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #define EPS 1e-6
 
 namespace
@@ -592,3 +596,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
     listInliers = pose.getRansacInliers();
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

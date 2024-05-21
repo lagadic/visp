@@ -33,10 +33,12 @@
  *
 *****************************************************************************/
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef vpPlotGraph_H
 #define vpPlotGraph_H
+
+#include <visp3/core/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -51,6 +53,11 @@
 #include <visp3/core/vpPoint.h>
 
 #if defined(VISP_HAVE_DISPLAY)
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 class vpPlotGraph
 {
@@ -216,6 +223,10 @@ public:
   void setUnitZ(const std::string &unitz);
 };
 
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif
 #endif

@@ -31,15 +31,21 @@
  * Operation on row vectors.
  */
 
-#ifndef vpRowVector_H
-#define vpRowVector_H
+#ifndef _vpRowVector_H_
+#define _vpRowVector_H_
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 class vpMatrix;
 class vpColVector;
@@ -335,5 +341,7 @@ public:
 };
 
 VISP_EXPORT vpRowVector operator*(const double &x, const vpRowVector &v);
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

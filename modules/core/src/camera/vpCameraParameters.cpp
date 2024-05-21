@@ -48,6 +48,11 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpMath.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
@@ -683,3 +688,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
   }
   return os;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

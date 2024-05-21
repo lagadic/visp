@@ -44,6 +44,10 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpUniRand.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 // Local helper
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
@@ -696,3 +700,6 @@ unsigned int vpPolygon::getSize() const
 {
   return (static_cast<unsigned int>(_corners.size()));
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

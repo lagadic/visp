@@ -31,14 +31,14 @@
  * Pixel to meter conversion.
  */
 
-#ifndef _vpPixelMeterConversion_h_
-#define _vpPixelMeterConversion_h_
-
 /*!
   \file vpPixelMeterConversion.h
   \brief pixel to meter conversion
-
 */
+
+#ifndef _vpPixelMeterConversion_h_
+#define _vpPixelMeterConversion_h_
+
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
@@ -50,6 +50,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpPixelMeterConversion
 
@@ -384,5 +388,7 @@ public:
   //@}
 #endif
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

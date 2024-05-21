@@ -36,6 +36,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpSubRowVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 //! Default constructor that creates an empty vector.
 vpSubRowVector::vpSubRowVector() : vpRowVector(), m_pColNum(0), m_parent(nullptr) { }
 
@@ -181,3 +185,6 @@ vpSubRowVector &vpSubRowVector::operator=(const double &x)
   }
   return *this;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

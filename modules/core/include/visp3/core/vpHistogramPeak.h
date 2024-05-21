@@ -37,13 +37,17 @@
   Class vpHistogramPeak defines a gray level histogram peak.
 */
 
-#ifndef vpHistogramPeak_h
-#define vpHistogramPeak_h
+#ifndef _vpHistogramPeak_h_
+#define _vpHistogramPeak_h_
 
 #include <visp3/core/vpConfig.h>
 
 #include <ostream>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpHistogramPeak
 
@@ -64,7 +68,7 @@ public:
   vpHistogramPeak(const vpHistogramPeak &p);
 
   /*! Destructor that does nothing. */
-  virtual ~vpHistogramPeak() {}
+  virtual ~vpHistogramPeak() { }
 
   vpHistogramPeak &operator=(const vpHistogramPeak &p);
   bool operator==(const vpHistogramPeak &p) const;
@@ -145,5 +149,7 @@ protected:
  * c-basic-offset: 2
  * End:
  */
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

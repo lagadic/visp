@@ -31,19 +31,24 @@
  * Translation vector.
  */
 
-#ifndef vpTRANSLATIONVECTOR_H
-#define vpTRANSLATIONVECTOR_H
-
 /*!
  * \file vpTranslationVector.h
  * \brief Class that consider the case of a translation vector.
  */
 
+#ifndef _vpTRANSLATIONVECTOR_H_
+#define _vpTRANSLATIONVECTOR_H_
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+class vpMatrix;
 
 /*!
   \class vpTranslationVector
@@ -207,5 +212,7 @@ public:
 protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

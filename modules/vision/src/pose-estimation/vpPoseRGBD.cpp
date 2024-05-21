@@ -37,8 +37,11 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
-namespace
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
 {
+#endif
+
 // See also vpPlaneEstimation.cpp that implements the same functionaly in c++17
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
                               vpColVector &centroid, double &normalized_weights)
@@ -145,8 +148,6 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
 
   normalized_weights = total_w / nPoints;
 }
-
-} // namespace
 
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
                                              const vpCameraParameters &colorIntrinsics,
@@ -445,3 +446,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
   }
   return false;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

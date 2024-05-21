@@ -54,6 +54,11 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 int laFonctionSansNom(double delta);
 void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
 
@@ -1338,8 +1343,12 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
   return mov;
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpPlotGraph.cpp.o) has no symbols
 void dummy_vpPlotGraph() { };
 #endif
 #endif

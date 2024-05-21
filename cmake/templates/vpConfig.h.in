@@ -112,6 +112,9 @@
                                         VISP_VERSION_MINOR, \
                                         VISP_VERSION_PATCH)
 
+// Defined if the user wants to protect the classes in a dedicated visp namespace
+#cmakedefine ENABLE_VISP_NAMESPACE
+
 // Enable debug and trace printings
 #cmakedefine VP_TRACE
 #cmakedefine VP_DEBUG

@@ -34,6 +34,11 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpPose.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 #define DEBUG_LEVEL3 0
@@ -612,3 +617,7 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
 #undef DEBUG_LEVEL3
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

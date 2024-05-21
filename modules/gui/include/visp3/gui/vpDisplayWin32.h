@@ -31,12 +31,13 @@
  * Windows 32 display base class
  */
 
-#include <visp3/core/vpConfig.h>
-
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #ifndef vpDisplayWin32_hh
 #define vpDisplayWin32_hh
+
+#include <visp3/core/vpConfig.h>
+
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #include <string>
 
@@ -50,6 +51,11 @@
 #include <visp3/gui/vpWin32Renderer.h>
 #include <visp3/gui/vpWin32Window.h>
 #include <windows.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
@@ -187,5 +193,9 @@ protected:
 
   void waitForInit();
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

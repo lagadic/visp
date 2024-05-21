@@ -31,17 +31,22 @@
  * Mask on a vpRowVector.
  */
 
-#ifndef _vpSubRowVector_h_
-#define _vpSubRowVector_h_
-
-#include <visp3/core/vpRowVector.h>
-
 /*!
  * \file vpSubRowVector.h
  *
  * \brief Definition of the vpSubRowVector class
  */
 
+#ifndef _vpSubRowVector_h_
+#define _vpSubRowVector_h_
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpRowVector.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpSubRowVector
  * \ingroup group_core_matrices
@@ -54,15 +59,6 @@
  */
 class VISP_EXPORT vpSubRowVector : public vpRowVector
 {
-private:
-  //! Copy constructor unavailable
-  vpSubRowVector(const vpSubRowVector &m /* m */);
-
-protected:
-  //! Number of row of parent vpColVector at initialization
-  unsigned int m_pColNum;
-  //! Parent vpColVector
-  vpRowVector *m_parent;
 
 public:
   vpSubRowVector();
@@ -77,6 +73,18 @@ public:
   vpSubRowVector &operator=(const vpRowVector &B);
   vpSubRowVector &operator=(const vpMatrix &B);
   vpSubRowVector &operator=(const double &x);
-};
 
+protected:
+  //! Number of row of parent vpColVector at initialization
+  unsigned int m_pColNum;
+  //! Parent vpColVector
+  vpRowVector *m_parent;
+
+private:
+  //! Copy constructor unavailable
+  vpSubRowVector(const vpSubRowVector &m /* m */);
+};
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

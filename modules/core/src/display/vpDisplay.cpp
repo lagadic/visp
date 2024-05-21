@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpDisplay.cpp
+  \brief Generic class for image display.
+*/
+
 #include <limits>
 
 #include <visp3/core/vpDisplay.h>
@@ -43,11 +48,10 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPoint.h>
 
-/*!
-  \file vpDisplay.cpp
-  \brief Generic class for image display.
-*/
-
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Default constructor.
 */
@@ -326,5 +330,8 @@ void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
 {
   if (!m_displayHasBeenInitialized) {
     m_scaleType = scaleType;
-  }
 }
+}
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

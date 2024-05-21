@@ -31,15 +31,15 @@
  * Image tools.
  */
 
-#ifndef vpImageTools_H
-#define vpImageTools_H
-
 /*!
   \file vpImageTools.h
 
   \brief Various image tools; sub-image extraction, modification of
   the look up table, binarisation...
 */
+
+#ifndef _vpImageTools_H_
+#define _vpImageTools_H_
 
 #include <visp3/core/vpImage.h>
 
@@ -63,6 +63,10 @@
 #include <omp.h>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpImageTools
 
@@ -1937,5 +1941,7 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     }
   }
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

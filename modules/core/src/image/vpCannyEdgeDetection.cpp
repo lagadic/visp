@@ -39,7 +39,11 @@ namespace
 {
 // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
-static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+static void scaleFilter(
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+  vpArray2D<FilterType> &filter, const float &scale)
 {
   const unsigned int nbRows = filter.getRows();
   const unsigned int nbCols = filter.getCols();
@@ -52,6 +56,10 @@ static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
 };
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 // // Initialization methods
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
@@ -523,3 +531,6 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   }
   return hasFoundStrongEdge;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -35,16 +35,22 @@
  * Bruno Renier
  *
 *****************************************************************************/
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <algorithm>
 
 #include <visp3/core/vpConfig.h>
+
 #if (defined(_WIN32) & defined(VISP_HAVE_D3D9))
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/gui/vpD3DRenderer.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 /*
   Be careful, when using :
@@ -1190,8 +1196,12 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
   }
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpD3DRenderer.cpp.o) has no symbols
 void dummy_vpD3DRenderer() { };
 #endif
 #endif

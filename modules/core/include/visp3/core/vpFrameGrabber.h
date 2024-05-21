@@ -31,18 +31,23 @@
  * Frame grabbing.
  */
 
-#ifndef vpFrameGrabber_hh
-#define vpFrameGrabber_hh
-
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-
 /*!
  * \file vpFrameGrabber.h
  * \brief Base class for all video devices. It is
  *        designed to provide a generic front end to video sources.
  */
 
+#ifndef _vpFrameGrabber_h_
+#define _vpFrameGrabber_h_
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpFrameGrabber
  *
@@ -95,10 +100,6 @@ class VISP_EXPORT vpFrameGrabber
 public:
   bool init; //!< Set to true if the frame grabber has been initialized.
 
-protected:
-  unsigned int height; //!< Number of rows in the image.
-  unsigned int width;  //!< Number of columns in the image.
-
 public:
   /** @name Inherited functionalities from vpFramegrabber */
   //@{
@@ -127,6 +128,12 @@ public:
    * the memory used by a specific frame grabber
    */
   virtual void close() = 0;
-};
 
+protected:
+  unsigned int height; //!< Number of rows in the image.
+  unsigned int width;  //!< Number of columns in the image.
+};
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

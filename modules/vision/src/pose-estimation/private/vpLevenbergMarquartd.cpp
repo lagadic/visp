@@ -39,6 +39,11 @@
 #include <visp3/core/vpMath.h>
 #include "vpLevenbergMarquartd.h"
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #define SIGN(x) ((x) < 0 ? -1 : 1)
 #define SWAP(a, b, c)                                                                                                  \
   {                                                                                                                    \
@@ -1205,3 +1210,7 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
 
 #undef TRUE
 #undef FALSE
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -39,8 +39,13 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+namespace vp
+#else
+namespace visp
+#endif
 {
+
 void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
                   unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
@@ -100,10 +105,7 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
     }
   }
 }
-} // namespace
 
-namespace vp
-{
 void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {
@@ -161,4 +163,5 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
 
   nbComponents = current_label - 1;
 }
-};
+
+} // namespace

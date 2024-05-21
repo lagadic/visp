@@ -42,6 +42,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRobust
   \ingroup group_core_robust
@@ -89,27 +93,6 @@ public:
     CAUCHY, //!< Cauchy influence function.
     HUBER   //!< Huber influence function.
   } vpRobustEstimatorType;
-
-private:
-  //! Normalized residue
-  vpColVector m_normres;
-  //! Sorted normalized Residues
-  vpColVector m_sorted_normres;
-  //! Sorted residues
-  vpColVector m_sorted_residues;
-
-  //! Min admissible value of residual vector Median Absolute Deviation
-  double m_mad_min;
-  //! Previous value of residual vector Median Absolute Deviation
-  double m_mad_prev;
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  //! Iteration, only used in deprecated simultMEstimator()
-  unsigned int m_iter;
-#endif
-  //! Size of the containers
-  unsigned int m_size;
-  //! Residual vector Median Absolute Deviation
-  double m_mad;
 
 public:
   vpRobust();
@@ -182,6 +165,27 @@ public:
   //@}
 #endif
 private:
+  //! Normalized residue
+  vpColVector m_normres;
+  //! Sorted normalized Residues
+  vpColVector m_sorted_normres;
+  //! Sorted residues
+  vpColVector m_sorted_residues;
+
+  //! Min admissible value of residual vector Median Absolute Deviation
+  double m_mad_min;
+  //! Previous value of residual vector Median Absolute Deviation
+  double m_mad_prev;
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  //! Iteration, only used in deprecated simultMEstimator()
+  unsigned int m_iter;
+#endif
+  //! Size of the containers
+  unsigned int m_size;
+  //! Residual vector Median Absolute Deviation
+  double m_mad;
+
+private:
   //! Resize containers for sort methods
   void resize(unsigned int n_data);
 
@@ -244,5 +248,7 @@ private:
   double select(vpColVector &a, int l, int r, int k);
   //@}
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

@@ -37,8 +37,8 @@
  * the C mathematics library (math.h)
  */
 
-#ifndef vpMATH_HH
-#define vpMATH_HH
+#ifndef _vpMATH_H_
+#define _vpMATH_H_
 
 #include <visp3/core/vpConfig.h>
 
@@ -91,6 +91,11 @@
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 class vpPoint;
 class vpHomogeneousMatrix;
@@ -345,8 +350,8 @@ public:
 
     double delta = (end - start) / (num - 1);
 
-    for (int i = 0; i < num - 1; ++i) {
-      linspaced.push_back(start + delta * i);
+    for (int i = 0; i < (num - 1); ++i) {
+      linspaced.push_back(start + (delta * i));
     }
     linspaced.push_back(end); // I want to ensure that start and end
     // are exactly the same as the input
@@ -662,5 +667,7 @@ template <> inline unsigned int vpMath::saturate<unsigned int>(double v)
 {
   return static_cast<unsigned int>(vpMath::round(v));
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

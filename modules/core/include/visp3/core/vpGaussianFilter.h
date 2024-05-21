@@ -36,13 +36,18 @@
   \brief Gaussian filter class
 */
 
-#ifndef vpGaussianFilter_H
-#define vpGaussianFilter_H
+#ifndef _vpGaussianFilter_H_
+#define _vpGaussianFilter_H_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
 #if defined(VISP_HAVE_SIMDLIB)
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpGaussianFilter
 
@@ -63,12 +68,14 @@ public:
 
 private:
   vpGaussianFilter(const vpGaussianFilter &gf);
-  vpGaussianFilter &operator=(const vpGaussianFilter &);
+  vpGaussianFilter &operator=(const vpGaussianFilter &gf);
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

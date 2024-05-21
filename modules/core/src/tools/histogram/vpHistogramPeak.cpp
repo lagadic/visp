@@ -43,15 +43,19 @@
 
 #include <visp3/core/vpHistogramPeak.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Default constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
+vpHistogramPeak::vpHistogramPeak() : level(0), value(0) { }
 
 /*!
   Default constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) {}
+vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) { }
 
 /*!
   Copy constructor of a gray level histogram peak.
@@ -96,7 +100,9 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 
   return s;
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

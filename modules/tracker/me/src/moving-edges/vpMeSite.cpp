@@ -43,6 +43,11 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 static bool horsImage(int i, int j, int half, int rows, int cols)
 {
@@ -444,3 +449,7 @@ void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::yellow, 1);
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

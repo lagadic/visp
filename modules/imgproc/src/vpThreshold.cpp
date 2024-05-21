@@ -40,8 +40,13 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+namespace vp
+#else
+namespace visp
+#endif
 {
+
 bool isBimodal(const std::vector<float> &hist_float)
 {
   int modes = 0;
@@ -368,10 +373,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
   return threshold;
 }
-} // namespace
 
-namespace vp
-{
 unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                             const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
@@ -420,4 +422,5 @@ unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMeth
 
   return threshold;
 }
-};
+
+} // namespace

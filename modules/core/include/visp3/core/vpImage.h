@@ -66,6 +66,10 @@ typedef unsigned short uint16_t;
 #include <inttypes.h>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 class vpDisplay;
 
 /*!
@@ -278,7 +282,7 @@ public:
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
   */
-  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[(i * width) + j] = v; }
 
   /*!
     Get the value of an image point.
@@ -1974,8 +1978,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   int64_t y_ = y >> 16;
 
   if (((y_ + 1) < height) && ((x_ + 1) < width)) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
-    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ + 1) * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
+    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + ((y_ + 1) * width) + x_);
 
     return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
                                        ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >>
@@ -1985,7 +1989,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
   }
   else if ((x_ + 1) < width) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
     return static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
   }
   else {
@@ -2560,5 +2564,7 @@ template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
   swap(first.height, second.height);
   swap(first.row, second.row);
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

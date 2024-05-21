@@ -35,15 +35,20 @@
   \file vpRansac.h
 */
 
-#ifndef vpRANSAC_HH
-#define vpRANSAC_HH
+#ifndef _vpRANSAC_H_
+#define _vpRANSAC_H_
 
 #include <ctime>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h> // debug and trace
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h> // random number generation
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRansac
   \ingroup group_core_robust
@@ -241,5 +246,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
   return true;
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

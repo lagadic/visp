@@ -40,6 +40,11 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \file vpDisplayGTK.h
  * \brief Define the GTK console to display images.
@@ -228,5 +233,8 @@ private:
   Impl *m_impl;
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

@@ -39,6 +39,11 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #define VPEPS 1e-6
 
  /*!
@@ -528,3 +533,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
     return false;
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -44,6 +44,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBa.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Copy operator (from an unsigned char value)
 
@@ -258,3 +262,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)
   os << "(" << static_cast<int>(rgba.R) << "," << static_cast<int>(rgba.G) << "," << static_cast<int>(rgba.B) << "," << static_cast<int>(rgba.A) << ")";
   return os;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

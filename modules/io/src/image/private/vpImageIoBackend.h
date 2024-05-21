@@ -41,6 +41,11 @@
 
 #include <visp3/core/vpImage.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 // Portable FloatMap format (PFM)
 // Portable Graymap format (PGM)
 // Portable Pixmap format (PPM)
@@ -131,6 +136,10 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa>
 
 void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer);
 void writePNGtoMemStb(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer, bool saveAlpha);
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
 #endif
 
 #endif

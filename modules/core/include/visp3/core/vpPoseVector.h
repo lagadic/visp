@@ -32,9 +32,6 @@
  * a rotation vector (theta u representation) and t is a translation vector.
  */
 
-#ifndef vpPOSEVECTOR_H
-#define vpPOSEVECTOR_H
-
 /*!
   \file vpPoseVector.h
 
@@ -43,11 +40,8 @@
     translation vector.
 */
 
-class vpRotationMatrix;
-class vpHomogeneousMatrix;
-class vpTranslationVector;
-class vpThetaUVector;
-class vpRowVector;
+#ifndef _vpPOSEVECTOR_H_
+#define _vpPOSEVECTOR_H_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -55,10 +49,33 @@ class vpRowVector;
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+class vpPoseVector;
+}
 #endif
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#if defined(ENABLE_VISP_NAMESPACE)
+void to_json(nlohmann::json &j, const visp::vpPoseVector &pose);
+void from_json(const nlohmann::json &j, visp::vpPoseVector &pose);
+#endif
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
+class vpTranslationVector;
+class vpThetaUVector;
+class vpRowVector;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 /*!
   \class vpPoseVector
 
@@ -186,7 +203,11 @@ class vpRowVector;
   {"cols":1,"data":[0.1,0.2,0.3,3.141592653589793,1.5707963267948966,0.7853981633974483],"rows":6,"type":"vpPoseVector"}
   \endcode
 */
-class VISP_EXPORT vpPoseVector : public vpArray2D<double>
+class VISP_EXPORT
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+vpPoseVector: public vpArray2D<double>
 {
 public:
   // constructor
@@ -303,8 +324,8 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
-  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
+  friend void ::to_json(nlohmann::json &j, const vpPoseVector &cam);
+  friend void ::from_json(const nlohmann::json &j, vpPoseVector &cam);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
@@ -327,11 +348,23 @@ public:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json &j, const vpPoseVector &r)
+inline void to_json(nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+const visp::vpPoseVector &r
+#else
+const vpPoseVector &r
+#endif
+)
 {
   r.convert_to_json(j);
 }
-inline void from_json(const nlohmann::json &j, vpPoseVector &r)
+inline void from_json(const nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+visp::vpPoseVector &r
+#else
+vpPoseVector &r
+#endif
+)
 {
   r.parse_json(j);
 }

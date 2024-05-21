@@ -31,17 +31,22 @@
  * RGBA pixel.
  */
 
-#ifndef vpRGBa_h
-#define vpRGBa_h
-
 /*!
   \file vpRGBa.h
   \brief Define the object vpRGBa that is used to build color
   images (it defines a RGB 32 bits structure, fourth byte is not used)
 */
 
+#ifndef _vpRGBa_h_
+#define _vpRGBa_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRGBa
 
@@ -141,5 +146,7 @@ public:
 
   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

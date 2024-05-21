@@ -31,19 +31,24 @@
  * Line feature.
  */
 
-#ifndef vpLine_H
-#define vpLine_H
-
 /*!
  * \file vpLine.h
  * \brief  class that defines what is a line
  */
 
+#ifndef _vpLine_H_
+#define _vpLine_H_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 
 #include <visp3/core/vpForwardProjection.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpLine
  * \ingroup group_core_geometry
@@ -172,5 +177,7 @@ public:
 protected:
   void init() vp_override;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

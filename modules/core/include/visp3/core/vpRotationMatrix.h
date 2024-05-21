@@ -31,13 +31,13 @@
  * Rotation matrix.
  */
 
-#ifndef _vpRotationMatrix_h_
-#define _vpRotationMatrix_h_
-
 /*!
   \file vpRotationMatrix.h
   \brief Class that consider the particular case of rotation matrix
 */
+
+#ifndef _vpRotationMatrix_h_
+#define _vpRotationMatrix_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -50,6 +50,10 @@
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/core/vpTranslationVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRotationMatrix
 
@@ -231,5 +235,7 @@ protected:
 VISP_EXPORT
 #endif
 vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R);
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

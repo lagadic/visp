@@ -31,20 +31,26 @@
  * Generic rotation vector (cannot be used as is !).
  */
 
-#ifndef _vpRotationVector_h_
-#define _vpRotationVector_h_
-
 /*!
   \file vpRotationVector.h
   \brief class that consider the case of a generic rotation vector
   (cannot be used as is !)
 */
 
+#ifndef _vpRotationVector_h_
+#define _vpRotationVector_h_
+
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
 
 #include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpConfig.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 class vpRowVector;
 class vpColVector;
@@ -157,4 +163,7 @@ VISP_EXPORT
 #endif
 vpColVector operator*(const double &x, const vpRotationVector &v);
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

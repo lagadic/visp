@@ -44,6 +44,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distortion
@@ -400,5 +404,8 @@ void vpMeterPixelConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
                     distCoeffs, imagePoints_vec);
   iP.set_u(imagePoints_vec[0].x);
   iP.set_v(imagePoints_vec[0].y);
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

@@ -49,6 +49,11 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpPlot.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
   Default constructor.
 
@@ -727,7 +732,11 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
   fichier.close();
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpPlot.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpPlot.cpp.o) has no symbols
 void dummy_vpPlot() { };
 #endif

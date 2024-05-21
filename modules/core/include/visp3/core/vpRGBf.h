@@ -31,17 +31,22 @@
  * 32-bit floating point RGB pixel.
  */
 
-#ifndef vpRGBf_h
-#define vpRGBf_h
-
 /*!
   \file vpRGBf.h
   \brief Define the object vpRGBf that is used to build color
   images (it defines a RGB 32-bit floating point structure)
 */
 
+#ifndef _vpRGBf_h_
+#define _vpRGBf_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRGBf
 
@@ -127,5 +132,7 @@ public:
 
   friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

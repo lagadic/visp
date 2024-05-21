@@ -46,6 +46,11 @@
 #include <iostream>
 #include <stdio.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
   \class vpImageIo
 
@@ -185,4 +190,9 @@ public:
   static void writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer,
       int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif

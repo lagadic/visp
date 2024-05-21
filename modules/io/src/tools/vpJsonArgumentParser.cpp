@@ -27,13 +27,17 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/io/vpJsonArgumentParser.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpConfig.h>
 #include <fstream>
 
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 using json = nlohmann::json; //! json namespace shortcut
 
@@ -149,5 +153,9 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
     parser.second(j);
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

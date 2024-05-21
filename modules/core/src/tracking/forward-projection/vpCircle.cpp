@@ -37,6 +37,10 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 void vpCircle::init()
 {
   oP.resize(7);
@@ -432,3 +436,6 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
            (ctheta * n11 * Yg)) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg)) - (ctheta3 * n02 * Xg)) /
        (((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02) - (n02 * ctheta2)) / stheta);
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

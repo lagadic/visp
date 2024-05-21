@@ -46,8 +46,23 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+template <typename T> class vpArray2D;
+}
+#endif
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
+#if defined(ENABLE_VISP_NAMESPACE)
+//template<typename Type>
+template<class T>
+void from_json(const nlohmann::json &j, visp::vpArray2D<T> &array);
+//template<typename Type>
+template<class T>
+void to_json(nlohmann::json &j, const visp::vpArray2D<T> &array);
+#endif
 #endif
 
 /*!
@@ -122,7 +137,11 @@
  * }
  * \endcode
 */
-template <class Type> class vpArray2D
+template <class Type> class
+#if defined(ENABLE_VISP_NAMESPACE)
+visp::
+#endif
+vpArray2D
 {
 protected:
   //! Number of rows in the array
@@ -1018,10 +1037,10 @@ public:
 #ifdef VISP_HAVE_NLOHMANN_JSON
   //template<typename Type>
   template<class T>
-  friend void from_json(const nlohmann::json &j, vpArray2D<T> &array);
+  friend void ::from_json(const nlohmann::json &j, vpArray2D<T> &array);
   //template<typename Type>
   template<class T>
-  friend void to_json(nlohmann::json &j, const vpArray2D<T> &array);
+  friend void ::to_json(nlohmann::json &j, const vpArray2D<T> &array);
 #endif
 
   /*!
@@ -1081,6 +1100,11 @@ public:
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 /*!
   Return the array min value.
@@ -1323,13 +1347,23 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
  * \relates vpArray2D
  */
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-
-
 template <class Type>
-inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
+inline void from_json(const nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+visp::vpArray2D<Type> &array
+#else
+vpArray2D<Type> &array
+#endif
+)
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace visp;
+#endif
   if (j.is_array()) {
     const unsigned int nrows = static_cast<unsigned int>(j.size());
     if (nrows == 0) { // Initialize an empty array, Finished
@@ -1381,7 +1415,13 @@ inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
 
 
 template <class Type>
-inline void to_json(nlohmann::json &j, const vpArray2D<Type> &array)
+inline void to_json(nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+const visp::vpArray2D<Type> &array
+#else
+const vpArray2D<Type> &array
+#endif
+)
 {
   j = {
     {"cols", array.colNum},

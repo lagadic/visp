@@ -34,8 +34,6 @@
  *
 *****************************************************************************/
 
-#include <math.h>
-#include <visp3/core/vpRzyxVector.h>
 /*!
   \file vpRzyxVector.cpp
   \brief class that consider the case of the  Rzyx angle parameterization for
@@ -43,6 +41,13 @@
 
 */
 
+#include <math.h>
+#include <visp3/core/vpRzyxVector.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyxVector::vpRzyxVector() : vpRotationVector(3) { }
 
@@ -336,5 +341,8 @@ vpRzyxVector &vpRzyxVector::operator=(const std::initializer_list<double> &list)
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

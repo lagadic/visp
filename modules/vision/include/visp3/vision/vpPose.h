@@ -62,6 +62,11 @@
 
 #include <visp3/core/vpUniRand.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpPose
  * \ingroup group_vision_pose
@@ -125,7 +130,7 @@ public:
   /*!
    * Constructor from a vector of points.
    */
-  vpPose(const std::vector<vpPoint> &lP);
+  explicit vpPose(const std::vector<vpPoint> &lP);
 
   /*!
    * Destructor that deletes the array of point (freed the memory).
@@ -406,7 +411,7 @@ public:
   /*!
    * Get the number of inliers.
    */
-  unsigned int getRansacNbInliers() const { return (unsigned int)ransacInliers.size(); }
+  unsigned int getRansacNbInliers() const { return static_cast<unsigned int>(ransacInliers.size()); }
 
   /**
    * Get the vector of indexes corresponding to inliers.
@@ -437,10 +442,10 @@ public:
    */
   vpMatrix getCovarianceMatrix() const
   {
-    if (!computeCovariance)
+    if (!computeCovariance) {
       vpTRACE("Warning : The covariance matrix has not been computed. See "
         "setCovarianceComputation() to do it.");
-
+    }
     return covarianceMatrix;
   }
 
@@ -693,7 +698,7 @@ public:
     const std::map<DataId, vpImagePoint> &ips, const vpCameraParameters &camera_intrinsics,
     std::optional<vpHomogeneousMatrix> cMo_init = std::nullopt, bool enable_vvs = true)
   {
-    if (cMo_init && !enable_vvs) {
+    if (cMo_init && (!enable_vvs)) {
       throw(vpException(
         vpException::fatalError,
         "It doesn't make sense to use an initialized pose without enabling VVS to compute the pose from 4 points"));
@@ -880,5 +885,9 @@ private:
     bool poseRansacImpl();
   };
 };
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

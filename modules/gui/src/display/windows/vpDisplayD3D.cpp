@@ -47,6 +47,10 @@
 #include <visp3/gui/vpD3DRenderer.h>
 #include <visp3/gui/vpDisplayD3D.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \brief Basic constructor.
 */
@@ -188,7 +192,11 @@ vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, int winx, int winy, const 
   init(I, winx, winy, title);
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayD3D.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpDisplayD3D.cpp.o) has no symbols
 void dummy_vpDisplayD3D() { };
 #endif

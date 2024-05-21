@@ -57,6 +57,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 void readStb(vpImage<unsigned char> &I, const std::string &filename)
 {
   int width = 0, height = 0, channels = 0;
@@ -266,4 +271,9 @@ void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char>
 #endif
   }
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif

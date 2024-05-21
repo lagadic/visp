@@ -79,8 +79,13 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+namespace vp
+#else
+namespace visp
+#endif
 {
+
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 
 void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)
@@ -191,10 +196,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 
   return transferValue(v, clippedHist);
 }
-} // namespace
 
-namespace vp
-{
 void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (blockRadius < 0) {
@@ -481,4 +483,5 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
     ++cpt;
   }
 }
-};
+
+} // namespace

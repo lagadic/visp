@@ -62,6 +62,10 @@
 #define LABEL_XML_TUY "theta_uy"
 #define LABEL_XML_TUZ "theta_uz"
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserHomogeneousMatrix::Impl
 {
@@ -556,7 +560,9 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 {
   m_impl->setHomogeneousMatrixName(name);
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
 void dummy_vpXmlParserHomogeneousMatrix() { };

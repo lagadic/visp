@@ -31,13 +31,13 @@
  * Exceptions that can be emitted by the vpIo class and its derivatives.
  */
 
-#ifndef _vpIoException_h_
-#define _vpIoException_h_
-
 /*!
  * \file vpIoException.h
  * \brief Error that can be emitted by the vpIoTools class and its derivatives.
 */
+
+#ifndef _vpIoException_h_
+#define _vpIoException_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -45,6 +45,10 @@
 #include <iostream>
 #include <string>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpIoException
  * \ingroup group_core_debug
@@ -88,5 +92,7 @@ public:
    */
   explicit vpIoException(int id) : vpException(id) { }
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

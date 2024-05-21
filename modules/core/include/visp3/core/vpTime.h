@@ -31,13 +31,14 @@
  * Time management and measurement.
  */
 
-#ifndef vpTime_h
-#define vpTime_h
-
 /*!
   \file vpTime.h
   \brief Time management and measurement
  */
+
+#ifndef _vpTime_h_
+#define _vpTime_h_
+
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
@@ -47,6 +48,10 @@
 
 #include <visp3/core/vpException.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \ingroup group_core_time
  * \brief Time management and measurement.
@@ -99,5 +104,7 @@ private:
   double m_lastTimePoint;
 #endif
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

@@ -31,18 +31,23 @@
  * Generic tracker.
  */
 
-#ifndef vpTracker_H
-#define vpTracker_H
-
 /*!
  * \file vpTracker.h
  * \brief Class that defines what is a generic tracker.
  */
 
+#ifndef _vpTracker_H_
+#define _vpTracker_H_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpTracker
  * \ingroup group_core_trackers
@@ -83,7 +88,7 @@ public:
   //! Copy constructor.
   vpTracker(const vpTracker &tracker);
   //! Destructor.
-  virtual ~vpTracker() { ; }
+  virtual ~vpTracker() { }
 
   /** @name Public Member Functions Inherited from vpTracker */
   //@{
@@ -103,5 +108,7 @@ protected:
   void init();
   //@}
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

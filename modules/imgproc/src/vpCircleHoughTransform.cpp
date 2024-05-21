@@ -33,13 +33,16 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 // Static variables
 const unsigned char vpCircleHoughTransform::edgeMapOn = 255;
 const unsigned char vpCircleHoughTransform::edgeMapOff = 0;
 
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
-namespace
-{
 // Sorting by decreasing probabilities
 bool hasBetterProba(std::pair<size_t, float> a, std::pair<size_t, float> b)
 {
@@ -92,7 +95,6 @@ scaleFilter(vpArray2D<float> &filter, const float &scale)
     }
   }
 }
-};
 #endif
 
 vpCircleHoughTransform::vpCircleHoughTransform()
@@ -1203,3 +1205,7 @@ operator<<(std::ostream &os, const vpCircleHoughTransform &detector)
   os << detector.toString();
   return os;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

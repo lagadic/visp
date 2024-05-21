@@ -65,6 +65,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 #ifndef CV_RGB
 #define CV_RGB(r, g, b) cv::Scalar((b), (g), (r), 0)
 #endif
@@ -1789,7 +1794,11 @@ void vpDisplayOpenCV::overlay(std::function<void(cv::Mat &)> overlay_function, d
   }
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayOpenCV.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpDisplayOpenCV.cpp.o) has no symbols
 void dummy_vpDisplayOpenCV() { };
 #endif

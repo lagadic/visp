@@ -38,11 +38,12 @@
 
 */
 
-#ifndef vpHistogram_h
-#define vpHistogram_h
+#ifndef _vpHistogram_h_
+#define _vpHistogram_h_
 
 #include <sstream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpHistogramPeak.h>
 #include <visp3/core/vpHistogramValey.h>
@@ -54,6 +55,10 @@
 
 #include <list>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpHistogram
   \ingroup group_core_histogram
@@ -317,5 +322,7 @@ private:
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
   unsigned int m_total; /*!< Cumulated number of pixels in the input image. */
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

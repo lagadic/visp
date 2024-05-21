@@ -48,6 +48,11 @@
 
 #include <visp3/gui/vpWin32Window.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 // Should be already defined ...
 #ifndef GET_X_LPARAM
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
@@ -311,8 +316,12 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
   }
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpWin32Window.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpWin32Window.cpp.o) has no symbols
 void dummy_vpWin32Window() { };
 #endif

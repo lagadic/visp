@@ -49,6 +49,11 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpPoseVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
 
   Default constructor that construct a 6 dimension pose vector \f$ [\bf t,
@@ -610,6 +615,9 @@ void vpPoseVector::convert_to_json(nlohmann::json &j) const
 }
 void vpPoseVector::parse_json(const nlohmann::json &j)
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace visp;
+#endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) this;
   if (j.is_object() && j.contains("type")) { // Specific conversions
     const bool converted = convertFromTypeAndBuildFrom<vpPoseVector, vpHomogeneousMatrix>(j, *this);
@@ -624,5 +632,8 @@ void vpPoseVector::parse_json(const nlohmann::json &j)
   if ((getCols() != 1) && (getRows() != 6)) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 6D pose vector");
   }
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

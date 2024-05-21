@@ -46,6 +46,11 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \class vpDetectorAprilTag
  * \ingroup group_detection_tag
@@ -417,6 +422,10 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
 
   return os;
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif
 #endif

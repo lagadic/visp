@@ -33,12 +33,6 @@
  *
 *****************************************************************************/
 
-#include <assert.h>
-#include <sstream>
-
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-
 /*!
   \file vpVelocityTwistMatrix.cpp
 
@@ -47,6 +41,16 @@
   transform a velocity skew from one frame to an other.
 */
 
+#include <assert.h>
+#include <sstream>
+
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Copy operator that allow to set a velocity twist matrix from an other one.
 
@@ -719,3 +723,6 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
 void vpVelocityTwistMatrix::setIdentity() { eye(); }
 
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

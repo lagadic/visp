@@ -45,6 +45,10 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRect.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpPolygon
   \ingroup group_core_geometry
@@ -96,19 +100,6 @@ int main()
 */
 class VISP_EXPORT vpPolygon
 {
-protected:
-  //! Collection of image points containing the corners.
-  std::vector<vpImagePoint> _corners;
-  //! Center of the polygon. It is automatically computed when the corners are
-  //! set.
-  vpImagePoint _center;
-  //! Area of the polygon.
-  double _area;
-  //! Flag set to true when the polygon is a good polygon (ie. it has more
-  //! than two corners) or false otherwise.
-  bool _goodPoly;
-  //! Bounding box containing the polygon.
-  vpRect _bbox;
 
 public:
   enum PointInPolygonMethod
@@ -185,6 +176,20 @@ protected:
   void updateCenter();
   void updateBoundingBox();
 
+protected:
+  //! Collection of image points containing the corners.
+  std::vector<vpImagePoint> _corners;
+  //! Center of the polygon. It is automatically computed when the corners are
+  //! set.
+  vpImagePoint _center;
+  //! Area of the polygon.
+  double _area;
+  //! Flag set to true when the polygon is a good polygon (ie. it has more
+  //! than two corners) or false otherwise.
+  bool _goodPoly;
+  //! Bounding box containing the polygon.
+  vpRect _bbox;
+
 private:
   bool testIntersectionSegments(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImagePoint &ip3,
                                 const vpImagePoint &ip4) const;
@@ -201,5 +206,7 @@ public:
   static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
                        const PointInPolygonMethod &method = PnPolyRayCasting);
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

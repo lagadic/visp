@@ -31,13 +31,13 @@
  * Directory management.
  */
 
-#ifndef _vpIoTools_h_
-#define _vpIoTools_h_
-
 /*!
  * \file vpIoTools.h
  * \brief File and directories basic tools.
  */
+
+#ifndef _vpIoTools_h_
+#define _vpIoTools_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -487,6 +487,10 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * }
  * \endcode
  */
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 class VISP_EXPORT vpIoTools
 {
 
@@ -589,4 +593,7 @@ protected:
   static int mkdir_p(const std::string &path, int mode);
 #endif
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

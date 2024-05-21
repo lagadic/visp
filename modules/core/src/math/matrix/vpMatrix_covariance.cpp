@@ -46,6 +46,10 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpTranslationVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Compute the covariance matrix of the parameters x from a least squares
   minimization defined as: Ax = b
@@ -231,3 +235,6 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   // building deltaP
   deltaP = Js.pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

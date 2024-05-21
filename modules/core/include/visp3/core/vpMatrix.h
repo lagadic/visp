@@ -31,8 +31,30 @@
  * Matrix manipulation.
  */
 
-#ifndef vpMatrix_H
-#define vpMatrix_H
+/*!
+  \file vpMatrix.h
+
+  \brief Definition of matrix class as well as a set of operations on
+  these matrices.
+*/
+
+#ifndef _vpMatrix_H_
+#define _vpMatrix_H_
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
+class vpRowVector;
+class vpColVector;
+class vpTranslationVector;
+class vpHomogeneousMatrix;
+class vpVelocityTwistMatrix;
+class vpForceTwistMatrix;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpConfig.h>
@@ -46,19 +68,10 @@
 #include <iostream>
 #include <math.h>
 
-class vpRowVector;
-class vpColVector;
-class vpTranslationVector;
-class vpHomogeneousMatrix;
-class vpVelocityTwistMatrix;
-class vpForceTwistMatrix;
-
-/*!
-  \file vpMatrix.h
-
-  \brief Definition of matrix class as well as a set of operations on
-  these matrices.
-*/
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 
 /*!
   \class vpMatrix
@@ -1200,4 +1213,7 @@ __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lap
 VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

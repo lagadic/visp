@@ -40,6 +40,11 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 /*!
  * \file vpDisplayX.h
  * \brief Define the X11 console to display images.
@@ -224,5 +229,8 @@ private:
   Impl *m_impl;
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

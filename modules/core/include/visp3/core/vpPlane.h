@@ -31,13 +31,17 @@
  * Plane geometrical structure.
  */
 
-#ifndef vpPlane_hh
-#define vpPlane_hh
+#ifndef _vpPlane_h_
+#define _vpPlane_h_
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpPlane
 
@@ -155,5 +159,7 @@ public:
   double getIntersection(const vpColVector &M1, vpColVector &H) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

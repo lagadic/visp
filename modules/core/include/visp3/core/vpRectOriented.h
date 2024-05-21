@@ -31,18 +31,22 @@
  * Defines a (possibly oriented) rectangle in the plane.
  */
 
-#ifndef vpRectOriented_h
-#define vpRectOriented_h
+#ifndef _vpRectOriented_h_
+#define _vpRectOriented_h_
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpRect.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpRectOriented
  * \ingroup group_core_geometry
  * \brief Defines an oriented rectangle in the plane.
  */
-
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpRect.h>
-
 class VISP_EXPORT vpRectOriented
 {
 public:
@@ -105,4 +109,7 @@ private:
   vpImagePoint m_bottomRight;
   bool isLeft(const vpImagePoint &pointToTest, const vpImagePoint &point1, const vpImagePoint &point2) const;
 };
-#endif // vpRectOriented_h
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+#endif // _vpRectOriented_h_

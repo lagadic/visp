@@ -43,6 +43,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpQuaternionVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 // minimum value of sine
 const double vpQuaternionVector::minimum = 0.0001;
 
@@ -549,3 +553,6 @@ vpQuaternionVector vpQuaternionVector::slerp(const vpQuaternionVector &q0, const
 
   return qSlerp;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

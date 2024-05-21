@@ -42,6 +42,11 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 {
   try {
@@ -353,4 +358,8 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vec
   return cMoPrev;
 }
 
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
 #endif

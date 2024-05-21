@@ -31,9 +31,20 @@
  * Defines a rectangle in the plane.
  */
 
-#ifndef vpRect_h
-#define vpRect_h
+#ifndef _vpRect_h_
+#define _vpRect_h_
 
+#include <algorithm>
+#include <cassert>
+#include <vector>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpImagePoint.h>
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpRect
   \ingroup group_core_geometry
@@ -65,13 +76,6 @@
   setting sizes, e.g. setWidth(), setHeight()
 
 */
-
-#include <algorithm>
-#include <cassert>
-#include <vector>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpImagePoint.h>
-
 class VISP_EXPORT vpRect
 {
 public:
@@ -342,7 +346,7 @@ public:
 
     \sa setLeft()
   */
-  inline void setRight(double pos) { this->width = pos - this->left + 1.0; }
+  inline void setRight(double pos) { this->width = (pos - this->left) + 1.0; }
 
   /*!
     Sets the top edge position of the rectangle to pos. May change the bottom
@@ -408,5 +412,7 @@ private:
   double width;  // Rectangle width
   double height; // Rectangle height
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

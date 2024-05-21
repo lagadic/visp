@@ -51,6 +51,11 @@
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
+
 void readEXRTiny(vpImage<float> &I, const std::string &filename)
 {
   EXRVersion exr_version;
@@ -318,5 +323,9 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   free(header.requested_pixel_types);
   free(header.pixel_types);
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 #endif

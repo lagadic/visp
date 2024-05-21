@@ -31,16 +31,20 @@
  * CPU features (hardware capabilities).
  */
 
-#ifndef _vpCPUFeatures_h_
-#define _vpCPUFeatures_h_
-
 /*!
   \file vpCPUFeatures.h
   \brief Check CPU features (hardware capabilities).
 */
 
+#ifndef _vpCPUFeatures_h_
+#define _vpCPUFeatures_h_
+
 #include <visp3/core/vpConfig.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \ingroup group_core_cpu_features
   \brief Check CPU features (hardware capabilities).
@@ -77,5 +81,7 @@ VISP_EXPORT size_t getCPUCacheL3();
 #endif
 VISP_EXPORT void printCPUInfo();
 } // namespace vpCPUFeatures
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

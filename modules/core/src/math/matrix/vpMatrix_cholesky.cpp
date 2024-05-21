@@ -30,11 +30,7 @@
  *
  * Description:
  * Matrix Cholesky decomposition.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -71,6 +67,14 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 #endif
 #endif
 
+#if defined(VISP_HAVE_EIGEN3)
+#include <Eigen/Dense>
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition.
   The matrix must be real symmetric positive defined.
@@ -85,30 +89,29 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  // Symmetric matrix
-  A[0][0] = 1/1.; A[0][1] = 1/5.; A[0][2] = 1/6.; A[0][3] = 1/7.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/3.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    // Symmetric matrix
+    A[0][0] = 1/1.; A[0][1] = 1/5.; A[0][2] = 1/6.; A[0][3] = 1/7.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/3.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByCholesky();
-  std::cout << "Inverse by Cholesky: \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1; // A^-1
+    A_1 = A.inverseByCholesky();
+    std::cout << "Inverse by Cholesky: \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa pseudoInverse()
 */
-
 vpMatrix vpMatrix::inverseByCholesky() const
 {
 #if defined(VISP_HAVE_LAPACK)
@@ -123,36 +126,36 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
-Lapack 3rd party. The matrix must be real symmetric positive defined.
+  Lapack 3rd party. The matrix must be real symmetric positive defined.
 
   \return The inverse matrix.
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  unsigned int n = 4;
-  vpMatrix A(n, n);
-  vpMatrix I;
-  I.eye(4);
+  int main()
+  {
+    unsigned int n = 4;
+    vpMatrix A(n, n);
+    vpMatrix I;
+    I.eye(4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Make matrix symmetric positive
-  A = 0.5*(A+A.t());
-  A = A + n*I;
+    // Make matrix symmetric positive
+    A = 0.5*(A+A.t());
+    A = A + n*I;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByCholeskyLapack();
-  std::cout << "Inverse by Cholesky (Lapack): \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByCholeskyLapack();
+    std::cout << "Inverse by Cholesky (Lapack): \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByCholesky(), inverseByCholeskyOpenCV()
@@ -267,7 +270,7 @@ vpMatrix vpMatrix::choleskyByLapack()const
   }
   return L;
 }
-#endif
+#endif // VISP_HAVE_LAPACK
 
 #if defined(VISP_HAVE_OPENCV)
 /*!
@@ -278,30 +281,30 @@ vpMatrix vpMatrix::choleskyByLapack()const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  unsigned int n = 4;
-  vpMatrix A(n, n);
-  vpMatrix I;
-  I.eye(4);
+  int main()
+  {
+    unsigned int n = 4;
+    vpMatrix A(n, n);
+    vpMatrix I;
+    I.eye(4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Make matrix symmetric positive
-  A = 0.5*(A+A.t());
-  A = A + n*I;
+    // Make matrix symmetric positive
+    A = 0.5*(A+A.t());
+    A = A + n*I;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByCholeskyOpenCV();
-  std::cout << "Inverse by Cholesky (OpenCV): \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByCholeskyOpenCV();
+    std::cout << "Inverse by Cholesky (OpenCV): \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByCholesky(), inverseByCholeskyLapack()
@@ -349,10 +352,9 @@ vpMatrix vpMatrix::choleskyByOpenCV() const
   }
   return L;
 }
-#endif
+#endif // VISP_HAVE_OPENCV
 
 #if defined(VISP_HAVE_EIGEN3)
-#include <Eigen/Dense>
 /*!
  * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
  * using Eigen3 library.
@@ -377,5 +379,9 @@ vpMatrix vpMatrix::choleskyByEigen3() const
     }
   }
   return Lvisp;
+}
+#endif // VISP_HAVE_EIGEN3
+
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

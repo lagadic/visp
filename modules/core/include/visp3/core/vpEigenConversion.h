@@ -40,7 +40,13 @@
 #endif
 #include <visp3/core/vpMatrix.h>
 
-namespace vp
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#define VISP_EIGEN_CONVERSION_NAMESPACE vp
+#else
+#define VISP_EIGEN_CONVERSION_NAMESPACE visp
+#endif
+
+namespace VISP_EIGEN_CONVERSION_NAMESPACE
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
