@@ -30,8 +30,7 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert.cpp
@@ -47,8 +46,10 @@
 
 
 #include <visp3/core/vpConfig.h>
-// image
-// #include "private/vpBayerConversion.h"
+
+#ifndef VISP_SKIP_BAYER_CONVERSION
+#include "private/vpBayerConversion.h"
+#endif
 #include "private/vpImageConvert_impl.h"
 #if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.h>
