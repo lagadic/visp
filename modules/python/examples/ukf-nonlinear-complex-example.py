@@ -472,7 +472,7 @@ if __name__ == '__main__':
   robot = vpBicycleModel(wheelbase)
 
   # The object that draws the sigma points used by the UKF
-  drawer = UKSigmaDrawerMerwe(n=3, alpha=0.00001, beta=2, kappa=0, resFunc=residual_state_vectors, addFunc=add_state_vectors)
+  drawer = UKSigmaDrawerMerwe(n=3, alpha=0.1, beta=2, kappa=0, resFunc=residual_state_vectors, addFunc=add_state_vectors)
 
   # The matrices require for the construction of the Unscented filter
   P0 = Matrix([[0.1, 0., 0.],
@@ -482,7 +482,6 @@ if __name__ == '__main__':
   R = Matrix(2*nbLandmarks, 2 * nbLandmarks) # The measurement covariance matrix for the grid of landmarks
   for i in range(nbLandmarks):
     R.insert(R1landmark, 2*i, 2*i)
-  print(R)
 
   Q = Matrix() # The process covariance matrix
   Q.eye(3)

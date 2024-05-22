@@ -540,7 +540,7 @@ int main(/*const int argc, const char *argv[]*/)
   const unsigned int nbCmds = cmds.size();
 
   // Initialize the attributes of the UKF
-  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(3, 0.00001, 2., 0, stateResidual, stateAdd);
+  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(3, 0.1, 2., 0, stateResidual, stateAdd);
 
   vpMatrix R1landmark(2, 2, 0.); // The covariance of the noise introduced by the measurement with 1 landmark
   R1landmark[0][0] = sigmaRange*sigmaRange;

@@ -135,7 +135,7 @@ public:
 protected:
   inline void computeLambda()
   {
-    m_lambda = m_alpha * m_alpha * (m_n + m_kappa) - m_n;
+    m_lambda = m_alpha * m_alpha * (static_cast<double>(m_n) + m_kappa) - static_cast<double>(m_n);
   }
 
   double m_alpha; /*!< A factor, which should be a real in the interval [0; 1]. The larger alpha is,
