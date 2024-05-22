@@ -275,7 +275,7 @@ public:
    * @brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
    *
    */
-  class vpMatrixZigZagIndex
+  class VISP_EXPORT vpMatrixZigZagIndex
   {
   public:
     vpMatrixZigZagIndex();
