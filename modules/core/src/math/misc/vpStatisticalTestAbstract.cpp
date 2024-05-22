@@ -38,6 +38,10 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 std::string vpStatisticalTestAbstract::vpMeanDriftTypeToString(const vpStatisticalTestAbstract::vpMeanDriftType &type)
 {
   std::string name;
@@ -244,3 +248,6 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testUpward
     return MEAN_DRIFT_NONE;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

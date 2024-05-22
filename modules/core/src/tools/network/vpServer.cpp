@@ -44,6 +44,10 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Construct a server on the machine launching it.
 */
@@ -174,7 +178,8 @@ bool vpServer::start()
     int set_option = 1;
     if (0 ==
         setsockopt(emitter.socketFileDescriptorEmitter, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
-    } else {
+    }
+    else {
       std::cout << "Failed to set socket signal option" << std::endl;
     }
   }
@@ -232,9 +237,11 @@ bool vpServer::checkForConnections()
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     return false;
-  } else {
+  }
+  else {
     if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter, &readFileDescriptor)) {
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
@@ -243,8 +250,8 @@ bool vpServer::checkForConnections()
           emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress, &client.receptorAddressSize);
 #else // Win32
       client.socketFileDescriptorReceptor =
-          accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
-                 &client.receptorAddressSize);
+        accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
+               &client.receptorAddressSize);
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -259,7 +266,8 @@ bool vpServer::checkForConnections()
       receptor_list.push_back(client);
 
       return true;
-    } else {
+    }
+    else {
       for (unsigned int i = 0; i < receptor_list.size(); i++) {
         if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
           char deco;
@@ -286,8 +294,10 @@ bool vpServer::checkForConnections()
   Print the connected clients.
 */
 void vpServer::print() { vpNetwork::print("Client"); }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
-void dummy_vpServer(){};
+void dummy_vpServer() { };
 #endif

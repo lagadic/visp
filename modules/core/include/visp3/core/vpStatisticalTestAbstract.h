@@ -44,6 +44,10 @@
 
 #include <visp3/core/vpConfig.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /**
  * \ingroup group_core_math_tools
  * \brief Base class for methods detecting the drift of the mean of a process.
@@ -262,5 +266,7 @@ public:
    */
   vpMeanDriftType testUpwardMeanDrift(const float &signal);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

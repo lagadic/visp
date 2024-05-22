@@ -39,12 +39,28 @@
 #ifndef _vpMomentCInvariant_h_
 #define _vpMomentCInvariant_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class vpMomentCentered;
 class vpMomentBasic;
+class vpMomentCInvariant;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentCInvariant &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpMomentCInvariant
 
@@ -276,6 +292,9 @@ public:
    */
   inline const std::vector<double> &getMomentVector() const { return values; }
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentCInvariant &v);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

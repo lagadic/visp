@@ -51,6 +51,10 @@
 #include <math.h>
 #include <visp3/core/vpColVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpScale
   \ingroup group_core_robust
@@ -85,5 +89,7 @@ public:
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
   double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

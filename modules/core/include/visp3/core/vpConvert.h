@@ -47,6 +47,10 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPoint.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpConvert
   \ingroup group_core_bridges
@@ -98,6 +102,8 @@ private:
   static cv::Point3d vpObjectPointToPoint3d(const vpPoint &point);
 
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

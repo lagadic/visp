@@ -42,7 +42,7 @@
 #define _vpMatrix_H_
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -69,7 +69,7 @@ class vpForceTwistMatrix;
 #include <math.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 

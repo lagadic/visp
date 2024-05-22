@@ -65,6 +65,10 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpNetwork
 
@@ -501,6 +505,8 @@ template <typename T> int vpNetwork::sendTo(T *object, const unsigned int &dest,
     flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #endif
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

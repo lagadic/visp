@@ -46,7 +46,18 @@
 #include <string>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpException;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+// Forward declaration to ensure that the operator is in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpException &art);
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -133,7 +144,7 @@ public:
   /*!
    * Print the error structure.
    */
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpException &art);
 
 protected:
   //! Contains the error code, see the errorCodeEnum table for details.

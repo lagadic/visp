@@ -31,6 +31,11 @@
  * Kalman filtering.
  */
 
+/*!
+  \file vpLinearKalmanFilterInstantiation.h
+  \brief Implementation of some specific linear Kalman filters.
+*/
+
 #ifndef vpLinearKalmanFilterInstantiation_h
 #define vpLinearKalmanFilterInstantiation_h
 
@@ -38,11 +43,10 @@
 
 #include <math.h>
 
-/*!
-  \file vpLinearKalmanFilterInstantiation.h
-  \brief Implementation of some specific linear Kalman filters.
-*/
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpLinearKalmanFilterInstantiation
   \ingroup group_core_kalman
@@ -156,5 +160,7 @@ void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)
     break;
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

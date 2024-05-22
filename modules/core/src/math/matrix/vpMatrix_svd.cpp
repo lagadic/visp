@@ -75,7 +75,7 @@ extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *l
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*---------------------------------------------------------------------

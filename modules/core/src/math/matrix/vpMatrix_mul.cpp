@@ -45,7 +45,7 @@
 // that's why we prefer use naive code when VISP_HAVE_GSL is defined.
 #if defined(VISP_HAVE_LAPACK)
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 #ifdef VISP_HAVE_MKL

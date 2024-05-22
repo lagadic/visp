@@ -41,6 +41,11 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 /*!
   Computes the normalized area \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$.
   Depends on vpMomentCentered.
@@ -83,16 +88,6 @@ vpMomentAreaNormalized::vpMomentAreaNormalized(double a_star, double Z_star)
 }
 
 /*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "An = " << m.values[0] << std::endl;
-  return os;
-}
-
-/*!
 Prints dependencies namely,
 1. Depth at desired pose Z*
 2. Area moment at desired pose
@@ -118,4 +113,18 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
   else
     a = getObject().get(0, 0);
   os << "a = " << a << std::endl;
+}
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentAreaNormalized &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "An = " << m.values[0] << std::endl;
+  return os;
 }

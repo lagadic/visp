@@ -38,10 +38,26 @@
 #ifndef _vpMomentGravityCenter_h_
 #define _vpMomentGravityCenter_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>
-class vpMomentObject;
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMomentGravityCenter;
+class vpMomentObject;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentGravityCenter &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMomentGravityCenter
  *
@@ -130,7 +146,9 @@ public:
   const std::string name() const { return "vpMomentGravityCenter"; }
   void printDependencies(std::ostream &os) const;
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentGravityCenter &v);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

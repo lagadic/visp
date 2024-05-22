@@ -39,13 +39,29 @@
 
 #include <cstdlib>
 #include <utility>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpPoint.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class vpCameraParameters;
+class vpMomentObject;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentObject &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpMomentObject
 
@@ -280,7 +296,7 @@ public:
   void init(unsigned int orderinp);
   void init(const vpMomentObject &objin);
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentObject &v);
   /*!
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
     \param momobj : A vpMomentObject
@@ -310,5 +326,8 @@ private:
   void cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 #endif

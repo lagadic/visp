@@ -41,6 +41,10 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits to perform Exponentially Weighted Moving Average mean drft tests.
@@ -179,4 +183,7 @@ public:
    */
   void setAlpha(const float &alpha);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

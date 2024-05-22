@@ -44,11 +44,8 @@
 #include <visp3/core/vpColVector.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-#define VISP_VPRGBA_NAMESPACE visp::
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
-#else
-#define VISP_VPRGBA_NAMESPACE
 #endif
 class vpRGBa;
 #if defined(ENABLE_VISP_NAMESPACE)
@@ -56,11 +53,11 @@ class vpRGBa;
 #endif
 
 // Forward declaration to have the operators in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_VPRGBA_NAMESPACE vpRGBa &rgba);
-VISP_VPRGBA_NAMESPACE vpRGBa operator*(const double &x, const VISP_VPRGBA_NAMESPACE vpRGBa &rgb);
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRGBa &rgba);
+VISP_NAMESPACE_ADDRESSING vpRGBa operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRGBa &rgb);
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -160,7 +157,7 @@ public:
   unsigned char B; //!< Blue component.
   unsigned char A; //!< Additionnal component.
 
-  friend VISP_EXPORT vpRGBa ::operator*(const double &x, const vpRGBa &rgb);
+  friend VISP_EXPORT vpRGBa(::operator*)(const double &x, const vpRGBa &rgb);
 };
 #if defined(ENABLE_VISP_NAMESPACE)
 }

@@ -44,22 +44,20 @@
 #include <visp3/core/vpColVector.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-#define VISP_VPRGBF_NAMESPACE visp::
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
-#else
-#define VISP_VPRGBF_NAMESPACE
 #endif
 class vpRGBf;
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 
-std::ostream &operator<<(std::ostream &os, const VISP_VPRGBF_NAMESPACE vpRGBf &rgb);
-VISP_VPRGBF_NAMESPACE vpRGBf operator*(double x, const VISP_VPRGBF_NAMESPACE vpRGBf &rgb);
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRGBf &rgb);
+VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const VISP_NAMESPACE_ADDRESSING vpRGBf &rgb);
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -138,14 +136,14 @@ public:
   bool operator<(const vpRGBf &v) const;
   bool operator>(const vpRGBf &v) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpRGBf &rgb);
 
 public:
   float R; //!< Red component.
   float G; //!< Green component.
   float B; //!< Blue component.
 
-  friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
+  friend VISP_EXPORT vpRGBf(::operator*)(double x, const vpRGBf &rgb);
 };
 #if defined(ENABLE_VISP_NAMESPACE)
 }

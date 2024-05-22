@@ -37,6 +37,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpUniRand.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpGaussRand
   \ingroup group_core_random
@@ -127,7 +131,7 @@ public:
   /*!
       Default noise generator constructor.
      */
-  vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) {}
+  vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) { }
 
   /*!
       Gaussian noise random generator constructor.
@@ -138,8 +142,7 @@ public:
     */
   vpGaussRand(double sigma_val, double mean_val, long noise_seed = 0)
     : m_rng(noise_seed), m_mean(mean_val), m_sigma(sigma_val), m_AlreadyDone(false), m_x2(0)
-  {
-  }
+  { }
 
   /*!
       Set the standard deviation and mean for gaussian noise.
@@ -165,5 +168,7 @@ public:
     */
   double operator()() { return m_sigma * gaussianDraw() + m_mean; }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

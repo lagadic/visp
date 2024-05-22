@@ -36,6 +36,10 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTriangle.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Basic constructor.
 
@@ -189,3 +193,6 @@ bool vpTriangle::inTriangle(const vpImagePoint &iP, double threshold)
 
   return (p_ds_uv0 + p_ds_uv1 < 1. + threshold && p_ds_uv0 > -threshold && p_ds_uv1 > -threshold);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

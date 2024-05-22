@@ -126,13 +126,13 @@ using namespace buminiz;
 
 #include <regex>
 
-char visp::cnpy::BigEndianTest()
+char VISP_NAMESPACE_ADDRESSING cnpy::BigEndianTest()
 {
   int x = 1;
   return (((reinterpret_cast<char *>(&x))[0]) ? '<' : '>');
 }
 
-char visp::cnpy::map_type(const std::type_info &t)
+char VISP_NAMESPACE_ADDRESSING cnpy::map_type(const std::type_info &t)
 {
   if (t == typeid(float)) { return 'f'; }
   if (t == typeid(double)) { return 'f'; }
@@ -159,7 +159,7 @@ char visp::cnpy::map_type(const std::type_info &t)
   else { return '?'; }
 }
 
-void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
+void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
   uint16_t header_len = *reinterpret_cast<uint16_t *>(buffer+8);
   std::string header(reinterpret_cast<char *>(buffer+9), header_len);
@@ -194,7 +194,7 @@ void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std:
   word_size = atoi(str_ws.substr(0, loc2).c_str());
 }
 
-void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
+void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
   char buffer[256];
   size_t res = fread(buffer, sizeof(char), 11, fp);
@@ -250,7 +250,7 @@ void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_
   word_size = atoi(str_ws.substr(0, loc2).c_str());
 }
 
-void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset)
+void VISP_NAMESPACE_ADDRESSING cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset)
 {
   std::vector<char> footer(22);
   fseek(fp, -22, SEEK_END);
@@ -274,14 +274,14 @@ void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_head
   UNUSED(comment_len); assert(comment_len == 0);
 }
 
-visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
+VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npy_file(FILE *fp)
 {
   std::vector<size_t> shape;
   size_t word_size;
   bool fortran_order;
-  visp::cnpy::parse_npy_header(fp, word_size, shape, fortran_order);
+  VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(fp, word_size, shape, fortran_order);
 
-  visp::cnpy::NpyArray arr(shape, word_size, fortran_order);
+  VISP_NAMESPACE_ADDRESSING cnpy::NpyArray arr(shape, word_size, fortran_order);
   size_t nread = fread(arr.data<char>(), 1, arr.num_bytes(), fp);
   if (nread != arr.num_bytes()) {
     throw std::runtime_error("load_the_npy_file: failed fread");
@@ -289,7 +289,7 @@ visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
   return arr;
 }
 
-visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
+VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
 {
   std::vector<unsigned char> buffer_compr(compr_bytes);
   std::vector<unsigned char> buffer_uncompr(uncompr_bytes);
@@ -321,9 +321,9 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   std::vector<size_t> shape;
   size_t word_size;
   bool fortran_order;
-  visp::cnpy::parse_npy_header(&buffer_uncompr[0], word_size, shape, fortran_order);
+  VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(&buffer_uncompr[0], word_size, shape, fortran_order);
 
-  visp::cnpy::NpyArray array(shape, word_size, fortran_order);
+  VISP_NAMESPACE_ADDRESSING cnpy::NpyArray array(shape, word_size, fortran_order);
 
   size_t offset = uncompr_bytes - array.num_bytes();
   memcpy(array.data<unsigned char>(), &buffer_uncompr[0]+offset, array.num_bytes());
@@ -339,7 +339,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
+VISP_NAMESPACE_ADDRESSING cnpy::npz_t VISP_NAMESPACE_ADDRESSING cnpy::npz_load(std::string fname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
 
@@ -347,7 +347,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
     throw std::runtime_error("npz_load: Error! Unable to open file "+fname+"!");
   }
 
-  visp::cnpy::npz_t arrays;
+  VISP_NAMESPACE_ADDRESSING cnpy::npz_t arrays;
   bool quit = false;
   while (!quit) {
     std::vector<char> local_header(30);
@@ -404,7 +404,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname)
+VISP_NAMESPACE_ADDRESSING cnpy::NpyArray VISP_NAMESPACE_ADDRESSING cnpy::npz_load(std::string fname, std::string varname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
 
@@ -469,7 +469,7 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
+VISP_NAMESPACE_ADDRESSING cnpy::NpyArray VISP_NAMESPACE_ADDRESSING cnpy::npy_load(std::string fname)
 {
 
   FILE *fp = fopen(fname.c_str(), "rb");
@@ -487,7 +487,7 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 std::string vpIoTools::baseName = "";
@@ -546,7 +546,7 @@ std::string &rtrim(std::string &s)
 } // namespace
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -2132,16 +2132,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-  }
+}
 
-  /**
-   * @brief Return a upper-case version of the string \b input .
-   * Numbers and special characters stay the same
-   *
-   * @param input The input string for which we want to ensure that all the characters are in upper case.
-   * @return std::string A upper-case version of the string \b input, where
-   * numbers and special characters stay the same
-   */
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2153,16 +2153,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-  }
+}
 
-  /*!
-    Returns the absolute path using realpath() on Unix systems or
-    GetFullPathName() on Windows systems. \return According to realpath()
-    manual, returns an absolute pathname that names the same file, whose
-    resolution does not involve '.', '..', or symbolic links for Unix systems.
-    According to GetFullPathName() documentation, retrieves the full path of the
-    specified file for Windows systems.
-   */
+/*!
+  Returns the absolute path using realpath() on Unix systems or
+  GetFullPathName() on Windows systems. \return According to realpath()
+  manual, returns an absolute pathname that names the same file, whose
+  resolution does not involve '.', '..', or symbolic links for Unix systems.
+  According to GetFullPathName() documentation, retrieves the full path of the
+  specified file for Windows systems.
+ */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

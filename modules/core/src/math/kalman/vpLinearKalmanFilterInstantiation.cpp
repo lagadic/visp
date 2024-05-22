@@ -45,6 +45,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   Initialize the Kalman filter material depending on the selected
@@ -810,7 +814,8 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
     iter++;
 
     return;
-  } else if (iter == 1) {
+  }
+  else if (iter == 1) {
     if (model == stateConstVel_MeasurePos) {
       for (unsigned int i = 0; i < size_measure * nsignal; i++) {
         double z_prev = Xest[size_state * i]; // Previous mesured position
@@ -827,3 +832,6 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
   filtering(z);
   prediction();
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

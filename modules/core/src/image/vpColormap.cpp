@@ -1008,7 +1008,7 @@ unsigned char m_winterSrgbBytes[256][3] = {
 };
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!

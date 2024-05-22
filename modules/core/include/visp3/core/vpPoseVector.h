@@ -49,32 +49,29 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
+#endif
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
 class vpPoseVector;
+class vpTranslationVector;
+class vpThetaUVector;
+class vpRowVector;
+#ifdef ENABLE_VISP_NAMESPACE
 }
 #endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-#if defined(ENABLE_VISP_NAMESPACE)
-void to_json(nlohmann::json &j, const visp::vpPoseVector &pose);
-void from_json(const nlohmann::json &j, visp::vpPoseVector &pose);
-#endif
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
-#endif
-class vpRotationMatrix;
-class vpHomogeneousMatrix;
-class vpTranslationVector;
-class vpThetaUVector;
-class vpRowVector;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
 #endif
 /*!
   \class vpPoseVector
@@ -203,11 +200,7 @@ class vpRowVector;
   {"cols":1,"data":[0.1,0.2,0.3,3.141592653589793,1.5707963267948966,0.7853981633974483],"rows":6,"type":"vpPoseVector"}
   \endcode
 */
-class VISP_EXPORT
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-vpPoseVector: public vpArray2D<double>
+class VISP_EXPORT vpPoseVector : public vpArray2D<double>
 {
 public:
   // constructor
@@ -220,6 +213,8 @@ public:
   vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu);
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
+
+  virtual ~vpPoseVector() { }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   vp_deprecated vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
@@ -345,26 +340,18 @@ public:
   //@}
 #endif
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-const visp::vpPoseVector &r
-#else
-const vpPoseVector &r
-#endif
-)
+inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpPoseVector &r)
 {
   r.convert_to_json(j);
 }
-inline void from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::vpPoseVector &r
-#else
-vpPoseVector &r
-#endif
-)
+
+inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpPoseVector &r)
 {
   r.parse_json(j);
 }

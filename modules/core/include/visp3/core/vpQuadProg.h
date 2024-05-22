@@ -31,6 +31,11 @@
  * Quadratic Programming
  */
 
+/*!
+ * \file vpQuadProg.h
+ * \brief Implementation of Quadratic Program with Active Sets.
+ */
+
 #ifndef _vpQuadProg_h_
 #define _vpQuadProg_h_
 
@@ -41,11 +46,10 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMatrixException.h>
 
-/*!
- * \file vpQuadProg.h
- * \brief Implementation of Quadratic Program with Active Sets.
- */
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpQuadProg
  * \ingroup group_core_optim
@@ -159,4 +163,7 @@ protected:
   }
 #endif
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

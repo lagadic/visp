@@ -34,12 +34,25 @@
 #ifndef _vpPlane_h_
 #define _vpPlane_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpPlane;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPlane &p);
+
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -149,7 +162,7 @@ public:
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;

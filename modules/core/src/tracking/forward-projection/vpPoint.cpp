@@ -43,7 +43,7 @@
 #include <visp3/core/vpPoint.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 void vpPoint::init()
@@ -414,8 +414,6 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
   vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
-
 /*!
  * Display the projection of a 3D point in image \e I.
  *
@@ -513,3 +511,5 @@ void vpPoint::set_w(double w) { p[2] = w; }
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPoint & /* vpp */) { return (os << "vpPoint"); }

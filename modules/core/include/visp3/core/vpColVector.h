@@ -43,21 +43,23 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
+#endif
+
 class vpColVector;
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-#if defined(ENABLE_VISP_NAMESPACE)
-void to_json(nlohmann::json &j, const visp::vpColVector &pose);
-void from_json(const nlohmann::json &j, visp::vpColVector &pose);
+// Forward declaration to ensure that the methods are in the global namespace
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpColVector &pose);
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpColVector &pose);
 #endif
-#endif
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpMatrix;
@@ -1476,7 +1478,7 @@ public:
 };
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -1501,7 +1503,7 @@ const vpColVector &v
 )
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   to_json(j, *asArray);
@@ -1516,7 +1518,7 @@ vpColVector &v
 )
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   from_json(j, *asArray);

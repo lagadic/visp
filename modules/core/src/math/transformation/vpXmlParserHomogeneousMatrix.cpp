@@ -63,7 +63,7 @@
 #define LABEL_XML_TUZ "theta_uz"
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

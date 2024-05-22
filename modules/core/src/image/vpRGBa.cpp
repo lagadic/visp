@@ -45,7 +45,7 @@
 #include <visp3/core/vpRGBa.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -232,8 +232,11 @@ bool vpRGBa::operator>(const vpRGBa &v) const
 
   return (gray1 > gray2);
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
-vpRGBa operator*(const double &x, const vpRGBa &rgb) { return rgb * x; }
+VISP_NAMESPACE_ADDRESSING vpRGBa operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRGBa &rgb) { return rgb * x; }
 
 /*!
 
@@ -257,11 +260,8 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRGBa &rgba)
 {
   os << "(" << static_cast<int>(rgba.R) << "," << static_cast<int>(rgba.G) << "," << static_cast<int>(rgba.B) << "," << static_cast<int>(rgba.A) << ")";
   return os;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif

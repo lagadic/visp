@@ -72,7 +72,7 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!

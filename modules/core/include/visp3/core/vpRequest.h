@@ -42,6 +42,10 @@
 #include <string.h>
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpRequest
 
@@ -225,5 +229,7 @@ template <typename T> void vpRequest::addParameterObject(T *params, const int &s
     delete[] tempS;
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

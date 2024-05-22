@@ -41,6 +41,10 @@
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <visp3/core/vpColVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpUKSigmaDrawerAbstract
   \ingroup group_core_kalman
@@ -79,5 +83,8 @@ public:
 protected:
   unsigned int m_n; /*!< The size of the state of the UKF.*/
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

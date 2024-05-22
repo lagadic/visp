@@ -75,7 +75,7 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
 #include <limits> // numeric_limits
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*--------------------------------------------------------------------

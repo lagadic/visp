@@ -44,7 +44,7 @@
 #include <visp3/core/vpHistogramValey.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -77,20 +77,22 @@ bool vpHistogramValey::operator==(const vpHistogramValey &v) const
   return ((level == v.level) && (value == v.value));
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 /*!
   \relates vpHistogramValey
   \brief std::cout a valey
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpHistogramValey &v)
 {
 
   s << static_cast<int>(v.getLevel()) << " " << v.getValue();
 
   return s;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+
 /*
  * Local variables:
  * c-basic-offset: 2

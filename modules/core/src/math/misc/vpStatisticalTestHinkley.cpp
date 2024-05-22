@@ -46,6 +46,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpStatisticalTestHinkley::vpStatisticalTestHinkley()
   : vpStatisticalTestAbstract()
   , m_dmin2(0.1f)
@@ -248,3 +252,6 @@ void vpStatisticalTestHinkley::updateTestSignals(const float &signal)
   ++m_count;
   computeMean(signal);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -41,6 +41,10 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits a simple test comparing the current value to the
@@ -169,5 +173,7 @@ public:
    */
   void init(const float &h, const float &mean, const float &stdev);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

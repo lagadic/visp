@@ -44,22 +44,22 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpUniRand.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
-{
-#endif
 // Local helper
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
 #include <opencv2/imgproc/imgproc.hpp>
+
 
 /*!
  * Compute convex hull corners.
  *
  * \param[in] ips : List of 2D points.
  */
-template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpContainer &ips)
+template <typename IpContainer> std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> convexHull(const IpContainer &ips)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   if (ips.size() == 0) {
     throw vpException(vpException::badValue,
                       "Convex Hull can not be computed as the input does not contain any image point.");
@@ -109,6 +109,10 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    Default constructor that creates an empty polygon.
 */

@@ -38,7 +38,7 @@
 #include <visp3/core/vpPoint.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 template <class Type> void vp_display_close(vpImage<Type> &I)

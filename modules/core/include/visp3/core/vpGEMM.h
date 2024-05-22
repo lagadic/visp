@@ -38,7 +38,7 @@
 #include <visp3/core/vpException.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 const vpArray2D<double> null(0, 0);

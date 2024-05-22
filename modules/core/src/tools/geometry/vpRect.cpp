@@ -43,7 +43,7 @@
 #include <visp3/core/vpRect.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -255,6 +255,9 @@ bool vpRect::operator!=(const vpRect &r) const
   */
   return !(*this == r);
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 /*!
   Check if an image point belongs to a rectangle.
@@ -264,17 +267,14 @@ bool vpRect::operator!=(const vpRect &r) const
 
   \return Returns true if the point belongs to the rectangle.
 */
-VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect)
+VISP_EXPORT bool inRectangle(const VISP_NAMESPACE_ADDRESSING vpImagePoint &ip, const VISP_NAMESPACE_ADDRESSING vpRect &rect)
 {
   return ((ip.get_i() <= rect.getBottom()) && (ip.get_i() >= rect.getTop()) && (ip.get_j() <= rect.getRight()) &&
           (ip.get_j() >= rect.getLeft()));
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRect &r)
 {
   os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
   return os;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif

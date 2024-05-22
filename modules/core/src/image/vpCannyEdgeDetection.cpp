@@ -57,23 +57,14 @@ static void scaleFilter(
 #endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-void ::from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-  vpCannyEdgeDetection &detector)
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector)
 {
-  std::string filteringAndGradientName =
 #if defined(ENABLE_VISP_NAMESPACE)
-    visp::
+  using namespace VISP_NAMESPACE_NAME;
 #endif
-    vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
   filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-  detector.m_filteringAndGradientType =
-#if defined(ENABLE_VISP_NAMESPACE)
-    visp::
-#endif
-    vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
+  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
   detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
   detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
   detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
@@ -83,17 +74,9 @@ void ::from_json(const nlohmann::json &j,
   detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
 }
 
-void ::to_json(nlohmann::json &j, const
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-vpCannyEdgeDetection &detector)
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector)
 {
-  std::string filteringAndGradientName =
-#if defined(ENABLE_VISP_NAMESPACE)
-    visp::
-#endif
-    vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  std::string filteringAndGradientName = VISP_NAMESPACE_ADDRESSING vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
   j = nlohmann::json {
           {"filteringAndGradientType", filteringAndGradientName},
           {"gaussianSize", detector.m_gaussianKernelSize},
@@ -108,7 +91,7 @@ vpCannyEdgeDetection &detector)
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 // // Initialization methods

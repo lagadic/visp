@@ -38,7 +38,20 @@
 #include <visp3/core/vpRGBa.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpColor;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+// Forward declaration to ensure that the operators are in the global namespace
+bool operator==(const VISP_NAMESPACE_ADDRESSING vpColor &c1, const VISP_NAMESPACE_ADDRESSING vpColor &c2);
+bool operator!=(const VISP_NAMESPACE_ADDRESSING vpColor &c1, const VISP_NAMESPACE_ADDRESSING vpColor &c2);
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -278,8 +291,8 @@ public:
   /*! Default destructor. */
   inline virtual ~vpColor() { }
 
-  friend VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2);
-  friend VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2);
+  friend VISP_EXPORT bool ::operator==(const vpColor &c1, const vpColor &c2);
+  friend VISP_EXPORT bool ::operator!=(const vpColor &c1, const vpColor &c2);
   /*!
     Set a color from its RGB values.
 
@@ -387,7 +400,8 @@ vpColor const __declspec(selectany) vpColor::allColors[vpColor::nbColors] = { vp
                                                                              vpColor::gray,       // 3
                                                                              vpColor::darkGray,   // 4
                                                                              vpColor::black,      // 0
-                                                                             vpColor::white };     // 17
+                                                                             vpColor::white
+};     // 17
 
 #endif
 #if defined(ENABLE_VISP_NAMESPACE)

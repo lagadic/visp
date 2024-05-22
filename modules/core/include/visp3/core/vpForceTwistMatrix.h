@@ -38,7 +38,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpMatrix;
@@ -53,7 +53,7 @@ class vpMatrix;
 #include <visp3/core/vpRotationMatrix.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!

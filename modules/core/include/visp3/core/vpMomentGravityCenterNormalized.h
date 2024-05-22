@@ -41,8 +41,24 @@
 
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentGravityCenter.h>
-class vpMomentObject;
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMomentGravityCenterNormalized;
+class vpMomentObject;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentGravityCenterNormalized &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMomentGravityCenterNormalized
  *
@@ -65,7 +81,10 @@ public:
   //! Moment name.
   const std::string name() const { return "vpMomentGravityCenterNormalized"; }
   void printDependencies(std::ostream &os) const;
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 #endif

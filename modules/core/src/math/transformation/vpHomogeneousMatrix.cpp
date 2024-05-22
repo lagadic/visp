@@ -47,7 +47,7 @@
 #include <visp3/core/vpQuaternionVector.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -1384,7 +1384,7 @@ void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
 void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) this;
   if (j.is_object() && j.contains("type")) { // Specific conversions

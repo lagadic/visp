@@ -37,11 +37,27 @@
 #ifndef _vpMomentAreaNormalized_h_
 #define _vpMomentAreaNormalized_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMomentAreaNormalized;
 class vpMomentObject;
 class vpMomentCentered;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentAreaNormalized &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMomentAreaNormalized
  *
@@ -178,8 +194,10 @@ public:
    * Moment name.
    */
   const std::string name() const { return "vpMomentAreaNormalized"; }
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
   void printDependencies(std::ostream &os) const;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

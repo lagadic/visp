@@ -41,7 +41,10 @@
 #include <visp3/core/vpQuadProg.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
   to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
@@ -678,7 +681,9 @@ vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
     return A.solveBySVD(b);
   return A.solveByQR(b);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #else
 void dummy_vpQuadProg() { };
 #endif

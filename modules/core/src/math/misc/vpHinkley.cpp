@@ -53,6 +53,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /* VP_DEBUG_MODE fixed by configure:
    1:
    2:
@@ -432,6 +436,9 @@ void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
     break;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
  // Work around to avoid warning: libvisp_core.a(vpHinkley.cpp.o) has no symbols
 void dummy_vpRHinkley() { };

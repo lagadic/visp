@@ -43,7 +43,7 @@
 #include <visp3/core/vpRzyzVector.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*! Default constructor that initialize all the 3 angles to zero. */

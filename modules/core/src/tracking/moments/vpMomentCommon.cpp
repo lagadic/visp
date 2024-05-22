@@ -39,6 +39,10 @@
 #include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Default constructor. Initializes the common database with the following
   moments: basic, gravity,centered,centered+normalized,normalized
@@ -227,3 +231,6 @@ vpMomentCommon::~vpMomentCommon()
   if (momentCInvariant)
     delete momentCInvariant;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

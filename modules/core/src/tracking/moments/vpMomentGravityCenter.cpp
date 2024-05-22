@@ -38,6 +38,11 @@
 
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Computes the two gravity center coordinates commonly called \f$x_g\f$ and
   \f$y_g\f$.
@@ -60,16 +65,6 @@ vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment() { values.resize(2); 
 const std::vector<double> &vpMomentGravityCenter::get() const { return values; }
 
 /*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
-  return os;
-}
-
-/*!
 Prints its dependencies
 Basic moments m10, m01 and m00 from vpMomentObject
 */
@@ -79,4 +74,17 @@ void vpMomentGravityCenter::printDependencies(std::ostream &os) const
   os << "m10 = " << getObject().get(1, 0) << "\t";
   os << "m00 = " << getObject().get(0, 1) << "\t";
   os << "m00 = " << getObject().get(0, 0) << std::endl;
+}
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentGravityCenter &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
+  return os;
 }

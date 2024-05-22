@@ -42,6 +42,10 @@
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpServer
 
@@ -216,6 +220,8 @@ public:
   */
   void setMaxNumberOfClients(const unsigned int &l) { max_clients = l; }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

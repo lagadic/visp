@@ -38,10 +38,15 @@
 
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentObject.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Default constructor.
 */
-vpMomentBasic::vpMomentBasic() : vpMoment() {}
+vpMomentBasic::vpMomentBasic() : vpMoment() { }
 
 /*!
   Retrieve all moments of all orders computed. vpMomentBasic::get()[j*order+i]
@@ -64,18 +69,7 @@ double vpMomentBasic::get(unsigned int i, unsigned int j) const { return getObje
 /*!
   Dummy function. Everything is already done in object.
 */
-void vpMomentBasic::compute() {}
-
-/*!
-  Outputs the moment's values to a stream.
-  Same output as in vpMomentObject.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &m)
-{
-  os << (__FILE__) << std::endl;
-  vpMomentObject::printWithIndices(m.getObject(), os);
-  return os;
-}
+void vpMomentBasic::compute() { }
 
 /*!
 No dependencies on other vpMoments, since basic moments are computed in
@@ -85,7 +79,24 @@ void vpMomentBasic::printDependencies(std::ostream &os) const
 {
   os << (__FILE__) << std::endl;
   os << "No dependencies on other vpMoments, since basic moments are "
-        "computed in vpMomentObject"
-     << std::endl;
+    "computed in vpMomentObject"
+    << std::endl;
   vpMomentObject::printWithIndices(getObject(), os);
+}
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+/*!
+  Outputs the moment's values to a stream.
+  Same output as in vpMomentObject.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentBasic &m)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  os << (__FILE__) << std::endl;
+  vpMomentObject::printWithIndices(m.getObject(), os);
+  return os;
 }

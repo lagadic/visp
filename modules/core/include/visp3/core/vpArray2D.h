@@ -47,24 +47,32 @@
 #include <visp3/core/vpException.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
+#endif
 template <typename T> class vpArray2D;
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 
+template<class T>
+std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpArray2D<T> &A);
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-#if defined(ENABLE_VISP_NAMESPACE)
 //template<typename Type>
 template<class T>
-void from_json(const nlohmann::json &j, visp::vpArray2D<T> &array);
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray2D<T> &array);
+
 //template<typename Type>
 template<class T>
-void to_json(nlohmann::json &j, const visp::vpArray2D<T> &array);
-#endif
+void to_json(nlohmann::json &j, const  VISP_NAMESPACE_ADDRESSING vpArray2D<T> &array);
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpArray2D
  *  \ingroup group_core_matrices
@@ -137,11 +145,7 @@ void to_json(nlohmann::json &j, const visp::vpArray2D<T> &array);
  * }
  * \endcode
 */
-template <class Type> class
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::
-#endif
-vpArray2D
+template <class Type> class vpArray2D
 {
 protected:
   //! Number of rows in the array
@@ -619,32 +623,7 @@ public:
     Writes the given array to the output stream and returns a reference to the
     output stream.
     */
-  friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
-  {
-    if ((A.data == nullptr) || (A.size() == 0)) {
-      return s;
-    }
-    std::ios_base::fmtflags original_flags = s.flags();
-
-    s.precision(10);
-    unsigned int a_rows = A.getRows();
-    unsigned int a_cols = A.getCols();
-    for (unsigned int i = 0; i < a_rows; ++i) {
-      for (unsigned int j = 0; j < (a_cols - 1); ++j) {
-        s << A[i][j] << "  ";
-      }
-      // We don't add "  " after the last row element
-      s << A[i][a_cols - 1];
-      // We don't add a \n char on the end of the last array line
-      if (i < (a_rows - 1)) {
-        s << std::endl;
-      }
-    }
-
-    s.flags(original_flags); // restore s to standard state
-
-    return s;
-  }
+  friend std::ostream &::operator<< <>(std::ostream &s, const vpArray2D<Type> &A);
 
   vpArray2D<Type> hadamard(const vpArray2D<Type> &m) const;
 
@@ -1100,9 +1079,40 @@ public:
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+template <class Type>
+std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &A)
+{
+  if ((A.data == nullptr) || (A.size() == 0)) {
+    return s;
+  }
+  std::ios_base::fmtflags original_flags = s.flags();
+
+  s.precision(10);
+  unsigned int a_rows = A.getRows();
+  unsigned int a_cols = A.getCols();
+  for (unsigned int i = 0; i < a_rows; ++i) {
+    for (unsigned int j = 0; j < (a_cols - 1); ++j) {
+      s << A[i][j] << "  ";
+    }
+    // We don't add "  " after the last row element
+    s << A[i][a_cols - 1];
+    // We don't add a \n char on the end of the last array line
+    if (i < (a_rows - 1)) {
+      s << std::endl;
+    }
+  }
+
+  s.flags(original_flags); // restore s to standard state
+
+  return s;
+}
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -1353,16 +1363,10 @@ template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A)
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 template <class Type>
-inline void from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::vpArray2D<Type> &array
-#else
-vpArray2D<Type> &array
-#endif
-)
+inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &array)
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   if (j.is_array()) {
     const unsigned int nrows = static_cast<unsigned int>(j.size());
@@ -1415,13 +1419,7 @@ vpArray2D<Type> &array
 
 
 template <class Type>
-inline void to_json(nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-const visp::vpArray2D<Type> &array
-#else
-const vpArray2D<Type> &array
-#endif
-)
+inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &array)
 {
   j = {
     {"cols", array.colNum},

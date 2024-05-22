@@ -36,6 +36,10 @@
 #include <visp3/core/vpCylinder.h>
 #include <visp3/core/vpFeatureDisplay.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void vpCylinder::init()
 {
   oP.resize(7);
@@ -420,3 +424,6 @@ void vpCylinder::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color, thickness);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

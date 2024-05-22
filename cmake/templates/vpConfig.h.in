@@ -114,6 +114,13 @@
 
 // Defined if the user wants to protect the classes in a dedicated visp namespace
 #cmakedefine ENABLE_VISP_NAMESPACE
+#ifdef ENABLE_VISP_NAMESPACE
+#define VISP_NAMESPACE_NAME visp
+#define VISP_NAMESPACE_ADDRESSING visp::
+#else
+#define VISP_NAMESPACE_NAME
+#define VISP_NAMESPACE_ADDRESSING
+#endif
 
 // Enable debug and trace printings
 #cmakedefine VP_TRACE

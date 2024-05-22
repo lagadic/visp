@@ -39,8 +39,25 @@
 #ifndef _vpMomentBasic_h_
 #define _vpMomentBasic_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMomentBasic;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentBasic &v);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpMomentBasic
 
@@ -78,7 +95,10 @@ public:
     Moment name.
     */
   const std::string name() const { return "vpMomentBasic"; }
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &v);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentBasic &v);
   void printDependencies(std::ostream &os) const;
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

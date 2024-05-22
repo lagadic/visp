@@ -50,34 +50,25 @@
 #include <visp3/core/vpMatrix.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
+#endif
+
 class vpCameraParameters;
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 
 // Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-  vpCameraParameters &cam);
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
 // Forward declaration to have the to_json in the global namespace
-void to_json(nlohmann::json &j, const
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-  vpCameraParameters &cam);
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
 
 // Forward declaration to have the from_json in the global namespace
-void from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-  vpCameraParameters &cam);
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
 #endif
 
 /*!
@@ -511,7 +502,7 @@ const vpCameraParameters &cam
 )
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   j["px"] = cam.m_px;
   j["py"] = cam.m_py;
@@ -573,7 +564,7 @@ vpCameraParameters &cam
 )
 {
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace visp;
+  using namespace VISP_NAMESPACE_NAME;
 #endif
   const double px = j.at("px").get<double>();
   const double py = j.at("py").get<double>();
