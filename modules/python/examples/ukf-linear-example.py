@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@
  not perfect.
 """
 
-from visp.core import ColVector, Matrix, UnscentedKalman, UKSigmaDrawerMerwe, GaussRand
+from visp.core import ColVector, Matrix, UnscentedKalman, UKSigmaDrawerMerwe
 
 # For the Graphical User Interface
 try:
@@ -184,8 +184,6 @@ if __name__ == '__main__':
   z_prec = ColVector(2, 0.) # Previous measurement vector
   np.random.seed(4224)
 
-  rngX = GaussRand(sigmaXmeas, 0., 4224) # Gaussian noise random generator for x-axis measurement
-  rngY = GaussRand(sigmaYmeas, 0., 2112) # Gaussian noise random generator for y-axis measurement
   for i in range(100):
     # Creating noisy measurements
     x_meas = gt_X[0] + np.random.normal(0.0, sigmaXmeas)
