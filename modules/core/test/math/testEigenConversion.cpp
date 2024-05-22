@@ -46,6 +46,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 template <typename Type> std::ostream &operator<<(std::ostream &os, const Eigen::Quaternion<Type> &q)
@@ -56,8 +60,8 @@ template <typename Type> std::ostream &operator<<(std::ostream &os, const Eigen:
 template <typename Type> std::ostream &operator<<(std::ostream &os, const Eigen::AngleAxis<Type> &aa)
 {
   return os << "angle: " << aa.angle() << " ; axis: " << aa.axis()(0) << " ; " << aa.axis()(1) << " ; " << aa.axis()(2)
-            << " ; thetau: " << aa.angle() * aa.axis()(0) << " ; " << aa.angle() * aa.axis()(1) << " ; "
-            << aa.angle() * aa.axis()(2);
+    << " ; thetau: " << aa.angle() * aa.axis()(0) << " ; " << aa.angle() * aa.axis()(1) << " ; "
+    << aa.angle() * aa.axis()(2);
 }
 } // namespace
 
@@ -121,7 +125,7 @@ TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]")
   vp::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -150,7 +154,7 @@ TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
   vp::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -179,7 +183,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conve
   vp::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -208,7 +212,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conve
   vp::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_conversion]")
 {

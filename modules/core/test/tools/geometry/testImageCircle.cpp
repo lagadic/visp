@@ -45,6 +45,9 @@ bool equal(const float &actualVal, const float &theoreticalVal)
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const float OFFSET = 5.f;
   const float WIDTH = 640.f;
   const float HEIGHT = 480.f;

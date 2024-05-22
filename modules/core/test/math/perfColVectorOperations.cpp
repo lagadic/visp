@@ -42,6 +42,10 @@
 
 #include <visp3/core/vpColVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 static bool g_runBenchmark = false;

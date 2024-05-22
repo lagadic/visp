@@ -45,6 +45,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRowVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool test(const std::string &s, const vpRowVector &v, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;

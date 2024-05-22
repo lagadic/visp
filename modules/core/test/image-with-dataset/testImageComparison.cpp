@@ -46,6 +46,10 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
 
@@ -68,7 +72,7 @@ SYNOPSIS\n\
   %s [-i <input image path>]\n\
      [-h]\n            \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -170,8 +174,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -180,9 +184,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -217,7 +221,8 @@ int main(int argc, const char **argv)
     // Modify I_Klimt1
     if (I_Klimt1[I_Klimt1.getHeight() / 2][I_Klimt1.getWidth() / 2] < 255) {
       I_Klimt1[I_Klimt1.getHeight() / 2][I_Klimt1.getWidth() / 2]++;
-    } else {
+    }
+    else {
       I_Klimt1[I_Klimt1.getHeight() / 2][I_Klimt1.getWidth() / 2]--;
     }
 
@@ -262,7 +267,8 @@ int main(int argc, const char **argv)
     // Modify I_color_Klimt2
     if (I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R < 255) {
       I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R++;
-    } else {
+    }
+    else {
       I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R--;
     }
 
@@ -280,7 +286,8 @@ int main(int argc, const char **argv)
       throw vpException(vpException::fatalError, ss.str());
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "\nCatch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

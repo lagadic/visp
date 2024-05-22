@@ -41,6 +41,10 @@
 
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool equal(const vpArray2D<double> &a1, const vpArray2D<double> &a2, double epsilon)
 {
   if (a1.size() != a2.size()) {

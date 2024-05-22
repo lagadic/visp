@@ -48,6 +48,9 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 TEST_CASE("Test comparison operator", "[operator]")
 {
   vpImagePoint ip1, ip2, ip3;
@@ -152,7 +155,8 @@ int main()
 
   if (ip1 == ip2) {
     std::cout << "ip1 == ip2" << std::endl;
-  } else {
+  }
+  else {
     std::cout << "ip1 != ip2 (bad result)" << std::endl;
     return EXIT_FAILURE;
   }
@@ -160,20 +164,23 @@ int main()
   if (ip1 != ip2) {
     std::cout << "ip1 != ip2 (bad result)" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "ip1 == ip2" << std::endl;
   }
 
   if (ip1 == ip3) {
     std::cout << "ip1 == ip3 (bad result)" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "ip1 != ip3" << std::endl;
   }
 
   if (ip1 != ip3) {
     std::cout << "ip1 != ip3" << std::endl;
-  } else {
+  }
+  else {
     std::cout << "ip1 == ip3 (bad result)" << std::endl;
     return EXIT_FAILURE;
   }

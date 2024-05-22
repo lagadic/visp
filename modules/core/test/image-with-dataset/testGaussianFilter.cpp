@@ -35,6 +35,10 @@
 
 #include <visp3/core/vpConfig.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
   \example testGaussianFilter.cpp
 

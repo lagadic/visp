@@ -64,13 +64,16 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpCPUFeatures::printCPUInfo();
   std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << " ; VISP_HAVE_SSE2: " << VALUE(VISP_HAVE_SSE2)
-            << std::endl;
+    << std::endl;
   std::cout << "checkSSE3: " << vpCPUFeatures::checkSSE3() << " ; VISP_HAVE_SSE3: " << VALUE(VISP_HAVE_SSE3)
-            << std::endl;
+    << std::endl;
   std::cout << "checkSSSE3: " << vpCPUFeatures::checkSSSE3() << " ; VISP_HAVE_SSSE3: " << VALUE(VISP_HAVE_SSSE3)
-            << std::endl;
+    << std::endl;
 
   return EXIT_SUCCESS;
 }

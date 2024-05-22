@@ -50,6 +50,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePath = vpIoTools::createFilePath(ipath, "faces/1280px-Solvay_conference_1927.png");
 

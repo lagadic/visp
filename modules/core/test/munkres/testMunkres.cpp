@@ -63,6 +63,10 @@ ostream &operator<<(ostream &os, const pair<unsigned int, unsigned int> &val)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 {
   auto testMunkres = [](const std::vector<std::vector<double> > &cost_matrix,
@@ -231,7 +235,7 @@ int main()
 
   if (not testHorMat()) {
     return EXIT_FAILURE;
-  }
+}
 
   return EXIT_SUCCESS;
 }

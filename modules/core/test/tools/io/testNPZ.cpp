@@ -47,6 +47,10 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImage.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 std::string createTmpDir()
