@@ -331,11 +331,11 @@ int main(int argc, const char **argv)
       std::vector<vpImage<unsigned char>> images(opt_numDbImages);
       for (unsigned i = 0; i < opt_numDbImages; ++i) {
         vpColVector to(3, 0.0), positionNoise(3, 0.0);
-        double noiseDiv = 16.0;
+        const double noiseDiv = 16.0;
         positionNoise[0] = random.uniform(-scenew / noiseDiv, scenew / noiseDiv);
         positionNoise[1] = random.uniform(-sceneh / noiseDiv, sceneh / noiseDiv);
         positionNoise[2] = random.uniform(0.0, Z / noiseDiv);
-        double noiseDivTo = 16.0;
+        const double noiseDivTo = 16.0;
         to[0] = random.uniform(-scenew / noiseDivTo, scenew / noiseDivTo);
         to[1] = random.uniform(-sceneh / noiseDivTo, sceneh / noiseDivTo);
         const vpColVector from = vpColVector(cdMo.getTranslationVector()) + positionNoise;
@@ -461,7 +461,7 @@ int main(int argc, const char **argv)
     luminanceI.setCameraParameters(cam);
     vpFeatureLuminanceMapping sI(luminanceI, sMapping);
     std::cout << "Before build from" << std::endl;
-    sI.buildFrom(I);
+    sI.build(I);
     sI.getMapping()->inverse(sI.get_s(), Irec);
 
     std::cout << "Building sId" << std::endl;
@@ -471,7 +471,7 @@ int main(int argc, const char **argv)
     luminanceId.init(I.getHeight(), I.getWidth(), Z);
     luminanceId.setCameraParameters(cam);
     vpFeatureLuminanceMapping sId(luminanceId, sdMapping);
-    sId.buildFrom(Id);
+    sId.build(Id);
 
     // set a velocity control mode
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -500,7 +500,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageDifference(I, Id, Idiff);
 
       // Compute current visual features
-      sI.buildFrom(I);
+      sI.build(I);
       sI.getMapping()->inverse(sI.get_s(), Irec);
 
       if (iter > iterGN) {

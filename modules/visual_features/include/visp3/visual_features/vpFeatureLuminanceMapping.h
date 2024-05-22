@@ -64,7 +64,7 @@ public:
    * This representation s has getProjectionSize() rows.
    *
    * Note that when combined with vpFeatureLuminanceMapping,
-   * The image \p I does not have the same size as the image input of vpFeatureLuminanceMapping::buildFrom.
+   * The image \p I does not have the same size as the image input of vpFeatureLuminanceMapping::build.
    * \p I is the center crop of this image.
    * @param I The input image
    * @param s The resulting representation that will serve as visual servoing features.
@@ -387,7 +387,7 @@ public:
 
   virtual ~vpFeatureLuminanceMapping() = default;
 
-  void buildFrom(vpImage<unsigned char> &I);
+  void build(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
                unsigned int = 1) const vp_override
