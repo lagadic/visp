@@ -58,26 +58,6 @@
  */
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
-protected:
-  /** @name Protected Attributes Inherited from vpMeTracker */
-  //@{
-  //! Tracking dependent variables/functions
-  //! List of tracked moving edges points.
-  std::list<vpMeSite> m_meList;
-  //! Moving edges initialisation parameters
-  vpMe *m_me;
-  //! Initial range
-  unsigned int m_init_range;
-  //! Number of good moving-edges that are tracked
-  int m_nGoodElement;
-  //! Mask used to disable tracking on a part of image
-  const vpImage<bool> *m_mask;
-  //! Mask used to determine candidate points for initialization in an image
-  const vpImage<bool> *m_maskCandidates;
-  //! Moving-edges display type
-  vpMeSite::vpMeSiteDisplayType m_selectDisplay;
-  //@}
-
 public:
   /*!
    * Default constructor.
@@ -320,6 +300,27 @@ public:
   }
   //@}
 #endif
+
+protected:
+  /** @name Protected Attributes Inherited from vpMeTracker */
+  //@{
+  //! Tracking dependent variables/functions
+  //! List of tracked moving edges points.
+  std::list<vpMeSite> m_meList;
+  //! Moving edges initialisation parameters
+  vpMe *m_me;
+  //! Initial range
+  unsigned int m_init_range;
+  //! Number of good moving-edges that are tracked
+  int m_nGoodElement;
+  //! Mask used to disable tracking on a part of image
+  const vpImage<bool> *m_mask;
+  //! Mask used to determine candidate points for initialization in an image
+  const vpImage<bool> *m_maskCandidates;
+  //! Moving-edges display type
+  vpMeSite::vpMeSiteDisplayType m_selectDisplay;
+  //@}
+
 };
 
 #endif

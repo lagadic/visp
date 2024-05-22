@@ -115,9 +115,6 @@ public:
 
   void setWorldCoordinates(double oX, double oY, double oZ, double R);
 
-protected:
-  void init() vp_override;
-
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -147,6 +144,9 @@ public:
   vp_deprecated double get_mu02() const { return p[4]; }
   //@}
 #endif
+protected:
+  void init() vp_override;
+
 };
 
 #endif

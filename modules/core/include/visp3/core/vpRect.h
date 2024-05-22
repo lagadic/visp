@@ -342,7 +342,7 @@ public:
 
     \sa setLeft()
   */
-  inline void setRight(double pos) { this->width = pos - this->left + 1.0; }
+  inline void setRight(double pos) { this->width = (pos - this->left) + 1.0; }
 
   /*!
     Sets the top edge position of the rectangle to pos. May change the bottom

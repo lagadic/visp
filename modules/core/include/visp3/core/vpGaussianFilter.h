@@ -63,7 +63,7 @@ public:
 
 private:
   vpGaussianFilter(const vpGaussianFilter &gf);
-  vpGaussianFilter &operator=(const vpGaussianFilter &);
+  vpGaussianFilter &operator=(const vpGaussianFilter &gf);
 
   // PIMPL idiom
   class Impl;

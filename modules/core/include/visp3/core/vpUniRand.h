@@ -121,19 +121,6 @@ typedef unsigned __int32 uint32_t;
 */
 class VISP_EXPORT vpUniRand
 {
-private:
-  struct vpPcgStateSetseq_64_t
-  { // Internals are *Private*.
-    uint64_t state;            // RNG state.  All values are possible.
-    uint64_t inc;              // Controls which RNG sequence (stream) is
-    // selected. Must *always* be odd.
-
-    vpPcgStateSetseq_64_t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
-      : state(state_), inc(inc_)
-    { }
-  };
-  typedef struct vpPcgStateSetseq_64_t pcg32_random_t;
-
 public:
   vpUniRand();
   vpUniRand(uint64_t seed, uint64_t seq = 0x123465789ULL);
@@ -164,6 +151,19 @@ public:
 #endif
     return shuffled;
   }
+
+private:
+  struct vpPcgStateSetseq_64_t
+  { // Internals are *Private*.
+    uint64_t state;            // RNG state.  All values are possible.
+    uint64_t inc;              // Controls which RNG sequence (stream) is
+    // selected. Must *always* be odd.
+
+    vpPcgStateSetseq_64_t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
+      : state(state_), inc(inc_)
+    { }
+  };
+  typedef struct vpPcgStateSetseq_64_t pcg32_random_t;
 
 private:
   uint32_t boundedRand(uint32_t bound);

@@ -57,19 +57,6 @@
  */
 class VISP_EXPORT vpException : public std::exception
 {
-protected:
-  //! Contains the error code, see the errorCodeEnum table for details.
-  int code;
-
-  //! Contains an error message (can be empty)
-  std::string message;
-
-  //! Set the message container
-  void setMessage(const char *format, va_list args);
-
-  //!  forbid the empty constructor (protected)
-  vpException() : code(notInitialized), message("") { }
-
 public:
   enum generalExceptionEnum
   {
@@ -143,6 +130,20 @@ public:
    * Print the error structure.
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
+
+protected:
+  //! Contains the error code, see the errorCodeEnum table for details.
+  int code;
+
+  //! Contains an error message (can be empty)
+  std::string message;
+
+  //! Set the message container
+  void setMessage(const char *format, va_list args);
+
+  //!  forbid the empty constructor (protected)
+  vpException() : code(notInitialized), message("") { }
+
 };
 
 #endif
