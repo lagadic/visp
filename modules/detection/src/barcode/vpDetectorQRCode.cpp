@@ -39,6 +39,10 @@
 
 #include <visp3/detection/vpDetectorQRCode.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    Default constructor.
  */
@@ -88,8 +92,11 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
 
   return detected;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorQRCode.cpp.o) has
 // no symbols
-void dummy_vpDetectorQRCode(){};
+void dummy_vpDetectorQRCode() { };
 #endif

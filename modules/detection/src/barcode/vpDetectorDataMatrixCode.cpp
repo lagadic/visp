@@ -43,6 +43,10 @@
 
 #include <visp3/detection/vpDetectorDataMatrixCode.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    Default constructor that does nothing except setting detection timeout to 50ms.
    This value could be changed using setTimeout().
@@ -109,11 +113,13 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
         m_message.push_back((const char *)msg->output);
 
         m_nb_objects++;
-      } else {
+      }
+      else {
         end = true;
       }
       dmtxMessageDestroy(&msg);
-    } else {
+    }
+    else {
       end = true;
     }
     dmtxRegionDestroy(&reg);
@@ -127,9 +133,11 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   }
   return detected;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_core.a(vpDetectorDataMatrixCode.cpp.o) has no symbols
-void dummy_vpDetectorDataMatrixCode(){};
+void dummy_vpDetectorDataMatrixCode() { };
 #endif

@@ -46,11 +46,22 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
 #endif
+class vpDetectorAprilTag;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2);
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpDetectorAprilTag
  * \ingroup group_detection_tag
@@ -305,7 +316,7 @@ public:
     m_displayTagThickness = thickness;
   }
 
-  friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
+  friend void ::swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 

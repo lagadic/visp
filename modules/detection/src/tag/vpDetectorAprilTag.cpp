@@ -61,7 +61,7 @@
 #include <visp3/vision/vpPose.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -1191,13 +1191,6 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges) { m_impl->setR
 void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRefinePose(refinePose); }
 #endif
 
-void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
-{
-  using std::swap;
-
-  swap(o1.m_impl, o2.m_impl);
-}
-
 /*!
  * Modify the resulting tag pose returned by getPose() in order to get
  * a pose where z-axis is aligned when the camera plane is parallel to the tag.
@@ -1211,6 +1204,13 @@ void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2)
+{
+  using std::swap;
+
+  swap(o1.m_impl, o2.m_impl);
+}
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
