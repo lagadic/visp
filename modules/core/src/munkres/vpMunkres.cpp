@@ -42,6 +42,10 @@
 // Check if std:c++17 or higher
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * Find a starred zero in a specific mask matrix row.
  *
@@ -191,5 +195,7 @@ vpMunkres::STEP_T vpMunkres::stepFive(std::vector<std::vector<vpMunkres::ZERO_T>
     }
   }
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

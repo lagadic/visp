@@ -46,6 +46,10 @@
 // Internal
 #include "vpMath.h"
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpMunkres
   \ingroup group_core_munkres
@@ -369,5 +373,7 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
 
   return ret;
 }
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
