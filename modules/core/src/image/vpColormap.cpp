@@ -1007,6 +1007,10 @@ unsigned char m_winterSrgbBytes[256][3] = {
 };
 };
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   Creates a colormap class to be able to recolor an image with different grayscale values
   into some corresponding color values, for better visualization for example.
@@ -1217,3 +1221,6 @@ void vpColormap::convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor)
   }
   convert(I_float, Icolor);
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

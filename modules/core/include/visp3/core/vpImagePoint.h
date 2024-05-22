@@ -48,11 +48,38 @@
 #include <vector>
 
 #if defined(ENABLE_VISP_NAMESPACE)
+#define VISP_VPIMAGEPOINT_NAMESPACE visp::
+namespace visp
+{
+#else
+#define VISP_VPIMAGEPOINT_NAMESPACE
+#endif
+class vpImagePoint;
+class vpRect;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+// Forward declaration to have the operators in the global namespace when using ViSP namespace
+bool operator==(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip2);
+bool operator!=(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip2);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator+=(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip2);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator+(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip2);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator+(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, int offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator+(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, unsigned int offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator+(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, double offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator-(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip2);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator-(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, int offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator-(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, unsigned int offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator-(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, double offset);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator*(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, double scale);
+VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint operator/(const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip1, double scale);
+std::ostream &operator<<(std::ostream &os, const VISP_VPIMAGEPOINT_NAMESPACE vpImagePoint &ip);
+
+#if defined(ENABLE_VISP_NAMESPACE)
 namespace visp
 {
 #endif
-class vpRect;
-
 /*!
   \class vpImagePoint
   \ingroup group_core_image
@@ -364,20 +391,20 @@ public:
   static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
   static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2);
 
-  friend VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, double offset);
-  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale);
-  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale);
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImagePoint &ip);
+  friend VISP_EXPORT bool ::operator==(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT bool ::operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint ::operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint ::operator+(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint ::operator+(const vpImagePoint &ip1, int offset);
+  friend VISP_EXPORT vpImagePoint ::operator+(const vpImagePoint &ip1, unsigned int offset);
+  friend VISP_EXPORT vpImagePoint ::operator+(const vpImagePoint &ip1, double offset);
+  friend VISP_EXPORT vpImagePoint ::operator-(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint ::operator-(const vpImagePoint &ip1, int offset);
+  friend VISP_EXPORT vpImagePoint ::operator-(const vpImagePoint &ip1, unsigned int offset);
+  friend VISP_EXPORT vpImagePoint ::operator-(const vpImagePoint &ip1, double offset);
+  friend VISP_EXPORT vpImagePoint ::operator*(const vpImagePoint &ip1, double scale);
+  friend VISP_EXPORT vpImagePoint ::operator/(const vpImagePoint &ip1, double scale);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpImagePoint &ip);
 
 private:
   double i, j;

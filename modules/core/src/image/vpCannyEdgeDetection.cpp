@@ -56,6 +56,57 @@ static void scaleFilter(
 };
 #endif
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void ::from_json(const nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+  vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName =
+#if defined(ENABLE_VISP_NAMESPACE)
+    visp::
+#endif
+    vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+  detector.m_filteringAndGradientType =
+#if defined(ENABLE_VISP_NAMESPACE)
+    visp::
+#endif
+    vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
+  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
+  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
+  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
+  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
+  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
+  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
+}
+
+void ::to_json(nlohmann::json &j, const
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName =
+#if defined(ENABLE_VISP_NAMESPACE)
+    visp::
+#endif
+    vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  j = nlohmann::json {
+          {"filteringAndGradientType", filteringAndGradientName},
+          {"gaussianSize", detector.m_gaussianKernelSize},
+          {"gaussianStdev", detector.m_gaussianStdev},
+          {"lowerThreshold", detector.m_lowerThreshold},
+          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
+          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
+          {"upperThreshold", detector.m_upperThreshold},
+          {"upperThresholdRatio", detector.m_upperThresholdRatio}
+  };
+}
+#endif
+
 #if defined(ENABLE_VISP_NAMESPACE)
 namespace visp
 {

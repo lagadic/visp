@@ -44,6 +44,21 @@
 #include <visp3/core/vpColVector.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
+#define VISP_VPRGBF_NAMESPACE visp::
+namespace visp
+{
+#else
+#define VISP_VPRGBF_NAMESPACE
+#endif
+class vpRGBf;
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+std::ostream &operator<<(std::ostream &os, const VISP_VPRGBF_NAMESPACE vpRGBf &rgb);
+VISP_VPRGBF_NAMESPACE vpRGBf operator*(double x, const VISP_VPRGBF_NAMESPACE vpRGBf &rgb);
+
+#if defined(ENABLE_VISP_NAMESPACE)
 namespace visp
 {
 #endif

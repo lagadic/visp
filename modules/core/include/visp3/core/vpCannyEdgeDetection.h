@@ -40,9 +40,29 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+class vpCannyEdgeDetection;
+}
+#endif
+
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
+
+// Forward declaration to have the methods in the global namespace
+void from_json(const nlohmann::json &j,
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+  vpCannyEdgeDetection &detector);
+
+void to_json(nlohmann::json &j, const
+#if defined(ENABLE_VISP_NAMESPACE)
+  visp::
+#endif
+  vpCannyEdgeDetection &detector);
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
@@ -115,19 +135,7 @@ public:
    * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector : The detector that will be initialized from the JSON data.
    */
-  friend inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
-  {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-    filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-    detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
-    detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
-    detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
-    detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
-    detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
-    detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
-    detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
-    detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
-  }
+  friend void ::from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector);
 
   /**
    * \brief Parse a vpCannyEdgeDetection object into JSON format.
@@ -135,20 +143,7 @@ public:
    * \param[out] j : A JSON parser object.
    * \param[in] detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
-  friend inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
-  {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
-    j = nlohmann::json {
-            {"filteringAndGradientType", filteringAndGradientName},
-            {"gaussianSize", detector.m_gaussianKernelSize},
-            {"gaussianStdev", detector.m_gaussianStdev},
-            {"lowerThreshold", detector.m_lowerThreshold},
-            {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
-            {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
-            {"upperThreshold", detector.m_upperThreshold},
-            {"upperThresholdRatio", detector.m_upperThresholdRatio}
-    };
-  }
+  friend inline void ::to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector);
 #endif
   //@}
 

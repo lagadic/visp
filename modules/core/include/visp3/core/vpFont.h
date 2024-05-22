@@ -31,18 +31,22 @@
  * Draw text in an image.
  */
 
-#ifndef _vpFont_h_
-#define _vpFont_h_
-
 /*!
   \file vpFont.h
 
   \brief Draw text in an image.
 */
 
+#ifndef _vpFont_h_
+#define _vpFont_h_
+
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
   \class vpFont
 
@@ -80,5 +84,7 @@ private:
   class Impl;
   Impl *m_impl;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

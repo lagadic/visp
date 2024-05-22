@@ -31,13 +31,13 @@
  * Directory management.
  */
 
-#ifndef _vpConvert_h_
-#define _vpConvert_h_
-
 /*!
   \file vpConvert.h
   \brief Tools for type or general conversion.
  */
+
+#ifndef _vpConvert_h_
+#define _vpConvert_h_
 
 #include <visp3/core/vpConfig.h>
 

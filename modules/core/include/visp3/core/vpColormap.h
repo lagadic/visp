@@ -32,20 +32,23 @@
  * some corresponding color values, for better visualization for example.
  */
 
-#ifndef _vpColormap_h_
-#define _vpColormap_h_
-
 /*!
  * \file vpColormap.h
  *
  * \brief Colormap tool to have a mapping between 256 values and RGB values.
  */
 
+#ifndef _vpColormap_h_
+#define _vpColormap_h_
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
-
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 /*!
  * \class vpColormap
  *
@@ -99,5 +102,7 @@ private:
   unsigned char m_colormapSrgbBytes[256][3];
 #endif
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

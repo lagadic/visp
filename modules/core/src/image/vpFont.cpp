@@ -67,6 +67,10 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "private/stb_truetype.h"
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace visp
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpFont::Impl
 {
@@ -2692,3 +2696,6 @@ vpImagePoint vpFont::getMeasure(const std::string &text) const { return m_impl->
   \return A result of the operation.
 */
 bool vpFont::setHeight(unsigned int height) { return m_impl->Resize(height); }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
