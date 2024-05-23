@@ -1,5 +1,5 @@
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
-
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifdef VISP_HAVE_MODULE_IO
 #include <visp3/io/vpImageIo.h>
 #endif
@@ -576,3 +576,5 @@ void vpFeatureLuminanceMapping::print(unsigned int select) const
   }
   std::cout << s << std::endl;
 }
+
+#endif // C++11
