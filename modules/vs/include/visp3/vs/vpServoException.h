@@ -31,19 +31,24 @@
  * Exception that can be emitted by the vpServo class and its derivatives.
  */
 
-#ifndef _vpServoException_h_
-#define _vpServoException_h_
-
 /*!
  * \file vpServoException.h
  * \brief error that can be emitted by the vpServo class and its derivatives
  */
 
+#ifndef _vpServoException_h_
+#define _vpServoException_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
 #include <iostream>
 #include <string>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpServoException
  * \brief Error that can be emitted by the vpServo class and its derivatives.
@@ -90,5 +95,7 @@ public:
    */
   explicit vpServoException(int id) : vpException(id) { }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -31,19 +31,34 @@
  * Adaptive gain.
  */
 
-#ifndef _vpAdaptiveGain_h_
-#define _vpAdaptiveGain_h_
-
 /*!
  * \file vpAdaptiveGain.h
  * \brief Adaptive gain
  */
 
+#ifndef _vpAdaptiveGain_h_
+#define _vpAdaptiveGain_h_
+
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpAdaptiveGain;
 class vpColVector;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpAdaptiveGain &lambda);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpAdaptiveGain
  *
@@ -301,7 +316,9 @@ public:
    * \param os : The stream where to print the adaptive gain parameters.
    * \param lambda : The adaptive gain containing the parameters to print.
    */
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpAdaptiveGain &lambda);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

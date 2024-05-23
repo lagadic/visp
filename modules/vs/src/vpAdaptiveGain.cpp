@@ -44,6 +44,10 @@
 #include <iostream>
 #include <limits> // numeric_limits
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 const double vpAdaptiveGain::DEFAULT_LAMBDA_ZERO = 1.666;
 const double vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY = 0.1666;
 const double vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE = 1.666;
@@ -138,7 +142,11 @@ double vpAdaptiveGain::operator()(void) const { return this->limitValue(); }
 
 double vpAdaptiveGain::operator()(const vpColVector &x) const { return this->value(x.infinityNorm()); }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda)
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpAdaptiveGain &lambda)
 {
   os << "Zero= " << lambda.coeff_a + lambda.coeff_c << "\tInf= " << lambda.coeff_c
     << "\tSlope= " << lambda.coeff_a * lambda.coeff_b;

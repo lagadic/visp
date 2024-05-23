@@ -31,19 +31,24 @@
  * Save data during the task execution.
  */
 
-#ifndef _vpServoData_h_
-#define _vpServoData_h_
-
 /*!
   \file vpServoData.h
   \brief  save data during the task execution
 */
 
+#ifndef _vpServoData_h_
+#define _vpServoData_h_
+
+#include <visp3/core/vpConfig.h>
 // Servo
 #include <visp3/vs/vpServo.h>
 
 #include <iostream>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpServoData
  * \ingroup group_task
@@ -115,5 +120,7 @@ public:
    */
   void close();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

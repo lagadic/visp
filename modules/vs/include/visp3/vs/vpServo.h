@@ -31,22 +31,27 @@
  * Visual servoing control law.
  */
 
-#ifndef _vpServo_h_
-#define _vpServo_h_
-
 /*!
  * \file vpServo.h
  * \brief  Class required to compute the visual servoing control law.
  */
 
+#ifndef _vpServo_h_
+#define _vpServo_h_
+
 #include <list>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/vs/vpAdaptiveGain.h>
 #include <visp3/vs/vpServoException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpServo
  *
@@ -1333,5 +1338,7 @@ protected:
 
   double m_pseudo_inverse_threshold; //!< Threshold used in the pseudo inverse
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
