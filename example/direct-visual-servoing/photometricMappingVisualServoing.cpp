@@ -316,6 +316,7 @@ int main(int argc, const char **argv)
     if (opt_method == "pca") {
       vpUniRand random(17);
       std::cout << "Building image database for PCA computation with " << opt_numDbImages << " images" << std::endl;
+#if defined(VISP_HAVE_GUI)
 #if defined(VISP_HAVE_X11)
       vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
@@ -328,6 +329,7 @@ int main(int argc, const char **argv)
       if (opt_display) {
         d.init(I, 0, 0, "Image database (subsample)");
       }
+#endif
       std::vector<vpImage<unsigned char>> images(opt_numDbImages);
       for (unsigned i = 0; i < opt_numDbImages; ++i) {
         vpColVector to(3, 0.0), positionNoise(3, 0.0);
@@ -368,7 +370,7 @@ int main(int argc, const char **argv)
     sim.setCameraPosition(cdMo);
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
-
+#if defined(VISP_HAVE_GUI)
     // display the image
 #if defined(VISP_HAVE_X11)
     vpDisplayX d;
@@ -391,6 +393,7 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
 #endif
+#endif
 
     // ----------------------------------------------------------
     // position the robot at the initial position
@@ -407,7 +410,7 @@ int main(int argc, const char **argv)
     I = 0;
     sim.getImage(I, cam); // and aquire the image Id
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_GUI) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
     if (opt_display) {
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -423,7 +426,8 @@ int main(int argc, const char **argv)
 
     vpImageTools::imageDifference(I, Id, Idiff);
 
-    // Affiche de l'image de difference
+    // Display image difference
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
 #if defined(VISP_HAVE_X11)
     vpDisplayX d1, d2;
 
@@ -432,7 +436,6 @@ int main(int argc, const char **argv)
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d1, d2;
 #endif
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
     if (opt_display) {
       d1.init(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
       d2.init(Irec, 40 + static_cast<int>(I.getWidth()) * 2, 10, "Reconstructed image");
@@ -455,16 +458,12 @@ int main(int argc, const char **argv)
     // ------------------------------------------------------
 
     // current visual feature built from the image
-    std::cout << "Building sI" << std::endl;
     vpFeatureLuminance luminanceI;
     luminanceI.init(I.getHeight(), I.getWidth(), Z);
     luminanceI.setCameraParameters(cam);
     vpFeatureLuminanceMapping sI(luminanceI, sMapping);
-    std::cout << "Before build from" << std::endl;
     sI.build(I);
     sI.getMapping()->inverse(sI.get_s(), Irec);
-
-    std::cout << "Building sId" << std::endl;
 
     // desired visual feature built from the image
     vpFeatureLuminance luminanceId;
