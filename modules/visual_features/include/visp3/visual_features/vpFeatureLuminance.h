@@ -31,6 +31,13 @@
  * Luminance based feature.
  */
 
+/*!
+ * \file vpFeatureLuminance.h
+ * \brief Class that defines the image luminance visual feature
+ *
+ * For more details see \cite Collewet08c.
+ */
+
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
 
@@ -39,15 +46,12 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
-/*!
- * \file vpFeatureLuminance.h
- * \brief Class that defines the image luminance visual feature
- *
- * For more details see \cite Collewet08c.
- */
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpLuminance
  * \brief Class that defines the luminance and gradient of a point.
@@ -129,5 +133,7 @@ public:
 public:
   vpCameraParameters cam;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

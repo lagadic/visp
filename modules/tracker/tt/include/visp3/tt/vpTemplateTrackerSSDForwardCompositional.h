@@ -44,8 +44,13 @@
 #ifndef vpTemplateTrackerSSDForwardCompositional_hh
 #define vpTemplateTrackerSSDForwardCompositional_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \ingroup group_tt_tracker
   The algorithm implemented in this class is described in \cite Baker04a and
@@ -64,4 +69,7 @@ protected:
 public:
   explicit vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

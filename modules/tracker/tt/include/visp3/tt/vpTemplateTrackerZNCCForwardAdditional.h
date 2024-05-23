@@ -44,8 +44,13 @@
 #ifndef vpTemplateTrackerZNCCForwardAdditional_hh
 #define vpTemplateTrackerZNCCForwardAdditional_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerZNCC.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpTemplateTrackerZNCCForwardAdditional
   \ingroup group_tt_tracker
@@ -62,4 +67,7 @@ protected:
 public:
   explicit vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

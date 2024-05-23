@@ -38,10 +38,13 @@
 *****************************************************************************/
 #include <visp3/tt_mi/vpTemplateTrackerMIForwardCompositional.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerMIForwardCompositional::vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), CompoInitialised(false)
-{
-}
+{ }
 
 void vpTemplateTrackerMIForwardCompositional::initCompo()
 {
@@ -228,7 +231,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-    } else {
+    }
+    else {
       computeProba(Nbpoint);
       computeMI(MI);
       if (hessianComputation != vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
@@ -252,7 +256,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
           dp = gain * 0.2 * HLM.inverseByLU() * G;
           break;
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         throw(e);
       }
     }
@@ -289,3 +294,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
     MI_postEstimation = -1;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

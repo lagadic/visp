@@ -39,6 +39,10 @@
 
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp) : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2, nbParam);
@@ -120,3 +124,6 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpCol
     return 10e10;
   return erreur / Nbpoint;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

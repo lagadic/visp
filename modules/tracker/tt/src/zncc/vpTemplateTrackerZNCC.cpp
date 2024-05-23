@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerZNCC.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp) : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2, nbParam);
@@ -119,3 +123,6 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
   }
   return -nom / sqrt(var1 * var2);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

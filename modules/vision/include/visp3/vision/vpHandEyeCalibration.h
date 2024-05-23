@@ -46,6 +46,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpHandEyeCalibration
  *
@@ -94,5 +98,7 @@ private:
   static int calibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                             vpHomogeneousMatrix &eMc);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

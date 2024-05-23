@@ -31,13 +31,13 @@
  * 2D point with polar coordinates visual feature.
  */
 
-#ifndef vpFeaturePointPolar_H
-#define vpFeaturePointPolar_H
-
 /*!
  * \file vpFeaturePointPolar.h
  * \brief Class that defines a 2D point visual feature with polar coordinates.
  */
+
+#ifndef vpFeaturePointPolar_H
+#define vpFeaturePointPolar_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeaturePointPolar
  * \ingroup group_visual_features
@@ -309,5 +313,7 @@ public:
   static unsigned int selectTheta();
 
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -46,6 +46,10 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpRobust.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 // Local helpers
 namespace
 {
@@ -298,5 +302,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
     return estimatePlaneEquationSVD(pt_cloud);
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

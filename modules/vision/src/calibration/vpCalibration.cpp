@@ -41,6 +41,11 @@
 #include <visp3/vision/vpCalibration.h>
 #include <visp3/vision/vpPose.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 double vpCalibration::m_threshold = 1e-10f;
 unsigned int vpCalibration::m_nbIterMax = 4000;
 double vpCalibration::m_gain = 0.25;
@@ -630,3 +635,6 @@ void vpCalibration::setAspectRatio(double aspect_ratio)
     m_aspect_ratio = aspect_ratio;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -31,13 +31,13 @@
  * 3D point visual feature.
  */
 
-#ifndef vpFeaturePoint3d_H
-#define vpFeaturePoint3d_H
-
 /*!
  * \file vpFeaturePoint3D.h
  * \brief class that defines the 3D point visual feature.
  */
+
+#ifndef vpFeaturePoint3d_H
+#define vpFeaturePoint3d_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeaturePoint3D
  * \ingroup group_visual_features
@@ -260,5 +264,8 @@ public:
   static unsigned int selectY();
   static unsigned int selectZ();
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 #endif

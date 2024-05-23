@@ -43,6 +43,10 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Computes interaction matrix for gravity center moment. Called internally.
  * The moment primitives must be computed before calling this.
@@ -72,7 +76,9 @@ void vpFeatureMomentGravityCenter::compute_interaction()
     featureMomentBasic.interaction(0, 1) / momentObject.get(0, 0) -
     momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #else
 
 #include <limits>
@@ -84,6 +90,10 @@ void vpFeatureMomentGravityCenter::compute_interaction()
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Computes interaction matrix for gravity center moment. Called internally.
  * The moment primitives must be computed before calling this.
@@ -155,5 +165,7 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   interaction_matrices[1][0][WY] = Ygwy;
   interaction_matrices[1][0][WZ] = -Xg;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

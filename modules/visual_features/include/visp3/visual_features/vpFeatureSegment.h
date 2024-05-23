@@ -31,13 +31,13 @@
  * Segment visual feature.
  */
 
-#ifndef vpFeatureSegment_H
-#define vpFeatureSegment_H
-
 /*!
  * \file vpFeatureSegment.h
  * \brief class that defines the Segment visual feature
  */
+
+#ifndef vpFeatureSegment_H
+#define vpFeatureSegment_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -46,6 +46,10 @@
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureSegment
  * \ingroup group_visual_features
@@ -291,5 +295,7 @@ private:
   double sin_a_;
   bool normalized_;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

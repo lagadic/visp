@@ -39,6 +39,10 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerSSDESM.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), compoInitialised(false), HDir(), HInv(), HLMDir(), HLMInv(), GDir(), GInv()
 {
@@ -169,7 +173,8 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
     try {
       dp = (HLMDir).inverseByLU() * (GDir);
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       delete[] tempt;
       throw(e);
     }
@@ -199,3 +204,6 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   nbIteration = iteration;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

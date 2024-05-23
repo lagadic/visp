@@ -31,13 +31,13 @@
  * 2D vanishing point visual feature (Z coordinate in 3D space is infinity)
  */
 
-#ifndef vpFeatureVanishingPoint_H
-#define vpFeatureVanishingPoint_H
-
 /*!
  * \file vpFeatureVanishingPoint.h \brief Class that defines 2D vanishing
  * point visual feature (Z coordinate in 3D space is infinity)
  */
+
+#ifndef vpFeatureVanishingPoint_H
+#define vpFeatureVanishingPoint_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureVanishingPoint
  * \ingroup group_visual_features
@@ -112,5 +116,7 @@ public:
 protected:
   unsigned int m_select; // Memory to know which features are used for display;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

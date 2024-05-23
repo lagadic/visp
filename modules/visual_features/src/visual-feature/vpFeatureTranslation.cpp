@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFeatureTranslation.cpp
+  \brief class that defines 3D translation visual feature
+*/
+
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureTranslation.h>
 
@@ -45,10 +50,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
-  \file vpFeatureTranslation.cpp
-  \brief class that defines 3D translation visual feature
-*/
 /*
 
 attributes and members directly related to the vpBasicFeature needs
@@ -56,6 +57,10 @@ other functionalities are useful but not mandatory
 
 */
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   Initialise the memory space requested for 3D translation visual
@@ -785,3 +790,6 @@ unsigned int vpFeatureTranslation::selectTy() { return FEATURE_LINE[1]; }
   \sa selectTx(), selectTy()
 */
 unsigned int vpFeatureTranslation::selectTz() { return FEATURE_LINE[2]; }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

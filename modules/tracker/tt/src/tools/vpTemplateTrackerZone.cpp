@@ -43,10 +43,14 @@
 
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    Default constructor.
  */
-vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) {}
+vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) { }
 
 /*!
    Copy constructor.
@@ -123,7 +127,8 @@ void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I, bool dela
         if (delaunay) {
           // Draw a line between the 2 last points
           vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue, 3);
-        } else {
+        }
+        else {
           if (vip.size() % 3 == 2)
             // draw line between point 2-1
             vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue, 3);
@@ -166,7 +171,8 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
   if (delaunay) {
     if (vip.size() == 3) {
       initFromPoints(I, vip, false);
-    } else if (vip.size() == 4) {
+    }
+    else if (vip.size() == 4) {
       std::vector<vpImagePoint> vip_delaunay;
       vip_delaunay.push_back(vip[0]);
       vip_delaunay.push_back(vip[1]);
@@ -175,7 +181,8 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
       vip_delaunay.push_back(vip[3]);
       vip_delaunay.push_back(vip[0]);
       initFromPoints(I, vip_delaunay, false);
-    } else {
+    }
+    else {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       // Init Delaunay
       cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
@@ -213,7 +220,8 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, cons
       throw vpException(vpException::functionNotImplementedError, "Delaunay triangulation is not available!");
 #endif
     }
-  } else {
+  }
+  else {
     Zone.clear();
     for (unsigned int i = 0; i < vip.size(); i += 3) {
       vpTemplateTrackerTriangle triangle(vip[i], vip[i + 1], vip[i + 2]);
@@ -577,3 +585,6 @@ double vpTemplateTrackerZone::getArea() const
   }
   return area;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

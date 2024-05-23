@@ -73,6 +73,10 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpKeyPoint
  * \ingroup group_vision_keypoints group_detection_keypoint group_detection_mbt_object
@@ -2252,6 +2256,8 @@ private:
 
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

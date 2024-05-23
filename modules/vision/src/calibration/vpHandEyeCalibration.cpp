@@ -39,6 +39,11 @@
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 /*!
   \brief Compute the distances of the data to the mean obtained.
 
@@ -1022,6 +1027,10 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   }
   return err;
 }
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 #undef HE_I
 #undef HE_TSAI_OROT

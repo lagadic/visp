@@ -42,6 +42,10 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   Initialize a 3D point feature using the coordinates of the point
@@ -64,12 +68,15 @@ void vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t)
     s.set_Y(t.cP[1] / t.cP[3]);
     s.set_Z(t.cP[2] / t.cP[3]);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

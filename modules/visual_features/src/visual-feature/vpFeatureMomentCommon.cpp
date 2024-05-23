@@ -35,6 +35,10 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Constructor which initializes and links all common features in the database
  * \param moments : database for moment primitives
@@ -75,3 +79,6 @@ void vpFeatureMomentCommon::updateAll(double A, double B, double C)
   featureAlpha.update(A, B, C);
   feature_moment_area.update(A, B, C);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

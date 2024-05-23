@@ -38,9 +38,26 @@
 #ifndef _vpFeatureMomentCInvariant_h_
 #define _vpFeatureMomentCInvariant_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpFeatureMomentCInvariant;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCInvariant &featcinv);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureMomentCInvariant
  *
@@ -179,10 +196,27 @@ public:
    */
   static unsigned int selectPy() { return 1 << 13; }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #else
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpFeatureMomentCInvariant;
 class vpMomentDatabase;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCInvariant &featcinv);
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureMomentCInvariant
  *
@@ -327,7 +361,10 @@ public:
    */
   void printLsofInvariants(std::ostream &os) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

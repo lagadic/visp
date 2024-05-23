@@ -33,13 +33,15 @@
  *
 *****************************************************************************/
 
-#ifndef vpFeatureBuilder_H
-#define vpFeatureBuilder_H
-
 /*!
   \file vpFeatureBuilder.h
   \brief  class  that defines conversion between tracker and visual feature
 */
+
+#ifndef vpFeatureBuilder_H
+#define vpFeatureBuilder_H
+
+
 #include <visp3/core/vpConfig.h>
 
 // tracker
@@ -79,6 +81,10 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpFeatureBuilder
 
@@ -152,4 +158,7 @@ public:
                      const vpImagePoint &line1_ip2, const vpImagePoint &line2_ip1, const vpImagePoint &line2_ip2,
                      unsigned int select);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

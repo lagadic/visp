@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, double r, double t)
@@ -67,11 +71,16 @@ double vpTemplateTrackerBSpline::Bspline4(double diff)
   double aDiff = vpMath::abs(diff);
   if (aDiff < 1.) {
     return (aDiff * aDiff * (aDiff / 2. - 1) + 4. / 6.);
-  } else if (aDiff < 2.) {
+  }
+  else if (aDiff < 2.) {
     double a = 2. - aDiff;
     return (a * a * a / 6.);
-  } else
+  }
+  else
     return 0;
 }
 
+#endif
+#ifdef ENABLE_VISP_NAMESPACE
+}
 #endif

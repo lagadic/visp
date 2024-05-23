@@ -39,6 +39,10 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerZNCCForwardAdditional.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerZNCCForwardAdditional::vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerZNCC(warp)
 {
@@ -252,7 +256,8 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
 
     try {
       dp = HLMdesireInverse * G;
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       delete[] tempt;
       throw(e);
     }
@@ -280,3 +285,6 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
 
   nbIteration = iteration;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

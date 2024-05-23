@@ -41,6 +41,10 @@
 #include <limits>
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 /*!
@@ -166,3 +170,6 @@ vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsi
 
   return e;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -44,6 +44,10 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Default constructor.
  * \param moments_ : Database of moment primitives.
@@ -315,13 +319,19 @@ void vpFeatureMomentCentered::compute_interaction()
   }
 #endif // #ifdef VISP_MOMENTS_COMBINE_MATRICES
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 /*!
  * \relates vpFeatureMomentCentered
  * Print all the interaction matrices of visual features
  */
-std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCentered &mu)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpTRACE(" << Ls - CENTRED MOMENTS >>");
   unsigned int order_m_1 = (unsigned int)(mu.order - 1);
   for (unsigned int i = 0; i < order_m_1; i++) {

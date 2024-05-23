@@ -43,6 +43,11 @@
 #include <pugixml.hpp>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 namespace
 {
 // Specific Type transformation functions
@@ -4214,6 +4219,10 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
     vpKeyPoint::KeyPointsFilter::runByPixelsMask(keypoints, mask);
 }
 #endif
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

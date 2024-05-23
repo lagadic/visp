@@ -40,6 +40,10 @@
 #include <iostream>
 #include <string>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpCalibrationException
  * \brief Error that can be emitted by the vpCalibration class.
@@ -90,5 +94,7 @@ public:
    */
   explicit vpCalibrationException(int id) : vpException(id) { }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

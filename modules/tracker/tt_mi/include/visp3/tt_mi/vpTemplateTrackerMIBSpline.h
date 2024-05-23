@@ -54,7 +54,10 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class VISP_EXPORT vpTemplateTrackerMIBSpline
 {
 public:
@@ -118,6 +121,8 @@ public:
                                    unsigned int &NbParam, int &bspline,
                                    vpTemplateTrackerMI::vpHessienApproximationType &approx, bool use_hessien_des);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

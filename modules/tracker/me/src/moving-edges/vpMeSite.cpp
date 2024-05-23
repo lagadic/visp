@@ -44,7 +44,7 @@
 #include <visp3/me/vpMeSite.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -382,11 +382,6 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
 
 int vpMeSite::operator!=(const vpMeSite &m) { return ((m.m_i != m_i) || (m.m_j != m_j)); }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
-{
-  return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
-}
-
 void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
 
 void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
@@ -453,3 +448,8 @@ void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpMeSite &vpMeS)
+{
+  return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
+}

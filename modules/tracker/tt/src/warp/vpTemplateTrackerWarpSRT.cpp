@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpSRT.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Construct a model with 4 parameters for scale, rotation and translation initialized to zero.
  */
@@ -261,3 +265,6 @@ void vpTemplateTrackerWarpSRT::pRondp(const vpColVector &p1, const vpColVector &
   p12[2] = scale1 * (c1 * u2 - s1 * v2) + u1;
   p12[3] = scale1 * (s1 * u2 + c1 * v2) + v1;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

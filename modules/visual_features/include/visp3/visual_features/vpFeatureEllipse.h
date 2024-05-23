@@ -31,13 +31,13 @@
  * 2D ellipse visual feature.
  */
 
-#ifndef vpFeatureEllipse_H
-#define vpFeatureEllipse_H
-
 /*!
  * \file vpFeatureEllipse.h
  * \brief Class that defines 2D ellipse visual feature
  */
+
+#ifndef vpFeatureEllipse_H
+#define vpFeatureEllipse_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -46,6 +46,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureEllipse
  * \ingroup group_visual_features
@@ -173,5 +177,7 @@ public:
   //@}
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -39,12 +39,29 @@
 #ifndef _vpMe_h_
 #define _vpMe_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMe;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+// Forward declaration to have the methods in the global namespace
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpMe &me);
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpMe &me);
+#endif
+
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 /*!
@@ -530,7 +547,7 @@ private:
    * @param j : Resulting json object.
    * @param me : The object to convert.
    */
-  friend void to_json(nlohmann::json &j, const vpMe &me);
+  friend void ::to_json(nlohmann::json &j, const vpMe &me);
 
   /**
    * @brief Retrieve a vpMe object from a JSON representation
@@ -579,18 +596,21 @@ private:
    * @param j JSON representation to convert
    * @param me converted object
    */
-  friend void from_json(const nlohmann::json &j, vpMe &me);
+  friend void ::from_json(const nlohmann::json &j, vpMe &me);
 #endif
 };
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
 
-NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
-  {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
-  {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType, {
+  {VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
+  {VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
 });
 
-inline void to_json(nlohmann::json &j, const vpMe &me)
+inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpMe &me)
 {
   j = {
     {"thresholdType", me.getLikelihoodThresholdType()},
@@ -610,7 +630,7 @@ inline void to_json(nlohmann::json &j, const vpMe &me)
   };
 }
 
-inline void from_json(const nlohmann::json &j, vpMe &me)
+inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpMe &me)
 {
   if (j.contains("thresholdType")) {
     me.setLikelihoodThresholdType(j.value("thresholdType", me.getLikelihoodThresholdType()));
@@ -624,7 +644,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     assert((mus.size() == 2));
     me.setMu1(mus[0]);
     me.setMu2(mus[1]);
-}
+  }
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
   me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));
@@ -646,11 +666,6 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
   me.initMask();
 }
 
-#endif
-
-
-#if defined(ENABLE_VISP_NAMESPACE)
-}
 #endif
 
 #endif

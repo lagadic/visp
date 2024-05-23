@@ -35,6 +35,11 @@
 #include <limits> // numeric_limits
 #include <visp3/core/vpColVector.h>
 #include <visp3/me/vpNurbs.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
   Compute the distance d = |Pw1-Pw2|
 */
@@ -745,3 +750,6 @@ void vpNurbs::globalCurveApprox(unsigned int n)
 {
   globalCurveApprox(crossingPoints, p, n, knots, controlPoints, weights);
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

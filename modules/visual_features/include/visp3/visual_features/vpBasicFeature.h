@@ -36,14 +36,15 @@
  *
 *****************************************************************************/
 
-#ifndef vpBasicFeature_H
-#define vpBasicFeature_H
-
 /*!
   \file vpBasicFeature.h
   \brief class that defines what is a visual feature
 */
 
+#ifndef vpBasicFeature_H
+#define vpBasicFeature_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 
@@ -68,6 +69,10 @@
 // #define FEATURE_LINE7 0x40
 // #define FEATURE_LINE8 0x80
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpBasicFeature
  * \ingroup group_visual_features
@@ -145,5 +150,7 @@ protected:
 protected:
   vpBasicFeatureDeallocatorType deallocate;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

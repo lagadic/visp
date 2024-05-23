@@ -34,6 +34,11 @@
 
 #if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 vpPoseFeatures::vpPoseFeatures()
   : m_maxSize(0), m_totalSize(0), m_vvsIterMax(200), m_lambda(1.0), m_verbose(false), m_computeCovariance(false),
   m_covarianceMatrix(), m_featurePoint_Point_list(), m_featurePoint3D_Point_list(), m_featureVanishingPoint_Point_list(),
@@ -462,6 +467,11 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     throw;
   }
 }
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpPoseFeatures.cpp.o) has no symbols
 void dummy_vpPoseFeatures() { };

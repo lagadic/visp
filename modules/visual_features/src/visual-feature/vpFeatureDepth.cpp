@@ -54,18 +54,14 @@
 #include <visp3/core/vpFeatureDisplay.h>
 
 /*
-
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
-
-
-
-
-
 */
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Initialize the memory space requested for 3D depth visual feature.
 */
@@ -463,7 +459,9 @@ void vpFeatureDepth::display(const vpCameraParameters & /* cam */, const vpImage
     // to produce a failure
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

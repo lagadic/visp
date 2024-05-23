@@ -31,19 +31,23 @@
  * Exception that can be emitted by the vpFeature class and its derivatives.
  */
 
-#ifndef _vpFeatureException_h_
-#define _vpFeatureException_h_
-
 /*!
  * \file vpFeatureException.h
  *  \brief error that can be emitted by the vpFeature class and its derivatives
  */
+
+#ifndef _vpFeatureException_h_
+#define _vpFeatureException_h_
 
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureException
  * \ingroup group_visual_features
@@ -92,5 +96,7 @@ public:
    */
   explicit vpFeatureException(int id) : vpException(id) { }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -44,8 +44,13 @@
 #ifndef vpTemplateTrackerSSDForwardAdditional_hh
 #define vpTemplateTrackerSSDForwardAdditional_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \ingroup group_tt_tracker
   The algorithm implemented in this class is described in \cite Baker04a and
@@ -65,7 +70,7 @@ private:
   vpMatrix KQuasiNewton;
 
 protected:
-  void initHessienDesired(const vpImage<unsigned char> & /*I*/) {}
+  void initHessienDesired(const vpImage<unsigned char> & /*I*/) { }
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
@@ -73,4 +78,7 @@ public:
 
   void setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method) { minimizationMethod = method; }
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

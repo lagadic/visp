@@ -46,6 +46,10 @@
 
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpBasicKeyPoint
  * \ingroup group_vision_keypoints
@@ -279,5 +283,7 @@ protected:
 private:
   virtual void init() = 0;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

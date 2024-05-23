@@ -46,7 +46,10 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Computes interaction matrix for centered and normalized moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -91,7 +94,9 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   interaction_matrices[1] = momentGravity.get()[1] * featureMomentAreaNormalized.interaction(1) +
     momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(2);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #else
 
 #include <limits>
@@ -104,6 +109,10 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Computes interaction matrix for centered and normalized moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -221,4 +230,7 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   interaction_matrices[1][0][WY] = Ynwy;
   interaction_matrices[1][0][WZ] = -Xn;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

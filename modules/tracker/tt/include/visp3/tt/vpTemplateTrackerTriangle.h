@@ -48,11 +48,16 @@
 #include <vector>
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpTemplateTrackerTriangle
   \ingroup group_tt_tools
@@ -137,10 +142,12 @@ public:
     if (i == 0) {
       x = C1.x;
       y = C1.y;
-    } else if (i == 1) {
+    }
+    else if (i == 1) {
       x = C2.x;
       y = C2.y;
-    } else /*if(i==2)*/ {
+    }
+    else /*if(i==2)*/ {
       x = C3.x;
       y = C3.y;
     }
@@ -164,4 +171,7 @@ public:
 
   vpTemplateTrackerTriangle &operator=(const vpTemplateTrackerTriangle &T);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -31,21 +31,26 @@
  * Generic feature (used to create new feature not implemented in ViSP).
  */
 
-#ifndef vpGenericFeature_hh
-#define vpGenericFeature_hh
-
 /*!
  * \file vpGenericFeature.h
  * \brief class that defines what is a generic feature (used to create new
  * feature not implemented in ViSP2
  */
 
+#ifndef vpGenericFeature_hh
+#define vpGenericFeature_hh
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
 #include <math.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpGenericFeature
  * \ingroup group_visual_features
@@ -212,5 +217,7 @@ private:
   vpColVector err;
   vpGenericFeatureErrorType errorStatus;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

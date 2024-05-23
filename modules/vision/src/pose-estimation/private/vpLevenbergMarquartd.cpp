@@ -40,7 +40,7 @@
 #include "vpLevenbergMarquartd.h"
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 

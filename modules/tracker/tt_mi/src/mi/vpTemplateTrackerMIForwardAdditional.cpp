@@ -43,6 +43,10 @@
 #include <omp.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
@@ -122,7 +126,8 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
     vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
     try {
       HLMdesireInverse = HLMdesire.inverseByLU();
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       throw(e);
     }
   }
@@ -216,7 +221,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-    } else {
+    }
+    else {
       computeProba(Nbpoint);
       computeMI(MI);
       computeHessien(H);
@@ -238,7 +244,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
           dp = gain * 0.2 * HLM.inverseByLU() * G;
           break;
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         throw(e);
       }
     }
@@ -255,7 +262,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       if (MI_LMA > MI) {
         p = p_test_LMA;
         lambda = (lambda / 10. < 1e-6) ? lambda / 10. : 1e-6;
-      } else {
+      }
+      else {
         lambda = (lambda * 10. < 1e6) ? 1e6 : lambda * 10.;
       }
     } break;
@@ -325,3 +333,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     MI_postEstimation = -1;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

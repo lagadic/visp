@@ -42,6 +42,10 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
@@ -124,7 +128,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       dp = HLM.inverseByLU() * G;
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       delete[] tempt;
       throw(e);
     }
@@ -138,7 +143,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
       if (erreur_LMA < erreur) {
         p = p_test_LMA;
         lambda = (lambda / 10. < 1e-6) ? lambda / 10. : 1e-6;
-      } else {
+      }
+      else {
         lambda = (lambda * 10. < 1e6) ? 1e6 : lambda * 10.;
       }
     } break;
@@ -199,3 +205,6 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
 
   nbIteration = iteration;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

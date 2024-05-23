@@ -46,6 +46,10 @@
 #include <iostream>
 #include <math.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMeLine
  *
@@ -458,5 +462,7 @@ public:
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

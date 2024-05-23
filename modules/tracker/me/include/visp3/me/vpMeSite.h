@@ -44,8 +44,20 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/me/vpMe.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+class vpMeSite;
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
+
+// Forward declaration to have the operator in the global namespace
+std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpMeSite &vpMeS);
+
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -321,7 +333,7 @@ public:
   /*!
    * ostream operator.
    */
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS);
+  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, vpMeSite &vpMeS);
 
   // Static functions
   /*!

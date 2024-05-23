@@ -39,6 +39,10 @@
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpTemplateTrackerMI
  * \ingroup group_tt_mi_tracker
@@ -165,5 +169,7 @@ public:
   void setLambda(double _l) { lambda = _l; }
   void setNc(int newNc);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

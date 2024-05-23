@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 // findWarp special a SL3 car methode additionnelle ne marche pas (la derivee
 // n est calculable qu en p=0)
 // => resout le probleme de maniere compositionnelle
@@ -526,3 +530,6 @@ void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1, const vpC
   // vrai que si commutatif ...
   p12 = p1 + p2;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

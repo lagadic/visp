@@ -44,12 +44,17 @@
 #ifndef vpTemplateTrackerWarp_hh
 #define vpTemplateTrackerWarp_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpTemplateTrackerWarp
   \ingroup group_tt_warp
@@ -64,11 +69,11 @@ public:
   /*!
    * Default constructor.
    */
-  vpTemplateTrackerWarp() : denom(1.), nbParam(0) {}
+  vpTemplateTrackerWarp() : denom(1.), nbParam(0) { }
   /*!
    * Destructor.
    */
-  virtual ~vpTemplateTrackerWarp() {}
+  virtual ~vpTemplateTrackerWarp() { }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   virtual void computeCoeff(const vpColVector &p) = 0;
@@ -255,5 +260,7 @@ public:
   void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out);
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

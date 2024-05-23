@@ -51,6 +51,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -205,12 +209,14 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         if (button == vpMouseButton::button3) {
           opt_click = false;
         }
-      } else {
-        // Use right click to enable/disable step by step tracking
+      }
+      else {
+     // Use right click to enable/disable step by step tracking
         if (vpDisplay::getClick(Imatch, button, false)) {
           if (button == vpMouseButton::button3) {
             opt_click = true;
-          } else if (button == vpMouseButton::button1) {
+          }
+          else if (button == vpMouseButton::button1) {
             break;
           }
         }
@@ -242,8 +248,8 @@ int main(int argc, const char **argv)
 
     if (env_ipath.empty()) {
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
-                   "variable value."
-                << std::endl;
+        "variable value."
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -261,7 +267,8 @@ int main(int argc, const char **argv)
       run_test(env_ipath, opt_click_allowed, opt_display, Iref, Icur, Imatch);
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

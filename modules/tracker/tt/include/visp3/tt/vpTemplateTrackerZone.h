@@ -41,6 +41,7 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -48,6 +49,10 @@
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpTemplateTrackerZone
   \ingroup group_tt_tools
@@ -119,4 +124,7 @@ public:
 
   vpTemplateTrackerZone &operator=(const vpTemplateTrackerZone &z);
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

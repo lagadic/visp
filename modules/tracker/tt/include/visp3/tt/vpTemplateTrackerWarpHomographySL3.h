@@ -42,9 +42,14 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/vision/vpHomography.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpTemplateTrackerWarpHomographySL3
  * \ingroup group_tt_warp
@@ -92,4 +97,7 @@ public:
   void warpXInv(const vpColVector &, vpColVector &, const vpColVector &) { }
 #endif
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

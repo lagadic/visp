@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 
-#ifndef vpFeatureThetaU_H
-#define vpFeatureThetaU_H
-
 /*!
   \file vpFeatureThetaU.h
   \brief class that defines the ThetaU visual feature
 */
+
+#ifndef vpFeatureThetaU_H
+#define vpFeatureThetaU_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -49,6 +49,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureThetaU
  * \ingroup group_visual_features
@@ -306,5 +310,7 @@ public:
 private:
   vpFeatureThetaURotationRepresentationType rotation;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Construct a model with 2 parameters for translation initialized to zero.
  */
@@ -194,3 +198,6 @@ void vpTemplateTrackerWarpTranslation::pRondp(const vpColVector &p1, const vpCol
   p12[0] = p1[0] + p2[0];
   p12[1] = p1[1] + p2[1];
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

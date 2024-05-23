@@ -39,8 +39,13 @@
 #ifndef _vpFeatureMomentGravityCenterNormalized_h_
 #define _vpFeatureMomentGravityCenterNormalized_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!
@@ -278,5 +283,8 @@ public:
    */
   static unsigned int selectYn() { return 1 << 1; }
 };
+#endif
+#ifdef ENABLE_VISP_NAMESPACE
+}
 #endif
 #endif

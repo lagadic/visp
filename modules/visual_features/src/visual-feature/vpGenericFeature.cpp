@@ -42,6 +42,10 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void vpGenericFeature::init() { s = 0; }
 
 /*!
@@ -646,7 +650,9 @@ void vpGenericFeature::display(const vpCameraParameters & /* cam */, const vpIma
     // to produce a failure
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

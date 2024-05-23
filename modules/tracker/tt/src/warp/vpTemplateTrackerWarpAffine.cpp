@@ -38,6 +38,10 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpAffine.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Construct a model with 6 affine parameters initialized to zero.
  */
@@ -221,7 +225,7 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &p, vpColVec
   double det = r_00 * r_11 - r_01 * r_10;
   if (std::fabs(det) < std::numeric_limits<double>::epsilon()) {
     throw(vpException(vpException::fatalError, "In vpTemplateTrackerWarpAffine::getParamInverse() "
-                                               "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
+                      "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
   }
 
   double ri_11 = r_00 / det;
@@ -263,3 +267,6 @@ void vpTemplateTrackerWarpAffine::pRondp(const vpColVector &p1, const vpColVecto
   p12[4] = r1_00 * u2 + r1_01 * v2 + u1;
   p12[5] = r1_10 * u2 + r1_11 * v2 + v1;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

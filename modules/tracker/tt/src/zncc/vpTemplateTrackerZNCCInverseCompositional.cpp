@@ -41,6 +41,10 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerZNCCInverseCompositional.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerZNCC(warp), compoInitialised(false), moydIrefdp()
 {
@@ -194,7 +198,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
           sIcd2Iref[it][jt] += prodIc * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
                                          dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy) - moyd2Iref[it][jt]);
           sdIrefdIref[it][jt] +=
-              (ptTemplate[point].dW[it] - moydIrefdp[it]) * (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
+            (ptTemplate[point].dW[it] - moydIrefdp[it]) * (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
         }
       }
 
@@ -323,7 +327,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
       if (std::fabs(denom) <= std::numeric_limits<double>::epsilon()) {
         diverge = true;
-      } else {
+      }
+      else {
         double NCC = sIcIref / denom;
         vpColVector dcovarIref(nbParam);
         dcovarIref = sIrefdIref / covarIref;
@@ -331,7 +336,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
         try {
           dp = -HLMdesireInverse * G;
-        } catch (const vpException &e) {
+        }
+        catch (const vpException &e) {
           throw(e);
         }
 
@@ -340,7 +346,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
         computeEvalRMS(p);
       }
-    } else
+    }
+    else
       diverge = true;
 
     if (iteration == 0) {
@@ -355,3 +362,6 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
   nbIteration = iteration;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

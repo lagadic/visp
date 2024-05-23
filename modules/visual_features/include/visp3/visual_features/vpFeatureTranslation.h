@@ -31,13 +31,13 @@
  * 3D translation visual feature.
  */
 
-#ifndef vpFeatureTranslation_H
-#define vpFeatureTranslation_H
-
 /*!
   \file vpFeatureTranslation.h
   \brief class that defines the translation visual feature.
 */
+
+#ifndef vpFeatureTranslation_H
+#define vpFeatureTranslation_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -46,6 +46,10 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpFeatureTranslation
  * \ingroup group_visual_features
@@ -347,5 +351,7 @@ private:
   vpHomogeneousMatrix f2Mf1;
   vpFeatureTranslationRepresentationType translation;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

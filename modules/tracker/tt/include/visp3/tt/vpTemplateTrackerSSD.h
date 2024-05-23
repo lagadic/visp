@@ -46,6 +46,7 @@
 
 #include <math.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
@@ -55,6 +56,10 @@
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/vision/vpHomography.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpTemplateTrackerSSD
   \ingroup group_tt_tracker
@@ -77,5 +82,7 @@ public:
   double getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
   void setGain(double g) { gain = g; }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

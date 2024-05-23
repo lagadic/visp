@@ -45,6 +45,10 @@
 #undef MAX /* FC unused anywhere */
 #undef MIN /* FC unused anywhere */
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)
 {
 
@@ -1222,6 +1226,8 @@ void vpCalibration::calibVVSWithDistortionMulti(unsigned int nbPose, vpCalibrati
     table_cal[i] = v_table_cal[i];
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
