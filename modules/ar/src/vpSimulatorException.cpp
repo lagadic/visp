@@ -41,7 +41,10 @@
 #include <visp3/ar/vpSimulatorException.h>
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
 {
   this->code = id;
@@ -54,9 +57,11 @@ vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
 vpSimulatorException::vpSimulatorException(int id, const std::string &msg) : vpException(id, msg) { ; }
 
 vpSimulatorException::vpSimulatorException(int id) : vpException(id) { ; }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulatorException.cpp.o) has no symbols
-void dummy_vpSimulatorException(){};
+void dummy_vpSimulatorException() { };
 
 #endif

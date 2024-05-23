@@ -33,8 +33,6 @@
  *
 *****************************************************************************/
 
-#ifndef vpViewer_HH
-#define vpViewer_HH
 /*!
   \file vpViewer.h
 
@@ -46,6 +44,9 @@
   one of the GUI (SoWin, SoXT, SoQt) are installed.
 
 */
+
+#ifndef vpViewer_HH
+#define vpViewer_HH
 
 #include <visp3/core/vpConfig.h>
 
@@ -94,6 +95,10 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpViewer
   \ingroup group_ar_simulator
@@ -153,7 +158,9 @@ private:
   static void exitMainLoop() { SoXt::exitMainLoop(); };
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // VISP_HAVE_COIN3D_AND_GUI
 
 #endif

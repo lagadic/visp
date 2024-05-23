@@ -31,20 +31,25 @@
  * Exceptions that can be emitted by the simulator classes.
  */
 
-#ifndef _vpSimulatorException_h_
-#define _vpSimulatorException_h_
-
 /*!
  * \file vpSimulatorException.h
  *  \brief Error that can be emitted by the vpSimulator class and its derivatives
  */
 
+#ifndef _vpSimulatorException_h_
+#define _vpSimulatorException_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #include <iostream> /* Classe std::ostream.    */
 #include <string>   /* Classe string.     */
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpSimulatorException
  * \brief Error that can be emitted by the vpSimulator class and its derivatives.
@@ -81,6 +86,8 @@ public:
    */
   explicit vpSimulatorException(int id);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

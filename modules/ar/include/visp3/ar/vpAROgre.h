@@ -70,6 +70,10 @@
 #include <OIS.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpAROgre
 
@@ -88,10 +92,10 @@
 
 */
 class VISP_EXPORT vpAROgre : public Ogre::FrameListener,
-                             public Ogre::WindowEventListener
+  public Ogre::WindowEventListener
 #ifdef VISP_HAVE_OIS
   ,
-                             public OIS::KeyListener
+  public OIS::KeyListener
 #endif
 {
 public:
@@ -296,7 +300,7 @@ protected:
    * Build the 3D scene
    * Override this to show what you want
    */
-  virtual void createScene(void){};
+  virtual void createScene(void) { };
 
   virtual void closeOIS(void);
 
@@ -391,7 +395,9 @@ protected:
   std::list<std::string> mOptionalResourceLocation; /** Optional resource location (used to
                                                         load mesh and material) */
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // VISP_HAVE_OGRE
 
 #endif

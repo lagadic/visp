@@ -64,6 +64,10 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpTime.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpAR
 
@@ -143,13 +147,15 @@ private:
   bool background;
 
 public:
-  vpAR() : background(false){};
+  vpAR() : background(false) { };
 
   virtual ~vpAR();
   void initInternalViewer(unsigned int width, unsigned int height, vpImageType type = grayImage);
   void setImage(vpImage<unsigned char> &I);
   void setImage(vpImage<vpRGBa> &I);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif
