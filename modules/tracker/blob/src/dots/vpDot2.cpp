@@ -55,7 +55,7 @@
 #include <visp3/blob/vpDot2.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
@@ -2505,13 +2505,13 @@ void vpDot2::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const st
   }
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 /*!
   Writes the dot center of gravity coordinates in the frame (i,j) (For more
   details about the orientation of the frame see the vpImagePoint
   documentation) to the stream \e os, and returns a reference to the stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot2 &d) { return (os << "(" << d.getCog() << ")"); }
-
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpDot2 &d) { return (os << "(" << d.getCog() << ")"); }
