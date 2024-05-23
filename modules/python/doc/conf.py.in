@@ -408,6 +408,11 @@ autodoc_excludes = [
 '__reduce__', '__reduce_ex__', '__repr__', '__setattr__',
 '__sizeof__', '__str__', '__subclasshook__', '__getattribute__', '__entries',
 ]
+
+autodoc_default_options = {
+  'exclude-members': ','.join(autodoc_excludes)
+}
+
 def autodoc_skip_member(app, what, name, obj, skip, options):
   # Ref: https://stackoverflow.com/a/21449475/
 

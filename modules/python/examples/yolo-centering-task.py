@@ -1,6 +1,6 @@
 
 
-from typing import Optional, Tuple
+import visp
 from visp.core import ColVector, Point, Color, PixelMeterConversion, Display
 from visp.core import CameraParameters, HomogeneousMatrix , ExponentialMap, PoseVector
 
@@ -25,15 +25,14 @@ import argparse
 
 plt.rcParams['text.usetex'] = True
 
-def get_simulator(scene_image: ImageRGBa) -> ImageSimulator:
-  simulator = ImageSimulator()
-  l = 1.5
-  L = 1
+def get_simulator(scene_path: str) -> ImageSimulator:
+  scene_image = np.asarray(Image.open(scene_path).convert('RGBA'))
+  scene_image = ImageRGBa(scene_image)
+  simulator = ImageSimulator() # Planar scene from single image
+  l, L = 1.5, 1.0
   scene_3d = [
-    [-l, -L, 0.0],
-    [l, -L, 0.0],
-    [l, L, 0.0],
-    [-l, L, 0.0],
+    [-l, -L, 0.0], [l, -L, 0.0],
+    [l, L, 0.0], [-l, L, 0.0],
   ]
   simulator.init(scene_image, list(map(lambda X: Point(X), scene_3d)))
   simulator.setCleanPreviousImage(True, color=Color.black)
@@ -106,32 +105,30 @@ if __name__ == '__main__':
   parser.add_argument('--class-id', type=int, help='COCO class id of the object to track (e.g, 2 for a car)')
   args = parser.parse_args()
 
+  detection_model = YOLO('yolov8n.pt')
+
   h, w = 480, 640
   Z = 5.0
-
   cam = CameraParameters(px=600, py=600, u0=w / 2.0, v0=h / 2.0)
-  detection_model = YOLO('yolov8n.pt')
-  # Initialize simulator
-  scene_image = np.asarray(Image.open(args.scene))
-  scene_image = np.concatenate((scene_image, np.ones_like(scene_image[..., 0:1]) * 255), axis=-1)
-  scene_image = ImageRGBa(scene_image)
-  simulator = get_simulator(scene_image)
+
 
   plotter = VSPlot()
 
+  # Initialization
+  simulator = get_simulator(args.scene)
   cTw = HomogeneousMatrix(-2.0, 0.5, Z, 0.0, 0.0, 0.0)
   I = ImageRGBa(h, w)
   Idisp = ImageRGBa(h, w)
-
   simulator.setCameraPosition(cTw)
   simulator.getImage(I, cam)
 
-  s = FeaturePoint()
-  s.buildFrom(0.0, 0.0, Z)
   # Define centering task
   xd, yd = PixelMeterConversion.convertPoint(cam, w / 2.0, h / 2.0)
   sd = FeaturePoint()
   sd.buildFrom(xd, yd, Z)
+
+  s = FeaturePoint()
+  s.buildFrom(0.0, 0.0, Z)
 
   task = Servo()
   task.addFeature(s, sd)
@@ -139,8 +136,9 @@ if __name__ == '__main__':
   task.setCameraDoF(ColVector([0, 0, 0, 1, 1, 0]))
   task.setServo(Servo.ServoType.EYEINHAND_CAMERA)
   task.setInteractionMatrixType(Servo.ServoIteractionMatrixType.CURRENT)
-  prev_v = ColVector(6, 0.0)
   target_class = args.class_id # Car
+
+  prev_v = ColVector(6, 0.0)
 
   d = get_display()
   d.init(I)
@@ -153,12 +151,16 @@ if __name__ == '__main__':
     start = time.time()
     # Data acquisition
     simulator.getImage(I, cam)
+    def has_class_box(box):
+      return box.cls is not None and len(box.cls) > 0 and box.cls[0] == target_class
+
     # Build current features
-    results = detection_model(np.array(I.numpy()[..., 2::-1]))
-    boxes = map(lambda result: result.boxes, results)
-    boxes = filter(lambda box: box.cls is not None and len(box.cls) > 0 and box.cls[0] == target_class, boxes)
+    results = detection_model(np.array(I.numpy()[..., 2::-1])) # Run detection
+    boxes = map(lambda result: result.boxes, results) #
+    boxes = filter(has_class_box, boxes)
     boxes = sorted(boxes, key=lambda box: box.conf[0])
     bbs = list(map(lambda box: box.xywh[0].cpu().numpy(), boxes))
+
     if len(bbs) > 0:
       bb = bbs[-1] # Take highest confidence
       u, v = bb[0], bb[1]
