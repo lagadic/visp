@@ -40,13 +40,13 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpVideoWriter.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
-{
-#endif
-
 #if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
 #endif
 
 /*!

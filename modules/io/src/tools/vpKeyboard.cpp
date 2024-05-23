@@ -31,6 +31,11 @@
  * Keyboard management.
  */
 
+/*!
+  \file vpKeyboard.cpp
+  \brief Keyboard management under unix.
+*/
+
 #include <stdio.h>
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
@@ -41,10 +46,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/io/vpKeyboard.h>
 
-/*!
-  \file vpKeyboard.cpp
-  \brief Keyboard management under unix.
-*/
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 
 /*!
   Activates the raw mode to read keys in an non blocking way.
@@ -161,5 +166,7 @@ void vpKeyboard::setRawMode(bool active)
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // defined UNIX

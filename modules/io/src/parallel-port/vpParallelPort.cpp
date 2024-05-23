@@ -31,6 +31,11 @@
  * Parallel port management.
  */
 
+/*!
+  \file vpParallelPort.cpp
+  \brief Parallel port management under unix.
+*/
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_PARPORT
@@ -43,11 +48,12 @@
 
 #include <visp3/io/vpParallelPort.h>
 
-/*!
-  \file vpParallelPort.cpp
-  \brief Parallel port management under unix.
-*/
 
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 static unsigned char vpParallelPortData;
 
 /*!
@@ -157,7 +163,9 @@ void vpParallelPort::close()
     throw(vpParallelPortException(vpParallelPortException::closing, "Can't close the parallel port"));
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no symbols
 void dummy_vpParallelPort() { };

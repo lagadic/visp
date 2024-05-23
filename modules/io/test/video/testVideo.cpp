@@ -48,6 +48,10 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 static long first_frame = 100;
 static int frame_step = 2;
 static unsigned int nframes = 3;
@@ -72,7 +76,8 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
       std::cout << "Frame saved in: " << writer.getFrameName() << std::endl;
     }
     return true;
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
 }
@@ -177,7 +182,8 @@ int main(int argc, char *argv[])
     try {
       // Create the dirname
       vpIoTools::makeDirectory(tmp);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << tmp << std::endl;
     }

@@ -35,7 +35,7 @@
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 

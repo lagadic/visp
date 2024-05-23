@@ -43,14 +43,14 @@
 
 #include <visp3/io/vpImageIo.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
-{
-#endif
-
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
 #include <opencv2/videoio/videoio.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
 #endif
 
 /*!

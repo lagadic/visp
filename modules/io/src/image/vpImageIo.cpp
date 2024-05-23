@@ -42,7 +42,7 @@
 #include "private/vpImageIoBackend.h"
 
 #if defined(ENABLE_VISP_NAMESPACE)
-using namespace visp;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
