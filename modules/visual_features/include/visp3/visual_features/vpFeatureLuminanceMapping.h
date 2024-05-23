@@ -275,7 +275,7 @@ public:
    * @brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
    *
    */
-  class VISP_EXPORT vpMatrixZigZagIndex
+  class vpMatrixZigZagIndex
   {
   public:
     vpMatrixZigZagIndex();
@@ -288,7 +288,6 @@ public:
     void init(unsigned rows, unsigned cols);
     /**
      * @brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
-     *
      *
      * @param m the matrix
      * @param start The first value. Use 0 to start with the matrix's top left value
@@ -340,7 +339,7 @@ public:
   vpLuminanceDCT(const vpLuminanceDCT &other);
 
 
-  vpLuminanceDCT &operator=(const vpLuminanceDCT &other);
+  vpLuminanceDCT &operator=(const vpLuminanceDCT &other) = default;
 
 
   void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;

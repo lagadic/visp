@@ -390,6 +390,10 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::setValues(const vpColVector &s, unsign
 
 // vpLuminanceDCT
 
+vpLuminanceDCT::vpLuminanceDCT(const vpLuminanceDCT &other) : vpLuminanceMapping(other.getProjectionSize())
+{
+  *this = other;
+}
 
 void vpLuminanceDCT::map(const vpImage<unsigned char> &I, vpColVector &s)
 {
@@ -403,8 +407,6 @@ void vpLuminanceDCT::map(const vpImage<unsigned char> &I, vpColVector &s)
   m_dct = m_Dcols * m_Imat * m_Drows;
   m_zigzag.getValues(m_dct, 0, m_mappingSize, s);
 }
-
-
 
 void vpLuminanceDCT::computeDCTMatrix(vpMatrix &D, unsigned int n) const
 {
