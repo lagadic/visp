@@ -44,6 +44,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 template <typename Type> bool test(const std::string &display, vpImage<Type> &I, unsigned int scale, bool click)
 {
   bool success = true;
@@ -66,19 +70,23 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 #ifdef VISP_HAVE_GDI
     d = new vpDisplayGDI;
 #endif
-  } else if (display == "GTK") {
+  }
+  else if (display == "GTK") {
 #ifdef VISP_HAVE_GTK
     d = new vpDisplayGTK;
 #endif
-  } else if (display == "X") {
+  }
+  else if (display == "X") {
 #ifdef VISP_HAVE_X11
     d = new vpDisplayX;
 #endif
-  } else if (display == "OpenCV") {
+  }
+  else if (display == "OpenCV") {
 #ifdef HAVE_OPENCV_HIGHGUI
     d = new vpDisplayOpenCV;
 #endif
-  } else if (display == "D3D9") {
+  }
+  else if (display == "D3D9") {
 #ifdef VISP_HAVE_D3D9
     d = new vpDisplayD3D;
 #endif
@@ -145,10 +153,12 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 #endif
 
       vpImageIo::write(Idiff, ss.str());
-    } else {
+    }
+    else {
       std::cout << "  ++ Test width scale= " << scale << " type= " << itype << ": succeed" << std::endl;
     }
-  } else {
+  }
+  else {
     itype = "rgba";
     vpImage<Type> Iinsert = I;
     vpImage<Type> Isampled; // vpRGBa necessary
@@ -197,7 +207,8 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 
       vpImageIo::write(Idiff, ss.str());
 
-    } else {
+    }
+    else {
       std::cout << "  ++ Test width scale= " << scale << " type= " << itype << ": succeed" << std::endl;
     }
   }
@@ -277,10 +288,10 @@ int main(int argc, const char *argv[])
       std::cout << "\nUsage: " << argv[0] << " [-i <image path>] [-c] [-d] [--help]\n" << std::endl;
       std::cout << "\nOptions: " << std::endl;
       std::cout << "  -i <input image path> : set image input path.\n"
-                << "       From this path read \"Klimt/Klimt.pgm\" image.\n"
-                << "       Setting the VISP_INPUT_IMAGE_PATH environment\n"
-                << "       variable produces the same behaviour than using\n"
-                << "       this option." << std::endl;
+        << "       From this path read \"Klimt/Klimt.pgm\" image.\n"
+        << "       Setting the VISP_INPUT_IMAGE_PATH environment\n"
+        << "       variable produces the same behaviour than using\n"
+        << "       this option." << std::endl;
       std::cout << "  -c : disable mouse click" << std::endl;
       std::cout << "  -d : disable display" << std::endl;
       std::cout << "  -h, --help : print this help\n" << std::endl;

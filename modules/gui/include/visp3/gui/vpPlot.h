@@ -46,7 +46,7 @@
 #if defined(VISP_HAVE_DISPLAY)
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 

@@ -45,6 +45,10 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpDisplayPCL
   \ingroup group_gui_plotter
@@ -80,7 +84,9 @@ private:
   std::string m_window_name;
   pcl::visualization::PCLVisualizer::Ptr m_viewer;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 #endif

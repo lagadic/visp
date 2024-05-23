@@ -37,14 +37,20 @@
 #ifndef _vpColorBlindFliendlyPalette_h_
 #define _vpColorBlindFliendlyPalette_h_
 
-#include<visp3/core/vpConfig.h>
-#include<visp3/core/vpColor.h>
+#include <iostream>
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColor.h>
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
 /**
  * \brief Class that furnishes a set of colors that color blind people
  * should be able to distinguish one from another.
  */
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class VISP_EXPORT vpColorBlindFriendlyPalette
 {
 public:
@@ -172,6 +178,9 @@ private:
 
   Palette m_colorID; /*!< The ID of the color in the \b vpColorBlindFriendlyPalette::Palette.*/
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 /**
  * \brief Permit to display in a \b std::ostream the name of the \b color.
@@ -180,7 +189,7 @@ private:
  * \param color The color we are interested in displaying the name.
  * \return std::ostream& The stream, in which the name of the \b color has been written.
  */
-std::ostream &operator<<(std::ostream &os, const vpColorBlindFriendlyPalette &color);
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
 
 /**
  * \brief Permits to initialize a \b vpColorBlindFriendlyPalette by reading its name in
@@ -190,7 +199,7 @@ std::ostream &operator<<(std::ostream &os, const vpColorBlindFriendlyPalette &co
  * \param color The color we want to initialized.
  * \return std::istream& The \b is input, from which we have read the name of \b color.
  */
-std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color);
+std::istream &operator>>(std::istream &is, VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
 
 #endif
 #endif // _vpColorBlindFliendlyPalette_h_

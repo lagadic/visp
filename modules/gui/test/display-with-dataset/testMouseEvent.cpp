@@ -77,7 +77,13 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:Lp:ht:f:l:s:w"
-typedef enum {
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+typedef enum
+{
   vpX11,
   vpGTK,
   vpGDI,
@@ -238,11 +244,14 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
         dtype = vpX11;
-      } else if (sDisplayType.compare("GTK") == 0) {
+      }
+      else if (sDisplayType.compare("GTK") == 0) {
         dtype = vpGTK;
-      } else if (sDisplayType.compare("GDI") == 0) {
+      }
+      else if (sDisplayType.compare("GDI") == 0) {
         dtype = vpGDI;
-      } else if (sDisplayType.compare("D3D") == 0) {
+      }
+      else if (sDisplayType.compare("D3D") == 0) {
         dtype = vpD3D;
       }
 
@@ -363,7 +372,7 @@ int main(int argc, const char **argv)
       std::cout << "  No display is available\n";
     }
     return EXIT_FAILURE;
-  }
+}
 
   if (!opt_display)
     opt_click_blocking = false; // turn off the waiting
@@ -378,8 +387,8 @@ int main(int argc, const char **argv)
     if (ipath != env_ipath) {
       std::cout << std::endl << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                << "  we skip the environment variable." << std::endl;
+        << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+        << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -388,11 +397,11 @@ int main(int argc, const char **argv)
     usage(argv[0], nullptr, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_dtype);
     std::cerr << std::endl << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-              << "  environment variable to specify the location of the " << std::endl
-              << "  image path where test images are located." << std::endl
-              << "  Use -p <personal image path> option if you want to " << std::endl
-              << "  use personal images." << std::endl
-              << std::endl;
+      << "  environment variable to specify the location of the " << std::endl
+      << "  image path where test images are located." << std::endl
+      << "  Use -p <personal image path> option if you want to " << std::endl
+      << "  use personal images." << std::endl
+      << std::endl;
 
     return EXIT_FAILURE;
   }
@@ -414,7 +423,8 @@ int main(int argc, const char **argv)
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
     filename = vpIoTools::createFilePath(dirname, s.str());
-  } else {
+  }
+  else {
 
     snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
     filename = cfilename;
@@ -422,12 +432,13 @@ int main(int argc, const char **argv)
   // Read image named "filename" and put the bitmap in I
   try {
     vpImageIo::read(I, filename);
-  } catch (...) {
+  }
+  catch (...) {
     std::cerr << std::endl << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option, " << std::endl
-              << "  or your -p " << opt_ppath << " option " << std::endl
-              << "  or VISP_INPUT_IMAGE_PATH environment variable" << std::endl;
+      << "  or your -p " << opt_ppath << " option " << std::endl
+      << "  or VISP_INPUT_IMAGE_PATH environment variable" << std::endl;
     return EXIT_FAILURE;
   }
   // Create a display for the image
@@ -490,7 +501,8 @@ int main(int argc, const char **argv)
       // display variable.
       vpDisplay::display(I);
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE("Error while displaying the image");
       delete display;
       return EXIT_FAILURE;
@@ -507,7 +519,8 @@ int main(int argc, const char **argv)
         s.str("");
         s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
-      } else {
+      }
+      else {
         snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
@@ -548,11 +561,13 @@ int main(int argc, const char **argv)
           }
         }
         vpTime::wait(tms, 1000);
-      } else {
-        // Synchronise the loop to 40 ms
+      }
+      else {
+     // Synchronise the loop to 40 ms
         vpTime::wait(tms, 40);
       }
-    } catch (...) {
+    }
+    catch (...) {
       delete display;
       return EXIT_FAILURE;
     }

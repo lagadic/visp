@@ -65,11 +65,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
-{
-#endif
-
 #ifndef CV_RGB
 #define CV_RGB(r, g, b) cv::Scalar((b), (g), (r), 0)
 #endif
@@ -78,6 +73,11 @@ namespace visp
 #include <visp3/gui/vpDisplayX.h> // to get screen resolution
 #elif defined(_WIN32)
 #include <windows.h>
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
 #endif
 
 std::vector<std::string> vpDisplayOpenCV::m_listTitles = std::vector<std::string>();

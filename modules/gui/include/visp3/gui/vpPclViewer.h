@@ -48,6 +48,10 @@
 // PCL
 #include <pcl/visualization/pcl_visualizer.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpPclViewer
   \ingroup group_gui_plotter
@@ -256,5 +260,8 @@ protected:
   bool m_hasToSavePCDs; /*!< If true, the point clouds will be saved at each iteration of the drawing thread.*/
   std::string m_outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
 };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // #if defined(VISP_HAVE_PCL)
 #endif // _vpPclVisualizer_h_

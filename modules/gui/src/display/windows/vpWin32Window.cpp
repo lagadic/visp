@@ -49,7 +49,7 @@
 #include <visp3/gui/vpWin32Window.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace visp
+namespace VISP_NAMESPACE_NAME
 {
 #endif
 
