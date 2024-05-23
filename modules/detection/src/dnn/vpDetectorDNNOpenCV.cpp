@@ -285,6 +285,7 @@ public:
   friend vpDetectorDNNOpenCV;
 };
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
 void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpenCV::NetConfig &config)
 {
 #ifdef ENABLE_VISP_NAMESPACE
@@ -345,9 +346,41 @@ void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpe
   };
 }
 
+/**
+   * \brief Read the network configuration from JSON. All values are optional and if an argument is not present,
+   * the default value defined in the constructor is kept
+   *
+   * \param j The JSON object, resulting from the parsing of a JSON file.
+   * \param network The network, that will be initialized from the JSON data.
+   */
+void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpenCV &network)
+{
+  network.m_netConfig = j.value("networkSettings", network.m_netConfig);
+}
+
+/**
+ * \brief Parse the network configuration into JSON format.
+ *
+ * \param j The JSON parser.
+ * \param network  The network we want to parse the configuration.
+ */
+void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpenCV &network)
+{
+  j = nlohmann::json {
+    {"networkSettings", network.m_netConfig}
+  };
+}
+#endif
+
 std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpenCV::NetConfig &config)
 {
   os << config.toString();
+  return os;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpDetectorDNNOpenCV &network)
+{
+  os << network.m_netConfig;
   return os;
 }
 
