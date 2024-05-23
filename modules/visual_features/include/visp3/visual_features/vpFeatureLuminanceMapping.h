@@ -33,6 +33,7 @@
 
 #ifndef vpFeatureLuminanceMapping_h
 #define vpFeatureLuminanceMapping_h
+#include <visp3/core/vpConfig.h>
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <array>
 #include <memory>
