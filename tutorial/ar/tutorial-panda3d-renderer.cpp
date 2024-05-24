@@ -167,7 +167,7 @@ int main(int argc, const char **argv)
   const std::string objectName = "object";
 
   std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer =
-    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS);
+    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer =
     std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer =

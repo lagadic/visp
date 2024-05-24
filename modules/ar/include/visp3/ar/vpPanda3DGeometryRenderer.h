@@ -55,7 +55,7 @@ public:
 
   enum vpRenderType
   {
-    WORLD_NORMALS, //! Surface normals in world space.
+    OBJECT_NORMALS, //! Surface normals in the object frame.
     CAMERA_NORMALS, //! Surface normals in the frame of the camera. Z points towards the camera and y is up.
   };
 

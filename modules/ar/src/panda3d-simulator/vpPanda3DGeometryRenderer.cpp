@@ -110,7 +110,7 @@ void main()
 std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
 {
   switch (type) {
-  case vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS:
+  case vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS:
     return "normals-world";
   case vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS:
     return "normals-camera";
@@ -125,7 +125,7 @@ void vpPanda3DGeometryRenderer::setupScene()
 {
   m_renderRoot = m_window->get_render().attach_new_node(m_name);
   PT(Shader) shader;
-  if (m_renderType == WORLD_NORMALS) {
+  if (m_renderType == OBJECT_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
                                       SHADER_VERT_NORMAL_AND_DEPTH_WORLD,
                                       SHADER_FRAG_NORMAL_AND_DEPTH);
