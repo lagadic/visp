@@ -33,6 +33,10 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include "orthographicLens.h"
+#include "cardMaker.h"
+#include "texturePool.h"
+
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT = R"shader(
 #version 330
 
@@ -238,6 +242,54 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
 }
 
 
+void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
+{
+
+  if (m_display2d == nullptr) {
+    CardMaker cm("card");
+    cm.set_frame_fullscreen_quad();
+
+    NodePath myCamera2d(new Camera("myCam2d"));
+    PT(OrthographicLens) lens = new OrthographicLens();
+    lens->set_film_size(2, 2);
+    lens->set_near_far(-1000, 1000);
+    lens->set_film_offset(0, 0);
+    ((Camera *)myCamera2d.node())->set_lens(lens);
+
+    NodePath myRender2d("myRender2d");
+    myRender2d.set_depth_test(false);
+    myRender2d.set_depth_write(false);
+    myCamera2d.reparent_to(myRender2d);
+    m_backgroundImage = myRender2d.attach_new_node(cm.generate());
+
+    m_display2d = m_colorBuffer->make_display_region();
+    m_display2d->set_sort(-100);
+    m_display2d->set_camera(myCamera2d);
+  }
+  if (m_backgroundTexture == nullptr) {
+    m_backgroundTexture = new Texture();
+  }
+  m_backgroundImage.set_texture(m_backgroundTexture);
+  m_backgroundTexture->setup_2d_texture(background.getWidth(), background.getHeight(),
+                                    Texture::ComponentType::T_unsigned_byte,
+                                    Texture::Format::F_rgba8);
+  //m_backgroundTexture = TexturePool::load_texture("/home/sfelton/IMG_20230221_165330430.jpg");
+  unsigned char *data = (unsigned char *)m_backgroundTexture->modify_ram_image();
+
+  std::cout << m_backgroundTexture->get_x_size() << ", " << m_backgroundTexture->get_y_size()  << std::endl;
+  for (unsigned int i = 0; i < background.getHeight(); ++i) {
+    const vpRGBa *srcRow = background[background.getHeight() - (i + 1)];
+    unsigned char *destRow = data + i * background.getWidth() * 4;
+    for (unsigned int j = 0; j < background.getWidth(); ++j) {
+      destRow[j * 4] = srcRow[j].B;
+      destRow[j * 4 + 1] = srcRow[j].G;
+      destRow[j * 4 + 2] = srcRow[j].R;
+      destRow[j * 4 + 3] = srcRow[j].A;
+    }
+  }
+
+}
+
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 {
   I.resize(m_colorTexture->get_y_size(), m_colorTexture->get_x_size());
@@ -249,7 +301,6 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
   rowIncrement = -rowIncrement;
 
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    data += rowIncrement;
     vpRGBa *colorRow = I[i];
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
       // BGRA order in panda3d
@@ -258,6 +309,7 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
       colorRow[j].R = data[j * 4 + 2];
       colorRow[j].A = data[j * 4 + 3];
     }
+    data += rowIncrement;
   }
 
 

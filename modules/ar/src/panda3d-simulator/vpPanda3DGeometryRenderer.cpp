@@ -197,7 +197,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   rowIncrement = -rowIncrement;
 
   for (unsigned int i = 0; i < normals.getHeight(); ++i) {
-    data += rowIncrement;
     vpRGBf *normalRow = normals[i];
     float *depthRow = depth[i];
     for (unsigned int j = 0; j < normals.getWidth(); ++j) {
@@ -206,9 +205,8 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
       normalRow[j].R = (data[j * 4 + 2]);
       depthRow[j] = (data[j * 4 + 3]);
     }
+    data += rowIncrement;
   }
-
-//#pragma omp parallel for simd
 }
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
@@ -224,13 +222,13 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
   rowIncrement = -rowIncrement;
 
   for (unsigned int i = 0; i < normals.getHeight(); ++i) {
-    data += rowIncrement;
     vpRGBf *normalRow = normals[i];
     for (unsigned int j = 0; j < normals.getWidth(); ++j) {
       normalRow[j].B = (data[j * 4]);
       normalRow[j].G = (data[j * 4 + 1]);
       normalRow[j].R = (data[j * 4 + 2]);
     }
+    data += rowIncrement;
   }
 }
 
@@ -247,11 +245,11 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
   rowIncrement = -rowIncrement;
 
   for (unsigned int i = 0; i < depth.getHeight(); ++i) {
-    data += rowIncrement;
     float *depthRow = depth[i];
     for (unsigned int j = 0; j < depth.getWidth(); ++j) {
       depthRow[j] = (data[j * 4 + 3]);
     }
+    data += rowIncrement;
   }
 }
 

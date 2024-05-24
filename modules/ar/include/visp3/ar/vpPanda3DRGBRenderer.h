@@ -68,7 +68,7 @@ public:
    * \brief Default constructor. Initialize an RGB renderer with the normal rendering behavior showing speculars
    *
    */
-  vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB"), m_showSpeculars(true) { }
+  vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB"), m_showSpeculars(true), m_display2d(nullptr), m_backgroundTexture(nullptr) { }
   /**
    * \brief RGB renderer constructor allowing to specify
    * whether specular highlights should be rendered or
@@ -90,9 +90,12 @@ public:
 
   void addNodeToScene(const NodePath &object) vp_override;
 
+  void setBackgroundImage(const vpImage<vpRGBa> &background);
+
   GraphicsOutput *getMainOutputBuffer() vp_override { return m_colorBuffer; }
 
   bool isShowingSpeculars() const { return m_showSpeculars; }
+
 
 protected:
   void setupScene() vp_override;
@@ -106,6 +109,9 @@ private:
   static const char *COOK_TORRANCE_VERT;
   static const char *COOK_TORRANCE_FRAG;
 
+  NodePath m_backgroundImage;
+  DisplayRegion *m_display2d;
+  PT(Texture) m_backgroundTexture;
 
 };
 

@@ -46,6 +46,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpImageIo.h>
 
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
@@ -120,10 +121,14 @@ int main(int argc, const char **argv)
   bool showLightContrib = false;
   bool showCanny = false;
   char *modelPathCstr = nullptr;
+  char *backgroundPathCstr = nullptr;
+
   vpParseArgv::vpArgvInfo argTable[] =
   {
     {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
      "Path to the model to load."},
+    {"-background", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&backgroundPathCstr,
+     "Path to the background image to load for the rgb renderer."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
      "Show frames step by step."},
     {"-specular", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&showLightContrib,
@@ -150,6 +155,10 @@ int main(int argc, const char **argv)
   }
   else {
     modelPath = "data/suzanne.bam";
+  }
+  std::string backgroundPath;
+  if (backgroundPathCstr) {
+    backgroundPath = backgroundPathCstr;
   }
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
@@ -212,11 +221,17 @@ int main(int argc, const char **argv)
   renderer.addLight(dlight);
 
   rgbRenderer->printStructure();
+  if (!backgroundPath.empty()) {
+    vpImage<vpRGBa> background;
+    vpImageIo::read(background, backgroundPath);
+    rgbRenderer->setBackgroundImage(background);
+  }
+
+
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
-
   unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
-
+  std::cout << "Creating display and data images" << std::endl;
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
   vpImage<vpRGBf> cannyRawData;
@@ -281,7 +296,6 @@ int main(int argc, const char **argv)
     }
 
     const double beforeConvert = vpTime::measureTimeMs();
-
     displayNormals(normalsImage, normalDisplayImage);
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
     displayDepth(depthImage, depthDisplayImage, nearV, farV);
@@ -316,16 +330,6 @@ int main(int argc, const char **argv)
         }
       }
     }
-    // if (firstFrame) {
-    //   renderParams.setImageResolution(h * 0.5, w * 0.5);
-    //   vpCameraParameters orig = renderParams.getCameraIntrinsics();
-    //   vpCameraParameters newCam(orig.get_px() * 0.5, orig.get_py() * 0.5, orig.get_u0() * 0.5, orig.get_v0() * 0.5);
-    //   renderParams.setCameraIntrinsics(newCam);
-    //   std::cout << h << std::endl;
-    //   //dDepth.setDownScalingFactor(0.5);
-    //   renderer.setRenderParameters(renderParams);
-    // }
-    // firstFrame = false;
     const double afterAll = vpTime::measureTimeMs();
     const double delta = (afterAll - beforeRender) / 1000.0;
     const vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
