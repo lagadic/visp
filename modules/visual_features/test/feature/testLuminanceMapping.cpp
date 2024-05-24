@@ -359,9 +359,8 @@ SCENARIO("Using DCT features", "[visual_features]")
         for (unsigned i = 0; i < I.getRows(); ++i) {
           for (unsigned j = 0; j < I.getCols(); ++j) {
             const int diff = abs(static_cast<int>(I[i][j]) - static_cast<int>(Ir[i][j]));
-            if (diff > 2) {
-              FAIL();
-            }
+            REQUIRE(diff < 2);
+            INFO("i = " + std::to_string(i) + ", j = " + std::to_string(j));
           }
         }
       }
