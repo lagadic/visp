@@ -3,4 +3,23 @@
 \tableofcontents
 
 \section tutorial-panda3d-intro Introduction
+
+\snippet tutorial-panda3d-renderer.cpp Renderer set
+
+\snippet tutorial-panda3d-renderer.cpp Subrenderers
+
+\snippet tutorial-panda3d-renderer.cpp Adding subrenderers
+
+\warning ADD plot
+
+\snippet tutorial-panda3d-renderer.cpp Scene configuration
+
+
+\section tutorial-panda3d-full-code Full code
+
+
+
+
+\include tutorial-panda3d-renderer.cpp
+
 */

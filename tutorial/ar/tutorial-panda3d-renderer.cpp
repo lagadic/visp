@@ -160,12 +160,20 @@ int main(int argc, const char **argv)
   if (backgroundPathCstr) {
     backgroundPath = backgroundPathCstr;
   }
+  const std::string objectName = "object";
+
+  //! [Renderer set]
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
+  renderer.setVerticalSyncEnabled(false);
+  renderer.setAbortOnPandaError(true);
+  if (debug) {
+    renderer.enableDebugLog();
+  }
+  //! [Renderer set]
 
-  const std::string objectName = "object";
-
+  //! [Subrenderers init]
   std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer =
     std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer =
@@ -180,8 +188,9 @@ int main(int argc, const char **argv)
     std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
   std::shared_ptr<vpPanda3DCanny> cannyFilter =
     std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
+  //! [Subrenderers]
 
-
+  //! [Adding subrenderers]
   renderer.addSubRenderer(geometryRenderer);
   renderer.addSubRenderer(cameraRenderer);
   renderer.addSubRenderer(rgbRenderer);
@@ -192,23 +201,13 @@ int main(int argc, const char **argv)
     renderer.addSubRenderer(grayscaleFilter);
     renderer.addSubRenderer(blurFilter);
     renderer.addSubRenderer(cannyFilter);
-
   }
-
-  renderer.setVerticalSyncEnabled(false);
-  renderer.setAbortOnPandaError(true);
-  if (debug) {
-    renderer.enableDebugLog();
-  }
-
-
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
   renderer.initFramework();
+  //! [Adding subrenderers]
 
-  std::cout << "Loading object " << modelPath << std::endl;
+  //! [Scene configuration]
   NodePath object = renderer.loadObject(objectName, modelPath);
-  std::cout << "Adding node to scene" <<std::endl;
-
   renderer.addNodeToScene(object);
 
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
@@ -220,7 +219,8 @@ int main(int argc, const char **argv)
   vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
 
-  rgbRenderer->printStructure();
+  <<<<<<< HEAD
+    rgbRenderer->printStructure();
   if (!backgroundPath.empty()) {
     vpImage<vpRGBa> background;
     vpImageIo::read(background, backgroundPath);
@@ -230,7 +230,14 @@ int main(int argc, const char **argv)
 
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
-  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+  ====== =
+    renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
+    //! [Scene configuration]
+
+  rgbRenderer->printStructure();
+
+  >>>>>>> c386b93ae(tutorial structure)
+    unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   std::cout << "Creating display and data images" << std::endl;
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
