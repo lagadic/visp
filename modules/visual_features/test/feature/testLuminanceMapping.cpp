@@ -90,9 +90,17 @@ SCENARIO("Using PCA features", "[visual_features]")
         REQUIRE_THROWS(vpLuminancePCA::learn(data.transpose(), k));
       }
     }
+    WHEN("Learning with more images than pixels")
+    {
+      vpMatrix wrongData(20, 50);
+      THEN("An exception is thrown")
+      {
+        REQUIRE_THROWS(vpLuminancePCA::learn(wrongData.transpose(), 32));
+      }
+    }
     WHEN("Learning PCA basis")
     {
-      for (unsigned int k = 1; k <= trueComponents; ++k) {
+      for (unsigned int k = 2; k <= trueComponents; ++k) {
 
         vpLuminancePCA pca = vpLuminancePCA::learn(data.transpose(), k);
         const vpMatrix &basis = *pca.getBasis();
@@ -123,7 +131,27 @@ SCENARIO("Using PCA features", "[visual_features]")
           REQUIRE(pca.getMean()->getRows() == dataDim);
           REQUIRE(pca.getMean()->getCols() == 1);
         }
+        THEN("Modifying the basis size (number of inputs) by hand and saving")
+        {
+          const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_pca_wrong");
+          const std::string basisFile = vpIoTools::createFilePath(tempDir, "basis.txt");
+          const std::string meanFile = vpIoTools::createFilePath(tempDir, "mean.txt");
+          const std::string varFile = vpIoTools::createFilePath(tempDir, "var.txt");
+          pca.getBasis()->resize(pca.getBasis()->getRows(), pca.getBasis()->getCols() - 1);
+          REQUIRE_THROWS(pca.save(basisFile, meanFile, varFile));
+        }
+        THEN("Modifying the mean Columns by hand")
+        {
+          const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_pca_wrong");
+          const std::string basisFile = vpIoTools::createFilePath(tempDir, "basis.txt");
+          const std::string meanFile = vpIoTools::createFilePath(tempDir, "mean.txt");
+          const std::string varFile = vpIoTools::createFilePath(tempDir, "var.txt");
 
+          std::shared_ptr<vpColVector> mean = pca.getMean();
+          mean->resize(mean->getRows() + 1, false);
+          REQUIRE_THROWS(pca.save(basisFile, meanFile, varFile));
+
+        }
         THEN("Saving and loading pca leads to same basis and mean")
         {
           const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_pca");
@@ -224,6 +252,18 @@ SCENARIO("Using PCA features", "[visual_features]")
           }
         }
       }
+    }
+  }
+  WHEN("Saving unintialized PCA")
+  {
+    vpLuminancePCA pca;
+    const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_pca");
+    const std::string basisFile = vpIoTools::createFilePath(tempDir, "basis.txt");
+    const std::string meanFile = vpIoTools::createFilePath(tempDir, "mean.txt");
+    const std::string varFile = vpIoTools::createFilePath(tempDir, "var.txt");
+    THEN("an exception is thrown")
+    {
+      REQUIRE_THROWS(pca.save(basisFile, meanFile, varFile));
     }
   }
 }
@@ -352,7 +392,6 @@ SCENARIO("Using DCT features", "[visual_features]")
           REQUIRE(s.sum() == Approx(s[0]).margin(1e-5));
         }
 
-        //dct.interaction(I, );
         vpImage<unsigned char> Ir;
         dct.inverse(s, Ir);
         REQUIRE((Ir.getRows() == I.getRows() && Ir.getCols() == I.getCols()));
