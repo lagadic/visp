@@ -256,7 +256,7 @@ int main(int argc, const char **argv)
     double alpha = 1.5, beta = -10.0;
     vpImage<vpRGBa> I_color_adjust;
     double t = vpTime::measureTimeMs();
-    vp::adjust(I_color, I_color_adjust, alpha, beta);
+    VISP_IMGPROC_NAMESPACE::adjust(I_color, I_color_adjust, alpha, beta);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color adjust: " << t << " ms" << std::endl;
 
@@ -267,7 +267,7 @@ int main(int argc, const char **argv)
     // Equalize Histogram
     vpImage<vpRGBa> I_color_equalize_histogram;
     t = vpTime::measureTimeMs();
-    vp::equalizeHistogram(I_color, I_color_equalize_histogram);
+    VISP_IMGPROC_NAMESPACE::equalizeHistogram(I_color, I_color_equalize_histogram);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color histogram equalization: " << t << " ms" << std::endl;
 
@@ -279,7 +279,7 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I_color_gamma_correction;
     float gamma = 2.2f;
     t = vpTime::measureTimeMs();
-    vp::gammaCorrection(I_color, I_color_gamma_correction, gamma);
+    VISP_IMGPROC_NAMESPACE::gammaCorrection(I_color, I_color_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color gamma correction: " << t << " ms" << std::endl;
 
@@ -290,7 +290,7 @@ int main(int argc, const char **argv)
     // Retinex
     vpImage<vpRGBa> I_color_retinex;
     t = vpTime::measureTimeMs();
-    vp::retinex(I_color, I_color_retinex);
+    VISP_IMGPROC_NAMESPACE::retinex(I_color, I_color_retinex);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color retinex: " << t << " ms" << std::endl;
 
@@ -301,7 +301,7 @@ int main(int argc, const char **argv)
     // Stretch contrast
     vpImage<vpRGBa> I_color_stretch_contrast;
     t = vpTime::measureTimeMs();
-    vp::stretchContrast(I_color, I_color_stretch_contrast);
+    VISP_IMGPROC_NAMESPACE::stretchContrast(I_color, I_color_stretch_contrast);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color contrast stretching: " << t << " ms" << std::endl;
 
@@ -312,7 +312,7 @@ int main(int argc, const char **argv)
     // Stretch Contrast HSV
     vpImage<vpRGBa> I_color_stretch_contrast_HSV;
     t = vpTime::measureTimeMs();
-    vp::stretchContrastHSV(I_color, I_color_stretch_contrast_HSV);
+    VISP_IMGPROC_NAMESPACE::stretchContrastHSV(I_color, I_color_stretch_contrast_HSV);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color HSV contrast stretching: " << t << " ms" << std::endl;
 
@@ -324,7 +324,7 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I_color_unsharp_mask;
     const float sigma = 1.0f;
     t = vpTime::measureTimeMs();
-    vp::unsharpMask(I_color, I_color_unsharp_mask, sigma);
+    VISP_IMGPROC_NAMESPACE::unsharpMask(I_color, I_color_unsharp_mask, sigma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color unsharp mask: " << t << " ms" << std::endl;
 
@@ -335,7 +335,7 @@ int main(int argc, const char **argv)
 // CLAHE
     vpImage<vpRGBa> I_color_clahe;
     t = vpTime::measureTimeMs();
-    vp::clahe(I_color, I_color_clahe, 50);
+    VISP_IMGPROC_NAMESPACE::clahe(I_color, I_color_clahe, 50);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color CLAHE: " << t << " ms" << std::endl;
 
@@ -359,7 +359,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_adjust;
     beta = -20.0;
     t = vpTime::measureTimeMs();
-    vp::adjust(I, I_adjust, alpha, beta);
+    VISP_IMGPROC_NAMESPACE::adjust(I, I_adjust, alpha, beta);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale adjust: " << t << " ms" << std::endl;
 
@@ -370,7 +370,7 @@ int main(int argc, const char **argv)
     // Equalize Histogram
     vpImage<unsigned char> I_equalize_histogram;
     t = vpTime::measureTimeMs();
-    vp::equalizeHistogram(I, I_equalize_histogram);
+    VISP_IMGPROC_NAMESPACE::equalizeHistogram(I, I_equalize_histogram);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale histogram equalization: " << t << " ms" << std::endl;
 
@@ -382,7 +382,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_gamma_correction;
     gamma = 1.8f;
     t = vpTime::measureTimeMs();
-    vp::gammaCorrection(I, I_gamma_correction, gamma);
+    VISP_IMGPROC_NAMESPACE::gammaCorrection(I, I_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale gamma correction: " << t << " ms" << std::endl;
 
@@ -393,7 +393,7 @@ int main(int argc, const char **argv)
     // Stretch contrast
     vpImage<unsigned char> I_stretch_contrast;
     t = vpTime::measureTimeMs();
-    vp::stretchContrast(I, I_stretch_contrast);
+    VISP_IMGPROC_NAMESPACE::stretchContrast(I, I_stretch_contrast);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale contrast stretching: " << t << " ms" << std::endl;
 
@@ -404,7 +404,7 @@ int main(int argc, const char **argv)
     // Unsharp Mask
     vpImage<unsigned char> I_unsharp_mask;
     t = vpTime::measureTimeMs();
-    vp::unsharpMask(I, I_unsharp_mask, sigma);
+    VISP_IMGPROC_NAMESPACE::unsharpMask(I, I_unsharp_mask, sigma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale unsharp mask: " << t << " ms" << std::endl;
 
@@ -415,7 +415,7 @@ int main(int argc, const char **argv)
     // CLAHE
     vpImage<unsigned char> I_clahe;
     t = vpTime::measureTimeMs();
-    vp::clahe(I, I_clahe, 50);
+    VISP_IMGPROC_NAMESPACE::clahe(I, I_clahe, 50);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale CLAHE: " << t << " ms" << std::endl;
 

@@ -171,15 +171,15 @@ void printImage(const vpImage<unsigned char> &I, const std::string &name)
   }
 }
 
-void displayContourInfo(const vp::vpContour &contour, int level)
+void displayContourInfo(const VISP_CONTOURS_NAMESPACE::vpContour &contour, int level)
 {
   std::cout << "\nContour:" << std::endl;
   std::cout << "\tlevel: " << level << std::endl;
-  std::cout << "\tcontour type: " << (contour.m_contourType == vp::CONTOUR_OUTER ? "outer contour" : "hole contour")
+  std::cout << "\tcontour type: " << (contour.m_contourType == VISP_CONTOURS_NAMESPACE::CONTOUR_OUTER ? "outer contour" : "hole contour")
     << std::endl;
   std::cout << "\tnb children: " << contour.m_children.size() << std::endl;
 
-  for (std::vector<vp::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+  for (std::vector<VISP_CONTOURS_NAMESPACE::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
        ++it) {
     displayContourInfo(**it, level + 1);
   }
@@ -279,10 +279,10 @@ int main(int argc, const char **argv)
     std::cout << "Test with image data:" << std::endl;
     printImage(I_test_data, "I_test_data");
 
-    vp::vpContour vp_contours;
+    VISP_CONTOURS_NAMESPACE::vpContour vp_contours;
     std::vector<std::vector<vpImagePoint> > contours;
     double t = vpTime::measureTimeMs();
-    vp::findContours(I_test_data, vp_contours, contours);
+    VISP_CONTOURS_NAMESPACE::findContours(I_test_data, vp_contours, contours);
     t = vpTime::measureTimeMs() - t;
 
     displayContourInfo(vp_contours, 0);
@@ -304,7 +304,7 @@ int main(int argc, const char **argv)
     vpImageIo::write(I2, filename);
 
     t = vpTime::measureTimeMs();
-    vp::findContours(I, vp_contours, contours);
+    VISP_CONTOURS_NAMESPACE::findContours(I, vp_contours, contours);
     t = vpTime::measureTimeMs() - t;
 
     displayContourInfo(vp_contours, 0);
@@ -313,50 +313,50 @@ int main(int argc, const char **argv)
 
     // Draw and save
     vpImage<unsigned char> I_draw_contours(I2.getHeight(), I2.getWidth(), 0);
-    vp::drawContours(I_draw_contours, contours);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_draw_contours, contours);
 
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted.pgm");
     vpImageIo::write(I_draw_contours, filename);
 
     vpImage<vpRGBa> I_draw_contours_color(I2.getHeight(), I2.getWidth(), vpRGBa(0, 0, 0));
-    vp::drawContours(I_draw_contours_color, contours, vpColor::red);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_draw_contours_color, contours, vpColor::red);
 
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted_color.ppm");
     vpImageIo::write(I_draw_contours_color, filename);
 
     // Test retrieve list
-    vp::findContours(I, vp_contours, contours, vp::CONTOUR_RETR_LIST);
+    VISP_CONTOURS_NAMESPACE::findContours(I, vp_contours, contours, VISP_CONTOURS_NAMESPACE::CONTOUR_RETR_LIST);
     vpImage<unsigned char> I_draw_contours_list(I2.getHeight(), I2.getWidth(), 0);
 
     vpImage<unsigned char> I_tmp_list(I.getHeight(), I.getWidth(), 0);
-    vp::drawContours(I_tmp_list, contours);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_tmp_list, contours);
 
     contours.clear();
-    for (std::vector<vp::vpContour *>::const_iterator it = vp_contours.m_children.begin();
+    for (std::vector<VISP_CONTOURS_NAMESPACE::vpContour *>::const_iterator it = vp_contours.m_children.begin();
          it != vp_contours.m_children.end(); ++it) {
       contours.push_back((*it)->m_points);
     }
 
-    vp::drawContours(I_draw_contours_list, contours);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_draw_contours_list, contours);
     std::cout << "(I_tmp_list == I_draw_contours_list)? " << (I_tmp_list == I_draw_contours_list) << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted_list.pgm");
     vpImageIo::write(I_draw_contours_list, filename);
 
     // Test retrieve external
-    vp::findContours(I, vp_contours, contours, vp::CONTOUR_RETR_EXTERNAL);
+    VISP_CONTOURS_NAMESPACE::findContours(I, vp_contours, contours, VISP_CONTOURS_NAMESPACE::CONTOUR_RETR_EXTERNAL);
     vpImage<unsigned char> I_draw_contours_external(I2.getHeight(), I2.getWidth(), 0);
 
     vpImage<unsigned char> I_tmp_external(I.getHeight(), I.getWidth(), 0);
-    vp::drawContours(I_tmp_external, contours);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_tmp_external, contours);
 
     contours.clear();
-    for (std::vector<vp::vpContour *>::const_iterator it = vp_contours.m_children.begin();
+    for (std::vector<VISP_CONTOURS_NAMESPACE::vpContour *>::const_iterator it = vp_contours.m_children.begin();
          it != vp_contours.m_children.end(); ++it) {
       contours.push_back((*it)->m_points);
     }
 
-    vp::drawContours(I_draw_contours_external, contours);
+    VISP_CONTOURS_NAMESPACE::drawContours(I_draw_contours_external, contours);
     std::cout << "(I_tmp_external == I_draw_contours_external)? " << (I_tmp_external == I_draw_contours_external)
       << std::endl;
 
@@ -369,7 +369,7 @@ int main(int argc, const char **argv)
                            (unsigned char)255);
 
     t = vpTime::measureTimeMs();
-    vp::fillHoles(I_holes);
+    VISP_CONTOURS_NAMESPACE::fillHoles(I_holes);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nFill Holes: " << t << " ms" << std::endl;
 

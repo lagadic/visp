@@ -138,6 +138,9 @@ int main()
 #else
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpTRACE("Basler Pylon grabber capabilities are not available...\n"
           "You should install pylon SDK to use this binary.");
 }

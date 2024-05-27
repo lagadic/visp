@@ -74,11 +74,13 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPolygon.h>
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-namespace vp
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#define VISP_CONTOURS_NAMESPACE vp
 #else
-namespace VISP_NAMESPACE_NAME
+#define VISP_CONTOURS_NAMESPACE VISP_NAMESPACE_NAME
 #endif
+
+namespace VISP_CONTOURS_NAMESPACE
 {
 
 /*!

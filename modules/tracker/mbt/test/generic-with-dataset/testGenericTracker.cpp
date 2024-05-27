@@ -64,6 +64,10 @@
 
 #define GETOPTARGS "i:dsclt:e:DmCh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void usage(const char *name, const char *badparam)
@@ -709,7 +713,7 @@ int main(int argc, const char *argv[])
         "KLT module or OpenCV is not available.\nTest is not run."
         << std::endl;
       return EXIT_SUCCESS;
-    }
+  }
 #endif
 
     // Test if an input path is set
@@ -742,7 +746,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "Test succeed" << std::endl;
     return EXIT_SUCCESS;
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

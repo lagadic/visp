@@ -252,7 +252,7 @@ int main(int argc, const char **argv)
 
     // Huang
     double t = vpTime::measureTimeMs();
-    double threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_HUANG);
+    double threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_HUANG);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Huang): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -263,7 +263,7 @@ int main(int argc, const char **argv)
     // Intermodes
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_INTERMODES);
+    threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_INTERMODES);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Intermodes): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -274,7 +274,7 @@ int main(int argc, const char **argv)
     // IsoData
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_ISODATA);
+    threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_ISODATA);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (IsoData): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -285,7 +285,7 @@ int main(int argc, const char **argv)
     // Mean
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_MEAN);
+    threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_MEAN);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Mean): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -296,7 +296,7 @@ int main(int argc, const char **argv)
     // Otsu
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_OTSU);
+    threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_OTSU);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Otsu): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -307,7 +307,7 @@ int main(int argc, const char **argv)
     // Triangle
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_TRIANGLE);
+    threshold = VISP_IMGPROC_NAMESPACE::autoThreshold(I_thresh, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_TRIANGLE);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Triangle): " << threshold << " ; t=" << t << " ms" << std::endl;
 
