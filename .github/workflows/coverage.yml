@@ -65,14 +65,14 @@ jobs:
           '/usr/*' \
           '*/private/*' \
           '*/test/*' \
-          "$WD/../3rdparty/*" \
-          "$WD/../demo/*" \
-          "$WD/../example/*" \
-          "$WD/../samples/*" \
-          "$WD/../modules/gui*" \
-          "$WD/../modules/io/src/parallel-port*" \
-          "$WD/../modules/robot*" \
-          "$WD/../modules/sensor*" \
+          "/*/3rdparty/*" \
+          "/*/demo/*" \
+          "/*/example/*" \
+          "/*/samples/*" \
+          "/*/modules/gui*" \
+          "/*/modules/io/src/parallel-port*" \
+          "/*/modules/robot*" \
+          "/*/modules/sensor*" \
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
