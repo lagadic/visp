@@ -41,7 +41,11 @@
 #ifndef vpBAYERCONVERSION_H
 #define vpBAYERCONVERSION_H
 
+#include <visp3/core/vpConfig.h>
+
+#ifndef VISP_SKIP_BAYER_CONVERSION
 #include <cassert>
+
 
 #include <visp3/core/vpMath.h>
 
@@ -1391,4 +1395,5 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
   }
 }
 
+#endif
 #endif

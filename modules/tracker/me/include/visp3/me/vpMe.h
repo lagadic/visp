@@ -628,7 +628,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     assert((mus.size() == 2));
     me.setMu1(mus[0]);
     me.setMu2(mus[1]);
-  }
+}
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
   me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));

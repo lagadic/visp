@@ -169,7 +169,6 @@ public:
 #endif
 protected:
   void init() vp_override;
-
 };
 #if defined(ENABLE_VISP_NAMESPACE)
 }
