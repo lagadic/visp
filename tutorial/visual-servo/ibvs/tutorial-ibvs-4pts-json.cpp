@@ -13,7 +13,8 @@ using json = nlohmann::json; //! json namespace shortcut
 
 
 #if defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
+namespace VISP_NAMESPACE_NAME
+{
 #endif
 
 //! [Enum]
@@ -105,7 +106,7 @@ void to_json(json &j, const Arguments &a)
     {"cMo", a.cMo},
     {"cdMo", a.cdMo},
     {"errorThreshold", a.errorThreshold},
-    {"samplingTime", a.samplingTime},
+    {"samplingTime", a.samplingTime} ,
     {"interactionMatrix", a.interactionMatrixType}
   };
 }
@@ -210,9 +211,15 @@ void saveResults(const ServoingExperimentData &results, const std::string &path)
   file.close();
 }
 //! [write json to file]
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 
 int main(int argc, char *argv[])
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   //! [Main parsing]
   std::string arguments_path = "";
   std::string output_path = "";
