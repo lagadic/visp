@@ -14,6 +14,10 @@
 #include "ClassUsingPclViewer.h"
 //! [Class include]
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Enum for mode choice]
 /**
  * @brief Enumeration permitting to choose between running the blocking-mode display

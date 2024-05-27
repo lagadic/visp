@@ -1,10 +1,15 @@
 //! \example tutorial-draw-circle.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImageDraw.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<unsigned char> I(2160, 3840, 128);
   vpImage<vpRGBa> I_rgb(2160, 3840, vpColor(0, 0, 0));
 
@@ -46,9 +51,9 @@ int main()
 #if defined(VISP_HAVE_DISPLAY)
       if (d) {
         delete d;
-      }
-#endif
     }
+#endif
+  }
 
     {
       //! [Circle draw color]
@@ -73,9 +78,9 @@ int main()
 #if defined(VISP_HAVE_DISPLAY)
       if (d) {
         delete d;
-      }
-#endif
     }
+#endif
+}
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;

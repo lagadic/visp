@@ -1,3 +1,4 @@
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -5,6 +6,10 @@
 
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)

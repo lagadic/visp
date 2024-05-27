@@ -1,4 +1,5 @@
 //! \example tutorial-mb-generic-tracker-full.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -11,6 +12,10 @@
 #include <visp3/io/vpVideoWriter.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)

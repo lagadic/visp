@@ -43,6 +43,10 @@
 
 #include <sys/stat.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Preprocess image]
 void preprocessImage(cv::Mat &img, float *gpu_input, const nvinfer1::Dims &dims, float meanR, float meanG, float meanB)
 {

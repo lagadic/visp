@@ -11,6 +11,11 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; //! json namespace shortcut
 
+
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Enum]
 enum vpInteractionMatrixTypeSubset
 {

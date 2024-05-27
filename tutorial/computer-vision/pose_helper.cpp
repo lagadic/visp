@@ -4,6 +4,10 @@
 
 #include "pose_helper.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Compute pose]
 void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip, const vpCameraParameters &cam,
                  bool init, vpHomogeneousMatrix &cMo)
@@ -45,7 +49,8 @@ std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &
         dot[i].initTracking(I);
         vpDisplay::flush(I);
       }
-    } else {
+    }
+    else {
       for (unsigned int i = 0; i < dot.size(); i++) {
         dot[i].track(I);
       }
@@ -64,9 +69,10 @@ std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &
     }
 
     return ip;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Traking lost" << std::endl;
     throw(vpException(vpException::fatalError, "Tracking lost"));
-  }
+}
 }
 #endif

@@ -1,4 +1,5 @@
 #include <memory>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -38,6 +39,10 @@ int main(int argc, char *argv[])
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
   && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool opencv_backend = false;
   std::string npz_filename = "npz_tracking_teabox.npz";
   bool print_cMo = false;

@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <visp3/core/vpConfig.h>
 // Display
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -23,6 +24,9 @@ int main()
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #if defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 

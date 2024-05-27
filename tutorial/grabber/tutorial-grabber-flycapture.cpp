@@ -1,4 +1,5 @@
 //! \example tutorial-grabber-flycapture.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -61,6 +62,9 @@ void usage(const char *argv[], int error)
 int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_FLYCAPTURE) && defined(VISP_HAVE_THREADS)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;

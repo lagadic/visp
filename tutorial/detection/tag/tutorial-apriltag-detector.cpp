@@ -2,6 +2,7 @@
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -13,6 +14,10 @@ int main(int argc, const char **argv)
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
+
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   std::string input_filename = "AprilTag.pgm";
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -205,7 +210,7 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+}
 
 #else
   (void)argc;

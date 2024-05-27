@@ -1,4 +1,5 @@
 //! \example tutorial-event-keyboard.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -7,6 +8,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<unsigned char> I(240, 320); // Create a black image
 #if defined(VISP_HAVE_X11)
   vpDisplay *d = new vpDisplayX;

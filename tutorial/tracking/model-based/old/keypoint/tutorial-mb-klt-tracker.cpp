@@ -1,4 +1,5 @@
 /*! \example tutorial-mb-klt-tracker.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -10,6 +11,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   try {
     std::string videoname = "teabox.mp4";
@@ -113,7 +117,7 @@ int main(int argc, char **argv)
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
-  }
+}
 #endif
 #else
   (void)argc;

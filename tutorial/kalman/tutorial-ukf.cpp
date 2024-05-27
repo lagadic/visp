@@ -81,6 +81,10 @@
 #include <visp3/core/vpUnscentedKalman.h>
 //! [UKF_includes]
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 //! [Process_function]
 /**
@@ -185,7 +189,7 @@ public:
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(x[0], x[1], x[2]);
-    wMo.buildFrom(wTo, m_wRo);
+    wMo.build(wTo, m_wRo);
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       double u = 0., v = 0.;
@@ -211,7 +215,7 @@ public:
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(wX[0], wX[1], wX[2]);
-    wMo.buildFrom(wTo, m_wRo);
+    wMo.build(wTo, m_wRo);
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       double u = 0., v = 0.;

@@ -1,10 +1,15 @@
 /*! \example tutorial-ibvs-4pts-wireframe-robot-viper.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam);
@@ -97,7 +102,7 @@ int main()
     std::cout << "Robot joint limits: " << std::endl;
     for (unsigned int i = 0; i < qmin.size(); i++)
       std::cout << "Joint " << i << ": min " << vpMath::deg(qmin[i]) << " max " << vpMath::deg(qmax[i]) << " (deg)"
-                << std::endl;
+      << std::endl;
 
     robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -163,7 +168,8 @@ int main()
 
       vpTime::wait(1000 * robot.getSamplingTime());
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

@@ -12,9 +12,13 @@
 #include <opencv2/videoio.hpp>
 #endif
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
 #if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     bool opt_init_by_click = false;
     int opt_device = 0;

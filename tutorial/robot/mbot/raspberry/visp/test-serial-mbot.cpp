@@ -1,10 +1,15 @@
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpSerial.h>
 #include <visp3/core/vpTime.h>
 
 int main(int argc, char *argv[])
 {
 #if !defined(_WIN32)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   double time = 4;
   double v_x = 0;
   double w_z = 0;

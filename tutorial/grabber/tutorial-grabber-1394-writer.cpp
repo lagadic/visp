@@ -1,4 +1,5 @@
 /*! \example tutorial-grabber-1394-writer.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoWriter.h>
@@ -7,6 +8,9 @@
 int main(int argc, char **)
 {
 #ifdef VISP_HAVE_DC1394
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_DISPLAY
   vpDisplay *d = vpDisplayFactory::displayFactory();
 #else

@@ -14,6 +14,9 @@ int main(int argc, const char **argv)
 #if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) &&                                                            \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpImage<unsigned char> I;
     vpImageIo::read(I, "bar-code.pgm");
@@ -38,7 +41,7 @@ int main(int argc, const char **argv)
         opt_barcode = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "Usage: " << argv[0] << " [--code-type <0 for QR code | 1 for DataMatrix code>] [--help] [-h]"
-                  << std::endl;
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -93,7 +96,8 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     delete detector;
-  } catch (const vpException &e) {
+}
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #else

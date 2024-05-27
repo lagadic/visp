@@ -48,6 +48,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   {
     //! [Save_string_init]
     const std::string save_string = "Open Source Visual Servoing Platform";

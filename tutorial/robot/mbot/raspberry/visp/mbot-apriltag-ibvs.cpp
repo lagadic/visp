@@ -1,4 +1,5 @@
 //! \example mbot-apriltag-ibvs.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMomentAreaNormalized.h>
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -22,6 +23,10 @@
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   double tagSize = 0.065;

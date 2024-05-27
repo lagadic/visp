@@ -1,6 +1,7 @@
 //! \example tutorial-mb-generic-tracker-rgbd.cpp
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -14,6 +15,10 @@
 #include <pcl/common/common.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {

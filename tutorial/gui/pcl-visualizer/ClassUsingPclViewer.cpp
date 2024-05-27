@@ -12,6 +12,10 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/io/vpKeyboard.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 //! [Z coordinates computation]
 double zFunction(const double &x, const double &y, const unsigned int order)
 {

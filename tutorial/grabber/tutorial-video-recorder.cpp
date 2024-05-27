@@ -1,4 +1,5 @@
 /*! \example tutorial-video-recorder.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -29,6 +30,9 @@
 int main(int argc, const char *argv[])
 {
 #if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string opt_videoname = "video-recorded.mpg";
   int opt_device = 0;
 

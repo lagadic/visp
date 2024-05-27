@@ -14,6 +14,10 @@
 
 int main(int argc, const char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
 
   for (int i = 1; i < argc; i++) {
