@@ -49,19 +49,8 @@ namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpMoment;
-class vpMomentDatabase;
 class vpMomentObject;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentDatabase &v);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpMomentDatabase
  *
@@ -171,7 +160,7 @@ public:
   //@}
 
   friend class vpMoment;
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentDatabase &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &v);
 };
 #ifdef ENABLE_VISP_NAMESPACE
 }

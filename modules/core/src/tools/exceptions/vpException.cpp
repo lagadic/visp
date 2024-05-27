@@ -72,13 +72,13 @@ const std::string &vpException::getStringMessage() const { return this->message;
 int vpException::getCode() const { return this->code; }
 
 const char *vpException::what() const throw() { return (this->message).c_str(); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpException &error)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &error)
 {
   os << "Error [" << error.code << "]:\t" << error.message << std::endl;
 
   return os;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

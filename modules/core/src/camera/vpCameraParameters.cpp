@@ -643,25 +643,14 @@ void vpCameraParameters::printParameters()
   std::cout.flags(original_flags);
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 /*!
  * Print on the output stream \e os the camera parameters.
  *
  * \param os : Output stream.
  * \param cam : Camera parameters.
  */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::
-#endif
-vpCameraParameters &cam)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   switch (cam.get_projModel()) {
   case vpCameraParameters::perspectiveProjWithoutDistortion: {
     os << "Camera parameters for perspective projection without distortion:" << std::endl;
@@ -699,3 +688,6 @@ vpCameraParameters &cam)
   }
   return os;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

@@ -50,18 +50,7 @@ namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpCameraParameters;
-class vpMomentObject;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentObject &v);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpMomentObject
 
@@ -296,7 +285,7 @@ public:
   void init(unsigned int orderinp);
   void init(const vpMomentObject &objin);
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentObject &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &v);
   /*!
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
     \param momobj : A vpMomentObject

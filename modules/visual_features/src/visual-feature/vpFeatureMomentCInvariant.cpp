@@ -694,15 +694,12 @@ void vpFeatureMomentCInvariant::printLsofInvariants(std::ostream &os) const
     os << std::endl;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
  * \relates vpFeatureMomentCInvariant
  * Print all the interaction matrices of visual features
  */
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCInvariant &featcinv)
+std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv)
 {
   // Print L for c1 .. c10
   for (unsigned int i = 0; i < 10; ++i) {
@@ -728,4 +725,7 @@ std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFea
 
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

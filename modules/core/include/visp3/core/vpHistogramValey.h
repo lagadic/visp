@@ -47,17 +47,6 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpHistogramValey;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpHistogramValey &v);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpHistogramValey
 
@@ -146,7 +135,7 @@ public:
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &s, const vpHistogramValey &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v);
 };
 
 /*

@@ -54,19 +54,8 @@ namespace VISP_NAMESPACE_NAME
 class vpMomentObject;
 class vpMomentDatabase;
 class vpFeatureMomentDatabase;
-class vpFeatureMoment;
 class vpMoment;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMoment &featM);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpFeatureMoment
  *
@@ -252,7 +241,7 @@ public:
   void update(double A, double B, double C);
 
   //@}
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpFeatureMoment &featM);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM);
 };
 
 /*!

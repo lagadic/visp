@@ -40,20 +40,9 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpMomentArea;
 class vpMomentObject;
 class vpMomentCentered; // Required for discrete case of vpMomentObject
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentArea &m);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpMomentArea
  *
@@ -81,7 +70,7 @@ public:
   const std::string name() const { return "vpMomentArea"; }
   void printDependencies(std::ostream &os) const;
   //@}
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentArea &m);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m);
 };
 #ifdef ENABLE_VISP_NAMESPACE
 }

@@ -55,9 +55,6 @@ template <typename T> class vpArray2D;
 }
 #endif
 
-template<class T>
-std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpArray2D<T> &A);
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 //template<typename Type>
@@ -623,7 +620,30 @@ public:
     Writes the given array to the output stream and returns a reference to the
     output stream.
     */
-  friend std::ostream &::operator<< <>(std::ostream &s, const vpArray2D<Type> &A);
+  friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
+  {
+    if (A.data == nullptr || A.size() == 0) {
+      return s;
+    }
+    std::ios_base::fmtflags original_flags = s.flags();
+
+    s.precision(10);
+    for (unsigned int i = 0; i < A.getRows(); i++) {
+      for (unsigned int j = 0; j < A.getCols() - 1; j++) {
+        s << A[i][j] << "  ";
+      }
+      // We don't add "  " after the last row element
+      s << A[i][A.getCols() - 1];
+      // We don't add a \n char on the end of the last array line
+      if (i < A.getRows() - 1) {
+        s << std::endl;
+      }
+    }
+
+    s.flags(original_flags); // restore s to standard state
+
+    return s;
+  }
 
   vpArray2D<Type> hadamard(const vpArray2D<Type> &m) const;
 
@@ -910,48 +930,49 @@ public:
     file.close();
     return true;
   }
-  /*!
-    Save an array in a YAML-formatted file.
 
-    \param filename : absolute file name.
-    \param A : array to be saved in the file.
-    \param header : optional lines that will be saved at the beginning of the
-    file. Should be YAML-formatted and will adapt to the indentation if any.
+    /*!
+      Save an array in a YAML-formatted file.
 
-    \return Returns true if success.
+      \param filename : absolute file name.
+      \param A : array to be saved in the file.
+      \param header : optional lines that will be saved at the beginning of the
+      file. Should be YAML-formatted and will adapt to the indentation if any.
 
-    Here is an example of outputs.
-    \code
-    vpArray2D<double> M(3,4);
-    vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
-    vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
-    header\n    - with inner indentation");
-    \endcode
-    Content of matrix.yml:
-    \code
-    example: a YAML-formatted header
-    rows: 3
-    cols: 4
-    data:
-      - [0, 0, 0, 0]
-      - [0, 0, 0, 0]
-      - [0, 0, 0, 0]
-    \endcode
-    Content of matrixIndent.yml:
-    \code
-    example:
-        - a YAML-formatted header
-        - with inner indentation
-    rows: 3
-    cols: 4
-    data:
+      \return Returns true if success.
+
+      Here is an example of outputs.
+      \code
+      vpArray2D<double> M(3,4);
+      vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
+      vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
+      header\n    - with inner indentation");
+      \endcode
+      Content of matrix.yml:
+      \code
+      example: a YAML-formatted header
+      rows: 3
+      cols: 4
+      data:
         - [0, 0, 0, 0]
         - [0, 0, 0, 0]
         - [0, 0, 0, 0]
-    \endcode
+      \endcode
+      Content of matrixIndent.yml:
+      \code
+      example:
+          - a YAML-formatted header
+          - with inner indentation
+      rows: 3
+      cols: 4
+      data:
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+      \endcode
 
-    \sa loadYAML()
-  */
+      \sa loadYAML()
+    */
   static bool saveYAML(const std::string &filename, const vpArray2D<Type> &A, const char *header = "")
   {
     std::fstream file;
@@ -1079,42 +1100,6 @@ public:
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-template <class Type>
-std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &A)
-{
-  if ((A.data == nullptr) || (A.size() == 0)) {
-    return s;
-  }
-  std::ios_base::fmtflags original_flags = s.flags();
-
-  s.precision(10);
-  unsigned int a_rows = A.getRows();
-  unsigned int a_cols = A.getCols();
-  for (unsigned int i = 0; i < a_rows; ++i) {
-    for (unsigned int j = 0; j < (a_cols - 1); ++j) {
-      s << A[i][j] << "  ";
-    }
-    // We don't add "  " after the last row element
-    s << A[i][a_cols - 1];
-    // We don't add a \n char on the end of the last array line
-    if (i < (a_rows - 1)) {
-      s << std::endl;
-    }
-  }
-
-  s.flags(original_flags); // restore s to standard state
-
-  return s;
-}
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 
 /*!
   Return the array min value.

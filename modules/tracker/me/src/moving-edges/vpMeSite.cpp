@@ -445,11 +445,11 @@ void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpMeSite &vpMeS)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
 {
   return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

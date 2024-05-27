@@ -383,17 +383,16 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
   D = Do - ((cMo[0][3] * A) + (cMo[1][3] * B) + (cMo[2][3] * C));
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 /*!
 
   Print the plane parameters as a stream like "(A,B,C,D) " where
   A,B,C and D correspond to the parameters of the plane.
 
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPlane &p)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p)
 {
   return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << "," << p.getD() << ") ");
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

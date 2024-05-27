@@ -48,17 +48,6 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpHistogramPeak;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpHistogramPeak &p);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpHistogramPeak
 
@@ -148,7 +137,7 @@ public:
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &s, const vpHistogramPeak &p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p);
 
 protected:
   unsigned char level; //! Gray level ot the peak.

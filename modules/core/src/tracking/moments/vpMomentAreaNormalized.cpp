@@ -114,17 +114,16 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
     a = getObject().get(0, 0);
   os << "a = " << a << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentAreaNormalized &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &m)
 {
   os << (__FILE__) << std::endl;
   os << "An = " << m.values[0] << std::endl;
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

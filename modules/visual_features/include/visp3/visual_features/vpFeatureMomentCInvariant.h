@@ -46,18 +46,7 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpFeatureMomentCInvariant;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCInvariant &featcinv);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpFeatureMomentCInvariant
  *
@@ -204,19 +193,8 @@ public:
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpFeatureMomentCInvariant;
 class vpMomentDatabase;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCInvariant &featcinv);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpFeatureMomentCInvariant
  *
@@ -361,7 +339,7 @@ public:
    */
   void printLsofInvariants(std::ostream &os) const;
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
 };
 #ifdef ENABLE_VISP_NAMESPACE
 }

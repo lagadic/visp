@@ -949,25 +949,6 @@ vpRotationMatrix &vpRotationMatrix::build(const vpQuaternionVector &q)
 }
 
 /*!
-  Allow to multiply a scalar by a rotation matrix.
-*/
-vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
-{
-  vpRotationMatrix C;
-
-  unsigned int Rrow = R.getRows();
-  unsigned int Rcol = R.getCols();
-
-  for (unsigned int i = 0; i < Rrow; ++i) {
-    for (unsigned int j = 0; j < Rcol; ++j) {
-      C[i][j] = R[i][j] * x;
-    }
-  }
-
-  return C;
-}
-
-/*!
   Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation
   matrix.
  */
@@ -1145,3 +1126,22 @@ void vpRotationMatrix::setIdentity() { eye(); }
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+/*!
+  Allow to multiply a scalar by a rotation matrix.
+*/
+VISP_NAMESPACE_ADDRESSING vpRotationMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationMatrix &R)
+{
+  VISP_NAMESPACE_ADDRESSING vpRotationMatrix C;
+
+  unsigned int Rrow = R.getRows();
+  unsigned int Rcol = R.getCols();
+
+  for (unsigned int i = 0; i < Rrow; ++i) {
+    for (unsigned int j = 0; j < Rcol; ++j) {
+      C[i][j] = R[i][j] * x;
+    }
+  }
+
+  return C;
+}

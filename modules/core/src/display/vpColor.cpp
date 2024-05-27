@@ -124,10 +124,6 @@ vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 
 
 vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 /*!
   Compare two colors.
 
@@ -135,7 +131,7 @@ vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan
 
   \param c1,c2 : Color to compare.
 */
-VISP_EXPORT bool operator==(const VISP_NAMESPACE_ADDRESSING vpColor &c1, const VISP_NAMESPACE_ADDRESSING vpColor &c2)
+VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2)
 {
   return ((c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B));
 }
@@ -148,7 +144,11 @@ VISP_EXPORT bool operator==(const VISP_NAMESPACE_ADDRESSING vpColor &c1, const V
 
   \param c1,c2 : Color to compare.
 */
-VISP_EXPORT bool operator!=(const VISP_NAMESPACE_ADDRESSING vpColor &c1, const VISP_NAMESPACE_ADDRESSING vpColor &c2)
+VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2)
 {
   return ((c1.R != c2.R) || (c1.G != c2.G) || (c1.B == c2.B));
 }
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

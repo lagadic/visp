@@ -45,19 +45,7 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpRect;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-bool inRectangle(const VISP_NAMESPACE_ADDRESSING vpImagePoint &ip, const VISP_NAMESPACE_ADDRESSING vpRect &rect);
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRect &r);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpRect
   \ingroup group_core_geometry
@@ -283,8 +271,8 @@ public:
     return a &= r;
   }
 
-  friend VISP_EXPORT bool ::inRectangle(const VISP_NAMESPACE_ADDRESSING vpImagePoint &ip, const vpRect &rect);
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpRect &r);
+  friend VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r);
 
   void set(double left, double top, double width, double height);
   void set(const vpImagePoint &topLeft, double width, double height);

@@ -43,18 +43,7 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpPlane;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPlane &p);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpPlane
 
@@ -162,7 +151,7 @@ public:
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpPlane &p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;

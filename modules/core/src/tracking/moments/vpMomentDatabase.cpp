@@ -90,14 +90,11 @@ void vpMomentDatabase::updateAll(vpMomentObject &object)
     (*itr).second->update(object);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
  * Outputs all the moments values in the database to a stream.
  */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentDatabase &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -112,3 +109,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
 
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

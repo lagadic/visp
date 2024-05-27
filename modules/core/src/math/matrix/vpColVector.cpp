@@ -521,13 +521,6 @@ vpRowVector vpColVector::transpose() const { return t(); }
 
 void vpColVector::transpose(vpRowVector &v) const { v = t(); }
 
-vpColVector operator*(const double &x, const vpColVector &v)
-{
-  vpColVector vout;
-  vout = v * x;
-  return vout;
-}
-
 double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
   if (a.data == nullptr) {
@@ -1019,3 +1012,10 @@ double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpColVector &v)
+{
+  VISP_NAMESPACE_ADDRESSING vpColVector vout;
+  vout = v * x;
+  return vout;
+}

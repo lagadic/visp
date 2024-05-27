@@ -635,9 +635,6 @@ vpMomentObject::~vpMomentObject()
 {
   // deliberate empty
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
   Outputs the basic moment's values \f$m_{ij}\f$ to a stream presented as a
@@ -654,7 +651,7 @@ vpMomentObject::~vpMomentObject()
   m03 x    x  x
   \endcode
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentObject &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
 {
   for (unsigned int i = 0; i < m.values.size(); ++i) {
 
@@ -673,3 +670,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
 
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

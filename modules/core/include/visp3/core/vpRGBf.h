@@ -47,19 +47,7 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpRGBf;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpRGBf &rgb);
-VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const VISP_NAMESPACE_ADDRESSING vpRGBf &rgb);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpRGBf
 
@@ -136,14 +124,14 @@ public:
   bool operator<(const vpRGBf &v) const;
   bool operator>(const vpRGBf &v) const;
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpRGBf &rgb);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb);
 
 public:
   float R; //!< Red component.
   float G; //!< Green component.
   float B; //!< Blue component.
 
-  friend VISP_EXPORT vpRGBf(::operator*)(double x, const vpRGBf &rgb);
+  friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
 };
 #if defined(ENABLE_VISP_NAMESPACE)
 }

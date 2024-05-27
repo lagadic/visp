@@ -177,14 +177,10 @@ void vpMomentAlpha::printDependencies(std::ostream &os) const
   os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
 }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
 /*!
   Prints the value of the major-axis orientation in degrees and rad
  */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentAlpha &c)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &c)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -193,3 +189,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
   os << "Alpha = " << c.values[0] << "rad = " << vpMath::deg(c.values[0]) << "deg " << std::endl;
   return os;
 }
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

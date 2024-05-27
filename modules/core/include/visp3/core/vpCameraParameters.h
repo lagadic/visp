@@ -59,9 +59,6 @@ class vpCameraParameters;
 }
 #endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
 // Forward declaration to have the to_json in the global namespace
@@ -438,7 +435,7 @@ public:
   vpMatrix get_K_inverse() const;
 
   void printParameters();
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpCameraParameters &cam);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam);
 
 private:
   static const double DEFAULT_U0_PARAMETER;

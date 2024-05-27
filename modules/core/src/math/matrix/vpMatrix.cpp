@@ -1666,31 +1666,6 @@ double vpMatrix::sum() const
 //---------------------------------
 
 /*!
-  \relates vpMatrix
-  Allow to multiply a scalar by a matrix.
-*/
-vpMatrix operator*(const double &x, const vpMatrix &B)
-{
-  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
-    return B;
-  }
-
-  unsigned int Brow = B.getRows();
-  unsigned int Bcol = B.getCols();
-
-  vpMatrix C;
-  C.resize(Brow, Bcol, false, false);
-
-  for (unsigned int i = 0; i < Brow; ++i) {
-    for (unsigned int j = 0; j < Bcol; ++j) {
-      C[i][j] = B[i][j] * x;
-    }
-  }
-
-  return C;
-}
-
-/*!
    Operator that allows to multiply all the elements of a matrix
    by a scalar.
  */
@@ -5025,35 +5000,35 @@ vpRowVector vpMatrix::getRow(unsigned int i) const { return getRow(i, 0, colNum)
   \param row_size : Size of the row vector to extract.
   \return The extracted row vector.
 
-  The following example shows how to use this function:
-  \code
-  #include <visp3/core/vpMatrix.h>
-  #include <visp3/core/vpRowVector.h>
+The following example shows how to use this function:
+\code
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRowVector.h>
 
-  int main()
-  {
-    vpMatrix A(4,4);
+int main()
+{
+  vpMatrix A(4, 4);
 
-    for(unsigned int i=0; i < A.getRows(); i++)
-      for(unsigned int j=0; j < A.getCols(); j++)
-        A[i][j] = i*A.getCols()+j;
+  for (unsigned int i = 0; i < A.getRows(); i++)
+    for (unsigned int j = 0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
 
-    A.print(std::cout, 4);
+  A.print(std::cout, 4);
 
-    vpRowVector rv = A.getRow(1, 1, 3);
-    std::cout << "Row vector: \n" << rv << std::endl;
-  }
-  \endcode
-  It produces the following output :
-  \code
-  [4, 4] =
-  0  1  2  3
-  4  5  6  7
-  8  9 10 11
-  12 13 14 15
-  Row vector :
-  5  6  7
-  \endcode
+  vpRowVector rv = A.getRow(1, 1, 3);
+  std::cout << "Row vector: \n" << rv << std::endl;
+}
+\endcode
+It produces the following output :
+\code
+[4, 4] =
+0  1  2  3
+4  5  6  7
+8  9 10 11
+12 13 14 15
+Row vector :
+5  6  7
+\endcode
 */
 vpRowVector vpMatrix::getRow(unsigned int i, unsigned int j_begin, unsigned int row_size) const
 {
@@ -6729,3 +6704,28 @@ void vpMatrix::setIdentity(const double &val)
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+/*!
+  \relates vpMatrix
+  Allow to multiply a scalar by a matrix.
+*/
+VISP_NAMESPACE_ADDRESSING vpMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpMatrix &B)
+{
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
+    return B;
+  }
+
+  unsigned int Brow = B.getRows();
+  unsigned int Bcol = B.getCols();
+
+  VISP_NAMESPACE_ADDRESSING vpMatrix C;
+  C.resize(Brow, Bcol, false, false);
+
+  for (unsigned int i = 0; i < Brow; ++i) {
+    for (unsigned int j = 0; j < Bcol; ++j) {
+      C[i][j] = B[i][j] * x;
+    }
+  }
+
+  return C;
+}

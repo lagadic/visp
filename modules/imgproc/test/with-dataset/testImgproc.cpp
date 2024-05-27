@@ -31,6 +31,12 @@
  * Test imgproc functions.
  */
 
+/*!
+  \example testImgproc.cpp
+
+  \brief Test imgproc functions.
+*/
+
 #include <cstdio>
 #include <cstdlib>
 #include <visp3/core/vpImage.h>
@@ -40,14 +46,12 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \example testImgproc.cpp
-
-  \brief Test imgproc functions.
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);

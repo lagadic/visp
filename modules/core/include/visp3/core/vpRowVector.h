@@ -340,8 +340,9 @@ public:
 #endif
 };
 
-VISP_EXPORT vpRowVector operator*(const double &x, const vpRowVector &v);
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRowVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRowVector &v);
 #endif

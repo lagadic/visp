@@ -1481,6 +1481,10 @@ public:
 namespace VISP_NAMESPACE_NAME
 {
 #endif
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 /*!
  * \relates vpColVector
  * Allows to multiply a scalar by a column vector.
@@ -1488,10 +1492,8 @@ namespace VISP_NAMESPACE_NAME
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpColVector operator*(const double &x, const vpColVector &v);
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 inline void to_json(nlohmann::json &j,

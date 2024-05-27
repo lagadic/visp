@@ -73,16 +73,17 @@ namespace VISP_NAMESPACE_NAME
 class vpDisplay;
 // Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
 template <class Type> class vpImage; // forward declare to make function declaration possible
+
+// declarations
+template <class Type> std::ostream &operator<<(std::ostream &, const vpImage<Type> &);
+
+std::ostream &operator<<(std::ostream &, const vpImage<unsigned char> &);
+std::ostream &operator<<(std::ostream &, const vpImage<char> &);
+std::ostream &operator<<(std::ostream &, const vpImage<float> &);
+std::ostream &operator<<(std::ostream &, const vpImage<double> &);
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
-// declarations
-template <class Type> std::ostream &operator<<(std::ostream &, const VISP_NAMESPACE_ADDRESSING vpImage<Type> &);
-
-std::ostream &operator<<(std::ostream &, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &);
-std::ostream &operator<<(std::ostream &, const VISP_NAMESPACE_ADDRESSING vpImage<char> &);
-std::ostream &operator<<(std::ostream &, const VISP_NAMESPACE_ADDRESSING vpImage<float> &);
-std::ostream &operator<<(std::ostream &, const VISP_NAMESPACE_ADDRESSING vpImage<double> &);
 
 template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second);
 
@@ -330,13 +331,13 @@ public:
   vpImage<Type> &operator=(const Type &v);
   bool operator==(const vpImage<Type> &I) const;
   bool operator!=(const vpImage<Type> &I) const;
-  friend std::ostream &::operator<< <>(std::ostream &s, const vpImage<Type> &I);
-  friend std::ostream &::operator<<(std::ostream &s, const vpImage<unsigned char> &I);
-  friend std::ostream &::operator<<(std::ostream &s, const vpImage<char> &I);
-  friend std::ostream &::operator<<(std::ostream &s, const vpImage<float> &I);
-  friend std::ostream &::operator<<(std::ostream &s, const vpImage<double> &I);
+  friend std::ostream &operator<< <>(std::ostream &s, const vpImage<Type> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
-  // Perform a look-up table transformation
+    // Perform a look-up table transformation
   void performLut(const Type(&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
@@ -362,11 +363,8 @@ private:
   Type **row;           ///! points the row pointer array
   bool hasOwnership;    ///! true if this instance owns the bitmap, false otherwise (e.g. copyData=false)
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
-template <class Type> std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpImage<Type> &I)
+template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I)
 {
   if (I.bitmap == nullptr) {
     return s;
@@ -391,7 +389,7 @@ template <class Type> std::ostream &operator<<(std::ostream &s, const VISP_NAMES
   return s;
 }
 
-inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I)
+inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I)
 {
   if (I.bitmap == nullptr) {
     return s;
@@ -419,7 +417,7 @@ inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING
   return s;
 }
 
-inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpImage<char> &I)
+inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
 {
   if (I.bitmap == nullptr) {
     return s;
@@ -447,7 +445,7 @@ inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING
   return s;
 }
 
-inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpImage<float> &I)
+inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
 {
   if (I.bitmap == nullptr) {
     return s;
@@ -476,7 +474,7 @@ inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING
   return s;
 }
 
-inline std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpImage<double> &I)
+inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 {
   if (I.bitmap == nullptr) {
     return s;
@@ -634,10 +632,6 @@ void performLutRGBaThread(vpImageLutRGBa_Param_t *imageLut_param)
 } // namespace
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \relates vpImage
 */

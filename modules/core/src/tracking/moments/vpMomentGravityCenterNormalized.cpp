@@ -101,16 +101,16 @@ void vpMomentGravityCenterNormalized::printDependencies(std::ostream &os) const
     << "Yg = " << momentGravity.get()[1] << std::endl;
   os << "An = " << momentSurfaceNormalized.get()[0] << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentGravityCenterNormalized &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &m)
 {
   os << (__FILE__) << std::endl;
   os << "(Xn,Yn) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

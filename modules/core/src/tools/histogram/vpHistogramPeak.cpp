@@ -88,21 +88,21 @@ vpHistogramPeak &vpHistogramPeak::operator=(const vpHistogramPeak &p)
 
 */
 bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const { return ((level == p.level) && (value == p.value)); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
 /*!
   \relates vpHistogramPeak
   \brief std::cout a peak
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpHistogramPeak &p)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 {
 
   s << static_cast<int>(p.getLevel()) << " " << p.getValue();
 
   return s;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

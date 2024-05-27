@@ -157,9 +157,6 @@ void vpMomentCentered::printDependencies(std::ostream &os) const
   os << "Xg = " << momentGravity.getXg() << "\t"
     << "Yg = " << momentGravity.getYg() << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
   Outputs the centered moment's values \f$\mu_{ij}\f$ to a stream presented as
@@ -179,7 +176,7 @@ u30 x    x  x
  This output will be followed by an output with indexes as produced by
 printWithIndices() function
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentCentered &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &m)
 {
   for (unsigned int i = 0; i < m.values.size(); i++) {
     if (i % (m.getObject().getOrder() + 1) == 0)
@@ -196,3 +193,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
   m.printWithIndices(os);
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

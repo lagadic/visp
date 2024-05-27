@@ -101,17 +101,6 @@ vpColVector vpRotationVector::operator*(double x) const
 }
 
 /*!
-  \relates vpRotationVector
-  Allows to multiply a scalar by rotaion vector.
-*/
-vpColVector operator*(const double &x, const vpRotationVector &v)
-{
-  vpColVector vout;
-  vout = v * x;
-  return vout;
-}
-
-/*!
   Set vector first element value.
   \param val : Value of the vector first element [rad].
   \return An updated vector.
@@ -197,3 +186,14 @@ double vpRotationVector::sumSquare() const
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+/*!
+  \relates vpRotationVector
+  Allows to multiply a scalar by rotaion vector.
+*/
+VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationVector &v)
+{
+  VISP_NAMESPACE_ADDRESSING vpColVector vout;
+  vout = v * x;
+  return vout;
+}

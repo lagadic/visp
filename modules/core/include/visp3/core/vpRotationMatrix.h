@@ -231,11 +231,12 @@ protected:
   unsigned int m_index;
 };
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-VISP_EXPORT
-#endif
-vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R);
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+VISP_EXPORT
+#endif
+VISP_NAMESPACE_ADDRESSING vpRotationMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationMatrix &R);
 #endif

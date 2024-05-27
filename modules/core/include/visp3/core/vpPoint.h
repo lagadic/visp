@@ -48,18 +48,7 @@ namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpHomogeneousMatrix;
-class vpPoint;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPoint &vpp);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
   \class vpPoint
   \ingroup group_core_geometry
@@ -133,7 +122,7 @@ public:
   vpColVector getWorldCoordinates(void);
   void getWorldCoordinates(std::vector<double> &oP);
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpPoint &vpp);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp);
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in
   //! the camera frame _cP, output : the 2D coordinates _p.

@@ -56,18 +56,6 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpDot2;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpDot2 &d);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 
 /*!
  * \class vpDot2
@@ -259,7 +247,7 @@ public:
                     unsigned int gray_lvl_max, unsigned int size = 0);
 
   vpDot2 &operator=(const vpDot2 &twinDot);
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, vpDot2 &d);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot2 &d);
 
   void print(std::ostream &os) { os << *this << std::endl; }
   void searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int area_v, unsigned int area_w,

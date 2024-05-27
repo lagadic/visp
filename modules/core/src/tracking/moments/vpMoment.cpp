@@ -41,12 +41,16 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Prints the moment contents to a stream
  * \param os : a std::stream.
  * \param m : a moment instance.
  */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMoment &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
 {
   for (std::vector<double>::const_iterator i = m.values.begin(); i != m.values.end(); ++i)
     os << *i << ",";
@@ -54,10 +58,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
   return os;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * Default constructor
  */

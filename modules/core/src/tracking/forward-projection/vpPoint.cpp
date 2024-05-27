@@ -508,8 +508,8 @@ void vpPoint::set_x(double x) { p[0] = x; }
 void vpPoint::set_y(double y) { p[1] = y; }
 //! Set the point w coordinate in the image plane.
 void vpPoint::set_w(double w) { p[2] = w; }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
-
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpPoint & /* vpp */) { return (os << "vpPoint"); }

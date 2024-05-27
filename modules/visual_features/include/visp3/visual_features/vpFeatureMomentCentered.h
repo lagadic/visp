@@ -47,18 +47,7 @@ namespace VISP_NAMESPACE_NAME
 {
 #endif
 class vpMomentDatabase;
-class vpFeatureMomentCentered;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMomentCentered &v);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpFeatureMomentCentered
  *
@@ -131,7 +120,7 @@ public:
     return "vpFeatureMomentCentered";
   }
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
 };
 #ifdef ENABLE_VISP_NAMESPACE
 }

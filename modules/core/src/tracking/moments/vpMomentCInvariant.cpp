@@ -285,17 +285,17 @@ void vpMomentCInvariant::printInvariants(std::ostream &os) const
   }
   os << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentCInvariant &c)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant &c)
 {
   for (unsigned int i = 0; i < c.values.size(); i++) {
     os << c.values[i] << "," << std::endl;
   }
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -46,18 +46,7 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpMomentAlpha;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentAlpha &v);
-
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 /*!
  * \class vpMomentAlpha
  *
@@ -263,7 +252,7 @@ public:
       return false;
   }
 
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, const vpMomentAlpha &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &v);
   void printDependencies(std::ostream &os) const;
 };
 #ifdef ENABLE_VISP_NAMESPACE

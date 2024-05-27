@@ -1086,16 +1086,6 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
 }
 
 /*!
-  Allows to multiply a scalar by row vector.
-*/
-vpRowVector operator*(const double &x, const vpRowVector &v)
-{
-  vpRowVector vout;
-  vout = v * x;
-  return vout;
-}
-
-/*!
   Return the sum of all the elements \f$v_{i}\f$ of the row vector v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j\f$.
@@ -1373,3 +1363,13 @@ std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
 #if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
+
+/*!
+  Allows to multiply a scalar by row vector.
+*/
+VISP_NAMESPACE_ADDRESSING vpRowVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRowVector &v)
+{
+  VISP_NAMESPACE_ADDRESSING vpRowVector vout;
+  vout = v * x;
+  return vout;
+}

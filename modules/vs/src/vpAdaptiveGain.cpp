@@ -142,14 +142,14 @@ double vpAdaptiveGain::operator()(void) const { return this->limitValue(); }
 
 double vpAdaptiveGain::operator()(const vpColVector &x) const { return this->value(x.infinityNorm()); }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpAdaptiveGain &lambda)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda)
 {
   os << "Zero= " << lambda.coeff_a + lambda.coeff_c << "\tInf= " << lambda.coeff_c
     << "\tSlope= " << lambda.coeff_a * lambda.coeff_b;
 
   return os;
 }
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -82,7 +82,7 @@
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 namespace vp
 #else
-namespace visp
+namespace VISP_NAMESPACE_NAME
 #endif
 {
 

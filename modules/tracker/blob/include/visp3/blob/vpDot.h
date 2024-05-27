@@ -62,18 +62,6 @@
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpDot;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
-// Forward declaration to have the operator in the global namespace
-std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpDot &d);
-
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 
 /*!
  * \class vpDot
@@ -316,7 +304,7 @@ public:
   vpDot &operator=(const vpDot &d);
   bool operator==(const vpDot &d) const;
   bool operator!=(const vpDot &d) const;
-  friend VISP_EXPORT std::ostream &::operator<<(std::ostream &os, vpDot &d);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot &d);
 
   void print(std::ostream &os) { os << *this << std::endl; }
 

@@ -77,15 +77,11 @@ bool vpHistogramValey::operator==(const vpHistogramValey &v) const
   return ((level == v.level) && (value == v.value));
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 /*!
   \relates vpHistogramValey
   \brief std::cout a valey
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRESSING vpHistogramValey &v)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v)
 {
 
   s << static_cast<int>(v.getLevel()) << " " << v.getValue();
@@ -93,6 +89,9 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &s, const VISP_NAMESPACE_ADDRE
   return s;
 }
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

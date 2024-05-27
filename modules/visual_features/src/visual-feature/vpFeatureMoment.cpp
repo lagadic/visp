@@ -265,15 +265,9 @@ void vpFeatureMoment::printDependencies(std::ostream &os) const
     "to be implemented in the derived classes!"
     << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpFeatureMoment &featM)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   /*
    * - A static_cast is forced here since interaction() defined in vpBasicFeature()
    *   is not const. But introducing const in vpBasicFeature() can break a lot of
@@ -285,3 +279,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDR
   Lcomplete.matlabPrint(os);
   return os;
 }
+
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

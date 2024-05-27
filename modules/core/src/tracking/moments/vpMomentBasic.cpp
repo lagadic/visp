@@ -83,20 +83,17 @@ void vpMomentBasic::printDependencies(std::ostream &os) const
     << std::endl;
   vpMomentObject::printWithIndices(getObject(), os);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 /*!
   Outputs the moment's values to a stream.
   Same output as in vpMomentObject.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpMomentBasic &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &m)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   os << (__FILE__) << std::endl;
   vpMomentObject::printWithIndices(m.getObject(), os);
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

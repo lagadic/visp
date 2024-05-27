@@ -31,6 +31,12 @@
  * Test contours extraction.
  */
 
+/*!
+  \example testContours.cpp
+
+  \brief Test contours extraction.
+*/
+
 #include <iomanip>
 
 #include <visp3/core/vpImageTools.h>
@@ -39,14 +45,12 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \example testContours.cpp
-
-  \brief Test contours extraction.
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
@@ -69,7 +73,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n                 \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -172,7 +176,7 @@ void displayContourInfo(const vp::vpContour &contour, int level)
   std::cout << "\nContour:" << std::endl;
   std::cout << "\tlevel: " << level << std::endl;
   std::cout << "\tcontour type: " << (contour.m_contourType == vp::CONTOUR_OUTER ? "outer contour" : "hole contour")
-            << std::endl;
+    << std::endl;
   std::cout << "\tnb children: " << contour.m_children.size() << std::endl;
 
   for (std::vector<vp::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
@@ -229,7 +233,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], nullptr, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
@@ -244,8 +249,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -254,9 +259,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -268,7 +273,7 @@ int main(int argc, const char **argv)
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1,
         1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-        0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     vpImage<unsigned char> I_test_data(image_data, 14, 10, true);
     std::cout << "Test with image data:" << std::endl;
@@ -353,7 +358,7 @@ int main(int argc, const char **argv)
 
     vp::drawContours(I_draw_contours_external, contours);
     std::cout << "(I_tmp_external == I_draw_contours_external)? " << (I_tmp_external == I_draw_contours_external)
-              << std::endl;
+      << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted_external.pgm");
     vpImageIo::write(I_draw_contours_external, filename);
@@ -390,7 +395,7 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "(I_draw_contours_opencv == I_drawContours)? " << (I_draw_contours_opencv == I_draw_contours)
-              << std::endl;
+      << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_contours_extracted_opencv.pgm");
     vpImageIo::write(I_draw_contours_opencv, filename);
@@ -409,9 +414,9 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "(I_draw_contours_opencv == I_draw_contours_list)? "
-              << (I_draw_contours_opencv == I_draw_contours_list) << std::endl;
+      << (I_draw_contours_opencv == I_draw_contours_list) << std::endl;
 
-    // Test retrieve external
+// Test retrieve external
     vpImageConvert::convert(I, matImg);
     contours_opencv.clear();
     cv::findContours(matImg, contours_opencv, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
@@ -425,11 +430,12 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "(I_draw_contours_opencv == I_draw_contours_external)? "
-              << (I_draw_contours_opencv == I_draw_contours_external) << std::endl;
+      << (I_draw_contours_opencv == I_draw_contours_external) << std::endl;
 #endif
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
