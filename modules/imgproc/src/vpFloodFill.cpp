@@ -72,6 +72,9 @@ namespace vp
 namespace VISP_NAMESPACE_NAME
 #endif
 {
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
                const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)

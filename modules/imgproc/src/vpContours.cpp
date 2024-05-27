@@ -76,6 +76,9 @@ namespace vp
 namespace VISP_NAMESPACE_NAME
 #endif
 {
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direction)
 {

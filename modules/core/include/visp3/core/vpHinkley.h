@@ -42,6 +42,11 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpHinkley
   \deprecated This class is deprecated. You should rather use vpStatisticalTestHinkley.
@@ -166,5 +171,8 @@ private:
   double Tk;
   double Nk;
 };
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
 #endif

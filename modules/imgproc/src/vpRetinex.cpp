@@ -97,6 +97,10 @@ namespace VISP_NAMESPACE_NAME
 
 #define MAX_RETINEX_SCALES 8
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale)
 {
   std::vector<double> scales(MAX_RETINEX_SCALES);

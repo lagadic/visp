@@ -196,7 +196,7 @@ VISP_EXPORT vpGammaColorHandling vpGammaColorHandlingFromString(const std::strin
  * \param alpha : Multiplication coefficient.
  * \param beta : Constant value added to the old intensity.
  */
-VISP_EXPORT void adjust(vpImage<unsigned char> &I, double alpha, double beta);
+VISP_EXPORT void adjust(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, double alpha, double beta);
 
 /*!
  * \ingroup group_imgproc_brightness
@@ -209,7 +209,7 @@ VISP_EXPORT void adjust(vpImage<unsigned char> &I, double alpha, double beta);
  * \param alpha : Multiplication coefficient.
  * \param beta : Constant value added to the old intensity.
  */
-VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta);
+VISP_EXPORT void adjust(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I1, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I2, double alpha, double beta);
 
 /*!
  * \ingroup group_imgproc_brightness
@@ -221,7 +221,7 @@ VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char>
  * \param alpha : Multiplication coefficient.
  * \param beta : Constant value added to the old intensity.
  */
-VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, double beta);
+VISP_EXPORT void adjust(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, const double alpha, double beta);
 
 /*!
  * \ingroup group_imgproc_brightness
@@ -234,7 +234,7 @@ VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, double beta);
  * \param alpha : Multiplication coefficient.
  * \param beta : Constant value added to the old intensity.
  */
-VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta);
+VISP_EXPORT void adjust(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2, double alpha, double beta);
 
 /*!
  * \ingroup group_imgproc_brightness
@@ -265,7 +265,7 @@ VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double a
  * boxes of the given block size only and interpolates for locations in
  * between.
  */
-VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius = 150,
+VISP_EXPORT void clahe(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I1, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I2, int blockRadius = 150,
                        int bins = 256, float slope = 3.0f, bool fast = true);
 
 /*!
@@ -295,7 +295,7 @@ VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> 
  * boxes of the given block size only and interpolates for locations in
  * between.
 */
-VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius = 150, int bins = 256,
+VISP_EXPORT void clahe(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2, int blockRadius = 150, int bins = 256,
                        float slope = 3.0f, bool fast = true);
 
 /*!
@@ -308,7 +308,7 @@ VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int block
  * \param I : The grayscale image to apply histogram equalization.
  * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
  */
-VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void equalizeHistogram(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -321,8 +321,8 @@ VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool
  * \param I2 : The second grayscale image after histogram equalization.
  * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
  */
-VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
-                                   const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void equalizeHistogram(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I1, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I2,
+                                   const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -337,7 +337,7 @@ VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<uns
  * value channel (in HSV space), otherwise the histogram equalization is
  * performed independently on the RGB channels.
  */
-VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, bool useHSV = false);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -353,7 +353,7 @@ VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV = false);
  * value channel (in HSV space), otherwise the histogram equalization is
  * performed independently on the RGB channels.
  */
-VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2, bool useHSV = false);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -370,8 +370,8 @@ VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = GAMMA_MANUAL,
-                                 const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void gammaCorrection(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = GAMMA_MANUAL,
+                                 const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -389,8 +389,8 @@ VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, 
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const float &gamma,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void gammaCorrection(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I1, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I2, const float &gamma,
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -405,8 +405,8 @@ VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsig
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = GAMMA_RGB,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void gammaCorrection(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = GAMMA_RGB,
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -422,9 +422,9 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const v
  * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const float &gamma,
+VISP_EXPORT void gammaCorrection(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2, const float &gamma,
                                  const vpGammaColorHandling &colorHandling = GAMMA_RGB,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+                                 const vpGammaMethod &method = GAMMA_MANUAL, const VISP_NAMESPACE_ADDRESSING vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_retinex
@@ -447,7 +447,7 @@ VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2,
  * \param kernelSize : Kernel size for the gaussian blur
  * operation. If -1, the kernel size is calculated from the image size.
  */
-VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3, int level = RETINEX_UNIFORM,
+VISP_EXPORT void retinex(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, int scale = 240, int scaleDiv = 3, int level = RETINEX_UNIFORM,
                          double dynamic = 1.2, int kernelSize = -1);
 
 /*!
@@ -472,7 +472,7 @@ VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3, 
  * \param kernelSize : Kernel size for the gaussian blur
  * operation. If -1, the kernel size is calculated from the image size.
  */
-VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
+VISP_EXPORT void retinex(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
                          int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
 
 /*!
@@ -482,7 +482,7 @@ VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int sca
  *
  * \param I : The grayscale image to stretch the contrast.
 */
-VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);
+VISP_EXPORT void stretchContrast(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I);
 
 /*!
  * \ingroup group_imgproc_contrast
@@ -492,7 +492,7 @@ VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);
  * \param I1 : The first input grayscale image.
  * \param I2 : The second output grayscale image.
  */
-VISP_EXPORT void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
+VISP_EXPORT void stretchContrast(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I1, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I2);
 
 /*!
  * \ingroup group_imgproc_contrast
@@ -501,7 +501,7 @@ VISP_EXPORT void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsig
  *
  * \param I : The color image to stretch the contrast.
  */
-VISP_EXPORT void stretchContrast(vpImage<vpRGBa> &I);
+VISP_EXPORT void stretchContrast(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I);
 
 /*!
  * \ingroup group_imgproc_contrast
@@ -511,7 +511,7 @@ VISP_EXPORT void stretchContrast(vpImage<vpRGBa> &I);
  * \param I1 : The first input color image.
  * \param I2 : The second output color image.
  */
-VISP_EXPORT void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2);
+VISP_EXPORT void stretchContrast(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2);
 
 /*!
  * \ingroup group_imgproc_contrast
@@ -521,7 +521,7 @@ VISP_EXPORT void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
  *
  * \param I : The color image to stretch the contrast in the HSV color space.
  */
-VISP_EXPORT void stretchContrastHSV(vpImage<vpRGBa> &I);
+VISP_EXPORT void stretchContrastHSV(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I);
 
 /*!
  * \ingroup group_imgproc_contrast
@@ -532,7 +532,7 @@ VISP_EXPORT void stretchContrastHSV(vpImage<vpRGBa> &I);
  * \param I1 : The first input color image.
  * \param I2 : The second output color image.
  */
-VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2);
+VISP_EXPORT void stretchContrastHSV(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I1, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I2);
 
 /*!
  * \ingroup group_imgproc_sharpening
@@ -543,7 +543,7 @@ VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &
  * \param sigma : Standard deviation for Gaussian kernel.
  * \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight = 0.6);
+VISP_EXPORT void unsharpMask(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, float sigma, double weight = 0.6);
 
 /*!
  * \ingroup group_imgproc_sharpening
@@ -555,7 +555,7 @@ VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, float sigma, double weig
  * \param sigma : Standard deviation for Gaussian kernel.
  * \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, float sigma,
+VISP_EXPORT void unsharpMask(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &Ires, float sigma,
                              double weight = 0.6);
 
 /*!
@@ -567,7 +567,7 @@ VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned c
  * \param sigma : Standard deviation for Gaussian kernel.
  * \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight = 0.6);
+VISP_EXPORT void unsharpMask(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, float sigma, double weight = 0.6);
 
 /*!
  * \ingroup group_imgproc_sharpening
@@ -579,7 +579,7 @@ VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight = 0.
  * \param sigma : Standard deviation for Gaussian kernel.
  * \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma, double weight = 0.6);
+VISP_EXPORT void unsharpMask(const VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &Ires, float sigma, double weight = 0.6);
 
 /*!
  * \ingroup group_imgproc_connected_components
@@ -591,8 +591,8 @@ VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, fl
  * \param nbComponents : Number of connected components.
  * \param connexity : Type of connexity.
  */
-VISP_EXPORT void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
-                                     const vpImageMorphology::vpConnexityType &connexity = vpImageMorphology::CONNEXITY_4);
+VISP_EXPORT void connectedComponents(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, VISP_NAMESPACE_ADDRESSING vpImage<int> &labels, int &nbComponents,
+                                     const VISP_NAMESPACE_ADDRESSING vpImageMorphology::vpConnexityType &connexity = VISP_NAMESPACE_ADDRESSING vpImageMorphology::CONNEXITY_4);
 
 /*!
  * \ingroup group_imgproc_morph
@@ -601,10 +601,10 @@ VISP_EXPORT void connectedComponents(const vpImage<unsigned char> &I, vpImage<in
  *
  * \param I : Input binary image (0 means background, 255 means foreground).
  */
-VISP_EXPORT void fillHoles(vpImage<unsigned char> &I
+VISP_EXPORT void fillHoles(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I
 #if USE_OLD_FILL_HOLE
                            ,
-                           const vpImageMorphology::vpConnexityType &connexity = vpImageMorphology::CONNEXITY_4
+                           const VISP_NAMESPACE_ADDRESSING vpImageMorphology::vpConnexityType &connexity = VISP_NAMESPACE_ADDRESSING vpImageMorphology::CONNEXITY_4
 #endif
 );
 
@@ -619,9 +619,9 @@ VISP_EXPORT void fillHoles(vpImage<unsigned char> &I
  * \param newValue : New value to flood fill.
  * \param connexity : Type of connexity.
  */
-VISP_EXPORT void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
+VISP_EXPORT void floodFill(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const VISP_NAMESPACE_ADDRESSING vpImagePoint &seedPoint, const unsigned char oldValue,
                            const unsigned char newValue,
-                           const vpImageMorphology::vpConnexityType &connexity = vpImageMorphology::CONNEXITY_4);
+                           const VISP_NAMESPACE_ADDRESSING vpImageMorphology::vpConnexityType &connexity = VISP_NAMESPACE_ADDRESSING vpImageMorphology::CONNEXITY_4);
 
 /*!
  * \ingroup group_imgproc_morph
@@ -641,9 +641,9 @@ VISP_EXPORT void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPo
  * \param h_kp1 : Image morphologically reconstructed.
  * \param connexity : Type of connexity.
  */
-VISP_EXPORT void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
-                             vpImage<unsigned char> &h_kp1 /*alias I */,
-                             const vpImageMorphology::vpConnexityType &connexity = vpImageMorphology::CONNEXITY_4);
+VISP_EXPORT void reconstruct(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &marker, const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &mask,
+                             VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &h_kp1 /*alias I */,
+                             const VISP_NAMESPACE_ADDRESSING vpImageMorphology::vpConnexityType &connexity = VISP_NAMESPACE_ADDRESSING vpImageMorphology::CONNEXITY_4);
 
 /*!
  * \ingroup group_imgproc_threshold
@@ -655,7 +655,7 @@ VISP_EXPORT void reconstruct(const vpImage<unsigned char> &marker, const vpImage
  * \param backgroundValue : Value to set to the background.
  * \param foregroundValue : Value to set to the foreground.
  */
-VISP_EXPORT unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
+VISP_EXPORT unsigned char autoThreshold(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                                         const unsigned char backgroundValue = 0,
                                         const unsigned char foregroundValue = 255);
 

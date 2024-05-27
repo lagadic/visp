@@ -56,7 +56,7 @@
 #include <complex>
 
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-namespace VISP_NAMESPACE_NAME
+namespace visp
 {
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
 static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)

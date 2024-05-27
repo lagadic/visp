@@ -45,6 +45,9 @@ namespace vp
 namespace VISP_NAMESPACE_NAME
 #endif
 {
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void fillHoles(vpImage<unsigned char> &I
 #if USE_OLD_FILL_HOLE
@@ -94,8 +97,8 @@ void fillHoles(vpImage<unsigned char> &I
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     for (unsigned int j = 0; j < I.getWidth(); ++j) {
       I[i][j] = 255 - I_reconstruct[i + 1][j + 1];
-    }
   }
+}
 #else
   // Create flood fill mask
   vpImage<unsigned char> flood_fill_mask(I.getHeight() + 2, I.getWidth() + 2, 0);

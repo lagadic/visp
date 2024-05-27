@@ -86,6 +86,10 @@ namespace VISP_NAMESPACE_NAME
 #endif
 {
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 
 void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)

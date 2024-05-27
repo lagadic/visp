@@ -126,13 +126,13 @@ using namespace buminiz;
 
 #include <regex>
 
-char VISP_NAMESPACE_ADDRESSING cnpy::BigEndianTest()
+char visp::cnpy::BigEndianTest()
 {
   int x = 1;
   return (((reinterpret_cast<char *>(&x))[0]) ? '<' : '>');
 }
 
-char VISP_NAMESPACE_ADDRESSING cnpy::map_type(const std::type_info &t)
+char visp::cnpy::map_type(const std::type_info &t)
 {
   if (t == typeid(float)) { return 'f'; }
   if (t == typeid(double)) { return 'f'; }
@@ -159,7 +159,7 @@ char VISP_NAMESPACE_ADDRESSING cnpy::map_type(const std::type_info &t)
   else { return '?'; }
 }
 
-void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
+void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
   uint16_t header_len = *reinterpret_cast<uint16_t *>(buffer+8);
   std::string header(reinterpret_cast<char *>(buffer+9), header_len);
@@ -194,7 +194,7 @@ void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(unsigned char *buffer, siz
   word_size = atoi(str_ws.substr(0, loc2).c_str());
 }
 
-void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
+void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
   char buffer[256];
   size_t res = fread(buffer, sizeof(char), 11, fp);
@@ -250,7 +250,7 @@ void VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(FILE *fp, size_t &word_siz
   word_size = atoi(str_ws.substr(0, loc2).c_str());
 }
 
-void VISP_NAMESPACE_ADDRESSING cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset)
+void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset)
 {
   std::vector<char> footer(22);
   fseek(fp, -22, SEEK_END);
@@ -274,14 +274,14 @@ void VISP_NAMESPACE_ADDRESSING cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs,
   UNUSED(comment_len); assert(comment_len == 0);
 }
 
-VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npy_file(FILE *fp)
+visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
 {
   std::vector<size_t> shape;
   size_t word_size;
   bool fortran_order;
-  VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(fp, word_size, shape, fortran_order);
+  visp::cnpy::parse_npy_header(fp, word_size, shape, fortran_order);
 
-  VISP_NAMESPACE_ADDRESSING cnpy::NpyArray arr(shape, word_size, fortran_order);
+  visp::cnpy::NpyArray arr(shape, word_size, fortran_order);
   size_t nread = fread(arr.data<char>(), 1, arr.num_bytes(), fp);
   if (nread != arr.num_bytes()) {
     throw std::runtime_error("load_the_npy_file: failed fread");
@@ -289,7 +289,7 @@ VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npy_file(FILE *fp)
   return arr;
 }
 
-VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
+visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
 {
   std::vector<unsigned char> buffer_compr(compr_bytes);
   std::vector<unsigned char> buffer_uncompr(uncompr_bytes);
@@ -321,9 +321,9 @@ VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t c
   std::vector<size_t> shape;
   size_t word_size;
   bool fortran_order;
-  VISP_NAMESPACE_ADDRESSING cnpy::parse_npy_header(&buffer_uncompr[0], word_size, shape, fortran_order);
+  visp::cnpy::parse_npy_header(&buffer_uncompr[0], word_size, shape, fortran_order);
 
-  VISP_NAMESPACE_ADDRESSING cnpy::NpyArray array(shape, word_size, fortran_order);
+  visp::cnpy::NpyArray array(shape, word_size, fortran_order);
 
   size_t offset = uncompr_bytes - array.num_bytes();
   memcpy(array.data<unsigned char>(), &buffer_uncompr[0]+offset, array.num_bytes());
@@ -339,7 +339,7 @@ VISP_NAMESPACE_ADDRESSING cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t c
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-VISP_NAMESPACE_ADDRESSING cnpy::npz_t VISP_NAMESPACE_ADDRESSING cnpy::npz_load(std::string fname)
+visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
 
@@ -347,7 +347,7 @@ VISP_NAMESPACE_ADDRESSING cnpy::npz_t VISP_NAMESPACE_ADDRESSING cnpy::npz_load(s
     throw std::runtime_error("npz_load: Error! Unable to open file "+fname+"!");
   }
 
-  VISP_NAMESPACE_ADDRESSING cnpy::npz_t arrays;
+  visp::cnpy::npz_t arrays;
   bool quit = false;
   while (!quit) {
     std::vector<char> local_header(30);
@@ -404,7 +404,7 @@ VISP_NAMESPACE_ADDRESSING cnpy::npz_t VISP_NAMESPACE_ADDRESSING cnpy::npz_load(s
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-VISP_NAMESPACE_ADDRESSING cnpy::NpyArray VISP_NAMESPACE_ADDRESSING cnpy::npz_load(std::string fname, std::string varname)
+visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
 
@@ -469,7 +469,7 @@ VISP_NAMESPACE_ADDRESSING cnpy::NpyArray VISP_NAMESPACE_ADDRESSING cnpy::npz_loa
   \warning This function has only been tested on little endian platform.
   \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
  */
-VISP_NAMESPACE_ADDRESSING cnpy::NpyArray VISP_NAMESPACE_ADDRESSING cnpy::npy_load(std::string fname)
+visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 {
 
   FILE *fp = fopen(fname.c_str(), "rb");

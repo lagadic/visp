@@ -45,6 +45,9 @@ namespace vp
 namespace VISP_NAMESPACE_NAME
 #endif
 {
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
                   unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
