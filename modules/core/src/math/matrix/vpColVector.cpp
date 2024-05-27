@@ -1009,9 +1009,6 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 
 double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
 VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpColVector &v)
 {
@@ -1019,3 +1016,6 @@ VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAME
   vout = v * x;
   return vout;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

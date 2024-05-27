@@ -43,6 +43,10 @@
 #include <memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /**
  * \class vpMegaPoseTracker
  * \ingroup module_dnn_tracker
@@ -119,7 +123,7 @@ public:
    * @param[in] bb : The bounding box of the object.
    * @return A future object that will contain the result of the pose estimation.
    */
-  std::future<vpMegaPoseEstimate> init(const vpImage<vpRGBa> &I, const vpRect & bb);
+  std::future<vpMegaPoseEstimate> init(const vpImage<vpRGBa> &I, const vpRect &bb);
   /**
    * @brief Initialize tracking from an initial pose. The initial pose should be in the neighborhood of the true pose.
    * The pose should be expressed in the camera frame.
@@ -146,7 +150,7 @@ public:
    *
    * @param[in] cTo : The new pose estimate.
    */
-  void updatePose(const vpHomogeneousMatrix& cTo);
+  void updatePose(const vpHomogeneousMatrix &cTo);
 
 private:
   std::shared_ptr<vpMegaPose> m_megapose;
@@ -155,7 +159,9 @@ private:
   int m_refinerIterations;
   bool m_initialized;
 };
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif // VISP_HAVE_NLOHMANN_JSON
 
 #endif

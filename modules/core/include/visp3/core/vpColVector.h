@@ -42,21 +42,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
-
-class vpColVector;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-// Forward declaration to ensure that the methods are in the global namespace
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpColVector &pose);
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpColVector &pose);
 #endif
 #if defined(ENABLE_VISP_NAMESPACE)
 namespace VISP_NAMESPACE_NAME
@@ -77,6 +64,10 @@ class vpPoseVector;
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpColVector
  * \ingroup group_core_matrices
@@ -184,11 +175,7 @@ class vpPoseVector;
  * {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
  * \endcode
  */
-class VISP_EXPORT
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-vpColVector: public vpArray2D<double>
+class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
   friend class vpMatrix;
 
@@ -1363,7 +1350,7 @@ public:
    * @param j : Resulting json object.
    * @param v : The object to convert.
    */
-  friend void ::to_json(nlohmann::json &j, const vpColVector &v);
+  friend void to_json(nlohmann::json &j, const vpColVector &v);
 
   /*!
    * Retrieve a vpColVector object from a JSON representation.
@@ -1371,7 +1358,7 @@ public:
    * @param j : JSON representation to convert.
    * @param v : Converted object.
    */
-  friend void ::from_json(const nlohmann::json &j, vpColVector &v);
+  friend void from_json(const nlohmann::json &j, vpColVector &v);
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -1477,14 +1464,6 @@ public:
 #endif
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 /*!
  * \relates vpColVector
  * Allows to multiply a scalar by a column vector.
@@ -1492,41 +1471,27 @@ namespace VISP_NAMESPACE_NAME
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpColVector &v);
+vpColVector operator*(const double &x, const vpColVector &v);
 
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-inline void to_json(nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-const visp::vpColVector &v
-#else
-const vpColVector &v
-#endif
-)
+inline void to_json(nlohmann::json &j, const vpColVector &v)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
-inline void from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::vpColVector &v
-#else
-vpColVector &v
-#endif
-)
+
+inline void from_json(const nlohmann::json &j, vpColVector &v)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   from_json(j, *asArray);
   if (v.getCols() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
   }
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 #endif

@@ -40,23 +40,9 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
-
-class vpCannyEdgeDetection;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-
-// Forward declaration to have the methods in the global namespace
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector);
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector);
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
@@ -129,7 +115,7 @@ public:
    * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector : The detector that will be initialized from the JSON data.
    */
-  friend void ::from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector);
+  friend void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector);
 
   /**
    * \brief Parse a vpCannyEdgeDetection object into JSON format.
@@ -137,7 +123,7 @@ public:
    * \param[out] j : A JSON parser object.
    * \param[in] detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
-  friend void ::to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector);
+  friend void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector);
 #endif
   //@}
 

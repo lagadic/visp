@@ -38,9 +38,14 @@
 
 #include <vector>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 template <typename T> class vpMbtTukeyEstimator
 {
 public:
@@ -58,7 +63,9 @@ private:
   std::vector<T> m_residues;
 };
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 /*
  * The code bellow previously in vpMbtTuckeyEstimator.cpp produced
  * a link issue with MinGW-W64 x86_64-8.1.0-posix-seh-rt_v6-rev0 (g++ 8.1.0)
@@ -125,6 +132,10 @@ template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
 } // namespace
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 template class vpMbtTukeyEstimator<float>;
 template class vpMbtTukeyEstimator<double>;
 
@@ -251,11 +262,11 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_simd(const std::vector<f
   (void)weights;
   (void)NoiseThreshold;
 #endif
-}
+  }
 
-/*!
- * \relates vpMbtTukeyEstimator
- */
+  /*!
+   * \relates vpMbtTukeyEstimator
+   */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<double> &residues,
                                                               std::vector<double> &weights,
@@ -303,11 +314,11 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<
   (void)weights;
   (void)NoiseThreshold;
 #endif
-}
+  }
 
-/*!
- * \relates vpMbtTukeyEstimator
- */
+  /*!
+   * \relates vpMbtTukeyEstimator
+   */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                                    float NoiseThreshold)
@@ -471,6 +482,9 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
     }
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

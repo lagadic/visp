@@ -39,6 +39,7 @@
 #ifndef vpMbtPolygon_HH
 #define vpMbtPolygon_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
@@ -46,6 +47,10 @@
 
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMbtPolygon
  *
@@ -155,5 +160,7 @@ public:
    */
   inline void setIsPolygonOriented(const bool &oriented) { this->hasOrientation = oriented; }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

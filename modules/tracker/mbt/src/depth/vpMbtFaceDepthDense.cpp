@@ -157,6 +157,10 @@ inline float64x2_t v_fma(const float64x2_t &a, const float64x2_t &b, const float
 }
 #endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false),
@@ -1000,3 +1004,6 @@ void vpMbtFaceDepthDense::setScanLineVisibilityTest(bool v)
     (*it)->useScanLine = v;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

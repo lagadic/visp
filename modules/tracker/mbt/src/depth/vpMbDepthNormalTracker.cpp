@@ -52,6 +52,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpMbDepthNormalTracker::vpMbDepthNormalTracker()
   : m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
   m_depthNormalHiddenFacesDisplay(), m_depthNormalListOfActiveFaces(), m_depthNormalListOfDesiredFeatures(),
@@ -902,3 +906,6 @@ void vpMbDepthNormalTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint 
 void vpMbDepthNormalTracker::initFaceFromCorners(vpMbtPolygon &polygon) { addFace(polygon, false); }
 
 void vpMbDepthNormalTracker::initFaceFromLines(vpMbtPolygon &polygon) { addFace(polygon, true); }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

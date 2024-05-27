@@ -39,6 +39,7 @@
 #ifndef vpMbEdgeTracker_HH
 #define vpMbEdgeTracker_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
@@ -71,6 +72,11 @@
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
 #endif
 
 /*!
@@ -518,5 +524,7 @@ protected:
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

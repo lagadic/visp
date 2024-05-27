@@ -68,21 +68,14 @@ class vpPoint;
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/core/vpPoseVector.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+
 #if defined(ENABLE_VISP_NAMESPACE)
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-class vpHomogeneousMatrix;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &T);
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &T);
-#endif
-
 /*!
   \class vpHomogeneousMatrix
 
@@ -217,11 +210,7 @@ void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpHomogeneousM
   {"cols":4,"data":[0.0,0.0,-1.0,0.1,0.0,-1.0,0.0,0.2,-1.0,0.0,0.0,0.3,0.0,0.0,0.0,1.0],"rows":4,"type":"vpHomogeneousMatrix"}
   \endcode
 */
-class VISP_EXPORT
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-vpHomogeneousMatrix: public vpArray2D<double>
+class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 {
 public:
   vpHomogeneousMatrix();
@@ -405,8 +394,8 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void ::to_json(nlohmann::json &j, const vpHomogeneousMatrix &T);
-  friend void ::from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T);
+  friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
@@ -436,15 +425,17 @@ protected:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &T)
+inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 {
   T.convert_to_json(j);
 }
 
-inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &T)
+inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
 {
   T.parse_json(j);
 }
 #endif
-
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

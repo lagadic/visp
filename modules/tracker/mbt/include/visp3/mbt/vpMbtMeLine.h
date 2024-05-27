@@ -39,12 +39,17 @@
 #ifndef vpMbtMeLine_HH
 #define vpMbtMeLine_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeTracker.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMbtMeLine
  * \brief Implementation of a line used by the model-based tracker.
@@ -119,7 +124,9 @@ private:
   void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
   void updateDelta();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

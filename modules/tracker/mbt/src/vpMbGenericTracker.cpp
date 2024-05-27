@@ -46,6 +46,10 @@
 using json = nlohmann::json; //! json namespace shortcut
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 vpMbGenericTracker::vpMbGenericTracker()
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
   m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
@@ -7421,5 +7425,8 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
     m_cMo = cMo_1;
     throw; // rethrowing the original exception
   }
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif

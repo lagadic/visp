@@ -56,12 +56,13 @@ static void scaleFilter(
 };
 #endif
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector)
-{
 #if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
+namespace VISP_NAMESPACE_NAME
+{
 #endif
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
+{
   std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
   filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
   detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
@@ -74,9 +75,9 @@ void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCannyEdgeDet
   detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
 }
 
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetection &detector)
+void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
 {
-  std::string filteringAndGradientName = VISP_NAMESPACE_ADDRESSING vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
   j = nlohmann::json {
           {"filteringAndGradientType", filteringAndGradientName},
           {"gaussianSize", detector.m_gaussianKernelSize},
@@ -90,10 +91,6 @@ void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCannyEdgeDetec
 }
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 // // Initialization methods
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()

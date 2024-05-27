@@ -56,6 +56,10 @@
 
 #include <visp3/vision/vpPose.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Basic constructor
 */
@@ -877,3 +881,6 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
     }
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

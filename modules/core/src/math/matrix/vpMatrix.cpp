@@ -62,10 +62,6 @@
 #include <Simd/SimdLib.h>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #include <gsl/gsl_eigen.h>
@@ -73,6 +69,17 @@ namespace VISP_NAMESPACE_NAME
 #include <gsl/gsl_math.h>
 #elif defined(VISP_HAVE_MKL)
 #include <mkl.h>
+#endif
+#endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
+#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_GSL
+#elif defined(VISP_HAVE_MKL)
 typedef MKL_INT integer;
 
 void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_, double *w_data,
@@ -4992,13 +4999,13 @@ Row vector :
 vpRowVector vpMatrix::getRow(unsigned int i) const { return getRow(i, 0, colNum); }
 
 /*!
-  Extract a row vector from a matrix.
-  \warning All the indexes start from 0 in this function.
-  \param i : Index of the row to extract. If i=0, the first row is extracted.
-  \param j_begin : Index of the column that gives the location of the first
-  element of the row vector to extract.
-  \param row_size : Size of the row vector to extract.
-  \return The extracted row vector.
+Extract a row vector from a matrix.
+\warning All the indexes start from 0 in this function.
+\param i : Index of the row to extract.If i = 0, the first row is extracted.
+\param j_begin : Index of the column that gives the location of the first
+element of the row vector to extract.
+\param row_size : Size of the row vector to extract.
+\return The extracted row vector.
 
 The following example shows how to use this function:
 \code
@@ -6701,9 +6708,6 @@ void vpMatrix::setIdentity(const double &val)
 }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
 /*!
   \relates vpMatrix
@@ -6729,3 +6733,6 @@ VISP_NAMESPACE_ADDRESSING vpMatrix operator*(const double &x, const VISP_NAMESPA
 
   return C;
 }
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif

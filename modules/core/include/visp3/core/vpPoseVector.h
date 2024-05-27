@@ -55,18 +55,11 @@ namespace VISP_NAMESPACE_NAME
 #endif
 class vpRotationMatrix;
 class vpHomogeneousMatrix;
-class vpPoseVector;
 class vpTranslationVector;
 class vpThetaUVector;
 class vpRowVector;
 #ifdef ENABLE_VISP_NAMESPACE
 }
-#endif
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpPoseVector &pose);
 #endif
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -319,8 +312,8 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void ::to_json(nlohmann::json &j, const vpPoseVector &cam);
-  friend void ::from_json(const nlohmann::json &j, vpPoseVector &cam);
+  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
+  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
@@ -340,21 +333,20 @@ public:
   //@}
 #endif
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpPoseVector &r)
+inline void to_json(nlohmann::json &j, const vpPoseVector &r)
 {
   r.convert_to_json(j);
 }
 
-inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpPoseVector &r)
+inline void from_json(const nlohmann::json &j, vpPoseVector &r)
 {
   r.parse_json(j);
 }
 #endif
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

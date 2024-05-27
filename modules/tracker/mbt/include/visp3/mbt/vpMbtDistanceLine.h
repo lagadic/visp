@@ -44,6 +44,7 @@
 #ifndef vpMbtDistanceLine_HH
 #define vpMbtDistanceLine_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpLine.h>
 #include <visp3/core/vpPoint.h>
@@ -54,6 +55,10 @@
 
 #include <list>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpMbtDistanceLine
 
@@ -266,5 +271,7 @@ public:
 private:
   void project(const vpHomogeneousMatrix &cMo);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

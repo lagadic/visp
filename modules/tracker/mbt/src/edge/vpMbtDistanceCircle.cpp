@@ -52,6 +52,10 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureEllipse.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Basic constructor
 */
@@ -477,3 +481,6 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     }
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

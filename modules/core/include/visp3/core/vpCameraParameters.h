@@ -49,25 +49,14 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include<nlohmann/json.hpp>
+#endif
+
 #if defined(ENABLE_VISP_NAMESPACE)
 namespace VISP_NAMESPACE_NAME
 {
 #endif
-
-class vpCameraParameters;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include<nlohmann/json.hpp>
-// Forward declaration to have the to_json in the global namespace
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
-
-// Forward declaration to have the from_json in the global namespace
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCameraParameters &cam);
-#endif
-
 /*!
   \class vpCameraParameters
 
@@ -317,11 +306,7 @@ void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpCameraParame
   \endcode
  */
 
-class VISP_EXPORT
-#if defined(ENABLE_VISP_NAMESPACE)
-  visp::
-#endif
-  vpCameraParameters
+class VISP_EXPORT vpCameraParameters
 {
   friend class vpMeterPixelConversion;
   friend class vpPixelMeterConversion;
@@ -463,26 +448,18 @@ private:
 
   vpCameraParametersProjType m_projModel; //!< used projection model
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  friend void ::to_json(nlohmann::json &j, const vpCameraParameters &cam);
-  friend void ::from_json(const nlohmann::json &j, vpCameraParameters &cam);
+  friend void to_json(nlohmann::json &j, const vpCameraParameters &cam);
+  friend void from_json(const nlohmann::json &j, vpCameraParameters &cam);
 #endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
-#if defined(ENABLE_VISP_NAMESPACE)
-NLOHMANN_JSON_SERIALIZE_ENUM(visp::vpCameraParameters::vpCameraParametersProjType, {
-    {visp::vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
-    {visp::vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
-    {visp::vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
-  });
-#else
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
   });
-#endif
 
 /**
  * \brief Converts camera parameters into a JSON representation.
@@ -490,17 +467,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
  * \param j The resulting JSON object.
  * \param cam The camera to serialize.
  */
-inline void to_json(nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-const visp::vpCameraParameters &cam
-#else
-const vpCameraParameters &cam
-#endif
-)
+inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   j["px"] = cam.m_px;
   j["py"] = cam.m_py;
   j["u0"] = cam.m_u0;
@@ -552,17 +520,8 @@ const vpCameraParameters &cam
  * \param j The json object to deserialize.
  * \param cam The modified camera.
  */
-inline void from_json(const nlohmann::json &j,
-#if defined(ENABLE_VISP_NAMESPACE)
-visp::vpCameraParameters &cam
-#else
-vpCameraParameters &cam
-#endif
-)
+inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   const double px = j.at("px").get<double>();
   const double py = j.at("py").get<double>();
   const double u0 = j.at("u0").get<double>();
@@ -589,6 +548,9 @@ vpCameraParameters &cam
     break;
   }
   }
+}
+#endif
+#if defined(ENABLE_VISP_NAMESPACE)
 }
 #endif
 #endif

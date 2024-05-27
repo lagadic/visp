@@ -57,13 +57,6 @@ template <typename T> class vpArray2D;
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-//template<typename Type>
-template<class T>
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray2D<T> &array);
-
-//template<typename Type>
-template<class T>
-void to_json(nlohmann::json &j, const  VISP_NAMESPACE_ADDRESSING vpArray2D<T> &array);
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
@@ -1037,10 +1030,10 @@ public:
 #ifdef VISP_HAVE_NLOHMANN_JSON
   //template<typename Type>
   template<class T>
-  friend void ::from_json(const nlohmann::json &j, vpArray2D<T> &array);
+  friend void from_json(const nlohmann::json &j, vpArray2D<T> &array);
   //template<typename Type>
   template<class T>
-  friend void ::to_json(nlohmann::json &j, const vpArray2D<T> &array);
+  friend void to_json(nlohmann::json &j, const vpArray2D<T> &array);
 #endif
 
   /*!
@@ -1342,9 +1335,6 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
  * \relates vpArray2D
  */
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 template <class Type>
@@ -1420,4 +1410,9 @@ inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpArray2D
   j["data"] = data;
 }
 #endif
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
+
 #endif

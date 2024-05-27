@@ -1209,12 +1209,12 @@ const __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size_default = 0
 __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-VISP_NAMESPACE_ADDRESSING vpMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpMatrix &A);
+vpMatrix operator*(const double &x, const vpMatrix &A);
+
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif

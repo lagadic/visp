@@ -44,20 +44,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
-class vpMe;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-// Forward declaration to have the methods in the global namespace
-void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpMe &me);
-void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpMe &me);
 #endif
 
 #if defined(ENABLE_VISP_NAMESPACE)
@@ -547,7 +535,7 @@ private:
    * @param j : Resulting json object.
    * @param me : The object to convert.
    */
-  friend void ::to_json(nlohmann::json &j, const vpMe &me);
+  friend void to_json(nlohmann::json &j, const vpMe &me);
 
   /**
    * @brief Retrieve a vpMe object from a JSON representation
@@ -596,21 +584,17 @@ private:
    * @param j JSON representation to convert
    * @param me converted object
    */
-  friend void ::from_json(const nlohmann::json &j, vpMe &me);
+  friend void from_json(const nlohmann::json &j, vpMe &me);
 #endif
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
-NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType, {
-  {VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
-  {VISP_NAMESPACE_ADDRESSING vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
+  {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
+  {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
 });
 
-inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpMe &me)
+inline void to_json(nlohmann::json &j, const vpMe &me)
 {
   j = {
     {"thresholdType", me.getLikelihoodThresholdType()},
@@ -630,7 +614,7 @@ inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpMe &me)
   };
 }
 
-inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpMe &me)
+inline void from_json(const nlohmann::json &j, vpMe &me)
 {
   if (j.contains("thresholdType")) {
     me.setLikelihoodThresholdType(j.value("thresholdType", me.getLikelihoodThresholdType()));
@@ -668,4 +652,7 @@ inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpMe &m
 
 #endif
 
+#if defined(ENABLE_VISP_NAMESPACE)
+}
+#endif
 #endif
