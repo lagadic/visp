@@ -59,6 +59,9 @@
 */
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::cout << "IEEE1394 test in progress..." << std::endl;
 
@@ -112,7 +115,8 @@ int main()
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
-  } catch (...) {
+  }
+  catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
@@ -121,7 +125,7 @@ int main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
           "You should install libdc1394-2 to use this binary.");
-}
+  }
 
 #endif
 

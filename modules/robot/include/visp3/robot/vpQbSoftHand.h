@@ -40,6 +40,10 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/robot/vpQbDevice.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpQbSoftHand
  *
@@ -95,6 +99,8 @@ public:
   void setPosition(const vpColVector &position, const int &id = 1);
   void setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id = 1);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

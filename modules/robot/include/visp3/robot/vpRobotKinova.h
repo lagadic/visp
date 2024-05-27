@@ -33,9 +33,6 @@
  *
 *****************************************************************************/
 
-#ifndef vpRobotKinova_h
-#define vpRobotKinova_h
-
 /*!
 
   \file vpRobotKinova.h
@@ -43,6 +40,9 @@
   Interface for Kinova robot using Jaco SDK.
 
 */
+
+#ifndef vpRobotKinova_h
+#define vpRobotKinova_h
 
 #include <visp3/core/vpConfig.h>
 
@@ -60,7 +60,7 @@
 #elif _WIN32
 #include <CommandLayer.h>
 #include <CommunicationLayer.h>
-#include <winsock2.h>    
+#include <winsock2.h>
 #include <windows.h>
 #include <conio.h>
 #include <iostream>
@@ -69,6 +69,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpRobotKinova
@@ -178,6 +182,8 @@ private:
   int (*KinovaSetAngularControl)();
   int (*KinovaSetCartesianControl)();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

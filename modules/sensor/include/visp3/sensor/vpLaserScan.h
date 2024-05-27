@@ -32,8 +32,6 @@
  * Laser scan data structure.
  *
 *****************************************************************************/
-#ifndef vpLaserScan_h
-#define vpLaserScan_h
 
 /*!
   \file vpLaserScan.h
@@ -42,10 +40,18 @@
 
 */
 
+#ifndef vpLaserScan_h
+#define vpLaserScan_h
+
+#include <visp3/core/vpConfig.h>
 #include "visp3/sensor/vpScanPoint.h"
 
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpLaserScan
@@ -122,5 +128,7 @@ private:
   short stopAngle;
   unsigned short numPoints;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

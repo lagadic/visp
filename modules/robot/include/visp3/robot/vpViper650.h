@@ -31,17 +31,22 @@
  * Interface for the ADEPT Viper 650 robot.
  */
 
-#ifndef vpViper650_h
-#define vpViper650_h
-
-#include <visp3/robot/vpViper.h>
-
 /*!
  * \file vpViper650.h
  *
  * Modelization of the ADEPT Viper 650 robot.
  */
 
+#ifndef vpViper650_h
+#define vpViper650_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpViper.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpViper650
  *
@@ -165,5 +170,7 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

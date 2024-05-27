@@ -33,11 +33,16 @@
 #ifndef VPPIONEERPAN_H
 #define VPPIONEERPAN_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/robot/vpUnicycle.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpPioneerPan
  *
@@ -222,5 +227,7 @@ protected:
   vpHomogeneousMatrix mMp_; // constant
   vpHomogeneousMatrix pMe_; // depends on q pan
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

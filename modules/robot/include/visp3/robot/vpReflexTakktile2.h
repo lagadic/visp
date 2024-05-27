@@ -44,6 +44,10 @@
 
 #include <visp3/core/vpColVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpReflexTakktile2
@@ -84,7 +88,7 @@ public:
     std::vector<std::string> error_state;
 
     HandInfo();
-    ~HandInfo() {}
+    ~HandInfo() { }
 
     friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const HandInfo &hand);
   };
@@ -155,6 +159,8 @@ private:
   class Impl;
   Impl *m_impl;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

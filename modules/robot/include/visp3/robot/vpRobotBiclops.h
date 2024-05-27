@@ -57,6 +57,10 @@
 /* --- CLASS -------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpRobotBiclops
  *
@@ -439,7 +443,9 @@ private:
   //  }
   //#endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif /* #ifndef _vpRobotBiclops_h_ */
 
 #endif

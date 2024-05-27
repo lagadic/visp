@@ -41,6 +41,10 @@
 
 #include <visp3/sensor/vpMocap.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpMocapQualisys
  * \ingroup group_sensor_mocap
@@ -67,6 +71,8 @@ private:
   class vpMocapQualisysImpl;
   vpMocapQualisysImpl *m_impl;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif // vpMocapQualisys_h

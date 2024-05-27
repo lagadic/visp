@@ -32,6 +32,13 @@
  * Sick LD-MRS laser driver.
  *
 *****************************************************************************/
+
+/*!
+ * \file vpSickLDMRS.h
+ *
+ * \brief Driver for the Sick LD-MRS laser scanner.
+ */
+
 #ifndef vpSickLDMRS_h
 #define vpSickLDMRS_h
 
@@ -50,12 +57,10 @@
 #include <visp3/sensor/vpLaserScanner.h>
 #include <visp3/sensor/vpScanPoint.h>
 
-/*!
- * \file vpSickLDMRS.h
- *
- * \brief Driver for the Sick LD-MRS laser scanner.
- */
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpSickLDMRS
  *
@@ -156,7 +161,9 @@ protected:
   bool isFirstMeasure;
   size_t maxlen_body;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 #endif

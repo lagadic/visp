@@ -51,6 +51,10 @@
 #include "../wireframe-simulator/vpScene.h"
 #include "../wireframe-simulator/vpVwstack.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
 /*!
@@ -2467,7 +2471,9 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   // std::cout << "setPosition: final error " << err.t() << std::endl;
   return (err.frobeniusNorm() <= errMax);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols

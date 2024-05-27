@@ -58,6 +58,23 @@
 
 #if defined(VISP_HAVE_DC1394)
 
+/*
+ * Interface with libdc1394 2.x
+ */
+#include <string.h>
+
+#include <dc1394/control.h>
+#include <dc1394/utils.h>
+#include <dc1394/vendor/avt.h>
+
+#include <visp3/core/vpFrameGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vp1394TwoGrabber
 
@@ -161,20 +178,6 @@
     \endcode
 
 */
-
-/*
- * Interface with libdc1394 2.x
- */
-#include <string.h>
-
-#include <dc1394/control.h>
-#include <dc1394/utils.h>
-#include <dc1394/vendor/avt.h>
-
-#include <visp3/core/vpFrameGrabber.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-
 class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 {
 
@@ -460,6 +463,8 @@ private:
   dc1394camera_list_t *list;
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

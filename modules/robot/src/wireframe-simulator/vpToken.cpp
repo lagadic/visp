@@ -44,6 +44,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/
                          {"above", T_ABOVE},
                          {"back", T_BACK},
@@ -67,6 +71,8 @@ Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/
                          {"vrp", T_VRP},
                          {"vup", T_VUP},
                          {"window", T_WINDOW},
-                         {NULL, T_NULL}};
-
+                         {NULL, T_NULL} };
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

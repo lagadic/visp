@@ -31,14 +31,15 @@
  * Class which provides a simulator for the robot Afma6.
  */
 
-#ifndef vpSimulatorAfma6_HH
-#define vpSimulatorAfma6_HH
-
 /*!
  * \file vpSimulatorAfma6.h
  * \brief Class which provides a simulator for the robot Afma6.
  */
 
+#ifndef vpSimulatorAfma6_HH
+#define vpSimulatorAfma6_HH
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpAfma6.h>
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 
@@ -46,6 +47,10 @@
 
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpSimulatorAfma6
  *
@@ -257,7 +262,9 @@ protected:
   void updateArticularPosition() vp_override;
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 #endif

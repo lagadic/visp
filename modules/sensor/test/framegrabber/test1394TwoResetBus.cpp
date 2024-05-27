@@ -65,6 +65,9 @@
 */
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::cout << "IEEE1394 bus reset in progress..." << std::endl;
     vp1394TwoGrabber g;
@@ -75,7 +78,8 @@ int main()
     g.acquire(I);
     //     std::cout << "write /tmp/test.pgm" << std::endl;
     //     vpImageIo::write(I, "/tmp/test.pgm");
-  } catch (...) {
+  }
+  catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
@@ -84,7 +88,7 @@ int main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
           "You should install libdc1394-2 to use this binary.");
-}
+  }
 
 #endif
 

@@ -59,6 +59,10 @@ using std::chrono::seconds;
 using std::this_thread::sleep_for;
 using namespace std::chrono_literals;
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpRobotMavsdk::vpRobotMavsdkImpl
 {
@@ -1578,7 +1582,9 @@ void vpRobotMavsdk::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
  * all the other vehicles are considered with flying capabilities.
  */
 bool vpRobotMavsdk::hasFlyingCapability() { return m_impl->getFlyingCapability(); }
-
+#ifdef ENABLE_VISP_NAMESPACE
+  }
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no symbols
 void dummy_vpRobotMavsdk() { };

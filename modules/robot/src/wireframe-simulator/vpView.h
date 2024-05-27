@@ -139,6 +139,10 @@
     1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0                                     \
   }
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  *      CAMERA PARAMETERS
  *      _________________
@@ -151,7 +155,8 @@
  * twist  Angle de rotation sur l'axe de visee (eye,target) en degres.
  * speed  Vitesse sur l'axe de visee (eye,target).
  */
-typedef struct {
+typedef struct
+{
   Point3f eye;    /* position de l'observateur  */
   Point3f target; /* point vise      */
   float focal;    /* focale de la camera    */
@@ -160,17 +165,20 @@ typedef struct {
   float speed;    /* vitesse  sur l'axe de visee  */
 } Camera_parameters;
 
-typedef struct {
+typedef struct
+{
   float umin, umax; /* bords gauche et droit  */
   float vmin, vmax; /* bords inferieur et superieur */
 } View_window;
 
-typedef struct {
+typedef struct
+{
   float front; /* plan avant ("hither")  */
   float back;  /* plan arriere ("yon")    */
 } View_depth;
 
-typedef struct {
+typedef struct
+{
   Type type;        /* type de la  projection  */
   Point3f cop;      /* centre de projection    */
   Point3f vrp;      /* point de reference de visee  */
@@ -179,6 +187,8 @@ typedef struct {
   View_window vwd;  /* fenetre de projection  */
   View_depth depth; /* profondeurs de decoupages  */
 } View_parameters;
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

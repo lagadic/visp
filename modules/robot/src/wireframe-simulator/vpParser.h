@@ -47,7 +47,13 @@
 
 #include "vpBound.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void parser(Bound_scene *bsp);
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

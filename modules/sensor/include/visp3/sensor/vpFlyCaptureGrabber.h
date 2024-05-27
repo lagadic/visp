@@ -33,6 +33,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFlyCaptureGrabber.h
+  \brief Wrapper over PointGrey FlyCapture SDK to capture images from
+  PointGrey cameras.
+*/
+
 #ifndef _vpFlyCaptureGrabber_h_
 #define _vpFlyCaptureGrabber_h_
 
@@ -44,11 +50,11 @@
 
 #include <FlyCapture2.h>
 
-/*!
-  \file vpFlyCaptureGrabber.h
-  \brief Wrapper over PointGrey FlyCapture SDK to capture images from
-  PointGrey cameras.
-*/
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 /*!
   \class vpFlyCaptureGrabber
   \ingroup group_sensor_camera
@@ -231,6 +237,8 @@ protected:
   bool m_connected;              //!< true if camera connected
   bool m_capture;                //!< true is capture started
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

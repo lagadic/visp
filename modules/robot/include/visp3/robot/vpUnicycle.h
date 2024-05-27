@@ -33,10 +33,15 @@
 #ifndef VPUNICYCLE_H
 #define VPUNICYCLE_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpUnicycle
  *
@@ -114,5 +119,7 @@ protected:
   vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame
   vpMatrix eJe_;            // Robot jacobian
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -99,17 +99,22 @@
 */
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class VISP_EXPORT vpAfma4
 {
 public:
   vpAfma4();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma4(){};
+  virtual ~vpAfma4() { };
 
   /** @name Inherited functionalities from vpAfma4 */
   //@{
@@ -150,7 +155,9 @@ protected:
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 /*
  * Local variables:
  * c-basic-offset: 2

@@ -31,13 +31,13 @@
  * Basic class used to make robot simulators.
  */
 
-#ifndef vpRobotWireFrameSimulator_HH
-#define vpRobotWireFrameSimulator_HH
-
 /*!
  * \file vpRobotWireFrameSimulator.h
  * \brief Basic class used to make robot simulators.
  */
+
+#ifndef vpRobotWireFrameSimulator_HH
+#define vpRobotWireFrameSimulator_HH
 
 #include <visp3/core/vpConfig.h>
 
@@ -58,6 +58,10 @@
 #include <visp3/robot/vpRobotSimulator.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpRobotWireFrameSimulator
  *
@@ -411,6 +415,8 @@ protected:
   virtual void get_fMi(vpHomogeneousMatrix *fMit) = 0;
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

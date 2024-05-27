@@ -40,6 +40,10 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotUniversalRobots.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Default constructor.
  * - set eMc transformation to eye()
@@ -872,7 +876,9 @@ vpRobot::vpRobotStateType vpRobotUniversalRobots::setRobotState(vpRobot::vpRobot
 
   return vpRobot::setRobotState(newState);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotUniversalRobots.cpp.o) has no symbols
 void dummy_vpRobotUniversalRobots() { };

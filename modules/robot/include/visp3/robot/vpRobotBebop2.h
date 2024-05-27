@@ -59,6 +59,10 @@ extern "C" {
 #include <signal.h>
 #include <string>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpRobotBebop2
 
@@ -249,6 +253,8 @@ private:
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif //#ifdef VISP_HAVE_ARSDK
 #endif //#ifndef _vpRobotBebop2_h_

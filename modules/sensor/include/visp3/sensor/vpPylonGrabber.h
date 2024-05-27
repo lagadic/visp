@@ -36,6 +36,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpPylonGrabber.h
+  \brief Wrapper over Basler Pylon SDK to capture images from Basler
+  cameras.
+*/
+
 #ifndef _vpPylonGrabber_h_
 #define _vpPylonGrabber_h_
 
@@ -58,12 +64,10 @@
 
 #include <pylon/PylonIncludes.h>
 
-/*!
-  \file vpPylonGrabber.h
-  \brief Wrapper over Basler Pylon SDK to capture images from Basler
-  cameras.
-*/
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpPylonGrabber
   \ingroup group_sensor_camera
@@ -99,11 +103,12 @@ public:
   /*!
      Default destructor.
    */
-  virtual ~vpPylonGrabber(){};
+  virtual ~vpPylonGrabber() { };
 
   /*! Valid values for user set names.
    */
-  enum UserSetName {
+  enum UserSetName
+  {
     USERSET_DEFAULT,  //!< The default user set.
     USERSET_USERSET1, //!< User set 1.
     USERSET_USERSET2, //!< User set 2.
@@ -390,6 +395,8 @@ public:
    */
   virtual void stopCapture() = 0;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabber_h_

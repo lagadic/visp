@@ -44,13 +44,16 @@
 
 static Calibration *s_calibinfo = nullptr; //!< Struct containing calibration information
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Default constructor.
  */
 vpForceTorqueAtiSensor::vpForceTorqueAtiSensor()
   : m_calibfile(""), m_index(1), m_num_axes(6), m_num_channels(6), m_sample_bias()
-{
-}
+{ }
 
 /*!
  * Open the connection to the device.
@@ -255,7 +258,8 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
     char *units;
     if ((s_calibinfo->AxisNames[i])[0] == 'F') {
       units = s_calibinfo->ForceUnits;
-    } else
+    }
+    else
       units = s_calibinfo->TorqueUnits;
     os << s_calibinfo->AxisNames[i] << ": " << s_calibinfo->MaxLoads[i] << " " << units << std::endl;
   }
@@ -276,9 +280,11 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 
   return os;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueAtiSensor.cpp.o) has no symbols
-void dummy_vpForceTorqueAtiSensor(){};
+void dummy_vpForceTorqueAtiSensor() { };
 #endif

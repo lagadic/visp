@@ -129,6 +129,7 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPoint.h>
@@ -138,6 +139,10 @@
 #include <list>
 #include <vector>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 class VISP_EXPORT vpImageSimulator
 {
 public:
@@ -302,7 +307,9 @@ private:
   void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, const vpCameraParameters &cam,
               const std::vector<vpPoint> &point, vpRect &rect);
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 /*

@@ -54,6 +54,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/robot/vpRobot.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpRobotFranka
  *
@@ -353,6 +357,8 @@ public:
 
   void stopMotion();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif // #ifndef __vpRobotFranka_h_

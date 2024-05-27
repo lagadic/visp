@@ -49,6 +49,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string opt_portname;
   int opt_baudrate = 9600;
   bool opt_network = false;

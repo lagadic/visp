@@ -48,6 +48,10 @@
 #include "vpPylonGrabberGigE.h"
 #include "vpPylonGrabberUsb.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \brief Get the vpPylonFactory singleton.
  */
@@ -81,9 +85,11 @@ vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
     break;
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonFactory.cpp.o) has no symbols
-void dummy_vpPylonFactory(){};
+void dummy_vpPylonFactory() { };
 #endif // #ifdef VISP_HAVE_PYLON

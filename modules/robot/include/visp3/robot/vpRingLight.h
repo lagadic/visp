@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 
-#ifndef vpRingLight_h
-#define vpRingLight_h
-
 /*!
   \file vpRingLight.h
   \brief Ring light management under unix.
 */
+
+#ifndef vpRingLight_h
+#define vpRingLight_h
 
 #include <visp3/core/vpConfig.h>
 
@@ -49,6 +49,11 @@
 
 #include <visp3/io/vpParallelPort.h>
 #include <visp3/robot/vpRingLight.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpRingLight
@@ -117,7 +122,9 @@ public:
 private:
   vpParallelPort parport;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 #endif

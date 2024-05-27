@@ -31,19 +31,22 @@
  * Interface for the ADEPT Viper 850 robot.
  */
 
-#ifndef vpViper850_h
-#define vpViper850_h
-
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpViper.h>
-
 /*!
  * \file vpViper850.h
  *
  * Modelization of the ADEPT Viper 850 robot.
  */
 
+#ifndef vpViper850_h
+#define vpViper850_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpViper.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpViper850
  *
@@ -167,5 +170,7 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

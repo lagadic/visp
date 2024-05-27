@@ -50,6 +50,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
 
     std::cout << "a test for vpRobotAfma6 class..." << std::endl;
@@ -88,7 +91,8 @@ int main()
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

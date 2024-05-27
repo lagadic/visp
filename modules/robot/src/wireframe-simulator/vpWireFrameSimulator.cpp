@@ -66,6 +66,10 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPoint.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 extern Point2i *point2i;
 extern Point2i *listpoint2i;
 
@@ -1608,3 +1612,6 @@ vpImagePoint vpWireFrameSimulator::projectCameraTrajectory(const vpImage<unsigne
 
   return iP;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

@@ -33,10 +33,15 @@
 #ifndef VPPIONEER_H
 #define VPPIONEER_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/robot/vpUnicycle.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpPioneer
  *
@@ -138,5 +143,7 @@ private:
     eJe_[5][1] = 1; // wz
   }
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

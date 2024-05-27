@@ -55,6 +55,10 @@
 #include <pcl/point_types.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpRealSense
 
@@ -456,6 +460,8 @@ protected:
 
   void initStream();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

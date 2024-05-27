@@ -41,6 +41,10 @@
 
 #ifdef VISP_HAVE_UEYE
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpUeyeGrabber
  * \ingroup group_sensor_camera
@@ -120,6 +124,8 @@ private:
   class vpUeyeGrabberImpl;
   vpUeyeGrabberImpl *m_impl;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

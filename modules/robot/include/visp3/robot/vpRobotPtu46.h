@@ -59,7 +59,10 @@
 /* ------------------------------------------------------------------------ */
 /* --- CLASS ------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpRobotPtu46
@@ -122,7 +125,9 @@ public:
 
   void stopMotion();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif /* #ifndef _vpRobotPtu46_h_ */
 
 #endif

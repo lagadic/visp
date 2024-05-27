@@ -49,6 +49,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
 
     std::cout << "a test for vpRobotViper850 class..." << std::endl;
@@ -62,8 +65,8 @@ int main()
     std::cout << cam << std::endl;
 
     std::cout << "-- Settings associated to the Marlin F033C camera without "
-                 "distortion ---"
-              << std::endl;
+      "distortion ---"
+      << std::endl;
     viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA);
 
     std::cout << viper850 << std::endl;
@@ -71,8 +74,8 @@ int main()
     std::cout << cam << std::endl;
 
     std::cout << "-- Settings associated to the Marlin F033C camera with "
-                 "distortion ------"
-              << std::endl;
+      "distortion ------"
+      << std::endl;
     viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
@@ -95,11 +98,12 @@ int main()
     rzyz.build(R);
 
     std::cout << "fMe:" << std::endl
-              << "\tt: " << t.t() << std::endl
-              << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " " << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
-              << std::endl;
+      << "\tt: " << t.t() << std::endl
+      << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " " << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
+      << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

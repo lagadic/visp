@@ -54,6 +54,9 @@
 #include <visp3/io/vpKeyboard.h>
 #include <visp3/robot/vpRobotMavsdk.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &lastCommandTime)
 {
   bool running = true;

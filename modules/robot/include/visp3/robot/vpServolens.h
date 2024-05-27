@@ -34,13 +34,6 @@
  *
 *****************************************************************************/
 
-#ifndef _vpServolens_h_
-#define _vpServolens_h_
-
-#include <visp3/core/vpConfig.h>
-
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-
 /*!
 
   \file vpServolens.h
@@ -50,9 +43,21 @@
 
 */
 
+#ifndef _vpServolens_h_
+#define _vpServolens_h_
+
+#include <visp3/core/vpConfig.h>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpServolens
@@ -90,7 +95,8 @@ class VISP_EXPORT vpServolens
 {
 public:
   typedef enum { ZOOM = 1, FOCUS = 2, IRIS = 3 } vpServoType;
-  typedef enum {
+  typedef enum
+  {
     ZOOM_MAX = 10000, // Valeur maxi zoom (mm/100)
     ZOOM_MIN = 1000,  // Valeur mini zoom (mm/100)
     FOCUS_MAX = 1500, // Valeur maxi focus (metres/100)
@@ -130,6 +136,8 @@ private:
   int remfd; // file pointer of the host's tty
   bool isinit;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

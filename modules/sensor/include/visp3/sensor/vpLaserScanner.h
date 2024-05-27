@@ -32,10 +32,6 @@
  * Generic laser scanner.
  *
 *****************************************************************************/
-#ifndef vpLaserScanner_h
-#define vpLaserScanner_h
-
-#include "visp3/core/vpConfig.h"
 
 /*!
 
@@ -44,6 +40,15 @@
   \brief Implements a generic laser scanner.
  */
 
+#ifndef vpLaserScanner_h
+#define vpLaserScanner_h
+
+#include "visp3/core/vpConfig.h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpLaserScanner
@@ -72,5 +77,7 @@ protected:
   std::string ip;
   int port;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

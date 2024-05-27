@@ -45,6 +45,10 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotTemplate.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Basic initialization.
  */
@@ -277,7 +281,8 @@ void vpRobotTemplate::getPosition(const vpRobot::vpControlFrameType frame, vpCol
 {
   if (frame == JOINT_STATE) {
     getJointPosition(q);
-  } else {
+  }
+  else {
     std::cout << "Not implemented ! " << std::endl;
   }
 }
@@ -307,3 +312,6 @@ void vpRobotTemplate::getDisplacement(const vpRobot::vpControlFrameType frame, v
   (void)q;
   std::cout << "Not implemented ! " << std::endl;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

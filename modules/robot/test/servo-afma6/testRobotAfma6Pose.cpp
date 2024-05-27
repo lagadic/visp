@@ -60,6 +60,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     // Create an image B&W container
     vpImage<unsigned char> I;
@@ -169,10 +172,10 @@ int main()
     cMo.extract(R);
     r.build(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
-              << std::endl
-              << std::endl;
+      << std::endl
+      << std::endl;
 
-    // Get the robot position in the reference frame
+// Get the robot position in the reference frame
     vpHomogeneousMatrix rMc;
     vpColVector p; // position x,y,z,rx,ry,rz
     robot.getPosition(vpRobotAfma6::REFERENCE_FRAME, p);
@@ -190,8 +193,8 @@ int main()
     rMc.extract(R);
     r.build(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
-              << std::endl
-              << std::endl;
+      << std::endl
+      << std::endl;
 
     robot.getPosition(vpRobotAfma6::ARTICULAR_FRAME, p);
     std::cout << "Robot pose in articular: " << p << std::endl;
@@ -201,8 +204,8 @@ int main()
     rMc.extract(R);
     r.build(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
-              << std::endl
-              << std::endl;
+      << std::endl
+      << std::endl;
 
     vpHomogeneousMatrix rMo;
     rMo = rMc * cMo;
@@ -210,10 +213,11 @@ int main()
     rMo.extract(R);
     r.build(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
-              << std::endl
-              << std::endl;
+      << std::endl
+      << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

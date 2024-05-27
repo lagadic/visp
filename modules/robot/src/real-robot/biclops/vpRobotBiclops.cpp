@@ -55,6 +55,10 @@
 //#define VP_DEBUG_MODE 12 // Activate debug level up to 12
 #include <visp3/core/vpDebug.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
@@ -852,7 +856,9 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 
   m_q_previous = q_current; // Update for next call of this method
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no symbols
 void dummy_vpRobotBiclops() { };

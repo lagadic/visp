@@ -49,6 +49,11 @@
 #include "vpToken.h"
 
 #include <stdio.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  * La procedure "fprintf_Position" ecrit en ascii un positionnement.
  * Entree :
@@ -68,7 +73,7 @@ void fprintf_Position(FILE *f, AritPosition *pp)
  */
 void fscanf_Point3f(Point3f *pp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
+  static const char *err_tbl[] = { "float expected (coordinate ", " of point)" };
   int t;
 
   /* Lecture de la premiere coordonnee du point.  */
@@ -97,7 +102,7 @@ void fscanf_Point3f(Point3f *pp)
  */
 void fscanf_Vector(Vector *vp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ", " of vector)"};
+  static const char *err_tbl[] = { "float expected (coordinate ", " of vector)" };
 
   int t;
 
@@ -135,5 +140,7 @@ void fscanf_Position(AritPosition *pp)
   fscanf_Vector(&pp->translate);
   poperr();
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

@@ -50,6 +50,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  * La procedure "free_Bound" libere la memoire d'une surface.
  * Les champs "bound.face.edge" ne sont pas utilises.
@@ -217,5 +221,7 @@ void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn)
   strcpy(bsp->name, name);
   bsp->bound.nbr = 0;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

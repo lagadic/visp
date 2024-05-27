@@ -49,11 +49,17 @@
 
 #include "vpMy.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void fscanf_float(float *fp);
 void fscanf_Index(Index *ip);
 void fscanf_int(int *ip);
 void fscanf_string(char **str);
 void fscanf_Type(Type *ip);
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

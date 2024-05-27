@@ -32,9 +32,17 @@
  * Single laser scanner point.
  *
 *****************************************************************************/
+
+/*!
+  \file vpScanPoint.h
+
+  \brief Implements a single laser scanner point.
+*/
+
 #ifndef vpScanPoint_h
 #define vpScanPoint_h
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 
 #include <cmath>  // std::fabs
@@ -43,12 +51,10 @@
 #include <ostream>
 #include <sstream>
 
-/*!
-  \file vpScanPoint.h
-
-  \brief Implements a single laser scanner point.
-*/
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
   \class vpScanPoint
@@ -244,5 +250,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p)
 
   return s;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

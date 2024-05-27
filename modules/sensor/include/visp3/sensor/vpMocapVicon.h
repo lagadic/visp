@@ -41,6 +41,11 @@
 
 #include <visp3/sensor/vpMocap.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 /*!
  *\class vpMocapVicon
  * \ingroup group_sensor_mocap
@@ -67,6 +72,8 @@ private:
   class vpMocapViconImpl;
   vpMocapViconImpl *m_impl;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif // vpMocapVicon_h

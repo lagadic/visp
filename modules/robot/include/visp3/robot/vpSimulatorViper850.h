@@ -31,14 +31,15 @@
  * Class which provides a simulator for the robot Viper850.
  */
 
-#ifndef vpSimulatorViper850_HH
-#define vpSimulatorViper850_HH
-
 /*!
  * \file vpSimulatorViper850.h
  * \brief Class which provides a simulator for the robot Viper850..
  */
 
+#ifndef vpSimulatorViper850_HH
+#define vpSimulatorViper850_HH
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
@@ -46,6 +47,10 @@
 
 #include <visp3/robot/vpViper850.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpSimulatorViper850
  *
@@ -284,7 +289,9 @@ protected:
   void updateArticularPosition() vp_override;
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 
 #endif

@@ -54,6 +54,10 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpRect.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpV4l2Grabber
 
@@ -346,6 +350,8 @@ private:
   vpV4l2FrameFormatType m_frameformat;
   vpV4l2PixelFormatType m_pixelformat;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

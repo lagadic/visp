@@ -47,6 +47,10 @@
 #include <stdio.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  * La procedure "parser" fait l'analyse syntaxique du fichier source.
  * Entree/Sortie :
@@ -93,5 +97,7 @@ void parser(Bound_scene *bsp)
       break;
     }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

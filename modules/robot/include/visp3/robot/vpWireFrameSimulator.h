@@ -33,13 +33,14 @@
  *
 *****************************************************************************/
 
-#ifndef vpWireFrameSimulator_HH
-#define vpWireFrameSimulator_HH
-
 /*!
   \file vpWireFrameSimulator.h
   \brief Implementation of a wire frame simulator.
 */
+
+#ifndef vpWireFrameSimulator_HH
+#define vpWireFrameSimulator_HH
+
 #include <cmath> // std::fabs
 #include <iostream>
 #include <limits> // numeric_limits
@@ -58,6 +59,10 @@
 #include <visp3/robot/vpImageSimulator.h>
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   \class vpWireFrameSimulator
 
@@ -603,5 +608,7 @@ protected:
                                        const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
   //@}
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

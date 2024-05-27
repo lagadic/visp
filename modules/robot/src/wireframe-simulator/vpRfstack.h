@@ -45,6 +45,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void fprintf_rfstack(FILE *fp);
 int *get_rfstack(void);
 void load_rfstack(int i);
@@ -53,6 +57,8 @@ void push_rfstack(void);
 void swap_rfstack(void);
 void add_rfstack(int i);
 void sub_rfstack(int i);
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

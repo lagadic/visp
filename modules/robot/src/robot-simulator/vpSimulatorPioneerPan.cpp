@@ -45,6 +45,10 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpSimulatorPioneerPan.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
   Constructor.
 
@@ -231,3 +235,6 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
     break;
   }
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

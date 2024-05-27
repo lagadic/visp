@@ -41,12 +41,17 @@
  */
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpPioneer.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpSimulatorPioneer
  *
@@ -130,5 +135,7 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
   void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

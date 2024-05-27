@@ -51,6 +51,10 @@
 #include "vpView.h"
 #include "vpVwstack.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  * POINT2I  :
  * Tableau de points 2D dans l'espace ecran servant a l'affichage fil-de-fer.
@@ -220,5 +224,7 @@ void wireframe_Face(Face *fp, Point2i *pp)
     SET_COORD2(*cp, pp[*vp].x, pp[*vp].y);
   }
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

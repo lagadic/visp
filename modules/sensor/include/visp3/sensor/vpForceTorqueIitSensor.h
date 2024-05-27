@@ -55,6 +55,11 @@
 
 #include <ftSensorLib/ftSensorLib.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
+
 /*!
   \class vpForceTorqueIitSensor
   \ingroup group_sensor_ft
@@ -168,7 +173,7 @@ protected:
   vpColVector m_ft;
   vpColVector m_ft_filt;
 
-  ftSensorsConnected m_ftSensorsData{};
+  ftSensorsConnected m_ftSensorsData {};
 
   std::atomic<bool> m_acquisitionEnabled;
   std::atomic<bool> m_dataValid;
@@ -180,6 +185,8 @@ protected:
   std::mutex m_mutex;
   int m_warmupMilliseconds;
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

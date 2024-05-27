@@ -50,6 +50,10 @@
 #include <visp3/robot/vpAfma4.h>
 #include <visp3/robot/vpRobotException.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
@@ -600,3 +604,6 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma4 &afma4)
 
   return os;
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif

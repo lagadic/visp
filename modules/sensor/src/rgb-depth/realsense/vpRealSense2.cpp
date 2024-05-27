@@ -65,6 +65,10 @@ bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
 }
 } // namespace
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * Default constructor.
  */
@@ -1693,7 +1697,9 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
 
   return os;
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has  symbols
 void dummy_vpRealSense2() { };

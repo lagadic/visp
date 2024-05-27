@@ -47,6 +47,10 @@
 
 #include "vpView.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void fprintf_vwstack(FILE *fp, char *argv);
 View_parameters *get_vwstack(void);
 void load_vwstack(View_parameters *vp);
@@ -54,6 +58,8 @@ void pop_vwstack(void);
 void push_vwstack(void);
 void swap_vwstack(void);
 void add_vwstack(const char *path, ...);
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

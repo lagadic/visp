@@ -85,7 +85,13 @@
     (B) = (T);                                                                                                         \
   }
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 typedef unsigned char Byte;
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

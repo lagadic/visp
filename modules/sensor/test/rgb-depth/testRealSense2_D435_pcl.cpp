@@ -54,6 +54,9 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   bool opt_pcl_color = false;
   bool opt_show_infrared2 = false;
   bool display_helper = false;

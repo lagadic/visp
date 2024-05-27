@@ -48,7 +48,10 @@
 #include <stdlib.h>
 #include <string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 static void open_hash(void);
 static void close_hash(void);
 static int hashpjw(const char *str);
@@ -62,7 +65,8 @@ static char *get_keyword(void);
 #define PRIME 211
 #define NEXT(x) (x) = (x)->next
 
-typedef struct bucket {
+typedef struct bucket
+{
   struct bucket *next; /* element suivant  */
   char *ident;         /* identifateur   */
   Byte length;         /* longueur de "ident"  */
@@ -231,5 +235,7 @@ Index get_symbol(char *ident, int length)
   }
   return (0); /*  identificateur  */
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

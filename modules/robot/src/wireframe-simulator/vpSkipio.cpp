@@ -47,6 +47,10 @@
 #include "vpToken.h"
 #include <stdio.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*
  * La procedure "skip_cmd" saute les structures d'une commande
  * jusqu'a reconnaitre le debut d'une nouvelle commande.
@@ -97,5 +101,7 @@ void skip_keyword(int token, const char *err)
   }
   lexerr("start", err, NULL);
 }
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif

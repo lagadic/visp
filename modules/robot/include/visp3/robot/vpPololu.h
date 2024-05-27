@@ -44,6 +44,10 @@
 
 class RPMSerialInterface;
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
  * \class vpPololu
  * \ingroup group_robot_real_arm
@@ -328,6 +332,8 @@ private:
    */
   void VelocityCmdThread();
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

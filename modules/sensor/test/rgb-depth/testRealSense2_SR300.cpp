@@ -62,6 +62,10 @@
 #include <opencv2/highgui.hpp>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
