@@ -61,18 +61,18 @@ jobs:
         cmake --build . --target all -j$(nproc)
         cmake --build . --target test -j$(nproc)
         lcov --directory . --capture --output-file visp-coverage.info
-        lcov --remove visp-coverage.info \
+        export WD=`pwd` && lcov --remove visp-coverage.info \
           '/usr/*' \
           '*/private/*' \
           '*/test/*' \
-          "/home/runner/work/visp/visp/3rdparty/*" \
-          "/home/runner/work/visp/visp/demo/*" \
-          "/home/runner/work/visp/visp/example/*" \
-          "/home/runner/work/visp/visp/samples/*" \
-          "/home/runner/work/visp/visp/modules/gui*" \
-          "/home/runner/work/visp/visp/modules/io/src/parallel-port*" \
-          "/home/runner/work/visp/visp/modules/robot*" \
-          "/home/runner/work/visp/visp/modules/sensor*" \
+          "$WD/../3rdparty/*" \
+          "$WD/../demo/*" \
+          "$WD/../example/*" \
+          "$WD/../samples/*" \
+          "$WD/../modules/gui*" \
+          "$WD/../modules/io/src/parallel-port*" \
+          "$WD/../modules/robot*" \
+          "$WD/../modules/sensor*" \
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
