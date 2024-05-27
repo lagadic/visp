@@ -3,7 +3,7 @@ name: Code-coverage
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
   pull_request:
-    types: [opened, reopened, synchronized]
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 

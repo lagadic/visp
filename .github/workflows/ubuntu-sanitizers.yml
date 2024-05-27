@@ -2,7 +2,7 @@ name: Ubuntu-sanitizers
 
 on:
   pull_request:
-    types: [opened, reopened, synchronized]
+    types: [opened, reopened, synchronize]
   schedule:
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
     # * is a special character in YAML so you have to quote this string
