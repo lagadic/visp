@@ -60,12 +60,12 @@
    The mean of several angles must be computed in the Unscented Transform. The definition we chose to use
    is the following:
 
-   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \np.sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \np.cos{\theta_i}}{n})  \f$
+   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n sin{\theta_i}}{n}, \frac{\sum_{i=1}^n cos{\theta_i}}{n})  \f$
 
    As the Unscented Transform uses a weighted mean, the actual implementation of the weighted mean
    of several angles is the following:
 
-   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \np.sin{\theta_i}, \sum_{i=1}^n w_m^i \np.cos{\theta_i})  \f$
+   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i sin{\theta_i}, \sum_{i=1}^n w_m^i cos{\theta_i})  \f$
 
    where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
 
@@ -87,7 +87,7 @@ except:
   has_gui = False
 import numpy as np
 
-def normalizeAngle(angle: float) -> float:
+def normalize_angle(angle: float) -> float:
   angleIn0to2pi = Math.modulo(angle, 2. * np.pi)
   angleInMinPiPi = angleIn0to2pi
   if angleInMinPiPi > np.pi:
@@ -95,13 +95,13 @@ def normalizeAngle(angle: float) -> float:
     angleInMinPiPi = angleInMinPiPi - 2. * np.pi
   return angleInMinPiPi
 
-def measurementMean(measurements: List[ColVector], wm: List[float]) -> ColVector:
+def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVector:
   """
-  @brief Compute the weighted mean of measurement vectors.
+  Compute the weighted mean of measurement vectors.
 
-  @param[in] measurements The measurement vectors, such as v[0] = dist_0 ; v[1] = bearing_0;
+  :param measurements The measurement vectors, such as v[0] = dist_0 ; v[1] = bearing_0;
     v[2] = dist_1 ; v[3] = bearing_1 ...
-  @param[in] wm The associated weights.
+  :param wm The associated weights.
 
   @return ColVector The weighted mean.
   """
@@ -122,13 +122,13 @@ def measurementMean(measurements: List[ColVector], wm: List[float]) -> ColVector
     mean[(2*j)+1] = np.arctan2(sumSin[j], sumCos[j])
   return ColVector(mean)
 
-def measurementResidual(meas: ColVector, toSubstract: ColVector) -> ColVector:
+def measurement_residual(meas: ColVector, toSubstract: ColVector) -> ColVector:
   """
-  @brief Compute the substraction between two vectors expressed in the measurement space,
+  Compute the substraction between two vectors expressed in the measurement space,
   such as v[0] = dist_0 ; v[1] = bearing_0; v[2] = dist_1 ; v[3] = bearing_1 ...
 
-  @param[in] meas Measurement to which we must substract something.
-  @param[in] toSubstract The something we must substract.
+  :param meas Measurement to which we must substract something.
+  :param toSubstract The something we must substract.
 
   @return ColVector \b meas - \b toSubstract .
   """
@@ -137,29 +137,29 @@ def measurementResidual(meas: ColVector, toSubstract: ColVector) -> ColVector:
   res = np.zeros(nbMeasures)
   for i in range(nbPoints):
     res[2*i] = meas[2*i] - toSubstract[2*i]
-    res[2*i+1] = normalizeAngle(meas[2*i + 1] - toSubstract[2*i + 1])
+    res[2*i+1] = normalize_angle(meas[2*i + 1] - toSubstract[2*i + 1])
   return ColVector(res)
 
-def add_state_vectors(a: ColVector, b: ColVector) -> ColVector:
+def state_add_vectors(a: ColVector, b: ColVector) -> ColVector:
   """
-  @brief Compute the addition between two vectors expressed in the state space,
+  Compute the addition between two vectors expressed in the state space,
   such as v[0] = x ; v[1] = y; v[2] = heading .
 
-  @param a The first state vector to which another state vector must be added.
-  @param b The other state vector that must be added to a.
+  :param a The first state vector to which another state vector must be added.
+  :param b The other state vector that must be added to a.
 
   @return ColVector The sum a + b.
   """
   add = a + b
-  return ColVector([add[0], add[1], normalizeAngle(add[2])] )
+  return ColVector([add[0], add[1], normalize_angle(add[2])] )
 
 
-def mean_state_vectors(states: List[ColVector], wm: List[float]) -> ColVector:
+def state_mean_vectors(states: List[ColVector], wm: List[float]) -> ColVector:
   """
-  @brief Compute the weighted mean of state vectors.
+  Compute the weighted mean of state vectors.
 
-  @param states The state vectors.
-  @param wm The associated weights.
+  :param states The state vectors.
+  :param wm The associated weights.
   @return ColVector The weighted mean.
  """
   mean = np.zeros(3)
@@ -175,39 +175,39 @@ def mean_state_vectors(states: List[ColVector], wm: List[float]) -> ColVector:
   mean[2] = np.arctan2(sumSin, sumCos)
   return ColVector(mean)
 
-def residual_state_vectors(a, b) -> ColVector:
+def state_residual_vectors(a, b) -> ColVector:
   """
-  @brief Compute the substraction between two vectors expressed in the state space,
+  Compute the substraction between two vectors expressed in the state space,
   such as v[0] = x ; v[1] = y; v[2] = heading .
 
-  @param a The first state vector to which another state vector must be substracted.
-  @param b The other state vector that must be substracted to a.
+  :param a The first state vector to which another state vector must be substracted.
+  :param b The other state vector that must be substracted to a.
 
   @return ColVector The substraction a - b.
   """
   res = a - b
-  return ColVector([res[0], res[1], normalizeAngle(res[2])])
+  return ColVector([res[0], res[1], normalize_angle(res[2])])
 
 def fx(x: ColVector, dt: float) -> ColVector:
   """
-  @brief As the state model {x, y, \f$ \theta \f$} does not contain any velocity
+  As the state model {x, y, \f$ \theta \f$} does not contain any velocity
   information, it does not evolve without commands.
 
-  @param x The internal state of the UKF.
-  @param dt The sampling time: how far in the future are we projecting x.
+  :param x The internal state of the UKF.
+  :param dt The sampling time: how far in the future are we projecting x.
 
   @return ColVector The updated internal state, projected in time, also known as the prior.
   """
   return x
 
-def generateTurnCommands(v: float, angleStart: float, angleStop: float, nbSteps: int) -> List[ColVector]:
+def generate_turn_commands(v: float, angleStart: float, angleStop: float, nbSteps: int) -> List[ColVector]:
   """
-  @brief Compute the commands realinp.sing a turn at constant linear velocity.
+  Compute the commands realinp.sing a turn at constant linear velocity.
 
-  @param v Constant linear velocity.
-  @param angleStart Starting angle (in degrees).
-  @param angleStop Stop angle (in degrees).
-  @param nbSteps Number of steps to perform the turn.
+  :param v Constant linear velocity.
+  :param angleStart Starting angle (in degrees).
+  :param angleStop Stop angle (in degrees).
+  :param nbSteps Number of steps to perform the turn.
   @return List[ColVector] The corresponding list of commands.
   """
   cmds = []
@@ -218,9 +218,9 @@ def generateTurnCommands(v: float, angleStart: float, angleStop: float, nbSteps:
     cmds.append(cmd)
   return cmds
 
-def generateCommands() -> List[ColVector]:
+def generate_commands() -> List[ColVector]:
   """
-  @brief Generate the list of commands for the simulation.
+  Generate the list of commands for the simulation.
 
   @return List[ColVector] The list of commands to use in the simulation
   """
@@ -234,27 +234,27 @@ def generateCommands() -> List[ColVector]:
 
   # Left turn
   lastLinearVelocity = cmds[len(cmds) -1][0]
-  leftTurnCmds = generateTurnCommands(lastLinearVelocity, 0, 2, 15)
+  leftTurnCmds = generate_turn_commands(lastLinearVelocity, 0, 2, 15)
   cmds.extend(leftTurnCmds)
   for i in range(100):
     cmds.append(cmds[len(cmds) -1])
 
   # Right turn
   lastLinearVelocity = cmds[len(cmds) -1][0]
-  rightTurnCmds = generateTurnCommands(lastLinearVelocity, 2, -2, 15);
+  rightTurnCmds = generate_turn_commands(lastLinearVelocity, 2, -2, 15);
   cmds.extend(rightTurnCmds)
   for i in range(200):
     cmds.append(cmds[len(cmds) -1])
 
   # Left  turn again
   lastLinearVelocity = cmds[len(cmds) -1][0]
-  leftTurnCmds = generateTurnCommands(lastLinearVelocity, -2, 0, 15)
+  leftTurnCmds = generate_turn_commands(lastLinearVelocity, -2, 0, 15)
   cmds.extend(leftTurnCmds)
   for i in range(150):
     cmds.append(cmds[len(cmds) -1])
 
   lastLinearVelocity = cmds[len(cmds) -1][0]
-  leftTurnCmds = generateTurnCommands(lastLinearVelocity, 0, 1, 25)
+  leftTurnCmds = generate_turn_commands(lastLinearVelocity, 0, 1, 25)
   cmds.extend(leftTurnCmds)
   for i in range(150):
     cmds.append(cmds[len(cmds) -1])
@@ -263,23 +263,23 @@ def generateCommands() -> List[ColVector]:
 
 class vpBicycleModel:
   """
-  @brief Class that approximates a 4-wheel robot unp.sing a bicycle model.
+  Class that approximates a 4-wheel robot unp.sing a bicycle model.
   """
   def __init__(self, w: float):
     """
-    @brief Construct a new vpBicycleModel object.
+    Construct a new vpBicycleModel object.
 
-    @param w The length of the wheelbase.
+    :param w The length of the wheelbase.
     """
-    self.m_w = w # The length of the wheelbase.
+    self._w = w # The length of the wheelbase.
 
-  def computeMotion(self, u: ColVector, x: ColVector, dt: float) -> ColVector:
+  def compute_motion(self, u: ColVector, x: ColVector, dt: float) -> ColVector:
     """
-    @brief Models the effect of the command on the state model.
+    Models the effect of the command on the state model.
 
-    @param u The commands. u[0] = velocity ; u[1] = steeringAngle .
-    @param x The state model. x[0] = x ; x[1] = y ; x[2] = heading
-    @param dt The period.
+    :param u The commands. u[0] = velocity ; u[1] = steeringAngle .
+    :param x The state model. x[0] = x ; x[1] = y ; x[2] = heading
+    :param dt The period.
     @return ColVector The state model after applying the command.
     """
     heading = x[2]
@@ -289,15 +289,15 @@ class vpBicycleModel:
 
     if (abs(steeringAngle) > 0.001):
       # The robot is turning
-      beta = (distance / self.m_w) * np.tan(steeringAngle)
-      radius = self.m_w / np.tan(steeringAngle);
-      np.sinh = np.sin(heading)
-      np.sinhb = np.sin(heading + beta)
-      np.cosh = np.cos(heading)
-      np.coshb = np.cos(heading + beta)
+      beta = (distance / self._w) * np.tan(steeringAngle)
+      radius = self._w / np.tan(steeringAngle);
+      sinh = np.sin(heading)
+      sinhb = np.sin(heading + beta)
+      cosh = np.cos(heading)
+      coshb = np.cos(heading + beta)
       motion = ColVector([
-        -radius * np.sinh + radius * np.sinhb,
-        radius * np.cosh - radius * np.coshb,
+        -radius * sinh + radius * sinhb,
+        radius * cosh - radius * coshb,
         beta
       ])
       return motion
@@ -312,138 +312,138 @@ class vpBicycleModel:
 
   def move(self, u: ColVector, x: ColVector, dt: float) -> ColVector:
     """
-    @brief Models the effect of the command on the state model.
+    Models the effect of the command on the state model.
 
-    @param u The commands. u[0] = velocity ; u[1] = steeringAngle .
-    @param x The state model. x[0] = x ; x[1] = y ; x[2] = heading
-    @param dt The period.
+    :param u The commands. u[0] = velocity ; u[1] = steeringAngle .
+    :param x The state model. x[0] = x ; x[1] = y ; x[2] = heading
+    :param dt The period.
     @return ColVector The state model after applying the command.
     """
-    motion = self.computeMotion(u, x, dt)
+    motion = self.compute_motion(u, x, dt)
     newX = x + motion
-    normalizedAngle = normalizeAngle(newX[2])
+    normalizedAngle = normalize_angle(newX[2])
     return ColVector([newX[0], newX[1], normalizedAngle])
 
-class vpLandmarkMeasurements:
+class LandmarkMeasurements:
   """
-  @brief Class that permits to convert the position + heading of the 4-wheel
+  Class that permits to convert the position + heading of the 4-wheel
   robot into measurements from a landmark.
   """
   def __init__(self, x: float, y: float,  range_std: float, rel_angle_std: float):
     """
-    @brief Construct a new vpLandmarkMeasurements object.
+    Construct a new LandmarkMeasurements object.
 
-    @param x The position along the x-axis of the landmark.
-    @param y The position along the y-axis of the landmark.
-    @param range_std The standard deviation of the range measurements.
-    @param rel_angle_std The standard deviation of the relative angle measurements.
+    :param x The position along the x-axis of the landmark.
+    :param y The position along the y-axis of the landmark.
+    :param range_std The standard deviation of the range measurements.
+    :param rel_angle_std The standard deviation of the relative angle measurements.
     """
-    self.m_x = x # The position along the x-axis of the landmark
-    self.m_y = y # The position along the y-axis of the landmark
-    self.m_range_std = range_std # The standard deviation of the range measurement
-    self.m_rel_angle_std = rel_angle_std # The standard deviation of the relative angle measurement
+    self._x = x # The position along the x-axis of the landmark
+    self._y = y # The position along the y-axis of the landmark
+    self._range_std = range_std # The standard deviation of the range measurement
+    self._rel_angle_std = rel_angle_std # The standard deviation of the relative angle measurement
     np.random.seed(4224)
 
   def state_to_measurement(self, chi: ColVector) -> ColVector:
     """
-    @brief Convert the prior of the UKF into the measurement space.
+    Convert the prior of the UKF into the measurement space.
 
-    @param chi The prior.
+    :param chi The prior.
     @return ColVector The prior expressed in the measurement space.
     """
-    dx = self.m_x - chi[0]
-    dy = self.m_y - chi[1]
-    meas = ColVector([sqrt(dx * dx + dy * dy), normalizeAngle(np.arctan2(dy, dx) - chi[2])])
+    dx = self._x - chi[0]
+    dy = self._y - chi[1]
+    meas = ColVector([sqrt(dx * dx + dy * dy), normalize_angle(np.arctan2(dy, dx) - chi[2])])
     return meas
 
-  def measureGT(self, pos: ColVector) -> ColVector:
+  def measure_gt(self, pos: ColVector) -> ColVector:
     """
-    @brief Perfect measurement of the range and relative orientation of the robot
+    Perfect measurement of the range and relative orientation of the robot
     located at pos.
 
-    @param pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+    :param pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
     @return ColVector [0] the range [1] the relative orientation of the robot.
     """
-    dx = self.m_x - pos[0]
-    dy = self.m_y - pos[1]
+    dx = self._x - pos[0]
+    dy = self._y - pos[1]
     range = sqrt(dx * dx + dy * dy)
-    orientation = normalizeAngle(np.arctan2(dy, dx) - pos[2])
+    orientation = normalize_angle(np.arctan2(dy, dx) - pos[2])
     measurements = ColVector([range, orientation])
     return measurements
 
-  def measureWithNoise(self, pos: ColVector) -> ColVector:
+  def measure_with_noise(self, pos: ColVector) -> ColVector:
     """
-    @brief Noisy measurement of the range and relative orientation that
+    Noisy measurement of the range and relative orientation that
     correspond to pos.
 
-    @param pos The actual position of the robot (pos[0]: x ; pos[1] = y ; pos[2] = heading).
+    :param pos The actual position of the robot (pos[0]: x ; pos[1] = y ; pos[2] = heading).
     @return ColVector [0] the range [1] the relative orientation.
     """
-    measurementsGT = self.measureGT(pos)
+    measurementsGT = self.measure_gt(pos)
     measurementsNoisy = measurementsGT
-    range = measurementsNoisy[0] + np.random.normal(0., self.m_range_std)
-    relAngle = normalizeAngle(measurementsNoisy[1] + np.random.normal(0., self.m_rel_angle_std))
+    range = measurementsNoisy[0] + np.random.normal(0., self._range_std)
+    relAngle = normalize_angle(measurementsNoisy[1] + np.random.normal(0., self._rel_angle_std))
     return ColVector([range, relAngle])
 
 
-class vpLandmarksGrid:
+class LandmarksGrid:
   """
-  @brief Class that represent a grid of landmarks that measure the distance and
+  Class that represent a grid of landmarks that measure the distance and
   relative orientation of the 4-wheel robot.
   """
-  def __init__(self, landmarks: List[vpLandmarkMeasurements]):
+  def __init__(self, landmarks: List[LandmarkMeasurements]):
     """
-    @brief Construct a new vpLandmarksGrid object.
+    Construct a new LandmarksGrid object.
 
-    @param landmarks The list of landmarks forming the grid.
+    :param landmarks The list of landmarks forming the grid.
     """
-    self.m_landmarks = landmarks # The list of landmarks forming the grid.
+    self._landmarks = landmarks # The list of landmarks forming the grid.
 
   def state_to_measurement(self, chi: ColVector) -> ColVector:
     """
-    @brief Convert the prior of the UKF into the measurement space.
+    Convert the prior of the UKF into the measurement space.
 
-    @param chi The prior.
+    :param chi The prior.
     @return ColVector The prior expressed in the measurement space.
     """
-    nbLandmarks = len(self.m_landmarks)
+    nbLandmarks = len(self._landmarks)
     measurements = np.zeros(2*nbLandmarks)
     for i in range (nbLandmarks):
-      landmarkMeas = self.m_landmarks[i].state_to_measurement(chi)
+      landmarkMeas = self._landmarks[i].state_to_measurement(chi)
       measurements[2*i] = landmarkMeas[0]
       measurements[(2*i) + 1] = landmarkMeas[1]
     return ColVector(measurements)
 
-  def measureGT(self, pos: ColVector) -> ColVector:
+  def measure_gt(self, pos: ColVector) -> ColVector:
     """
-    @brief Perfect measurement from each landmark of the range and relative orientation of the robot
+    Perfect measurement from each landmark of the range and relative orientation of the robot
     located at pos.
 
-    @param pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+    :param pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
     @return ColVector n x ([0] the range [1] the relative orientation of the robot), where
     n is the number of landmarks.
     """
-    nbLandmarks = len(self.m_landmarks)
+    nbLandmarks = len(self._landmarks)
     measurements = np.zeros(2*nbLandmarks)
     for i in range(nbLandmarks):
-      landmarkMeas = self.m_landmarks[i].measureGT(pos)
+      landmarkMeas = self._landmarks[i].measure_gt(pos)
       measurements[2*i] = landmarkMeas[0]
       measurements[(2*i) + 1] = landmarkMeas[1]
     return ColVector(measurements)
 
-  def measureWithNoise(self, pos: ColVector) -> ColVector:
+  def measure_with_noise(self, pos: ColVector) -> ColVector:
     """
-    @brief Noisy measurement from each landmark of the range and relative orientation that
+    Noisy measurement from each landmark of the range and relative orientation that
     correspond to pos.
 
-    @param[in] pos The actual position of the robot (pos[0]: x ; pos[1] = y ; pos[2] = heading).
+    :param pos The actual position of the robot (pos[0]: x ; pos[1] = y ; pos[2] = heading).
     @return ColVector n x ([0] the range [1] the relative orientation of the robot), where
     n is the number of landmarks.
     """
-    nbLandmarks = len(self.m_landmarks)
+    nbLandmarks = len(self._landmarks)
     measurements = np.zeros(2*nbLandmarks)
     for i in range(nbLandmarks):
-      landmarkMeas = self.m_landmarks[i].measureWithNoise(pos)
+      landmarkMeas = self._landmarks[i].measure_with_noise(pos)
       measurements[2*i] = landmarkMeas[0]
       measurements[(2*i) + 1] = landmarkMeas[1]
     return ColVector(measurements)
@@ -451,34 +451,28 @@ class vpLandmarksGrid:
 if __name__ == '__main__':
   dt = 0.1 # Period of 0.1s
   step = 1. # Number of update of the robot position between two UKF filtering
-  sigmaRange = 0.3 # Standard deviation of the range measurement: 0.3m
-  sigmaBearing = Math.rad(0.5) # Standard deviation of the bearing angle: 0.5deg
+  sigma_range = 0.3 # Standard deviation of the range measurement: 0.3m
+  sigma_bearing = Math.rad(0.5) # Standard deviation of the bearing angle: 0.5deg
   wheelbase = 0.5 # Wheelbase of 0.5m
   processVariance = 0.0001
-  landmarks = [ vpLandmarkMeasurements(5, 10, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(10, 5, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(15, 15, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(20, 5, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(0, 30, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(50, 30, sigmaRange, sigmaBearing)
-              , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing)
-              ] # Vector of landmarks constituing the grid
+  positions = [ (5, 10) , (10, 5), (15, 15), (20, 5), (0, 30), (50, 30), (40, 10)] # Positions of the landmarks constituing the grid
+  landmarks = [LandmarkMeasurements(x, y, sigma_range, sigma_bearing) for x,y in positions] # Vector of landmarks constituing the grid
   nbLandmarks = len(landmarks) # Number of landmarks constituing the grid
-  cmds = generateCommands()
+  cmds = generate_commands()
   nbCmds = len(cmds)
 
   # Creation of the simulated grid of landmarks and robot
-  grid = vpLandmarksGrid(landmarks)
+  grid = LandmarksGrid(landmarks)
   robot = vpBicycleModel(wheelbase)
 
   # The object that draws the sigma points used by the UKF
-  drawer = UKSigmaDrawerMerwe(n=3, alpha=0.1, beta=2, kappa=0, resFunc=residual_state_vectors, addFunc=add_state_vectors)
+  drawer = UKSigmaDrawerMerwe(n=3, alpha=0.1, beta=2, kappa=0, resFunc=state_residual_vectors, addFunc=state_add_vectors)
 
   # The matrices require for the construction of the Unscented filter
   P0 = Matrix([[0.1, 0., 0.],
                [0., 0.1, 0.],
                [0., 0., 0.05]]) # The initial estimate of the state covariance matrix
-  R1landmark = Matrix([[sigmaRange * sigmaRange, 0], [0, sigmaBearing*sigmaBearing]]) # The measurement covariance matrix for 1 landmark
+  R1landmark = Matrix([[sigma_range * sigma_range, 0], [0, sigma_bearing*sigma_bearing]]) # The measurement covariance matrix for 1 landmark
   R = Matrix(2*nbLandmarks, 2 * nbLandmarks) # The measurement covariance matrix for the grid of landmarks
   for i in range(nbLandmarks):
     R.insert(R1landmark, 2*i, 2*i)
@@ -493,12 +487,12 @@ if __name__ == '__main__':
 
   # Initializing the state vector and state covariance matrix estimates
   ukf.init(X0, P0)
-  ukf.setCommandStateFunction(robot.computeMotion)
-  ukf.setMeasurementMeanFunction(measurementMean)
-  ukf.setMeasurementResidualFunction(measurementResidual)
-  ukf.setStateAddFunction(add_state_vectors)
-  ukf.setStateMeanFunction(mean_state_vectors)
-  ukf.setStateResidualFunction(residual_state_vectors)
+  ukf.setCommandStateFunction(robot.compute_motion)
+  ukf.setMeasurementMeanFunction(measurement_mean)
+  ukf.setMeasurementResidualFunction(measurement_residual)
+  ukf.setStateAddFunction(state_add_vectors)
+  ukf.setStateMeanFunction(state_mean_vectors)
+  ukf.setStateResidualFunction(state_residual_vectors)
 
   # Initializing the Graphical User Interface if the needed libraries are available
   if has_gui:
@@ -517,7 +511,7 @@ if __name__ == '__main__':
 
     if (i % int(step) == 0):
       # Perform the measurement
-      z = grid.measureWithNoise(robot_pos)
+      z = grid.measure_with_noise(robot_pos)
 
       # Use the UKF to filter the measurement
       ukf.filter(z, dt, cmds[i])
