@@ -35,6 +35,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -66,6 +67,9 @@ void usage(const char **argv, int error, const std::string &robot_ip)
 
 int main(int argc, const char **argv)
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string opt_robot_ip = "192.168.0.100";
 
