@@ -35,6 +35,7 @@
 
 #include <sstream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayD3D.h>

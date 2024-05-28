@@ -35,8 +35,9 @@
 #define vpDisplayX_h
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_X11
 #include <visp3/core/vpDisplay.h>
+
+#ifdef VISP_HAVE_X11
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 

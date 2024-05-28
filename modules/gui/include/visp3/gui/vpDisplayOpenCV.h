@@ -35,12 +35,12 @@
 #define _vpDisplayOpenCV_h_
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
 #include <functional>
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 

@@ -41,10 +41,10 @@
 #define vpDisplayGDI_HH
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 
 #if (defined(VISP_HAVE_GDI))
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/gui/vpDisplayWin32.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)

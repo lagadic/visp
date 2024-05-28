@@ -35,9 +35,8 @@
 #define VPDISPLAYD3D_HH
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_D3D9))
-
 #include <visp3/core/vpDisplay.h>
+#if (defined(VISP_HAVE_D3D9))
 #include <visp3/gui/vpDisplayWin32.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)

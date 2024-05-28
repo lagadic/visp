@@ -35,9 +35,8 @@
 #define vpDisplayGTK_h
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_GTK))
-
 #include <visp3/core/vpDisplay.h>
+#if (defined(VISP_HAVE_GTK))
 #include <visp3/core/vpImage.h>
 
 #if defined(ENABLE_VISP_NAMESPACE)

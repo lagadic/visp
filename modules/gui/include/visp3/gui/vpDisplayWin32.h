@@ -36,12 +36,12 @@
 #define vpDisplayWin32_hh
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #include <string>
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible

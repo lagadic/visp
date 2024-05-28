@@ -36,6 +36,7 @@
 #define vpDisplayFactory_h
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
