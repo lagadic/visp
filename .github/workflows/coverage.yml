@@ -61,7 +61,7 @@ jobs:
         cmake --build . --target all -j$(nproc)
         cmake --build . --target test -j$(nproc)
         lcov --directory . --capture --output-file visp-coverage.info
-        export WD=`pwd` && lcov --remove visp-coverage.info \
+        lcov --remove visp-coverage.info \
           '/usr/*' \
           '*/private/*' \
           '*/test/*' \
