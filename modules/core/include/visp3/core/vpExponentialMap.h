@@ -43,10 +43,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpExponentialMap
 
@@ -97,7 +94,5 @@ public:
   static vpColVector inverse(const vpHomogeneousMatrix &M);
   static vpColVector inverse(const vpHomogeneousMatrix &M, const double &delta_t);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -46,10 +46,7 @@
 
 #include <visp3/core/vpTime.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
    Default constructor that consider the first camera found on the bus as
@@ -1406,9 +1403,7 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
   this->acquire(I);
   return *this;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols

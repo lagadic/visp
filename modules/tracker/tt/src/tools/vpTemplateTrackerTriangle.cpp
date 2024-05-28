@@ -38,10 +38,7 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
@@ -427,6 +424,4 @@ double vpTemplateTrackerTriangle::getMaxx() const { return minx_temp + l_t + 1; 
   that are in the triangle. \sa getMaxx()
  */
 double vpTemplateTrackerTriangle::getMaxy() const { return miny_temp + h_t + 1; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

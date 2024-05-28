@@ -49,10 +49,7 @@
 // Meter/pixel conversion
 #include <visp3/core/vpCameraParameters.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpFeatureDisplay
 
@@ -88,7 +85,5 @@ public:
   static void displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                            const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

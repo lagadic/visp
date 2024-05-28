@@ -41,7 +41,7 @@
 
 #include "private/vpImageIoBackend.h"
 
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 

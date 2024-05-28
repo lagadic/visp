@@ -38,10 +38,7 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTriangle
   \ingroup group_core_geometry
@@ -110,7 +107,5 @@ public:
 private:
   void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

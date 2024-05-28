@@ -40,10 +40,7 @@
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(nullptr),
   ptTemplatePyr(nullptr), ptTemplateInit(false), templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr),
@@ -843,6 +840,4 @@ void vpTemplateTracker::initPosEvalRMS(const vpColVector &param)
     }
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

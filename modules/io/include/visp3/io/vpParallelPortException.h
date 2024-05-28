@@ -46,10 +46,7 @@
 #include <iostream>
 #include <string>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpParallelPortException
  *
@@ -92,7 +89,5 @@ public:
    */
   explicit vpParallelPortException(int id) : vpException(id) { }
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

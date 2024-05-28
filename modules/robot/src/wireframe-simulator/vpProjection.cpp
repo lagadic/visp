@@ -44,10 +44,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "View_to_Matrix" constuit la matrice homogene de projection
  * a partir des parametres de la prise de vue.
@@ -235,7 +232,5 @@ void set_perspective(View_parameters *vp, Matrix wc)
   m[3][3] = 0.0;
   postmult_matrix(wc, m);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

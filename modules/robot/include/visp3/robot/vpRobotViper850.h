@@ -63,10 +63,7 @@ extern "C" {
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /* !
   \class vpRobotViper850
 
@@ -482,8 +479,6 @@ public: /* Methode publiques */
 private:
   double maxRotationVelocity_joint6;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif /* #ifndef vpRobotViper850_h */

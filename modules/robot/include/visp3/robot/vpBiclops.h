@@ -42,10 +42,7 @@
 #include <visp3/core/vpPoseVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpBiclops
  *
@@ -324,7 +321,5 @@ public:
  */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops &dummy);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

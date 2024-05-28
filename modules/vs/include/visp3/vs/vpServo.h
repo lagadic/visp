@@ -48,10 +48,7 @@
 #include <visp3/vs/vpAdaptiveGain.h>
 #include <visp3/vs/vpServoException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpServo
  *
@@ -1338,7 +1335,5 @@ protected:
 
   double m_pseudo_inverse_threshold; //!< Threshold used in the pseudo inverse
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

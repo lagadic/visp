@@ -46,10 +46,7 @@
 #include <visp3/me/vpMeEllipse.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbtMeEllipse
  * \ingroup group_mbt_features
@@ -81,8 +78,6 @@ private:
   void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
   void suppressPoints();
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #endif

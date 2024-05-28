@@ -46,10 +46,7 @@
 #include <iostream>
 #include <stdio.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpImageIo
@@ -191,8 +188,6 @@ public:
       int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

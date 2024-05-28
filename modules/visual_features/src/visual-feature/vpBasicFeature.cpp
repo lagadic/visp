@@ -43,10 +43,7 @@
 
 #include <visp3/visual_features/vpBasicFeature.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
     (unsigned int)(1 << 0),  (unsigned int)(1 << 1),  (unsigned int)(1 << 2),  (unsigned int)(1 << 3),
     (unsigned int)(1 << 4),  (unsigned int)(1 << 5),  (unsigned int)(1 << 6),  (unsigned int)(1 << 7),
@@ -172,9 +169,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int sel
 
   return e;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 4

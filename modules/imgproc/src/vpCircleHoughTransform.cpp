@@ -33,7 +33,7 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
 namespace visp
 {
 #endif
@@ -1206,6 +1206,4 @@ operator<<(std::ostream &os, const vpCircleHoughTransform &detector)
   return os;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

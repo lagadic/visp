@@ -55,10 +55,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fscanf_Bound" lit en ascii une surface.
  * Entree :
@@ -205,7 +202,5 @@ void fscanf_Point3f_list(Point3f_list *lp)
     pp->z = (t == T_INT) ? (float)myint : myfloat;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

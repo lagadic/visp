@@ -42,10 +42,7 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   To set the values of centred moments. Required when normalizing the moment
   values.
@@ -193,6 +190,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &m
   m.printWithIndices(os);
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

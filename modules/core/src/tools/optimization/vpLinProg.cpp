@@ -38,10 +38,7 @@
 
 #include <visp3/core/vpLinProg.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Reduces the search space induced by an equality constraint.
 
@@ -732,6 +729,4 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   }
 }
 #endif
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

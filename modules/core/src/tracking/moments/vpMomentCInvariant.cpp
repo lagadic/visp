@@ -41,10 +41,7 @@
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentObject.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
   (option to use a different calculation mode for sx and sy)
@@ -296,6 +293,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant 
   }
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

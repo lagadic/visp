@@ -55,10 +55,7 @@
 #include <thread>
 using json = nlohmann::json; //! json namespace shortcut
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 //// Network message utils
 
@@ -620,9 +617,7 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   std::vector<std::string> result = jsonValue;
   return result;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #else
 
 // Work around to avoid libvisp_dnn_tracker library empty when threads are not used

@@ -47,10 +47,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \file vpDisplayOpenCV.h
@@ -267,8 +264,6 @@ protected:
   void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

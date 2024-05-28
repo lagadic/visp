@@ -47,10 +47,7 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageQueue
 
@@ -286,8 +283,6 @@ private:
   bool m_directory_to_create;
   bool m_recording_trigger;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

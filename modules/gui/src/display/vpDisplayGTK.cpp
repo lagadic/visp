@@ -68,10 +68,7 @@
 #include <gdk/gdkrgb.h>
 #include <gtk/gtk.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpDisplayGTK::Impl
 {
@@ -1593,9 +1590,7 @@ unsigned int vpDisplayGTK::getScreenHeight()
   return height;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayGTK.cpp.o) has no symbols

@@ -46,10 +46,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbtMeLine
  * \brief Implementation of a line used by the model-based tracker.
@@ -124,9 +121,7 @@ private:
   void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
   void updateDelta();
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

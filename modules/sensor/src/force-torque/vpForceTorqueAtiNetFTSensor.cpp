@@ -55,10 +55,7 @@ typedef struct response_struct
 } RESPONSE;
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that set counts per force to 1000000, counts per torque to 1000000000 and scaling factor to 1.
  * Note that counts per force, counts per torque and scaling factor are used to transform force / torque in user units
@@ -276,7 +273,5 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
 
   return false;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

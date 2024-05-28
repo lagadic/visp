@@ -59,10 +59,7 @@
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
     && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Read the contents of the image file, allocate memory
   for the corresponding gray level image, if necessary convert the data in
@@ -306,8 +303,6 @@ void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned ch
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

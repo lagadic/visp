@@ -48,10 +48,7 @@
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpRzyxVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpHomogeneousMatrix;
 class vpRotationMatrix;
@@ -245,7 +242,5 @@ private:
   static const double minimum;
 
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

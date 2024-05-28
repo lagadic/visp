@@ -43,10 +43,7 @@
 
 #include <visp3/core/vpHistogramPeak.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor for a gray level histogram peak.
 */
@@ -100,9 +97,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 
   return s;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

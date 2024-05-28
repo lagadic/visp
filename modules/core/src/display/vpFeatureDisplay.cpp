@@ -49,10 +49,7 @@
 
 #include <visp3/core/vpImagePoint.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Display a 2D point with coordinates (x, y) expressed in the image plane.
   These coordinates are obtained after perspective projection of the point.
@@ -277,6 +274,4 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11
   vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
   vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

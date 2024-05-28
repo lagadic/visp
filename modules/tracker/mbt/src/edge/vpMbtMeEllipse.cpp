@@ -47,10 +47,7 @@
 #include <cmath>     // std::fabs
 #include <limits>    // numeric_limits
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
@@ -376,7 +373,5 @@ void vpMbtMeEllipse::suppressPoints()
       ++it;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -49,10 +49,7 @@
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerZone
   \ingroup group_tt_tools
@@ -124,7 +121,5 @@ public:
 
   vpTemplateTrackerZone &operator=(const vpTemplateTrackerZone &z);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

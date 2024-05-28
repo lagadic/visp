@@ -47,10 +47,7 @@
 #if defined(VISP_HAVE_PUGIXML)
 #include <string>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpXmlConfigParserKeyPoint
  * \ingroup group_vision_keypoints
@@ -202,8 +199,6 @@ private:
   //! Pointer to implementation
   Impl *m_impl;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

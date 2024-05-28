@@ -58,10 +58,7 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static const char *opt_Afma6[] = { "JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
                                   "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 
@@ -1594,6 +1591,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma6 &afma6)
 
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

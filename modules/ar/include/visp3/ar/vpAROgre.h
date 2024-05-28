@@ -70,10 +70,7 @@
 #include <OIS.h>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpAROgre
 
@@ -395,9 +392,7 @@ protected:
   std::list<std::string> mOptionalResourceLocation; /** Optional resource location (used to
                                                         load mesh and material) */
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // VISP_HAVE_OGRE
 
 #endif

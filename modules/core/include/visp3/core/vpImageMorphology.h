@@ -50,10 +50,7 @@
 #include <math.h>
 #include <string.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageMorphology
 
@@ -536,9 +533,7 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, operation, size);
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 /*

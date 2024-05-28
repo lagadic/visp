@@ -50,10 +50,7 @@
 
 #define DEBUG_DISPLAY_DEPTH_NORMAL 0
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthNormal
 {
 public:
@@ -316,9 +313,7 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>

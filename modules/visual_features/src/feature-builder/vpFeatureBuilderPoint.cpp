@@ -42,10 +42,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
   Create a vpFeaturePoint thanks to a vpDot and the parameters of the camera.
@@ -325,6 +322,4 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &goodC
     throw;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

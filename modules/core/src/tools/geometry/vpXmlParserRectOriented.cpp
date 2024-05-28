@@ -50,10 +50,7 @@
 
 #include <visp3/core/vpIoTools.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserRectOriented::Impl
 {
@@ -207,9 +204,7 @@ void vpXmlParserRectOriented::save(const std::string &filename, bool append) { m
 vpRectOriented vpXmlParserRectOriented::getRectangle() const { return m_impl->getRectangle(); }
 
 void vpXmlParserRectOriented::setRectangle(const vpRectOriented &rectangle) { m_impl->setRectangle(rectangle); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserRectOriented.cpp.o) has no symbols
 void dummy_vpXmlParserRectOriented() { };

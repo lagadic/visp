@@ -41,10 +41,7 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpHomography.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 const double vpHomography::m_threshold_rotation = 1e-7;
 const double vpHomography::m_threshold_displacement = 1e-18;
@@ -702,6 +699,4 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

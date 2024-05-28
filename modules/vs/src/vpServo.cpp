@@ -43,10 +43,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/vs/vpServo.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
   featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
@@ -1238,6 +1235,4 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
   }
   return q2;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

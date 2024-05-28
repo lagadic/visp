@@ -54,10 +54,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpKinect
@@ -180,9 +177,7 @@ private:
   unsigned int height; // height of the rgb image
   unsigned int width;  // width of the rgb image
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 #endif

@@ -47,10 +47,7 @@
 
 #include <math.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpGenericFeature
  * \ingroup group_visual_features
@@ -217,7 +214,5 @@ private:
   vpColVector err;
   vpGenericFeatureErrorType errorStatus;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -51,10 +51,7 @@
 static int stack[STACKSIZE] = { vpDEFAULT_REMOVE }; /* pile    */
 static int *sp = stack;                           /* sommet   */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_rfstack" affiche le sommet
  * de la pile des drapeaux d'elimination de faces.
@@ -181,7 +178,5 @@ void add_rfstack(int i) { *sp |= i; }
  * de la pile des drapeaux d'elimination de faces.
  */
 void sub_rfstack(int i) { *sp &= ~i; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -42,10 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -132,7 +129,5 @@ mu12 = mc.get(1,2); // the same
   \endcode
 */
 inline const std::vector<double> &vpMomentCentered::get() const { return vpMoment::get(); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

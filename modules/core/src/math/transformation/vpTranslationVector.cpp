@@ -42,10 +42,7 @@
 
 #include <visp3/core/vpTranslationVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
@@ -872,6 +869,4 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
   vpTranslationVector t(meanT);
   return t;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

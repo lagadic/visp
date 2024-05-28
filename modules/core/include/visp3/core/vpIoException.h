@@ -45,10 +45,7 @@
 #include <iostream>
 #include <string>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpIoException
  * \ingroup group_core_debug
@@ -92,7 +89,5 @@ public:
    */
   explicit vpIoException(int id) : vpException(id) { }
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

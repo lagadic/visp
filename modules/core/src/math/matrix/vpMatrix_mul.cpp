@@ -44,10 +44,7 @@
 // or vector content in a gsl_matrix or gsl_vector. This is not acceptable here.
 // that's why we prefer use naive code when VISP_HAVE_GSL is defined.
 #if defined(VISP_HAVE_LAPACK)
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>
 typedef MKL_INT integer;
@@ -116,9 +113,7 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M_, unsigned int N_, double a
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols

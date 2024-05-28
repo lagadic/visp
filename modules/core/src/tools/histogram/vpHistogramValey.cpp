@@ -43,10 +43,7 @@
 
 #include <visp3/core/vpHistogramValey.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Copy operator.
@@ -89,9 +86,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v)
   return s;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

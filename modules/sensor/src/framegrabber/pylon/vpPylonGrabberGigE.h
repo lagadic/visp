@@ -52,10 +52,7 @@
 
 #include <pylon/gige/BaslerGigEInstantCamera.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabberGigE
 
@@ -126,8 +123,6 @@ private:
   unsigned int m_numCameras;                //!< Number of connected GigE cameras
   bool m_connected;                         //!< true if camera connected
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabberGigE_h_

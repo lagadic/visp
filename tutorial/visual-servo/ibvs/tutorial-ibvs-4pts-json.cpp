@@ -164,9 +164,7 @@ void to_json(json &j, const vpFeaturePoint &p)
     {"z", p.get_Z()}
   };
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
 //! [Custom ViSP object conversion]
 

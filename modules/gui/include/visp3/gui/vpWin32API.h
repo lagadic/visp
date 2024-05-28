@@ -49,10 +49,7 @@
 #include <string>
 #include <windows.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
@@ -69,8 +66,6 @@ BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase);
 COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor);
 HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits);
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

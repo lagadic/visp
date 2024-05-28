@@ -66,10 +66,7 @@ typedef unsigned short uint16_t;
 #include <inttypes.h>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpDisplay;
 // Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
 template <class Type> class vpImage; // forward declare to make function declaration possible
@@ -81,16 +78,11 @@ std::ostream &operator<<(std::ostream &, const vpImage<unsigned char> &);
 std::ostream &operator<<(std::ostream &, const vpImage<char> &);
 std::ostream &operator<<(std::ostream &, const vpImage<float> &);
 std::ostream &operator<<(std::ostream &, const vpImage<double> &);
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second);
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImage
 
@@ -2558,9 +2550,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
 #endif
   }
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second)
 {
   using std::swap;

@@ -32,10 +32,7 @@
 #include <string.h>
 #include <visp3/io/vpParseArgv.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*
  * Default table of argument descriptors.  These are normally available
@@ -582,6 +579,4 @@ int vpParseArgv::parse(int argc, const char **argv, const char *validOpts, const
   return (chOpt);
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

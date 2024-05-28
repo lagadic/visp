@@ -49,10 +49,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   Copy operator.
@@ -793,6 +790,6 @@ int vpForceTwistMatrix::print(std::ostream &s, unsigned int length, char const *
 void vpForceTwistMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
   }
 #endif

@@ -46,10 +46,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \brief Error that can be emitted by the vpFrameGrabber class and its
  * derivates.
@@ -91,7 +88,5 @@ public:
    */
   explicit vpFrameGrabberException(int id) : vpException(id) { }
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

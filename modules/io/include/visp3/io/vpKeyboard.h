@@ -49,10 +49,7 @@
 #include <unistd.h>
 #endif // defined UNIX
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpKeyboard
@@ -101,7 +98,5 @@ private:
   struct termios initial_settings, new_settings;
 #endif // defined UNIX
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

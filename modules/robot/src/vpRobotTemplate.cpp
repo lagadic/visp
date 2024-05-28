@@ -45,10 +45,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotTemplate.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic initialization.
  */
@@ -312,6 +309,4 @@ void vpRobotTemplate::getDisplacement(const vpRobot::vpControlFrameType frame, v
   (void)q;
   std::cout << "Not implemented ! " << std::endl;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

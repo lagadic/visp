@@ -42,10 +42,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/sensor/vpComedi.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
@@ -174,9 +171,7 @@ std::string vpComedi::getPhyDataUnits() const
   }
   return units;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpComedi.cpp.o) has  symbols
 void dummy_vpComedi() { };

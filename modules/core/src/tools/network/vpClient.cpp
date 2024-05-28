@@ -40,10 +40,7 @@
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpClient::vpClient() : vpNetwork(), m_numberOfAttempts(0) { }
 
 /*!
@@ -217,9 +214,7 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   std::cout << "Connected!" << std::endl;
   return true;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpClient.cpp.o) has no symbols
 void dummy_vpClient() { };

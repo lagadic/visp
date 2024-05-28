@@ -54,10 +54,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerTriangle
   \ingroup group_tt_tools
@@ -171,7 +168,5 @@ public:
 
   vpTemplateTrackerTriangle &operator=(const vpTemplateTrackerTriangle &T);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

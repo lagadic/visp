@@ -42,10 +42,7 @@
 #include <Simd/SimdLib.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Change the look up table (LUT) of an image. Considering pixel gray
   level values \f$ l \f$ in the range \f$[A, B]\f$, this method allows
@@ -1195,6 +1192,4 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
   }
   return cpt_in_range;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

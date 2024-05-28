@@ -46,10 +46,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMatrixException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpQuadProg
  * \ingroup group_core_optim
@@ -163,7 +160,5 @@ protected:
   }
 #endif
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

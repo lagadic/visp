@@ -38,10 +38,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Check if an image point belongs to a rectangle.
 
@@ -455,6 +452,4 @@ double vpImagePoint::sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP
 {
   return vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j());
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

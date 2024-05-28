@@ -44,10 +44,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/me/vpMe.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpMeSite
@@ -397,8 +394,6 @@ private:
   vpMeSiteState m_state; //!< Site state
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

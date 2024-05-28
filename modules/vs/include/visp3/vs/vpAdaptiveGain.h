@@ -42,10 +42,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpColVector;
 
 /*!
@@ -307,7 +304,5 @@ public:
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

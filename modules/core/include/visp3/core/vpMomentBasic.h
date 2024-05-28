@@ -42,10 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMomentBasic
@@ -87,7 +84,5 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &v);
   void printDependencies(std::ostream &os) const;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

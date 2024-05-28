@@ -55,10 +55,7 @@
 #include <visp3/gui/vpWin32Renderer.h>
 #include <windows.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 // ViSP-defined messages for window's callback function
 #define vpWM_GETCLICK WM_USER + 1
@@ -140,9 +137,7 @@ public:
   friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

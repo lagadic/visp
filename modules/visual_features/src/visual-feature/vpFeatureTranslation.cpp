@@ -57,10 +57,7 @@ other functionalities are useful but not mandatory
 
 */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for 3D translation visual
@@ -790,6 +787,4 @@ unsigned int vpFeatureTranslation::selectTy() { return FEATURE_LINE[1]; }
   \sa selectTx(), selectTy()
 */
 unsigned int vpFeatureTranslation::selectTz() { return FEATURE_LINE[2]; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

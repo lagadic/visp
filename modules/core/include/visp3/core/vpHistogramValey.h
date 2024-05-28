@@ -43,10 +43,7 @@
 
 #include <visp3/core/vpHistogramPeak.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogramValey
 
@@ -143,7 +140,5 @@ public:
  * c-basic-offset: 2
  * End:
  */
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

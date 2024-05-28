@@ -55,10 +55,7 @@
 
 #include <list>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogram
   \ingroup group_core_histogram
@@ -322,7 +319,5 @@ private:
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
   unsigned int m_total; /*!< Cumulated number of pixels in the input image. */
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -37,14 +37,9 @@
 
 #include <visp3/robot/vpRobotSimulator.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor that sets the sampling time by default to 40ms.
 */
 vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f) { }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

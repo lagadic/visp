@@ -40,10 +40,7 @@
 #include <stdexcept>
 #include <visp3/core/vpEndian.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 namespace vpEndian
 {
 /*!
@@ -122,6 +119,4 @@ uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char *const ptr)
 #endif
 }
 } // namespace vpEndian
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

@@ -46,10 +46,7 @@
 #include <qualisys_cpp_sdk/RTPacket.h>
 #include <qualisys_cpp_sdk/RTProtocol.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpMocapQualisys::vpMocapQualisysImpl
 {
@@ -314,9 +311,7 @@ void vpMocapQualisys::setServerAddress(const std::string &serverAddr) { m_impl->
  * \param[in] verbose : When true enable verbose mode, otherwise disable verbose mode.
  */
 void vpMocapQualisys::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapQualisys.cpp.o) has no symbols

@@ -36,10 +36,7 @@
 #include <math.h>
 #include <visp3/core/vpGaussRand.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Generate a normal random variable using the Box-Muller generator.
 
@@ -68,6 +65,4 @@ double vpGaussRand::gaussianDraw()
     return v1 * fac;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

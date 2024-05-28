@@ -42,10 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpStatisticalTestSigma.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits a Shewhart's test.
@@ -242,7 +239,5 @@ public:
    */
   void init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -35,10 +35,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class CameraList
 {
 public:
@@ -190,9 +187,7 @@ private:
   PUEYE_CAMERA_LIST m_pCamList;
   UEYE_CAMERA_INFO m_CamInfo;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
 /*
  **********************************************************************************************

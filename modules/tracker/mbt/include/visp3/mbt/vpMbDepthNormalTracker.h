@@ -43,10 +43,7 @@
 #include <visp3/core/vpDisplay.h>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbDepthNormalTracker : public virtual vpMbTracker
 {
 public:
@@ -189,7 +186,5 @@ protected:
   void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
   void segmentPointCloud(const vpMatrix &point_cloud, unsigned int width, unsigned int height);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

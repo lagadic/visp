@@ -52,10 +52,7 @@
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTracker
   \ingroup group_tt_tracker
@@ -301,7 +298,5 @@ protected:
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   virtual void trackPyr(const vpImage<unsigned char> &I);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

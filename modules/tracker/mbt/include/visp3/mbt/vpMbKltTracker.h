@@ -55,10 +55,7 @@
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 #include <visp3/vision/vpHomography.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbKltTracker
  * \ingroup group_mbt_trackers
@@ -476,8 +473,6 @@ protected:
                        const vpHomogeneousMatrix &cdMo);
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif // VISP_HAVE_OPENCV

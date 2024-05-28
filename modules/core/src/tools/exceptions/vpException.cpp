@@ -39,10 +39,7 @@
 #include "visp3/core/vpException.h"
 #include <stdio.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpException::vpException(int id) : code(id), message() { }
 
 vpException::vpException(int id, const std::string &msg) : code(id), message(msg) { }
@@ -79,6 +76,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &error)
 
   return os;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

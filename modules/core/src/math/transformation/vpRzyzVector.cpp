@@ -42,10 +42,7 @@
 #include <math.h>
 #include <visp3/core/vpRzyzVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyzVector::vpRzyzVector() : vpRotationVector(3) { }
 /*! Copy constructor. */
@@ -323,6 +320,4 @@ vpRzyzVector &vpRzyzVector::operator=(const std::initializer_list<double> &list)
   return *this;
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

@@ -39,10 +39,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerMIBSpline::PutPVBsplineD(double *Prt, int cr, double er, int ct, double et, int Nc, double val,
                                                const int &degre)
 {
@@ -822,7 +819,5 @@ void vpTemplateTrackerMIBSpline::computeProbabilities(double *Prt, int &cr, doub
       PutTotPVBspline4(Prt, cr, er, ct, et, Nc, dW, NbParam);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

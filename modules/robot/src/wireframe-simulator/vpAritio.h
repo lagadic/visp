@@ -50,16 +50,11 @@
 #include "vpArit.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void fprintf_Position(FILE *f, AritPosition *pp);
 void fscanf_Point3f(Point3f *pp);
 void fscanf_Vector(Vector *vp);
 void fscanf_Position(AritPosition *pp);
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

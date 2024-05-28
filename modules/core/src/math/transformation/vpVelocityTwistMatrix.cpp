@@ -47,10 +47,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Copy operator that allow to set a velocity twist matrix from an other one.
 
@@ -723,6 +720,4 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
 void vpVelocityTwistMatrix::setIdentity() { eye(); }
 
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

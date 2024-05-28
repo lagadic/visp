@@ -52,10 +52,7 @@
 #include <visp3/mbt/vpMbKltTracker.h>
 #include <visp3/mbt/vpMbTracker.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbEdgeKltTracker
  * \ingroup group_mbt_trackers
@@ -354,9 +351,7 @@ protected:
   void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error,
                        const vpHomogeneousMatrix &cMo, unsigned int lvl = 0);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 #endif // VISP_HAVE_OPENCV

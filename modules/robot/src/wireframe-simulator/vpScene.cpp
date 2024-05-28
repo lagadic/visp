@@ -50,10 +50,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpPoint.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
   Get the extension of the file and return it
 */
@@ -317,7 +314,5 @@ void vp2jlc_matrix(const vpHomogeneousMatrix &vpM, Matrix &jlcM)
       jlcM[j][i] = (float)vpM[i][j];
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

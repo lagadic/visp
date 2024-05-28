@@ -52,10 +52,7 @@
 #include <visp3/gui/vpWin32Window.h>
 #include <windows.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
@@ -194,8 +191,6 @@ protected:
   void waitForInit();
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

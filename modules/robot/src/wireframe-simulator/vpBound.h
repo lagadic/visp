@@ -78,10 +78,7 @@
 #define VECTOR_NBR 6144
 #endif // face_normal
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef face_edge
 typedef struct
 {
@@ -125,8 +122,6 @@ void free_Bound_scene(Bound_scene *bsp);
 void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn);
 void malloc_huge_Bound(Bound *bp);
 void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn);
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

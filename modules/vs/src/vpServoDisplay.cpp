@@ -49,10 +49,7 @@
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                              vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {
@@ -90,6 +87,4 @@ void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, co
     }
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

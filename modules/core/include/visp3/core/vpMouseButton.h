@@ -36,10 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMouseButton
   \ingroup group_gui_display
@@ -56,7 +53,5 @@ public:
     none = 0     /*!< No button. */
   } vpMouseButtonType;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

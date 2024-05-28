@@ -42,10 +42,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/sensor/vpComedi.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpForceTorqueAtiSensor
  *
@@ -117,8 +114,6 @@ protected:
   unsigned short m_num_channels; //!< Number of channels available from the sensor
   vpColVector m_sample_bias;     //!< Sample value used for bias
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

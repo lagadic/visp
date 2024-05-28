@@ -49,10 +49,7 @@
 
 #include <vector>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -141,7 +138,5 @@ public:
 
   void updateAll(vpMomentObject &object) vp_override;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // VPCOMMONMOMENTS_H

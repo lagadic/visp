@@ -53,10 +53,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRingLight.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Constructor to access to the ring light device connected to the parallel
@@ -216,9 +213,7 @@ void vpRingLight::off()
   // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no symbols
 void dummy_vpRingLight() { };

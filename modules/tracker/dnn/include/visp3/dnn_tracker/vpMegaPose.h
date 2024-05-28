@@ -51,10 +51,7 @@
 
 #include <nlohmann/json.hpp>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \class vpMegaPoseEstimate
  * \ingroup module_dnn_tracker
@@ -249,8 +246,6 @@ private:
   static vpMegaPose::ServerMessage stringToMessage(const std::string &s);
 };
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // VISP_HAVE_NLOHMANN_JSON
 #endif

@@ -34,10 +34,7 @@
 #include <fstream>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 using json = nlohmann::json; //! json namespace shortcut
 
@@ -154,8 +151,6 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

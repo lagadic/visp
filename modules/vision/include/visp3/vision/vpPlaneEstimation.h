@@ -52,10 +52,7 @@
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPolygon.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpPlaneEstimation
@@ -88,7 +85,5 @@ private:
   //! Maximal subsampling factor applied to the point cloud to estimate a plane
   static constexpr auto MaxSubSampFactorToEstimatePlane { 20u };
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -44,10 +44,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotTemplate
  * \ingroup group_robot_real_template
@@ -88,7 +85,5 @@ protected:
 protected:
   vpHomogeneousMatrix m_eMc; //!< Constant transformation between end-effector and tool (or camera) frame
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

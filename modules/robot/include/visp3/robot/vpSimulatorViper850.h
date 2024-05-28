@@ -47,10 +47,7 @@
 
 #include <visp3/robot/vpViper850.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorViper850
  *
@@ -289,9 +286,7 @@ protected:
   void updateArticularPosition() vp_override;
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 #endif

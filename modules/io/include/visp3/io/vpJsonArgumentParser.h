@@ -68,10 +68,7 @@ nlohmann::json convertCommandLineArgument<std::string>(const std::string &arg)
   return j;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpJsonArgumentParser
@@ -268,9 +265,7 @@ private:
   nlohmann::json exampleJson; // Example JSON argument file: displayed when user calls for help
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif // VISP_HAVE_NLOHMANN_JSON
 

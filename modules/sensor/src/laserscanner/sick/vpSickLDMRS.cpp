@@ -59,10 +59,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Default constructor that initialize the Ethernet address to
@@ -281,7 +278,5 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
   return true;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

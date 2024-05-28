@@ -46,10 +46,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.
@@ -1383,7 +1380,7 @@ void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
 
 void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) this;
@@ -1405,6 +1402,4 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
   }
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

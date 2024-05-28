@@ -50,10 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/vision/vpCalibrationException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  *  \class vpCalibration
  *
@@ -343,7 +340,5 @@ private:
   static unsigned int m_nbIterMax;
   static double m_gain;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

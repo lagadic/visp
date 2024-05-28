@@ -45,10 +45,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h> // random number generation
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRansac
   \ingroup group_core_robust
@@ -246,7 +243,5 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
   return true;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

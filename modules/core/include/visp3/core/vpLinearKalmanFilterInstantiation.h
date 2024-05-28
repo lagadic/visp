@@ -43,10 +43,7 @@
 
 #include <math.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpLinearKalmanFilterInstantiation
   \ingroup group_core_kalman
@@ -160,7 +157,5 @@ void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)
     break;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

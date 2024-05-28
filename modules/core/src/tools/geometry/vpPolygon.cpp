@@ -109,10 +109,7 @@ template <typename IpContainer> std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoi
 
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that creates an empty polygon.
 */
@@ -704,6 +701,4 @@ unsigned int vpPolygon::getSize() const
 {
   return (static_cast<unsigned int>(_corners.size()));
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

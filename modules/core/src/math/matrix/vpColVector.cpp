@@ -57,10 +57,7 @@
 #include <Simd/SimdLib.h>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
   if (getRows() != v.getRows()) {
@@ -1016,6 +1013,4 @@ VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAME
   vout = v * x;
   return vout;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

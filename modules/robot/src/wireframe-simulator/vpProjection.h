@@ -47,15 +47,10 @@
 #include "vpArit.h"
 #include "vpView.h"
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void View_to_Matrix(View_parameters *vp, Matrix m);
 void set_parallel(View_parameters *vp, Matrix wc);
 void set_perspective(View_parameters *vp, Matrix wc);
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

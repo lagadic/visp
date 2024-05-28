@@ -64,10 +64,7 @@
 #include <list>
 #include <vector>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 typedef struct indexFaceSet
 {
   indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() { };
@@ -76,15 +73,10 @@ typedef struct indexFaceSet
   int nbIndex;
   std::vector<int> index;
 } indexFaceSet;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 typedef enum { BND_MODEL, WRL_MODEL, UNKNOWN_MODEL } Model_3D;
 
 Model_3D getExtension(const char *file);
@@ -97,8 +89,6 @@ void extractFaces(SoVRMLIndexedFaceSet *face_set, indexFaceSet *ifs);
 void ifsToBound(Bound *, std::list<indexFaceSet *> &);
 void destroyIfs(std::list<indexFaceSet *> &);
 #endif
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

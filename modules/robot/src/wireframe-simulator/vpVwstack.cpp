@@ -54,10 +54,7 @@
 
 #define STACKSIZE 4
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static View_parameters stack[STACKSIZE] = { vpDEFAULT_VIEW };
 static View_parameters *sp = stack;
 
@@ -263,7 +260,5 @@ void add_vwstack(const char *path, ...)
   }
   va_end(ap);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

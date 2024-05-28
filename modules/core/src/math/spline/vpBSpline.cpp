@@ -36,10 +36,7 @@
 #include <visp3/core/vpBSpline.h>
 #include <visp3/core/vpDebug.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -521,6 +518,4 @@ vpImagePoint *vpBSpline::computeCurveDers(double u, unsigned int der) const
 
   return derivate;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

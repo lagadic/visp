@@ -47,10 +47,7 @@
 
 std::chrono::milliseconds millis(1);
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 RPMSerialInterface *vpPololu::m_interface = nullptr;
 int vpPololu::m_nb_servo = 0;
 
@@ -335,9 +332,7 @@ void vpPololu::VelocityCmdThread()
     std::this_thread::sleep_for(20 * millis);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpPololu.cpp.o) has no symbols
 void dummy_vpPololu() { };

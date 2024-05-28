@@ -48,10 +48,7 @@
 
 using namespace ViconDataStreamSDK::CPP;
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpMocapVicon::vpMocapViconImpl
 {
@@ -271,9 +268,7 @@ void vpMocapVicon::setServerAddress(const std::string &serverAddr) { m_impl->set
  * \param[in] verbose : When true enable verbose mode, otherwise disable verbose mode.
  */
 void vpMocapVicon::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapVicon.cpp.o) has no symbols

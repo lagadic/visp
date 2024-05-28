@@ -56,10 +56,7 @@
 #endif
 #include <visp3/core/vpImageConvert.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 bool vpImageConvert::YCbCrLUTcomputed = false;
 int vpImageConvert::vpCrr[256];
 int vpImageConvert::vpCgb[256];
@@ -2429,6 +2426,4 @@ void vpImageConvert::demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rg
 }
 #endif // VISP_SKIP_BAYER_CONVERSION
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

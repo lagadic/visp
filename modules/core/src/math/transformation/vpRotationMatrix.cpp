@@ -52,10 +52,7 @@
 #include <math.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the rotation matrix as identity.
 
@@ -1123,9 +1120,7 @@ void vpRotationMatrix::orthogonalize()
 void vpRotationMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 /*!
   Allow to multiply a scalar by a rotation matrix.

@@ -48,10 +48,7 @@
 #include <omp.h>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Create a point cloud from a depth image.
  *
@@ -285,7 +282,5 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
 
   return pcl_size;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

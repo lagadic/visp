@@ -47,10 +47,7 @@
  * \brief Class that furnishes a set of colors that color blind people
  * should be able to distinguish one from another.
  */
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpColorBlindFriendlyPalette
 {
 public:
@@ -178,9 +175,7 @@ private:
 
   Palette m_colorID; /*!< The ID of the color in the \b vpColorBlindFriendlyPalette::Palette.*/
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
 /**
  * \brief Permit to display in a \b std::ostream the name of the \b color.

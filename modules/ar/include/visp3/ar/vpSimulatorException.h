@@ -46,10 +46,7 @@
 #include <iostream> /* Classe std::ostream.    */
 #include <string>   /* Classe string.     */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorException
  * \brief Error that can be emitted by the vpSimulator class and its derivatives.
@@ -86,8 +83,6 @@ public:
    */
   explicit vpSimulatorException(int id);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

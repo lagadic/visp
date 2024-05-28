@@ -487,10 +487,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * }
  * \endcode
  */
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpIoTools
 {
 
@@ -593,7 +590,5 @@ protected:
   static int mkdir_p(const std::string &path, int mode);
 #endif
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

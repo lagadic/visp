@@ -54,10 +54,7 @@
 #include <math.h>
 #include <visp3/blob/vpDot2.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /******************************************************************************
  *
@@ -2512,6 +2509,4 @@ void vpDot2::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const st
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, VISP_NAMESPACE_ADDRESSING vpDot2 &d) { return (os << "(" << d.getCog() << ")"); }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

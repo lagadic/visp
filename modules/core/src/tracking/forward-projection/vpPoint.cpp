@@ -42,10 +42,7 @@
 #include <visp3/core/vpFeatureDisplay.h>
 #include <visp3/core/vpPoint.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void vpPoint::init()
 {
   p.resize(3);
@@ -510,6 +507,4 @@ void vpPoint::set_y(double y) { p[1] = y; }
 void vpPoint::set_w(double w) { p[2] = w; }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

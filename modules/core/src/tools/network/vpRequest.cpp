@@ -38,10 +38,7 @@
 
 #include <visp3/core/vpRequest.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpRequest::vpRequest() : request_id(""), listOfParams() { }
 
 vpRequest::~vpRequest() { }
@@ -82,6 +79,4 @@ void vpRequest::addParameter(const std::vector<std::string> &listOfparams)
     this->listOfParams.push_back(listOfparams[i]);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

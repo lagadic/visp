@@ -52,10 +52,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpViper.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const unsigned int vpViper::njoint = 6;
 
 /*!
@@ -1290,6 +1287,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpViper &viper)
 
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

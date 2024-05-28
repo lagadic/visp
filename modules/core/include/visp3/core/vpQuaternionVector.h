@@ -46,10 +46,7 @@
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpThetaUVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpQuaternionVector
 
@@ -168,7 +165,5 @@ private:
   static const double minimum;
 
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

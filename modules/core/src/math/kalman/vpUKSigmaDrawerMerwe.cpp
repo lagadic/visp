@@ -41,10 +41,7 @@
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, const double &beta, const double &kappa,
                        const vpAddSubFunction &resFunc, const vpAddSubFunction &addFunc)
   : vpUKSigmaDrawerAbstract(n)
@@ -88,9 +85,7 @@ vpUKSigmaDrawerMerwe::vpSigmaPointsWeights vpUKSigmaDrawerMerwe::computeWeights(
   }
   return weights;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 void vpUKSigmaDrawerMerwe_dummy()
 {

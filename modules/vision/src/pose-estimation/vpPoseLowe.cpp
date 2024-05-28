@@ -41,10 +41,7 @@
 #include "private/vpLevenbergMarquartd.h"
 #include <visp3/vision/vpPose.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #define NBR_PAR 6
 #define X3_SIZE 3
@@ -335,6 +332,4 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 
 #undef DEBUG_LEVEL1
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

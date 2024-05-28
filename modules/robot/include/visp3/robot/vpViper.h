@@ -52,10 +52,7 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpViper
@@ -174,7 +171,5 @@ protected:
   vpColVector joint_max; // Maximal value of the joints
   vpColVector joint_min; // Minimal value of the joints
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

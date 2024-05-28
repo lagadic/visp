@@ -49,10 +49,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
@@ -632,6 +629,4 @@ void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> 
   aHb = H;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

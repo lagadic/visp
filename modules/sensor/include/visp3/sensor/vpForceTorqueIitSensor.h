@@ -55,10 +55,7 @@
 
 #include <ftSensorLib/ftSensorLib.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpForceTorqueIitSensor
@@ -185,8 +182,6 @@ protected:
   std::mutex m_mutex;
   int m_warmupMilliseconds;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

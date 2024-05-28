@@ -47,10 +47,7 @@
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserHomogeneousMatrix
 
@@ -175,8 +172,6 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

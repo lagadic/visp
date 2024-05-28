@@ -50,10 +50,7 @@
 
 #define STACKSIZE 32
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static Matrix stack[STACKSIZE] /* = IDENTITY_MATRIX*/; /* pile    */
 static Matrix *sp = stack;                             /* sommet   */
 
@@ -200,7 +197,5 @@ void prescale_tmstack(Vector *vp) { prescale_matrix(*sp, vp); }
  * vp    Vecteur de translation.
  */
 void pretranslate_tmstack(Vector *vp) { pretrans_matrix(*sp, vp); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -48,10 +48,7 @@
 #include <nlohmann/json.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMe
  * \ingroup module_me
@@ -652,7 +649,5 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
 
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

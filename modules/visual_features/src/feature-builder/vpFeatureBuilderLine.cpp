@@ -42,10 +42,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize a line feature thanks to a vpLine.
   A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are
@@ -238,6 +235,4 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, c
   }
 }
 #endif //#ifdef VISP_HAVE_MODULE_ME
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

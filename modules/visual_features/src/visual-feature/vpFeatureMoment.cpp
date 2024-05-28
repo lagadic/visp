@@ -43,10 +43,7 @@
 #include <vector>
 #include <visp3/core/vpDebug.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpBasicFeature;
 
 /*!
@@ -280,6 +277,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &fe
   return os;
 }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

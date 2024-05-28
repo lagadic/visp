@@ -48,10 +48,7 @@
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Computes interaction matrix for the normalized surface moment. Called
   internally. The moment primitives must be computed before calling this. This
@@ -107,6 +104,4 @@ void vpFeatureMomentArea::compute_interaction()
     interaction_matrices[0][0][5] = 0.;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

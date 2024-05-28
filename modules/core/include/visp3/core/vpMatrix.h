@@ -42,10 +42,7 @@
 #define _vpMatrix_H_
 
 #include <visp3/core/vpConfig.h>
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpRowVector;
 class vpColVector;
@@ -53,9 +50,7 @@ class vpTranslationVector;
 class vpHomogeneousMatrix;
 class vpVelocityTwistMatrix;
 class vpForceTwistMatrix;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
@@ -68,10 +63,7 @@ class vpForceTwistMatrix;
 #include <iostream>
 #include <math.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMatrix
@@ -1214,7 +1206,5 @@ VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -45,10 +45,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -314,6 +311,4 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

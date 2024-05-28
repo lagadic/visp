@@ -35,10 +35,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpHomography.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 //#define DEBUG_Homographie 0
 
@@ -1292,6 +1289,4 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 }
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

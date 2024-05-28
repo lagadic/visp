@@ -45,10 +45,7 @@
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpPoint.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpCameraParameters;
 
 /*!
@@ -315,8 +312,6 @@ private:
   void cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

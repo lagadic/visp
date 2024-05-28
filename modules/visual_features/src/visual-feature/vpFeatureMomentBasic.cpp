@@ -37,10 +37,7 @@
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * \param data_base : Database of moment primitives.
@@ -163,6 +160,4 @@ vpMatrix vpFeatureMomentBasic::interaction(unsigned int select_one, unsigned int
                                              "specify a higher order.");
   return interaction_matrices[select_two * order + select_one];
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

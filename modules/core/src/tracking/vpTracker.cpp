@@ -41,10 +41,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTracker.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 void vpTracker::init() { cPAvailable = false; }
 
@@ -60,9 +57,7 @@ vpTracker &vpTracker::operator=(const vpTracker &tracker)
 
   return *this;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

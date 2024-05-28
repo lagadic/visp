@@ -58,10 +58,7 @@
 #include <visp3/robot/vpRobotSimulator.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotWireFrameSimulator
  *
@@ -415,8 +412,6 @@ protected:
   virtual void get_fMi(vpHomogeneousMatrix *fMit) = 0;
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

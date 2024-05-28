@@ -45,10 +45,7 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -1551,6 +1548,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImageSimulator & 
   os << "";
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

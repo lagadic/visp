@@ -48,10 +48,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpTime.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that consider the first camera found on the bus as
    active.
@@ -814,9 +811,7 @@ vpPylonGrabber &vpPylonGrabberGigE::operator>>(vpImage<vpRGBa> &I)
   acquire(I);
   return *this;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonGrabberGigE.cpp.o) has no symbols

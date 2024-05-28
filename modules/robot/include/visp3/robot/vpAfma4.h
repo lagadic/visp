@@ -105,10 +105,7 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpAfma4
 {
 public:
@@ -155,9 +152,7 @@ protected:
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

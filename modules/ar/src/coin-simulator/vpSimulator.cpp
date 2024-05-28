@@ -71,10 +71,7 @@
 #include <Inventor/nodes/SoGroup.h>            /* Groupement de noeuds (sans separation)*/
 #include <Inventor/nodes/SoMaterial.h>         /* Matiere (couleur) des objets.     */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 // Positions of all of the vertices:
 //
 static float pyramidVertexes[5][3] = { {0.33f, 0.33f, 0.f},
@@ -1006,9 +1003,7 @@ void vpSimulator::getInternalImage(vpImage<unsigned char> &I)
   vpImageConvert::RGBToGrey(bufferView, I.bitmap, internal_width, internal_height, true);
   get = 1;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpSimulator.cpp.o) has no symbols
 void dummy_vpSimulator() { };

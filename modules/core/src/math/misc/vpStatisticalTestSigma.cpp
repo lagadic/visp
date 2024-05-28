@@ -39,10 +39,7 @@
 
 #include <visp3/core/vpStatisticalTestSigma.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void vpStatisticalTestSigma::computeLimits()
 {
   float delta = m_h * m_stdev;
@@ -116,6 +113,4 @@ void vpStatisticalTestSigma::init(const float &h, const float &mean, const float
   computeLimits();
   m_areStatisticsComputed = true;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

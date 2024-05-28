@@ -51,10 +51,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 //! Copy operator.   Allow operation such as A = v
 vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 {
@@ -1360,9 +1357,7 @@ std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
   os << "]" << std::endl;
   return os;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 /*!
   Allows to multiply a scalar by row vector.

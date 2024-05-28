@@ -44,10 +44,7 @@
 #include <iostream>
 #include <limits> // numeric_limits
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const double vpAdaptiveGain::DEFAULT_LAMBDA_ZERO = 1.666;
 const double vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY = 0.1666;
 const double vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE = 1.666;
@@ -150,6 +147,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lam
   return os;
 }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

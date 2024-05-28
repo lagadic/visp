@@ -47,10 +47,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpListElement
   \brief Each element of a list
@@ -708,9 +705,7 @@ template <class type> void vpList<type>::display()
   }
   std::cout << std::endl << std::endl;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif /* #ifndef VP_LIST_H */
 
 /*

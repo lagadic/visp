@@ -43,10 +43,7 @@
 
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor.
  */
@@ -585,6 +582,4 @@ double vpTemplateTrackerZone::getArea() const
   }
   return area;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

@@ -43,10 +43,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSubMatrix
  * \ingroup group_core_matrices
@@ -95,7 +92,5 @@ private:
   //! Copy constructor unavailable
   vpSubMatrix(const vpSubMatrix &m /* m */);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

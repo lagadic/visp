@@ -59,10 +59,7 @@ using std::chrono::seconds;
 using std::this_thread::sleep_for;
 using namespace std::chrono_literals;
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpRobotMavsdk::vpRobotMavsdkImpl
 {

@@ -86,10 +86,7 @@ typedef unsigned short uint16_t;
 #error Cannot detect host machine endianness.
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 namespace vpEndian
 {
 VISP_EXPORT uint16_t swap16bits(uint16_t val);
@@ -102,7 +99,5 @@ VISP_EXPORT double swapDouble(double d);
 
 VISP_EXPORT uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char *const ptr);
 } // namespace vpEndian
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

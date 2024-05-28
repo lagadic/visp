@@ -43,10 +43,7 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 static bool horsImage(int i, int j, int half, int rows, int cols)
@@ -450,6 +447,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
   return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

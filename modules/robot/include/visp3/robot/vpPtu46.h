@@ -54,10 +54,7 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpPtu46
@@ -103,7 +100,5 @@ public: /* Methodes publiques */
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 &constant);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

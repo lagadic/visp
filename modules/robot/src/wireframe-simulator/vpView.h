@@ -139,10 +139,7 @@
     1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0                                     \
   }
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  *      CAMERA PARAMETERS
  *      _________________
@@ -187,8 +184,6 @@ typedef struct
   View_window vwd;  /* fenetre de projection  */
   View_depth depth; /* profondeurs de decoupages  */
 } View_parameters;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

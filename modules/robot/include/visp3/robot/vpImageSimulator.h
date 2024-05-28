@@ -139,10 +139,7 @@
 #include <list>
 #include <vector>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpImageSimulator
 {
 public:
@@ -307,9 +304,7 @@ private:
   void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, const vpCameraParameters &cam,
               const std::vector<vpPoint> &point, vpRect &rect);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 /*

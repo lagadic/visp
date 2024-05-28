@@ -41,10 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \ingroup group_core_cpu_features
   \brief Check CPU features (hardware capabilities).
@@ -81,7 +78,5 @@ VISP_EXPORT size_t getCPUCacheL3();
 #endif
 VISP_EXPORT void printCPUInfo();
 } // namespace vpCPUFeatures
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

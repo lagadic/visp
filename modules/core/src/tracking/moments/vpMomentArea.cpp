@@ -41,10 +41,7 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Has the area \f$ a = m_{00} = \mu_{00} \f$ for dense objects,
   \f$ \mu_{20}+\mu_{02} \f$ for a discrete set of points.
@@ -111,6 +108,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m)
   return os;
 }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

@@ -54,10 +54,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static void inter(Byte mask, Index v0, Index v1);
 static void point_4D_3D(Point4f *p4, int size, Byte *cp, Point3f *p3);
 
@@ -466,7 +463,5 @@ Byte where_is_Point4f(Point4f *p4)
     b |= IS_FRONT;
   return (b);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

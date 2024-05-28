@@ -486,10 +486,7 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -502,9 +499,7 @@ const char vpIoTools::separator =
 #else
 '/';
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 namespace
 {
@@ -545,10 +540,7 @@ std::string &rtrim(std::string &s)
 }
 } // namespace
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
@@ -2704,6 +2696,4 @@ bool vpIoTools::parseBoolean(std::string input)
    Remove leading and trailing whitespaces from a string.
  */
 std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

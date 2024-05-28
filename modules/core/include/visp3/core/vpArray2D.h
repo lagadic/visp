@@ -46,23 +46,15 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 template <typename T> class vpArray2D;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpArray2D
  *  \ingroup group_core_matrices
@@ -1340,7 +1332,7 @@ template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A)
 template <class Type>
 inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &array)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
   if (j.is_array()) {
@@ -1411,8 +1403,6 @@ inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpArray2D
 }
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

@@ -50,10 +50,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMeterPixelConversion
 
@@ -356,7 +353,5 @@ public:
   //@}
 #endif
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -37,10 +37,7 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const double vpRobot::maxTranslationVelocityDefault = 0.2;
 const double vpRobot::maxRotationVelocityDefault = 0.7;
 
@@ -271,6 +268,4 @@ void vpRobot::setMaxRotationVelocity(double w_max)
   \return Maximum rotation velocity expressed in rad/s.
 */
 double vpRobot::getMaxRotationVelocity(void) const { return this->maxRotationVelocity; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

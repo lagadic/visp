@@ -49,10 +49,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpPoseVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
 
@@ -615,7 +612,7 @@ void vpPoseVector::convert_to_json(nlohmann::json &j) const
 }
 void vpPoseVector::parse_json(const nlohmann::json &j)
 {
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
   vpArray2D<double> *asArray = (vpArray2D<double>*) this;
@@ -634,6 +631,4 @@ void vpPoseVector::parse_json(const nlohmann::json &j)
   }
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

@@ -41,10 +41,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMocap
  * \ingroup group_sensor_mocap
@@ -108,7 +105,5 @@ protected:
   bool m_verbose;
   std::string m_serverAddr;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // vpMocap_h

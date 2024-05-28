@@ -45,10 +45,7 @@
 #include <stdarg.h>
 #include <string>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpException
  * \ingroup group_core_debug
@@ -149,7 +146,5 @@ protected:
   vpException() : code(notInitialized), message("") { }
 
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

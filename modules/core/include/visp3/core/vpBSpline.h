@@ -45,10 +45,7 @@
 #include <vector>
 #include <visp3/core/vpMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -238,7 +235,5 @@ public:
                                         const std::vector<double> &l_knots, const std::vector<vpImagePoint> &l_controlPoints);
   vpImagePoint *computeCurveDers(double u, unsigned int der) const;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

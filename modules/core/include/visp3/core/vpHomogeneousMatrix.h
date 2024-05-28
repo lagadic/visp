@@ -44,10 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpTranslationVector;
 class vpPoseVector;
@@ -58,9 +55,7 @@ class vpThetaUVector;
 class vpQuaternionVector;
 class vpPoint;
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -72,10 +67,7 @@ class vpPoint;
 #include <nlohmann/json.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHomogeneousMatrix
 
@@ -435,7 +427,5 @@ inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
   T.parse_json(j);
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

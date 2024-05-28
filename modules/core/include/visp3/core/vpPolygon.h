@@ -45,10 +45,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRect.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPolygon
   \ingroup group_core_geometry
@@ -206,7 +203,5 @@ public:
   static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
                        const PointInPolygonMethod &method = PnPolyRayCasting);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

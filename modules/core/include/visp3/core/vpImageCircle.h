@@ -49,10 +49,7 @@
 #include <opencv2/core/core.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \brief Class that defines a 2D circle in an image.
  */
@@ -145,7 +142,5 @@ private:
   vpImagePoint m_center;
   float m_radius;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -50,10 +50,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Convert the input float depth image to a 8-bits depth image. The input
   depth value is assigned a value proportional to its frequency.
@@ -267,7 +264,5 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa>
     }
   }
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

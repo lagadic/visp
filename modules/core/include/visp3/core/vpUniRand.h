@@ -83,10 +83,7 @@ typedef unsigned __int32 uint32_t;
 
 #include <vector>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUniRand
 
@@ -177,7 +174,5 @@ private:
   float m_maxInvFlt;
   pcg32_random_t m_rng;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

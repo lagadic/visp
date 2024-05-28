@@ -67,10 +67,7 @@ attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
 */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 2D line visual feature.
 */
@@ -604,6 +601,4 @@ unsigned int vpFeatureLine::selectRho() { return FEATURE_LINE[0]; }
   \endcode
 */
 unsigned int vpFeatureLine::selectTheta() { return FEATURE_LINE[1]; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

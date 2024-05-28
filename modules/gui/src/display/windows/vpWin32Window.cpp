@@ -48,10 +48,7 @@
 
 #include <visp3/gui/vpWin32Window.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 // Should be already defined ...
 #ifndef GET_X_LPARAM
@@ -316,9 +313,7 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)

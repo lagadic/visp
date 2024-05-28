@@ -48,10 +48,7 @@
 
 #include <visp3/core/vpException.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \ingroup group_core_time
  * \brief Time management and measurement.
@@ -104,7 +101,5 @@ private:
   double m_lastTimePoint;
 #endif
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

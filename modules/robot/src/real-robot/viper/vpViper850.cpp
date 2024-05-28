@@ -48,10 +48,7 @@
 
 static const char *opt_viper850[] = { "CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_VIPER850_DATA
 const std::string vpViper850::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
 std::string(VISP_VIPER850_DATA_PATH) +
@@ -837,6 +834,4 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<vpRG
 {
   getCameraParameters(cam, I.getWidth(), I.getHeight());
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

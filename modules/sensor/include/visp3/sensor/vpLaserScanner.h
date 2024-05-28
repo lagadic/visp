@@ -45,10 +45,7 @@
 
 #include "visp3/core/vpConfig.h"
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpLaserScanner
@@ -77,7 +74,5 @@ protected:
   std::string ip;
   int port;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

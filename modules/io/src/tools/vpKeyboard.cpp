@@ -46,10 +46,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/io/vpKeyboard.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   Activates the raw mode to read keys in an non blocking way.
@@ -166,7 +163,5 @@ void vpKeyboard::setRawMode(bool active)
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // defined UNIX

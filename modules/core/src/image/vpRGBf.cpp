@@ -45,10 +45,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBf.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Copy operator (from a floating-point value)
 
@@ -266,6 +263,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb)
   os << "(" << rgb.R << "," << rgb.G << "," << rgb.B << ")";
   return os;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

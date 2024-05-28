@@ -41,10 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpSerial
   \ingroup group_core_com_serial
@@ -181,8 +178,6 @@ private:
   stopbits_t m_stopbits;
   flowcontrol_t m_flowcontrol;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

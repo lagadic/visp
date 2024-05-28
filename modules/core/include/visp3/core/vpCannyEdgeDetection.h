@@ -45,10 +45,7 @@
 #include <nlohmann/json.hpp>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \brief Class that implements the Canny's edge detector.
  * It is possible to use a boolean mask to ignore some pixels of
@@ -367,7 +364,5 @@ private:
   void performEdgeTracking();
   //@}
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

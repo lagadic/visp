@@ -44,10 +44,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureException
  * \ingroup group_visual_features
@@ -96,7 +93,5 @@ public:
    */
   explicit vpFeatureException(int id) : vpException(id) { }
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

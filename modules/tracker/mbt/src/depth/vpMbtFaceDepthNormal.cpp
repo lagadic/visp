@@ -55,10 +55,7 @@
 #define USE_SSE 0
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpMbtFaceDepthNormal::vpMbtFaceDepthNormal()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false), m_faceActivated(false),
@@ -1838,6 +1835,4 @@ void vpMbtFaceDepthNormal::setScanLineVisibilityTest(bool v)
     (*it)->useScanLine = v;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

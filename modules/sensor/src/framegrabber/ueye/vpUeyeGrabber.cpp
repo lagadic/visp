@@ -65,10 +65,7 @@
     }                                                                                                                  \
   }
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*! \brief image buffer properties structure */
 struct sBufferProps
 {
@@ -1429,9 +1426,7 @@ void vpUeyeGrabber::setWhiteBalance(bool auto_wb) { m_impl->setWhiteBalance(auto
  * \param[in] verbose : true to enable, false to disable verbose mode.
  */
 void vpUeyeGrabber::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols
 void dummy_vpUeyeGrabber() { };

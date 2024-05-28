@@ -95,10 +95,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpViewer
   \ingroup group_ar_simulator
@@ -158,9 +155,7 @@ private:
   static void exitMainLoop() { SoXt::exitMainLoop(); };
 #endif
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // VISP_HAVE_COIN3D_AND_GUI
 
 #endif

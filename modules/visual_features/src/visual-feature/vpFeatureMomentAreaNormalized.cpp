@@ -44,10 +44,7 @@
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for the normalized surface moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -101,9 +98,7 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
     (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredArea() / a);
   interaction_matrices[0] = normalized_multiplier * La;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 
 #include <limits>
@@ -116,10 +111,7 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
 #include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for the normalized surface moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -209,7 +201,5 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   interaction_matrices[0][0][WY] = Anwy;
   interaction_matrices[0][0][WZ] = 0.;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

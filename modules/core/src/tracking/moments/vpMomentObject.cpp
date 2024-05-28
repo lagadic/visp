@@ -51,10 +51,7 @@
 #endif
 #include <cassert>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Computes moments from a vector of points describing a polygon (\cite Steger96).
   The points must be stored in a clockwise order. Used internally.
@@ -670,6 +667,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
 
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

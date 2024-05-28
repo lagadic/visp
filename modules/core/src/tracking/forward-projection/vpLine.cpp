@@ -45,10 +45,7 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialize the memory space requested for the 2D line parameters (\e
@@ -553,6 +550,4 @@ vpLine *vpLine::duplicate() const
   vpLine *feature = new vpLine(*this);
   return feature;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

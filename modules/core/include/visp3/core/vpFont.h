@@ -43,10 +43,7 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpFont
 
@@ -84,7 +81,5 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

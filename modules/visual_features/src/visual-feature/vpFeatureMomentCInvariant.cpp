@@ -43,10 +43,7 @@
 #include <limits>
 #include <vector>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for space-scale-rotation invariants. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -409,9 +406,7 @@ void vpFeatureMomentCInvariant::compute_interaction()
   interaction_matrices[13] =
     (I2 / (I3 * I3 * I3)) * La + (a / (I3 * I3 * I3)) * LI2 - (3 * a * I2 / (I3 * I3 * I3 * I3)) * LI3;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -426,10 +421,7 @@ void vpFeatureMomentCInvariant::compute_interaction()
 #include <limits>
 #include <vector>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for space-scale-rotation invariants. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -725,7 +717,5 @@ std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &feat
 
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

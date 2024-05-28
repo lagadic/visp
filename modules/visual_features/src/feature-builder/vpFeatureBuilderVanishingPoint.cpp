@@ -45,10 +45,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize a vpFeatureVanishingPoint thanks to a vpPoint.
   The vpFeatureVanishingPoint is initialized thanks to the parameters of the
@@ -260,6 +257,4 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpCameraParamete
     s.setAlpha(alpha);
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

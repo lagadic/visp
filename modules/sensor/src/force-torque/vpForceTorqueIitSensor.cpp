@@ -45,10 +45,7 @@
 
 #if defined(VISP_HAVE_FT_IIT_SDK) && defined(VISP_HAVE_THREADS)
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 
@@ -241,9 +238,7 @@ void vpForceTorqueIitSensor::stopStreaming()
     m_acquisitionThread.join();
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueIitSensor.cpp.o) has no symbols

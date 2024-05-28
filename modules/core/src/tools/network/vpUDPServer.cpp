@@ -65,10 +65,7 @@
 
 #include <visp3/core/vpUDPServer.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Create a (IPv4) UDP server.
 
@@ -337,9 +334,7 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
                 m_clientLength);
 #endif
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
 void dummy_vpUDPServer() { };

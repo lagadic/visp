@@ -50,10 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTime.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop,
                                              const std::string &log_folder, const vpRobot::vpControlFrameType &frame,
                                              const vpHomogeneousMatrix &eMc,
@@ -627,9 +624,7 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
   }
   return limited_values;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointVelTrajGenerator() { };

@@ -46,10 +46,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpServoDisplay
  * \ingroup group_task
@@ -102,7 +99,5 @@ public:
                       vpColor currentColor = vpColor::green, vpColor desiredColor = vpColor::red,
                       unsigned int thickness = 1);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

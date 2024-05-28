@@ -92,10 +92,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpPoint;
 class vpHomogeneousMatrix;
@@ -667,7 +664,5 @@ template <> inline unsigned int vpMath::saturate<unsigned int>(double v)
 {
   return static_cast<unsigned int>(vpMath::round(v));
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

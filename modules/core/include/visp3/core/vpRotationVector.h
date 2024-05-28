@@ -47,10 +47,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpConfig.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class vpRowVector;
 class vpColVector;
@@ -158,9 +155,7 @@ protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT

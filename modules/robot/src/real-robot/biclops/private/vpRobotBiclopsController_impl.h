@@ -45,10 +45,7 @@
 #include <Biclops.h>  // Contrib for Biclops sdk
 #include <PMDUtils.h> // Contrib for Biclops sdk
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #if defined(_WIN32)
 class VISP_EXPORT Biclops; // needed for dll creation
 #endif
@@ -246,9 +243,7 @@ private:
   shmType m_shm;
   bool m_stopControllerThread;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_BICLOPS
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

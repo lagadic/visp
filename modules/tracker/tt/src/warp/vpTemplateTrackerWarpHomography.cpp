@@ -39,10 +39,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Construct an homography model with 8 parameters initialized to zero.
  */
@@ -406,6 +403,4 @@ void vpTemplateTrackerWarpHomography::pRondp(const vpColVector &p1, const vpColV
   p12[2] = (h1_20 * h2_00 + h1_21 * h2_10 + h2_20) / h12_22;
   p12[5] = (h1_20 * h2_01 + h1_21 * h2_11 + h2_21) / h12_22;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

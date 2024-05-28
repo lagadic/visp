@@ -39,10 +39,7 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::shared_ptr<vpUKSigmaDrawerAbstract> &drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
   : m_Q(Q)
   , m_R(R)
@@ -149,9 +146,7 @@ vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransf
   }
   return result;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #else
 void vpUnscentedKalman_dummy()
 {

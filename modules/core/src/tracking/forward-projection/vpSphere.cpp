@@ -36,10 +36,7 @@
 #include <visp3/core/vpFeatureDisplay.h>
 #include <visp3/core/vpSphere.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Initialize internal sphere parameters.
  */
@@ -301,6 +298,4 @@ void vpSphere::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, 
 {
   vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

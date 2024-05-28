@@ -52,10 +52,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #if !(GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
@@ -1212,6 +1209,4 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

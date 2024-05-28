@@ -45,10 +45,7 @@
 #include <string>
 #include <visp3/core/vpConfig.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpFeatureMoment;
 class vpMomentObject;
 /*!
@@ -184,7 +181,5 @@ public:
   // vpFeatureMomentDatabase& m);
   friend class vpFeatureMoment;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

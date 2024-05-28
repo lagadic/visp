@@ -41,10 +41,7 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpPololu.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotPololuPtu
  * \ingroup group_robot_real_arm
@@ -271,8 +268,6 @@ private:
 
   bool m_verbose;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

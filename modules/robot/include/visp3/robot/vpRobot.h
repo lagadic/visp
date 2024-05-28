@@ -47,10 +47,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobot
   \ingroup group_robot_real_gantry group_robot_real_cylindrical
@@ -186,7 +183,5 @@ protected:
   vpControlFrameType getRobotFrame(void) const { return frameRobot; }
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

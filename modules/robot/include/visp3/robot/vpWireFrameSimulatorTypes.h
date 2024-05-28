@@ -39,10 +39,7 @@
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 typedef unsigned short Index;
 typedef char Type;
 typedef float Matrix[4][4];
@@ -130,8 +127,6 @@ typedef struct
   char *name;       /* nom de la scene  */
   Bound_list bound; /* liste de surfaces  */
 } Bound_scene;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

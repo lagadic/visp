@@ -52,10 +52,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/tracking.hpp>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpKltOpencv
  *
@@ -404,8 +401,6 @@ protected:
   long m_next_points_id; //!< Id for the newt keypoint
   bool m_initial_guess; //!< true when initial guess is provided
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

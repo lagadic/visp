@@ -40,10 +40,7 @@
 
 #include <visp3/sensor/vpDirectShowGrabberImpl.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpDirectShowDevice *vpDirectShowGrabberImpl::deviceList = nullptr;
 unsigned int vpDirectShowGrabberImpl::nbDevices;
 
@@ -1104,9 +1101,7 @@ void vpDirectShowGrabberImpl::MyFreeMediaType(AM_MEDIA_TYPE &mt)
     mt.pUnk = nullptr;
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowGrabberImpl.cpp.o) has no symbols

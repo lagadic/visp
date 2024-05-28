@@ -48,10 +48,7 @@
 
 #include <vector>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*
   \class vpDot
@@ -953,6 +950,4 @@ void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot &d) { return (os << "(" << d.getCog() << ")"); };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

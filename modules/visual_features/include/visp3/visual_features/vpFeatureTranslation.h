@@ -46,10 +46,7 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureTranslation
  * \ingroup group_visual_features
@@ -351,7 +348,5 @@ private:
   vpHomogeneousMatrix f2Mf1;
   vpFeatureTranslationRepresentationType translation;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -62,10 +62,7 @@
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMbScanLine
@@ -205,9 +202,7 @@ private:
   static vpPoint mix(const vpPoint &a, const vpPoint &b, double alpha);
   static double norm(const vpPoint &a, const vpPoint &b);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // doxygen should skip this
 
 #endif

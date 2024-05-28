@@ -117,8 +117,12 @@
 #define VISP_NAMESPACE_NAME visp
 #ifdef ENABLE_VISP_NAMESPACE
 #define VISP_NAMESPACE_ADDRESSING visp::
+#define BEGIN_VISP_NAMESPACE namespace visp {
+#define END_VISP_NAMESPACE }
 #else
 #define VISP_NAMESPACE_ADDRESSING
+#define BEGIN_VISP_NAMESPACE
+#define END_VISP_NAMESPACE
 #endif
 
 // Enable debug and trace printings

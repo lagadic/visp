@@ -45,10 +45,7 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 vpPlotCurve::vpPlotCurve()
   : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(), pointListx(), pointListy(),
@@ -120,9 +117,7 @@ void vpPlotCurve::plotList(const vpImage<unsigned char> &I, double xorg, double 
   }
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpPlotCurve.cpp.o) has no symbols

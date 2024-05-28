@@ -39,10 +39,7 @@
 #if (defined(VISP_HAVE_D3D9))
 #include <visp3/gui/vpDisplayWin32.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpDisplayD3D
@@ -115,8 +112,6 @@ public:
 
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

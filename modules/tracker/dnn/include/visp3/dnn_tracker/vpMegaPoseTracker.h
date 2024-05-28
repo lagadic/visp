@@ -43,10 +43,7 @@
 #include <memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \class vpMegaPoseTracker
  * \ingroup module_dnn_tracker
@@ -159,9 +156,7 @@ private:
   int m_refinerIterations;
   bool m_initialized;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif // VISP_HAVE_NLOHMANN_JSON
 
 #endif

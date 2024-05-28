@@ -54,10 +54,7 @@
 
 #include <Eigen/Core> // TODO: Remove when initial_position var is removed
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpColVector ft_cart_des_prev(6, 0);
 
 void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop, const std::string &log_folder,
@@ -339,9 +336,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
   }
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpForceTorqueGenerator.cpp.o) has no symbols
 void dummy_vpForceTorqueGenerator() { };

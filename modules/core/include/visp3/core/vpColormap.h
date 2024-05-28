@@ -45,10 +45,7 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpColormap
  *
@@ -102,7 +99,5 @@ private:
   unsigned char m_colormapSrgbBytes[256][3];
 #endif
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

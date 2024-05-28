@@ -39,10 +39,7 @@
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Parse the flag values defined in a JSON object.
   if the flags are defined as an int, then this is int is directly returned.
@@ -110,8 +107,6 @@ bool convertFromTypeAndBuildFrom(const nlohmann::json &j, T &t)
     return convertFromTypeAndBuildFrom<T, Os...>(j, t);
   }
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

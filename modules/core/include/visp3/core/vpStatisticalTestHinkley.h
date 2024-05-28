@@ -41,10 +41,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief This class implements the Hinkley's cumulative sum test.
@@ -333,7 +330,5 @@ public:
    */
   void setAlpha(const float &alpha);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

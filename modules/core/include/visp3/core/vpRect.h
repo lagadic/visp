@@ -41,10 +41,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpRect
@@ -413,7 +410,5 @@ private:
   double width;  // Rectangle width
   double height; // Rectangle height
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -53,10 +53,7 @@
 
 #include <visp3/robot/vpRobot.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpJointVelTrajGenerator
 {
 public:
@@ -120,8 +117,6 @@ private:
   const double m_offset_joint_limit = vpMath::rad(1); // stop before joint limit (rad)
   const double m_delta_q_min = 1e-9;                  // Delta q minimum (rad)
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

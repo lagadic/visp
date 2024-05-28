@@ -52,10 +52,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const char *vp1394TwoGrabber::strVideoMode[DC1394_VIDEO_MODE_NUM] = {
     "MODE_160x120_YUV444",  "MODE_320x240_YUV422",  "MODE_640x480_YUV411",   "MODE_640x480_YUV422",
     "MODE_640x480_RGB8",    "MODE_640x480_MONO8",   "MODE_640x480_MONO16",   "MODE_800x600_YUV422",
@@ -3403,9 +3400,7 @@ vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<vpRGBa> &I)
   this->acquire(I);
   return *this;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vp1394TwoGrabber.cpp.o) has
 // no symbols

@@ -47,10 +47,7 @@
 
 #define DEBUG_LEVEL2 0
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 //! Constructor
 vpScale::vpScale() : bandwidth(0.02), dimension(1)
 {
@@ -265,6 +262,4 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
   // (double)dimension)*c*vpMath::sqr(bandwidth));
   return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

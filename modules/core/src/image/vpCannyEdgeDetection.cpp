@@ -40,7 +40,7 @@ namespace
 // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
 static void scaleFilter(
-#if defined(ENABLE_VISP_NAMESPACE)
+#ifdef ENABLE_VISP_NAMESPACE
   visp::
 #endif
   vpArray2D<FilterType> &filter, const float &scale)
@@ -56,10 +56,7 @@ static void scaleFilter(
 };
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_NLOHMANN_JSON
 void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
 {
@@ -562,6 +559,4 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   }
   return hasFoundStrongEdge;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

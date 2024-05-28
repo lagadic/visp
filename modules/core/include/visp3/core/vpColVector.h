@@ -45,18 +45,13 @@
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpMatrix;
 class vpRowVector;
 class vpRotationVector;
 class vpTranslationVector;
 class vpPoseVector;
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMath.h>
@@ -64,10 +59,7 @@ class vpPoseVector;
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpColVector
  * \ingroup group_core_matrices
@@ -1491,7 +1483,5 @@ inline void from_json(const nlohmann::json &j, vpColVector &v)
   }
 }
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

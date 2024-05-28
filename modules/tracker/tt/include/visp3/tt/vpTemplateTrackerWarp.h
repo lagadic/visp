@@ -51,10 +51,7 @@
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerWarp
   \ingroup group_tt_warp
@@ -260,7 +257,5 @@ public:
   void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out);
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

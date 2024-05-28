@@ -51,10 +51,7 @@
 
 #define INCR_MIN 1
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void computeDelta(double &delta, int i1, int j1, int i2, int j2);
 
 static void normalizeAngle(double &delta)
@@ -1208,6 +1205,4 @@ void vpMeLine::displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, cons
   ip1.set_j(PExt2.m_jfloat);
   vpDisplay::displayCross(I, ip1, 10, vpColor::green, thickness);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

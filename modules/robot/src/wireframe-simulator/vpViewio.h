@@ -50,14 +50,9 @@
 #include "vpMy.h"
 #include "vpView.h"
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 void fscanf_Remove(Byte *bp);
 void fscanf_View_parameters(View_parameters *vp);
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

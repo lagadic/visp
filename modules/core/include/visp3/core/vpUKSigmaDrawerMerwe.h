@@ -42,10 +42,7 @@
 #include <visp3/core/vpUnscentedKalman.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUKSigmaDrawerMerwe
   \ingroup group_core_kalman
@@ -150,8 +147,6 @@ protected:
   vpAddSubFunction m_resFunc; /*!< Residual function expressed in the state space.*/
   vpAddSubFunction m_addFunc; /*!< Addition function expressed in the state space.*/
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

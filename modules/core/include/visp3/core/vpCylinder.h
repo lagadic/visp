@@ -45,10 +45,7 @@
 
 #include <visp3/core/vpForwardProjection.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpCylinder
  * \ingroup group_core_geometry
@@ -197,7 +194,5 @@ public:
   void setWorldCoordinates(const vpColVector &oP) vp_override;
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

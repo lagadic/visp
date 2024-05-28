@@ -42,10 +42,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 template <typename T> class vpMbtTukeyEstimator
 {
 public:
@@ -63,9 +60,7 @@ private:
   std::vector<T> m_residues;
 };
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 /*
  * The code bellow previously in vpMbtTuckeyEstimator.cpp produced
  * a link issue with MinGW-W64 x86_64-8.1.0-posix-seh-rt_v6-rev0 (g++ 8.1.0)
@@ -132,10 +127,7 @@ template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
 } // namespace
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 template class vpMbtTukeyEstimator<float>;
 template class vpMbtTukeyEstimator<double>;
 
@@ -482,9 +474,7 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
     }
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

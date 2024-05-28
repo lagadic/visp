@@ -48,10 +48,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 vpHomography::vpHomography() : vpArray2D<double>(3, 3), m_aMb(), m_bP() { eye(); }
 
@@ -719,6 +716,4 @@ vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam
   return H;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

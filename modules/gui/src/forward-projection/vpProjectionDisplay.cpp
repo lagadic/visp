@@ -57,10 +57,7 @@
 
 //#include <visp3/visual_features/vpBasicFeature.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 void vpProjectionDisplay::insert(vpForwardProjection &fp)
 {
@@ -150,9 +147,7 @@ void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomog
   vpDisplay::displayArrow(I, ipo, ip, vpColor::blue, 4 + thickness, 2 + thickness, thickness);
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpProjectionDisplay.cpp.o)

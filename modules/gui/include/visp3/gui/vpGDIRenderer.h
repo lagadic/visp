@@ -58,10 +58,7 @@
 
 #include <visp3/core/vpMath.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
@@ -138,9 +135,7 @@ private:
   void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 };
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

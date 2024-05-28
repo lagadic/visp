@@ -48,10 +48,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpPolygon3D.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 */
@@ -651,6 +648,4 @@ bool vpPolygon3D::roiInsideImage(const vpImage<unsigned char> &I, const std::vec
 
   return true;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

@@ -43,10 +43,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_gui_display
  */
@@ -145,7 +142,5 @@ vpDisplay *displayFactory(vpImage<T> &I, vpDisplay::vpScaleType scale_type)
 #endif
 }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

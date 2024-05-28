@@ -46,10 +46,7 @@
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Return the transpose of the rotation vector.
 
@@ -183,9 +180,7 @@ double vpRotationVector::sumSquare() const
 
   return sum_square;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 /*!
   \relates vpRotationVector

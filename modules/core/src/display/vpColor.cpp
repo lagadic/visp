@@ -35,10 +35,7 @@
 
 #include <visp3/core/vpColor.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 // FS: Sould be improved to avoid the #if preprocessor line. Not a good idea
 // to define colors in static.
 //     See also vpColor.h where things need to be improved.
@@ -149,6 +146,4 @@ VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2)
   return ((c1.R != c2.R) || (c1.G != c2.G) || (c1.B == c2.B));
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

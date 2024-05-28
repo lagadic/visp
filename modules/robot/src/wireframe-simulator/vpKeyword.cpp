@@ -48,10 +48,7 @@
 #include <stdlib.h>
 #include <string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static void open_hash(void);
 static void close_hash(void);
 static int hashpjw(const char *str);
@@ -235,7 +232,5 @@ Index get_symbol(char *ident, int length)
   }
   return (0); /*  identificateur  */
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

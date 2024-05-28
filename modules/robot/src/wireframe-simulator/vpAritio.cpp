@@ -50,10 +50,7 @@
 
 #include <stdio.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_Position" ecrit en ascii un positionnement.
  * Entree :
@@ -140,7 +137,5 @@ void fscanf_Position(AritPosition *pp)
   fscanf_Vector(&pp->translate);
   poperr();
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

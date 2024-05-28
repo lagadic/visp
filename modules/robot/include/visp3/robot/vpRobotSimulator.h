@@ -44,10 +44,7 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotSimulator
  *
@@ -84,7 +81,5 @@ public:
   virtual inline void setSamplingTime(const double &delta_t) { this->delta_t_ = delta_t; }
   //@}
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

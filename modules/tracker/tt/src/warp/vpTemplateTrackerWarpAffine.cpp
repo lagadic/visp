@@ -38,10 +38,7 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpAffine.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 6 affine parameters initialized to zero.
  */
@@ -267,6 +264,4 @@ void vpTemplateTrackerWarpAffine::pRondp(const vpColVector &p1, const vpColVecto
   p12[4] = r1_00 * u2 + r1_01 * v2 + u1;
   p12[5] = r1_10 * u2 + r1_11 * v2 + v1;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

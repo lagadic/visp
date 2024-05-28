@@ -41,10 +41,7 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Prints the moment contents to a stream
  * \param os : a std::stream.
@@ -137,6 +134,4 @@ void vpMoment::printDependencies(std::ostream &os) const
     "the derived classes!"
     << std::endl;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

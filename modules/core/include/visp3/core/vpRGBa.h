@@ -43,10 +43,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpRGBa;
 
 /*!
@@ -148,7 +145,5 @@ public:
 
   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

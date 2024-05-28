@@ -50,10 +50,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * Initialise the memory space requested for segment visual feature.
@@ -700,6 +697,4 @@ unsigned int vpFeatureSegment::selectL() { return FEATURE_LINE[2]; }
  */
 
 unsigned int vpFeatureSegment::selectAlpha() { return FEATURE_LINE[3]; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

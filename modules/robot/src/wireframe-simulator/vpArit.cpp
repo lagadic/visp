@@ -44,10 +44,7 @@
 #include <visp3/core/vpMath.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_matrix" affiche une matrice sur un fichier.
  * Entree :
@@ -752,7 +749,5 @@ void Translate_to_Matrix(Vector *vp, Matrix m)
   m[3][1] = vp->y;
   m[3][2] = vp->z;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

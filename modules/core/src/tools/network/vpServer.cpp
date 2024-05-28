@@ -44,10 +44,7 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Construct a server on the machine launching it.
 */
@@ -294,9 +291,7 @@ bool vpServer::checkForConnections()
   Print the connected clients.
 */
 void vpServer::print() { vpNetwork::print("Client"); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
 void dummy_vpServer() { };

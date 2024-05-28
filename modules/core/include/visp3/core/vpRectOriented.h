@@ -38,10 +38,7 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRect.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRectOriented
  * \ingroup group_core_geometry
@@ -109,7 +106,5 @@ private:
   vpImagePoint m_bottomRight;
   bool isLeft(const vpImagePoint &pointToTest, const vpImagePoint &point1, const vpImagePoint &point2) const;
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif // _vpRectOriented_h_

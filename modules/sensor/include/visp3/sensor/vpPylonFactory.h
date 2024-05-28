@@ -50,10 +50,7 @@
 
 #ifdef VISP_HAVE_PYLON
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Factory singleton class to create vpPylonGrabber subclass
   instances.
@@ -92,8 +89,6 @@ private:
 
   Pylon::PylonAutoInitTerm m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonFactory_h_

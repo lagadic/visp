@@ -48,10 +48,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageDraw
 
@@ -120,7 +117,5 @@ public:
   static void drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill = false,
                             unsigned int thickness = 1);
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -50,10 +50,7 @@
 
 */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 3D point visual
@@ -683,6 +680,4 @@ unsigned int vpFeaturePoint3D::selectY() { return FEATURE_LINE[1]; }
 
 */
 unsigned int vpFeaturePoint3D::selectZ() { return FEATURE_LINE[2]; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

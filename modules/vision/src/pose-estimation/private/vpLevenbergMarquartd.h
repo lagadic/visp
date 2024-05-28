@@ -43,10 +43,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
  * ENTREE  :
@@ -464,8 +461,6 @@ int VISP_EXPORT lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, 
                        int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info,
                        int *ipvt, int lwa, double *wa);
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

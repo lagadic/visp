@@ -34,10 +34,7 @@
 
 #include <visp3/core/vpFrameGrabber.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 unsigned int vpFrameGrabber::getHeight() const
 {
   return height;
@@ -47,6 +44,4 @@ unsigned int vpFrameGrabber::getWidth() const
 {
   return width;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

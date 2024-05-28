@@ -51,10 +51,7 @@
 #include <ostream>
 #include <sstream>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpScanPoint
@@ -250,7 +247,5 @@ inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p)
 
   return s;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

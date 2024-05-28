@@ -57,10 +57,7 @@
 #include <visp3/sensor/vpLaserScanner.h>
 #include <visp3/sensor/vpScanPoint.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSickLDMRS
  *
@@ -161,9 +158,7 @@ protected:
   bool isFirstMeasure;
   size_t maxlen_body;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 #endif

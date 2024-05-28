@@ -57,10 +57,7 @@
 #include <nlohmann/json.hpp>
 #endif
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorDNNOpenCV
  * \ingroup group_detection_dnn
@@ -620,8 +617,6 @@ vpDetectorDNNOpenCV::DetectedFeatures2D::display(const vpImage< Type > &img, con
   ss << "(" << std::setprecision(4) << m_score * 100. << "%)";
   vpDisplay::displayText(img, m_bbox.getTopRight(), ss.str(), color);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -40,10 +40,7 @@
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 #include <future>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I, const vpRect &bb)
 {
   return std::async(std::launch::async, [&I, &bb, this]() -> vpMegaPoseEstimate {
@@ -79,9 +76,7 @@ void vpMegaPoseTracker::updatePose(const vpHomogeneousMatrix &cTo)
 {
   m_poseEstimate.cTo = cTo;
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPoseTracker.cpp.o) has no symbols
 void dummy_vpMegaPoseTracker() { };

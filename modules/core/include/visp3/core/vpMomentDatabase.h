@@ -44,10 +44,7 @@
 #include <iostream>
 #include <map>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpMoment;
 class vpMomentObject;
 
@@ -162,7 +159,5 @@ public:
   friend class vpMoment;
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &v);
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

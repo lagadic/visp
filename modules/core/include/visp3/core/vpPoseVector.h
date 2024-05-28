@@ -49,23 +49,15 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 class vpRotationMatrix;
 class vpHomogeneousMatrix;
 class vpTranslationVector;
 class vpThetaUVector;
 class vpRowVector;
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPoseVector
 
@@ -346,7 +338,5 @@ inline void from_json(const nlohmann::json &j, vpPoseVector &r)
   r.parse_json(j);
 }
 #endif
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

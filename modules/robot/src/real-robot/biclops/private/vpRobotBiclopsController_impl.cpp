@@ -52,10 +52,7 @@
 
 #include <visp3/core/vpDebug.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpRobotBiclops::vpRobotBiclopsController::vpRobotBiclopsController()
   : m_biclops(), m_axisMask(0), m_panAxis(nullptr), m_tiltAxis(nullptr), m_vergeAxis(nullptr), m_panProfile(), m_tiltProfile(),
   m_vergeProfile(), m_shm(), m_stopControllerThread(false)
@@ -354,9 +351,7 @@ vpRobotBiclops::vpRobotBiclopsController::shmType vpRobotBiclops::vpRobotBiclops
 
   return tmp_shm;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotBiclopsController.cpp.o) has no symbols

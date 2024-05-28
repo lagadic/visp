@@ -75,10 +75,7 @@
 #include <pcl/point_cloud.h>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageConvert
 
@@ -335,7 +332,5 @@ private:
   static int vpCgr[256];
   static int vpCbb[256];
 };
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

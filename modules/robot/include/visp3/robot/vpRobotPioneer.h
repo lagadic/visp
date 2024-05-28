@@ -48,10 +48,7 @@
 #include <visp3/robot/vpPioneer.h>
 #include <visp3/robot/vpRobot.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotPioneer
  *
@@ -134,9 +131,7 @@ public:
 protected:
   bool isInitialized;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 
 #endif // VPROBOTPIONEER_H

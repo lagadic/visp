@@ -43,10 +43,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpWin32API.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 DWORD vpProcessErrors(const std::string &api_name)
 {
@@ -141,9 +138,7 @@ HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, 
   return ret;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpWin32API.cpp.o) has no symbols

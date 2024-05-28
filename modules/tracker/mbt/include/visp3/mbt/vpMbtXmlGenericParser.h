@@ -49,10 +49,7 @@
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/me/vpMe.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtXmlGenericParser
   \brief Parse an Xml file to extract configuration parameters of a mbtConfig
@@ -168,8 +165,6 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

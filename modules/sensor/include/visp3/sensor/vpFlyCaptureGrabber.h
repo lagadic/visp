@@ -50,10 +50,7 @@
 
 #include <FlyCapture2.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpFlyCaptureGrabber
@@ -237,8 +234,6 @@ protected:
   bool m_connected;              //!< true if camera connected
   bool m_capture;                //!< true is capture started
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

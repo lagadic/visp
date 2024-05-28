@@ -39,10 +39,7 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Computes the two gravity center coordinates commonly called \f$x_g\f$ and
   \f$y_g\f$.
@@ -85,6 +82,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCent
   os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

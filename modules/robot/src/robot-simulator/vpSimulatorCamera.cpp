@@ -44,10 +44,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor that sets the transformation between
   world frame and camera frame to identity.
@@ -242,6 +239,4 @@ void vpSimulatorCamera::setPosition(const vpHomogeneousMatrix &wMc)
 
   this->wMc_ = wMc;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

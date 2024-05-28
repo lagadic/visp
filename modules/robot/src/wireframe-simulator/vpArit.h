@@ -149,10 +149,7 @@
 #define M_POLY2(x, a, b, c) (M_POLY1((x), (a), (b)) * (x) + (c))
 #define M_POLY3(x, a, b, c, d) (M_POLY2((x), (a), (b), (c)) * (x) + (d))
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 typedef struct
 {
   int x, y;
@@ -252,8 +249,6 @@ void Translate_to_Matrix(Vector *vp, Matrix m);
 
 void fscanf_Point3f(Point3f *pp);
 void fscanf_Vector(Vector *vp);
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
 #endif

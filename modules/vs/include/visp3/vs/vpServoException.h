@@ -45,10 +45,7 @@
 #include <iostream>
 #include <string>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpServoException
  * \brief Error that can be emitted by the vpServo class and its derivatives.
@@ -95,7 +92,5 @@ public:
    */
   explicit vpServoException(int id) : vpException(id) { }
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

@@ -38,10 +38,7 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, double r, double t)
@@ -81,6 +78,4 @@ double vpTemplateTrackerBSpline::Bspline4(double diff)
 }
 
 #endif
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

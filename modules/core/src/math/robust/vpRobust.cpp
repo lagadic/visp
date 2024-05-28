@@ -53,10 +53,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRobust.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */
@@ -709,6 +706,4 @@ double vpRobust::gammln(double xx)
 #undef vpEPS
 
 #endif
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

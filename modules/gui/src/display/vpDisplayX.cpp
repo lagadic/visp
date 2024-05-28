@@ -66,10 +66,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 // Work around to use this class with Eigen3
 #ifdef Success
@@ -2665,9 +2662,7 @@ bool vpDisplayX::getPointerPosition(vpImagePoint &ip)
   return ret;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayX.cpp.o) has no symbols

@@ -59,10 +59,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpServolens.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor. Does nothing.
 
@@ -800,7 +797,5 @@ bool vpServolens::clean(const char *in, char *out) const
   }
   return (error);
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

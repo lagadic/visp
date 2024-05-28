@@ -44,10 +44,7 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * \param moments_ : Database of moment primitives.
@@ -336,6 +333,4 @@ std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
   }
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

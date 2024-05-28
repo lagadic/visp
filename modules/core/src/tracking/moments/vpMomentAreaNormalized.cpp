@@ -41,10 +41,7 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 /*!
   Computes the normalized area \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$.
@@ -124,6 +121,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormali
   os << "An = " << m.values[0] << std::endl;
   return os;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

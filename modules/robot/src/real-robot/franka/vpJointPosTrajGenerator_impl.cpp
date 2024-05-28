@@ -50,10 +50,7 @@
 #include <franka/exception.h>
 #include <franka/robot.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 vpJointPosTrajGenerator::vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> &q_goal)
   : m_q_goal(7), m_q_start(7), m_delta_q(7), m_dq_max_sync(7), m_t_1_sync(7), m_t_2_sync(7), m_t_f_sync(7), m_q_1(7),
   m_dq_max(7), m_ddq_max_start(7), m_ddq_max_goal(7)
@@ -182,9 +179,7 @@ franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotSt
   output.motion_finished = motion_finished;
   return output;
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointPosTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointPosTrajGenerator() { };

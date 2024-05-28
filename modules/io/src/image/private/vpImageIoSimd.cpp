@@ -42,10 +42,7 @@
 #include "vpImageIoBackend.h"
 #include <Simd/SimdLib.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
 {
@@ -97,8 +94,6 @@ void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)
                       SimdImageFilePng, 90, filename.c_str());
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 
 #endif

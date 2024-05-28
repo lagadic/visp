@@ -64,10 +64,7 @@
 
 #include <pylon/PylonIncludes.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabber
   \ingroup group_sensor_camera
@@ -395,8 +392,6 @@ public:
    */
   virtual void stopCapture() = 0;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabber_h_

@@ -50,10 +50,7 @@
 
 
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 static unsigned char vpParallelPortData;
 
 /*!
@@ -163,9 +160,7 @@ void vpParallelPort::close()
     throw(vpParallelPortException(vpParallelPortException::closing, "Can't close the parallel port"));
   }
 }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no symbols
 void dummy_vpParallelPort() { };

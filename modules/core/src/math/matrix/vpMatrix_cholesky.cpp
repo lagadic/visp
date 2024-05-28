@@ -71,10 +71,7 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 #include <Eigen/Dense>
 #endif
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition.
   The matrix must be real symmetric positive defined.
@@ -382,6 +379,4 @@ vpMatrix vpMatrix::choleskyByEigen3() const
 }
 #endif // VISP_HAVE_EIGEN3
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

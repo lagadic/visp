@@ -42,10 +42,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpReflexTakktile2.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpReflexTakktile2::Impl : public reflex_driver2::ReflexDriver
 {
@@ -328,7 +325,5 @@ void vpReflexTakktile2::open()
  * \param milliseconds : Duration in [ms].
  */
 void vpReflexTakktile2::wait(int milliseconds) { m_impl->wait(milliseconds); }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif

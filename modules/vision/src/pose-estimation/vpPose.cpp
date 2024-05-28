@@ -49,10 +49,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 
 #define DEBUG_LEVEL1 0
 
@@ -669,6 +666,4 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   return lx / s;
 }
 
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

@@ -60,10 +60,7 @@
 
 */
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 2D point visual
@@ -630,6 +627,4 @@ unsigned int vpFeaturePointPolar::selectRho() { return FEATURE_LINE[0]; }
   \sa selectRho()
 */
 unsigned int vpFeaturePointPolar::selectTheta() { return FEATURE_LINE[1]; }
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

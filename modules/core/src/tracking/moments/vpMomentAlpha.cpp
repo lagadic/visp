@@ -41,10 +41,7 @@
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentGravityCenter.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Empty constructor. Initializes alpha moment as a reference alpha with a
   value in \f$[-\pi/2 ; \pi/2]\f$. A default-constructed alpha moment may be
@@ -190,6 +187,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &c)
   return os;
 }
 
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE

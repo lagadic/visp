@@ -37,10 +37,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 const vpArray2D<double> null(0, 0);
 
 /*!
@@ -447,7 +444,5 @@ inline void vpGEMM(const vpArray2D<double> &A, const vpArray2D<double> &B, const
     break;
   }
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE
 #endif

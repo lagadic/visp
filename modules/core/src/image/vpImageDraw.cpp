@@ -237,10 +237,7 @@ void DrawRectangle(vpImage<Type> &canvas, const vpRect &rect, const Type &color,
 }
 } // namespace
 
-#if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   Draw an arrow from image point \e ip1 to image point \e ip2.
   \param[in,out] I : Image where to draw the arrow.
@@ -983,6 +980,4 @@ void vpImageDraw::drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, con
     DrawRectangle(I, rectangle, vpRGBa(color.R, color.G, color.B), thickness);
   }
 }
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
+END_VISP_NAMESPACE

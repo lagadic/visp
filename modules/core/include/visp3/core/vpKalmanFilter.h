@@ -44,10 +44,7 @@
 
 #include <math.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace VISP_NAMESPACE_NAME
-{
-#endif
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpKalmanFilter
   \ingroup group_core_kalman
@@ -215,7 +212,5 @@ protected:
   //! Identity matrix \f$ \bf I\f$.
   vpMatrix I;
 };
-#ifdef ENABLE_VISP_NAMESPACE
-}
-#endif
+END_VISP_NAMESPACE
 #endif
