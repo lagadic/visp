@@ -1,0 +1,87 @@
+# TODO:
+# visp> In file included from /nix/store/g6lpg2p890jn3hkv63jjkk2f7k66y6hk-ogre-14.2.5/include/OGRE/Ogre.h:52,
+# visp>                  from /build/source/modules/ar/include/visp3/ar/vpAROgre.h:66:
+# visp> /nix/store/g6lpg2p890jn3hkv63jjkk2f7k66y6hk-ogre-14.2.5/include/OGRE/OgreConfigFile.h:94:41: note: declared here
+# visp>    94 |         OGRE_DEPRECATED SectionIterator getSectionIterator(void);
+# visp>       |                                         ^~~~~~~~~~~~~~~~~~
+# visp> /build/source/modules/ar/src/ogre-simulator/vpAROgre.cpp:315:33: error: no matching function for call to 'Ogre::Root::showConfigDialog()'
+# visp>   315 |     if (!mRoot->showConfigDialog()) {
+# visp>       |          ~~~~~~~~~~~~~~~~~~~~~~~^~
+{
+  cmake,
+  coin3d,
+  doxygen,
+  eigen,
+  #fetchFromGitHub,
+  lapack,
+  lib,
+  libdc1394,
+  libdmtx,
+  libglvnd,
+  libpng,
+  libxml2,
+  libX11,
+  nix-gitignore,
+  nlohmann_json,
+  #ogre,
+  openblas,
+  opencv,
+  python3,
+  stdenv,
+  texliveSmall,
+  v4l-utils,
+  xorg,
+  zbar,
+  zlib,
+}:
+
+stdenv.mkDerivation (finalAttrs: {
+  pname = "visp";
+  version = "3.6.0";
+
+  /*
+  src = fetchFromGitHub {
+    owner = "lagadic";
+    repo = "visp";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-m5Tmr+cZab7eSjmbXb8HpJpFHb0UYFTyimY+CkfBIAo=";
+  };
+  */
+  src = nix-gitignore.gitignoreSource [ ./.nixignore ] ./.;
+
+  nativeBuildInputs = [
+    cmake
+    doxygen
+    texliveSmall
+  ];
+
+  doCheck = true;
+
+  buildInputs = [
+    coin3d
+    eigen
+    lapack
+    libdmtx
+    libxml2
+    libdc1394
+    libX11
+    libglvnd
+    libpng
+    nlohmann_json
+    #ogre
+    openblas
+    opencv
+    (python3.withPackages (p: [ p.numpy ]))
+    v4l-utils
+    xorg.libpthreadstubs
+    zbar
+    zlib
+  ];
+
+  meta = {
+    description = "Open Source Visual Servoing Platform";
+    homepage = "https://visp.inria.fr";
+    license = lib.licenses.gpl2Plus;
+    maintainers = [ lib.maintainers.nim65s ];
+  };
+})
