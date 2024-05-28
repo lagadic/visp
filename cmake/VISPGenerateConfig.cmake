@@ -41,14 +41,19 @@
 # output: path_to_parent, the relative path to go from path_to_child to parent
 # example: if input =lib/x86_64-linux-gnu, then output=../..
 macro(get_path_to_parent path_to_child path_to_parent)
-  set(${path_to_parent} "")
-  set(input_ "${path_to_child}")
-  while(input_)
-    if(input_)
-      set(${path_to_parent} "${${path_to_parent}}../")
-    endif()
-    get_filename_component(input_ "${input_}" PATH)
-  endwhile(input_)
+  if(IS_ABSOLUTE ${path_to_child})
+    file(RELATIVE_PATH _path_to_parent "${path_to_child}" "${CMAKE_INSTALL_PREFIX}")
+    string(REGEX REPLACE "/$" "" ${path_to_parent} "${_path_to_parent}")
+  else()
+    set(${path_to_parent} "")
+    set(input_ "${path_to_child}")
+    while(input_)
+      if(input_)
+        set(${path_to_parent} "${${path_to_parent}}../")
+      endif()
+      get_filename_component(input_ "${input_}" PATH)
+    endwhile(input_)
+  endif()
 endmacro()
 
 # Here we determine the relative path from ./${VISP_LIB_INSTALL_PATH} to its parent folder
