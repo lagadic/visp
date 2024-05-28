@@ -1,7 +1,7 @@
 name: Windows - clang
 on:
   pull_request:
-  push:
+    types: [opened, reopened, synchronize]
 
 # https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
 # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
