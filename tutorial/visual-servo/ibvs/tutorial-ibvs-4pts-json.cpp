@@ -11,10 +11,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; //! json namespace shortcut
 
-
 #if defined(ENABLE_VISP_NAMESPACE)
-namespace VISP_NAMESPACE_NAME
-{
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 //! [Enum]
@@ -75,6 +73,9 @@ public:
 // the default value defined in the constructor is kept
 void from_json(const json &j, Arguments &a)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using VISP_NAMESPACE_ADDRESSING from_json;
+#endif
   a.lambda = j.value("lambda", a.lambda);
   if (a.lambda <= 0) {
     throw vpException(vpException::badValue, "Lambda should be > 0");
@@ -101,6 +102,9 @@ void from_json(const json &j, Arguments &a)
 
 void to_json(json &j, const Arguments &a)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using VISP_NAMESPACE_ADDRESSING to_json;
+#endif
   j = json {
     {"lambda", a.lambda},
     {"cMo", a.cMo},
@@ -147,6 +151,11 @@ Arguments readArguments(const std::string &path)
 //! [JSON input conversion]
 
 //! [Custom ViSP object conversion]
+#ifdef ENABLE_VISP_NAMESPACE
+// Required to have the to_json method in the same namespace than vpFeaturePoint
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 void to_json(json &j, const vpFeaturePoint &p)
 {
   j = json {
@@ -155,6 +164,9 @@ void to_json(json &j, const vpFeaturePoint &p)
     {"z", p.get_Z()}
   };
 }
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 
 //! [Custom ViSP object conversion]
 
@@ -190,6 +202,9 @@ private:
 
 void to_json(json &j, const ServoingExperimentData &res)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using VISP_NAMESPACE_ADDRESSING to_json;
+#endif
   j = json {
     {"parameters", res.m_arguments},
     {"trajectory", res.m_trajectory},
@@ -211,15 +226,9 @@ void saveResults(const ServoingExperimentData &results, const std::string &path)
   file.close();
 }
 //! [write json to file]
-#if defined(ENABLE_VISP_NAMESPACE)
-}
-#endif
 
 int main(int argc, char *argv[])
 {
-#if defined(ENABLE_VISP_NAMESPACE)
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   //! [Main parsing]
   std::string arguments_path = "";
   std::string output_path = "";
