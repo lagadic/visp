@@ -61,6 +61,10 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfolwv"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -575,6 +579,6 @@ int main()
     "this example."
     << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

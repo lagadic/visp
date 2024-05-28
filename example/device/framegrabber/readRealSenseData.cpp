@@ -70,6 +70,10 @@
 
 #define GETOPTARGS "ci:e:jbzodh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 
@@ -324,13 +328,13 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
 #if defined(VISP_HAVE_PCL_IO)
       if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
         std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
-      }
+    }
 #else
       throw(vpIoException(vpIoException::ioError, "Cannot read pcd file without PCL io module"));
 #endif
-    }
-#endif
   }
+#endif
+}
 
   return true;
 }

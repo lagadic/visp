@@ -43,6 +43,7 @@
   platforms since the Sick LD-MRS driver was not ported to Windows.
 
 */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpSickLDMRS.h>
@@ -51,6 +52,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpSickLDMRS laser;
     std::string ip = "131.254.12.119";
@@ -83,5 +88,5 @@ int main()
     << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
 
   return EXIT_SUCCESS;
-}
+  }
 #endif // #ifdef UNIX

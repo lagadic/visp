@@ -50,11 +50,16 @@
 #include <sstream>
 #include <stdio.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpParseArgv.h>
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     using ::std::cout;
     using ::std::endl;
@@ -74,7 +79,7 @@ int main(int argc, const char **argv)
         {"-double", vpParseArgv::ARGV_DOUBLE, (char *)nullptr, (char *)&double_val, "A double value."},
         {"-string", vpParseArgv::ARGV_STRING, (char *)nullptr, (char *)&string_val, "A chain value."},
         {"-h", vpParseArgv::ARGV_HELP, (char *)nullptr, (char *)nullptr, "Print the help."},
-        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr}};
+        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr} };
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
@@ -95,7 +100,8 @@ int main(int argc, const char **argv)
     cout << "Call  " << argv[0] << " -h to see how to change these parameters." << endl;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

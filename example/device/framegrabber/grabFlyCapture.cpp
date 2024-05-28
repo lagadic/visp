@@ -57,6 +57,10 @@
 
 #define GETOPTARGS "cdhi:n:o:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -95,7 +99,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          icamera, opath.c_str());
+icamera, opath.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -220,7 +224,8 @@ int main(int argc, const char **argv)
       if (opt_click && opt_display) {
         if (vpDisplay::getClick(I, false) == true)
           break;
-      } else {
+      }
+      else {
         static unsigned int cpt = 0;
         if (cpt++ == 10)
           break;
@@ -232,7 +237,8 @@ int main(int argc, const char **argv)
     // The camera connection will be closed automatically in vpFlyCapture
     // destructor
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

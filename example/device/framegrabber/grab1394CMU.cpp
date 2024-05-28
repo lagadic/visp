@@ -57,6 +57,11 @@
 // List of allowed command line options
 #define GETOPTARGS "dhn:o:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+
 void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath);
 bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframes, bool &save, std::string &opath);
 

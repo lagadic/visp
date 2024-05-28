@@ -47,6 +47,10 @@
 int main()
 {
 #if defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     // Create a window with one graphic
     vpPlot plot(1);
@@ -99,9 +103,10 @@ int main()
         y += dy;
         if (fabs(y) >= 1.0)
           zsign = -zsign;
-      } else {
-        // Tip: to allows modifying the point of view with the mouse we
-        // plot always the last point
+      }
+      else {
+     // Tip: to allows modifying the point of view with the mouse we
+     // plot always the last point
         if (plot.plot(0, 0, x, y, z * zsign) == vpMouseButton::button3)
           end = true;
         if (plot.plot(0, 1, x, -y, -z * zsign) == vpMouseButton::button3)
@@ -110,14 +115,15 @@ int main()
       iter++;
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 #else
   std::cout << "Plot functionalities are not avalaible since no display is "
-               "available."
-            << std::endl;
+    "available."
+    << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

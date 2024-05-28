@@ -76,6 +76,10 @@
 
 #define GETOPTARGS "se:o:acdpzijCf:bvh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void usage(const char *name, const char *badparam, int fps)
@@ -360,7 +364,7 @@ public:
       ptr_infraredImg = std::make_unique<vpImage<unsigned char>>(m_queueInfrared.front());
       m_queueInfrared.pop();
     }
-  }
+    }
 
   bool empty()
   {
@@ -383,7 +387,7 @@ private:
   std::queue<vpImage<unsigned char>> m_queueInfrared;
   size_t m_maxQueueSize;
   std::mutex m_mutex;
-};
+  };
 
 class vpStorageWorker
 {
@@ -911,7 +915,7 @@ int main(int argc, const char *argv[])
       }
       save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-    }
+      }
 
     double delta_time = vpTime::measureTimeMs() - start;
     vec_delta_time.push_back(delta_time);
@@ -958,7 +962,7 @@ int main(int argc, const char *argv[])
             }
             save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-          }
+            }
           break;
 
         case vpMouseButton::button2:
@@ -968,10 +972,10 @@ int main(int argc, const char *argv[])
           quit = true;
           save_queue.cancel();
           break;
+          }
         }
       }
     }
-  }
 
   double mean_vec_delta_time = vpMath::getMean(vec_delta_time);
   double median_vec_delta_time = vpMath::getMedian(vec_delta_time);
@@ -994,5 +998,5 @@ int main()
   std::cout << "pugixml built-in 3rdparty is requested." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+    }
 #endif

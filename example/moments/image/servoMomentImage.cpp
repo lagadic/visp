@@ -42,6 +42,7 @@
 
 #include <iostream>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
@@ -77,6 +78,10 @@ int main()
   return EXIT_SUCCESS;
 }
 #else
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class servoMoment

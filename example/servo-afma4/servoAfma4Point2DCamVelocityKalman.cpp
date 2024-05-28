@@ -79,6 +79,10 @@
 // List of allowed command line options
 #define GETOPTARGS "hK:l:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 typedef enum { K_NONE, K_VELOCITY, K_ACCELERATION } KalmanType;
 
 /*!

@@ -45,11 +45,16 @@
 
   */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpImage<unsigned char> I; // Grey level image
 

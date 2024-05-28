@@ -56,6 +56,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -69,6 +70,10 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)

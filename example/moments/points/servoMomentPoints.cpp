@@ -77,6 +77,10 @@ int main()
 }
 #else
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class servoMoment
 {

@@ -53,6 +53,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -60,6 +61,10 @@
 #include <visp3/io/vpParseArgv.h>
   // List of allowed command line options
 #define GETOPTARGS "i:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 

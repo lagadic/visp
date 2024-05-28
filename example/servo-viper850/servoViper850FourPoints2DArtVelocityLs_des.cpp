@@ -75,6 +75,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed joint velocities (m/s, rad/s) to achieve the task

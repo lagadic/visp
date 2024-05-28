@@ -71,6 +71,10 @@
 // List of allowed command line options
 #define GETOPTARGS "Aabcdf:hi:l:p:r:s:S:t:vw:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
   Print the program options.
 
@@ -326,8 +330,8 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
-      opt_display, opt_display_scale_auto, opt_track_circle, opt_track_arc, opt_save,
-      opt_me_range, opt_me_sample_step, opt_me_threshold, opt_verbose) == false) {
+                   opt_display, opt_display_scale_auto, opt_track_circle, opt_track_arc, opt_save,
+                   opt_me_range, opt_me_sample_step, opt_me_threshold, opt_verbose) == false) {
       return EXIT_FAILURE;
     }
 
