@@ -225,7 +225,7 @@ def generate_commands() -> List[ColVector]:
   @return List[ColVector] The list of commands to use in the simulation
   """
   cmds = []
-  # Starting by an straight line acceleration
+  # Starting by a straight line acceleration
   nbSteps = 30
   dv = (1.1 - 0.001) / float(nbSteps - 1)
   for i in range(nbSteps):
@@ -290,7 +290,7 @@ class vpBicycleModel:
     if (abs(steeringAngle) > 0.001):
       # The robot is turning
       beta = (distance / self._w) * np.tan(steeringAngle)
-      radius = self._w / np.tan(steeringAngle);
+      radius = self._w / np.tan(steeringAngle)
       sinh = np.sin(heading)
       sinhb = np.sin(heading + beta)
       cosh = np.cos(heading)
