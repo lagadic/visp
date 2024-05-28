@@ -270,7 +270,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   /*!

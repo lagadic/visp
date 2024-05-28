@@ -95,10 +95,6 @@ class VISP_EXPORT vpFrameGrabber
 public:
   bool init; //!< Set to true if the frame grabber has been initialized.
 
-protected:
-  unsigned int height; //!< Number of rows in the image.
-  unsigned int width;  //!< Number of columns in the image.
-
 public:
   /** @name Inherited functionalities from vpFramegrabber */
   //@{
@@ -127,6 +123,10 @@ public:
    * the memory used by a specific frame grabber
    */
   virtual void close() = 0;
+
+protected:
+  unsigned int height; //!< Number of rows in the image.
+  unsigned int width;  //!< Number of columns in the image.
 };
 
 #endif

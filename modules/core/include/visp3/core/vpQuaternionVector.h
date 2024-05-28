@@ -103,9 +103,6 @@
  */
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
-private:
-  static const double minimum;
-
 public:
   vpQuaternionVector();
   vpQuaternionVector(const vpQuaternionVector &q);
@@ -162,6 +159,10 @@ public:
   static vpQuaternionVector lerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
   static vpQuaternionVector nlerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
   static vpQuaternionVector slerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+
+private:
+  static const double minimum;
+
 };
 
 #endif

@@ -331,7 +331,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
     vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), u_moved, v_moved);
 
     double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
-    residuals[i++] = squaredResidual;
+    residuals[i] = squaredResidual;
+    i++;
     squared_error += squaredResidual;
   }
   return squared_error;

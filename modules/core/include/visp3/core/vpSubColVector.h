@@ -54,16 +54,6 @@
  */
 class VISP_EXPORT vpSubColVector : public vpColVector
 {
-private:
-  //! Copy constructor unavailable
-  vpSubColVector(const vpSubColVector &v /* m */);
-
-protected:
-  //! Number of row of parent vpColVector at initialization
-  unsigned int m_pRowNum;
-  //! Parent vpColVector
-  vpColVector *m_parent;
-
 public:
   vpSubColVector();
   vpSubColVector(vpColVector &v, const unsigned int &offset, const unsigned int &nrows);
@@ -82,6 +72,18 @@ public:
   vpSubColVector &operator=(const vpColVector &B);
   vpSubColVector &operator=(const vpMatrix &B);
   vpSubColVector &operator=(const double &x);
+
+protected:
+  //! Number of row of parent vpColVector at initialization
+  unsigned int m_pRowNum;
+  //! Parent vpColVector
+  vpColVector *m_parent;
+
+private:
+  //! Copy constructor unavailable
+  vpSubColVector(const vpSubColVector &v /* m */);
+
+
 };
 
 #endif

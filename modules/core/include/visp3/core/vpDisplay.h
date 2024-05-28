@@ -201,21 +201,6 @@ public:
                      vpDisplay::SCALE_1. */
   } vpScaleType;
 
-protected:
-  //! display has been initialized
-  bool m_displayHasBeenInitialized;
-  //! display position
-  int m_windowXPosition;
-  //! display position
-  int m_windowYPosition;
-  unsigned int m_width;
-  unsigned int m_height;
-  std::string m_title;
-  unsigned int m_scale;
-  vpScaleType m_scaleType;
-
-  void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
-
 public:
   vpDisplay();
   vpDisplay(const vpDisplay &d);
@@ -924,6 +909,21 @@ public:
                                               const vpColor &color);
   //@}
 #endif
+
+protected:
+  //! display has been initialized
+  bool m_displayHasBeenInitialized;
+  //! display position
+  int m_windowXPosition;
+  //! display position
+  int m_windowYPosition;
+  unsigned int m_width;
+  unsigned int m_height;
+  std::string m_title;
+  unsigned int m_scale;
+  vpScaleType m_scaleType;
+
+  void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
 
 private:
   //! Get the window pixmap and put it in vpRGBa image.

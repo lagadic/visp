@@ -133,9 +133,6 @@ public:
   static void computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho,
                                        const double &theta, double &i, double &j);
 
-protected:
-  void init() vp_override;
-
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -165,6 +162,9 @@ public:
   vp_deprecated double get_mu02() const { return p[4]; }
   //@}
 #endif
+protected:
+  void init() vp_override;
+
 };
 
 #endif

@@ -165,9 +165,6 @@ class vpQuaternionVector;
 */
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
-private:
-  static const double minimum;
-
 public:
   vpThetaUVector();
   vpThetaUVector(const vpThetaUVector &tu);
@@ -239,6 +236,10 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
 #endif
+
+private:
+  static const double minimum;
+
 };
 
 #endif

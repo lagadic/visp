@@ -654,7 +654,7 @@ public:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
-  static const double m_sing_threshold; // = 0.0001;
+  static const double m_sing_threshold; /* equals 0.0001 */
   static const double m_threshold_rotation;
   static const double m_threshold_displacement;
   vpHomogeneousMatrix m_aMb;
