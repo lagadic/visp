@@ -18,7 +18,9 @@
   libdc1394,
   libdmtx,
   libglvnd,
+  libjpeg,  # this is libjpeg-turbo
   libpng,
+  librealsense,
   libxml2,
   libX11,
   nix-gitignore,
@@ -26,6 +28,7 @@
   #ogre,
   openblas,
   opencv,
+  pkg-config,
   python3,
   stdenv,
   texliveSmall,
@@ -52,6 +55,7 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     cmake
     doxygen
+    pkg-config
     texliveSmall
   ];
 
@@ -61,12 +65,14 @@ stdenv.mkDerivation (finalAttrs: {
     coin3d
     eigen
     lapack
-    libdmtx
-    libxml2
     libdc1394
-    libX11
+    libdmtx
     libglvnd
+    libjpeg
     libpng
+    librealsense
+    libX11
+    libxml2
     nlohmann_json
     #ogre
     openblas
