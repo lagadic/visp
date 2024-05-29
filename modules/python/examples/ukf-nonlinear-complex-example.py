@@ -118,8 +118,8 @@ def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVecto
       sumCos[j] += np.cos(measurements[i][(2*j)+1]) * wm[i]
       sumSin[j] += np.sin(measurements[i][(2*j)+1]) * wm[i]
 
-  for j in range(nbLandmarks):
-    mean[(2*j)+1] = np.arctan2(sumSin[j], sumCos[j])
+  orientations = np.arctan2(sumSin, sumCos)
+  mean[1::2] = orientations[0::1]
   return ColVector(mean)
 
 def measurement_residual(meas: ColVector, toSubstract: ColVector) -> ColVector:
@@ -132,12 +132,8 @@ def measurement_residual(meas: ColVector, toSubstract: ColVector) -> ColVector:
 
   @return ColVector \b meas - \b toSubstract .
   """
-  nbMeasures = meas.size()
-  nbPoints = int(nbMeasures / 2)
-  res = np.zeros(nbMeasures)
-  for i in range(nbPoints):
-    res[2*i] = meas[2*i] - toSubstract[2*i]
-    res[2*i+1] = normalize_angle(meas[2*i + 1] - toSubstract[2*i + 1])
+  res = meas.numpy() - toSubstract.numpy()
+  res[1::2] = [normalize_angle(angle) for angle in res[1::2]]
   return ColVector(res)
 
 def state_add_vectors(a: ColVector, b: ColVector) -> ColVector:
