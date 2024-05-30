@@ -66,7 +66,6 @@
 from visp.core import ColVector, Matrix, UnscentedKalman, UKSigmaDrawerMerwe, Math
 import numpy as np
 from typing import List
-from math import cos, sin
 
 # For the Graphical User Interface
 try:
@@ -76,80 +75,80 @@ except:
   has_gui = False
 import numpy as np
 
-def normalizeAngle(angle: float) -> float:
-  angleIn0to2pi = Math.modulo(angle, 2. * np.pi)
-  angleInMinPiPi = angleIn0to2pi
-  if angleInMinPiPi > np.pi:
+def normalize_angle(angle: float) -> float:
+  angle_0_to_2pi = Math.modulo(angle, 2. * np.pi)
+  angle_MinPi_Pi = angle_0_to_2pi
+  if angle_MinPi_Pi > np.pi:
     # Substract 2 PI to be in interval [-Pi; Pi]
-    angleInMinPiPi = angleInMinPiPi - 2. * np.pi
-  return angleInMinPiPi
+    angle_MinPi_Pi = angle_MinPi_Pi - 2. * np.pi
+  return angle_MinPi_Pi
 
-def measurementMean(measurements: List[ColVector], wm: List[float]) -> ColVector:
+def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVector:
   """
-  @brief Compute the weighted mean of measurement vectors.
+  Compute the weighted mean of measurement vectors.
 
-  @param[in] measurements The measurement vectors, such as measurements[i][0] = range and
+  :param measurements: The measurement vectors, such as measurements[i][0] = range and
    measurements[i][1] = elevation_angle.
-  @param[in] wm The associated weights.
+  :param wm: The associated weights.
 
-  @return vpColVector
+  :return vpColVector: The weighted mean of the measurement vectors.
   """
-  nbPoints = len(measurements)
-  sumCos = 0.
-  sumSin = 0.
+  nb_points = len(measurements)
+  sum_cos = 0.
+  sum_sin = 0.
   meanRange = 0.
-  for i in range(nbPoints):
+  for i in range(nb_points):
     meanRange += wm[i] * measurements[i][0]
-    sumCos += wm[i] * cos(measurements[i][1])
-    sumSin += wm[i] * sin(measurements[i][1])
+    sum_cos += wm[i] * np.cos(measurements[i][1])
+    sum_sin += wm[i] * np.sin(measurements[i][1])
 
-  meanAngle = np.arctan2(sumSin, sumCos)
+  mean_angle = np.arctan2(sum_sin, sum_cos)
 
-  return ColVector([meanRange, meanAngle])
+  return ColVector([meanRange, mean_angle])
 
-def measurementResidual(meas: ColVector, toSubstract: ColVector) -> ColVector:
+def measurementResidual(meas: ColVector, to_substract: ColVector) -> ColVector:
   """
-  @brief Compute the substraction between two vectors expressed in the measurement space,
+  Compute the substraction between two vectors expressed in the measurement space,
    such as v[0] = range ; v[1] = elevation_angle
 
-  @param[in] meas Measurement to which we must substract something.
-  @param[in] toSubstract The something we must substract.
+  :param meas: Measurement to which we must substract something.
+  :param toSubstract: The something we must substract.
 
-  @return vpColVector \b meas - \b toSubstract .
+  :return vpColVector: \b meas - \b toSubstract .
   """
-  resTemp = meas - toSubstract
-  return ColVector([resTemp[0], normalizeAngle(resTemp[1])])
+  res_temp = meas - to_substract
+  return ColVector([res_temp[0], normalize_angle(res_temp[1])])
 
-def add_state_vectors(a, b) -> ColVector:
+def state_add_vectors(a, b) -> ColVector:
   """
-  @brief Method that permits to add two state vectors.
+  Method that permits to add two state vectors.
 
-  @param a The first state vector to which another state vector must be added.
-  @param b The other state vector that must be added to a.
+  :param a: The first state vector to which another state vector must be added.
+  :param b: The other state vector that must be added to a.
 
-  @return ColVector The sum a + b.
+  :return ColVector: The sum a + b.
   """
   return a + b
 
-def residual_state_vectors(a, b) -> ColVector:
+def state_residual_vectors(a, b) -> ColVector:
   """
-  @brief Method that permits to substract a state vector to another.
+  Method that permits to substract a state vector to another.
 
-  @param a The first state vector to which another state vector must be substracted.
-  @param b The other state vector that must be substracted to a.
+  :param a: The first state vector to which another state vector must be substracted.
+  :param b: The other state vector that must be substracted to a.
 
-  @return ColVector The substraction a - b.
+  :return ColVector: The substraction a - b.
   """
   return a - b
 
 def fx(x: ColVector, dt: float) -> ColVector:
   """
-  @brief Process function that projects in time the internal state of the UKF.
+  Process function that projects in time the internal state of the UKF.
 
-  @param x The internal state of the UKF.
-  @param dt The sampling time: how far in the future are we projecting x.
+  :param x: The internal state of the UKF.
+  :param dt: The sampling time: how far in the future are we projecting x.
 
-  @return ColVector The updated internal state, projected in time, also known as the prior.
+  :return ColVector: The updated internal state, projected in time, also known as the prior.
   """
   return ColVector([
   	x[0] + dt * x[1],
@@ -160,106 +159,106 @@ def fx(x: ColVector, dt: float) -> ColVector:
 
 class vpRadarStation:
   """
-  @brief Class that permits to convert the position of the aircraft into
+  Class that permits to convert the position of the aircraft into
   range and elevation angle measurements.
   """
-  def __init__(self, x, y, range_std, elev_angle_std):
+  def __init__(self, x: float, y: float, range_std: float, elev_angle_std: float):
     """
-    @brief Construct a new vpRadarStation
+    Construct a new vpRadarStation
 
-    @param x The position on the ground of the radar.
-    @param y The altitude of the radar.
-    @param range_std The standard deviation of the range measurements.
-    @param elev_angle_std The standard deviation of the elevation angle measurements.
+    :param x: The position on the ground of the radar.
+    :param y: The altitude of the radar.
+    :param range_std: The standard deviation of the range measurements.
+    :param elev_angle_std: The standard deviation of the elevation angle measurements.
     """
-    self.m_x = x
-    self.m_y = y
-    self.m_stdevRange = range_std
-    self.m_stdevElevAngle = elev_angle_std
+    self._x = x
+    self._y = y
+    self._stdevRange = range_std
+    self._stdevElevAngle = elev_angle_std
 
-  def state_to_measurement(self, x) -> ColVector:
+  def state_to_measurement(self, x: ColVector) -> ColVector:
     """
-    @brief Measurement function that expresses the internal state of the UKF in the measurement space.
+    Measurement function that expresses the internal state of the UKF in the measurement space.
 
-    @param x The internal state of the UKF.
+    :param x: The internal state of the UKF.
 
-    @return ColVector The internal state, expressed in the measurement space.
+    :return ColVector: The internal state, expressed in the measurement space.
     """
-    dx = x[0] - self.m_x
-    dy = x[2] - self.m_y
+    dx = x[0] - self._x
+    dy = x[2] - self._y
     range = np.sqrt(dx * dx + dy * dy)
     elev_angle = np.arctan2(dy, dx)
     return ColVector([range, elev_angle])
 
-  def measureGT(self, pos) -> ColVector:
+  def measure_gt(self, pos: ColVector) -> ColVector:
     """
-    @brief Perfect measurement of the range and elevation angle that
+    Perfect measurement of the range and elevation angle that
     correspond to pos.
 
-    @param pos The actual position of the aircraft (pos[0]: projection of the position
+    :param pos: The actual position of the aircraft (pos[0]: projection of the position
     on the ground, pos[1]: altitude).
 
-    @return ColVector [0] the range [1] the elevation angle.
+    :return ColVector: [0] the range [1] the elevation angle.
     """
-    dx = pos[0] - self.m_x
-    dy = pos[1] - self.m_y
+    dx = pos[0] - self._x
+    dy = pos[1] - self._y
     range = np.sqrt(dx * dx + dy * dy)
     elev_angle = np.arctan2(dy, dx)
     return ColVector([range, elev_angle])
 
-  def measureWithNoise(self, pos: ColVector) -> ColVector:
+  def measure_with_noise(self, pos: ColVector) -> ColVector:
     """
-    @brief Noisy measurement of the range and elevation angle that
+    Noisy measurement of the range and elevation angle that
     correspond to pos.
 
-    @param pos The actual position of the aircraft (pos[0]: projection of the position
+    :param pos: The actual position of the aircraft (pos[0]: projection of the position
      on the ground, pos[1]: altitude).
-    @return vpColVector [0] the range [1] the elevation angle.
+    :return vpColVector: [0] the range [1] the elevation angle.
     """
-    measurementsGT = self.measureGT(pos)
-    measurementsNoisy = ColVector([measurementsGT[0] + np.random.normal(0., self.m_stdevRange), measurementsGT[1] + np.random.normal(0., self.m_stdevElevAngle)])
-    return measurementsNoisy
+    measurements_GT = self.measure_gt(pos)
+    measurements_noisy = ColVector([measurements_GT[0] + np.random.normal(0., self._stdevRange), measurements_GT[1] + np.random.normal(0., self._stdevElevAngle)])
+    return measurements_noisy
 
 class vpACSimulator:
   """
-  @brief Class to simulate a flying aircraft.
+  Class to simulate a flying aircraft.
   """
 
   def __init__(self, X0: ColVector, vel: ColVector, vel_std: float):
     """
-    @brief Construct a new vpACSimulator object.
+    Construct a new vpACSimulator object.
 
-    @param X0 Initial position of the aircraft.
-    @param vel Velocity of the aircraft.
-    @param vel_std Standard deviation of the variation of the velocity.
+    :param X0: Initial position of the aircraft.
+    :param vel: Velocity of the aircraft.
+    :param vel_std: Standard deviation of the variation of the velocity.
     """
-    self.m_pos = X0 # Position of the simulated aircraft
-    self.m_vel = vel # Velocity of the simulated aircraft
+    self._pos = X0 # Position of the simulated aircraft
+    self._vel = vel # Velocity of the simulated aircraft
     np.random.seed(4224)
-    self.m_stdevVel = vel_std # Standard deviation of the random generator for slight variations of the velocity of the aircraft
+    self._stdevVel = vel_std # Standard deviation of the random generator for slight variations of the velocity of the aircraft
 
 
   def update(self, dt: float) -> ColVector:
     """
-    \brief Compute the new position of the aircraft after dt seconds have passed
+    Compute the new position of the aircraft after dt seconds have passed
     since the last update.
 
-    \param[in] dt Period since the last update.
-    \return vpColVector The new position of the aircraft.
+    :param dt: Period since the last update.
+    :return ColVector: The new position of the aircraft.
     """
-    dx_temp = self.m_vel * dt
-    dx = ColVector([dx_temp[0] + np.random.normal(0., self.m_stdevVel) * dt, dx_temp[1] + np.random.normal(0., self.m_stdevVel) * dt])
-    self.m_pos += dx
-    return self.m_pos
+    dx_temp = self._vel * dt
+    dx = ColVector([dx_temp[0] + np.random.normal(0., self._stdevVel) * dt, dx_temp[1] + np.random.normal(0., self._stdevVel) * dt])
+    self._pos += dx
+    return self._pos
 
 def generate_Q_matrix(dt: float) -> Matrix:
   """
-  @brief Method that generates the process covariance matrix for a process for which the
+  Method that generates the process covariance matrix for a process for which the
   state vector can be written as (x, dx/dt)^T
 
-  @param dt The sampling period.
+  :param dt: The sampling period.
 
-  @return Matrix The corresponding process covariance matrix.
+  :return Matrix: The corresponding process covariance matrix.
   """
   return Matrix(
   	[[dt**3/3, dt**2/2, 0, 0],
@@ -269,7 +268,7 @@ def generate_Q_matrix(dt: float) -> Matrix:
 
 def generate_P0_matrix() -> Matrix:
   """
-  @brief Method that generates the intial guess of the state covariance matrix.
+  Method that generates the intial guess of the state covariance matrix.
 
   @return Matrix The corresponding state covariance matrix.
   """
@@ -285,26 +284,26 @@ if __name__ == '__main__':
   gt_Y_init = 1000. # Ground truth initial position along the Y-axis, in meters
   gt_vX_init = 100. # The velocity along the x-axis
   gt_vY_init = 5. # The velocity along the y-axis
-  procVar = 0.1 # The variance of the process function
-  sigmaRange = 5 # Standard deviation of the range measurement: 5m
-  sigmaElevAngle = Math.rad(0.5) # Standard deviation of the elevation angle measurent: 0.5deg
-  stdevAircraftVelocity = 0.2; # Standard deviation of the velocity of the simulated aircraft,
+  proc_var = 0.1 # The variance of the process function
+  sigma_range = 5 # Standard deviation of the range measurement: 5m
+  sigma_elev_angle = Math.rad(0.5) # Standard deviation of the elevation angle measurent: 0.5deg
+  stdev_aircraft_velocity = 0.2; # Standard deviation of the velocity of the simulated aircraft,
                                # to make it deviate a bit from the constant velocity model
 
   # The object that draws the sigma points used by the UKF
-  drawer = UKSigmaDrawerMerwe(n=4, alpha=0.3, beta=2, kappa=-1, resFunc=residual_state_vectors, addFunc=add_state_vectors)
+  drawer = UKSigmaDrawerMerwe(n=4, alpha=0.3, beta=2, kappa=-1, resFunc=state_residual_vectors, addFunc=state_add_vectors)
 
   # The object that performs radar measurements
-  radar = vpRadarStation(0., 0., sigmaRange, sigmaElevAngle)
+  radar = vpRadarStation(0., 0., sigma_range, sigma_elev_angle)
 
   P0 = generate_P0_matrix() # The initial estimate of the state covariance matrix
-  R = Matrix([[sigmaRange * sigmaRange, 0], [0, sigmaElevAngle * sigmaElevAngle]]) # The measurement covariance matrix
-  Q = generate_Q_matrix(dt) * procVar # The process covariance matrix
+  R = Matrix([[sigma_range * sigma_range, 0], [0, sigma_elev_angle * sigma_elev_angle]]) # The measurement covariance matrix
+  Q = generate_Q_matrix(dt) * proc_var # The process covariance matrix
   ukf = UnscentedKalman(Q, R, drawer, fx, radar.state_to_measurement) # The Unscented Kalman Filter instance
 
   # Initializing the state vector and state covariance matrix estimates
   ukf.init(ColVector([0.9 * gt_X_init, 0.9 * gt_vX_init, 0.9 * gt_Y_init, 0.9 * gt_vY_init]), P0)
-  ukf.setMeasurementMeanFunction(measurementMean)
+  ukf.setMeasurementMeanFunction(measurement_mean)
   ukf.setMeasurementResidualFunction(measurementResidual)
 
   # Initializing the Graphical User Interface if the needed libraries are available
@@ -332,13 +331,13 @@ if __name__ == '__main__':
 
   ac_pos = ColVector([gt_X_init, gt_Y_init]) # Ground truth position
   ac_vel = ColVector([gt_vX_init, gt_vY_init]) # Ground truth velocity
-  ac = vpACSimulator(ac_pos, ac_vel, stdevAircraftVelocity)
-  gt_Xprec = ColVector([ac_pos[0], ac_pos[1]])
+  ac = vpACSimulator(ac_pos, ac_vel, stdev_aircraft_velocity)
+  gt_X_prev = ColVector([ac_pos[0], ac_pos[1]]) # Previous ground truth position
   for i in range(500):
     # Creating noisy measurements
     gt_X = ac.update(dt)
-    gt_V = (gt_X - gt_Xprec) / dt
-    z = radar.measureWithNoise(gt_X)
+    gt_V = (gt_X - gt_X_prev) / dt
+    z = radar.measure_with_noise(gt_X)
 
     # Filtering using the UKF
     ukf.filter(z, dt)
@@ -361,7 +360,7 @@ if __name__ == '__main__':
       plot.plot(3, 1, i, Xest[3])
 
     # Updating last measurement for future computation of the noisy velocity
-    gt_Xprec = ColVector([gt_X[0], gt_X[1]])
+    gt_X_prev = ColVector([gt_X[0], gt_X[1]])
 
   print('Finished')
   input('Press enter to quit')
