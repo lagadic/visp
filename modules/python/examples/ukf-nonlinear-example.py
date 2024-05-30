@@ -93,15 +93,12 @@ def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVecto
 
   :return vpColVector: The weighted mean of the measurement vectors.
   """
-  nb_points = len(measurements)
-  sum_cos = 0.
-  sum_sin = 0.
-  meanRange = 0.
-  for i in range(nb_points):
-    meanRange += wm[i] * measurements[i][0]
-    sum_cos += wm[i] * np.cos(measurements[i][1])
-    sum_sin += wm[i] * np.sin(measurements[i][1])
-
+  wm_np = np.array(wm)
+  ranges = np.array([meas[0] for meas in measurements])
+  elev_angles = np.array([meas[1] for meas in measurements])
+  meanRange = (wm_np * ranges).sum()
+  sum_cos = (wm_np * np.cos(elev_angles)).sum()
+  sum_sin = (wm_np * np.sin(elev_angles)).sum()
   mean_angle = np.arctan2(sum_sin, sum_cos)
 
   return ColVector([meanRange, mean_angle])
