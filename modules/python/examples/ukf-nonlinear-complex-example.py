@@ -159,15 +159,13 @@ def state_mean_vectors(states: List[ColVector], wm: List[float]) -> ColVector:
   :return ColVector: The weighted mean.
  """
   mean = np.zeros(3)
-  nbPoints = len(states)
-  sumCos = 0.
-  sumSin = 0.
-  for i in range (nbPoints):
-    mean[0] += wm[i] * states[i][0]
-    mean[1] += wm[i] * states[i][1]
-    sumCos += wm[i] * np.cos(states[i][2])
-    sumSin += wm[i] * np.sin(states[i][2])
-
+  wm_np = np.array(wm)
+  weighted_x = wm_np * np.array([state[0] for state in states])
+  weighted_y = wm_np * np.array([state[1] for state in states])
+  mean[0] = np.array(weighted_x).sum()
+  mean[1] = np.array(weighted_y).sum()
+  sumCos = (wm_np * np.array([np.cos(state[2]) for state in states])).sum()
+  sumSin = (wm_np * np.array([np.sin(state[2]) for state in states])).sum()
   mean[2] = np.arctan2(sumSin, sumCos)
   return ColVector(mean)
 
@@ -207,9 +205,9 @@ def generate_turn_commands(v: float, angleStart: float, angleStop: float, nbStep
   :return List[ColVector]: The corresponding list of commands.
   """
   cmds = []
-  dTheta = Math.rad(angleStop - angleStart) / float(nbSteps - 1);
+  dTheta = Math.rad(angleStop - angleStart) / float(nbSteps - 1)
   for i in range(nbSteps):
-    theta = Math.rad(angleStart) + dTheta * float(i);
+    theta = Math.rad(angleStart) + dTheta * float(i)
     cmd = ColVector([v, theta])
     cmds.append(cmd)
   return cmds
