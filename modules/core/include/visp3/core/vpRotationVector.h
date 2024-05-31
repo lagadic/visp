@@ -155,11 +155,9 @@ protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
 
-END_VISP_NAMESPACE
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
 VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationVector &v);
-
+END_VISP_NAMESPACE
 #endif

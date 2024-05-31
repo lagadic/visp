@@ -180,15 +180,15 @@ double vpRotationVector::sumSquare() const
 
   return sum_square;
 }
-END_VISP_NAMESPACE
 
 /*!
   \relates vpRotationVector
   Allows to multiply a scalar by rotaion vector.
 */
-VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationVector &v)
+vpColVector operator*(const double &x, const vpRotationVector &v)
 {
-  VISP_NAMESPACE_ADDRESSING vpColVector vout;
+  vpColVector vout;
   vout = v * x;
   return vout;
 }
+END_VISP_NAMESPACE

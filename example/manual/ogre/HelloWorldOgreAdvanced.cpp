@@ -53,11 +53,11 @@
 #include <opencv2/videoio.hpp>
 #endif
 
-#if defined(VISP_HAVE_OGRE)
-
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
+
+#if defined(VISP_HAVE_OGRE)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -145,7 +145,7 @@ int main()
     if (!grabber.isOpened()) {   // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
-  }
+    }
     cv::Mat frame;
     grabber >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
@@ -188,7 +188,7 @@ int main()
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

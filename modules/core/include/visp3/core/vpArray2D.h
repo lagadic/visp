@@ -46,10 +46,6 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-BEGIN_VISP_NAMESPACE
-template <typename T> class vpArray2D;
-END_VISP_NAMESPACE
-
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 #endif
@@ -607,20 +603,22 @@ public:
     */
   friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
-    if (A.data == nullptr || A.size() == 0) {
+    if ((A.data == nullptr) || (A.size() == 0)) {
       return s;
     }
     std::ios_base::fmtflags original_flags = s.flags();
 
     s.precision(10);
-    for (unsigned int i = 0; i < A.getRows(); i++) {
-      for (unsigned int j = 0; j < A.getCols() - 1; j++) {
+    unsigned int a_rows = A.getRows();
+    unsigned int a_cols = A.getCols();
+    for (unsigned int i = 0; i < a_rows; ++i) {
+      for (unsigned int j = 0; j < (a_cols - 1); ++j) {
         s << A[i][j] << "  ";
       }
       // We don't add "  " after the last row element
-      s << A[i][A.getCols() - 1];
+      s << A[i][a_cols - 1];
       // We don't add a \n char on the end of the last array line
-      if (i < A.getRows() - 1) {
+      if (i < (a_rows - 1)) {
         s << std::endl;
       }
     }

@@ -6710,7 +6710,7 @@ void vpMatrix::setIdentity(const double &val)
   \relates vpMatrix
   Allow to multiply a scalar by a matrix.
 */
-VISP_NAMESPACE_ADDRESSING vpMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpMatrix &B)
+vpMatrix operator*(const double &x, const vpMatrix &B)
 {
   if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return B;

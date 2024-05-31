@@ -1357,14 +1357,14 @@ std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
   os << "]" << std::endl;
   return os;
 }
-END_VISP_NAMESPACE
 
 /*!
   Allows to multiply a scalar by row vector.
 */
-VISP_NAMESPACE_ADDRESSING vpRowVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRowVector &v)
+vpRowVector operator*(const double &x, const vpRowVector &v)
 {
-  VISP_NAMESPACE_ADDRESSING vpRowVector vout;
+  vpRowVector vout;
   vout = v * x;
   return vout;
 }
+END_VISP_NAMESPACE

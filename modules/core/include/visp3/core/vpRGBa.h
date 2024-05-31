@@ -44,8 +44,6 @@
 #include <visp3/core/vpColVector.h>
 
 BEGIN_VISP_NAMESPACE
-class vpRGBa;
-
 /*!
   \class vpRGBa
 

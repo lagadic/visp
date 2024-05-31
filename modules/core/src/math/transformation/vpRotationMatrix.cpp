@@ -1120,14 +1120,13 @@ void vpRotationMatrix::orthogonalize()
 void vpRotationMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-END_VISP_NAMESPACE
 
 /*!
   Allow to multiply a scalar by a rotation matrix.
 */
-VISP_NAMESPACE_ADDRESSING vpRotationMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationMatrix &R)
+vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
 {
-  VISP_NAMESPACE_ADDRESSING vpRotationMatrix C;
+  vpRotationMatrix C;
 
   unsigned int Rrow = R.getRows();
   unsigned int Rcol = R.getCols();
@@ -1140,3 +1139,4 @@ VISP_NAMESPACE_ADDRESSING vpRotationMatrix operator*(const double &x, const VISP
 
   return C;
 }
+END_VISP_NAMESPACE

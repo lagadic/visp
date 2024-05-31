@@ -230,7 +230,7 @@ bool vpRGBa::operator>(const vpRGBa &v) const
   return (gray1 > gray2);
 }
 
-VISP_NAMESPACE_ADDRESSING vpRGBa operator*(const double &x, const  vpRGBa &rgb) { return rgb * x; }
+vpRGBa operator*(const double &x, const  vpRGBa &rgb) { return rgb * x; }
 
 /*!
 
