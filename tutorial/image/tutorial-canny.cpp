@@ -29,6 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+
+//! \example tutorial-canny.cpp
+
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpCannyEdgeDetection.h>
