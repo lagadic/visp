@@ -15,3 +15,8 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
+
+if(VISP_HAVE_PCL)
+vp_set_source_file_compile_flag(tutorial-pcl-viewer.cpp -Wno-unused-parameter)
+vp_set_source_file_compile_flag(ClassUsingPclViewer.cpp -Wno-unused-parameter)
+endif()
