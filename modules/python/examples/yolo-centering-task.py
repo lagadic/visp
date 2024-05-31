@@ -108,7 +108,7 @@ if __name__ == '__main__':
   detection_model = YOLO('yolov8n.pt')
 
   h, w = 480, 640
-  Z = 5.0
+  Z = 3.0
   cam = CameraParameters(px=600, py=600, u0=w / 2.0, v0=h / 2.0)
 
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
   # Initialization
   simulator = get_simulator(args.scene)
-  cTw = HomogeneousMatrix(-2.0, 0.5, Z, 0.0, 0.0, 0.0)
+  cTw = HomogeneousMatrix(-0.1, 0.1, Z, 0.0, 0.0, 0.0)
   I = ImageRGBa(h, w)
   Idisp = ImageRGBa(h, w)
   simulator.setCameraPosition(cTw)
@@ -137,8 +137,10 @@ if __name__ == '__main__':
   task.setServo(Servo.ServoType.EYEINHAND_CAMERA)
   task.setInteractionMatrixType(Servo.ServoIteractionMatrixType.CURRENT)
   target_class = args.class_id # Car
+  print(target_class)
 
   prev_v = ColVector(6, 0.0)
+  v = ColVector(6, 0.0)
 
   d = get_display()
   d.init(I)
@@ -148,27 +150,38 @@ if __name__ == '__main__':
   error_norm = 1e10
   # Servoing loop
   while error_norm > 5e-7:
+    print('Error norm is', error_norm)
+    print('AAAAAAAAAAAAAA')
     start = time.time()
     # Data acquisition
     simulator.getImage(I, cam)
     def has_class_box(box):
-      return box.cls is not None and len(box.cls) > 0 and box.cls[0] == target_class
+      return box.cls is not None and len(box.cls) > 0 and box.cls[0]
 
     # Build current features
-    results = detection_model(np.array(I.numpy()[..., 2::-1])) # Run detection
-    boxes = map(lambda result: result.boxes, results) #
-    boxes = filter(has_class_box, boxes)
-    boxes = sorted(boxes, key=lambda box: box.conf[0])
-    bbs = list(map(lambda box: box.xywh[0].cpu().numpy(), boxes))
-
-    if len(bbs) > 0:
-      bb = bbs[-1] # Take highest confidence
+    results = detection_model(np.array(I.numpy()[..., 2::-1]))[0] # Run detection
+    boxes = results.boxes
+    max_conf = 0.0
+    idx = -1
+    bb = None
+    for i in range(len(boxes.conf)):
+      if boxes.cls[i] == target_class and boxes.conf[i] > max_conf:
+        print('New max')
+        idx = i
+        max_conf = boxes.conf[i]
+        bb = boxes.xywh[i].cpu().numpy()
+    # boxes = filter(has_class_box, boxes)
+    # print('BOXES AFTER FILTER:', list(boxes))
+    # boxes = sorted(boxes, key=lambda box: box.conf[0])
+    # bbs = list(map(lambda box: box.xywh[0].cpu().numpy(), boxes))
+    if bb is not None:
       u, v = bb[0], bb[1]
       x, y = PixelMeterConversion.convertPoint(cam, u, v)
       s.buildFrom(x, y, Z)
       v = task.computeControlLaw()
       prev_v = v
     else:
+      task.computeControlLaw()
       v = prev_v
     error: ColVector = task.getError()
     error_norm = error.sumSquare()
@@ -179,6 +192,8 @@ if __name__ == '__main__':
     s.display(cam, I, Color.darkRed, thickness=2)
     Display.flush(I)
     Display.getImage(I, Idisp)
+    print(v)
+    print(v, error, cTw)
     plotter.on_iter(Idisp, v, error, cTw)
 
     # Move robot/update simulator
