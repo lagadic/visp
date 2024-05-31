@@ -119,6 +119,8 @@
 #define VISP_NAMESPACE_ADDRESSING visp::
 #define BEGIN_VISP_NAMESPACE namespace visp {
 #define END_VISP_NAMESPACE }
+// Create an empty namespace to ensure that "using VISP_NAMESPACE_NAME;" does not raise an error
+namespace VISP_NAMESPACE_NAME {}
 #else
 #define VISP_NAMESPACE_ADDRESSING
 #define BEGIN_VISP_NAMESPACE
