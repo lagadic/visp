@@ -85,7 +85,7 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
   }
 
   // Drawing the sigma points
-  m_chi = m_sigmaDrawer->drawSigmaPoints(m_Xest, m_Pest);
+  m_chi = m_sigmaDrawer->drawSigmaPoints(x, P);
 
   // Computation of the attached weights
   vpUKSigmaDrawerAbstract::vpSigmaPointsWeights weights = m_sigmaDrawer->computeWeights();
