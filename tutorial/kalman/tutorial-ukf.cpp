@@ -424,8 +424,6 @@ int main(/*const int argc, const char *argv[]*/)
   object_pos[3] = 1.;
   //! [Init_simu]
 
-  std::cin.get();
-
   //! [Simu_loop]
   for (unsigned int i = 0; i < 200; ++i) {
     //! [Update obj pose]

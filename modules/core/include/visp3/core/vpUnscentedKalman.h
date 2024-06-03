@@ -384,6 +384,7 @@ public:
     return mean;
   }
 private:
+  bool m_hasUpdateBeenCalled; /*!< Set to true when update is called, reset at the beginning of predict.*/
   vpColVector m_Xest; /*!< The estimated (i.e. filtered) state variables.*/
   vpMatrix m_Pest; /*!< The estimated (i.e. filtered) covariance matrix.*/
   vpMatrix m_Q; /*!< The covariance introduced by performing the prediction step.*/

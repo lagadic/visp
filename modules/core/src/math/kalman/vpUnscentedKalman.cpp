@@ -40,7 +40,8 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::shared_ptr<vpUKSigmaDrawerAbstract> &drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
-  : m_Q(Q)
+  : m_hasUpdateBeenCalled(false)
+  , m_Q(Q)
   , m_R(R)
   , m_f(f)
   , m_h(h)
@@ -68,6 +69,21 @@ void vpUnscentedKalman::filter(const vpColVector &z, const double &dt, const vpC
 
 void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
 {
+  vpColVector x;
+  vpMatrix P;
+
+  if (m_hasUpdateBeenCalled) {
+    // Update is the last function that has been called, starting from the filtered values.
+    x = m_Xest;
+    P = m_Pest;
+    m_hasUpdateBeenCalled = false;
+  }
+  else {
+    // Predict is the last function that has been called, starting from the predicted values.
+    x = m_mu;
+    P = m_P;
+  }
+
   // Drawing the sigma points
   m_chi = m_sigmaDrawer->drawSigmaPoints(m_Xest, m_Pest);
 
@@ -124,6 +140,7 @@ void vpUnscentedKalman::update(const vpColVector &z)
   // Updating the estimate
   m_Xest = m_stateAddFunction(m_mu, m_K * m_measResFunc(z, m_muz));
   m_Pest = m_P - m_K * m_Pz * m_K.transpose();
+  m_hasUpdateBeenCalled = true;
 }
 
 vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints,
