@@ -38,20 +38,24 @@
  * fixed to the ceiling.
  *
  * The state vector of the UKF is:
- *  \f{eqnarray*}{
+ *  \f[
+      \begin{array}{lcl}
         \textbf{x}[0] &=& {}^WX_x \\
         \textbf{x}[1] &=& {}^WX_y \\
         \textbf{x}[2] &=& {}^WX_z \\
         \textbf{x}[3] &=& \omega \Delta t
-   \f}
+   \end{array}
+  \f]
 
    The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
    Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
    The measurement vector can be written as:
-   \f{eqnarray*}{
+   \f[
+     \begin{array}{lcl}
         \textbf{z}[2i] &=& u_i \\
         \textbf{z}[2i+1] &=& v_i
-   \f}
+     \end{array}
+   \f]
 
  * Some noise is added to the measurement vector to simulate measurements which are
  * not perfect.
@@ -419,6 +423,8 @@ int main(/*const int argc, const char *argv[]*/)
   vpColVector object_pos(4, 0.);
   object_pos[3] = 1.;
   //! [Init_simu]
+
+  std::cin.get();
 
   //! [Simu_loop]
   for (unsigned int i = 0; i < 200; ++i) {

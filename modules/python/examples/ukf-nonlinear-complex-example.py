@@ -39,20 +39,24 @@
   As such, it can be modeled unp.sing a bicycle model.
 
   The state vector of the UKF is:
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
         \textbf{x}[0] &=& x \\
         \textbf{x}[1] &=& y \\
         \textbf{x}[2] &=& \theta
-   \f}
+   \end{array}
+   \f]
    where \f$ \theta \f$ is the heading of the robot.
 
    The measurement \f$ \textbf{z} \f$ corresponds to the distance and relative orientation of the
    robot with different landmarks. Be \f$ p_x^i \f$ and \f$ p_y^i \f$ the position of the \f$ i^{th} \f$ landmark
    along the x and y axis, the measurement vector can be written as:
-   \f{eqnarray*}{
+   \f[
+   \begin{array}{lcl}
         \textbf{z}[2i] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
         \textbf{z}[2i+1] &=& \tan^{-1}{\frac{p_y^i - y}{p_x^i - x}} - \theta
-   \f}
+   \end{array}
+   \f]
 
   Some noise is added to the measurement vector to simulate measurements which are
   not perfect.

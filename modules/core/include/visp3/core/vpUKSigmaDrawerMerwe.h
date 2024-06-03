@@ -54,12 +54,14 @@
   Be \f$ \boldsymbol{\mu} \in {R}^n \f$ the mean and \f$ \boldsymbol{\Sigma} \in {R}^{n x n} \f$ the covariance matrix of the
   input of the algorithm. The algorithm will draw \f$ 2n + 1 \f$ sigma points \f$ \chi_i \in {R}^n \f$ such as:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
     \chi_0 &=& \boldsymbol{\mu} \\
     \chi_i &=& \begin{cases} \boldsymbol{\mu} + \left[ \sqrt{(n + \lambda) \boldsymbol{\Sigma}} \right]_i^T & i = 1 .. n \\
                              \boldsymbol{\mu} - \left[ \sqrt{(n + \lambda) \boldsymbol{\Sigma}} \right]_{i - n}^T & i = n + 1 .. 2n
                \end{cases}
-  \f}
+  \end{array}
+  \f]
 
   where the subscript \f$ i \f$ denotes that we keep the \f$ i^{th} \f$ of the matrix.
 
@@ -89,7 +91,6 @@
   \b Additionnal \b note: the original author recommended to set \f$ \beta = 2 \f$ for Gaussian problems, \f$ \kappa = 3 - n \f$
   and \f$ 0 \leq \alpha \leq 1 \f$, where a larger value for \f$ \alpha \f$ spreads the sigma points further from the mean,
   which can be a problem for highly non-linear problems.
-
 */
 class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {

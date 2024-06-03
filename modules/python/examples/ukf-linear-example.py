@@ -40,19 +40,23 @@
  The system we are interested in is a system moving on a 2D-plane.
 
  The state vector of the UKF is:
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
         \textbf{x}[0] &=& x \\
         \textbf{x}[1] &=& \dot{x} \\
         \textbf{x}[1] &=& y \\
         \textbf{x}[2] &=& \dot{y}
-  \f}
+  \end{array}
+  \f]
 
  The measurement \f$ \textbf{z} \f$ corresponds to the position along the x-axis
  and y-axis. The measurement vector can be written as:
- \f{eqnarray*}{
+ \f[
+  \begin{array}{lcl}
       \textbf{z}[0] &=& x \\
       \textbf{z}[1] &=& y
- \f}
+ \end{array}
+  \f]
 
  Some noise is added to the measurement vector to simulate a sensor which is
  not perfect.

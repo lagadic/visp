@@ -61,10 +61,12 @@
   Be \f$ \textbf{x} \in {R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in {R}^{n\text{ x }n} \f$ the process covariance matrix.
   We have:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
       \textbf{w}^m, \textbf{w}^c &=& weight-function(n, parameters)
-   \f}
+   \end{array}
+  \f]
 
   There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
   proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
@@ -79,11 +81,13 @@
   Then, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
   and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
       \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
       \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
-   \f}
+  \end{array}
+  \f]
 
   where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
 
@@ -95,11 +99,13 @@
   Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in {R}^m \f$ and the
   covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
       \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
       \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
-   \f}
+   \end{array}
+  \f]
 
   where \f$ \textbf{R} \f$ is the measurement covariance matrix.
 
@@ -117,11 +123,12 @@
 
   Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new covariance \f$ \textbf{P} \f$:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
    \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
    \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
-  \f}
-
+  \end{array}
+  \f]
 */
 class VISP_EXPORT vpUnscentedKalman
 {
