@@ -36,6 +36,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <limits> // numeric_limits
 #include <vector>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
