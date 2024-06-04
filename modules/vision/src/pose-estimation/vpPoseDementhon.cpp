@@ -479,7 +479,8 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.));
   double svdThreshold = m_dementhonSvThresh;
   int irank = 0;
-  for (int i = 0; (i < nbMaxIter) && (!isRankEqualTo3); ++i) {
+  int i = 0;
+  while ((i < nbMaxIter) && (!isRankEqualTo3)) {
     irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
     if (irank == 3) {
       isRankEqualTo3 = true;
@@ -488,6 +489,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
       isRankEqualTo3 = false;
       svdThreshold *= svdFactorUsedWhenFailure;
     }
+    ++i;
   }
 
   if (!isRankEqualTo3) {

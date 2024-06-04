@@ -35,7 +35,6 @@
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentObject.h>
@@ -52,7 +51,7 @@ BEGIN_VISP_NAMESPACE
  *
  $ Minimum vpMomentObject order needed to compute this feature: 2.
  */
-void vpFeatureMomentGravityCenter::compute_interaction()
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_featuremoment_basic;
 
@@ -76,7 +75,6 @@ void vpFeatureMomentGravityCenter::compute_interaction()
 END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentCentered.h>
@@ -95,7 +93,7 @@ BEGIN_VISP_NAMESPACE
  *
  * Minimum vpMomentObject order needed to compute this feature: 2.
  */
-void vpFeatureMomentGravityCenter::compute_interaction()
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_gravity;

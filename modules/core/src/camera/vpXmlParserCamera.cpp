@@ -302,18 +302,18 @@ public:
     bool test_subsampling_height = true;
 
     if (subsampling_width) {
-      test_subsampling_width = (abs((int)subsampl_width - (int)subsampling_width_tmp) <
-                                (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)));
+      test_subsampling_width = (abs(static_cast<int>(subsampl_width) - static_cast<int>(subsampling_width_tmp)) <
+                                (allowedPixelDiffOnImageSize * static_cast<int>(subsampling_width_tmp / subsampling_width)));
     }
     if (subsampling_height) {
-      test_subsampling_height = (abs((int)subsampl_height - (int)subsampling_height_tmp) <
-                                 (allowedPixelDiffOnImageSize * (int)(subsampling_height_tmp / subsampling_height)));
+      test_subsampling_height = (abs(static_cast<int>(subsampl_height) - static_cast<int>(subsampling_height_tmp)) <
+                                 (allowedPixelDiffOnImageSize * static_cast<int>(subsampling_height_tmp / subsampling_height)));
     }
     // if same name && same projection model && same image size camera already exists, we return SEQUENCE_OK
     // otherwise it is a new camera that need to be updated and we return SEQUENCE_OK
     bool same_name = (cam_name.empty() || (cam_name == camera_name_tmp));
-    bool same_img_size = (abs((int)im_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || im_width == 0) &&
-      (abs((int)im_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || im_height == 0) &&
+    bool same_img_size = (abs(static_cast<int>(im_width) - static_cast<int>(image_width_tmp)) < allowedPixelDiffOnImageSize || im_width == 0) &&
+      (abs(static_cast<int>(im_height) - static_cast<int>(image_height_tmp)) < allowedPixelDiffOnImageSize || im_height == 0) &&
       (test_subsampling_width) && (test_subsampling_height);
     if (same_name && same_img_size && same_proj_model) {
       back = SEQUENCE_OK; // Camera exists
@@ -332,8 +332,8 @@ public:
     }
 #if 0
     if (!((projModelFound == true) &&
-          (abs((int)im_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || im_width == 0) &&
-          (abs((int)im_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || im_height == 0) &&
+          (abs(static_cast<int>(im_width) - static_cast<int>(image_width_tmp)) < allowedPixelDiffOnImageSize || im_width == 0) &&
+          (abs(static_cast<int>(im_height) - static_cast<int>(image_height_tmp)) < allowedPixelDiffOnImageSize || im_height == 0) &&
           (test_subsampling_width) && (test_subsampling_height))) {
       // Same images size, we need to check if the camera have the same name
       if (!cam_name.empty() && (cam_name != camera_name_tmp)) {
@@ -501,8 +501,8 @@ public:
 
         std::vector<double> fixed_distortion_coeffs;
 
-        // In case disortion coefficients are missing, we should complete them with 0 values
-        // Since 0x3FF is 0011|1111|1111 and we are interrested in the most significant 1s shown below
+        // In case distortion coefficients are missing, we should complete them with 0 values
+        // Since 0x3FF is 0011|1111|1111 and we are interested in the most significant 1s shown below
         //                  -- ---
         // If we divide by 32 (>> 2^5 : 5 remaining least significant bits), we will have to check 5 bits only
         int check = validation / 32;
@@ -661,21 +661,25 @@ public:
                              unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
+    pugi::xml_node resNode = pugi::xml_node();
 
-    for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element)
-        continue;
-
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-      }
-      if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK == read_camera_header(node, cam_name, im_width, im_height, subsampl_width, subsampl_height)) {
-          return node;
+    pugi::xml_node node = node_.first_child();
+    bool hasNotFoundCam = true;
+    while (node && hasNotFoundCam) {
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+        }
+        if (prop == CODE_XML_CAMERA) {
+          if (SEQUENCE_OK == read_camera_header(node, cam_name, im_width, im_height, subsampl_width, subsampl_height)) {
+            resNode = node;
+            hasNotFoundCam = false;
+          }
         }
       }
+      node = node.next_sibling();
     }
-    return pugi::xml_node();
+    return resNode;
   }
 
   /*!
@@ -998,23 +1002,27 @@ public:
   pugi::xml_node find_additional_info(const pugi::xml_node &node_)
   {
     vpXmlCodeType prop;
+    pugi::xml_node resNode = pugi::xml_node();
 
-    for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element) {
-        continue;
+    pugi::xml_node node = node_.first_child();
+    bool hasNotFoundInfo = true;
+    while (node && hasNotFoundInfo) {
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+        }
+
+        if (prop == CODE_XML_ADDITIONAL_INFO) {
+          // We found the node
+          resNode = node;
+          hasNotFoundInfo = false;
+        }
       }
 
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-      }
-
-      if (prop == CODE_XML_ADDITIONAL_INFO) {
-        // We found the node
-        return node;
-      }
+      node = node.next_sibling();
     }
 
-    return pugi::xml_node();
+    return resNode;
   }
 
   /*!

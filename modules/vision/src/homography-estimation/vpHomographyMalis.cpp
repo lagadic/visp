@@ -47,7 +47,6 @@
 #include <visp3/vision/vpHomography.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 
 BEGIN_VISP_NAMESPACE
 

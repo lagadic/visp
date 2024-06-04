@@ -197,15 +197,19 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, doubl
     if (code_P[0] != 0) {
       n = 0; // c'est P[0] qu'on clippera
       bit_i = 1;
-      for (i = 0; !(code_P[0] & bit_i); ++i) {
+      i = 0;
+      while (!(code_P[0] & bit_i)) {
         bit_i <<= 1;
+        ++i;
       }
     }
     else {
       n = 1; // c'est P[1] qu'on clippera
       bit_i = 1;
-      for (i = 0; !(code_P[1] & bit_i); ++i) {
+      i = 0;
+      while (!(code_P[1] & bit_i)) {
         bit_i <<= 1;
+        ++i;
       }
     }
 

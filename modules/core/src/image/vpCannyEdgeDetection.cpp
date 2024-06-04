@@ -514,8 +514,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   bool test_col = false;
   bool test_drdc = false;
   bool edge_in_image_limit = false;
-  for (int dr = -1; (dr <= 1) && (!hasFoundStrongEdge); ++dr) {
-    for (int dc = -1; (dc <= 1) && (!hasFoundStrongEdge); ++dc) {
+  int dr = -1, dc = -1;
+  while ((dr <= 1) && (!hasFoundStrongEdge)) {
+    while ((dc <= 1) && (!hasFoundStrongEdge)) {
       // reset the check for the edge on image limit
       edge_in_image_limit = false;
 
@@ -551,7 +552,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
           // continue - nothing to do
         }
       }
+      ++dc;
     }
+    ++dr;
   }
   if (hasFoundStrongEdge) {
     m_edgePointsCandidates[coordinates] = STRONG_EDGE;

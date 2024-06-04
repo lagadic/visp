@@ -33,8 +33,6 @@
  *
 *****************************************************************************/
 
-#include <limits> // numeric_limits
-
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
@@ -47,11 +45,11 @@ BEGIN_VISP_NAMESPACE
 /*!
    Default constructor.
  */
-vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) { }
+  vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) { }
 
-/*!
-   Copy constructor.
- */
+  /*!
+     Copy constructor.
+   */
 vpTemplateTrackerZone::vpTemplateTrackerZone(const vpTemplateTrackerZone &z)
   : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1)
 {

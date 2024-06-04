@@ -35,7 +35,6 @@
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -56,7 +55,7 @@ BEGIN_VISP_NAMESPACE
  * - vpMomentAreaNormalized
  * - vpFeatureMomentAreaNormalized
  */
-void vpFeatureMomentGravityCenterNormalized::compute_interaction()
+  void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 {
   bool found_moment_gravity;
   bool found_moment_surface_normalized;
@@ -94,7 +93,6 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -113,7 +111,7 @@ BEGIN_VISP_NAMESPACE
  * - vpMomentAreaNormalized
  * - vpMomentGravityCenter
  */
-void vpFeatureMomentGravityCenterNormalized::compute_interaction()
+  void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 {
   bool found_moment_surface_normalized;
   bool found_moment_gravity;

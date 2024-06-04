@@ -38,6 +38,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
+#include <limits> // numeric_limits
+
 BEGIN_VISP_NAMESPACE
 /*!
   Check if an image point belongs to a rectangle.

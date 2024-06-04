@@ -31,7 +31,6 @@
  * Implementation for all supported moment features.
  */
 
-#include <limits>
 #include <vector>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
@@ -46,8 +45,8 @@ BEGIN_VISP_NAMESPACE
  * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param featureMoments : Database of features.
  */
-vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                                           vpFeatureMomentDatabase *featureMoments)
+  vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                                             vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(data_base, A_, B_, C_, featureMoments), order(0)
 { }
 

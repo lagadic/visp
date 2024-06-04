@@ -40,7 +40,6 @@
 */
 
 #include <cmath>
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpTranslationVector.h>

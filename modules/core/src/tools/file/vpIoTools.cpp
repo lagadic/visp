@@ -56,7 +56,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <functional>
-#include <limits>
+#include <limits> // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -544,7 +544,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
-const std::string &vpIoTools::getBuildInformation()
+  const std::string &vpIoTools::getBuildInformation()
 {
   static std::string build_info =
 #include "version_string.inc"
@@ -1530,7 +1530,8 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
         value = static_cast<float>(M_PI);
@@ -1546,8 +1547,9 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
       }
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1564,7 +1566,8 @@ bool vpIoTools::readConfigVar(const std::string &var, double &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
         value = M_PI;
@@ -1580,8 +1583,9 @@ bool vpIoTools::readConfigVar(const std::string &var, double &value)
       }
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1599,13 +1603,15 @@ bool vpIoTools::readConfigVar(const std::string &var, int &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = atoi(configValues[k].c_str());
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1671,13 +1677,15 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = configValues[k];
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1702,7 +1710,8 @@ bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, 
   bool found = false;
   std::string nb;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       found = true;
       // resize or not
@@ -1732,6 +1741,7 @@ bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, 
         }
       }
     }
+    ++k;
   }
   if (found == false) {
     std::cout << var << " not found in config file" << std::endl;
@@ -2124,16 +2134,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2145,16 +2155,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

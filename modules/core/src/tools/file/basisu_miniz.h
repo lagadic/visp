@@ -1661,7 +1661,8 @@ static mz_bool tdefl_compress_lz_codes(tdefl_compressor *d)
 #define TDEFL_PUT_BITS_FAST(b, l) { bit_buffer |= (((mz_uint64)(b)) << bits_in); bits_in += (l); }
 
   flags = 1;
-  for (pLZ_codes = d->m_lz_code_buf; pLZ_codes < pLZ_code_buf_end; flags >>= 1) {
+  pLZ_codes = d->m_lz_code_buf;
+  while (pLZ_codes < pLZ_code_buf_end) {
     if (flags == 1)
       flags = *pLZ_codes++ | 0x100;
 
@@ -1712,6 +1713,7 @@ static mz_bool tdefl_compress_lz_codes(tdefl_compressor *d)
     pOutput_buf += (bits_in >> 3);
     bit_buffer >>= (bits_in & ~7);
     bits_in &= 7;
+    flags >>= 1;
   }
 
 #undef TDEFL_PUT_BITS_FAST

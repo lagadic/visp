@@ -40,7 +40,6 @@
 
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#include <limits>
 #include <vector>
 
 BEGIN_VISP_NAMESPACE
@@ -53,7 +52,7 @@ BEGIN_VISP_NAMESPACE
  * - vpMomentCInvariant
  * - vpFeatureMomentBasic
  */
-void vpFeatureMomentCInvariant::compute_interaction()
+  void vpFeatureMomentCInvariant::compute_interaction()
 {
   std::vector<vpMatrix> LI(16);
   bool found_moment_centered;
@@ -418,7 +417,6 @@ END_VISP_NAMESPACE
 
 #include <cmath>
 #include <iostream>
-#include <limits>
 #include <vector>
 
 BEGIN_VISP_NAMESPACE
@@ -431,7 +429,7 @@ BEGIN_VISP_NAMESPACE
  * - vpMomentCInvariant
  * - vpFeatureMomentBasic
  */
-void vpFeatureMomentCInvariant::compute_interaction()
+  void vpFeatureMomentCInvariant::compute_interaction()
 {
   // std::vector<vpMatrix> LI(16);
   LI.resize(16); // LI made class member

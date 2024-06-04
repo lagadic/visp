@@ -38,8 +38,6 @@
   \brief Generic class for image display.
 */
 
-#include <limits>
-
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImageConvert.h>
@@ -327,6 +325,6 @@ void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
 {
   if (!m_displayHasBeenInitialized) {
     m_scaleType = scaleType;
-}
+  }
 }
 END_VISP_NAMESPACE

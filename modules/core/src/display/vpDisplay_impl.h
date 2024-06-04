@@ -242,7 +242,7 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
     double t = (a - b) / (a + b);
     t *= t; // t^2
     double circumference = (angle / 2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
-    unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
+    unsigned int nbpoints = static_cast<unsigned int>(floor(circumference / 20));
     if (nbpoints < 10) {
       nbpoints = 10;
     }
@@ -563,15 +563,15 @@ template <class Type> void vp_display_display_roi(const vpImage<Type> &I, const 
   double left = floor(roi.getLeft());
   double roiheight = floor(roi.getHeight());
   double roiwidth = floor(roi.getWidth());
-  double iheight = (double)(I.getHeight());
-  double iwidth = (double)(I.getWidth());
+  double iheight = static_cast<double>(I.getHeight());
+  double iwidth = static_cast<double>(I.getWidth());
 
   if (top < 0 || top > iheight || left < 0 || left > iwidth || top + roiheight > iheight || left + roiwidth > iwidth) {
     throw(vpException(vpException::dimensionError, "Region of interest outside of the image"));
   }
 
   if (I.display != nullptr) {
-    (I.display)->displayImageROI(I, vpImagePoint(top, left), (unsigned int)roiwidth, (unsigned int)roiheight);
+    (I.display)->displayImageROI(I, vpImagePoint(top, left), static_cast<unsigned int>(roiwidth), static_cast<unsigned int>(roiheight));
   }
 }
 
@@ -585,7 +585,7 @@ template <class Type> void vp_display_flush(const vpImage<Type> &I)
 template <class Type> void vp_display_flush_roi(const vpImage<Type> &I, const vpRect &roi)
 {
   if (I.display != nullptr) {
-    (I.display)->flushDisplayROI(roi.getTopLeft(), (unsigned int)roi.getWidth(), (unsigned int)roi.getHeight());
+    (I.display)->flushDisplayROI(roi.getTopLeft(), static_cast<unsigned int>(roi.getWidth()), static_cast<unsigned int>(roi.getHeight()));
   }
 }
 

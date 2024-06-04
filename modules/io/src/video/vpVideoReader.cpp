@@ -43,7 +43,6 @@
 #include <cctype>
 #include <fstream>
 #include <iostream>
-#include <limits> // numeric_limits
 
 BEGIN_VISP_NAMESPACE
 

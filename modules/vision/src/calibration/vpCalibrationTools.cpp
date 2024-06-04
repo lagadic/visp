@@ -37,7 +37,6 @@
 #include <visp3/vision/vpPose.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0

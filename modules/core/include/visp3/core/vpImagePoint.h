@@ -43,7 +43,6 @@
 #include <visp3/core/vpConfig.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 #include <ostream>
 #include <vector>
 

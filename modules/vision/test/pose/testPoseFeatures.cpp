@@ -32,7 +32,6 @@
  */
 
 #include <iostream>
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpCameraParameters.h>

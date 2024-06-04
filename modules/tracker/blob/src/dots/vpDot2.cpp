@@ -2359,16 +2359,20 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
     vpDisplay::flush(I);
 
     // check that dots are far away ones from the other
-    for (i = 0; ((i < n) && fromFile); ++i) {
+    i = 0;
+    while ((i < n) && fromFile) {
       double d = sqrt(vpMath::sqr(dot[i].getHeight()) + vpMath::sqr(dot[i].getWidth()));
-      for (unsigned int j = 0; ((j < n) && fromFile); ++j) {
+      unsigned int j = 0;
+      while ((j < n) && fromFile) {
         if (j != i) {
           if (dot[i].getDistance(dot[j]) < d) {
             fromFile = false;
             std::cout << "Dots from file seem incoherent" << std::endl;
           }
         }
+        ++j;
       }
+      ++i;
     }
   }
 

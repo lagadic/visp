@@ -38,7 +38,6 @@
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#include <limits>
 #include <vector>
 
 BEGIN_VISP_NAMESPACE
@@ -51,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * - vpMomentCentered
  * - vpFeatureMomentCentered
  */
-void vpFeatureMomentAlpha::compute_interaction()
+  void vpFeatureMomentAlpha::compute_interaction()
 {
   bool found_moment_centered;
   bool found_FeatureMoment_centered;
@@ -84,7 +83,7 @@ void vpFeatureMomentAlpha::compute_interaction()
  * - vpMomentCentered
  * - vpMomentGravityCenter
  */
-void vpFeatureMomentAlpha::compute_interaction()
+  void vpFeatureMomentAlpha::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_gravity;

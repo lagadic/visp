@@ -43,7 +43,6 @@
 
 #include <cmath> // std::fabs
 #include <iostream>
-#include <limits> // numeric_limits
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>

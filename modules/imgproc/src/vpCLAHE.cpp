@@ -146,10 +146,15 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   clipHistogram(hist, cdfs, limit);
   int hMin = static_cast<int>(hist.size()) - 1;
 
-  for (int i = 0; i < hMin; ++i) {
+  int stopIdx = hMin;
+  bool hasNotFoundFirstNotZero = true;
+  int i = 0;
+  while ((i < stopIdx) && hasNotFoundFirstNotZero) {
     if (cdfs[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
   int cdf = 0;
   int hist_size = static_cast<int>(hist.size());
@@ -174,10 +179,15 @@ float transferValue(int v, std::vector<int> &clippedHist)
 {
   int clippedHistLength = static_cast<int>(clippedHist.size());
   int hMin = clippedHistLength - 1;
-  for (int i = 0; i<hMin; ++i) {
+  int idxStop = hMin;
+  int i = 0;
+  bool hasNotFoundFirstNotZero = true;
+  while ((i<idxStop) && hasNotFoundFirstNotZero) {
     if (clippedHist[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
 
   int cdf = 0;

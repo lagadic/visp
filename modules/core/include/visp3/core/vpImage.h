@@ -1807,13 +1807,13 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
 */
 template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 {
-  int h = height * 2;
-  int w = width * 2;
+  unsigned int h = height * 2;
+  unsigned int w = width * 2;
 
   res.resize(h, w);
 
-  for (int i = 0; i < h; ++i) {
-    for (int j = 0; j < w; ++j) {
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       res[i][j] = (*this)[i >> 1][j >> 1];
     }
   }
@@ -1827,22 +1827,22 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   */
 
   // interpolate pixels B and I
-  for (int i = 0; i < h; i += 2) {
-    for (int j = 1; j < (w - 1); j += 2) {
+  for (unsigned int i = 0; i < h; i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
       res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
     }
   }
 
   // interpolate pixels E and G
-  for (int i = 1; i < (h - 1); i += 2) {
-    for (int j = 0; j < w; j += 2) {
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 0; j < w; j += 2) {
       res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
     }
   }
 
   // interpolate pixel F
-  for (int i = 1; i < (h - 1); i += 2) {
-    for (int j = 1; j < (w - 1); j += 2) {
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
       res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
                                  (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
     }
