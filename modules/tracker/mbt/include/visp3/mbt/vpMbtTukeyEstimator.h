@@ -37,8 +37,8 @@
 #define _vpMbtTukeyEstimator_h_
 
 #include <vector>
-#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColVector.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -59,8 +59,9 @@ private:
   std::vector<T> m_normres;
   std::vector<T> m_residues;
 };
-#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_VISP_NAMESPACE
+#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*
  * The code bellow previously in vpMbtTuckeyEstimator.cpp produced
  * a link issue with MinGW-W64 x86_64-8.1.0-posix-seh-rt_v6-rev0 (g++ 8.1.0)
@@ -113,7 +114,7 @@ END_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if HAVE_TRANSFORM
-namespace
+  namespace
 {
 // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
@@ -180,7 +181,7 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));
-  }
+}
 #endif
 
   m_residues = m_normres;
@@ -254,11 +255,11 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_simd(const std::vector<f
   (void)weights;
   (void)NoiseThreshold;
 #endif
-  }
+}
 
-  /*!
-   * \relates vpMbtTukeyEstimator
-   */
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<double> &residues,
                                                               std::vector<double> &weights,
@@ -306,11 +307,11 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<
   (void)weights;
   (void)NoiseThreshold;
 #endif
-  }
+}
 
-  /*!
-   * \relates vpMbtTukeyEstimator
-   */
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                                    float NoiseThreshold)

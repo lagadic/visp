@@ -39,6 +39,7 @@
 #ifndef _vpMeSite_h_
 #define _vpMeSite_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
@@ -63,7 +64,7 @@ BEGIN_VISP_NAMESPACE
  *
  * - sample step.
  */
-class VISP_EXPORT vpMeSite
+  class VISP_EXPORT vpMeSite
 {
 public:
   /*!

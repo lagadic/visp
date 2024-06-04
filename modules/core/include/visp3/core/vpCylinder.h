@@ -40,6 +40,7 @@
 #define vpCylinder_hh
 
 #include <math.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
@@ -96,7 +97,7 @@ BEGIN_VISP_NAMESPACE
  * get_p(), getRho1(), getTheta1() and getRho2(), getTheta2() allow to access to the
  * projected line parameters.
  */
-class VISP_EXPORT vpCylinder : public vpForwardProjection
+  class VISP_EXPORT vpCylinder : public vpForwardProjection
 {
 public:
   typedef enum

@@ -47,8 +47,8 @@
 #include <set>
 #include <vector>
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -70,7 +70,7 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_mbt_faces
 
  */
-class VISP_EXPORT vpMbScanLine
+  class VISP_EXPORT vpMbScanLine
 {
 public:
   //! Structure to define if a scanline intersection is a starting or an

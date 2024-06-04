@@ -41,8 +41,8 @@
 #ifndef vpMbtDistanceCircle_HH
 #define vpMbtDistanceCircle_HH
 
-#include <visp3/core/vpCircle.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCircle.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/mbt/vpMbHiddenFaces.h>
