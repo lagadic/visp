@@ -57,7 +57,6 @@ class vpPoint;
 
 END_VISP_NAMESPACE
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>

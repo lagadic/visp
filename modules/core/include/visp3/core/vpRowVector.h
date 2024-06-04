@@ -337,7 +337,7 @@ public:
 #endif
 };
 
-VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRowVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRowVector &v);
+VISP_EXPORT vpRowVector operator*(const double &x, const vpRowVector &v);
 
 END_VISP_NAMESPACE
 #endif

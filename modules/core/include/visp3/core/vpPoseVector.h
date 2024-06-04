@@ -55,9 +55,7 @@ class vpHomogeneousMatrix;
 class vpTranslationVector;
 class vpThetaUVector;
 class vpRowVector;
-END_VISP_NAMESPACE
 
-BEGIN_VISP_NAMESPACE
 /*!
   \class vpPoseVector
 

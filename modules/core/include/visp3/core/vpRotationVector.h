@@ -44,8 +44,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpArray2D.h>
 
 BEGIN_VISP_NAMESPACE
 

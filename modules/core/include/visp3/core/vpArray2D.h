@@ -1328,11 +1328,8 @@ template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A)
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 template <class Type>
-inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &array)
+inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   if (j.is_array()) {
     const unsigned int nrows = static_cast<unsigned int>(j.size());
     if (nrows == 0) { // Initialize an empty array, Finished
@@ -1384,7 +1381,7 @@ inline void from_json(const nlohmann::json &j, VISP_NAMESPACE_ADDRESSING vpArray
 
 
 template <class Type>
-inline void to_json(nlohmann::json &j, const VISP_NAMESPACE_ADDRESSING vpArray2D<Type> &array)
+inline void to_json(nlohmann::json &j, const vpArray2D<Type> &array)
 {
   j = {
     {"cols", array.colNum},

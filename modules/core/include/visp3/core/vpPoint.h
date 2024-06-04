@@ -39,6 +39,7 @@
 #ifndef _vpPoint_H_
 #define _vpPoint_H_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpMatrix.h>
