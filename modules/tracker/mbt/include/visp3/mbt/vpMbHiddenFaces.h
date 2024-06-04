@@ -594,13 +594,13 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         {
           (void)cameraPos; // Avoid warning
           testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, width, height));
-      }
+        }
 #endif
         else
           testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, width, height));
-    }
+      }
 
-    // test if the face is still visible
+      // test if the face is still visible
       if (testDisappear) {
         //               std::cout << "Face " << i << " disappears" <<
         //               std::endl;
@@ -614,7 +614,7 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         // if(nbCornerInsidePrev > Lpol[i]->getNbCornerInsidePrevImage())
         //  changed = true;
       }
-  }
+    }
     else {
       bool testAppear = true;
 
@@ -641,9 +641,9 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         Lpol[i]->isvisible = false;
       }
     }
-}
-//   std::cout << "Nombre de polygones visibles: " << nbVisiblePolygon <<
-//   std::endl;
+  }
+  //   std::cout << "Nombre de polygones visibles: " << nbVisiblePolygon <<
+  //   std::endl;
   return Lpol[i]->isvisible;
 }
 
@@ -942,8 +942,7 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
 
   return Lpol[index]->isvisible;
 }
-END_VISP_NAMESPACE
 
 #endif // VISP_HAVE_OGRE
-
+END_VISP_NAMESPACE
 #endif // vpMbHiddenFaces
