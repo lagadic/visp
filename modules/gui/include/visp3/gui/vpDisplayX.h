@@ -31,6 +31,11 @@
  * Image display.
  */
 
+/*!
+ * \file vpDisplayX.h
+ * \brief Define the X11 console to display images.
+ */
+
 #ifndef vpDisplayX_h
 #define vpDisplayX_h
 
@@ -42,11 +47,6 @@
 #include <visp3/core/vpRect.h>
 
 BEGIN_VISP_NAMESPACE
-
-/*!
- * \file vpDisplayX.h
- * \brief Define the X11 console to display images.
- */
 
 /*!
  * \class vpDisplayX
@@ -127,7 +127,7 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  */
-class VISP_EXPORT vpDisplayX : public vpDisplay
+  class VISP_EXPORT vpDisplayX : public vpDisplay
 {
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
