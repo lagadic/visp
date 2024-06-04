@@ -1465,9 +1465,9 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
 {
   if (fixedPoint && (!centerCorner)) {
     const int nbits = 16;
-    const int64_t precision = 1 << nbits;
+    const uint64_t precision = 1 << nbits;
     const float precision_1 = 1 / static_cast<float>(precision);
-    const int64_t precision2 = 1ULL << (2 * nbits);
+    const uint64_t precision2 = 1ULL << (2 * nbits);
     const float precision_2 = 1 / static_cast<float>(precision2);
 
     int64_t a0_i64 = static_cast<int64_t>(T[0][0] * precision);
