@@ -784,6 +784,7 @@ VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
+VP_OPTION(WITH_MINIZ      ""           ""    "Enable npz related I/O functions."   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
@@ -1149,6 +1150,7 @@ VP_SET(VISP_HAVE_SIMDLIB     TRUE IF (BUILD_MODULE_visp_core AND WITH_SIMDLIB))
 VP_SET(VISP_HAVE_STBIMAGE    TRUE IF (BUILD_MODULE_visp_core AND WITH_STBIMAGE))
 VP_SET(VISP_HAVE_TINYEXR     TRUE IF (BUILD_MODULE_visp_core AND WITH_TINYEXR))
 VP_SET(VISP_HAVE_PUGIXML     TRUE IF (BUILD_MODULE_visp_core AND WITH_PUGIXML))
+VP_SET(VISP_HAVE_MINIZ     TRUE IF (BUILD_MODULE_visp_core AND WITH_MINIZ))
 
 VP_SET(VISP_HAVE_QUALISYS    TRUE IF (BUILD_MODULE_visp_sensor AND USE_QUALISYS))
 VP_SET(VISP_HAVE_VICON       TRUE IF (BUILD_MODULE_visp_sensor AND USE_VICON))
@@ -1743,6 +1745,7 @@ status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VE
 status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
 status("    Use TinyEXR (built-in):" WITH_TINYEXR     THEN "yes (ver ${TINYEXR_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes" ELSE "no")
+status("    Enable npz I/O functions:" WITH_MINIZ     THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")

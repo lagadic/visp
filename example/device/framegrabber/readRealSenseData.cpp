@@ -68,7 +68,11 @@
 #endif
 #endif
 
+#ifdef VISP_HAVE_MINIZ
 #define GETOPTARGS "ci:e:jbzodh"
+#else
+#define GETOPTARGS "ci:e:jbodh"
+#endif
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -90,7 +94,9 @@ void usage(const char *name, const char *badparam)
     << " [-c]"
     << " [-j]"
     << " [-b]"
+#ifdef VISP_HAVE_MINIZ
     << " [-z]"
+#endif
     << " [-o]"
     << " [-d]"
     << " [--help,-h]"
@@ -111,9 +117,11 @@ void usage(const char *name, const char *badparam)
     << "  -b" << std::endl
     << "    Depth and Pointcloud streams are saved in binary format." << std::endl
     << std::endl
+#ifdef VISP_HAVE_MINIZ
     << "  -z" << std::endl
     << "    Pointcloud stream is saved in NPZ format." << std::endl
     << std::endl
+#endif
     << "  -o" << std::endl
     << "    Save color images in PNG format (lossless) in a new folder." << std::endl
     << std::endl
@@ -153,9 +161,11 @@ bool getOptions(int argc, const char *argv[], std::string &input_directory, std:
     case 'b':
       force_binary_format = true;
       break;
+#ifdef VISP_HAVE_MINIZ
     case 'z':
       read_npz = true;
       break;
+#endif
     case 'o':
       save_video = true;
       break;
@@ -242,6 +252,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
         }
       }
     }
+#ifdef VISP_HAVE_MINIZ
     else {
       visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(filename_depth);
 
@@ -259,6 +270,11 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       const bool copyData = true;
       I_depth_raw = vpImage<uint16_t>(depth_data_ptr, height, width, copyData);
     }
+#else
+    else {
+      throw(vpIoException(vpIoException::ioError, "Cannot open non-binary depth file when npz I/O functions are disabled."));
+    }
+#endif
   }
 
   // Read pointcloud
@@ -295,6 +311,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
         }
       }
     }
+#ifdef VISP_HAVE_MINIZ
     else if (read_npz) {
       visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(filename_pointcloud);
 
@@ -324,17 +341,18 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
         }
       }
     }
+#endif
     else {
 #if defined(VISP_HAVE_PCL_IO)
       if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
         std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
-    }
+      }
 #else
       throw(vpIoException(vpIoException::ioError, "Cannot read pcd file without PCL io module"));
 #endif
-  }
+    }
 #endif
-}
+  }
 
   return true;
 }
