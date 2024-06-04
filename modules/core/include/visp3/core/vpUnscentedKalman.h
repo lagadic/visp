@@ -289,6 +289,26 @@ public:
   }
 
   /**
+   * \brief Permit to change the covariance introduced at each prediction step.
+   *
+   * \param[in] Q The process covariance matrix.
+   */
+  inline void setProcessCovariance(const vpMatrix &Q)
+  {
+    m_Q = Q;
+  }
+
+  /**
+   * \brief Permit to change the covariance introduced at each update step.
+   *
+   * \param[in] R The measurement covariance matrix.
+   */
+  inline void setMeasurementCovariance(const vpMatrix &R)
+  {
+    m_R = R;
+  }
+
+  /**
    * \brief Perform first the prediction step and then the filtering step.
    *
    * \param[in] z The new measurement.
@@ -317,6 +337,26 @@ public:
    * \param[in] z The measurements at the current timestep.
    */
   void update(const vpColVector &z);
+
+  /**
+   * \brief Get the estimated (i.e. filtered) covariance of the state.
+   *
+   * \return vpMatrix The filtered covariance matrix.
+   */
+  inline vpMatrix getPest() const
+  {
+    return m_Pest;
+  }
+
+  /**
+   * \brief Get the predicted covariance of the state, i.e. the covariance of the prior.
+   *
+   * \return vpMatrix The predicted covariance matrix.
+   */
+  inline vpMatrix getPpred() const
+  {
+    return m_Ppred;
+  }
 
   /**
    * \brief Get the estimated (i.e. filtered) state.
@@ -393,7 +433,7 @@ private:
   std::vector<double> m_wc; /*!< The weights for the covariance computation.*/
   std::vector<vpColVector> m_Y; /*!< The projection forward in time of the sigma points according to the process model, called the prior.*/
   vpColVector m_mu; /*!< The mean of the prior.*/
-  vpMatrix m_P; /*!< The covariance matrix of the prior.*/
+  vpMatrix m_Ppred; /*!< The covariance matrix of the prior.*/
   vpMatrix m_R; /*!< The covariance introduced by performing the update step.*/
   std::vector<vpColVector> m_Z; /*!< The sigma points of the prior expressed in the measurement space, called the measurement sigma points.*/
   vpColVector m_muz; /*!< The mean of the measurement sigma points.*/

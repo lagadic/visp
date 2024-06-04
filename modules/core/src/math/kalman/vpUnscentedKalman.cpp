@@ -81,7 +81,7 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
   else {
     // Predict is the last function that has been called, starting from the predicted values.
     x = m_mu;
-    P = m_P;
+    P = m_Ppred;
   }
 
   // Drawing the sigma points
@@ -111,7 +111,7 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
   // Computation of the mean and covariance of the prior
   vpUnscentedTransformResult transformResults = unscentedTransform(m_Y, m_wm, m_wc, m_Q, m_stateResFunc, m_stateMeanFunc);
   m_mu = transformResults.m_mu;
-  m_P = transformResults.m_P;
+  m_Ppred = transformResults.m_P;
 }
 
 void vpUnscentedKalman::update(const vpColVector &z)
@@ -139,7 +139,7 @@ void vpUnscentedKalman::update(const vpColVector &z)
 
   // Updating the estimate
   m_Xest = m_stateAddFunction(m_mu, m_K * m_measResFunc(z, m_muz));
-  m_Pest = m_P - m_K * m_Pz * m_K.transpose();
+  m_Pest = m_Ppred - m_K * m_Pz * m_K.transpose();
   m_hasUpdateBeenCalled = true;
 }
 
