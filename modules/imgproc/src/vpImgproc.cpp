@@ -64,7 +64,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace VISP_IMGPROC_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
 using namespace VISP_NAMESPACE_NAME;

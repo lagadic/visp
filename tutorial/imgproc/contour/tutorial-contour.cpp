@@ -21,16 +21,16 @@ using namespace VISP_NAMESPACE_NAME;
 namespace
 {
 //! [Print contours hierarchy func]
-void displayContourInfo(const VISP_CONTOURS_NAMESPACE::vpContour &contour, int level)
+void displayContourInfo(const VISP_NAMESPACE_NAME::vpContour &contour, int level)
 {
   std::cout << "\nContour:" << std::endl;
   std::cout << "\tlevel: " << level << std::endl;
-  std::cout << "\tcontour type: " << (contour.m_contourType == VISP_CONTOURS_NAMESPACE::CONTOUR_OUTER ? "outer contour" : "hole contour")
+  std::cout << "\tcontour type: " << (contour.m_contourType == VISP_NAMESPACE_NAME::CONTOUR_OUTER ? "outer contour" : "hole contour")
     << std::endl;
   std::cout << "\tcontour size: " << contour.m_points.size() << std::endl;
   std::cout << "\tnb children: " << contour.m_children.size() << std::endl;
 
-  for (std::vector<VISP_CONTOURS_NAMESPACE::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+  for (std::vector<VISP_NAMESPACE_NAME::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
        ++it) {
     displayContourInfo(**it, level + 1);
   }
@@ -38,13 +38,13 @@ void displayContourInfo(const VISP_CONTOURS_NAMESPACE::vpContour &contour, int l
 //! [Print contours hierarchy func]
 
 //! [Draw contours hierarchical func]
-void drawContoursTree(vpImage<vpRGBa> &I, const VISP_CONTOURS_NAMESPACE::vpContour &contour)
+void drawContoursTree(vpImage<vpRGBa> &I, const VISP_NAMESPACE_NAME::vpContour &contour)
 {
   std::vector<std::vector<vpImagePoint> > contours;
   contours.push_back(contour.m_points);
-  VISP_CONTOURS_NAMESPACE::drawContours(I, contours, contour.m_contourType == VISP_CONTOURS_NAMESPACE::CONTOUR_OUTER ? vpColor::red : vpColor::green);
+  VISP_NAMESPACE_NAME::drawContours(I, contours, contour.m_contourType == VISP_NAMESPACE_NAME::CONTOUR_OUTER ? vpColor::red : vpColor::green);
 
-  for (std::vector<VISP_CONTOURS_NAMESPACE::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+  for (std::vector<VISP_NAMESPACE_NAME::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
        ++it) {
     drawContoursTree(I, **it);
   }
@@ -61,7 +61,7 @@ int main(int argc, const char **argv)
   //!
   std::string input_filename = "grid36-03.pgm";
   bool white_foreground = false;
-  VISP_CONTOURS_NAMESPACE::vpContourRetrievalType extraction_method = VISP_CONTOURS_NAMESPACE::CONTOUR_RETR_TREE;
+  VISP_NAMESPACE_NAME::vpContourRetrievalType extraction_method = VISP_NAMESPACE_NAME::CONTOUR_RETR_TREE;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--input" && i + 1 < argc) {
@@ -71,7 +71,7 @@ int main(int argc, const char **argv)
       white_foreground = true;
     }
     else if (std::string(argv[i]) == "--method" && i + 1 < argc) {
-      extraction_method = (VISP_CONTOURS_NAMESPACE::vpContourRetrievalType)atoi(argv[i + 1]);
+      extraction_method = (VISP_NAMESPACE_NAME::vpContourRetrievalType)atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
@@ -103,20 +103,20 @@ int main(int argc, const char **argv)
   d2.init(I_draw_contours, I_bin.getWidth(), 10, "Contours");
 
   //! [Otsu]
-  VISP_CONTOURS_NAMESPACE::autoThreshold(I, VISP_CONTOURS_NAMESPACE::AUTO_THRESHOLD_OTSU, white_foreground ? 0 : 1, white_foreground ? 1 : 0);
+  VISP_NAMESPACE_NAME::autoThreshold(I, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_OTSU, white_foreground ? 0 : 1, white_foreground ? 1 : 0);
   //! [Otsu]
   for (unsigned int i = 0; i < I_bin.getSize(); i++) {
     I_bin.bitmap[i] = 255 * I.bitmap[i];
   }
 
   //! [Find contours]
-  VISP_CONTOURS_NAMESPACE::vpContour vp_contours;
+  VISP_NAMESPACE_NAME::vpContour vp_contours;
   std::vector<std::vector<vpImagePoint> > contours;
-  VISP_CONTOURS_NAMESPACE::findContours(I, vp_contours, contours, extraction_method);
+  VISP_NAMESPACE_NAME::findContours(I, vp_contours, contours, extraction_method);
   //! [Find contours]
 
   //! [Draw contours]
-  VISP_CONTOURS_NAMESPACE::drawContours(I_draw_contours, contours, vpColor::red);
+  VISP_NAMESPACE_NAME::drawContours(I_draw_contours, contours, vpColor::red);
   //! [Draw contours]
 
   vpDisplay::display(I_bin);

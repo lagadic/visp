@@ -256,7 +256,7 @@ int main()
       switch (button) {
       case vpMouseButton::button1:
         //! [Flood fill]
-        VISP_IMGPROC_NAMESPACE::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
+        VISP_NAMESPACE_NAME::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
         //! [Flood fill]
 
         //! [Bucket fill]

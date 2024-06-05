@@ -61,7 +61,7 @@ int main(int argc, const char **argv)
   //! [Connected components]
   vpImage<int> labels;
   int nbComponents = 0;
-  VISP_IMGPROC_NAMESPACE::connectedComponents(I, labels, nbComponents, connexity);
+  VISP_NAMESPACE_NAME::connectedComponents(I, labels, nbComponents, connexity);
   std::cout << "nbComponents=" << nbComponents << std::endl;
   //! [Connected components]
 

@@ -45,13 +45,7 @@
 #include <visp3/core/vpImageMorphology.h>
 #include <visp3/imgproc/vpContours.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#define VISP_IMGPROC_NAMESPACE vp
-#else
-#define VISP_IMGPROC_NAMESPACE VISP_NAMESPACE_NAME
-#endif
-
-namespace VISP_IMGPROC_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
 
 #define USE_OLD_FILL_HOLE 0

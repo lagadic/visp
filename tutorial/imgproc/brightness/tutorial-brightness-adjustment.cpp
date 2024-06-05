@@ -30,8 +30,8 @@ int main(int argc, const char **argv)
   std::string input_filename = "Sample_low_brightness.png";
   double alpha = 10.0, beta = 50.0;
   double gamma = 3.5;
-  VISP_IMGPROC_NAMESPACE::vpGammaMethod method = VISP_IMGPROC_NAMESPACE::GAMMA_MANUAL;
-  VISP_IMGPROC_NAMESPACE::vpGammaColorHandling colorHandling = VISP_IMGPROC_NAMESPACE::GAMMA_HSV;
+  VISP_NAMESPACE_NAME::vpGammaMethod method = VISP_NAMESPACE_NAME::GAMMA_MANUAL;
+  VISP_NAMESPACE_NAME::vpGammaColorHandling colorHandling = VISP_NAMESPACE_NAME::GAMMA_HSV;
   int scale = 240, scaleDiv = 3, level = 0, kernelSize = -1;
   double dynamic = 3.0;
 
@@ -50,11 +50,11 @@ int main(int argc, const char **argv)
     }
     else if ((std::string(argv[i]) == "--gamma-color-handling") && ((i + 1) < argc)) {
       ++i;
-      colorHandling = VISP_IMGPROC_NAMESPACE::vpGammaColorHandlingFromString(argv[i]);
+      colorHandling = VISP_NAMESPACE_NAME::vpGammaColorHandlingFromString(argv[i]);
     }
     else if ((std::string(argv[i]) == "--gamma-method") && ((i + 1) < argc)) {
       ++i;
-      method = VISP_IMGPROC_NAMESPACE::vpGammaMethodFromString(argv[i]);
+      method = VISP_NAMESPACE_NAME::vpGammaMethodFromString(argv[i]);
     }
     else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
       scale = atoi(argv[i + 1]);
@@ -74,16 +74,16 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--input <input image>]"
-        " [--alpha <alpha for VISP_IMGPROC_NAMESPACE::adjust()>] [--beta <beta for "
-        "VISP_IMGPROC_NAMESPACE::adjust()>]"
-        " [--gamma <gamma for VISP_IMGPROC_NAMESPACE::gammaCorrection()>]"
-        " [--gamma-color-handling " << VISP_IMGPROC_NAMESPACE::vpGammaColorHandlingList() << "]"
-        " [--gamma-method " << VISP_IMGPROC_NAMESPACE::vpGammaMethodList() << "]"
-        " [--scale <scale for VISP_IMGPROC_NAMESPACE::retinex()> [--scaleDiv for "
-        "VISP_IMGPROC_NAMESPACE::retinex()]"
-        " [--level <level for VISP_IMGPROC_NAMESPACE::retinex()> [--kernelSize "
-        "<kernelSize for VISP_IMGPROC_NAMESPACE::retinex()>]"
-        " [--dynamic <dynamic for VISP_IMGPROC_NAMESPACE::retinex()>] [--help]"
+        " [--alpha <alpha for VISP_NAMESPACE_NAME::adjust()>] [--beta <beta for "
+        "VISP_NAMESPACE_NAME::adjust()>]"
+        " [--gamma <gamma for VISP_NAMESPACE_NAME::gammaCorrection()>]"
+        " [--gamma-color-handling " << VISP_NAMESPACE_NAME::vpGammaColorHandlingList() << "]"
+        " [--gamma-method " << VISP_NAMESPACE_NAME::vpGammaMethodList() << "]"
+        " [--scale <scale for VISP_NAMESPACE_NAME::retinex()> [--scaleDiv for "
+        "VISP_NAMESPACE_NAME::retinex()]"
+        " [--level <level for VISP_NAMESPACE_NAME::retinex()> [--kernelSize "
+        "<kernelSize for VISP_NAMESPACE_NAME::retinex()>]"
+        " [--dynamic <dynamic for VISP_NAMESPACE_NAME::retinex()>] [--help]"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -111,7 +111,7 @@ int main(int argc, const char **argv)
 
   //! [Brightness contrast adjustment]
   vpImage<vpRGBa> I_color_adjust;
-  VISP_IMGPROC_NAMESPACE::adjust(I_color, I_color_adjust, alpha, beta);
+  VISP_NAMESPACE_NAME::adjust(I_color, I_color_adjust, alpha, beta);
   //! [Brightness contrast adjustment]
   I_color_res.insert(I_color_adjust, vpImagePoint(0, I_color.getWidth()));
   std::stringstream ss;
@@ -124,19 +124,19 @@ int main(int argc, const char **argv)
   vpDisplay::getClick(I_color_res);
 
   //! [Gamma correction]
-  if (method != VISP_IMGPROC_NAMESPACE::GAMMA_MANUAL) {
+  if (method != VISP_NAMESPACE_NAME::GAMMA_MANUAL) {
     // If the user wants to use an automatic method, the gamma factor must be negative.
     gamma = -1.;
   }
 
   if (gamma > 0.) {
     // If the user wants to set a constant user-defined gamma factor, the method must be set to manual.
-    method = VISP_IMGPROC_NAMESPACE::GAMMA_MANUAL;
+    method = VISP_NAMESPACE_NAME::GAMMA_MANUAL;
   }
   vpImage<unsigned char> I_gray_gamma_correction;
-  VISP_IMGPROC_NAMESPACE::gammaCorrection(I_gray, I_gray_gamma_correction, static_cast<float>(gamma), method);
+  VISP_NAMESPACE_NAME::gammaCorrection(I_gray, I_gray_gamma_correction, static_cast<float>(gamma), method);
   vpImage<vpRGBa> I_color_gamma_correction;
-  VISP_IMGPROC_NAMESPACE::gammaCorrection(I_color, I_color_gamma_correction, static_cast<float>(gamma), colorHandling, method);
+  VISP_NAMESPACE_NAME::gammaCorrection(I_color, I_color_gamma_correction, static_cast<float>(gamma), colorHandling, method);
   //! [Gamma correction]
   I_gray_res.insert(I_gray_gamma_correction, vpImagePoint(0, I_gray.getWidth()));
   ss.str("");
@@ -160,7 +160,7 @@ int main(int argc, const char **argv)
 
   //! [Histogram equalization]
   vpImage<vpRGBa> I_color_equalize_histogram;
-  VISP_IMGPROC_NAMESPACE::equalizeHistogram(I_color, I_color_equalize_histogram);
+  VISP_NAMESPACE_NAME::equalizeHistogram(I_color, I_color_equalize_histogram);
   //! [Histogram equalization]
   I_color_res.insert(I_color_equalize_histogram, vpImagePoint(0, I_color.getWidth()));
   ss.str("");
@@ -174,7 +174,7 @@ int main(int argc, const char **argv)
 
   //! [Retinex]
   vpImage<vpRGBa> I_color_retinex;
-  VISP_IMGPROC_NAMESPACE::retinex(I_color, I_color_retinex, scale, scaleDiv, level, dynamic, kernelSize);
+  VISP_NAMESPACE_NAME::retinex(I_color, I_color_retinex, scale, scaleDiv, level, dynamic, kernelSize);
   //! [Retinex]
   I_color_res.insert(I_color_retinex, vpImagePoint(0, I_color.getWidth()));
 
