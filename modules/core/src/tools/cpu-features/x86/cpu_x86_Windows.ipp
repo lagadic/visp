@@ -68,7 +68,7 @@ unsigned __int64 _xgetbv(unsigned int index)
 }
 #endif
 #if defined(__MINGW32__)
-void __cpuidex(int CPUInfo[4], int function_id, int subfunction_id)
+void __cpuidex(uint CPUInfo[4], uint function_id, uint subfunction_id)
 {
   __asm__ __volatile__(
      "cpuid"
@@ -76,9 +76,9 @@ void __cpuidex(int CPUInfo[4], int function_id, int subfunction_id)
      : "a" (function_id), "c" (subfunction_id));
 }
 #endif
-void cpu_x86::cpuid(int32_t out[4], int32_t x)
+void cpu_x86::cpuid(uint32_t out[4], uint32_t x)
 {
-  __cpuidex(out, x, 0);
+  __cpuidex(out, x, 0U);
 }
 __int64 xgetbv(unsigned int x)
 {
