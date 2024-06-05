@@ -1,4 +1,5 @@
 //! \example tutorial-apriltag-detector.cpp
+#include <visp3/core/vpConfig.h>
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
@@ -10,13 +11,16 @@
 
 int main(int argc, const char **argv)
 {
-  //! [Macro defined]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+//! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   std::string input_filename = "AprilTag.pgm";
-  visp::vpDetectorAprilTag::vpAprilTagFamily tagFamily = visp::vpDetectorAprilTag::TAG_36h11;
-  visp::vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = visp::vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double tagSize = 0.053;
   float quad_decimate = 1.0;
   int nThreads = 1;
@@ -29,7 +33,7 @@ int main(int argc, const char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
-      poseEstimationMethod = static_cast<visp::vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[i + 1]));
+      poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
@@ -61,7 +65,7 @@ int main(int argc, const char **argv)
       thickness = static_cast<unsigned int>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
-      tagFamily = static_cast<visp::vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[i + 1]));
+      tagFamily = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--z_aligned") {
       z_aligned = true;
@@ -85,12 +89,12 @@ int main(int argc, const char **argv)
     }
   }
 
-  visp::vpCameraParameters cam;
+  vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 #if defined(VISP_HAVE_PUGIXML)
-  visp::vpXmlParserCamera parser;
+  vpXmlParserCamera parser;
   if (!intrinsic_file.empty() && !camera_name.empty()) {
-    parser.parse(cam, intrinsic_file, camera_name, visp::vpCameraParameters::perspectiveProjWithoutDistortion);
+    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
   }
 #endif
 
@@ -101,52 +105,52 @@ int main(int argc, const char **argv)
   std::cout << "Z aligned: " << z_aligned << std::endl;
 
   try {
-    visp::vpImage<visp::vpRGBa> I_color;
-    visp::vpImageIo::read(I_color, input_filename);
-    visp::vpImage<unsigned char> I;
-    visp::vpImageConvert::convert(I_color, I);
+    vpImage<vpRGBa> I_color;
+    vpImageIo::read(I_color, input_filename);
+    vpImage<unsigned char> I;
+    vpImageConvert::convert(I_color, I);
 
 #ifdef VISP_HAVE_X11
-    visp::vpDisplayX d(I);
+    vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
-    visp::vpDisplayGDI d(I);
+    vpDisplayGDI d(I);
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    visp::vpDisplayOpenCV d(I);
+    vpDisplayOpenCV d(I);
 #endif
 
     //! [Create AprilTag detector]
-    visp::vpDetectorAprilTag detector(tagFamily);
+    vpDetectorAprilTag detector(tagFamily);
     //! [Create AprilTag detector]
 
     //! [AprilTag detector settings]
     detector.setAprilTagQuadDecimate(quad_decimate);
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
     detector.setAprilTagNbThreads(nThreads);
-    detector.setDisplayTag(display_tag, color_id < 0 ? visp::vpColor::none : visp::vpColor::getColor(color_id), thickness);
+    detector.setDisplayTag(display_tag, color_id < 0 ? vpColor::none : vpColor::getColor(color_id), thickness);
     detector.setZAlignedWithCameraAxis(z_aligned);
     //! [AprilTag detector settings]
 
-    visp::vpDisplay::display(I);
+    vpDisplay::display(I);
 
-    double t = visp::vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     //! [Detect and compute pose]
-    std::vector<visp::vpHomogeneousMatrix> cMo_vec;
+    std::vector<vpHomogeneousMatrix> cMo_vec;
     detector.detect(I, tagSize, cam, cMo_vec);
     //! [Detect and compute pose]
-    t = visp::vpTime::measureTimeMs() - t;
+    t = vpTime::measureTimeMs() - t;
 
     std::stringstream ss;
     ss << "Detection time: " << t << " ms for " << detector.getNbObjects() << " tags";
-    visp::vpDisplay::displayText(I, 40, 20, ss.str(), visp::vpColor::red);
+    vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
     //! [Parse detected codes]
     for (size_t i = 0; i < detector.getNbObjects(); i++) {
       //! [Parse detected codes]
       //! [Get location]
-      std::vector<visp::vpImagePoint> p = detector.getPolygon(i);
-      visp::vpRect bbox = detector.getBBox(i);
+      std::vector<vpImagePoint> p = detector.getPolygon(i);
+      vpRect bbox = detector.getBBox(i);
       //! [Get location]
-      visp::vpDisplay::displayRectangle(I, bbox, visp::vpColor::green);
+      vpDisplay::displayRectangle(I, bbox, vpColor::green);
       //! [Get message]
       std::string message = detector.getMessage(i);
       //! [Get message]
@@ -156,56 +160,56 @@ int main(int argc, const char **argv)
         int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
         ss.str("");
         ss << "Tag id: " << tag_id;
-        visp::vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()), ss.str(), visp::vpColor::red);
+        vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()), ss.str(), vpColor::red);
       }
       //! [Get tag id]
       for (size_t j = 0; j < p.size(); j++) {
-        visp::vpDisplay::displayCross(I, p[j], 14, visp::vpColor::red, 3);
+        vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
         std::ostringstream number;
         number << j;
-        visp::vpDisplay::displayText(I, p[j] + visp::vpImagePoint(15, 5), number.str(), visp::vpColor::blue);
+        vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(), vpColor::blue);
       }
     }
 
-    visp::vpDisplay::displayText(I, 20, 20, "Click to display tag poses", visp::vpColor::red);
-    visp::vpDisplay::flush(I);
-    visp::vpDisplay::getClick(I);
+    vpDisplay::displayText(I, 20, 20, "Click to display tag poses", vpColor::red);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I);
 
-    visp::vpDisplay::display(I);
+    vpDisplay::display(I);
 
     //! [Display camera pose for each tag]
     for (size_t i = 0; i < cMo_vec.size(); i++) {
-      visp::vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, visp::vpColor::none, 3);
+      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
     }
     //! [Display camera pose for each tag]
 
-    visp::vpDisplay::displayText(I, 20, 20, "Click to quit.", visp::vpColor::red);
-    visp::vpDisplay::flush(I);
-    visp::vpDisplay::getClick(I);
+    vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I);
 
 #ifdef VISP_HAVE_X11
-    visp::vpDisplayX d2(I_color, 50, 50);
+    vpDisplayX d2(I_color, 50, 50);
 #elif defined(VISP_HAVE_GDI)
-    visp::vpDisplayGDI d2(I_color, 50, 50);
+    vpDisplayGDI d2(I_color, 50, 50);
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    visp::vpDisplayOpenCV d2(I_color, 50, 50);
+    vpDisplayOpenCV d2(I_color, 50, 50);
 #endif
-    // To test the displays on a visp::vpRGBa image
-    visp::vpDisplay::display(I_color);
+    // To test the displays on a vpRGBa image
+    vpDisplay::display(I_color);
 
     // Display frames and tags but remove the display of the last element
-    std::vector<std::vector<visp::vpImagePoint> > tagsCorners = detector.getTagsCorners();
+    std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
     tagsCorners.pop_back();
-    detector.displayTags(I_color, tagsCorners, visp::vpColor::none, 3);
+    detector.displayTags(I_color, tagsCorners, vpColor::none, 3);
 
     cMo_vec.pop_back();
-    detector.displayFrames(I_color, cMo_vec, cam, tagSize / 2, visp::vpColor::none, 3);
+    detector.displayFrames(I_color, cMo_vec, cam, tagSize / 2, vpColor::none, 3);
 
-    visp::vpDisplay::displayText(I_color, 20, 20, "Click to quit.", visp::vpColor::red);
-    visp::vpDisplay::flush(I_color);
-    visp::vpDisplay::getClick(I_color);
+    vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
+    vpDisplay::flush(I_color);
+    vpDisplay::getClick(I_color);
   }
-  catch (const visp::vpException &e) {
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
