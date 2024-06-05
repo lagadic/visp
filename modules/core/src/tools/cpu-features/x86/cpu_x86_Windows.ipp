@@ -17,6 +17,7 @@
 //  Dependencies
 #include <Windows.h>
 #include <intrin.h>
+#include <memory.h>
 #include "cpu_x86.h"
 namespace FeatureDetector
 {
@@ -78,7 +79,13 @@ void __cpuidex(uint CPUInfo[4], uint function_id, uint subfunction_id)
 #endif
 void cpu_x86::cpuid(uint32_t out[4], uint32_t x)
 {
+#if defined(__MINGW32__)
   __cpuidex(out, x, 0U);
+#else
+  int32_t out_as_int[4];
+  __cpuidex(out_as_int, x, 0U);
+  memcpy(out, out_as_int, sizeof(int32_t) * 4);
+#endif
 }
 __int64 xgetbv(unsigned int x)
 {
