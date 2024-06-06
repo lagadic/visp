@@ -69,7 +69,7 @@ unsigned __int64 _xgetbv(unsigned int index)
 }
 #endif
 #if defined(__MINGW32__)
-void __cpuidex(uint CPUInfo[4], uint function_id, uint subfunction_id)
+void __cpuidex(unsigned int CPUInfo[4], unsigned int function_id, unsigned int subfunction_id)
 {
   __asm__ __volatile__(
      "cpuid"
