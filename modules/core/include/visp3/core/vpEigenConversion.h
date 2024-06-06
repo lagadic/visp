@@ -40,14 +40,7 @@
 #endif
 #include <visp3/core/vpMatrix.h>
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-// The following macro forces us to us
-#define VISP_EIGEN_CONVERSION_NAMESPACE vp
-#else
-#define VISP_EIGEN_CONVERSION_NAMESPACE VISP_NAMESPACE_NAME
-#endif
-
-namespace VISP_EIGEN_CONVERSION_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
@@ -102,5 +95,5 @@ VISP_EXPORT void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpColVector &src, Ei
 
 VISP_EXPORT void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpRowVector &src, Eigen::RowVectorXd &dst);
 #endif
-} // namespace vp
+} // namespace VISP_NAMESPACE_NAME
 #endif

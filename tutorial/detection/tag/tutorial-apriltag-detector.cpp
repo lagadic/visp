@@ -1,4 +1,5 @@
 //! \example tutorial-apriltag-detector.cpp
+#include <visp3/core/vpConfig.h>
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
@@ -10,7 +11,10 @@
 
 int main(int argc, const char **argv)
 {
-  //! [Macro defined]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+//! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE

@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpEigenConversion.h>
 
-namespace VISP_EIGEN_CONVERSION_NAMESPACE
+namespace VISP_NAMESPACE_NAME
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
@@ -91,4 +91,4 @@ void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpRowVector &src, Eigen::RowVect
   dst = Eigen::RowVectorXd::Map(src.data, src.size());
 }
 #endif
-} // namespace vp
+} // namespace VISP_NAMESPACE_NAME

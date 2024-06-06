@@ -56,37 +56,37 @@ int main(int argc, const char **argv)
 
   //! [Huang]
   vpImage<unsigned char> I_huang = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_huang, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_HUANG);
+  VISP_NAMESPACE_NAME::autoThreshold(I_huang, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_HUANG);
   //! [Huang]
   I_res.insert(I_huang, vpImagePoint());
 
   //! [Intermodes]
   vpImage<unsigned char> I_intermodes = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_intermodes, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_INTERMODES);
+  VISP_NAMESPACE_NAME::autoThreshold(I_intermodes, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_INTERMODES);
   //! [Intermodes]
   I_res.insert(I_intermodes, vpImagePoint(0, I.getWidth()));
 
   //! [IsoData]
   vpImage<unsigned char> I_isodata = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_isodata, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_ISODATA);
+  VISP_NAMESPACE_NAME::autoThreshold(I_isodata, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_ISODATA);
   //! [IsoData]
   I_res.insert(I_isodata, vpImagePoint(0, 2 * I.getWidth()));
 
   //! [Mean]
   vpImage<unsigned char> I_mean = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_mean, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_MEAN);
+  VISP_NAMESPACE_NAME::autoThreshold(I_mean, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_MEAN);
   //! [Mean]
   I_res.insert(I_mean, vpImagePoint(I.getHeight(), 0));
 
   //! [Otsu]
   vpImage<unsigned char> I_otsu = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_otsu, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_OTSU);
+  VISP_NAMESPACE_NAME::autoThreshold(I_otsu, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_OTSU);
   //! [Otsu]
   I_res.insert(I_otsu, vpImagePoint(I.getHeight(), 2 * I.getWidth()));
 
   //! [Triangle]
   vpImage<unsigned char> I_triangle = I;
-  VISP_IMGPROC_NAMESPACE::autoThreshold(I_triangle, VISP_IMGPROC_NAMESPACE::AUTO_THRESHOLD_TRIANGLE);
+  VISP_NAMESPACE_NAME::autoThreshold(I_triangle, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_TRIANGLE);
   //! [Triangle]
   I_res.insert(I_triangle, vpImagePoint(2 * I.getHeight(), 0));
 

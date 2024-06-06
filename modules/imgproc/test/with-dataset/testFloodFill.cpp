@@ -279,21 +279,21 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_check_8_connexity(image_data_check_8_connexity, 8, 8, true);
 
     // Test flood fill on test data 4-connexity
-    VISP_IMGPROC_NAMESPACE::floodFill(I_test_flood_fill_4_connexity, vpImagePoint(2, 2), 0, 1, vpImageMorphology::CONNEXITY_4);
+    VISP_NAMESPACE_NAME::floodFill(I_test_flood_fill_4_connexity, vpImagePoint(2, 2), 0, 1, vpImageMorphology::CONNEXITY_4);
     printImage(I_test_flood_fill_4_connexity, "I_test_flood_fill_4_connexity");
 
     if (I_test_flood_fill_4_connexity != I_check_4_connexity) {
-      throw vpException(vpException::fatalError, "Problem with VISP_IMGPROC_NAMESPACE::floodFill() and 4-connexity!");
+      throw vpException(vpException::fatalError, "Problem with VISP_NAMESPACE_NAME::floodFill() and 4-connexity!");
     }
     std::cout << "\n(I_test_flood_fill_4_connexity == I_check_4_connexity)? "
       << (I_test_flood_fill_4_connexity == I_check_4_connexity) << std::endl;
 
 // Test flood fill on test data 8-connexity
-    VISP_IMGPROC_NAMESPACE::floodFill(I_test_flood_fill_8_connexity, vpImagePoint(2, 2), 0, 1, vpImageMorphology::CONNEXITY_8);
+    VISP_NAMESPACE_NAME::floodFill(I_test_flood_fill_8_connexity, vpImagePoint(2, 2), 0, 1, vpImageMorphology::CONNEXITY_8);
     printImage(I_test_flood_fill_8_connexity, "I_test_flood_fill_8_connexity");
 
     if (I_test_flood_fill_8_connexity != I_check_8_connexity) {
-      throw vpException(vpException::fatalError, "Problem with VISP_IMGPROC_NAMESPACE::floodFill() and 8-connexity!");
+      throw vpException(vpException::fatalError, "Problem with VISP_NAMESPACE_NAME::floodFill() and 8-connexity!");
     }
     std::cout << "\n(I_test_flood_fill_8_connexity == I_check_8_connexity)? "
       << (I_test_flood_fill_8_connexity == I_check_8_connexity) << std::endl;
@@ -313,7 +313,7 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I_klimt_flood_fill_4_connexity = I_klimt;
     double t = vpTime::measureTimeMs();
-    VISP_IMGPROC_NAMESPACE::floodFill(I_klimt_flood_fill_4_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_4);
+    VISP_NAMESPACE_NAME::floodFill(I_klimt_flood_fill_4_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_4);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Flood fill on Klimt image (4-connexity): " << t << " ms" << std::endl;
 
@@ -322,7 +322,7 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I_klimt_flood_fill_8_connexity = I_klimt;
     t = vpTime::measureTimeMs();
-    VISP_IMGPROC_NAMESPACE::floodFill(I_klimt_flood_fill_8_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_8);
+    VISP_NAMESPACE_NAME::floodFill(I_klimt_flood_fill_8_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_8);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Flood fill on Klimt image (8-connexity): " << t << " ms" << std::endl;
     filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_8_connexity.pgm");

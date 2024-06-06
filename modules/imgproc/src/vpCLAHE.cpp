@@ -79,16 +79,8 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-namespace vp
-#else
 namespace VISP_NAMESPACE_NAME
-#endif
 {
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 
@@ -405,7 +397,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
             ++hist[fastRound((I1[yi][xi] / 255.0f) * bins)];
           }
         }
-      }
+        }
       else {
         hist = prev_hist;
 
@@ -454,9 +446,9 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         int limit = static_cast<int>(((slope * n) / bins) + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
+      }
     }
   }
-}
 
 void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {

@@ -121,6 +121,9 @@
 #define END_VISP_NAMESPACE }
 // Create an empty namespace to ensure that "using VISP_NAMESPACE_NAME;" does not raise an error
 namespace VISP_NAMESPACE_NAME {}
+
+// Create an alias for compatibility with older versions of ViSP
+namespace vp = VISP_NAMESPACE_NAME;
 #else
 #define VISP_NAMESPACE_ADDRESSING
 #define BEGIN_VISP_NAMESPACE

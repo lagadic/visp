@@ -295,7 +295,7 @@ int main(int argc, const char **argv)
     vpImage<int> labels_connex4;
     int nbComponents = 0;
     double t = vpTime::measureTimeMs();
-    VISP_IMGPROC_NAMESPACE::connectedComponents(I, labels_connex4, nbComponents, vpImageMorphology::CONNEXITY_4);
+    VISP_NAMESPACE_NAME::connectedComponents(I, labels_connex4, nbComponents, vpImageMorphology::CONNEXITY_4);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\n4-connexity connected components:" << std::endl;
     std::cout << "Time: " << t << " ms" << std::endl;
@@ -303,7 +303,7 @@ int main(int argc, const char **argv)
 
     vpImage<int> labels_connex8;
     t = vpTime::measureTimeMs();
-    VISP_IMGPROC_NAMESPACE::connectedComponents(I, labels_connex8, nbComponents, vpImageMorphology::CONNEXITY_8);
+    VISP_NAMESPACE_NAME::connectedComponents(I, labels_connex8, nbComponents, vpImageMorphology::CONNEXITY_8);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\n8-connexity connected components:" << std::endl;
     std::cout << "Time: " << t << " ms" << std::endl;

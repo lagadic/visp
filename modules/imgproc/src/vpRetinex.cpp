@@ -88,18 +88,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-namespace vp
-#else
 namespace VISP_NAMESPACE_NAME
-#endif
 {
 
 #define MAX_RETINEX_SCALES 8
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale)
 {

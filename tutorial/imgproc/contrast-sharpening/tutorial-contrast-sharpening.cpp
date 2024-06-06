@@ -80,31 +80,31 @@ int main(int argc, const char **argv)
 
   //! [Stretch contrast]
   vpImage<vpRGBa> I_stretch;
-  VISP_IMGPROC_NAMESPACE::stretchContrast(I_color, I_stretch);
+  VISP_NAMESPACE_NAME::stretchContrast(I_color, I_stretch);
   //! [Stretch contrast]
   d2.init(I_stretch, I_color.getWidth(), 10, "Stretch contrast");
 
   //! [Stretch contrast HSV]
   vpImage<vpRGBa> I_stretch_hsv;
-  VISP_IMGPROC_NAMESPACE::stretchContrastHSV(I_color, I_stretch_hsv);
+  VISP_NAMESPACE_NAME::stretchContrastHSV(I_color, I_stretch_hsv);
   //! [Stretch contrast HSV]
   d3.init(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
 
   //! [Histogram equalization]
   vpImage<vpRGBa> I_hist_eq;
-  VISP_IMGPROC_NAMESPACE::equalizeHistogram(I_color, I_hist_eq);
+  VISP_NAMESPACE_NAME::equalizeHistogram(I_color, I_hist_eq);
   //! [Histogram equalization]
   d4.init(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80, "Histogram equalization");
 
   //! [CLAHE]
   vpImage<vpRGBa> I_clahe;
-  VISP_IMGPROC_NAMESPACE::clahe(I_color, I_clahe, blockRadius, bins, slope);
+  VISP_NAMESPACE_NAME::clahe(I_color, I_clahe, blockRadius, bins, slope);
   //! [CLAHE]
   d5.init(I_clahe, 0, 2 * I_color.getHeight() + 80, "CLAHE");
 
   //! [Unsharp mask]
   vpImage<vpRGBa> I_unsharp;
-  VISP_IMGPROC_NAMESPACE::unsharpMask(I_clahe, I_unsharp, sigma, weight);
+  VISP_NAMESPACE_NAME::unsharpMask(I_clahe, I_unsharp, sigma, weight);
   //! [Unsharp mask]
   d6.init(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80, "Unsharp mask");
 
