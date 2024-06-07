@@ -58,10 +58,8 @@ vpKeyboard::vpKeyboard()
   init();
 }
 #else
-{}
+{ }
 #endif
-
-
 
 /*!
   Stops the raw mode.
@@ -74,7 +72,6 @@ vpKeyboard::~vpKeyboard()
 }
 
 /*!
-
   Get the hit key. kbhit() indicates if a key was hitten.
 */
 int vpKeyboard::getchar()
@@ -91,8 +88,6 @@ int vpKeyboard::getchar()
 }
 
 /*!
-
-
   \return 1 : if a key was hit.
 */
 int vpKeyboard::kbhit()
@@ -163,5 +158,6 @@ void vpKeyboard::setRawMode(bool active)
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
 }
-END_VISP_NAMESPACE
 #endif // defined UNIX
+
+END_VISP_NAMESPACE

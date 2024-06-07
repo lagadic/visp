@@ -30,14 +30,12 @@
  *
  * Description:
  * Firewire cameras video capture.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file test1394TwoGrabber.cpp
 
   \brief  Aquire images using libdc1394-2.x library.
-
 */
 
 #include <visp3/core/vpConfig.h>
@@ -46,22 +44,21 @@
 #include <iostream>
 #include <string>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_DC1394)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
+
 /*!
   \example test1394TwoGrabber.cpp
-
-
-
 */
 int main()
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   try {
     std::cout << "IEEE1394 test in progress..." << std::endl;
 
@@ -123,14 +120,8 @@ int main()
 #else
 int main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-          "You should install libdc1394-2 to use this binary.");
-  }
+  vpTRACE("Ieee 1394 grabber capabilities are not available...");
+  vpTRACE("You should install libdc1394-2 to use this binary.");
+}
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

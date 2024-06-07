@@ -1505,7 +1505,7 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
-  swap(*this, other);
+  ::swap(*this, other);
   if (other.display != nullptr) {
     display = other.display;
   }
