@@ -184,16 +184,16 @@ END_VISP_NAMESPACE
  * \param color The color we are interested in displaying the name.
  * \return std::ostream& The stream, in which the name of the \b color has been written.
  */
-std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
+  std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
 
-/**
- * \brief Permits to initialize a \b vpColorBlindFriendlyPalette by reading its name in
- * an \b std::istream.
- *
- * \param is A stream from which we will read the name of \b color in order to initialized it.
- * \param color The color we want to initialized.
- * \return std::istream& The \b is input, from which we have read the name of \b color.
- */
+  /**
+   * \brief Permits to initialize a \b vpColorBlindFriendlyPalette by reading its name in
+   * an \b std::istream.
+   *
+   * \param is A stream from which we will read the name of \b color in order to initialized it.
+   * \param color The color we want to initialized.
+   * \return std::istream& The \b is input, from which we have read the name of \b color.
+   */
 std::istream &operator>>(std::istream &is, VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
 
 #endif

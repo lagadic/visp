@@ -75,7 +75,7 @@ BEGIN_VISP_NAMESPACE
  * \warning This class uses threading capabilities. Thus on Unix-like
  * platforms, the libpthread third-party library need to be
  * installed. On Windows, we use the native threading capabilities.
- */
+*/
 class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, public vpRobotSimulator
 {
 public:

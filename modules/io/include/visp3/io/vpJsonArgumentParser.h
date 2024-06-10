@@ -181,7 +181,7 @@ public:
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;

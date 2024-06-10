@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpTemplateTrackerWarpHomographySL3
  * \ingroup group_tt_warp
- */
+*/
 class VISP_EXPORT vpTemplateTrackerWarpHomographySL3 : public vpTemplateTrackerWarp
 {
 protected:

@@ -73,7 +73,7 @@ class vpMomentDatabase;
  * - vpFeatureMomentBasic
  * - vpFeatureMomentGravityCenter
  * - vpMomentGravityCenter
- */
+*/
 class VISP_EXPORT vpFeatureMomentCentered : public vpFeatureMoment
 {
 protected:

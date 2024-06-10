@@ -172,7 +172,7 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  *
  * An other fully explained example is given in the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
 private:

@@ -135,7 +135,7 @@ BEGIN_VISP_NAMESPACE
  *   } while (error > 0.0001); // Stop the task when current and desired visual features are close
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpServo
 {
 

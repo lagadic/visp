@@ -118,40 +118,40 @@ int main()
   example shows how to capture simultaneously images from multiple cameras.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpFlyCaptureGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/sensor/vpFlyCaptureGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_FLYCAPTURE)
-  int nframes = 100;
-  char filename[FILENAME_MAX];
-  unsigned int numCameras = vpFlyCaptureGrabber::getNumCameras();
+  int main()
+  {
+  #if defined(VISP_HAVE_FLYCAPTURE)
+    int nframes = 100;
+    char filename[FILENAME_MAX];
+    unsigned int numCameras = vpFlyCaptureGrabber::getNumCameras();
 
-  std::cout << "Number of cameras detected: " << numCameras << std::endl;
+    std::cout << "Number of cameras detected: " << numCameras << std::endl;
 
-  vpFlyCaptureGrabber *g = new vpFlyCaptureGrabber [numCameras];
-  std::vector< vpImage<unsigned char> > I(numCameras);
+    vpFlyCaptureGrabber *g = new vpFlyCaptureGrabber [numCameras];
+    std::vector< vpImage<unsigned char> > I(numCameras);
 
-  for(unsigned int cam=0; cam < numCameras; cam++) {
-    g[cam].setCameraIndex(cam); // Default camera is the first on the bus
-    g[cam].getCameraInfo(std::cout);
-    g[cam].open(I[cam]);
-  }
-
-  for(int i=0; i< nframes; i++) {
     for(unsigned int cam=0; cam < numCameras; cam++) {
-      g[cam].acquire(I[cam]);
-      snprintf(filename, FILENAME_MAX, "image-camera%d-%04d.pgm", cam, i);
-      vpImageIo::write(I[cam], filename);
+      g[cam].setCameraIndex(cam); // Default camera is the first on the bus
+      g[cam].getCameraInfo(std::cout);
+      g[cam].open(I[cam]);
     }
+
+    for(int i=0; i< nframes; i++) {
+      for(unsigned int cam=0; cam < numCameras; cam++) {
+        g[cam].acquire(I[cam]);
+        snprintf(filename, FILENAME_MAX, "image-camera%d-%04d.pgm", cam, i);
+        vpImageIo::write(I[cam], filename);
+      }
+    }
+    delete [] g;
+  #endif
   }
-  delete [] g;
-#endif
-}
   \endcode
- */
+*/
 class VISP_EXPORT vpFlyCaptureGrabber : public vpFrameGrabber
 {
 public:

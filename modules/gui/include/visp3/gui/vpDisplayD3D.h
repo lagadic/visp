@@ -97,7 +97,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayD3D : public vpDisplayWin32
 {
 public:

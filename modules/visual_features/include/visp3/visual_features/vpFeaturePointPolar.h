@@ -249,7 +249,7 @@ BEGIN_VISP_NAMESPACE
  *   return 0;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeaturePointPolar : public vpBasicFeature
 {
 private:

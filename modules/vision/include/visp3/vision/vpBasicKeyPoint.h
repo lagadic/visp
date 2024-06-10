@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
  * \brief class that defines what is a keypoint. This class provides
  * all the basic elements to implement classes which aims to match
  * points from an image to another.
- */
+*/
 class VISP_EXPORT vpBasicKeyPoint
 {
 public:

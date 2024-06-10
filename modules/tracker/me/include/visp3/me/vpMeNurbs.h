@@ -124,7 +124,7 @@ BEGIN_VISP_NAMESPACE
  * setEnableCannyDetection to enable it.
  *
  * \warning : This function requires OpenCV.
- */
+*/
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

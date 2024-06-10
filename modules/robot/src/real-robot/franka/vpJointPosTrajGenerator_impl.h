@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
  * An example showing how to generate a joint pose motion to a goal position. Adapted from:
  * Wisama Khalil and Etienne Dombre. 2002. Modeling, Identification and Control of Robots
  * (Kogan Page Science Paper edition).
- */
+*/
 class vpJointPosTrajGenerator
 {
 public:

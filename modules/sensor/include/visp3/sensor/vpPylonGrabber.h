@@ -93,7 +93,7 @@ BEGIN_VISP_NAMESPACE
   - acA1600-60gm
 
   This class is inspired by vpFlyCaptureGrabber with much simplified methods.
- */
+*/
 class VISP_EXPORT vpPylonGrabber : public vpFrameGrabber
 {
 public:

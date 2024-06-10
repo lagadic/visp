@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_vision_plane
  *
  * \note This class is only available with c++17 enabled.
- */
+*/
 class VISP_EXPORT vpPlaneEstimation
 {
 public:

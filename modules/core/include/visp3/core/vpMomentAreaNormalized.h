@@ -130,7 +130,7 @@ class vpMomentCentered;
  * \code
  * An:1.41421
  * \endcode
- */
+*/
 class VISP_EXPORT vpMomentAreaNormalized : public vpMoment
 {
 private:

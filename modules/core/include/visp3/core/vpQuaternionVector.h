@@ -101,7 +101,7 @@ BEGIN_VISP_NAMESPACE
   double z = q.z();
   double w = q.w();
   \endcode
- */
+*/
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
 public:

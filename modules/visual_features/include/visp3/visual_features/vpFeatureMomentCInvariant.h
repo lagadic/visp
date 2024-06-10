@@ -88,7 +88,7 @@ BEGIN_VISP_NAMESPACE
  *
  * An example of how to use vpFeatureMomentCInvariant in a complete visual
  * servoing example is given in vpFeatureMomentCommon.
- */
+*/
 class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment
 {
 public:

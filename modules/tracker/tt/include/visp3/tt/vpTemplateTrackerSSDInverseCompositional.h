@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_tt_tracker
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
- */
+*/
 class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional : public vpTemplateTrackerSSD
 {
 protected:

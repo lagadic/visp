@@ -101,7 +101,7 @@ BEGIN_VISP_NAMESPACE
  *   }
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDiskGrabber : public vpFrameGrabber
 {
 private:

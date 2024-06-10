@@ -43,7 +43,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpRectOriented
  * \ingroup group_core_geometry
  * \brief Defines an oriented rectangle in the plane.
- */
+*/
 class VISP_EXPORT vpRectOriented
 {
 public:

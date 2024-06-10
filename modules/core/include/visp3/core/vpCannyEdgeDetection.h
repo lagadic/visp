@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \brief Class that implements the Canny's edge detector.
  * It is possible to use a boolean mask to ignore some pixels of
  * the input gray-scale image.
- */
+*/
 class VISP_EXPORT vpCannyEdgeDetection
 {
 

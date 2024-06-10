@@ -81,7 +81,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpForceTorqueAtiSensor : public vpComedi
 {
 public:

@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 class VISP_EXPORT vpStatisticalTestAbstract
 {
 public:

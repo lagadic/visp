@@ -98,7 +98,7 @@ BEGIN_VISP_NAMESPACE
  * in the vpTracker::p public attribute, where \e p is a vector defined
  * as: \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
  * To compute these parameters use projection(). To get the corresponding values use get_p().
- */
+*/
 class VISP_EXPORT vpLine : public vpForwardProjection
 {
 public:

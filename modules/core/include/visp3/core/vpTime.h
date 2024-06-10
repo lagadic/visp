@@ -68,7 +68,7 @@ BEGIN_VISP_NAMESPACE
  *   }
  * }
  * \endcode
- */
+*/
 
 namespace vpTime
 {

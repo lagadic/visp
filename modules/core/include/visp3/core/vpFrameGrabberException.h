@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \brief Error that can be emitted by the vpFrameGrabber class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:

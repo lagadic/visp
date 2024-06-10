@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpIoException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpIoTools class and its derivatives.
- */
+*/
 class VISP_EXPORT vpIoException : public vpException
 {
 public:

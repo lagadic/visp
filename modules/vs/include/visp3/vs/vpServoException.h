@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpServoException
  * \brief Error that can be emitted by the vpServo class and its derivatives.
- */
+*/
 class VISP_EXPORT vpServoException : public vpException
 {
 public:

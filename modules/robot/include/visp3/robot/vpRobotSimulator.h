@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief This class aims to be a basis used to create all the
  * robot simulators.
- */
+*/
 class VISP_EXPORT vpRobotSimulator : public vpRobot
 {
 protected:

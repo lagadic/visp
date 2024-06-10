@@ -46,7 +46,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpMocap
  * \ingroup group_sensor_mocap
  * Generic motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocap
 {
 public:

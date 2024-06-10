@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpTrackingException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpTracker class and its derivatives.
- */
+*/
 class VISP_EXPORT vpTrackingException : public vpException
 {
 public:

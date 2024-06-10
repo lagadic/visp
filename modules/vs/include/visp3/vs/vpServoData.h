@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpServoData
  * \ingroup group_task
  * \brief Save data during the task execution when using vpServo.
- */
+*/
 class VISP_EXPORT vpServoData
 {
 private:

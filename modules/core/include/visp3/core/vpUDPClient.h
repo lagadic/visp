@@ -161,7 +161,7 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  *
  * \sa vpUDPServer
- */
+*/
 class VISP_EXPORT vpUDPClient
 {
 public:

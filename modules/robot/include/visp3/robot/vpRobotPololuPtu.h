@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
  * | :---: | :-------: | :-------: | -------------: | ----------------: |
  * |     1 |         0 |         0 |   \f$ \pi/2\f$ |         \f$q_1\f$ |
  * |     2 |         0 |         0 |   \f$-\pi/2\f$ | \f$q_2 - \pi/2\f$ |
- */
+*/
 class VISP_EXPORT vpRobotPololuPtu : public vpRobot
 {
 public:

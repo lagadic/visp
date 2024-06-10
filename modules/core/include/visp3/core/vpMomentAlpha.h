@@ -201,7 +201,7 @@ BEGIN_VISP_NAMESPACE
  * Shortcuts for quickly getting those references exist in vpMomentCommon.
  *
  * This moment depends on vpMomentCentered.
- */
+*/
 class VISP_EXPORT vpMomentAlpha : public vpMoment
 {
 private:

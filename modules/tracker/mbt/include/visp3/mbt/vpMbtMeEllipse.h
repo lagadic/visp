@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Class that tracks an ellipse moving edges with specific capabilities for
  * model-based tracking.
- */
+*/
 class VISP_EXPORT vpMbtMeEllipse : public vpMeEllipse
 {
 public:

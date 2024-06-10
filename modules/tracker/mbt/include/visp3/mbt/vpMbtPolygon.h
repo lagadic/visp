@@ -55,7 +55,7 @@ BEGIN_VISP_NAMESPACE
  * tracker.
  *
  * \ingroup group_mbt_faces
- */
+*/
 class VISP_EXPORT vpMbtPolygon : public vpPolygon3D
 {
 public:

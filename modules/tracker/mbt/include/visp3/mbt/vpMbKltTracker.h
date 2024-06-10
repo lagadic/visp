@@ -202,7 +202,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpMbKltTracker : public virtual vpMbTracker
 {
 protected:

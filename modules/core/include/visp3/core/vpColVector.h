@@ -166,7 +166,7 @@ BEGIN_VISP_NAMESPACE
  * $ cat col-vector.json
  * {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
  * \endcode
- */
+*/
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
   friend class vpMatrix;

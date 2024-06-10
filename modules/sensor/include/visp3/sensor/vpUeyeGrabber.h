@@ -80,7 +80,7 @@ BEGIN_VISP_NAMESPACE
  *   g.acquire(I);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpUeyeGrabber
 {
 public:

@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpServoDisplay
  * \ingroup group_task
  * \brief Interface with the image for feature display.
- */
+*/
 class VISP_EXPORT vpServoDisplay
 {
 public:

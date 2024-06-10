@@ -199,7 +199,7 @@ BEGIN_VISP_NAMESPACE
  *   std::cout << "e: " << e << std::endl;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeaturePoint3D : public vpBasicFeature
 {
 public:

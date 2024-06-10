@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_visual_features
  * \brief Error that can be emitted by the vpBasicFeature class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpFeatureException : public vpException
 {
 public:

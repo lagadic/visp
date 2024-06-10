@@ -133,7 +133,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
 private:

@@ -43,7 +43,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpTemplateTrackerMI
  * \ingroup group_tt_mi_tracker
- */
+*/
 class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 {
 public:

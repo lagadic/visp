@@ -47,7 +47,7 @@ BEGIN_VISP_NAMESPACE
  *\class vpMocapVicon
  * \ingroup group_sensor_mocap
  * Vicon motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocapVicon : public vpMocap
 {
 public:

@@ -165,7 +165,7 @@ BEGIN_VISP_NAMESPACE
   }
   \endcode
  *
- */
+*/
 class VISP_EXPORT vpHomography : public vpArray2D<double>
 {
 public:

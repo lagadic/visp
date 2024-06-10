@@ -46,7 +46,7 @@
 BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_gui_display
- */
+*/
 namespace vpDisplayFactory
 {
 /**

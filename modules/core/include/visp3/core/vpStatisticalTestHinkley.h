@@ -84,7 +84,7 @@ BEGIN_VISP_NAMESPACE
   If a drift is detected, the drift location is given by the last instant
   \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
   N_{k^{'}} = 0 \f$.
- */
+*/
 class VISP_EXPORT vpStatisticalTestHinkley : public vpStatisticalTestAbstract
 {
 protected:

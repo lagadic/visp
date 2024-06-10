@@ -64,8 +64,8 @@ BEGIN_VISP_NAMESPACE
  * trackers.
  *
  * \ingroup group_mbt_faces
- */
-  template <class PolygonType = vpMbtPolygon> class vpMbHiddenFaces
+*/
+template <class PolygonType = vpMbtPolygon> class vpMbHiddenFaces
 {
 private:
   //! List of polygons

@@ -68,7 +68,7 @@ BEGIN_VISP_NAMESPACE
  *   0 \end{array} \right] \f] \f[ L_{\frac{1}{\rho}} = \left[ \begin{array}{cccccc} 0 & 0 & 0 & -(1 + \frac{1}{\rho^2})
  *   \sin \alpha & (1 + \frac{1}{\rho^2}) \cos \alpha & 0 \end{array} \right] \f] \f[ L_{\alpha} = \left[
  *   \begin{array}{cccccc} 0 & 0 & 0 & \frac{\cos \alpha}{\rho} & \frac{\sin \alpha}{\rho} & -1 \end{array} \right] \f]
- */
+*/
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {
 public:

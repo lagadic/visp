@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
   The algorithm implemented in this class is described in \cite Irani98a and
   \cite Marchand16a.
 
- */
+*/
 class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional : public vpTemplateTrackerZNCC
 {
 protected:

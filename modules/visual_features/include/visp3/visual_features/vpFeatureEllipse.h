@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpFeatureEllipse
  * \ingroup group_visual_features
  * \brief Class that defines 2D ellipse visual feature.
- */
+*/
 class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature
 {
   /*

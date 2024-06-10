@@ -106,7 +106,7 @@ class vpMomentObject;
  * Yg=-0.00833333
  * Xg=0.0166667, Yg=-0.00833333
  * \endcode
- */
+*/
 
 class VISP_EXPORT vpMomentGravityCenter : public vpMoment
 {

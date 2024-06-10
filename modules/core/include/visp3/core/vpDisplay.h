@@ -169,7 +169,7 @@ BEGIN_VISP_NAMESPACE
  *
  * Other examples are available in tutorial-image-viewer.cpp and
  * tutorial-viewer.cpp.
- */
+*/
 class VISP_EXPORT vpDisplay
 {
 public:

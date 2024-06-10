@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_vision_calib
  *
  * \brief Tool for hand-eye calibration.
- */
+*/
 class VISP_EXPORT vpHandEyeCalibration
 {
 public:

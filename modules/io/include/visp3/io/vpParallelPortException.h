@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Error that can be emitted by the vpParallelPort class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpParallelPortException : public vpException
 {
 public:

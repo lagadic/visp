@@ -126,8 +126,8 @@ BEGIN_VISP_NAMESPACE
  *   vpDisplay::getClick(I);
  * }
  * \endcode
- */
-  class VISP_EXPORT vpDisplayX : public vpDisplay
+*/
+class VISP_EXPORT vpDisplayX : public vpDisplay
 {
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS

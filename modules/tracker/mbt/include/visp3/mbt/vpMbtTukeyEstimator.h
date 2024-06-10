@@ -181,7 +181,7 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));
-}
+  }
 #endif
 
   m_residues = m_normres;

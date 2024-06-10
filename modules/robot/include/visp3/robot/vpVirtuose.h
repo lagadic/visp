@@ -138,7 +138,7 @@ int main()
   std::cout << "Joint position: " << q.t() << std::endl;
 }
   \endcode
- */
+*/
 class VISP_EXPORT vpVirtuose
 {
 public:

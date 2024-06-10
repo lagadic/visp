@@ -173,7 +173,7 @@ BEGIN_VISP_NAMESPACE
  *
  * If the feature needs to be use with other features, the example
  * servoSimuPoint2DhalfCamVelocity2.cpp shows how to do it.
- */
+*/
 class VISP_EXPORT vpGenericFeature : public vpBasicFeature
 {
 private:

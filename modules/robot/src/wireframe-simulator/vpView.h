@@ -151,7 +151,7 @@ BEGIN_VISP_NAMESPACE
  * angle  Angle d'ouverture en degres.
  * twist  Angle de rotation sur l'axe de visee (eye,target) en degres.
  * speed  Vitesse sur l'axe de visee (eye,target).
- */
+*/
 typedef struct
 {
   Point3f eye;    /* position de l'observateur  */

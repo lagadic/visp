@@ -88,7 +88,7 @@ BEGIN_VISP_NAMESPACE
  *
  * with \f$p_x, p_y\f$ the position of the head base frame in the mobile
  * platform frame located at the middle point between the two wheels.
- */
+*/
 class VISP_EXPORT vpPioneerPan : public vpUnicycle
 {
 public:

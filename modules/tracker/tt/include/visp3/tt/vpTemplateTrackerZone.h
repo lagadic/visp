@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
   A zone can be initialized either by user interaction using mouse click in a
   display device throw initClick(), or by a list of points throw
   initFromPoints().
- */
+*/
 class VISP_EXPORT vpTemplateTrackerZone
 {
 protected:

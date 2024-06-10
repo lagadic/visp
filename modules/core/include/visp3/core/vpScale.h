@@ -64,7 +64,7 @@ BEGIN_VISP_NAMESPACE
 
   \author Andrew Comport
   \date 24/10/03
- */
+*/
 class VISP_EXPORT vpScale
 {
 

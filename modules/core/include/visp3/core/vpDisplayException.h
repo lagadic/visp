@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpDisplayException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpDisplay class and its derivatives.
- */
+*/
 class VISP_EXPORT vpDisplayException : public vpException
 {
 public:

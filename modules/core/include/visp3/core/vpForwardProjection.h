@@ -60,7 +60,7 @@ BEGIN_VISP_NAMESPACE
  * - in the image plane \e p. These parameters are located in the public
  *   attribute vpTracker::p. They correspond to normalized coordinates
  *   of the feature expressed in meters.
- */
+*/
 class VISP_EXPORT vpForwardProjection : public vpTracker
 {
 public:

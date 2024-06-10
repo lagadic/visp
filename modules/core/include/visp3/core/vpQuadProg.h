@@ -66,7 +66,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \warning The solvers are only available if c++11 or higher is activated during build.
  * Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
- */
+*/
 class VISP_EXPORT vpQuadProg
 {
 public:

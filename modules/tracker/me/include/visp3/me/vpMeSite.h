@@ -63,8 +63,8 @@ BEGIN_VISP_NAMESPACE
  *   amongst all edges found.
  *
  * - sample step.
- */
-  class VISP_EXPORT vpMeSite
+*/
+class VISP_EXPORT vpMeSite
 {
 public:
   /*!

@@ -133,7 +133,7 @@ inline void from_json(const nlohmann::json &j, vpMegaPoseEstimate &m)
   * For more information on how the model works, see <a href="https://megapose6d.github.io/">The MegaPose Github page</a> or the paper \cite Labbe2022Megapose.
   *
   * For instructions on how to install the Python server and an example usage, see \ref tutorial-tracking-megapose.
-  */
+*/
 class VISP_EXPORT vpMegaPose
 {
 public:

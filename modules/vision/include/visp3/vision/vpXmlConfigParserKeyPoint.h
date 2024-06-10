@@ -56,7 +56,7 @@ BEGIN_VISP_NAMESPACE
  * XML file for vpKeyPoint class.
  *
  * \warning This class is only available if pugixml is successfully built.
- */
+*/
 class VISP_EXPORT vpXmlConfigParserKeyPoint
 {
 public:

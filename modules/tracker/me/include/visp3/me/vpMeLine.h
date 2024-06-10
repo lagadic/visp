@@ -143,7 +143,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \note It is possible to display the line as an overlay. For that you
  * must use the display function of the class vpMeLine.
- */
+*/
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
