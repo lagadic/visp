@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorException
  * \brief Error that can be emitted by the vpSimulator class and its derivatives.
- */
+*/
 class VISP_EXPORT vpSimulatorException : public vpException
 {
 public:

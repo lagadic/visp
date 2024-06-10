@@ -58,7 +58,7 @@ class vpMomentObject;
  * vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get
  * access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
  * \f$(x_g,y_g)\f$ .
- */
+*/
 class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:

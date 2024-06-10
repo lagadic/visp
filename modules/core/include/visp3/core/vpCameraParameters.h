@@ -301,7 +301,7 @@ BEGIN_VISP_NAMESPACE
   $ cat cam.json
   {"model":"perspectiveWithoutDistortion","px":801.0,"py":802.0,"u0":325.0,"v0":245.0}
   \endcode
- */
+*/
 
 class VISP_EXPORT vpCameraParameters
 {

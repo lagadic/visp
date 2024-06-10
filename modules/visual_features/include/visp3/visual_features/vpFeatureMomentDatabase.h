@@ -150,7 +150,7 @@ class vpMomentObject;
  *   return 0;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureMomentDatabase
 {
 private:

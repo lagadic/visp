@@ -144,7 +144,7 @@ class vpMomentDatabase;
  * - vpFeatureMomentBasic
  *
  * Minimum vpMomentObject order needed to compute this feature: 2.
- */
+*/
 class VISP_EXPORT vpFeatureMomentGravityCenter : public vpFeatureMoment
 {
 public:

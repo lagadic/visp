@@ -90,7 +90,7 @@ BEGIN_VISP_NAMESPACE
  *   set this tool during robot initialisation or using set_eMc().
  *
  * - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
- */
+*/
 class VISP_EXPORT vpViper650 : public vpViper
 {
 public:

@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpImageException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpImage class and its derivatives.
- */
+*/
 class VISP_EXPORT vpImageException : public vpException
 {
 public:

@@ -63,7 +63,7 @@ namespace VISP_NAMESPACE_NAME
    This class implements native pthread functionalities if available, or
    native Windows threading capabilities if pthread is not available under
    Windows.
- */
+*/
 class vp_deprecated vpThread
 {
 public:

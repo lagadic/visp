@@ -153,7 +153,7 @@ class vpMoment;
  *   std::cout << fmb.interaction(1,1) << std::endl;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureMoment : public vpBasicFeature
 {
 protected:

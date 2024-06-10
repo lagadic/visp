@@ -96,8 +96,8 @@ BEGIN_VISP_NAMESPACE
  * Perspective projection is achieved using projection() methods. The methods
  * get_p(), getRho1(), getTheta1() and getRho2(), getTheta2() allow to access to the
  * projected line parameters.
- */
-  class VISP_EXPORT vpCylinder : public vpForwardProjection
+*/
+class VISP_EXPORT vpCylinder : public vpForwardProjection
 {
 public:
   typedef enum

@@ -83,7 +83,7 @@ BEGIN_VISP_NAMESPACE
  *   projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
  *   get_n11() and get_n02(). They correspond to 2D normalized circle parameters with values expressed in meters.
  *   To get theses parameters use get_p().
- */
+*/
 class VISP_EXPORT vpCircle : public vpForwardProjection
 {
 public:

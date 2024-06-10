@@ -106,7 +106,7 @@ class vpTranslationVector;
  * \ingroup group_core_math_tools
  * \brief Provides simple mathematics computation tools that are not
  * available in the C mathematics library (math.h)
- */
+*/
 class VISP_EXPORT vpMath
 {
 public:

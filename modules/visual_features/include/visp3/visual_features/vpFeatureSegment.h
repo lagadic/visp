@@ -62,7 +62,7 @@ BEGIN_VISP_NAMESPACE
  *
  * The selection of the feature set is done either during construction using
  * vpFeatureSegment(bool), or by setNormalized(bool).
- */
+*/
 class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:

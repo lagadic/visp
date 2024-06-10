@@ -60,7 +60,7 @@ BEGIN_VISP_NAMESPACE
  * Please find more information on the algorithm
  * [here](https://theailearner.com/tag/hough-gradient-method-opencv/)
  *
- */
+*/
 class VISP_EXPORT vpCircleHoughTransform
 {
 public:

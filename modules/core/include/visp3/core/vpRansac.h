@@ -63,7 +63,7 @@ BEGIN_VISP_NAMESPACE
   http://www.csse.uwa.edu.au/~pk
 
   \sa vpHomography
- */
+*/
 template <class vpTransformation> class vpRansac
 {
 public:

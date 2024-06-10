@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
  * See http://www.traclabs.com/tracbiclops.htm for more details concerning the
  * hardware.
  *
- */
+*/
 class VISP_EXPORT vpBiclops
 {
 public:

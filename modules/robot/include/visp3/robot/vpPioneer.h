@@ -82,7 +82,7 @@ BEGIN_VISP_NAMESPACE
  * \end{array}
  * \right)
  * \f].
- */
+*/
 class VISP_EXPORT vpPioneer : public vpUnicycle
 {
 public:

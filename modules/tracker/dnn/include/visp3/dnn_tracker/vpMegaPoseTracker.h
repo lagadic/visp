@@ -95,7 +95,7 @@ BEGIN_VISP_NAMESPACE
  * }
  * \endcode
  * For a more detailed usage see \ref tutorial-tracking-megapose.
- */
+*/
 class VISP_EXPORT vpMegaPoseTracker
 {
 public:

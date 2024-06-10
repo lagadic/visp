@@ -46,7 +46,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpMocapQualisys
  * \ingroup group_sensor_mocap
  * Qualisys motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocapQualisys : public vpMocap
 {
 public:

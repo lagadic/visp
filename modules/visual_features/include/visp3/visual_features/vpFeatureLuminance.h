@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
  * \brief Class that defines the luminance and gradient of a point.
  *
  * \sa vpFeatureLuminance
- */
+*/
 class VISP_EXPORT vpLuminance
 {
 public:

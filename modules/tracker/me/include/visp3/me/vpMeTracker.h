@@ -57,7 +57,7 @@ BEGIN_VISP_NAMESPACE
  * \brief Contains abstract elements for a Distance to Feature type feature.
  *
  * 2D state = list of points, 3D state = feature
- */
+*/
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
 public:

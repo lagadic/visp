@@ -57,7 +57,7 @@ BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * Used to pass parameters to the window's thread.
- */
+*/
 struct threadParam
 {
   //! Pointer to the display associated with the window.
@@ -89,7 +89,7 @@ struct threadParam
  * Windows 32 displays.
  * Uses calls to a renderer to do some display.
  * (i.e. all display methods are implemented in the renderer)
- */
+*/
 class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 {
 protected:

@@ -122,7 +122,7 @@ BEGIN_VISP_NAMESPACE
  * \ref tutorial-tracking-blob, section \ref tracking_blob_tracking.
  *
  * \sa vpDot
- */
+*/
 class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:

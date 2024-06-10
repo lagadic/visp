@@ -55,7 +55,7 @@ BEGIN_VISP_NAMESPACE
  * STL.
  * It is therefore possible to catch vpException with any other derivative of
  * std::exception in the same catch.
- */
+*/
 class VISP_EXPORT vpException : public std::exception
 {
 public:

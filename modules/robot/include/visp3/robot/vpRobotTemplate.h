@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpRobotTemplate
  * \ingroup group_robot_real_template
  * \brief Class that defines a robot just to show which function you must implement.
- */
+*/
 class VISP_EXPORT vpRobotTemplate : public vpRobot
 {
 public:

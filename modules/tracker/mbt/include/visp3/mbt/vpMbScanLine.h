@@ -69,8 +69,8 @@ BEGIN_VISP_NAMESPACE
 
   \ingroup group_mbt_faces
 
- */
-  class VISP_EXPORT vpMbScanLine
+*/
+class VISP_EXPORT vpMbScanLine
 {
 public:
   //! Structure to define if a scanline intersection is a starting or an

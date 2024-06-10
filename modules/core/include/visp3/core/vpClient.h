@@ -159,7 +159,7 @@ BEGIN_VISP_NAMESPACE
  * \sa vpClient
  * \sa vpRequest
  * \sa vpNetwork
- */
+*/
 class VISP_EXPORT vpClient : public vpNetwork
 {
 private:

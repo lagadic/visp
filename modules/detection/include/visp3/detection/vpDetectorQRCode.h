@@ -106,7 +106,7 @@ BEGIN_VISP_NAMESPACE
  *
  * Other examples are also provided in tutorial-barcode-detector.cpp and
  * tutorial-barcode-detector-live.cpp
- */
+*/
 class VISP_EXPORT vpDetectorQRCode : public vpDetectorBase
 {
 protected:

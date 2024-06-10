@@ -101,7 +101,7 @@ class vpMomentObject;
  * - vpMomentCInvariant
  * - vpMomentGravityCenter
  * - vpMomentGravityCenterNormalized
- */
+*/
 class VISP_EXPORT vpMoment
 {
 private:

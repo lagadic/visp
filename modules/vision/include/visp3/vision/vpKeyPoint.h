@@ -208,7 +208,7 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  *
  * This class is also described in \ref tutorial-matching.
- */
+*/
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint
 {
 public:

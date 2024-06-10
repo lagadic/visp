@@ -214,7 +214,7 @@ class vpServo;
  * Gain : Zero= 1  Inf= 1  Deriv= 0
  *
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureMomentCommon : public vpFeatureMomentDatabase
 {
 private:

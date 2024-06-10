@@ -112,7 +112,7 @@ class vpColVector;
  *   }
  * }
  * \endcode
- */
+*/
 
 class VISP_EXPORT vpAdaptiveGain
 {

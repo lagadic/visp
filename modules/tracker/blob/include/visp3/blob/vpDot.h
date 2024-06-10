@@ -109,7 +109,7 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  *
  * \sa vpDot2
- */
+*/
 class VISP_EXPORT vpDot : public vpTracker
 {
 public:

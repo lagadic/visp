@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotException
  * \brief Error that can be emitted by the vpRobot class and its derivatives.
- */
+*/
 class VISP_EXPORT vpRobotException : public vpException
 {
 public:

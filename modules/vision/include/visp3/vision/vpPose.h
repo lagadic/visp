@@ -75,7 +75,7 @@ BEGIN_VISP_NAMESPACE
  * vpPoseFeatures class.
  *
  * To see how to use this class you can follow the \ref tutorial-pose-estimation.
- */
+*/
 class VISP_EXPORT vpPose
 {
 public:

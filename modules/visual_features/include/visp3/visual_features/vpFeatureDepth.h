@@ -152,7 +152,7 @@ BEGIN_VISP_NAMESPACE
  *   s.error(s_star);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureDepth : public vpBasicFeature
 {
 

@@ -203,7 +203,7 @@ BEGIN_VISP_NAMESPACE
  *   return 0;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpMbEdgeKltTracker :
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   public vpMbKltTracker,

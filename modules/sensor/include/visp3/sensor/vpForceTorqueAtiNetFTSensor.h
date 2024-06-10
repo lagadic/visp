@@ -97,7 +97,7 @@ BEGIN_VISP_NAMESPACE
  * ...
  * \endcode
  * where 3 first values are forces Fx, Fy, Fz in N and the 3 last are torques Tx, Ty, Tz in Nm.
- */
+*/
 class VISP_EXPORT vpForceTorqueAtiNetFTSensor : public vpUDPClient
 {
 public:

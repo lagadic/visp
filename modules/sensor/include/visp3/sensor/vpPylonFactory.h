@@ -65,7 +65,7 @@ BEGIN_VISP_NAMESPACE
   vpPylonFactory &factory = vpPylonFactory::instance();
   vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
- */
+*/
 class VISP_EXPORT vpPylonFactory
 {
 public:

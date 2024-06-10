@@ -79,7 +79,7 @@ BEGIN_VISP_NAMESPACE
  * Examples of such JSON files can be found in the tutorial folder.
  *
  * \sa \ref tutorial-detection-dnn
- */
+*/
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
 public:

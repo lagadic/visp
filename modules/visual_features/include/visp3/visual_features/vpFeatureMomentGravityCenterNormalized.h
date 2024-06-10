@@ -85,7 +85,7 @@ class vpMomentDatabase;
  * - vpMomentGravityCenter
  * - vpMomentAreaNormalized
  * - vpFeatureMomentAreaNormalized
- */
+*/
 class VISP_EXPORT vpFeatureMomentGravityCenterNormalized : public vpFeatureMoment
 {
 public:

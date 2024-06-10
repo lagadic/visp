@@ -56,7 +56,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Display under windows using Direct3D9.
  * Is used by vpDisplayD3D to do the drawing.
- */
+*/
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 {
   IDirect3D9 *pD3D;

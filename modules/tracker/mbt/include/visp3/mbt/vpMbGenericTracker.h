@@ -196,7 +196,7 @@ BEGIN_VISP_NAMESPACE
  *   "version": "1.0"
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:

@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
   \class vpConvert
   \ingroup group_core_bridges
   Bridges over other frameworks like OpenCV.
- */
+*/
 class VISP_EXPORT vpConvert
 {
 public:

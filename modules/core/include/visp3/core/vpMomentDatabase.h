@@ -124,7 +124,7 @@ class vpMomentObject;
  * Consequently, a database can contain at most one moment of each type. Often it
  * is useful to update all moments with the same object. Shortcuts
  * (vpMomentDatabase::updateAll) are provided for that matter.
- */
+*/
 class VISP_EXPORT vpMomentDatabase
 {
 private:

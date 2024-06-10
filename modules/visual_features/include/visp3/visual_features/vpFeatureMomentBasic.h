@@ -73,7 +73,7 @@ class vpMomentDatabase;
  *
  * This feature depends on:
  * - vpMomentBasic
- */
+*/
 class VISP_EXPORT vpFeatureMomentBasic : public vpFeatureMoment
 {
 protected:

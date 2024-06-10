@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
  *
  *
  * \sa vpMatrix vpColVector vpRowVector
- */
+*/
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
 

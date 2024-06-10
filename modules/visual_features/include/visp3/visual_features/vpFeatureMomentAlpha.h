@@ -97,7 +97,7 @@ class vpMomentDatabase;
  * This feature depends on:
  * - vpMomentCentered
  * - vpMomentGravityCenter
- */
+*/
 class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment
 {
 public:

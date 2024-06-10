@@ -265,7 +265,7 @@ BEGIN_VISP_NAMESPACE
  *   }
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {
 public:

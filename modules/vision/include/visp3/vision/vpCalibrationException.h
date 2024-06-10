@@ -44,7 +44,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * \class vpCalibrationException
  * \brief Error that can be emitted by the vpCalibration class.
- */
+*/
 class VISP_EXPORT vpCalibrationException : public vpException
 {
 public:

@@ -284,7 +284,7 @@ BEGIN_VISP_NAMESPACE
 
    \note Additional information can be found in the
    [librealsense wiki](https://github.com/IntelRealSense/librealsense/wiki/).
- */
+*/
 class VISP_EXPORT vpRealSense2
 {
 public:

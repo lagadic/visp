@@ -52,7 +52,7 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_sensor_laserscanner
 
   \brief Class that defines a generic laser scanner.
- */
+*/
 class /*VISP_EXPORT*/ vpLaserScanner
 {
 public:

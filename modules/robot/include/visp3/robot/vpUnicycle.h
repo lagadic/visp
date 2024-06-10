@@ -47,7 +47,7 @@ BEGIN_VISP_NAMESPACE
  * \brief Generic functions for unicycle mobile robots.
  *
  * This class provides common features for unicycle mobile robots.
- */
+*/
 class VISP_EXPORT vpUnicycle
 {
 public:

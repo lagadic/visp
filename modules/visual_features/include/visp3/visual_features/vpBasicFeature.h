@@ -74,7 +74,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpBasicFeature
  * \ingroup group_visual_features
  * \brief class that defines what is a visual feature
- */
+*/
 class VISP_EXPORT vpBasicFeature
 {
 public:

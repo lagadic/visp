@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
   Implements the Munkres Assignment Algorithm described [here](https://en.wikipedia.org/wiki/Hungarian_algorithm).
 
   \note This class is only available with c++17 enabled.
- */
+*/
 class VISP_EXPORT vpMunkres
 {
 public:

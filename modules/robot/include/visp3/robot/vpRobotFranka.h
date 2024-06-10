@@ -218,7 +218,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \sa \ref tutorial-franka-pbvs
  * \sa \ref tutorial-franka-ibvs
- */
+*/
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {
 private:

@@ -63,7 +63,7 @@ BEGIN_VISP_NAMESPACE
 
   \ingroup group_mbt_features
 
- */
+*/
 class VISP_EXPORT vpMbtDistanceLine
 {
 private:

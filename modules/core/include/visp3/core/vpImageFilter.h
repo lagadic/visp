@@ -66,7 +66,7 @@ BEGIN_VISP_NAMESPACE
  * \ingroup group_core_image
  *
  * \brief  Various image filter, convolution, etc...
- */
+*/
 class VISP_EXPORT vpImageFilter
 {
 public:

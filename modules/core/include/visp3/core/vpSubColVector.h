@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  * a vpSubColVector.
  *
  * \sa vpMatrix vpColVector vpRowVector
- */
+*/
 class VISP_EXPORT vpSubColVector : public vpColVector
 {
 public:

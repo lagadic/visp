@@ -51,7 +51,7 @@ BEGIN_VISP_NAMESPACE
  * \class vpMbtMeLine
  * \brief Implementation of a line used by the model-based tracker.
  * \ingroup group_mbt_features
- */
+*/
 class VISP_EXPORT vpMbtMeLine : public vpMeTracker
 {
 private:

@@ -53,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \brief Creates a colormap class to be able to recolor an image with different grayscale
  * values into some corresponding color values, for better visualization for example.
- */
+*/
 class VISP_EXPORT vpColormap
 {
 public:

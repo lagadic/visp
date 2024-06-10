@@ -62,7 +62,7 @@ BEGIN_VISP_NAMESPACE
   vpPylonFactory::createPylonGrabber() instead.
 
   \headerfile vpPylonGrabberGigE.h ""
- */
+*/
 class VISP_EXPORT vpPylonGrabberGigE : public vpPylonGrabber
 {
 public:

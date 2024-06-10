@@ -58,7 +58,7 @@ BEGIN_VISP_NAMESPACE
 
   Data parser for the model-based tracker.
 
- */
+*/
 class VISP_EXPORT vpMbtXmlGenericParser
 {
 public:

@@ -60,7 +60,7 @@ BEGIN_VISP_NAMESPACE
 
   Other data as the start/stop angle, the start/end timestamp are
   also considered.
- */
+*/
 class /*VISP_EXPORT*/ vpLaserScan
 {
 public:

@@ -49,14 +49,14 @@ BEGIN_VISP_NAMESPACE
   The example below shows how to check or get CPU capabilities.
 
   \code
-#include <visp3/core/vpCPUFeatures.h>
+  #include <visp3/core/vpCPUFeatures.h>
 
-int main()
-{
-  std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << std::endl;
-  std::cout << "CPU info: " << vpCPUFeatures::printCPUInfo() << std::endl;
-  return 0;
-}
+  int main()
+  {
+    std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << std::endl;
+    std::cout << "CPU info: " << vpCPUFeatures::printCPUInfo() << std::endl;
+    return 0;
+  }
   \endcode
 */
 

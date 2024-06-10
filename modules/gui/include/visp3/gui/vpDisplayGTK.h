@@ -124,7 +124,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayGTK : public vpDisplay
 {
 private:

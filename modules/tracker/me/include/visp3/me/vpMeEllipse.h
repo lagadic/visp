@@ -91,7 +91,7 @@ BEGIN_VISP_NAMESPACE
  *
  * \include tutorial-me-ellipse-tracker.cpp
  *
- */
+*/
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:

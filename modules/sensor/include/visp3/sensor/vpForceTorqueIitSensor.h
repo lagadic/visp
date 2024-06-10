@@ -144,7 +144,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04
   To configure the sensor, you may access the sensor through the web interface using uour favorite browser.
   \image html vpForceTorqueIitSensor-ethernet.png
 
- */
+*/
 class VISP_EXPORT vpForceTorqueIitSensor
 {
 public:

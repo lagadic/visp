@@ -100,7 +100,7 @@ BEGIN_VISP_NAMESPACE
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 {
 public:

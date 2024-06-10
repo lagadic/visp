@@ -140,30 +140,30 @@ sFp:
   from probe frame to a sensor frame.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpForceTwistMatrix.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  // Twist transformation matrix from sensor to probe frame
-  vpForceTwistMatrix sFp;
+  int main()
+  {
+    // Twist transformation matrix from sensor to probe frame
+    vpForceTwistMatrix sFp;
 
-  // Force/torque sensor frame to probe frame transformation
-  vpHomogeneousMatrix sMp;
-  // ... sMp need here to be initialized
+    // Force/torque sensor frame to probe frame transformation
+    vpHomogeneousMatrix sMp;
+    // ... sMp need here to be initialized
 
-  sFp.build(sMp);
+    sFp.build(sMp);
 
-  // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
-  vpColVector p_H(6);
-  // ... p_H should here have an initial value
+    // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
+    vpColVector p_H(6);
+    // ... p_H should here have an initial value
 
-  // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
-  vpColVector s_H(6);
+    // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
+    vpColVector s_H(6);
 
-  // Compute the value of the force/torque in the sensor frame
-  s_H = sFp * p_H;
-}
+    // Compute the value of the force/torque in the sensor frame
+    s_H = sFp * p_H;
+  }
   \endcode
 */
 class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
@@ -242,6 +242,6 @@ public:
   vp_deprecated void setIdentity();
   //@}
 #endif
-  };
+};
 END_VISP_NAMESPACE
 #endif
