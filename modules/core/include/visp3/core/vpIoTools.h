@@ -74,6 +74,7 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
   return ~crcu32;
 }
 
+#ifdef VISP_HAVE_MINIZ
 namespace cnpy
 {
 // Copyright (C) 2011  Carl Rogers
@@ -385,6 +386,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 }
 
 } // namespace cnpy
+#endif
 } // namespace VISP_NAMESPACE_NAME
 #endif
 

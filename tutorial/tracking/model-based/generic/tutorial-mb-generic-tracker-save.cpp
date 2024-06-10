@@ -5,7 +5,7 @@
 #include <visp3/io/vpVideoReader.h>
 
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -218,5 +218,8 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "This tutorial needs c++11 flags" << std::endl;
+#ifndef VISP_HAVE_MINIZ
+  std::cerr << "You also need to enable npz I/O functions" << std::endl;
+#endif
 }
 #endif

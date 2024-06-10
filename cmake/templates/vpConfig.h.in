@@ -161,6 +161,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Always define pugixml for compatibility.
 #cmakedefine VISP_HAVE_PUGIXML
 
+// Defined if basisu_miniz is used internally
+#cmakedefine VISP_HAVE_MINIZ
+
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
 
