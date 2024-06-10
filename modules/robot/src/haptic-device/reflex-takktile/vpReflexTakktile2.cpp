@@ -42,13 +42,14 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpReflexTakktile2.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpReflexTakktile2::Impl : public reflex_driver2::ReflexDriver
 {
 public:
-  Impl() {}
+  Impl() { }
 
-  ~Impl() {}
+  ~Impl() { }
 };
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -119,9 +120,8 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpReflexTakktile2::
  */
 vpReflexTakktile2::vpReflexTakktile2()
   : m_network_interface(), m_finger_file_name(), m_tactile_file_name(), m_motor_file_name(), m_hand_info(),
-    m_impl(new Impl())
-{
-}
+  m_impl(new Impl())
+{ }
 
 /*!
  * Destructor.
@@ -325,5 +325,5 @@ void vpReflexTakktile2::open()
  * \param milliseconds : Duration in [ms].
  */
 void vpReflexTakktile2::wait(int milliseconds) { m_impl->wait(milliseconds); }
-
+END_VISP_NAMESPACE
 #endif

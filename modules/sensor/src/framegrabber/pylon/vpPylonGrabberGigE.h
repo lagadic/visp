@@ -52,6 +52,7 @@
 
 #include <pylon/gige/BaslerGigEInstantCamera.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabberGigE
 
@@ -61,7 +62,7 @@
   vpPylonFactory::createPylonGrabber() instead.
 
   \headerfile vpPylonGrabberGigE.h ""
- */
+*/
 class VISP_EXPORT vpPylonGrabberGigE : public vpPylonGrabber
 {
 public:
@@ -122,6 +123,6 @@ private:
   unsigned int m_numCameras;                //!< Number of connected GigE cameras
   bool m_connected;                         //!< true if camera connected
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabberGigE_h_

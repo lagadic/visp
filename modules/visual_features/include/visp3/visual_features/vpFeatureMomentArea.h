@@ -39,8 +39,10 @@
 #ifndef _vpFeatureMomentArea_h_
 #define _vpFeatureMomentArea_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 
 /*!
@@ -50,7 +52,7 @@ class vpMomentDatabase;
  *
  * \brief Surface moment feature. Computes the interaction matrix associated
  * with vpMomentArea.
- */
+*/
 class VISP_EXPORT vpFeatureMomentArea : public vpFeatureMoment
 {
 public:
@@ -87,4 +89,5 @@ public:
     return "vpFeatureMomentArea";
   }
 };
+END_VISP_NAMESPACE
 #endif

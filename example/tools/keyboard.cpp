@@ -48,6 +48,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::cout << "Push some characters on the keyboard..." << std::endl;
   printf("Hit 'q' or 'Q' to stop the loop ...\n");
   vpKeyboard keyboard;

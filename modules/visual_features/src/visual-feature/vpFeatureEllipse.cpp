@@ -60,6 +60,8 @@ other functionalities ar useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
+
 void vpFeatureEllipse::init()
 {
   // feature dimension
@@ -481,3 +483,4 @@ vp_deprecated unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[
  */
 vp_deprecated unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
 #endif
+END_VISP_NAMESPACE

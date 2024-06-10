@@ -31,22 +31,22 @@
  * 2D point useful for image processing
  */
 
-#ifndef _vpImagePoint_h_
-#define _vpImagePoint_h_
-
 /*!
   \file vpImagePoint.h
   \brief Class that defines a 2D point in an image. This class is useful
   for image processing
  */
 
+#ifndef _vpImagePoint_h_
+#define _vpImagePoint_h_
+
 #include <visp3/core/vpConfig.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 #include <ostream>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 class vpRect;
 
 /*!
@@ -378,5 +378,5 @@ public:
 private:
   double i, j;
 };
-
+END_VISP_NAMESPACE
 #endif

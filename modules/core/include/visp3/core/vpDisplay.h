@@ -31,6 +31,12 @@
  * Image display.
  */
 
+/*!
+ * \file vpDisplay.h
+ * \brief Generic class for image display, also provide the interface
+ * with the image.
+ */
+
 #ifndef _vpDisplay_h_
 #define _vpDisplay_h_
 
@@ -48,12 +54,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
 
-/*!
- * \file vpDisplay.h
- * \brief Generic class for image display, also provide the interface
- * with the image.
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDisplay
  *
@@ -168,7 +169,7 @@
  *
  * Other examples are available in tutorial-image-viewer.cpp and
  * tutorial-viewer.cpp.
- */
+*/
 class VISP_EXPORT vpDisplay
 {
 public:
@@ -929,5 +930,5 @@ private:
   //! Get the window pixmap and put it in vpRGBa image.
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
 };
-
+END_VISP_NAMESPACE
 #endif

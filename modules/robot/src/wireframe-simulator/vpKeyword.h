@@ -45,10 +45,10 @@
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 void open_keyword(Keyword *kwp);
 void close_keyword(void);
 Index get_symbol(char *ident, int length);
-
+END_VISP_NAMESPACE
 #endif
 #endif

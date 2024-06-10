@@ -51,6 +51,8 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/sensor/vpDirectShowDevice.h>
 #include <visp3/sensor/vpDirectShowSampleGrabberI.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
         \class vpDirectShowGrabberImpl
         \brief class for windows direct show devices - implementation
@@ -208,7 +210,7 @@ private:
   // Frees the format block in an AM_MEDIA_TYPE structure
   void MyFreeMediaType(AM_MEDIA_TYPE &mt);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

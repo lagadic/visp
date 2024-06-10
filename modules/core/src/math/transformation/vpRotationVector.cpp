@@ -33,6 +33,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpRotationVector.cpp
+  \brief Class that consider the case of a generic rotation vector
+  (cannot be used as is !).
+*/
+
 #include <algorithm>
 #include <math.h>
 
@@ -40,12 +46,7 @@
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
-/*!
-  \file vpRotationVector.cpp
-  \brief Class that consider the case of a generic rotation vector
-  (cannot be used as is !).
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   Return the transpose of the rotation vector.
 
@@ -94,17 +95,6 @@ vpColVector vpRotationVector::operator*(double x) const
     v[i] = (*this)[i] * x;
   }
   return v;
-}
-
-/*!
-  \relates vpRotationVector
-  Allows to multiply a scalar by rotaion vector.
-*/
-vpColVector operator*(const double &x, const vpRotationVector &v)
-{
-  vpColVector vout;
-  vout = v * x;
-  return vout;
 }
 
 /*!
@@ -190,3 +180,15 @@ double vpRotationVector::sumSquare() const
 
   return sum_square;
 }
+
+/*!
+  \relates vpRotationVector
+  Allows to multiply a scalar by rotaion vector.
+*/
+vpColVector operator*(const double &x, const vpRotationVector &v)
+{
+  vpColVector vout;
+  vout = v * x;
+  return vout;
+}
+END_VISP_NAMESPACE

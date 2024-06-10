@@ -33,14 +33,15 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpForwardProjection.h>
-
 /*!
   \file vpForwardProjection.cpp
   \brief   class that defines what is a point
 */
 
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpForwardProjection.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Print to stdout the feature parameters in:
   - the object frame
@@ -101,3 +102,4 @@ void vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 
 */
 void vpForwardProjection::track(const vpHomogeneousMatrix &cMo) { project(cMo); }
+END_VISP_NAMESPACE

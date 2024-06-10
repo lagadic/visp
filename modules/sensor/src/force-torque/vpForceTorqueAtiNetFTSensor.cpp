@@ -46,7 +46,8 @@
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef struct response_struct {
+typedef struct response_struct
+{
   uint32_t rdt_sequence;
   uint32_t ft_sequence;
   uint32_t status;
@@ -54,6 +55,7 @@ typedef struct response_struct {
 } RESPONSE;
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that set counts per force to 1000000, counts per torque to 1000000000 and scaling factor to 1.
  * Note that counts per force, counts per torque and scaling factor are used to transform force / torque in user units
@@ -62,9 +64,8 @@ typedef struct response_struct {
  */
 vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
   : vpUDPClient(), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1), m_ft_bias(6, 0),
-    m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
-{
-}
+  m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
+{ }
 
 /*!
  * Constructor that initializes an Eternet UDP connection to a given hostname and port.
@@ -73,9 +74,8 @@ vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
  */
 vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port)
   : vpUDPClient(hostname, port), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1),
-    m_ft_bias(6, 0), m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
-{
-}
+  m_ft_bias(6, 0), m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
+{ }
 
 /*!
  * Start high-speed real-time Net F/T streaming.
@@ -175,7 +175,8 @@ void vpForceTorqueAtiNetFTSensor::bias(unsigned int n_counts)
 
   if (n_counts == 0) {
     m_ft_bias = getForceTorque();
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < n_counts; i++) {
       ft_bias_tmp += getForceTorque();
       waitForNewData();
@@ -272,5 +273,5 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
 
   return false;
 }
-
+END_VISP_NAMESPACE
 #endif

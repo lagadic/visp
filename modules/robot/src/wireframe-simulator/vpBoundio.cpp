@@ -55,6 +55,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fscanf_Bound" lit en ascii une surface.
  * Entree :
@@ -158,7 +159,7 @@ void fscanf_Face_list(Face_list *lp)
  */
 void fscanf_Point3f_list(Point3f_list *lp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
+  static const char *err_tbl[] = { "float expected (coordinate ", " of point)" };
   Point3f *pp;   /* point courant  */
   Point3f *pend; /* borne de "pp"  */
 
@@ -201,5 +202,5 @@ void fscanf_Point3f_list(Point3f_list *lp)
     pp->z = (t == T_INT) ? (float)myint : myfloat;
   }
 }
-
+END_VISP_NAMESPACE
 #endif

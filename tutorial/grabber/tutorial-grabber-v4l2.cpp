@@ -1,4 +1,5 @@
 /*! \example tutorial-grabber-v4l2.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -77,6 +78,9 @@ void usage(const char *argv[], int error)
 int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_THREADS)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     int opt_device = 0;
     unsigned int opt_scale = 1; // Default value is 2 in the constructor. Turn

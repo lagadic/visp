@@ -40,6 +40,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/robot/vpQbDevice.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpQbSoftHand
  *
@@ -95,6 +96,6 @@ public:
   void setPosition(const vpColVector &position, const int &id = 1);
   void setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id = 1);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -31,14 +31,15 @@
  * Class which provides a simulator for the robot Afma6.
  */
 
-#ifndef vpSimulatorAfma6_HH
-#define vpSimulatorAfma6_HH
-
 /*!
  * \file vpSimulatorAfma6.h
  * \brief Class which provides a simulator for the robot Afma6.
  */
 
+#ifndef vpSimulatorAfma6_HH
+#define vpSimulatorAfma6_HH
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpAfma6.h>
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 
@@ -46,6 +47,7 @@
 
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorAfma6
  *
@@ -166,7 +168,7 @@
  *
  * To know how this class can be used to achieve a visual servoing simulation,
  * you can follow the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpSimulatorAfma6 : public vpRobotWireFrameSimulator, public vpAfma6
 {
 public:
@@ -257,7 +259,7 @@ protected:
   void updateArticularPosition() vp_override;
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

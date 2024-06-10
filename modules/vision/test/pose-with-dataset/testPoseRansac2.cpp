@@ -47,16 +47,20 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/vision/vpPose.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 #if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 bool samePoints(const vpPoint &pt1, const vpPoint &pt2)
 {
   return vpMath::equal(pt1.get_oX(), pt2.get_oX(), std::numeric_limits<double>::epsilon()) &&
-         vpMath::equal(pt1.get_oY(), pt2.get_oY(), std::numeric_limits<double>::epsilon()) &&
-         vpMath::equal(pt1.get_oZ(), pt2.get_oZ(), std::numeric_limits<double>::epsilon()) &&
-         vpMath::equal(pt1.get_x(), pt2.get_x(), std::numeric_limits<double>::epsilon()) &&
-         vpMath::equal(pt1.get_y(), pt2.get_y(), std::numeric_limits<double>::epsilon());
+    vpMath::equal(pt1.get_oY(), pt2.get_oY(), std::numeric_limits<double>::epsilon()) &&
+    vpMath::equal(pt1.get_oZ(), pt2.get_oZ(), std::numeric_limits<double>::epsilon()) &&
+    vpMath::equal(pt1.get_x(), pt2.get_x(), std::numeric_limits<double>::epsilon()) &&
+    vpMath::equal(pt1.get_y(), pt2.get_y(), std::numeric_limits<double>::epsilon());
 }
 
 int checkInlierIndex(const std::vector<unsigned int> &vectorOfFoundInlierIndex,
@@ -81,16 +85,16 @@ bool checkInlierPoints(const std::vector<vpPoint> &vectorOfFoundInlierPoints,
   for (size_t i = 0; i < vectorOfFoundInlierPoints.size(); i++) {
     if (!samePoints(vectorOfFoundInlierPoints[i], bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]])) {
       std::cerr << "Problem with the inlier index and the corresponding "
-                   "inlier point!"
-                << std::endl;
+        "inlier point!"
+        << std::endl;
       std::cerr << "Returned inliers: oX=" << std::setprecision(std::numeric_limits<double>::max_digits10)
-                << vectorOfFoundInlierPoints[i].get_oX() << ", oY=" << vectorOfFoundInlierPoints[i].get_oY()
-                << ", oZ=" << vectorOfFoundInlierPoints[i].get_oZ() << " ; x=" << vectorOfFoundInlierPoints[i].get_x()
-                << ", y=" << vectorOfFoundInlierPoints[i].get_y() << std::endl;
+        << vectorOfFoundInlierPoints[i].get_oX() << ", oY=" << vectorOfFoundInlierPoints[i].get_oY()
+        << ", oZ=" << vectorOfFoundInlierPoints[i].get_oZ() << " ; x=" << vectorOfFoundInlierPoints[i].get_x()
+        << ", y=" << vectorOfFoundInlierPoints[i].get_y() << std::endl;
       const vpPoint &pt = bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]];
       std::cerr << "Object points: oX=" << std::setprecision(std::numeric_limits<double>::max_digits10) << pt.get_oX()
-                << ", oY=" << pt.get_oY() << ", oZ=" << pt.get_oZ() << " ; x=" << pt.get_x() << ", y=" << pt.get_y()
-                << std::endl;
+        << ", oY=" << pt.get_oY() << ", oZ=" << pt.get_oZ() << " ; x=" << pt.get_x() << ", y=" << pt.get_y()
+        << std::endl;
       return false;
     }
   }
@@ -256,8 +260,8 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
   // Print the number of points in the final data vector
   std::cout << "\nNumber of model points in the noisy data vector: " << bunnyModelPoints_noisy.size() << " points."
-            << std::endl
-            << std::endl;
+    << std::endl
+    << std::endl;
 
   unsigned int nbInlierToReachConsensus = (unsigned int)(60.0 * (double)(bunnyModelPoints_noisy.size()) / 100.0);
   double threshold = 0.001;
@@ -299,7 +303,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   chrono_RANSAC.stop();
 
   std::cout << "\ncMo estimated with RANSAC (" << ransac_iterations << " iterations) on noisy data:\n"
-            << cMo_estimated_RANSAC_2 << std::endl;
+    << cMo_estimated_RANSAC_2 << std::endl;
   std::cout << "Computation time: " << chrono_RANSAC.getDurationMs() << " ms" << std::endl;
 
   double r_RANSAC_estimated_2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_2);
@@ -318,8 +322,8 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   chrono_RANSAC_parallel.stop();
 
   std::cout << "\ncMo estimated with parallel RANSAC (1000 iterations) on "
-               "noisy data:\n"
-            << cMo_estimated_RANSAC_parallel << std::endl;
+    "noisy data:\n"
+    << cMo_estimated_RANSAC_parallel << std::endl;
   std::cout << "Computation time: " << chrono_RANSAC_parallel.getDurationMs() << " ms" << std::endl;
 
   double r_RANSAC_estimated_parallel = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel);
@@ -332,28 +336,28 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   chrono_RANSAC_parallel2.stop();
 
   std::cout << "\ncMo estimated with parallel RANSAC (" << ransac_iterations << " iterations) on noisy data:\n"
-            << cMo_estimated_RANSAC_parallel2 << std::endl;
+    << cMo_estimated_RANSAC_parallel2 << std::endl;
   std::cout << "Computation time: " << chrono_RANSAC_parallel2.getDurationMs() << " ms" << std::endl;
 
   double r_RANSAC_estimated_parallel2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel2);
   std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_parallel2
-            << std::endl;
+    << std::endl;
 
-  // Check inlier index
+// Check inlier index
   std::vector<unsigned int> vectorOfFoundInlierIndex = pose_ransac.getRansacInlierIndex();
   int nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex, vectorOfOutlierFlags);
 
   int nbTrueInlierIndex = (int)std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false);
   std::cout << "\nThere are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  // Check inlier points returned
+// Check inlier points returned
   std::vector<vpPoint> vectorOfFoundInlierPoints = pose_ransac.getRansacInliers();
 
   if (vectorOfFoundInlierPoints.size() != vectorOfFoundInlierIndex.size()) {
     std::cerr << "The number of inlier index is different from the number of "
-                 "inlier points!"
-              << std::endl;
+      "inlier points!"
+      << std::endl;
     return false;
   }
   if (!checkInlierPoints(vectorOfFoundInlierPoints, vectorOfFoundInlierIndex, bunnyModelPoints_noisy)) {
@@ -367,14 +371,14 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_2, vectorOfOutlierFlags);
 
   std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_2.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  // Check inlier points returned
+// Check inlier points returned
   std::vector<vpPoint> vectorOfFoundInlierPoints_2 = pose_ransac2.getRansacInliers();
   if (vectorOfFoundInlierPoints_2.size() != vectorOfFoundInlierIndex_2.size()) {
     std::cerr << "The number of inlier index is different from the number of "
-                 "inlier points!"
-              << std::endl;
+      "inlier points!"
+      << std::endl;
     return false;
   }
   if (!checkInlierPoints(vectorOfFoundInlierPoints_2, vectorOfFoundInlierIndex_2, bunnyModelPoints_noisy)) {
@@ -388,14 +392,14 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel, vectorOfOutlierFlags);
 
   std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  // Check inlier points returned
+// Check inlier points returned
   std::vector<vpPoint> vectorOfFoundInlierPoints_parallel = pose_ransac_parallel.getRansacInliers();
   if (vectorOfFoundInlierPoints_parallel.size() != vectorOfFoundInlierIndex_parallel.size()) {
     std::cerr << "The number of inlier index is different from the number "
-                 "of inlier points!"
-              << std::endl;
+      "of inlier points!"
+      << std::endl;
     return false;
   }
   if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel, vectorOfFoundInlierIndex_parallel,
@@ -410,14 +414,14 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel2, vectorOfOutlierFlags);
 
   std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel2.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  // Check inlier points returned
+// Check inlier points returned
   std::vector<vpPoint> vectorOfFoundInlierPoints_parallel2 = pose_ransac_parallel2.getRansacInliers();
   if (vectorOfFoundInlierPoints_parallel2.size() != vectorOfFoundInlierIndex_parallel2.size()) {
     std::cerr << "The number of inlier index is different from the number "
-                 "of inlier points!"
-              << std::endl;
+      "of inlier points!"
+      << std::endl;
     return false;
   }
   if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel2, vectorOfFoundInlierIndex_parallel2,
@@ -430,11 +434,12 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     std::cerr << "r_RANSAC_estimated=" << r_RANSAC_estimated << std::endl;
     std::cerr << "threshold=" << threshold << std::endl;
     return false;
-  } else {
+  }
+  else {
     if (r_RANSAC_estimated_parallel > threshold) {
       std::cerr << "The pose estimated with the parallel RANSAC method is "
-                   "badly estimated!"
-                << std::endl;
+        "badly estimated!"
+        << std::endl;
       std::cerr << "r_RANSAC_estimated_parallel=" << r_RANSAC_estimated_parallel << std::endl;
       std::cerr << "threshold=" << threshold << std::endl;
       return false;
@@ -449,14 +454,14 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
 TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
 {
-  const int sample_sizes[] = {2, 3, 4, 5, 6, 7, 8};
-  const double epsilon[] = {0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5};
+  const int sample_sizes[] = { 2, 3, 4, 5, 6, 7, 8 };
+  const double epsilon[] = { 0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5 };
 
   // Format output
   const std::string spacing = "       ";
 
   std::cout << spacing << " outliers percentage\n"
-            << "nb pts\\";
+    << "nb pts\\";
   for (int cpt2 = 0; cpt2 < 7; cpt2++) {
     std::cout << std::setfill(' ') << std::setw(5) << epsilon[cpt2] << " ";
   }
@@ -483,9 +488,9 @@ TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
 #if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
 {
-  const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
-  const std::vector<bool> duplicates = {false, false, false, false, false, false, false, false, true};
-  const std::vector<bool> degenerates = {false, false, false, false, false, false, true, true, true};
+  const std::vector<size_t> model_sizes = { 10, 20, 50, 100, 200, 500, 1000, 0, 0 };
+  const std::vector<bool> duplicates = { false, false, false, false, false, false, false, false, true };
+  const std::vector<bool> degenerates = { false, false, false, false, false, false, true, true, true };
 
   std::string visp_input_images = vpIoTools::getViSPImagesDataPath();
   std::string model_filename = vpIoTools::createFilePath(visp_input_images, "3dmodel/bunny/bunny.xyz");
@@ -499,7 +504,8 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
     std::cout << "\n\n===============================================================================" << std::endl;
     if (model_sizes[i] == 0) {
       std::cout << "Test on " << bunnyModelPoints_noisy_original.size() << " model points." << std::endl;
-    } else {
+    }
+    else {
       std::cout << "Test on " << model_sizes[i] << " model points." << std::endl;
     }
     std::cout << "Test duplicate: " << duplicates[i] << " ; Test degenerate: " << degenerates[i] << std::endl;

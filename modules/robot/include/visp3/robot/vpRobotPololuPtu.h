@@ -41,7 +41,7 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpPololu.h>
 
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotPololuPtu
  * \ingroup group_robot_real_arm
@@ -59,7 +59,7 @@
  * | :---: | :-------: | :-------: | -------------: | ----------------: |
  * |     1 |         0 |         0 |   \f$ \pi/2\f$ |         \f$q_1\f$ |
  * |     2 |         0 |         0 |   \f$-\pi/2\f$ | \f$q_2 - \pi/2\f$ |
- */
+*/
 class VISP_EXPORT vpRobotPololuPtu : public vpRobot
 {
 public:
@@ -268,6 +268,6 @@ private:
 
   bool m_verbose;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

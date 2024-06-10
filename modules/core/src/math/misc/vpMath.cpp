@@ -54,6 +54,7 @@
 #include <float.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 #if !(defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)) ||                                           \
     !(defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF)) ||                                           \
     !(defined(VISP_HAVE_FUNC_ISFINITE) || defined(VISP_HAVE_FUNC_STD_ISFINITE) || defined(VISP_HAVE_FUNC__FINITE))
@@ -762,3 +763,4 @@ vpHomogeneousMatrix vpMath::enu2ned(const vpHomogeneousMatrix &enu_M)
   vpHomogeneousMatrix ned_M = ned_M_enu * enu_M;
   return ned_M;
 }
+END_VISP_NAMESPACE

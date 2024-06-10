@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
@@ -59,6 +60,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -262,4 +267,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

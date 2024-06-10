@@ -47,6 +47,7 @@
 
 #define DEBUG_LEVEL2 0
 
+BEGIN_VISP_NAMESPACE
 //! Constructor
 vpScale::vpScale() : bandwidth(0.02), dimension(1)
 {
@@ -71,7 +72,7 @@ vpScale::vpScale(double kernel_bandwidth, unsigned int dim) : bandwidth(kernel_b
 }
 
 //! Destructor
-vpScale::~vpScale() {}
+vpScale::~vpScale() { }
 
 // Calculate the modes of the density for the distribution
 // and their associated errors
@@ -181,7 +182,8 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j++;
-    } else {
+    }
+    else {
       inside_kernel = 0;
     }
   }
@@ -196,7 +198,8 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j--;
-    } else {
+    }
+    else {
       inside_kernel = 0;
     }
   }
@@ -259,3 +262,4 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
   // (double)dimension)*c*vpMath::sqr(bandwidth));
   return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }
+END_VISP_NAMESPACE

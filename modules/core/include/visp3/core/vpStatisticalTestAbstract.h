@@ -44,6 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Base class for methods detecting the drift of the mean of a process.
@@ -52,7 +53,7 @@
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 class VISP_EXPORT vpStatisticalTestAbstract
 {
 public:
@@ -262,5 +263,5 @@ public:
    */
   vpMeanDriftType testUpwardMeanDrift(const float &signal);
 };
-
+END_VISP_NAMESPACE
 #endif

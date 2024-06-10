@@ -31,13 +31,13 @@
  * Segment visual feature.
  */
 
-#ifndef vpFeatureSegment_H
-#define vpFeatureSegment_H
-
 /*!
  * \file vpFeatureSegment.h
  * \brief class that defines the Segment visual feature
  */
+
+#ifndef vpFeatureSegment_H
+#define vpFeatureSegment_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -46,6 +46,7 @@
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureSegment
  * \ingroup group_visual_features
@@ -61,7 +62,7 @@
  *
  * The selection of the feature set is done either during construction using
  * vpFeatureSegment(bool), or by setNormalized(bool).
- */
+*/
 class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
@@ -291,5 +292,5 @@ private:
   double sin_a_;
   bool normalized_;
 };
-
+END_VISP_NAMESPACE
 #endif

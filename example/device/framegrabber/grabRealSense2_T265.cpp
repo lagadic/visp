@@ -55,6 +55,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpHomogeneousMatrix cMw, cMw_0;
   vpHomogeneousMatrix cextMw(0, 0, 2, 0, 0, 0); // External camera view for pose visualization
   vpColVector odo_vel, odo_acc, imu_acc, imu_vel;

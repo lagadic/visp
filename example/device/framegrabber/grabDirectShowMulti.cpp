@@ -64,6 +64,10 @@
 
 #define GRAB_COLOR
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
 Print the program options.
@@ -136,7 +140,7 @@ OPTIONS                                                    Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          camera, nframes, opath.c_str());
+camera, nframes, opath.c_str());
 
   exit(0);
 }
@@ -297,7 +301,8 @@ int main(int argc, const char **argv)
         g[i].open();
       }
 
-    } else {
+    }
+    else {
       ncameras = 1; // acquisition from only one camera
       delete[] g;
       g = new vpDirectShowGrabber[1];
@@ -355,19 +360,19 @@ int main(int argc, const char **argv)
           unsigned int width, height;
           g[i].getFormat(width, height, framerate);
           std::cout << "----------------------------------------------------------" << std::endl
-                    << "---- MediaType and framerate currently used by device " << std::endl
-                    << "---- (or camera) " << c << std::endl
-                    << "---- Current MediaType : " << g[i].getMediaType() << std::endl
-                    << "---- Current format : " << width << " x " << height << " at " << framerate << " fps"
-                    << std::endl
-                    << "----------------------------------------------------------" << std::endl;
+            << "---- MediaType and framerate currently used by device " << std::endl
+            << "---- (or camera) " << c << std::endl
+            << "---- Current MediaType : " << g[i].getMediaType() << std::endl
+            << "---- Current format : " << width << " x " << height << " at " << framerate << " fps"
+            << std::endl
+            << "----------------------------------------------------------" << std::endl;
         }
         if (verbose_settings) {
           std::cout << "----------------------------------------------------------" << std::endl
-                    << "---- MediaTypes supported by device (or camera) " << c << std::endl
-                    << "---- One of the MediaType below can be set using " << std::endl
-                    << "---- option -t <mediatype>." << std::endl
-                    << "----------------------------------------------------------" << std::endl;
+            << "---- MediaTypes supported by device (or camera) " << c << std::endl
+            << "---- One of the MediaType below can be set using " << std::endl
+            << "---- option -t <mediatype>." << std::endl
+            << "----------------------------------------------------------" << std::endl;
           g[i].getStreamCapabilities();
         }
       }
@@ -390,7 +395,7 @@ int main(int argc, const char **argv)
         c = camera;
 
       std::cout << "Image size for camera " << c << " : width: " << I[i].getWidth() << " height: " << I[i].getHeight()
-                << std::endl;
+        << std::endl;
 
       if (display) {
         // Initialise the display
@@ -444,7 +449,8 @@ int main(int argc, const char **argv)
       delete[] d;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -453,7 +459,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

@@ -55,6 +55,7 @@
 #include <pcl/point_types.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRealSense
 
@@ -456,6 +457,6 @@ protected:
 
   void initStream();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

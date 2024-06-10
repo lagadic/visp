@@ -51,6 +51,10 @@ using json = nlohmann::json; //! json namespace shortcut
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 template <typename T, typename C> void checkProperties(const T &t1, const T &t2, C fn, const std::string &message)
 {
   THEN(message) { REQUIRE((t1.*fn)() == (t2.*fn)()); }

@@ -39,6 +39,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+BEGIN_VISP_NAMESPACE
+
 #define VPEPS 1e-6
 
  /*!
@@ -528,3 +530,5 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
     return false;
   }
 }
+
+END_VISP_NAMESPACE

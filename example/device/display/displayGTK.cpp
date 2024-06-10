@@ -70,6 +70,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.

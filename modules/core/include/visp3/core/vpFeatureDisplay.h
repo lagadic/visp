@@ -31,13 +31,15 @@
  * Interface with the image for feature display.
  */
 
-#ifndef vpFeatureDisplay_H
-#define vpFeatureDisplay_H
-
 /*!
   \file vpFeatureDisplay.h
   \brief interface with the image for feature display
 */
+
+#ifndef _vpFeatureDisplay_H_
+#define _vpFeatureDisplay_H_
+
+#include <visp3/core/vpConfig.h>
 
 // Color / image / display
 #include <visp3/core/vpColor.h>
@@ -47,6 +49,7 @@
 // Meter/pixel conversion
 #include <visp3/core/vpCameraParameters.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpFeatureDisplay
 
@@ -82,5 +85,5 @@ public:
   static void displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                            const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
-
+END_VISP_NAMESPACE
 #endif

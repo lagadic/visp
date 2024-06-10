@@ -15,6 +15,10 @@
 using json = nlohmann::json; //! json namespace shortcut
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 typedef enum
 {
   DETECTION_CONTAINER_MAP = 0,

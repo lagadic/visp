@@ -44,6 +44,7 @@
 #include <visp3/core/vpMath.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_matrix" affiche une matrice sur un fichier.
  * Entree :
@@ -282,10 +283,11 @@ float cosin_to_angle(float ca, float sa)
 
   if (FABS(ca) < M_EPSILON) {
     a = (sa > (float)0.0) ? (float)M_PI_2 : (float)(-M_PI_2);
-  } else {
+  }
+  else {
     a = (float)atan((double)(sa / ca));
     if (ca < (float)0.0)
-      a += (sa > (float)0.0) ? (float)M_PI : (float)(-M_PI);
+      a += (sa >(float)0.0) ? (float)M_PI : (float)(-M_PI);
   }
   return (a);
 }
@@ -353,7 +355,8 @@ float norm_vector(Vector *vp)
     vp->x /= norm;
     vp->y /= norm;
     vp->z /= norm;
-  } else {
+  }
+  else {
     static char proc_name[] = "norm_vector";
     fprintf(stderr, "%s: nul vector\n", proc_name);
   }
@@ -499,13 +502,16 @@ void upright_vector(Vector *vp, Vector *up)
   if (FABS(vp->z) > M_EPSILON) { /* x et y sont fixes  */
     up->z = -(vp->x + vp->y) / vp->z;
     up->x = up->y = 1.0;
-  } else if (FABS(vp->y) > M_EPSILON) { /* x et z sont fixes  */
+  }
+  else if (FABS(vp->y) > M_EPSILON) { /* x et z sont fixes  */
     up->y = -(vp->x + vp->z) / vp->y;
     up->x = up->z = 1.0;
-  } else if (FABS(vp->x) > M_EPSILON) { /* y et z sont fixes  */
+  }
+  else if (FABS(vp->x) > M_EPSILON) { /* y et z sont fixes  */
     up->x = -(vp->y + vp->z) / vp->x;
     up->y = up->z = 1.0;
-  } else {
+  }
+  else {
     static char proc_name[] = "upright_vector";
     up->x = up->y = up->z = 0.0;
     fprintf(stderr, "%s: nul vector\n", proc_name);
@@ -568,7 +574,8 @@ void Matrix_to_Rotate(Matrix m, Vector *vp)
     cx = m[2][2] / cy;
 
     SET_COORD3(*vp, cosin_to_angle(cx, sx), cosin_to_angle(cy, sy), cosin_to_angle(cz, sz));
-  } else { /* RZ = 0 =>  Ry = +/- 90 degres  */
+  }
+  else { /* RZ = 0 =>  Ry = +/- 90 degres  */
     sx = m[1][1];
     cx = -m[2][1];
 
@@ -618,9 +625,9 @@ void Position_to_Matrix(AritPosition *pp, Matrix m)
 void Rotate_to_Matrix(Vector *vp, Matrix m)
 {
   float rx = vp->x * (float)M_PI / (float)180.0, /* passage en radians  */
-      ry = vp->y * (float)M_PI / (float)180.0, rz = vp->z * (float)M_PI / (float)180.0;
+    ry = vp->y * (float)M_PI / (float)180.0, rz = vp->z * (float)M_PI / (float)180.0;
   float cx = (float)cos((double)rx), sx = (float)sin((double)rx), cy = (float)cos((double)ry),
-        sy = (float)sin((double)ry), cz = (float)cos((double)rz), sz = (float)sin((double)rz);
+    sy = (float)sin((double)ry), cz = (float)cos((double)rz), sz = (float)sin((double)rz);
 
   m[0][0] = cy * cz;
   m[1][0] = (sx * sy * cz) - (cx * sz);
@@ -742,5 +749,5 @@ void Translate_to_Matrix(Vector *vp, Matrix m)
   m[3][1] = vp->y;
   m[3][2] = vp->z;
 }
-
+END_VISP_NAMESPACE
 #endif

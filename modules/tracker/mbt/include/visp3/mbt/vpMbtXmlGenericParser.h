@@ -49,6 +49,7 @@
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/me/vpMe.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtXmlGenericParser
   \brief Parse an Xml file to extract configuration parameters of a mbtConfig
@@ -57,7 +58,7 @@
 
   Data parser for the model-based tracker.
 
- */
+*/
 class VISP_EXPORT vpMbtXmlGenericParser
 {
 public:
@@ -164,6 +165,6 @@ private:
   class Impl;
   Impl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

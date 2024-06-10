@@ -44,8 +44,10 @@
 #ifndef vpTemplateTrackerWarpRT_hh
 #define vpTemplateTrackerWarpRT_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerWarpRT
   \ingroup group_tt_warp
@@ -68,8 +70,8 @@ public:
   vpTemplateTrackerWarpRT();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  void computeCoeff(const vpColVector &) {}
-  void computeDenom(vpColVector &, const vpColVector &) {}
+  void computeCoeff(const vpColVector &) { }
+  void computeDenom(vpColVector &, const vpColVector &) { }
 #endif
 
   void dWarp(const vpColVector &X, const vpColVector &, const vpColVector &p, vpMatrix &dM);
@@ -94,4 +96,5 @@ public:
   void warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &p);
   void warpXInv(const vpColVector &X1, vpColVector &X2, const vpColVector &p);
 };
+END_VISP_NAMESPACE
 #endif

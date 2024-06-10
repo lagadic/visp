@@ -31,14 +31,15 @@
  * Class which provides a simulator for the robot Viper850.
  */
 
-#ifndef vpSimulatorViper850_HH
-#define vpSimulatorViper850_HH
-
 /*!
  * \file vpSimulatorViper850.h
  * \brief Class which provides a simulator for the robot Viper850..
  */
 
+#ifndef vpSimulatorViper850_HH
+#define vpSimulatorViper850_HH
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
@@ -46,6 +47,7 @@
 
 #include <visp3/robot/vpViper850.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorViper850
  *
@@ -191,7 +193,7 @@
  *
  * To know how this class can be used to achieve a visual servoing simulation,
  * you can follow the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public vpViper850
 {
 public:
@@ -284,7 +286,7 @@ protected:
   void updateArticularPosition() vp_override;
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

@@ -38,6 +38,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+BEGIN_VISP_NAMESPACE
 std::string vpStatisticalTestAbstract::vpMeanDriftTypeToString(const vpStatisticalTestAbstract::vpMeanDriftType &type)
 {
   std::string name;
@@ -244,3 +245,4 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testUpward
     return MEAN_DRIFT_NONE;
   }
 }
+END_VISP_NAMESPACE

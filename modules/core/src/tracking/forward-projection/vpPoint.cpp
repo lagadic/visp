@@ -33,15 +33,16 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpFeatureDisplay.h>
-#include <visp3/core/vpPoint.h>
-
 /*!
   \file vpPoint.cpp
   \brief Class that defines what is a 3D point.
 */
 
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpPoint.h>
+
+BEGIN_VISP_NAMESPACE
 void vpPoint::init()
 {
   p.resize(3);
@@ -410,8 +411,6 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
   vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
-
 /*!
  * Display the projection of a 3D point in image \e I.
  *
@@ -506,3 +505,6 @@ void vpPoint::set_x(double x) { p[0] = x; }
 void vpPoint::set_y(double y) { p[1] = y; }
 //! Set the point w coordinate in the image plane.
 void vpPoint::set_w(double w) { p[2] = w; }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
+END_VISP_NAMESPACE

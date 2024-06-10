@@ -49,6 +49,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 bool runBenchmark = false;

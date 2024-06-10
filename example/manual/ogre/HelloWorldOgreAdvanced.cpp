@@ -43,6 +43,7 @@
 
 #include <visp3/ar/vpAROgre.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -50,6 +51,10 @@
 
 #if defined(HAVE_OPENCV_VIDEOIO)
 #include <opencv2/videoio.hpp>
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #if defined(VISP_HAVE_OGRE)

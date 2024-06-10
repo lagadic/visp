@@ -55,6 +55,7 @@ extern "C" {
 #include "trycatch.h"
 }
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotViper650
 
@@ -465,6 +466,6 @@ public: /* Methode publiques */
 private:
   double m_maxRotationVelocity_joint6;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif /* #ifndef vpRobotViper650_h */

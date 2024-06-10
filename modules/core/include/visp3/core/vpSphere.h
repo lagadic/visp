@@ -36,15 +36,18 @@
  * \brief forward projection of a sphere
  */
 
-#ifndef vpSphere_hh
-#define vpSphere_hh
+#ifndef _vpSphere_h_
+#define _vpSphere_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
 #include <math.h>
 #include <visp3/core/vpForwardProjection.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSphere
  * \ingroup group_core_geometry
@@ -73,7 +76,7 @@
  *   projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
  *   get_n11() and get_n02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
  *   To get theses parameters use get_p().
- */
+*/
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {
 public:
@@ -148,5 +151,5 @@ protected:
   void init() vp_override;
 
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -39,10 +39,16 @@
 #ifndef _vpMe_h_
 #define _vpMe_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMe
  * \ingroup module_me
@@ -119,7 +125,7 @@
  * {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
  *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdMarginRatio":-1.0,"minThreshold":-1.0,"thresholdType":"normalized"}
  * \endcode
- */
+*/
 class VISP_EXPORT vpMe
 {
 public:
@@ -578,9 +584,8 @@ private:
   friend void from_json(const nlohmann::json &j, vpMe &me);
 #endif
 };
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
   {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
   {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
@@ -620,7 +625,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     assert((mus.size() == 2));
     me.setMu1(mus[0]);
     me.setMu2(mus[1]);
-}
+  }
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
   me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));
@@ -644,4 +649,5 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
 
 #endif
 
+END_VISP_NAMESPACE
 #endif

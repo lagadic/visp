@@ -41,6 +41,10 @@
 #include <iostream>
 #include <visp3/core/vpImage.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 template <typename PixelType> PixelType checkPixelAccess(unsigned int height, unsigned int width, double v, double u)

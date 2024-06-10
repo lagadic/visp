@@ -58,6 +58,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   int port = 53210;
   std::string ip = "localhost";
 
@@ -77,11 +80,11 @@ int main()
   std::cout << "After init" << std::endl;
 #if 0
   // Get joint position
-  for (size_t device=0; device < virtuose.size(); device ++) {
+  for (size_t device = 0; device < virtuose.size(); device++) {
     std::cout << "Number of joints: " << virtuose[device].getJointsNumber()
-              << " Joint position: " << virtuose[device].getArticularPosition().t() << std::endl
-              << " Cartesian position: " << virtuose[device].getAvatarPosition().t() << std::endl;
-    //    std::cout << "Joint velocity: " << virtuose.getArticularVelocity().t() << std::endl;
+      << " Joint position: " << virtuose[device].getArticularPosition().t() << std::endl
+      << " Cartesian position: " << virtuose[device].getAvatarPosition().t() << std::endl;
+//    std::cout << "Joint velocity: " << virtuose.getArticularVelocity().t() << std::endl;
   }
 #endif
   bool end = false;

@@ -1,5 +1,6 @@
 //! \example tutorial-klt-tracker.cpp
 //! [Include]
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpVideoReader.h>
@@ -11,6 +12,10 @@ int main(int argc, const char *argv[])
 //! [Check 3rd party]
 #if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   //! [Check 3rd party]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string opt_videoname = "video-postcard.mp4";
     bool opt_init_by_click = false;
@@ -143,7 +148,7 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
-  }
+}
 #else
   (void)argc;
   (void)argv;

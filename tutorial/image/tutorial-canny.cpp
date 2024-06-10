@@ -29,6 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+
+//! \example tutorial-canny.cpp
+
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpCannyEdgeDetection.h>
@@ -40,6 +43,10 @@
 #endif
 
 #include "drawingHelpers.h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 template <class T>
 void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &stdev)

@@ -31,16 +31,18 @@
  * Centered moment descriptor
  */
 
-#ifndef _vpMomentCentered_h_
-#define _vpMomentCentered_h_
-
-#include <visp3/core/vpMoment.h>
 /*!
   \file vpMomentCentered.h
   \brief Centered moment descriptor (also referred as \f$\mu_{ij}\f$).
-
 */
 
+#ifndef _vpMomentCentered_h_
+#define _vpMomentCentered_h_
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpMoment.h>
+
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -127,5 +129,5 @@ mu12 = mc.get(1,2); // the same
   \endcode
 */
 inline const std::vector<double> &vpMomentCentered::get() const { return vpMoment::get(); }
-
+END_VISP_NAMESPACE
 #endif

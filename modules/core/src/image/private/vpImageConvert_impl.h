@@ -38,17 +38,19 @@
   \brief Image conversion tools
 */
 
-#ifndef vpIMAGECONVERT_impl_H
-#define vpIMAGECONVERT_impl_H
+#ifndef _vpIMAGECONVERT_impl_H_
+#define _vpIMAGECONVERT_impl_H_
 
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <omp.h>
 #include <array>
 #endif
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Convert the input float depth image to a 8-bits depth image. The input
   depth value is assigned a value proportional to its frequency.
@@ -262,5 +264,5 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa>
     }
   }
 }
-
+END_VISP_NAMESPACE
 #endif

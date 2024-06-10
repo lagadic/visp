@@ -50,6 +50,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/mbt/vpMbtMeLine.h>
 
+BEGIN_VISP_NAMESPACE
 //! Normalize an angle between -Pi and Pi
 static void normalizeAngle(double &delta)
 {
@@ -730,5 +731,5 @@ void vpMbtMeLine::bubbleSortJ()
 #endif
   m_meList.sort(sortByJ);
 }
-
+END_VISP_NAMESPACE
 #endif

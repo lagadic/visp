@@ -43,6 +43,7 @@
 #include <visp3/sensor/vpDirectShowGrabber.h>
 #include <visp3/sensor/vpDirectShowGrabberImpl.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
         Returns the number of rows in the grabbed image
 */
@@ -188,9 +189,9 @@ bool vpDirectShowGrabber::setMediaType(int mediaTypeID) { return grabber->setMed
         \return the current mediaTypeID
 */
 int vpDirectShowGrabber::getMediaType() { return grabber->getMediaType(); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpDirectShowGrabber.cpp.o)
 // has no symbols
-void dummy_vpDirectShowGrabber(){};
+void dummy_vpDirectShowGrabber() { };
 #endif

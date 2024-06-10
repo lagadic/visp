@@ -2,6 +2,10 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_X11)
 vpDisplayX drawingHelpers::d;
 #elif defined(VISP_HAVE_OPENCV)

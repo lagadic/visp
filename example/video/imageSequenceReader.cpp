@@ -43,6 +43,7 @@
    Reading an image sequence using vpVideoReader class.
   */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -58,6 +59,10 @@
 
   // List of allowed command line options
 #define GETOPTARGS "cdi:p:f:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, int &first, bool &click_allowed,

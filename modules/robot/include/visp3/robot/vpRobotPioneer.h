@@ -48,6 +48,7 @@
 #include <visp3/robot/vpPioneer.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotPioneer
  *
@@ -58,7 +59,7 @@
  * This class provides a position and speed control interface for Pioneer
  * mobile robots. It inherits from the Aria ArRobot class. For more information
  * about the model of the robot, see vpPioneer documentation.
- */
+*/
 class VISP_EXPORT vpRobotPioneer : public vpRobot, public vpPioneer, public ArRobot
 {
 private: /* Not allowed functions. */
@@ -130,7 +131,7 @@ public:
 protected:
   bool isInitialized;
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif // VPROBOTPIONEER_H

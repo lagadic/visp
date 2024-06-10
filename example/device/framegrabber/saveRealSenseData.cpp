@@ -60,6 +60,7 @@
 #endif
 
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -74,7 +75,15 @@
 #define USE_REALSENSE2
 #endif
 
+#ifdef VISP_HAVE_MINIZ
 #define GETOPTARGS "se:o:acdpzijCf:bvh"
+#else
+#define GETOPTARGS "se:o:acdpijCf:bvh"
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -89,7 +98,9 @@ void usage(const char *name, const char *badparam, int fps)
     << " [-d]"
     << " [-p]"
     << " [-b]"
+#ifdef VISP_HAVE_MINIZ
     << " [-z]"
+#endif
     << " [-i]"
     << " [-j]"
     << " [-C]"
@@ -123,9 +134,11 @@ void usage(const char *name, const char *badparam, int fps)
     << "  -b" << std::endl
     << "    Force depth and pointcloud to be saved in (little-endian) binary format." << std::endl
     << std::endl
+#ifdef VISP_HAVE_MINIZ
     << "  -z" << std::endl
     << "    Pointcloud is saved in NPZ format." << std::endl
     << std::endl
+#endif
     << "  -i" << std::endl
     << "    Add infrared stream to saved data when -s option is enabled." << std::endl
     << std::endl
@@ -208,9 +221,11 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, 
     case 'v':
       depth_hist_visu = true;
       break;
+#ifdef VISP_HAVE_MINIZ
     case 'z':
       save_pcl_npz_format = true;
       break;
+#endif
     case 'b':
       save_force_binary_format = true;
       break;
@@ -465,6 +480,7 @@ public:
                 }
               }
             }
+#ifdef VISP_HAVE_MINIZ
             else {
               ss << m_directory << "/depth_image_" << m_save_pattern << ".npz";
               snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
@@ -492,6 +508,11 @@ public:
               std::vector<uint16_t> I_depth_raw_vec(ptr_depthImg->bitmap, ptr_depthImg->bitmap + ptr_depthImg->getSize());
               visp::cnpy::npz_save(filename_depth, "data", I_depth_raw_vec.data(), { height, width }, "a");
             }
+#else
+            else {
+              throw(vpIoException(vpIoException::ioError, "Cannot manage non-binary files when npz I/O functions are disabled."));
+            }
+#endif
           }
 
           if (m_save_pointcloud && ptr_pointCloud) {
@@ -553,7 +574,8 @@ public:
               }
             }
             else if (m_save_pcl_npz_format) {
-              // Write Npz headers
+#ifdef VISP_HAVE_MINIZ
+// Write Npz headers
               std::vector<char> vec_filename(filename_point_cloud.begin(), filename_point_cloud.end());
               // Null-terminated character is handled at reading
               // For null-terminated character handling, see:
@@ -592,6 +614,9 @@ public:
 #endif
               // Write data
               visp::cnpy::npz_save(filename_point_cloud, "data", vec_pcl.data(), { height, width, channels }, "a");
+#else
+              throw(vpIoException(vpIoException::fatalError, "Cannot save in npz format when npz I/O functions are disabled."));
+#endif
             }
             else {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_PCL_COMMON)
@@ -680,7 +705,9 @@ int main(int argc, const char *argv[])
   std::cout << "save_jpeg: " << save_jpeg << std::endl;
   std::cout << "stream_fps: " << stream_fps << std::endl;
   std::cout << "depth_hist_visu: " << depth_hist_visu << std::endl;
+#ifdef VISP_HAVE_MINIZ
   std::cout << "save_pcl_npz_format: " << save_pcl_npz_format << std::endl;
+#endif
   std::cout << "save_force_binary_format: " << save_force_binary_format << std::endl;
   std::cout << "click_to_save: " << click_to_save << std::endl;
 
@@ -908,10 +935,10 @@ int main(int argc, const char *argv[])
 #else
       if (save_pointcloud) {
         ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
-      }
+    }
       save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-    }
+  }
 
     double delta_time = vpTime::measureTimeMs() - start;
     vec_delta_time.push_back(delta_time);
@@ -955,10 +982,10 @@ int main(int argc, const char *argv[])
 #else
             if (save_pointcloud) {
               ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
-            }
+          }
             save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-          }
+        }
           break;
 
         case vpMouseButton::button2:
@@ -968,9 +995,9 @@ int main(int argc, const char *argv[])
           quit = true;
           save_queue.cancel();
           break;
-        }
       }
     }
+}
   }
 
   double mean_vec_delta_time = vpMath::getMean(vec_delta_time);

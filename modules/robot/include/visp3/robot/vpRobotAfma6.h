@@ -55,6 +55,7 @@ extern "C" {
 #include "trycatch.h"
 }
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotAfma6
 
@@ -315,6 +316,6 @@ public: /* Methode publiques */
 
   void stopMotion();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif /* #ifndef vpRobotAfma6_h */

@@ -33,19 +33,21 @@
  *
 *****************************************************************************/
 
-#ifndef vpRobot_H
-#define vpRobot_H
-
 /*!
   \file vpRobot.h
   \brief class that defines a generic virtual robot
 */
 
+#ifndef vpRobot_H
+#define vpRobot_H
+
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobot
   \ingroup group_robot_real_gantry group_robot_real_cylindrical
@@ -181,5 +183,5 @@ protected:
   vpControlFrameType getRobotFrame(void) const { return frameRobot; }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

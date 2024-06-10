@@ -31,23 +31,26 @@
  * Exceptions that can be emitted by the vpTracking class and its derivatives.
  */
 
-#ifndef _vpTrackingException_H
-#define _vpTrackingException_H
-
 /*!
  * \file vpTrackingException.h
  *  \brief error that can be emitted by the vpTracker class and its derivatives
  */
 
+#ifndef _vpTrackingException_H_
+#define _vpTrackingException_H_
+
 #include <iostream>
 #include <string>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpTrackingException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpTracker class and its derivatives.
- */
+*/
 class VISP_EXPORT vpTrackingException : public vpException
 {
 public:
@@ -87,5 +90,5 @@ public:
    */
   explicit vpTrackingException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,6 +1,7 @@
 /*! \example tutorial-image-colormap.cpp */
 #include <map>
 #include <visp3/core/vpColormap.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -11,6 +12,9 @@
 int main()
 {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::map<vpColormap::vpColormapType, std::string> colormaps_str = {
         {vpColormap::COLORMAP_AUTUMN, "Colormap Autumn"},

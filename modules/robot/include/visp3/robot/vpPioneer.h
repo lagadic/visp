@@ -33,10 +33,12 @@
 #ifndef VPPIONEER_H
 #define VPPIONEER_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/robot/vpUnicycle.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpPioneer
  *
@@ -80,7 +82,7 @@
  * \end{array}
  * \right)
  * \f].
- */
+*/
 class VISP_EXPORT vpPioneer : public vpUnicycle
 {
 public:
@@ -138,5 +140,5 @@ private:
     eJe_[5][1] = 1; // wz
   }
 };
-
+END_VISP_NAMESPACE
 #endif

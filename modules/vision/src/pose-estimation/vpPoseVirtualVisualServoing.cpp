@@ -42,6 +42,8 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
+BEGIN_VISP_NAMESPACE
+
 void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 {
   try {
@@ -354,3 +356,5 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vec
 }
 
 #endif
+
+END_VISP_NAMESPACE

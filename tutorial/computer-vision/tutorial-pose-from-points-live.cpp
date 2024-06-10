@@ -33,6 +33,9 @@ int main(int argc, char **argv)
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && defined(VISP_HAVE_PUGIXML) && \
     (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
      defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string opt_intrinsic_file; // xml file obtained from camera calibration
     std::string opt_camera_name;    // corresponding camera name in the xml calibration file
@@ -233,4 +236,4 @@ int main(int argc, char **argv)
     "use this example"
     << std::endl;
 #endif
-}
+  }

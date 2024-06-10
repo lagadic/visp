@@ -46,6 +46,7 @@
 #include <iostream>
 #include <math.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMeLine
  *
@@ -142,7 +143,7 @@
  *
  * \note It is possible to display the line as an overlay. For that you
  * must use the display function of the class vpMeLine.
- */
+*/
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
@@ -458,5 +459,5 @@ public:
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -45,6 +45,7 @@
 
 #include <visp3/core/vpColVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpComedi
 
@@ -174,6 +175,6 @@ protected:
   std::vector<unsigned int> m_chanlist;     /*!< Channel list */
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

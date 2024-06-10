@@ -31,13 +31,13 @@
  * Tools to automatize the creation of xml parser based on the libXML2
  */
 
-#ifndef vpXmlParser_HH
-#define vpXmlParser_HH
-
 /*!
   \file vpXmlParser.h
   \brief Tools to simplify the creation of xml parser based on the libXML2
 */
+
+#ifndef vpXmlParser_HH
+#define vpXmlParser_HH
 
 #include <visp3/core/vpConfig.h>
 
@@ -54,6 +54,7 @@
 #include <string>
 #include <typeinfo>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParser
 
@@ -309,7 +310,7 @@ public:
   static void cleanup() { xmlCleanupParser(); }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif /* VISP_HAVE_XML2 */
 
 #endif

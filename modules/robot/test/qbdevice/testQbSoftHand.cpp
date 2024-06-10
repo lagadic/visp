@@ -46,6 +46,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
   std::cout << "Test qbSoftHand device" << std::endl;
   try {

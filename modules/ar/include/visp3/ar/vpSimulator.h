@@ -82,6 +82,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpSimulator
 
@@ -291,6 +292,6 @@ public:
   //! get the intrinsic parameters of the camera
   void getCameraParameters(vpCameraParameters &cam) { cam = internalCameraParameters; }
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

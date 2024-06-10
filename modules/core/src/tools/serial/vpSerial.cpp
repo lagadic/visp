@@ -59,6 +59,7 @@
 #endif
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Creates a serial port object that opens the port if the parameter is not empty.
   \code
@@ -97,7 +98,7 @@ int main()
 vpSerial::vpSerial(const std::string &port, unsigned long baudrate, bytesize_t bytesize, parity_t parity,
                    stopbits_t stopbits, flowcontrol_t flowcontrol)
   : m_port(port), m_fd(-1), m_is_open(false), m_xonxoff(false), m_rtscts(false), m_baudrate(baudrate), m_parity(parity),
-    m_bytesize(bytesize), m_stopbits(stopbits), m_flowcontrol(flowcontrol)
+  m_bytesize(bytesize), m_stopbits(stopbits), m_flowcontrol(flowcontrol)
 {
   if (m_port.empty() == false)
     open();
@@ -168,7 +169,8 @@ int vpSerial::available()
   int count = 0;
   if (-1 == ioctl(m_fd, TIOCINQ, &count)) {
     throw(vpException(vpException::fatalError, "Cannot check is serial port data available"));
-  } else {
+  }
+  else {
     return count;
   }
 }
@@ -185,7 +187,8 @@ void vpSerial::close()
       ret = ::close(m_fd);
       if (ret == 0) {
         m_fd = -1;
-      } else {
+      }
+      else {
         throw(vpException(vpException::fatalError, "Cannot close serial port"));
       }
     }
@@ -262,7 +265,7 @@ bool vpSerial::read(char *c, long timeout_s)
   }
 
   fd_set readfds;                          /* list of fds for select to listen to */
-  struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
+  struct timeval timeout = { timeout_s, 0 }; // seconde, micro-sec
 
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(m_fd), &readfds);
@@ -271,10 +274,12 @@ bool vpSerial::read(char *c, long timeout_s)
 
   if (ret < 0) {
     throw(vpException(vpException::fatalError, "Serial i/o exception"));
-  } else if (ret == 0) {
-    // Timeout occurred
+  }
+  else if (ret == 0) {
+ // Timeout occurred
     return false;
-  } else {
+  }
+  else {
     ssize_t n = ::read(m_fd, c, 1); // read one character at a time
     if (n != 1)
       return false;
@@ -337,10 +342,10 @@ void vpSerial::configure()
 
   // set up raw mode / no echo / binary
   options.c_cflag |= (tcflag_t)(CLOCAL | CREAD);
-  options.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN); //|ECHOPRT
+  options.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN); //|ECHOPRT
 
-  options.c_oflag &= (tcflag_t) ~(OPOST);
-  options.c_iflag &= (tcflag_t) ~(INLCR | IGNCR | ICRNL | IGNBRK);
+  options.c_oflag &= (tcflag_t)~(OPOST);
+  options.c_iflag &= (tcflag_t)~(INLCR | IGNCR | ICRNL | IGNBRK);
 
 #ifdef IUCLC
   options.c_iflag &= (tcflag_t)~IUCLC;
@@ -541,7 +546,7 @@ void vpSerial::configure()
 
   switch (m_stopbits) {
   case stopbits_one:
-    options.c_cflag &= (tcflag_t) ~(CSTOPB);
+    options.c_cflag &= (tcflag_t)~(CSTOPB);
     break;
   case stopbits_two:
     options.c_cflag |= (CSTOPB);
@@ -549,13 +554,13 @@ void vpSerial::configure()
   }
 
   // setup parity
-  options.c_iflag &= (tcflag_t) ~(INPCK | ISTRIP);
+  options.c_iflag &= (tcflag_t)~(INPCK | ISTRIP);
   switch (m_parity) {
   case parity_none:
-    options.c_cflag &= (tcflag_t) ~(PARENB | PARODD);
+    options.c_cflag &= (tcflag_t)~(PARENB | PARODD);
     break;
   case parity_even:
-    options.c_cflag &= (tcflag_t) ~(PARODD);
+    options.c_cflag &= (tcflag_t)~(PARODD);
     options.c_cflag |= (PARENB);
     break;
   case parity_odd:
@@ -584,9 +589,9 @@ void vpSerial::configure()
     options.c_iflag |= (IXON | IXOFF);
   else
 #ifdef IXANY
-    options.c_iflag &= (tcflag_t) ~(IXON | IXOFF | IXANY);
+    options.c_iflag &= (tcflag_t)~(IXON | IXOFF | IXANY);
 #else
-    options.c_iflag &= (tcflag_t) ~(IXON | IXOFF);
+    options.c_iflag &= (tcflag_t)~(IXON | IXOFF);
 #endif
 
     // rtscts
@@ -610,8 +615,8 @@ void vpSerial::configure()
   // activate settings
   ::tcsetattr(m_fd, TCSANOW, &options);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
-void dummy_vpSerial(){};
+void dummy_vpSerial() { };
 #endif

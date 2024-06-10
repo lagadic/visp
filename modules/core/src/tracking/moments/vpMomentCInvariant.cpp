@@ -41,6 +41,7 @@
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
   (option to use a different calculation mode for sx and sy)
@@ -122,15 +123,15 @@ void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered, std::v
   I_val[4] = (mu30 + mu12) * (mu30 + mu12) + (mu21 + mu03) * (mu21 + mu03);
   I_val[5] = -mu30_2 * mu03_2 + (-4 * mu12_3 + 6 * mu21 * mu12 * mu03) * mu30 - 4 * mu21_3 * mu03 + 3 * mu21_2 * mu12_2;
   I_val[6] = 3 * mu12_4 + 2 * mu30 * mu12_3 + (3 * mu30_2 - 6 * mu03 * mu21) * mu12_2 -
-             6 * mu30 * mu21 * (mu21 + mu03) * mu12 + 2 * mu30_2 * mu03_2 + 2 * mu21_3 * mu03 + 3 * mu21_2 * mu03_2 +
-             3 * mu21_4;
+    6 * mu30 * mu21 * (mu21 + mu03) * mu12 + 2 * mu30_2 * mu03_2 + 2 * mu21_3 * mu03 + 3 * mu21_2 * mu03_2 +
+    3 * mu21_4;
   I_val[7] = (3 * mu21 + 2 * mu03) * mu12_3 + 3 * mu30 * (mu03 + 2 * mu21) * mu12_2 -
-             3 * mu21 * (mu30 + mu03 + mu21) * (-mu30 + mu03 + mu21) * mu12 +
-             mu30 * (-mu30_2 * mu03 - 2 * mu21_3 - 3 * mu03 * mu21_2 + mu03_3);
-  // I_val[8]=3*mu21_4-3*mu21_3*mu03+(3*mu03_2+kappa-6*mu12_2)*mu21_2-mu03*(-15*mu12_2+kappa)*mu21-(-3*mu12_2*mu30+(2*kappa-3*mu03_2)*mu12+kappa*mu30)*mu12;
+    3 * mu21 * (mu30 + mu03 + mu21) * (-mu30 + mu03 + mu21) * mu12 +
+    mu30 * (-mu30_2 * mu03 - 2 * mu21_3 - 3 * mu03 * mu21_2 + mu03_3);
+// I_val[8]=3*mu21_4-3*mu21_3*mu03+(3*mu03_2+kappa-6*mu12_2)*mu21_2-mu03*(-15*mu12_2+kappa)*mu21-(-3*mu12_2*mu30+(2*kappa-3*mu03_2)*mu12+kappa*mu30)*mu12;
   I_val[8] = 3 * mu03 * mu21_3 - 2 * mu03_2 * mu21_2 + mu21_2 * mu30_2 + 3 * mu12_2 * mu03 * mu21 -
-             mu03 * mu21 * mu30_2 - mu03_3 * mu21 + 3 * mu12_3 * mu30 - 2 * mu12_2 * mu30_2 + mu12_2 * mu03_2 -
-             mu12 * mu30_3 - mu12 * mu30 * mu03_2 + 3 * mu12 * mu30 * mu21_2 - 6 * mu12 * mu30 * mu03 * mu21;
+    mu03 * mu21 * mu30_2 - mu03_3 * mu21 + 3 * mu12_3 * mu30 - 2 * mu12_2 * mu30_2 + mu12_2 * mu03_2 -
+    mu12 * mu30_3 - mu12 * mu30 * mu03_2 + 3 * mu12 * mu30 * mu21_2 - 6 * mu12 * mu30 * mu03 * mu21;
   I_val[9] = omicron * omicron;
 
   I_val[10] = mu40 * mu04 - 4 * mu31 * mu13 + 3 * mu22_2;
@@ -169,7 +170,7 @@ void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered, std::v
   double p02 = momentCentered.get(0, 2) / II[3];
 
   double d =
-      sqrt(std::fabs(a)) / (II[3] * sqrt(std::fabs(II[3]))); // d is the normalization factor for 3rd order moments
+    sqrt(std::fabs(a)) / (II[3] * sqrt(std::fabs(II[3]))); // d is the normalization factor for 3rd order moments
   double p30 = momentCentered.get(3, 0) * d;
   double p21 = momentCentered.get(2, 1) * d;
   double p12 = momentCentered.get(1, 2) * d;
@@ -199,7 +200,7 @@ void vpMomentCInvariant::compute()
                                                    "Specify at least order 5.");
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -292,3 +293,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant 
   }
   return os;
 }
+END_VISP_NAMESPACE

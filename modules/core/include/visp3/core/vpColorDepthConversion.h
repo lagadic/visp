@@ -39,6 +39,7 @@
 #include "vpCameraParameters.h"
 #include "vpImage.h"
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpColorDepthConversion
 {
 public:
@@ -54,3 +55,4 @@ public:
                                           const vpHomogeneousMatrix &color_M_depth,
                                           const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel);
 };
+END_VISP_NAMESPACE

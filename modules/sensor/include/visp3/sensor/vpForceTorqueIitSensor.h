@@ -55,6 +55,8 @@
 
 #include <ftSensorLib/ftSensorLib.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
   \class vpForceTorqueIitSensor
   \ingroup group_sensor_ft
@@ -142,7 +144,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04
   To configure the sensor, you may access the sensor through the web interface using uour favorite browser.
   \image html vpForceTorqueIitSensor-ethernet.png
 
- */
+*/
 class VISP_EXPORT vpForceTorqueIitSensor
 {
 public:
@@ -168,7 +170,7 @@ protected:
   vpColVector m_ft;
   vpColVector m_ft_filt;
 
-  ftSensorsConnected m_ftSensorsData{};
+  ftSensorsConnected m_ftSensorsData {};
 
   std::atomic<bool> m_acquisitionEnabled;
   std::atomic<bool> m_dataValid;
@@ -180,6 +182,6 @@ protected:
   std::mutex m_mutex;
   int m_warmupMilliseconds;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

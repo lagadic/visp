@@ -31,13 +31,13 @@
  * 2D point visual feature.
  */
 
-#ifndef vpFeatureDepth_H
-#define vpFeatureDepth_H
-
 /*!
  * \file vpFeatureDepth.h
  * \brief Class that defines 3D point visual feature
  */
+
+#ifndef vpFeatureDepth_H
+#define vpFeatureDepth_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -46,6 +46,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureDepth
  * \ingroup group_visual_features
@@ -151,7 +152,7 @@
  *   s.error(s_star);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureDepth : public vpBasicFeature
 {
 
@@ -207,5 +208,5 @@ public:
 
   void set_xyZLogZoverZstar(double x, double y, double Z, double logZZs);
 };
-
+END_VISP_NAMESPACE
 #endif

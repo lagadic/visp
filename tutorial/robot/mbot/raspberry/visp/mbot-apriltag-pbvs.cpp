@@ -1,4 +1,5 @@
 //! \example mbot-apriltag-pbvs.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpSerial.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
@@ -12,6 +13,10 @@
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -282,7 +287,7 @@ int main(int argc, const char **argv)
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
     if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
-    }
+}
   }
 
   return EXIT_SUCCESS;

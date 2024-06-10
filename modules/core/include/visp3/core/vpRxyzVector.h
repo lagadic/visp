@@ -32,9 +32,6 @@
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
  */
 
-#ifndef _vpRxyzVector_h_
-#define _vpRxyzVector_h_
-
 /*!
   \file vpRxyzVector.h
 
@@ -44,9 +41,14 @@
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
  */
 
+#ifndef _vpRxyzVector_h_
+#define _vpRxyzVector_h_
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpRotationVector;
 class vpRotationMatrix;
@@ -216,5 +218,5 @@ public:
   vpRxyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

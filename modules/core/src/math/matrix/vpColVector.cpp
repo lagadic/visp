@@ -57,6 +57,7 @@
 #include <Simd/SimdLib.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
   if (getRows() != v.getRows()) {
@@ -516,13 +517,6 @@ vpRowVector vpColVector::t() const
 vpRowVector vpColVector::transpose() const { return t(); }
 
 void vpColVector::transpose(vpRowVector &v) const { v = t(); }
-
-vpColVector operator*(const double &x, const vpColVector &v)
-{
-  vpColVector vout;
-  vout = v * x;
-  return vout;
-}
 
 double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
@@ -1012,3 +1006,11 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 
 double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+vpColVector operator*(const double &x, const vpColVector &v)
+{
+  vpColVector vout;
+  vout = v * x;
+  return vout;
+}
+END_VISP_NAMESPACE

@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpSphere.h>
@@ -64,6 +65,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdho"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
@@ -342,11 +347,12 @@ int main(int argc, const char **argv)
         if (opt_display && opt_click_allowed) {
           std::stringstream ss;
           ss << std::string("New projection operator: ") +
-                    (opt_new_proj_operator ? std::string("yes (use option -o to use old one)") : std::string("no"));
+            (opt_new_proj_operator ? std::string("yes (use option -o to use old one)") : std::string("no"));
           vpDisplay::displayText(I, 20, 20, "Secondary task enabled: yes", vpColor::white);
           vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::white);
         }
-      } else {
+      }
+      else {
         if (opt_display && opt_click_allowed) {
           vpDisplay::displayText(I, 20, 20, "Secondary task enabled: no", vpColor::white);
         }
@@ -378,7 +384,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -388,4 +395,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

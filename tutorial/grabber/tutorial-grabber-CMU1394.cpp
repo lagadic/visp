@@ -1,4 +1,5 @@
 /*! \example tutorial-grabber-CMU1394.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
@@ -6,6 +7,9 @@
 int main()
 {
 #ifdef VISP_HAVE_CMU1394
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpImage<unsigned char> I;
 
@@ -31,7 +35,8 @@ int main()
       if (vpDisplay::getClick(I, false)) // A click to exit
         break;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

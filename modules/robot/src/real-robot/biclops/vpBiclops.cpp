@@ -37,6 +37,7 @@
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 const unsigned int vpBiclops::ndof = 2;
 const float vpBiclops::h = 0.048f;
 const float vpBiclops::panJointLimit = (float)(M_PI);
@@ -257,3 +258,4 @@ void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
     fJe[5][0] = 1;
   }
 }
+END_VISP_NAMESPACE

@@ -62,6 +62,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
  * \class vpExampleDataParser
  * \brief Class example used to show how to implement a xml parser based on the

@@ -1,4 +1,5 @@
 //! \example tutorial-matching-keypoint-SIFT.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpVideoReader.h>
@@ -13,6 +14,9 @@ int main()
     (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                             \
      (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   //! [Define]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpImage<unsigned char> I;
 
   vpVideoReader reader;

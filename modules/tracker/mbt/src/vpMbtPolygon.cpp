@@ -48,6 +48,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtPolygon.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 */
@@ -268,3 +269,4 @@ int main()
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
 void vpMbtPolygon::setLod(bool use_lod) { this->useLod = use_lod; }
+END_VISP_NAMESPACE

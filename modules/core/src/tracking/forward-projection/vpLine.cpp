@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpLine.cpp
+  \brief   class that defines what is a line
+*/
+
 #include <visp3/core/vpLine.h>
 
 #include <visp3/core/vpDebug.h>
@@ -40,11 +45,7 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
-/*!
-  \file vpLine.cpp
-  \brief   class that defines what is a line
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialize the memory space requested for the 2D line parameters (\e
@@ -549,3 +550,4 @@ vpLine *vpLine::duplicate() const
   vpLine *feature = new vpLine(*this);
   return feature;
 }
+END_VISP_NAMESPACE

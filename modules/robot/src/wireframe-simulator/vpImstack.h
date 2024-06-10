@@ -43,13 +43,13 @@
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 void fprintf_imstack(void);
 void load_imstack(void);
 void pop_imstack(void);
 void push_imstack(void);
 void swap_imstack(void);
 void add_imstack(void);
-
+END_VISP_NAMESPACE
 #endif
 #endif

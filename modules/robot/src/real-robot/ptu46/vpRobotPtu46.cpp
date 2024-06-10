@@ -46,6 +46,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotPtu46.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
@@ -768,7 +769,7 @@ void vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
   }
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotPtu46.cpp.o) has no symbols
 void dummy_vpRobotPtu46() { };

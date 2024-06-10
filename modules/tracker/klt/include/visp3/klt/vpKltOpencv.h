@@ -52,6 +52,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/tracking.hpp>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpKltOpencv
  *
@@ -68,7 +69,7 @@
  * \include tutorial-klt-tracker.cpp
  *
  * A line by line explanation is provided in \ref tutorial-tracking-keypoint.
- */
+*/
 class VISP_EXPORT vpKltOpencv
 {
 public:
@@ -400,6 +401,6 @@ protected:
   long m_next_points_id; //!< Id for the newt keypoint
   bool m_initial_guess; //!< true when initial guess is provided
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

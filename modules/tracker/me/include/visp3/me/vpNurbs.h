@@ -49,6 +49,7 @@
 
 #include <list>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpNurbs
  * \ingroup module_me
@@ -87,7 +88,7 @@
  *
  * You can find much more information about the B-Splines and the
  * implementation of all the methods in the Nurbs Book.
- */
+*/
 class VISP_EXPORT vpNurbs : public vpBSpline
 {
 protected:
@@ -523,5 +524,5 @@ public:
    */
   void globalCurveApprox(unsigned int n);
 };
-
+END_VISP_NAMESPACE
 #endif

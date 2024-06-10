@@ -17,6 +17,9 @@
 int main(int argc, const char **argv)
 {
 #if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   int opt_device = 0;
   int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
 

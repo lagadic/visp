@@ -1,4 +1,5 @@
 //! \example tutorial-apriltag-detector.cpp
+#include <visp3/core/vpConfig.h>
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
@@ -10,10 +11,15 @@
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
-
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string input_filename = "AprilTag.pgm";
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -29,7 +35,7 @@ int main(int argc, const char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
-      poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
+      poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
@@ -38,17 +44,19 @@ int main(int argc, const char **argv)
       input_filename = std::string(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[i + 1]);
+      quad_decimate = static_cast<float>(atof(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = atoi(argv[i + 1]);
     }
+#if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
     }
+#endif
     else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
     }
@@ -56,10 +64,10 @@ int main(int argc, const char **argv)
       color_id = atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int)atoi(argv[i + 1]);
+      thickness = static_cast<unsigned int>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
+      tagFamily = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[i + 1]));
     }
     else if (std::string(argv[i]) == "--z_aligned") {
       z_aligned = true;
@@ -154,7 +162,7 @@ int main(int argc, const char **argv)
         int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
         ss.str("");
         ss << "Tag id: " << tag_id;
-        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()), ss.str(), vpColor::red);
       }
       //! [Get tag id]
       for (size_t j = 0; j < p.size(); j++) {

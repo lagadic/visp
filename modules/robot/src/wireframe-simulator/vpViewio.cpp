@@ -53,6 +53,7 @@
 #include "vpToken.h"
 #include "vpViewio.h"
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fscanf_Remove" lit en ascii les parametres d'elimination
  * des faces.
@@ -163,5 +164,5 @@ void fscanf_View_parameters(View_parameters *vp)
   fscanf_float(&vp->depth.back);
   poperr();
 }
-
+END_VISP_NAMESPACE
 #endif

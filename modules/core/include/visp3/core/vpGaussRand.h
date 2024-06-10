@@ -37,6 +37,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpUniRand.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpGaussRand
   \ingroup group_core_random
@@ -81,37 +82,37 @@ different values using seed(). For example, this could be done using the
 current time. The code becomes:
 
   \verbatim
-#include <iostream>
-#include <visp3/core/vpGaussRand.h>
-#include <visp3/core/vpTime.h>
+  #include <iostream>
+  #include <visp3/core/vpGaussRand.h>
+  #include <visp3/core/vpTime.h>
 
-int main()
-{
-  vpGaussRand noise(0.5, 10);
-  long seed = (long)vpTime::measureTimeMs();
+  int main()
+  {
+    vpGaussRand noise(0.5, 10);
+    long seed = (long)vpTime::measureTimeMs();
 
-  noise.seed(seed);
-  for(int i=0; i< 10; i++) {
-    std::cout << "noise " << i << ": " << noise() << std::endl;
+    noise.seed(seed);
+    for(int i=0; i< 10; i++) {
+      std::cout << "noise " << i << ": " << noise() << std::endl;
+    }
+    return 0;
   }
-  return 0;
-}
   \endverbatim
 
   Now if you run the previous example you will always get different values:
   \verbatim
-noise 0: 10.5982
-noise 1: 9.19111
-noise 2: 9.82498
-noise 3: 9.07857
-noise 4: 9.9285
-noise 5: 10.3688
-noise 6: 9.75621
-noise 7: 10.3259
-noise 8: 10.4238
-noise 9: 10.2391
+  noise 0: 10.5982
+  noise 1: 9.19111
+  noise 2: 9.82498
+  noise 3: 9.07857
+  noise 4: 9.9285
+  noise 5: 10.3688
+  noise 6: 9.75621
+  noise 7: 10.3259
+  noise 8: 10.4238
+  noise 9: 10.2391
   \endverbatim
- */
+*/
 class VISP_EXPORT vpGaussRand
 {
 private:
@@ -127,7 +128,7 @@ public:
   /*!
       Default noise generator constructor.
      */
-  vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) {}
+  vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) { }
 
   /*!
       Gaussian noise random generator constructor.
@@ -138,8 +139,7 @@ public:
     */
   vpGaussRand(double sigma_val, double mean_val, long noise_seed = 0)
     : m_rng(noise_seed), m_mean(mean_val), m_sigma(sigma_val), m_AlreadyDone(false), m_x2(0)
-  {
-  }
+  { }
 
   /*!
       Set the standard deviation and mean for gaussian noise.
@@ -165,5 +165,5 @@ public:
     */
   double operator()() { return m_sigma * gaussianDraw() + m_mean; }
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -43,6 +43,7 @@
 
 bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2) { return (rect1.area() > rect2.area()); }
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
@@ -139,7 +140,7 @@ bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 
   return detected;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no symbols
 void dummy_vpDetectorFace() { };

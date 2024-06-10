@@ -48,6 +48,10 @@
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/vision/vpHomography.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool test(const std::string &s, const vpHomography &H, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
@@ -182,7 +186,8 @@ int main()
     }
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

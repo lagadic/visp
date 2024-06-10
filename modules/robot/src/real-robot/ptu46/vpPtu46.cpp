@@ -45,6 +45,7 @@
 #include <math.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
@@ -291,3 +292,4 @@ void vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   fJe[4][1] = -c1;
   fJe[5][0] = 1;
 }
+END_VISP_NAMESPACE

@@ -42,6 +42,7 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Adds a moment to the database.
  * \param moment : Moment to add.
@@ -92,6 +93,9 @@ void vpMomentDatabase::updateAll(vpMomentObject &object)
  */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::map<const std::string, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator itr;
   os << "{";
 
@@ -102,3 +106,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m
 
   return os;
 }
+END_VISP_NAMESPACE

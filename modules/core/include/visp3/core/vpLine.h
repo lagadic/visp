@@ -31,19 +31,21 @@
  * Line feature.
  */
 
-#ifndef vpLine_H
-#define vpLine_H
-
 /*!
  * \file vpLine.h
  * \brief  class that defines what is a line
  */
 
+#ifndef _vpLine_H_
+#define _vpLine_H_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 
 #include <visp3/core/vpForwardProjection.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpLine
  * \ingroup group_core_geometry
@@ -96,7 +98,7 @@
  * in the vpTracker::p public attribute, where \e p is a vector defined
  * as: \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
  * To compute these parameters use projection(). To get the corresponding values use get_p().
- */
+*/
 class VISP_EXPORT vpLine : public vpForwardProjection
 {
 public:
@@ -172,5 +174,5 @@ public:
 protected:
   void init() vp_override;
 };
-
+END_VISP_NAMESPACE
 #endif

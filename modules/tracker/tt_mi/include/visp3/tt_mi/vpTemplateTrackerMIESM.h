@@ -39,6 +39,7 @@
 #ifndef vpTemplateTrackerMIESM_hh
 #define vpTemplateTrackerMIESM_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
@@ -46,6 +47,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerMIESM
   \ingroup group_tt_mi_tracker
@@ -104,5 +106,5 @@ public:
 
   void setMinimizationMethod(vpMinimizationTypeMIESM method) { minimizationMethod = method; }
 };
-
+END_VISP_NAMESPACE
 #endif

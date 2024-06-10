@@ -31,14 +31,24 @@
  * Theta U parameterization for the rotation.
  */
 
-#ifndef _vpThetaUVector_h_
-#define _vpThetaUVector_h_
-
 /*!
   \file vpThetaUVector.h
   \brief class that consider the case of the Theta U parameterization for the
   rotation
 */
+
+#ifndef _vpThetaUVector_h_
+#define _vpThetaUVector_h_
+
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpQuaternionVector.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpRzyxVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpHomogeneousMatrix;
 class vpRotationMatrix;
@@ -49,15 +59,6 @@ class vpRzyzVector;
 class vpColVector;
 class vpRotationVector;
 class vpQuaternionVector;
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpQuaternionVector.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpRzyxVector.h>
 
 /*!
   \class vpThetaUVector
@@ -241,5 +242,5 @@ private:
   static const double minimum;
 
 };
-
+END_VISP_NAMESPACE
 #endif

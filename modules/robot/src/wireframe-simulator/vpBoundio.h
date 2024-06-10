@@ -49,9 +49,10 @@
 
 #include "vpBound.h"
 
+BEGIN_VISP_NAMESPACE
 void fscanf_Bound(Bound *bp);
 void fscanf_Face_list(Face_list *lp);
 void fscanf_Point3f_list(Point3f_list *lp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

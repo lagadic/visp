@@ -31,14 +31,13 @@
  * Meter to pixel conversion.
  */
 
-#ifndef _vpMeterPixelConversion_h_
-#define _vpMeterPixelConversion_h_
-
 /*!
   \file vpMeterPixelConversion.h
   \brief Meter to pixel conversion.
-
 */
+
+#ifndef _vpMeterPixelConversion_h_
+#define _vpMeterPixelConversion_h_
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpCircle.h>
@@ -51,6 +50,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMeterPixelConversion
 
@@ -353,5 +353,5 @@ public:
   //@}
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

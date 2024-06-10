@@ -52,6 +52,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureEllipse.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor
 */
@@ -477,3 +478,4 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     }
   }
 }
+END_VISP_NAMESPACE

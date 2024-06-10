@@ -40,6 +40,7 @@
 #endif
 #include <visp3/core/vpCPUFeatures.h>
 
+BEGIN_VISP_NAMESPACE
 namespace vpCPUFeatures
 {
 // TODO: try to refactor to keep only SimdCpuInfo code and remove cpu_x86 code?
@@ -71,3 +72,4 @@ bool checkNeon() { return SimdCpuInfo(SimdCpuInfoNeon) != 0; }
 
 void printCPUInfo() { cpu_features.print(); }
 } // namespace vpCPUFeatures
+END_VISP_NAMESPACE

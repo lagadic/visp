@@ -1,6 +1,7 @@
 /*! \example tutorial-grabber-rgbd-D435-structurecore.cpp */
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -13,6 +14,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Both cameras can stream color and depth in 640x480 resolution.
   unsigned int width = 640, height = 480;
 
@@ -68,8 +72,8 @@ int main(int argc, char **argv)
     if (vpDisplay::getClick(I_color_rs, false) || vpDisplay::getClick(I_color_sc, false) ||
         vpDisplay::getClick(I_depth_rs, false) || vpDisplay::getClick(I_depth_sc, false)) {
       break;
-    }
-  }
+}
+}
 #else
   (void)argc;
   (void)argv;

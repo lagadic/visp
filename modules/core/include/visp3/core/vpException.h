@@ -45,6 +45,7 @@
 #include <stdarg.h>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpException
  * \ingroup group_core_debug
@@ -54,7 +55,7 @@
  * STL.
  * It is therefore possible to catch vpException with any other derivative of
  * std::exception in the same catch.
- */
+*/
 class VISP_EXPORT vpException : public std::exception
 {
 public:
@@ -145,5 +146,5 @@ protected:
   vpException() : code(notInitialized), message("") { }
 
 };
-
+END_VISP_NAMESPACE
 #endif

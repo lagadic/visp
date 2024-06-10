@@ -1,8 +1,13 @@
 //! \example tutorial-draw-cross.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayFactory.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<unsigned char> I(2160, 3840, 128);
 
   try {

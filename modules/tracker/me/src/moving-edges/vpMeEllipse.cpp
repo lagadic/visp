@@ -40,6 +40,8 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeEllipse.h>
 
+BEGIN_VISP_NAMESPACE
+
 // --comment: define the VP_ME_ELLIPSE_REGULAR_SAMPLING flag
 #ifndef VP_ME_ELLIPSE_REGULAR_SAMPLING
 #define VP_ME_ELLIPSE_TWO_CONCENTRIC_CIRCLES
@@ -1438,3 +1440,5 @@ void vpMeEllipse::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &c
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }
+
+END_VISP_NAMESPACE

@@ -44,6 +44,10 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::vector<std::string> paths {
     ipath + "/Solvay/Solvay_conference_1927_Version2_640x440",

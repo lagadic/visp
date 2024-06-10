@@ -1,4 +1,5 @@
 #include <memory>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -37,7 +38,11 @@ std::unique_ptr<T> make_unique_compat(Args&&... args)
 int main(int argc, char *argv[])
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool opencv_backend = false;
   std::string npz_filename = "npz_tracking_teabox.npz";
   bool print_cMo = false;
@@ -201,6 +206,9 @@ int main(int argc, char *argv[])
   (void)argc;
   (void)argv;
   std::cerr << "Error, a missing display library is needed (X11, GDI or OpenCV built with HighGUI module)." << std::endl;
+#ifndef VISP_HAVE_MINIZ
+  std::cerr << "You also need to enable npz I/O functions" << std::endl;
+#endif
 #endif
 
   return EXIT_SUCCESS;

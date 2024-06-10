@@ -55,6 +55,10 @@
 #include <visp3/core/vpIoTools.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 TEST_CASE("Lon-Lat generator", "[math_lonlat]")
 {
   const int lonStart = 0, lonEnd = 360, nlon = 20;
@@ -132,10 +136,10 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
         if (file.is_open()) {
           (ecef_M_enu * enu_M_cv).save(file);
         }
-      }
-#endif
     }
+#endif
   }
+}
 }
 
 TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")

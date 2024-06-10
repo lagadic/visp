@@ -54,6 +54,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotFranka
  *
@@ -217,7 +218,7 @@
  *
  * \sa \ref tutorial-franka-pbvs
  * \sa \ref tutorial-franka-ibvs
- */
+*/
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {
 private:
@@ -353,6 +354,6 @@ public:
 
   void stopMotion();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif // #ifndef __vpRobotFranka_h_

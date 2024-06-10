@@ -49,13 +49,17 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
+
 /*!
  * Compute convex hull corners.
  *
  * \param[in] ips : List of 2D points.
  */
-template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpContainer &ips)
+template <typename IpContainer> std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> convexHull(const IpContainer &ips)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   if (ips.size() == 0) {
     throw vpException(vpException::badValue,
                       "Convex Hull can not be computed as the input does not contain any image point.");
@@ -105,6 +109,7 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that creates an empty polygon.
 */
@@ -696,3 +701,4 @@ unsigned int vpPolygon::getSize() const
 {
   return (static_cast<unsigned int>(_corners.size()));
 }
+END_VISP_NAMESPACE

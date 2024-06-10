@@ -42,6 +42,9 @@
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpWin32API.h>
+
+BEGIN_VISP_NAMESPACE
+
 DWORD vpProcessErrors(const std::string &api_name)
 {
   LPVOID lpMsgBuf;
@@ -135,7 +138,9 @@ HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, 
   return ret;
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpWin32API.cpp.o) has no symbols
 void dummy_vpWin32API() { };
 #endif

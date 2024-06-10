@@ -43,10 +43,15 @@
 #include <iostream>
 #include <string>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpReflexTakktile2.h>
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_network_interface = "eth0";
   std::string opt_finger_file_name = "yaml/finger_calibrate.yaml";
   std::string opt_tactile_file_name = "yaml/tactile_calibrate.yaml";

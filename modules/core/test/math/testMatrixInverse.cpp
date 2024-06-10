@@ -53,6 +53,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -248,7 +252,7 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
 {
   if (verbose)
     std::cout << "Create a bench of " << nb_matrices << " " << n << " by " << n << " symmetric positive matrices"
-              << std::endl;
+    << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
@@ -260,8 +264,8 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
       if (verbose) {
         std::cout << "  Generated random symmetric positive matrix A=" << std::endl << M << std::endl;
         std::cout << "  Generated random symmetric positive matrix not "
-                     "invertibleL: det="
-                  << det << ". Retrying..." << std::endl;
+          "invertibleL: det="
+          << det << ". Retrying..." << std::endl;
       }
     }
 #else
@@ -286,8 +290,8 @@ void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned in
       if (verbose) {
         std::cout << "  Generated random symmetric positive matrix A=" << std::endl << M << std::endl;
         std::cout << "  Generated random symmetric positive matrix not "
-                     "invertibleL: det="
-                  << det << ". Retrying..." << std::endl;
+          "invertibleL: det="
+          << det << ". Retrying..." << std::endl;
       }
     }
 #else
@@ -304,7 +308,7 @@ int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix>
     vpMatrix I = bench[i] * result[i];
     if (std::fabs(I.frobeniusNorm() - sqrt(static_cast<double>(bench[0].AtA().getRows()))) > epsilon) {
       std::cout << "Bad inverse[" << i << "]: " << I.frobeniusNorm() << " " << sqrt((double)bench[0].AtA().getRows())
-                << std::endl;
+        << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -337,7 +341,7 @@ int test_inverse_lu_eigen3(bool verbose, const std::vector<vpMatrix> &bench, dou
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using LU decomposition (Eigen3)." << std::endl;
+    << " matrix using LU decomposition (Eigen3)." << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -358,7 +362,7 @@ int test_inverse_lu_lapack(bool verbose, const std::vector<vpMatrix> &bench, dou
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using LU decomposition (Lapack)." << std::endl;
+    << " matrix using LU decomposition (Lapack)." << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -377,7 +381,7 @@ int test_inverse_cholesky_lapack(bool verbose, const std::vector<vpMatrix> &benc
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using cholesky decomposition (Lapack)." << std::endl;
+    << " matrix using cholesky decomposition (Lapack)." << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -396,7 +400,7 @@ int test_inverse_qr_lapack(bool verbose, const std::vector<vpMatrix> &bench, dou
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using QR decomposition (Lapack)" << std::endl;
+    << " matrix using QR decomposition (Lapack)" << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -417,7 +421,7 @@ int test_inverse_lu_opencv(bool verbose, const std::vector<vpMatrix> &bench, dou
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using LU decomposition (OpenCV)" << std::endl;
+    << " matrix using LU decomposition (OpenCV)" << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -436,7 +440,7 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
   // Compute inverse
   if (verbose)
     std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using Cholesky decomposition (OpenCV)" << std::endl;
+    << " matrix using Cholesky decomposition (OpenCV)" << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -458,7 +462,7 @@ int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double
   // Compute inverse
   if (verbose)
     std::cout << "  Pseudo inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << " matrix"
-              << std::endl;
+    << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -519,39 +523,39 @@ int main(int argc, const char *argv[])
     if (use_plot_file) {
       of.open(plotfile.c_str());
       of << "iter"
-         << "\t";
+        << "\t";
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"LU Lapack\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_EIGEN3)
       of << "\"LU Eigen3\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_OPENCV)
       of << "\"LU OpenCV\""
-         << "\t";
+        << "\t";
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"Cholesky Lapack\""
-         << "\t";
+        << "\t";
 #endif
 
 #if defined(VISP_HAVE_OPENCV)
       of << "\"Cholesky OpenCV\""
-         << "\t";
+        << "\t";
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"QR Lapack\""
-         << "\t";
+        << "\t";
 #endif
 
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
       of << "\"Pseudo inverse (Lapack, Eigen3 or OpenCV)\""
-         << "\t";
+        << "\t";
 #endif
       of << std::endl;
     }
@@ -643,12 +647,14 @@ int main(int argc, const char *argv[])
 
     if (ret == EXIT_SUCCESS) {
       std::cout << "Test succeed" << std::endl;
-    } else {
+    }
+    else {
       std::cout << "Test failed" << std::endl;
     }
 
     return ret;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

@@ -9,11 +9,16 @@
 //! [Include]
 #include <engine.h>
 #include <matrix.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 //! [Include]
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // ViSP matrix containing input data
   //! [InputData]
   vpMatrix x(3, 3, 0);

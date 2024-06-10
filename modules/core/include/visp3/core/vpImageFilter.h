@@ -31,13 +31,13 @@
  * Various image tools, convolution, ...
  */
 
+/*!
+ * \file vpImageFilter.h
+ * \brief  Various image filter, convolution, etc...
+ */
+
 #ifndef _vpImageFilter_h_
 #define _vpImageFilter_h_
-
- /*!
-  * \file vpImageFilter.h
-  * \brief  Various image filter, convolution, etc...
-  */
 
 #include <fstream>
 #include <iostream>
@@ -59,13 +59,14 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpImageFilter
  *
  * \ingroup group_core_image
  *
  * \brief  Various image filter, convolution, etc...
- */
+*/
 class VISP_EXPORT vpImageFilter
 {
 public:
@@ -1692,9 +1693,9 @@ private:
         filter[r][c] = filter[r][c] * scale;
       }
     }
-}
+  }
 #endif
 
 };
-
+END_VISP_NAMESPACE
 #endif

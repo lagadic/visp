@@ -48,6 +48,10 @@
 #include <windows.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    \class vpThread
 
@@ -59,7 +63,7 @@
    This class implements native pthread functionalities if available, or
    native Windows threading capabilities if pthread is not available under
    Windows.
- */
+*/
 class vp_deprecated vpThread
 {
 public:
@@ -179,6 +183,8 @@ protected:
   bool m_isCreated;  //!< Indicates if the thread is created
   bool m_isJoinable; //!< Indicates if the thread is joinable
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

@@ -49,6 +49,10 @@ using json = nlohmann::json; //! json namespace shortcut
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 vpMbGenericTracker baseTrackerConstructor()
 {
   const std::vector<std::string> names = { "C1", "C2" };
@@ -158,7 +162,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         json j = loadJson(jsonPath);
         modify(j);
         saveJson(j, jsonPath);
-      };
+        };
 
       REQUIRE_NOTHROW(t1.saveConfigFile(jsonPath));
       THEN("Reloading this tracker has the same basic properties")

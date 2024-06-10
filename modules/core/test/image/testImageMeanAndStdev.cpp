@@ -56,6 +56,9 @@ void printHelp(const std::string &progName)
 
 int main(const int argc, const char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   bool opt_verbose = false;
   for (int i = 1; i < argc; ++i) {
     std::string argName(argv[i]);

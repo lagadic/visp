@@ -33,17 +33,19 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTracker.h>
-
 /*!
   \file vpTracker.cpp
   \brief Class that defines what is a generic tracker.
 */
 
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpTracker.h>
+
+BEGIN_VISP_NAMESPACE
+
 void vpTracker::init() { cPAvailable = false; }
 
-vpTracker::vpTracker() : p(), cP(), cPAvailable(false) {}
+vpTracker::vpTracker() : p(), cP(), cPAvailable(false) { }
 
 vpTracker::vpTracker(const vpTracker &tracker) : p(), cP(), cPAvailable(false) { *this = tracker; }
 
@@ -55,7 +57,7 @@ vpTracker &vpTracker::operator=(const vpTracker &tracker)
 
   return *this;
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

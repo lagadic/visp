@@ -40,11 +40,13 @@
 
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotFranka.h>
 
 #if defined(VISP_HAVE_FRANKA)
 
-typedef enum {
+typedef enum
+{
   Gripper_Home,
   Gripper_Open,
   Gripper_Close,
@@ -56,6 +58,10 @@ typedef enum {
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_robot_ip = "192.168.1.1";
   double opt_grasping_width = 0.;
   GripperState_t opt_gripper_state = Gripper_None;
@@ -63,28 +69,34 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       opt_robot_ip = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--home") {
+    }
+    else if (std::string(argv[i]) == "--home") {
       opt_gripper_state = Gripper_Home;
-    } else if (std::string(argv[i]) == "--open") {
+    }
+    else if (std::string(argv[i]) == "--open") {
       opt_gripper_state = Gripper_Open;
-    } else if (std::string(argv[i]) == "--close") {
+    }
+    else if (std::string(argv[i]) == "--close") {
       opt_gripper_state = Gripper_Close;
-    } else if (std::string(argv[i]) == "--grasp" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--grasp" && i + 1 < argc) {
       opt_gripper_state = Gripper_Grasp;
       opt_grasping_width = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--test" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--test" && i + 1 < argc) {
       opt_gripper_state = Gripper_Test;
       opt_grasping_width = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Control Panda gripper." << std::endl;
       std::cout << argv[0] << " [--ip <default " << opt_robot_ip
-                << ">] [--home] [--open] [--close] [--grasp <object width in meter>] [--release] [--test <object width "
-                   "in meter>] [--help] [-h]\n"
-                << std::endl;
+        << ">] [--home] [--open] [--close] [--grasp <object width in meter>] [--release] [--test <object width "
+        "in meter>] [--help] [-h]\n"
+        << std::endl;
       std::cout << "Example to grasp a 4cm width object by first opening the gripper, then grasping the object :\n"
-                << argv[0] << " --ip 192.168.100.1 --open\n"
-                << argv[0] << " --ip 192.168.100.1 --grasp 0.04\n"
-                << std::endl;
+        << argv[0] << " --ip 192.168.100.1 --open\n"
+        << argv[0] << " --ip 192.168.100.1 --grasp 0.04\n"
+        << std::endl;
 
       return EXIT_SUCCESS;
     }
@@ -92,11 +104,12 @@ int main(int argc, char **argv)
 
   if (opt_gripper_state == Gripper_None) {
     std::cout << "Specify which action you want to achieve. Run \"" << argv[0]
-              << " --help\" to see how to use this binary." << std::endl;
+      << " --help\" to see how to use this binary." << std::endl;
     return EXIT_SUCCESS;
-  } else if ((opt_gripper_state == Gripper_Grasp || opt_gripper_state == Gripper_Test) && opt_grasping_width <= 0) {
+  }
+  else if ((opt_gripper_state == Gripper_Grasp || opt_gripper_state == Gripper_Test) && opt_grasping_width <= 0) {
     std::cout << "Object with in meter should be > 0. Run \"" << argv[0] << " --help\" to see how to use this binary."
-              << std::endl;
+      << std::endl;
     return EXIT_SUCCESS;
   }
 
@@ -108,19 +121,24 @@ int main(int argc, char **argv)
     if (opt_gripper_state == Gripper_Home) {
       std::cout << "Gripper homing..." << std::endl;
       robot.gripperHoming();
-    } else if (opt_gripper_state == Gripper_Close) {
+    }
+    else if (opt_gripper_state == Gripper_Close) {
       std::cout << "Gripper closing..." << std::endl;
       robot.gripperClose();
-    } else if (opt_gripper_state == Gripper_Open) {
+    }
+    else if (opt_gripper_state == Gripper_Open) {
       std::cout << "Gripper opening..." << std::endl;
       robot.gripperOpen();
-    } else if (opt_gripper_state == Gripper_Grasp) {
+    }
+    else if (opt_gripper_state == Gripper_Grasp) {
       std::cout << "Gripper grasp " << opt_grasping_width << "m object width..." << std::endl;
       robot.gripperGrasp(opt_grasping_width);
-    } else if (opt_gripper_state == Gripper_Release) {
+    }
+    else if (opt_gripper_state == Gripper_Release) {
       std::cout << "Gripper release object..." << std::endl;
       robot.gripperRelease();
-    } else if (opt_gripper_state == Gripper_Test) {
+    }
+    else if (opt_gripper_state == Gripper_Test) {
       std::cout << "Test gripper performing the following actions:" << std::endl;
       std::cout << "- Gripper homing..." << std::endl;
       robot.gripperHoming();
@@ -141,16 +159,19 @@ int main(int argc, char **argv)
       robot.gripperRelease();
     }
     std::cout << "The end!" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  } catch (const franka::NetworkException &e) {
+  }
+  catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
-              << std::endl;
+      << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
+      << std::endl;
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

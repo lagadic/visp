@@ -53,6 +53,10 @@ using json = nlohmann::json; //! json namespace shortcut
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 using StringMatcherBase = Catch::Matchers::StdString::StringMatcherBase;

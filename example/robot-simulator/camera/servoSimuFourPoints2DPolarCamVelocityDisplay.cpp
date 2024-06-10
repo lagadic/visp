@@ -80,6 +80,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -191,7 +195,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(logdirname);
-      } catch (...) {
+      }
+      catch (...) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
         return EXIT_FAILURE;
@@ -468,7 +473,8 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(Iint);
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -477,11 +483,11 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif

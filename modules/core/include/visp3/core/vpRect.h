@@ -31,8 +31,18 @@
  * Defines a rectangle in the plane.
  */
 
-#ifndef vpRect_h
-#define vpRect_h
+#ifndef _vpRect_h_
+#define _vpRect_h_
+
+#include <algorithm>
+#include <cassert>
+#include <limits> // numeric_limits
+#include <vector>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpImagePoint.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpRect
@@ -65,13 +75,6 @@
   setting sizes, e.g. setWidth(), setHeight()
 
 */
-
-#include <algorithm>
-#include <cassert>
-#include <vector>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpImagePoint.h>
-
 class VISP_EXPORT vpRect
 {
 public:
@@ -408,5 +411,5 @@ private:
   double width;  // Rectangle width
   double height; // Rectangle height
 };
-
+END_VISP_NAMESPACE
 #endif

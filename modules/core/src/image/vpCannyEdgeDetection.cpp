@@ -39,7 +39,11 @@ namespace
 {
 // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
-static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+static void scaleFilter(
+#ifdef ENABLE_VISP_NAMESPACE
+  visp::
+#endif
+  vpArray2D<FilterType> &filter, const float &scale)
 {
   const unsigned int nbRows = filter.getRows();
   const unsigned int nbCols = filter.getCols();
@@ -50,6 +54,38 @@ static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
   }
 }
 };
+#endif
+
+BEGIN_VISP_NAMESPACE
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+  detector.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
+  detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
+  detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
+  detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+  detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
+  detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
+  detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
+  detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
+}
+
+void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
+{
+  std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(detector.m_filteringAndGradientType);
+  j = nlohmann::json {
+          {"filteringAndGradientType", filteringAndGradientName},
+          {"gaussianSize", detector.m_gaussianKernelSize},
+          {"gaussianStdev", detector.m_gaussianStdev},
+          {"lowerThreshold", detector.m_lowerThreshold},
+          {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
+          {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
+          {"upperThreshold", detector.m_upperThreshold},
+          {"upperThresholdRatio", detector.m_upperThresholdRatio}
+  };
+}
 #endif
 
 // // Initialization methods
@@ -478,8 +514,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   bool test_col = false;
   bool test_drdc = false;
   bool edge_in_image_limit = false;
-  for (int dr = -1; (dr <= 1) && (!hasFoundStrongEdge); ++dr) {
-    for (int dc = -1; (dc <= 1) && (!hasFoundStrongEdge); ++dc) {
+  int dr = -1, dc = -1;
+  while ((dr <= 1) && (!hasFoundStrongEdge)) {
+    while ((dc <= 1) && (!hasFoundStrongEdge)) {
       // reset the check for the edge on image limit
       edge_in_image_limit = false;
 
@@ -515,7 +552,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
           // continue - nothing to do
         }
       }
+      ++dc;
     }
+    ++dr;
   }
   if (hasFoundStrongEdge) {
     m_edgePointsCandidates[coordinates] = STRONG_EDGE;
@@ -523,3 +562,4 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   }
   return hasFoundStrongEdge;
 }
+END_VISP_NAMESPACE

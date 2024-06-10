@@ -3,12 +3,17 @@
 #include <ios>
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 typedef enum { state_detection, state_tracking, state_quit } state_t;
 
@@ -67,7 +72,7 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   if (ret && detector.getNbObjects() > 0) { // if tag detected, we pick the first one
     cMo = cMo_vec[0];
     return state_tracking;
-  }
+}
 
   return state_detection;
 }
@@ -454,7 +459,7 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+}
 
   return EXIT_SUCCESS;
 #else

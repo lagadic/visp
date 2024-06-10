@@ -31,13 +31,13 @@
  * 2D line visual feature.
  */
 
-#ifndef _vpFeatureLine_h_
-#define _vpFeatureLine_h_
-
 /*!
  * \file vpFeatureLine.h
  * \brief Class that defines 2D line visual feature
  */
+
+#ifndef _vpFeatureLine_h_
+#define _vpFeatureLine_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -46,6 +46,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureLine
  * \ingroup group_visual_features
@@ -186,7 +187,7 @@
  *   s.error(s_star);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureLine : public vpBasicFeature
 {
   /*!
@@ -236,5 +237,5 @@ public:
   static unsigned int selectRho();
   static unsigned int selectTheta();
 };
-
+END_VISP_NAMESPACE
 #endif

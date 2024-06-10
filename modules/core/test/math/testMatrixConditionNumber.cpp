@@ -42,6 +42,10 @@
 #include <stdlib.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int test_condition_number(const std::string &test_name, const vpMatrix &M)
 {
   double precision = 1e-6;
@@ -97,7 +101,8 @@ int main()
   if (test_condition_number("* Test square matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -112,7 +117,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -121,7 +127,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -142,7 +149,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -151,7 +159,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
   std::cout << "Test succeed" << std::endl;

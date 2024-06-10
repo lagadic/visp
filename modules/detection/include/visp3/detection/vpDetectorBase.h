@@ -45,6 +45,8 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRect.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpDetectorBase
  * \ingroup group_detection_barcode group_detection_face
@@ -130,5 +132,7 @@ public:
 
   //@}
 };
+
+END_VISP_NAMESPACE
 
 #endif

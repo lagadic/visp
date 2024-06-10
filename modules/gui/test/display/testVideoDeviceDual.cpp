@@ -57,6 +57,10 @@
 // List of allowed command line options
 #define GETOPTARGS "hlt:dc"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
 
 void usage(const char *name, const char *badparam, vpDisplayType &dtype);
@@ -79,7 +83,7 @@ Test to open video devices or display.\n\
 SYNOPSIS\n\
   %s [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ",
-          name);
+name);
 
   std::string display;
   switch (dtype) {
@@ -158,13 +162,17 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
         dtype = vpX11;
-      } else if (sDisplayType.compare("GTK") == 0) {
+      }
+      else if (sDisplayType.compare("GTK") == 0) {
         dtype = vpGTK;
-      } else if (sDisplayType.compare("GDI") == 0) {
+      }
+      else if (sDisplayType.compare("GDI") == 0) {
         dtype = vpGDI;
-      } else if (sDisplayType.compare("D3D") == 0) {
+      }
+      else if (sDisplayType.compare("D3D") == 0) {
         dtype = vpD3D;
-      } else if (sDisplayType.compare("CV") == 0) {
+      }
+      else if (sDisplayType.compare("CV") == 0) {
         dtype = vpCV;
       }
 
@@ -253,9 +261,9 @@ int main(int argc, const char **argv)
         std::cout << "  No display is available\n";
       }
       return EXIT_FAILURE;
-    }
+  }
 
-    // Create 2 images
+  // Create 2 images
     vpImage<unsigned char> I1(240, 320), I2(240, 320);
     I1 = 128;
     I2 = 255;
@@ -344,11 +352,12 @@ int main(int argc, const char **argv)
     delete d1;
     delete d2;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+}
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-}
+  }
 
 #else
 int main() { vpERROR_TRACE("You do not have display functionalities..."); }

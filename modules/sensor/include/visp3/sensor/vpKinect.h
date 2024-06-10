@@ -54,6 +54,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpKinect
@@ -121,7 +122,8 @@ public:
   /*!
     Depth map resolution.
   */
-  typedef enum {
+  typedef enum
+  {
     DMAP_LOW_RES,   /*!< Depth map has a resolution of 320 by 240. */
     DMAP_MEDIUM_RES /*!< Depth map has a resolution of 640 by 480. */
   } vpDMResolution;
@@ -175,7 +177,7 @@ private:
   unsigned int height; // height of the rgb image
   unsigned int width;  // width of the rgb image
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

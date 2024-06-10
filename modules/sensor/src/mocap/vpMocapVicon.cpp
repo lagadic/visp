@@ -48,11 +48,12 @@
 
 using namespace ViconDataStreamSDK::CPP;
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpMocapVicon::vpMocapViconImpl
 {
 public:
-  vpMocapViconImpl() : m_DirectClient(), m_verbose(false), m_serverAddr() {}
+  vpMocapViconImpl() : m_DirectClient(), m_verbose(false), m_serverAddr() { }
   virtual ~vpMocapViconImpl() { close(); }
 
   void close()
@@ -126,7 +127,8 @@ public:
           std::cout << "Error : Could not get pose from body n°" << iBody << std::endl;
 
           return false;
-        } else {
+        }
+        else {
           bodyPose[0][3] = m_DirectClient.GetSegmentGlobalTranslation(bodyName, rootSegment).Translation[0] / 1000.0;
           bodyPose[1][3] = m_DirectClient.GetSegmentGlobalTranslation(bodyName, rootSegment).Translation[1] / 1000.0;
           bodyPose[2][3] = m_DirectClient.GetSegmentGlobalTranslation(bodyName, rootSegment).Translation[2] / 1000.0;
@@ -142,7 +144,8 @@ public:
         }
         if (all_bodies) {
           bodies_pose[bodyName] = bodyPose;
-        } else if (bodyPose.isValid()) {
+        }
+        else if (bodyPose.isValid()) {
           bodies_pose[bodyName] = bodyPose;
         }
       }
@@ -158,13 +161,15 @@ public:
       if (bodies_pose.find(body_name) != bodies_pose.end()) {
         body_pose = bodies_pose[body_name];
         return true;
-      } else {
+      }
+      else {
         std::cout << "The body " << body_name << " was not found in Vicon. Please check the name you typed."
-                  << std::endl;
+          << std::endl;
 
         return false;
       }
-    } else {
+    }
+    else {
       std::cout << "Error : could not process data from Vicon" << std::endl;
 
       return false;
@@ -208,7 +213,7 @@ private:
 /*!
  * Default constructor that creates a direct client (not a multi-cast client).
  */
-vpMocapVicon::vpMocapVicon() : m_impl(new vpMocapViconImpl()) {}
+vpMocapVicon::vpMocapVicon() : m_impl(new vpMocapViconImpl()) { }
 
 /*!
  * Destructor.
@@ -263,9 +268,9 @@ void vpMocapVicon::setServerAddress(const std::string &serverAddr) { m_impl->set
  * \param[in] verbose : When true enable verbose mode, otherwise disable verbose mode.
  */
 void vpMocapVicon::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapVicon.cpp.o) has no symbols
-void dummy_vpMocapVicon(){};
+void dummy_vpMocapVicon() { };
 #endif

@@ -49,17 +49,21 @@
 
 namespace
 {
-struct vpDataType_t {
+struct vpDataType_t
+{
   double double_val;
   int int_val;
 
-  vpDataType_t() : double_val(0.0), int_val(0) {}
-  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
+  vpDataType_t() : double_val(0.0), int_val(0) { }
+  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) { }
 };
 } // namespace
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 // inet_ntop() used in vpUDPClient is not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
   try {
@@ -74,9 +78,9 @@ int main()
       memcpy(&data_type.double_val, msg.c_str(), sizeof(data_type.double_val));
       memcpy(&data_type.int_val, msg.c_str() + sizeof(data_type.double_val), sizeof(data_type.int_val));
       std::cout << "Server received double_val: " << data_type.double_val << " ; int_val: " << data_type.int_val
-                << " from: " << hostInfo << std::endl;
+        << " from: " << hostInfo << std::endl;
 
-      // Get address and port
+// Get address and port
       std::istringstream iss(hostInfo);
       std::vector<std::string> tokens;
       std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(),
@@ -104,15 +108,18 @@ int main()
         std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(),
                   std::back_inserter(tokens));
         server.send("Echo: " + msg, tokens[1], atoi(tokens[2].c_str()));
-      } else if (res == 0) {
+      }
+      else if (res == 0) {
         std::cout << "Receive timeout" << std::endl;
-      } else {
+      }
+      else {
         std::cerr << "Error server.receive()!" << std::endl;
       }
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -120,4 +127,4 @@ int main()
   std::cout << "This test doesn't work on win XP where inet_ntop() is not available" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

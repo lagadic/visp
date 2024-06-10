@@ -49,6 +49,7 @@
 #include <string>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -79,6 +80,7 @@
 #include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbTracker
   \ingroup group_mbt_trackers
@@ -914,5 +916,5 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
-
+END_VISP_NAMESPACE
 #endif

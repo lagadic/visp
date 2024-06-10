@@ -31,13 +31,13 @@
  * 2D vanishing point visual feature (Z coordinate in 3D space is infinity)
  */
 
-#ifndef vpFeatureVanishingPoint_H
-#define vpFeatureVanishingPoint_H
-
 /*!
  * \file vpFeatureVanishingPoint.h \brief Class that defines 2D vanishing
  * point visual feature (Z coordinate in 3D space is infinity)
  */
+
+#ifndef vpFeatureVanishingPoint_H
+#define vpFeatureVanishingPoint_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureVanishingPoint
  * \ingroup group_visual_features
@@ -67,7 +68,7 @@
  *   0 \end{array} \right] \f] \f[ L_{\frac{1}{\rho}} = \left[ \begin{array}{cccccc} 0 & 0 & 0 & -(1 + \frac{1}{\rho^2})
  *   \sin \alpha & (1 + \frac{1}{\rho^2}) \cos \alpha & 0 \end{array} \right] \f] \f[ L_{\alpha} = \left[
  *   \begin{array}{cccccc} 0 & 0 & 0 & \frac{\cos \alpha}{\rho} & \frac{\sin \alpha}{\rho} & -1 \end{array} \right] \f]
- */
+*/
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {
 public:
@@ -112,5 +113,5 @@ public:
 protected:
   unsigned int m_select; // Memory to know which features are used for display;
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -43,6 +43,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vs/vpServoData.h>
 
+BEGIN_VISP_NAMESPACE
 void vpServoData::open(const std::string &directory)
 {
   try {
@@ -108,3 +109,4 @@ void vpServoData::close()
     sStarFile.close();
   }
 }
+END_VISP_NAMESPACE

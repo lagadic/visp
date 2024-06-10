@@ -31,14 +31,13 @@
  * D3D renderer for windows 32 display
  */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef VPD3DRENDERER_HH
+#define VPD3DRENDERER_HH
 
 #include <visp3/core/vpConfig.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if (defined(VISP_HAVE_D3D9))
-
-#ifndef VPD3DRENDERER_HH
-#define VPD3DRENDERER_HH
 
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
@@ -50,12 +49,14 @@
 
 #include <iostream>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpD3DRenderer.h
  *
  * \brief Display under windows using Direct3D9.
  * Is used by vpDisplayD3D to do the drawing.
- */
+*/
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 {
   IDirect3D9 *pD3D;
@@ -189,5 +190,8 @@ private:
   unsigned int supPowerOf2(unsigned int n);
 };
 #endif
+
+END_VISP_NAMESPACE
+
 #endif
 #endif

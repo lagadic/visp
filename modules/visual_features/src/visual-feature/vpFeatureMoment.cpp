@@ -43,6 +43,7 @@
 #include <vector>
 #include <visp3/core/vpDebug.h>
 
+BEGIN_VISP_NAMESPACE
 class vpBasicFeature;
 
 /*!
@@ -247,20 +248,6 @@ void vpFeatureMoment::linkTo(vpFeatureMomentDatabase &featureMoments)
 
 void vpFeatureMoment::compute_interaction() { }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM)
-{
-  /*
-   * - A static_cast is forced here since interaction() defined in vpBasicFeature()
-   *   is not const. But introducing const in vpBasicFeature() can break a lot of
-   *   client code.
-   * - 6 corresponds to 6 velocities in standard interaction matrix
-   */
-  vpMatrix Lcomplete(static_cast<unsigned int>(featM.getDimension()), 6);
-  Lcomplete = const_cast<vpFeatureMoment &>(featM).interaction(vpBasicFeature::FEATURE_ALL);
-  Lcomplete.matlabPrint(os);
-  return os;
-}
-
 /*!
  * Interface function to display the moments and other interaction matrices
  * on which a particular vpFeatureMoment is dependent upon
@@ -275,3 +262,19 @@ void vpFeatureMoment::printDependencies(std::ostream &os) const
     "to be implemented in the derived classes!"
     << std::endl;
 }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM)
+{
+  /*
+   * - A static_cast is forced here since interaction() defined in vpBasicFeature()
+   *   is not const. But introducing const in vpBasicFeature() can break a lot of
+   *   client code.
+   * - 6 corresponds to 6 velocities in standard interaction matrix
+   */
+  vpMatrix Lcomplete(static_cast<unsigned int>(featM.getDimension()), 6);
+  Lcomplete = const_cast<vpFeatureMoment &>(featM).interaction(vpBasicFeature::FEATURE_ALL);
+  Lcomplete.matlabPrint(os);
+  return os;
+}
+
+END_VISP_NAMESPACE

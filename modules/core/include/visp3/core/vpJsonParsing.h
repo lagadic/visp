@@ -39,15 +39,16 @@
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 
+BEGIN_VISP_NAMESPACE
 /*!
-Parse the flag values defined in a JSON object.
-if the flags are defined as an int, then this is int is directly returned.
-If it is defined as a combination of options (defined from an enumeration E) then the logical or of theses enum values is returned.
-Beware that invalid values may be defined in the JSON object: the int value may be invalid, or the parsing of enum values may fail.
+  Parse the flag values defined in a JSON object.
+  if the flags are defined as an int, then this is int is directly returned.
+  If it is defined as a combination of options (defined from an enumeration E) then the logical or of theses enum values is returned.
+  Beware that invalid values may be defined in the JSON object: the int value may be invalid, or the parsing of enum values may fail.
 
-\param j: the JSON object to parse
+  \param j: the JSON object to parse
 
-\return an int, corresponding to the combination of boolean flags
+  \return an int, corresponding to the combination of boolean flags
 
 */
 template<typename E>
@@ -68,11 +69,11 @@ int flagsFromJSON(const nlohmann::json &j)
 }
 
 /*!
-    Serialize flag values as a json array.
-    \param flags the value to serialize
-    \param options the possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
+  Serialize flag values as a json array.
+  \param flags the value to serialize
+  \param options the possible values that can be contained in flags. A flag i is set if flags & options[i] != 0.
 
-    \return a json object (an array) that contains the different flags of the variable flags.
+  \return a json object (an array) that contains the different flags of the variable flags.
 
 */
 template<typename E>
@@ -97,7 +98,8 @@ template<typename T, typename O, typename... Os>
 bool convertFromTypeAndBuildFrom(const nlohmann::json &j, T &t)
 {
   if (j["type"] == O::jsonTypeName) {
-    O other = j;
+    O other;
+    from_json(j, other);
     t.build(other);
     return true;
   }
@@ -105,6 +107,6 @@ bool convertFromTypeAndBuildFrom(const nlohmann::json &j, T &t)
     return convertFromTypeAndBuildFrom<T, Os...>(j, t);
   }
 }
-
+END_VISP_NAMESPACE
 #endif
 #endif

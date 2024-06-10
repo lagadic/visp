@@ -51,6 +51,8 @@
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr.h>
 
+BEGIN_VISP_NAMESPACE
+
 void readEXRTiny(vpImage<float> &I, const std::string &filename)
 {
   EXRVersion exr_version;
@@ -318,5 +320,7 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   free(header.requested_pixel_types);
   free(header.pixel_types);
 }
+
+END_VISP_NAMESPACE
 
 #endif

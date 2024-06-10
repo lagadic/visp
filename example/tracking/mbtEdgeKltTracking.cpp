@@ -62,6 +62,10 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfColwvp"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -325,8 +329,8 @@ int main(int argc, const char **argv)
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
-        }
       }
+    }
       else {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
@@ -338,9 +342,9 @@ int main(int argc, const char **argv)
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
 #endif
-        }
       }
-    }
+  }
+}
 
     if (!opt_initFile.empty())
       initFile = opt_initFile;

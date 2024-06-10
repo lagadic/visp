@@ -50,6 +50,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
 static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");

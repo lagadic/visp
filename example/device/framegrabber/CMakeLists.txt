@@ -80,6 +80,7 @@ if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
 
   visp_set_source_file_compile_flag(getRealSense2Info.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(grabRealSense2.cpp ${CXX_FLAGS_MUTE_WARNINGS})

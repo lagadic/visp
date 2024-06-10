@@ -46,6 +46,9 @@
 
 namespace common_tools
 {
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 static const int g_nearest_neighbor = 0;
 static const int g_bilinear = 1;
 

@@ -39,8 +39,10 @@
 #ifndef _vpFeatureMomentGravityCenter_h_
 #define _vpFeatureMomentGravityCenter_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!
@@ -142,7 +144,7 @@ class vpMomentDatabase;
  * - vpFeatureMomentBasic
  *
  * Minimum vpMomentObject order needed to compute this feature: 2.
- */
+*/
 class VISP_EXPORT vpFeatureMomentGravityCenter : public vpFeatureMoment
 {
 public:
@@ -255,6 +257,6 @@ public:
    */
   static unsigned int selectYg() { return 1 << 1; }
 };
-
 #endif
+END_VISP_NAMESPACE
 #endif

@@ -82,6 +82,8 @@ typedef unsigned __int32 uint32_t;
 #endif
 
 #include <vector>
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUniRand
 
@@ -172,5 +174,5 @@ private:
   float m_maxInvFlt;
   pcg32_random_t m_rng;
 };
-
+END_VISP_NAMESPACE
 #endif

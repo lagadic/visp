@@ -60,6 +60,8 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/vision/vpPose.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpDetectorAprilTag::Impl
 {
@@ -1186,13 +1188,6 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges) { m_impl->setR
 void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRefinePose(refinePose); }
 #endif
 
-void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
-{
-  using std::swap;
-
-  swap(o1.m_impl, o2.m_impl);
-}
-
 /*!
  * Modify the resulting tag pose returned by getPose() in order to get
  * a pose where z-axis is aligned when the camera plane is parallel to the tag.
@@ -1201,6 +1196,15 @@ void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
 void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
+}
+
+END_VISP_NAMESPACE
+
+VISP_EXPORT void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2)
+{
+  using std::swap;
+
+  swap(o1.m_impl, o2.m_impl);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

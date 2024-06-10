@@ -51,6 +51,8 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
+BEGIN_VISP_NAMESPACE
+
 class vpPlotCurve
 {
 public:
@@ -80,6 +82,8 @@ public:
   void plotList(const vpImage<unsigned char> &I, double xorg, double yorg, double zoomx, double zoomy);
 };
 
+
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

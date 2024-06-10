@@ -37,6 +37,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vp1394CMUGrabber.h
+  \brief Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
+*/
+
 #ifndef vp1394CMUGrabber_h
 #define vp1394CMUGrabber_h
 
@@ -55,11 +60,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
-/*!
-  \file vp1394CMUGrabber.h
-  \brief Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vp1394CMUGrabber
 
@@ -237,7 +238,8 @@ public:
         color = vp1394CMUGrabber::MONO16;
         break;
       }
-    } else if (_format == 1) {
+    }
+    else if (_format == 1) {
       switch (_mode) {
       case 0:
         color = vp1394CMUGrabber::YUV422;
@@ -264,7 +266,8 @@ public:
         color = vp1394CMUGrabber::MONO16;
         break;
       }
-    } else if (_format == 2) {
+    }
+    else if (_format == 2) {
       switch (_mode) {
       case 0:
         color = vp1394CMUGrabber::YUV422;
@@ -332,6 +335,6 @@ public:
 private:
   void initCamera();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -36,6 +36,7 @@
 
 #include <cmath>
 
+BEGIN_VISP_NAMESPACE
 /// Default constructor.
 vpRectOriented::vpRectOriented()
   : m_center(), m_width(), m_height(), m_theta(), m_topLeft(), m_topRight(), m_bottomLeft(), m_bottomRight()
@@ -246,3 +247,4 @@ bool vpRectOriented::isLeft(const vpImagePoint &pointToTest, const vpImagePoint 
   double d = (a * pointToTest.get_i()) + (b * pointToTest.get_j()) + c;
   return (d > 0);
 }
+END_VISP_NAMESPACE

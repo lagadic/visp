@@ -41,6 +41,7 @@
 
 #include <visp3/sensor/vpDirectShowDevice.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
         Initialize the vpDirectShowDevice with the moniker's information
         \param pMoniker The moniker that contains the device's information
@@ -111,10 +112,10 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDirectShowDevice &dev)
 {
   return os << dev.name << std::endl << dev.desc << std::endl << dev.devPath;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpDirectShowDevice.cpp.o)
 // has no symbols
-void dummy_vpDirectShowDevice(){};
+void dummy_vpDirectShowDevice() { };
 #endif
 #endif

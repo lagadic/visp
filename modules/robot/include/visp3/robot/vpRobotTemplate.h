@@ -31,24 +31,25 @@
  * Defines a robot just to show which function you must implement.
  */
 
-#ifndef vpRobotTemplate_h
-#define vpRobotTemplate_h
-
 /*!
  * \file vpRobotTemplate.h
  * Defines a robot just to show which function you must implement.
  */
+
+#ifndef vpRobotTemplate_h
+#define vpRobotTemplate_h
 
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotTemplate
  * \ingroup group_robot_real_template
  * \brief Class that defines a robot just to show which function you must implement.
- */
+*/
 class VISP_EXPORT vpRobotTemplate : public vpRobot
 {
 public:
@@ -84,5 +85,5 @@ protected:
 protected:
   vpHomogeneousMatrix m_eMc; //!< Constant transformation between end-effector and tool (or camera) frame
 };
-
+END_VISP_NAMESPACE
 #endif

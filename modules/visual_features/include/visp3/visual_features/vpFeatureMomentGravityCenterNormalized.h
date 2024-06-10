@@ -39,8 +39,10 @@
 #ifndef _vpFeatureMomentGravityCenterNormalized_h_
 #define _vpFeatureMomentGravityCenterNormalized_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!
@@ -83,7 +85,7 @@ class vpMomentDatabase;
  * - vpMomentGravityCenter
  * - vpMomentAreaNormalized
  * - vpFeatureMomentAreaNormalized
- */
+*/
 class VISP_EXPORT vpFeatureMomentGravityCenterNormalized : public vpFeatureMoment
 {
 public:
@@ -279,4 +281,5 @@ public:
   static unsigned int selectYn() { return 1 << 1; }
 };
 #endif
+END_VISP_NAMESPACE
 #endif

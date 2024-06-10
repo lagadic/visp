@@ -51,6 +51,7 @@
 
 #define VP_MAX_UDP_PAYLOAD 508
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUDPServer
 
@@ -217,6 +218,6 @@ private:
 
   void init(const std::string &hostname, int port);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

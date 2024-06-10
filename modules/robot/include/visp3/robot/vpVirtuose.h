@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpVirtuose.h
+  \brief Wrapper over Haption Virtuose SDK to control haptic devices.
+*/
+
 #ifndef _vpVirtuose_h_
 #define _vpVirtuose_h_
 
@@ -45,10 +50,7 @@
 
 #include <VirtuoseAPI.h>
 
-/*!
-  \file vpVirtuose.h
-  \brief Wrapper over Haption Virtuose SDK to control haptic devices.
-*/
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpVirtuose
   \ingroup group_robot_haptic
@@ -136,7 +138,7 @@ int main()
   std::cout << "Joint position: " << q.t() << std::endl;
 }
   \endcode
- */
+*/
 class VISP_EXPORT vpVirtuose
 {
 public:
@@ -225,6 +227,6 @@ protected:
   float m_period;
   unsigned int m_njoints;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -49,6 +49,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/klt/vpKltOpencv.h>
 
+BEGIN_VISP_NAMESPACE
 vpKltOpencv::vpKltOpencv()
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
   m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
@@ -321,7 +322,7 @@ void vpKltOpencv::suppressFeature(const int &index)
   m_points[1].erase(m_points[1].begin() + index);
   m_points_id.erase(m_points_id.begin() + index);
 }
-
+END_VISP_NAMESPACE
 #else
 
 // Work around to avoid visp_klt library empty when OpenCV is not installed or used

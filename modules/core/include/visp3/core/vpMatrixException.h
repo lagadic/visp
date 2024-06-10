@@ -40,11 +40,12 @@
 #include <iostream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMatrixException
  * \ingroup group_core_debug
  * \brief error that can be emitted by the vpMatrix class and its derivatives
- */
+*/
 class VISP_EXPORT vpMatrixException : public vpException
 {
 public:
@@ -99,5 +100,5 @@ public:
    */
   explicit vpMatrixException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

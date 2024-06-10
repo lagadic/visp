@@ -3,10 +3,15 @@
 //#define VP_DEBUG        // Activate the debug mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpIN_FCT("main()"); // std::cout if VP_TRACE defined
 
   // Check the active debug levels set in VP_DEBUG_MODE

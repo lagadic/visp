@@ -45,7 +45,9 @@
 
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
-typedef struct {
+BEGIN_VISP_NAMESPACE
+typedef struct
+{
   const char *ident; /* identifateur */
   Index token;       /* code du jeton */
 } Keyword;
@@ -62,7 +64,7 @@ extern int mylength;
 extern int mylineno;
 extern char *mytext;
 extern Keyword keyword_tbl[];
-
+END_VISP_NAMESPACE
 /*
  * Jetons superieurs a 270 (voir "../mylex/token.h").
  */

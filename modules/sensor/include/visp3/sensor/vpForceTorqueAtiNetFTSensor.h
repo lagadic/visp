@@ -45,6 +45,7 @@
 // is not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpForceTorqueAtiNetFTSensor
  *
@@ -96,7 +97,7 @@
  * ...
  * \endcode
  * where 3 first values are forces Fx, Fy, Fz in N and the 3 last are torques Tx, Ty, Tz in Nm.
- */
+*/
 class VISP_EXPORT vpForceTorqueAtiNetFTSensor : public vpUDPClient
 {
 public:
@@ -159,6 +160,6 @@ protected:
   vpColVector m_ft;
   bool m_is_streaming_started;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif
