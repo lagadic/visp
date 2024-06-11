@@ -43,6 +43,10 @@
 
 #include <functional> // std::function
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpParticleFilter
@@ -215,20 +219,38 @@ public:
    * \param[in] weights Vector that contains the weights associated to the particles.
    * \return vpColVector \f$ \textbf{res} = \sum^{N-1}_{i=0} weights[i] \textbf{particles}[i] \f$
    */
-  inline static vpColVector simpleMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
-  {
-    size_t nbParticles = particles.size();
-    if (nbParticles == 0) {
-      throw(vpException(vpException::dimensionError, "No particles to add when computing the mean"));
-    }
-    vpColVector res = particles[0] * weights[0];
-    for (size_t i = 1; i < nbParticles; ++i) {
-      res += particles[i] * weights[i];
-    }
-    return res;
-  }
+  static vpColVector simpleMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights);
+
+  /**
+   * \brief Returns true if the following condition is fulfilled, false otherwise:
+   * \f$ \frac{2}{\sum_i (\frac{w_i}{\sum_j w_j})^2} < N \f$
+   *
+   * \param[in] N The number of particles.
+   * \param[in] weights The weights associated to each particle.
+   * \return true Resampling must be performed.
+   * \return false Resampling is not needed.
+   */
+  static bool simpleResamplingCheck(const unsigned int &N, const std::vector<double> &weights);
+
+  /**
+   * \brief Function implementing the resampling of a Simple Importance Resampling Particle Filter.
+   *
+   * \param[in] particles Vector containing the particles.
+   * \param[in] weights Vector containing the associated weights.
+   * \return std::pair<std::vector<vpColVector>, std::vector<double>> A pair of vector of particles and
+   * vector of associated weights.
+   */
+  static std::pair<std::vector<vpColVector>, std::vector<double>> simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights);
 
 private:
+#ifdef VISP_HAVE_OPENMP
+  void predictMultithread(const double &dt, const vpColVector &u);
+  void updateMultithread(const vpColVector &z);
+#endif
+
+  void predictMonothread(const double &dt, const vpColVector &u);
+  void updateMonothread(const vpColVector &z);
+
   unsigned int m_N; /*!< Number of particles.*/
   std::vector<vpGaussRand> m_noiseGenerators; /*!< The noise generator adding noise to the particles at each time step.*/
   std::vector<vpColVector> m_particles; /*!< The particles.*/
