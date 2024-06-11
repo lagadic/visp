@@ -1,7 +1,7 @@
-/****************************************************************************
+/*
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@
  * Description:
  * Use to display an image behind the internal view of the simulator
  * used for augmented reality application
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpAR.h
@@ -45,8 +44,8 @@
 
 */
 
-#ifndef vpAR_HH
-#define vpAR_HH
+#ifndef VP_AR_H
+#define VP_AR_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -84,58 +83,57 @@ BEGIN_VISP_NAMESPACE
   The code below shows how to use the class.
 
   \code
-#include <visp3/ar/vpAR.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
+  #include <visp3/ar/vpAR.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpImage.h>
 
-#ifdef VISP_HAVE_COIN3D_AND_GUI
-static void *mainloopfunction(void *_simu)
-{
-  vpAR *simu = (vpAR *)_simu ;
-  simu->initMainApplication() ;
+  #ifdef VISP_HAVE_COIN3D_AND_GUI
+  static void *mainloopfunction(void *_simu)
+  {
+    vpAR *simu = (vpAR *)_simu ;
+    simu->initMainApplication() ;
 
-  vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo;
+    vpImage<unsigned char> I;
+    vpHomogeneousMatrix cMo;
 
-  //Your code to compute the pose cMo.
+    //Your code to compute the pose cMo.
 
-  //Set the image to use as background.
-  simu->setImage(I) ;
-  //Set the camera position thanks to the pose cMo computed before.
-  simu->setCameraPosition(cMo) ;
+    //Set the image to use as background.
+    simu->setImage(I) ;
+    //Set the camera position thanks to the pose cMo computed before.
+    simu->setCameraPosition(cMo) ;
 
-  simu->closeMainApplication();
-}
-#endif
+    simu->closeMainApplication();
+  }
+  #endif
 
-int main()
-{
-#ifdef VISP_HAVE_COIN3D_AND_GUI
-  vpAR simu;
-  //Camera parameters.
-  vpCameraParameters cam(600,600,160,120);
+  int main()
+  {
+  #ifdef VISP_HAVE_COIN3D_AND_GUI
+    vpAR simu;
+    //Camera parameters.
+    vpCameraParameters cam(600,600,160,120);
 
-  //Initialize the internal view of the simulator.
-  simu.initInternalViewer(640,480, vpSimulator::grayImage);
+    //Initialize the internal view of the simulator.
+    simu.initInternalViewer(640,480, vpSimulator::grayImage);
 
-  vpTime::wait(300);
+    vpTime::wait(300);
 
-  // Load the cad model. 4points.iv can be downloaded on the website
-  // with the image package
-  simu.load("./4points.iv");
+    // Load the cad model. 4points.iv can be downloaded on the website
+    // with the image package
+    simu.load("./4points.iv");
 
-  //Initialize the internal camera parameters.
-  simu.setInternalCameraParameters(cam);
+    //Initialize the internal camera parameters.
+    simu.setInternalCameraParameters(cam);
 
-  simu.initApplication(&mainloopfunction);
+    simu.initApplication(&mainloopfunction);
 
-  simu.mainLoop();
-#endif
-  return 0;
-}
+    simu.mainLoop();
+  #endif
+    return 0;
+  }
   \endcode
-
 */
 class VISP_EXPORT vpAR : public vpSimulator
 {

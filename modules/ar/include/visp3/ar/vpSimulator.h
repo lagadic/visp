@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,10 @@
  *
  * Description:
  * Simulator based on Coin3d.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
-#ifndef vpSimulator_HH
-#define vpSimulator_HH
+#ifndef VP_SIMULATOR_H
+#define VP_SIMULATOR_H
 /*!
   \file vpSimulator.h
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
