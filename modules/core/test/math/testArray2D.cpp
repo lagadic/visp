@@ -51,6 +51,10 @@
 
 #include <visp3/core/vpTranslationVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 template <typename Type> bool test(const std::string &s, const vpArray2D<Type> &A, const std::vector<Type> &bench)
 {
   static unsigned int cpt = 0;
@@ -140,11 +144,8 @@ TEST_CASE("Test constructors with double", "[constructors]")
     }
     SECTION("Keep default size (r=0, c=0)")
     {
-      vpArray2D<double> A(bench);
-      std::cout << "A with default size (r=0, c=0):\n" << A << std::endl;
-      CHECK(test("A", A, bench));
-      CHECK(A.getRows() == bench.size());
-      CHECK(A.getCols() == 1);
+      std::cout << "A with default size (r=0, c=0):\n" << std::endl;
+      REQUIRE_THROWS(vpArray2D<double>(bench));
     }
     SECTION("Keep row size to 0")
     {
@@ -221,11 +222,8 @@ TEST_CASE("Test constructors with float", "[constructors]")
     }
     SECTION("Keep default size (r=0, c=0)")
     {
-      vpArray2D<float> A(bench);
-      std::cout << "A with default size (r=0, c=0):\n" << A << std::endl;
-      CHECK(test("A", A, bench));
-      CHECK(A.getRows() == bench.size());
-      CHECK(A.getCols() == 1);
+      std::cout << "A with default size (r=0, c=0):\n" << std::endl;
+      REQUIRE_THROWS(vpArray2D<float>(bench));
     }
     SECTION("Keep row size to 0")
     {

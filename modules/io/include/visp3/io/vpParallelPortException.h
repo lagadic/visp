@@ -46,12 +46,13 @@
 #include <iostream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpParallelPortException
  *
  * \brief Error that can be emitted by the vpParallelPort class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpParallelPortException : public vpException
 {
 public:
@@ -88,5 +89,5 @@ public:
    */
   explicit vpParallelPortException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

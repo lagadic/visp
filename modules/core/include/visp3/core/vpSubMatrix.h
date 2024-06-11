@@ -31,17 +31,19 @@
  * Mask on a vpMatrix.
  */
 
-#ifndef _vpSubMatrix_h_
-#define _vpSubMatrix_h_
-
-#include <visp3/core/vpMatrix.h>
-
 /*!
  * \file vpSubMatrix.h
  *
  * \brief Definition of the vpSubMatrix class
  */
 
+#ifndef _vpSubMatrix_h_
+#define _vpSubMatrix_h_
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSubMatrix
  * \ingroup group_core_matrices
@@ -50,21 +52,9 @@
  *
  *
  * \sa vpMatrix vpColVector vpRowVector
- */
+*/
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
-private:
-  //! Eye method unavailable
-  void eye(unsigned int n);
-  //! Eye method unavailable
-  void eye(unsigned int m, unsigned int n);
-  //! Copy constructor unavailable
-  vpSubMatrix(const vpSubMatrix & /* m */);
-
-protected:
-  unsigned int pRowNum;
-  unsigned int pColNum;
-  vpMatrix *parent;
 
 public:
   //! Default constructor
@@ -88,6 +78,19 @@ public:
   vpSubMatrix &operator=(const vpMatrix &B);
   //! Operation such as subA = x
   vpSubMatrix &operator=(const double &x);
-};
 
+protected:
+  unsigned int pRowNum;
+  unsigned int pColNum;
+  vpMatrix *parent;
+
+private:
+  //! Eye method unavailable
+  void eye(unsigned int n);
+  //! Eye method unavailable
+  void eye(unsigned int m, unsigned int n);
+  //! Copy constructor unavailable
+  vpSubMatrix(const vpSubMatrix &m /* m */);
+};
+END_VISP_NAMESPACE
 #endif

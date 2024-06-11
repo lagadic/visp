@@ -49,6 +49,8 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 
 vpPose::vpPose()
@@ -94,17 +96,17 @@ void vpPose::addPoint(const vpPoint &newP)
 {
   listP.push_back(newP);
   listOfPoints.push_back(newP);
-  npt++;
+  ++npt;
 }
 
 void vpPose::addPoints(const std::vector<vpPoint> &lP)
 {
   listP.insert(listP.end(), lP.begin(), lP.end());
   listOfPoints.insert(listOfPoints.end(), lP.begin(), lP.end());
-  npt = (unsigned int)listP.size();
+  npt = static_cast<unsigned int>(listP.size());
 }
 
-void vpPose::setDistanceToPlaneForCoplanarityTest(double d) { distanceToPlaneForCoplanarityTest = d; }
+void vpPose::setDistToPlaneForCoplanTest(double d) { distanceToPlaneForCoplanarityTest = d; }
 
 void vpPose::setDementhonSvThreshold(const double &svThresh)
 {
@@ -122,8 +124,9 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
     throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
   }
 
-  if (npt == 3)
+  if (npt == 3) {
     return true;
+  }
 
   // Shuffling the points to limit the risk of using points close to each other
   std::vector<vpPoint> shuffled_listP = vpUniRand::shuffleVector<vpPoint>(listOfPoints);
@@ -140,9 +143,10 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
   std::vector<vpPoint>::const_iterator it_tmp;
 
   std::vector<vpPoint>::const_iterator it_i, it_j, it_k;
-  for (it_i = shuffled_listP.begin(); it_i != shuffled_listP.end(); ++it_i) {
+  std::vector<vpPoint>::const_iterator shuffled_listp_end = shuffled_listP.end();
+  for (it_i = shuffled_listP.begin(); it_i != shuffled_listp_end; ++it_i) {
     if (degenerate == false) {
-      // std::cout << "Found a non degenerate configuration" << std::endl;
+      // --comment: print "Found a non degenerate configuration"
       break;
     }
     P1 = *it_i;
@@ -158,9 +162,10 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
     if (not_on_origin) {
       it_tmp = it_i;
       ++it_tmp; // j = i+1
-      for (it_j = it_tmp; it_j != shuffled_listP.end(); ++it_j) {
+      std::vector<vpPoint>::const_iterator shuffled_listp_end_1 = shuffled_listP.end();
+      for (it_j = it_tmp; it_j != shuffled_listp_end_1; ++it_j) {
         if (degenerate == false) {
-          // std::cout << "Found a non degenerate configuration" << std::endl;
+          // --comment: cout "Found a non degenerate configuration"
           break;
         }
         P2 = *it_j;
@@ -175,7 +180,8 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
         if (not_on_origin) {
           it_tmp = it_j;
           ++it_tmp; // k = j+1
-          for (it_k = it_tmp; it_k != shuffled_listP.end(); ++it_k) {
+          std::vector<vpPoint>::const_iterator shuffled_listp_end_2 = shuffled_listP.end();
+          for (it_k = it_tmp; it_k != shuffled_listp_end_2; ++it_k) {
             P3 = *it_k;
             if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
               (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
@@ -207,13 +213,16 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
               b_c[2] = z2 - z3;
 
               cross_prod = vpColVector::crossProd(a_b, b_c);
-              if (cross_prod.sumSquare() <= std::numeric_limits<double>::epsilon())
+              if (cross_prod.sumSquare() <= std::numeric_limits<double>::epsilon()) {
                 degenerate = true; // points are collinear
-              else
+              }
+              else {
                 degenerate = false;
+              }
             }
-            if (degenerate == false)
+            if (degenerate == false) {
               break;
+            }
           }
         }
       }
@@ -225,32 +234,30 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
     return true;
   }
 
-  double a = y1 * z2 - y1 * z3 - y2 * z1 + y2 * z3 + y3 * z1 - y3 * z2;
-  double b = -x1 * z2 + x1 * z3 + x2 * z1 - x2 * z3 - x3 * z1 + x3 * z2;
-  double c = x1 * y2 - x1 * y3 - x2 * y1 + x2 * y3 + x3 * y1 - x3 * y2;
-  double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 - x3 * y1 * z2 + x3 * y2 * z1;
+  double a = (((y1 * z2) - (y1 * z3) - (y2 * z1)) + (y2 * z3) + (y3 * z1)) - (y3 * z2);
+  double b = ((((-x1 * z2) + (x1 * z3) + (x2 * z1)) - (x2 * z3)) - (x3 * z1)) + (x3 * z2);
+  double c = (((x1 * y2) - (x1 * y3) - (x2 * y1)) + (x2 * y3) + (x3 * y1)) - (x3 * y2);
+  double d = (((-x1 * y2 * z3) + (x1 * y3 * z2) + (x2 * y1 * z3)) - (x2 * y3 * z1) - (x3 * y1 * z2)) + (x3 * y2 * z1);
 
-  // std::cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d <<
-  // std::endl;
-  if (std::fabs(b) <= std::numeric_limits<double>::epsilon() &&
-    std::fabs(c) <= std::numeric_limits<double>::epsilon()) {
+  if ((std::fabs(b) <= std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(c) <= std::numeric_limits<double>::epsilon())) {
     coplanar_plane_type = 1; // ax=d
   }
-  else if (std::fabs(a) <= std::numeric_limits<double>::epsilon() &&
-    std::fabs(c) <= std::numeric_limits<double>::epsilon()) {
+  else if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(c) <= std::numeric_limits<double>::epsilon())) {
     coplanar_plane_type = 2; // by=d
   }
-  else if (std::fabs(a) <= std::numeric_limits<double>::epsilon() &&
-    std::fabs(b) <= std::numeric_limits<double>::epsilon()) {
+  else if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
     coplanar_plane_type = 3; // cz=d
   }
 
   double D = sqrt(vpMath::sqr(a) + vpMath::sqr(b) + vpMath::sqr(c));
 
-  for (it = shuffled_listP.begin(); it != shuffled_listP.end(); ++it) {
+  std::vector<vpPoint>::const_iterator shuffled_listp_end_decl2 = shuffled_listP.end();
+  for (it = shuffled_listP.begin(); it != shuffled_listp_end_decl2; ++it) {
     P1 = *it;
-    double dist = (a * P1.get_oX() + b * P1.get_oY() + c * P1.get_oZ() + d) / D;
-    // std::cout << "dist= " << dist << std::endl;
+    double dist = ((a * P1.get_oX()) + (b * P1.get_oY()) + (c * P1.get_oZ()) + d) / D;
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest) {
       vpDEBUG_TRACE(10, " points are not coplanar ");
@@ -286,7 +293,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
   double squared_error = 0;
   vpPoint P;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     double x = P.get_x();
     double y = P.get_y();
@@ -295,7 +303,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 
     squared_error += vpMath::sqr(x - P.get_x()) + vpMath::sqr(y - P.get_y());
   }
-  return (squared_error);
+  return squared_error;
 }
 
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam) const
@@ -310,7 +318,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
   residuals.resize(static_cast<unsigned int>(listP.size()));
   vpPoint P;
   unsigned int i = 0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     double x = P.get_x();
     double y = P.get_y();
@@ -324,10 +333,11 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
     vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), u_moved, v_moved);
 
     double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
-    residuals[i++] = squaredResidual;
+    residuals[i] = squaredResidual;
+    i++;
     squared_error += squaredResidual;
   }
-  return (squared_error);
+  return squared_error;
 }
 
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
@@ -410,6 +420,10 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case DEMENTHON_LAGRANGE_VIRTUAL_VS: {
     return computePoseDementhonLagrangeVVS(cMo);
   }
+  default:
+  {
+    std::cout << "method not identified" << std::endl;
+  }
   }
 
   switch (method) {
@@ -426,9 +440,15 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   }
   case LOWE:
   case LAGRANGE_LOWE:
-  case DEMENTHON_LOWE: {
+  case DEMENTHON_LOWE:
+  {
     poseLowe(cMo);
-  } break;
+  }
+  break;
+  default:
+  {
+    std::cout << "method not identified" << std::endl;
+  }
   }
 
   return true;
@@ -512,7 +532,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo)
     }
   }
 
-  if ((hasDementhonSucceeded || hasLagrangeSucceeded)) {
+  if (hasDementhonSucceeded || hasLagrangeSucceeded) {
     // At least one of the linear methods managed to compute an initial pose.
     // We initialize cMo with the method that had the lowest residual
     cMo = (r_dementhon < r_lagrange) ? cMo_dementhon : cMo_lagrange;
@@ -528,7 +548,8 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo)
 void vpPose::printPoint()
 {
   vpPoint P;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
 
     std::cout << "3D oP " << P.oP.t();
@@ -552,13 +573,11 @@ void vpPose::displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vp
 {
   vpPoint P;
   vpImagePoint ip;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
     vpDisplay::displayCross(I, ip, 5, col);
-    //  std::cout << "3D oP " << P.oP.t() ;
-    //  std::cout << "3D cP " << P.cP.t() ;
-    //  std::cout << "2D    " << P.p.t() ;
   }
 }
 
@@ -566,13 +585,11 @@ void vpPose::displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor c
 {
   vpPoint P;
   vpImagePoint ip;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
     vpDisplay::displayCross(I, ip, 5, col);
-    //  std::cout << "3D oP " << P.oP.t() ;
-    //  std::cout << "3D cP " << P.cP.t() ;
-    //  std::cout << "2D    " << P.p.t() ;
   }
 }
 
@@ -605,11 +622,13 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   vpMatrix H(3, 3);
   vpHomography hom;
 
-  //  vpHomography::HartleyDLT(rectx,recty,irectx,irecty,hom);
+  // --comment: vpHomography HartleyDLT of rectx recty irectx irecty hom
   vpHomography::HLM(rectx, recty, irectx, irecty, 1, hom);
-  for (unsigned int i = 0; i < 3; ++i)
-    for (unsigned int j = 0; j < 3; ++j)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       H[i][j] = hom[i][j];
+    }
+  }
   // calcul de s =  ||Kh1||/ ||Kh2|| =ratio (length on x axis/ length on y
   // axis)
   vpColVector kh1(3);
@@ -646,3 +665,5 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   P.computePose(vpPose::DEMENTHON_LOWE, cMo);
   return lx / s;
 }
+
+END_VISP_NAMESPACE

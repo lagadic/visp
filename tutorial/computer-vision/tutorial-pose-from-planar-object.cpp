@@ -2,6 +2,7 @@
 
 // Core
 #include <visp3/core/vpColorDepthConversion.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -22,6 +23,10 @@
 
 // Check if std:c++17 or higher
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // Local helper
 namespace
@@ -369,7 +374,7 @@ int main(int, char *argv[])
   // Ask roi for plane estimation
   //! [Roi_Plane_Estimation]
   vpPolygon roi_color_img {};
-  roi_color_img.buildFrom(getRoiFromUser(color_img), true);
+  roi_color_img.build(getRoiFromUser(color_img), true);
 
   std::vector<vpImagePoint> roi_corners_depth_img {};
   std::transform(

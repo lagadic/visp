@@ -43,6 +43,7 @@
 #if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class vpMbtXmlGenericParser::Impl
@@ -1916,7 +1917,7 @@ void vpMbtXmlGenericParser::setProjectionErrorKernelSize(const unsigned int &siz
   \param verbose : verbose flag
 */
 void vpMbtXmlGenericParser::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpMbtXmlGenericParser.cpp.o) has no symbols
 void dummy_vpMbtXmlGenericParser() { };

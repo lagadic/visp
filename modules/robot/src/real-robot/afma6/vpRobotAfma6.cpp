@@ -51,6 +51,7 @@
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -799,7 +800,7 @@ void vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpAfma6::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -1010,8 +1011,8 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
   vpRxyzVector rxyz;
   vpRotationMatrix R;
 
-  R.buildFrom(pose[3], pose[4], pose[5]); // thetau
-  rxyz.buildFrom(R);
+  R.build(pose[3], pose[4], pose[5]); // thetau
+  rxyz.build(R);
 
   for (unsigned int i = 0; i < 3; i++) {
     position[i] = pose[i];
@@ -1460,7 +1461,7 @@ void vpRobotAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(fRc);
+    rxyz.build(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1817,7 +1818,7 @@ void vpRobotAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
       vpRotationMatrix cRc;
       cMc.extract(cRc);
       vpThetaUVector thetaU;
-      thetaU.buildFrom(cRc);
+      thetaU.build(cRc);
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame
@@ -2224,7 +2225,7 @@ void vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
       c_prevMc_cur.extract(R);
 
       vpRxyzVector rxyz;
-      rxyz.buildFrom(R);
+      rxyz.build(R);
 
       for (unsigned int i = 0; i < 3; i++) {
         displacement[i] = t[i];
@@ -2307,7 +2308,7 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
 
   return status;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
 void dummy_vpRobotAfma6() { };

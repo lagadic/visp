@@ -44,6 +44,9 @@
 #include <visp3/gui/vpPlotGraph.h>
 
 #if defined(VISP_HAVE_DISPLAY)
+
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpPlot
  * \ingroup group_gui_plotter
@@ -104,7 +107,7 @@
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpPlot
 {
 public:
@@ -192,6 +195,8 @@ private:
   void initNbGraph(unsigned int nbGraph);
   void displayGrid();
 };
+
+END_VISP_NAMESPACE
 #endif
 
 #endif

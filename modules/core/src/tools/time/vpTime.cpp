@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpTime.cpp
+  \brief Time management and measurement
+*/
+
 #include <ctime>
 
 #include <visp3/core/vpDebug.h>
@@ -46,11 +51,6 @@
 #define USE_CXX11_CHRONO 0
 #endif
 
-/*!
-  \file vpTime.cpp
-  \brief Time management and measurement
-*/
-
 // Unix depend version
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -61,6 +61,7 @@
 #include <windows.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace vpTime
 {
@@ -177,12 +178,12 @@ int wait(double t0, double t)
   timeToWait = t0 + (t - timeCurrent);
 
   if (timeToWait <= 0.) { // no need to wait
-    return (1);
+    return 1;
   }
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((useconds_t)((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
+      usleep(static_cast<useconds_t>((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
     }
     // Blocking loop to have an accurate waiting
     do {
@@ -210,17 +211,17 @@ int wait(double t0, double t)
                       "vpTime::wait() is not implemented on Windows Phone 8.0"));
 #endif
 #endif
+    }
   }
-}
 
-/*!
-  Wait t miliseconds from now.
+  /*!
+    Wait t miliseconds from now.
 
-  The waiting is done by a call to usleep() if the time to wait is greater
-  than vpTime::minTimeForUsleepCall.
+    The waiting is done by a call to usleep() if the time to wait is greater
+    than vpTime::minTimeForUsleepCall.
 
-  \param t : Time to wait in ms.
-*/
+    \param t : Time to wait in ms.
+  */
 void wait(double t)
 {
   double timeToWait = t;
@@ -232,7 +233,7 @@ void wait(double t)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     double t0 = measureTimeMs();
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((useconds_t)((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
+      usleep(static_cast<useconds_t>((timeToWait - vpTime::minTimeForUsleepCall) * 1000));
     }
     // Blocking loop to have an accurate waiting
     do {
@@ -261,18 +262,18 @@ void wait(double t)
                       "vpTime::wait() is not implemented on Windows Phone 8.0"));
 #endif
 #endif
+    }
   }
-}
 
-/*!
-  Sleep t miliseconds from now.
+  /*!
+    Sleep t miliseconds from now.
 
-  \param t : Time to sleep in ms.
-*/
+    \param t : Time to sleep in ms.
+  */
 void sleepMs(double t)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  usleep((useconds_t)(t * 1000));
+  usleep(static_cast<useconds_t>(t * 1000));
 #elif defined(_WIN32)
 #if !defined(WINRT_8_0)
   Sleep((DWORD)(t));
@@ -419,3 +420,4 @@ void vpChrono::stop()
   m_durationMs += vpTime::measureTimeMs() - m_lastTimePoint;
 #endif
 }
+END_VISP_NAMESPACE

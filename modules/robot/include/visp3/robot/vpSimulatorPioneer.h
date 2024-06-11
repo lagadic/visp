@@ -41,12 +41,14 @@
  */
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpPioneer.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorPioneer
  *
@@ -93,7 +95,7 @@
  *
  * The usage of this class is also highlighted in \ref
  * tutorial-simu-robot-pioneer.
- */
+*/
 class VISP_EXPORT vpSimulatorPioneer : public vpPioneer, public vpRobotSimulator
 {
 
@@ -130,5 +132,5 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
   void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
-
+END_VISP_NAMESPACE
 #endif

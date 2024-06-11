@@ -40,9 +40,9 @@
 
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
-#include <limits>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for space-scale-rotation invariants. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -52,7 +52,7 @@
  * - vpMomentCInvariant
  * - vpFeatureMomentBasic
  */
-void vpFeatureMomentCInvariant::compute_interaction()
+  void vpFeatureMomentCInvariant::compute_interaction()
 {
   std::vector<vpMatrix> LI(16);
   bool found_moment_centered;
@@ -405,7 +405,7 @@ void vpFeatureMomentCInvariant::compute_interaction()
   interaction_matrices[13] =
     (I2 / (I3 * I3 * I3)) * La + (a / (I3 * I3 * I3)) * LI2 - (3 * a * I2 / (I3 * I3 * I3 * I3)) * LI3;
 }
-
+END_VISP_NAMESPACE
 #else
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -417,9 +417,9 @@ void vpFeatureMomentCInvariant::compute_interaction()
 
 #include <cmath>
 #include <iostream>
-#include <limits>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for space-scale-rotation invariants. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -429,7 +429,7 @@ void vpFeatureMomentCInvariant::compute_interaction()
  * - vpMomentCInvariant
  * - vpFeatureMomentBasic
  */
-void vpFeatureMomentCInvariant::compute_interaction()
+  void vpFeatureMomentCInvariant::compute_interaction()
 {
   // std::vector<vpMatrix> LI(16);
   LI.resize(16); // LI made class member
@@ -715,4 +715,5 @@ std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &feat
 
   return os;
 }
+END_VISP_NAMESPACE
 #endif

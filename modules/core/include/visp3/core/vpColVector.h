@@ -31,8 +31,27 @@
  * Provide some simple operation on column vectors.
  */
 
+/*!
+ * \file vpColVector.h
+ * \brief definition of column vector class as well
+ * as a set of operations on these vector
+ */
+
 #ifndef _vpColVector_h_
 #define _vpColVector_h_
+
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+BEGIN_VISP_NAMESPACE
+class vpMatrix;
+class vpRowVector;
+class vpRotationVector;
+class vpTranslationVector;
+class vpPoseVector;
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMath.h>
@@ -40,18 +59,7 @@
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
-class vpMatrix;
-class vpRowVector;
-class vpRotationVector;
-class vpTranslationVector;
-class vpPoseVector;
-
-/*!
- * \file vpColVector.h
- * \brief definition of column vector class as well
- * as a set of operations on these vector
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpColVector
  * \ingroup group_core_matrices
@@ -158,7 +166,7 @@ class vpPoseVector;
  * $ cat col-vector.json
  * {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
  * \endcode
- */
+*/
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
   friend class vpMatrix;
@@ -206,17 +214,17 @@ public:
    * Constructor that initialize a column vector from a 3-dim (Euler or
    * \f$\theta {\bf u}\f$) or 4-dim (quaternion) rotation vector.
    */
-  vpColVector(const vpRotationVector &v);
+  explicit vpColVector(const vpRotationVector &v);
 
   /*!
    * Constructor that initialize a column vector from a 6-dim pose vector.
    */
-  vpColVector(const vpPoseVector &p);
+  explicit vpColVector(const vpPoseVector &p);
 
   /*!
    * Constructor that initialize a column vector from a 3-dim translation vector.
    */
-  vpColVector(const vpTranslationVector &t);
+  explicit vpColVector(const vpTranslationVector &t);
 
   /*!
    * Constructor that creates a column vector from a m-by-1 matrix `M`.
@@ -224,7 +232,7 @@ public:
    * \exception vpException::dimensionError If the matrix is not a m-by-1
    * matrix.
    */
-  vpColVector(const vpMatrix &M);
+  explicit vpColVector(const vpMatrix &M);
 
   /*!
    * Constructor that takes column `j` of matrix `M`.
@@ -234,12 +242,12 @@ public:
   /*!
    * Constructor that creates a column vector from a std vector of double.
    */
-  vpColVector(const std::vector<double> &v);
+  explicit vpColVector(const std::vector<double> &v);
 
   /*!
    * Constructor that creates a column vector from a std vector of float.
    */
-  vpColVector(const std::vector<float> &v);
+  explicit vpColVector(const std::vector<float> &v);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
@@ -270,7 +278,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   /*!
@@ -366,7 +376,7 @@ public:
    */
   vpColVector extract(unsigned int r, unsigned int colsize) const
   {
-    if (r >= rowNum || r + colsize > rowNum) {
+    if ((r >= rowNum) || ((r + colsize) > rowNum)) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (%dx1) column vector from a (%dx1) "
                         "column vector starting at index %d",
@@ -1455,6 +1465,7 @@ VISP_EXPORT
 #endif
 vpColVector operator*(const double &x, const vpColVector &v);
 
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 inline void to_json(nlohmann::json &j, const vpColVector &v)
 {
@@ -1462,6 +1473,7 @@ inline void to_json(nlohmann::json &j, const vpColVector &v)
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
+
 inline void from_json(const nlohmann::json &j, vpColVector &v)
 {
   vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
@@ -1470,8 +1482,6 @@ inline void from_json(const nlohmann::json &j, vpColVector &v)
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
   }
 }
-
-
 #endif
-
+END_VISP_NAMESPACE
 #endif

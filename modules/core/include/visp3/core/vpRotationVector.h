@@ -31,20 +31,23 @@
  * Generic rotation vector (cannot be used as is !).
  */
 
-#ifndef _vpRotationVector_h_
-#define _vpRotationVector_h_
-
 /*!
   \file vpRotationVector.h
   \brief class that consider the case of a generic rotation vector
   (cannot be used as is !)
 */
 
+#ifndef _vpRotationVector_h_
+#define _vpRotationVector_h_
+
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpRowVector;
 class vpColVector;
@@ -127,7 +130,8 @@ public:
   vpRotationVector &operator=(const vpRotationVector &v)
   {
     resize(v.size(), 1);
-    for (unsigned int i = 0; i < v.size(); ++i) {
+    unsigned int v_size = v.size();
+    for (unsigned int i = 0; i < v_size; ++i) {
       data[i] = v.data[i];
     }
     return *this;
@@ -154,6 +158,6 @@ protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpColVector operator*(const double &x, const vpRotationVector &v);
-
+VISP_NAMESPACE_ADDRESSING vpColVector operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationVector &v);
+END_VISP_NAMESPACE
 #endif

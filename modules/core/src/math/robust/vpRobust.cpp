@@ -53,6 +53,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRobust.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */
@@ -274,10 +275,12 @@ int vpRobust::partition(vpColVector &a, int l, int r)
     while (a[++i] < v)
       ;
     while (v < a[--j])
-      if (j == l)
+      if (j == l) {
         break;
-    if (i >= j)
+      }
+    if (i >= j) {
       break;
+    }
     std::swap(a[i], a[j]);
   }
   std::swap(a[i], a[r]);
@@ -703,3 +706,4 @@ double vpRobust::gammln(double xx)
 #undef vpEPS
 
 #endif
+END_VISP_NAMESPACE

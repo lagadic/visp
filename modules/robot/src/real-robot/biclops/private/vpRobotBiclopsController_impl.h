@@ -45,6 +45,7 @@
 #include <Biclops.h>  // Contrib for Biclops sdk
 #include <PMDUtils.h> // Contrib for Biclops sdk
 
+BEGIN_VISP_NAMESPACE
 #if defined(_WIN32)
 class VISP_EXPORT Biclops; // needed for dll creation
 #endif
@@ -65,7 +66,7 @@ class VISP_EXPORT Biclops; // needed for dll creation
  *
  * This class uses libraries libBiclops.so, libUtils.so and libPMD.so and
  * includes Biclops.h and PMDUtils.h provided by Traclabs.
- */
+*/
 class VISP_EXPORT vpRobotBiclops::vpRobotBiclopsController
 {
 public:
@@ -242,9 +243,9 @@ private:
   shmType m_shm;
   bool m_stopControllerThread;
 };
-
-#endif /* #ifndef _vpRobotBiclopsController_h_ */
+END_VISP_NAMESPACE
+#endif // #ifdef VISP_HAVE_BICLOPS
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#endif
+#endif /* #ifndef _vpRobotBiclopsController_h_ */

@@ -48,61 +48,101 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
+BEGIN_VISP_NAMESPACE
+
 vpHomography::vpHomography() : vpArray2D<double>(3, 3), m_aMb(), m_bP() { eye(); }
 
 vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), m_aMb(), m_bP() { *this = H; }
 
 vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
-  buildFrom(aMb, bP);
+  build(aMb, bP);
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
   : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
-  buildFrom(tu, atb, p);
+  build(tu, atb, p);
 }
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
   : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
-  buildFrom(aRb, atb, p);
+  build(aRb, atb, p);
 }
 
 vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
-  buildFrom(arb, p);
+  build(arb, p);
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/**
+ * \deprecated You should use build(const vpHomogeneousMatrix &, const vpPlane &) instead.
+ */
 void vpHomography::buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP)
+{
+  build(aMb, bP);
+}
+
+/**
+ * \deprecated You should use build(const vpThetaUVector &, const vpTranslationVector &, const vpPlane &) instead.
+ */
+void vpHomography::buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
+{
+  build(tu, atb, p);
+}
+
+/**
+ * \deprecated You should use build(const vpRotationMatrix &, const vpTranslationVector &, const vpPlane &) instead.
+ */
+void vpHomography::buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
+{
+  build(aRb, atb, p);
+}
+
+/**
+ * \deprecated You should use build(const vpPoseVector &, const vpPlane &) instead.
+ */
+void vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &p)
+{
+  build(arb, p);
+}
+#endif
+
+vpHomography &vpHomography::build(const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 {
   insert(aMb);
   insert(bP);
   build();
+  return *this;
 }
 
-void vpHomography::buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
+vpHomography &vpHomography::build(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
 {
   insert(tu);
   insert(atb);
   insert(p);
   build();
+  return *this;
 }
 
-void vpHomography::buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
+vpHomography &vpHomography::build(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
 {
   insert(aRb);
   insert(atb);
   insert(p);
   build();
+  return *this;
 }
 
-void vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &p)
+vpHomography &vpHomography::build(const vpPoseVector &arb, const vpPlane &p)
 {
   double tx = arb[0], ty = arb[1], tz = arb[2], tux = arb[3], tuy = arb[4], tuz = arb[5];
-  m_aMb.buildFrom(tx, ty, tz, tux, tuy, tuz);
+  m_aMb.build(tx, ty, tz, tux, tuy, tuz);
   insert(p);
   build();
+  return *this;
 }
 
 /*********************************************************************/
@@ -333,14 +373,18 @@ void vpHomography::build()
   }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
-  \brief Compute aHb such that
-
-  \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
-  { ^b{\bf n}^T}
-  \f]
-  //note d => -d verifier
-*/
+ * Compute \f$ ^a{\bf H}_b \f$ homography such that
+ *
+ * \f[ ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
+ * { ^b{\bf n}^T}
+ * \f]
+ *
+ * \param[out] aHb : Computed homography.
+ * \param[in] aMb : Homogeneous transformation from frame a to frame b.
+ * \param[in] bP : Plane at frame b.
+ */
 void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 {
   const unsigned int nbCols = 3, nbRows = 3;
@@ -367,6 +411,7 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, cons
     }
   }
 }
+#endif
 
 double vpHomography::det() const
 {
@@ -670,3 +715,5 @@ vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam
 
   return H;
 }
+
+END_VISP_NAMESPACE

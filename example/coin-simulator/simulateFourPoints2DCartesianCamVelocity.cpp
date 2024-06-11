@@ -66,6 +66,10 @@
 #define GETOPTARGS "di:h"
 #define SAVE 0
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
 Print the program options.
@@ -222,10 +226,10 @@ static void *mainLoop(void *_simu)
   // Sets the desired position of the point
   vpFeaturePoint pd[4];
 
-  pd[0].buildFrom(-0.1, -0.1, 1);
-  pd[1].buildFrom(0.1, -0.1, 1);
-  pd[2].buildFrom(0.1, 0.1, 1);
-  pd[3].buildFrom(-0.1, 0.1, 1);
+  pd[0].build(-0.1, -0.1, 1);
+  pd[1].build(0.1, -0.1, 1);
+  pd[2].build(0.1, 0.1, 1);
+  pd[3].build(-0.1, 0.1, 1);
 
   // Define the task
   // We want an eye-in-hand control law

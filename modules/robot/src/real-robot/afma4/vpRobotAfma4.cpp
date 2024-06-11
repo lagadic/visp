@@ -50,6 +50,7 @@
 #include <visp3/robot/vpRobotAfma4.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -530,7 +531,7 @@ void vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpAfma4::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -1034,7 +1035,7 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(fRc);
+    rxyz.build(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1220,7 +1221,7 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
 
     // Transform the velocities from camera to end-effector frame
     vpVelocityTwistMatrix eVc;
-    eVc.buildFrom(this->_eMc);
+    eVc.build(this->_eMc);
     joint_vel = eJe_inverse * eVc * velocity;
 
     //     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1],
@@ -1752,7 +1753,7 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
     throw vpRobotException(vpRobotException::lowLevelError, "Cannot get velocity.");
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no symbols
 void dummy_vpRobotAfma4() { };

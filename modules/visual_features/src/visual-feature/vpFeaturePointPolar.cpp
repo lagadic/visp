@@ -60,6 +60,7 @@
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 2D point visual
@@ -218,7 +219,7 @@ double vpFeaturePointPolar::get_Z() const { return this->Z; }
   double theta = M_PI;
   double Z     = 1;
   // Creation of the current feature s
-  s.buildFrom(rho, theta, Z);
+  s.build(rho, theta, Z);
   // Build the interaction matrix L_s
   vpMatrix L = s.interaction();
   \endcode
@@ -367,13 +368,13 @@ vpMatrix vpFeaturePointPolar::interaction(unsigned int select)
   \code
   vpFeaturePointPolar s;
   // Creation of the current feature s
-  s.buildFrom(0.2, ..., 1);         // rho and Z need to be set
+  s.build(0.2, ..., 1);         // rho and Z need to be set
   // Build the interaction matrix L associated to rho component
   vpMatrix L_rho = s.interaction( vpFeaturePointPolar::selectRho() );
 
   vpFeaturePointPolar s_star;
   // Creation of the desired feature s*
-  s_star.buildFrom(0.45, ..., 1.2); // rho and Z need to be set
+  s_star.build(0.45, ..., 1.2); // rho and Z need to be set
 
   // Compute the error vector (s-s*) for the rho feature
   vpColVector e = s.error(s_star, vpFeaturePointPolar::selectRho());
@@ -408,7 +409,8 @@ vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, unsigned in
       etheta[0] = err;
       e = vpColVector::stack(e, etheta);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -429,7 +431,7 @@ vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, unsigned in
   \code
   // Creation of the current feature s
   vpFeaturePointPolar s;
-  s.buildFrom(0.1, M_PI_2, 1.3);
+  s.build(0.1, M_PI_2, 1.3);
 
   s.print(); // print all the 2 components of the image point feature
   s.print(vpBasicFeature::FEATURE_ALL); // same behavior then previous line
@@ -447,8 +449,9 @@ void vpFeaturePointPolar::print(unsigned int select) const
   std::cout << std::endl;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-
+  \deprecated You should use build(const double &, const double &, const double &) instead.
   Build a 2D image point visual feature with polar coordinates.
 
   \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
@@ -465,6 +468,12 @@ void vpFeaturePointPolar::print(unsigned int select) const
   on the camera which is not possible.
 */
 void vpFeaturePointPolar::buildFrom(double rho, double theta, double Z_)
+{
+  build(rho, theta, Z_);
+}
+#endif
+
+vpFeaturePointPolar &vpFeaturePointPolar::build(const double &rho, const double &theta, const double &Z_)
 {
 
   s[0] = rho;
@@ -486,8 +495,10 @@ void vpFeaturePointPolar::buildFrom(double rho, double theta, double Z_)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -513,7 +524,8 @@ void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<u
     y = rho * sin(theta);
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -543,7 +555,8 @@ void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<v
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -614,3 +627,4 @@ unsigned int vpFeaturePointPolar::selectRho() { return FEATURE_LINE[0]; }
   \sa selectRho()
 */
 unsigned int vpFeaturePointPolar::selectTheta() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

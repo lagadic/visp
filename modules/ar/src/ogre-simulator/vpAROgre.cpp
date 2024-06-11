@@ -55,6 +55,7 @@
 
 #include <OgreRectangle2D.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Constructor.
 
@@ -73,16 +74,15 @@
 vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned int height, const char *resourcePath,
                    const char *pluginsPath)
   : name("ViSP - Augmented Reality"), mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mResourcePath(resourcePath),
-    mPluginsPath(pluginsPath),
+  mPluginsPath(pluginsPath),
 #ifdef VISP_HAVE_OIS
-    mInputManager(0), mKeyboard(0),
+  mInputManager(0), mKeyboard(0),
 #endif
-    keepOn(true), // When created no reason to stop displaying
-    mImageRGBA(), mImage(), mPixelBuffer(), mBackground(nullptr), mBackgroundHeight(0), mBackgroundWidth(0),
-    mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
-    mshowConfigDialog(true), mOptionalResourceLocation()
-{
-}
+  keepOn(true), // When created no reason to stop displaying
+  mImageRGBA(), mImage(), mPixelBuffer(), mBackground(nullptr), mBackgroundHeight(0), mBackgroundWidth(0),
+  mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
+  mshowConfigDialog(true), mOptionalResourceLocation()
+{ }
 
 /*!
   Initialisation of Ogre with a grey level background.
@@ -235,11 +235,11 @@ void vpAROgre::init(bool
   if (!pluginsFileExists) {
     std::string errorMsg = std::string("Error: the requested plugins file \"")
 #if defined(NDEBUG) || !defined(_WIN32)
-                           + std::string("plugins.cfg")
+      +std::string("plugins.cfg")
 #else
-                           + std::string("plugins_d.cfg")
+      + std::string("plugins_d.cfg")
 #endif
-                           + std::string("\" doesn't exist in ") + std::string(mPluginsPath);
+      + std::string("\" doesn't exist in ") + std::string(mPluginsPath);
     std::cout << errorMsg << std::endl;
 
     throw(vpException(vpException::ioError, errorMsg));
@@ -248,7 +248,8 @@ void vpAROgre::init(bool
 
   if (Ogre::Root::getSingletonPtr() == nullptr) {
     mRoot = new Ogre::Root(pluginFile, "ogre.cfg", "Ogre.log");
-  } else {
+  }
+  else {
     mRoot = Ogre::Root::getSingletonPtr();
   }
 
@@ -276,7 +277,7 @@ void vpAROgre::init(bool
   }
   if (!resourcesFileExists) {
     std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
-                           std::string("doesn't exist in ") + std::string(mResourcePath);
+      std::string("doesn't exist in ") + std::string(mResourcePath);
 
     std::cout << errorMsg << std::endl;
 
@@ -315,7 +316,8 @@ void vpAROgre::init(bool
     if (!mRoot->showConfigDialog()) {
       canInit = false;
     }
-  } else {
+  }
+  else {
     if (!mRoot->restoreConfig()) {
       canInit = false;
     }
@@ -353,15 +355,18 @@ void vpAROgre::init(bool
         if (ss.fail()) {
           std::cout << "Cannot read Ogre video mode" << std::endl;
         }
-      } else if (mWindowWidth == 0 && mWindowHeight == 0) {
+      }
+      else if (mWindowWidth == 0 && mWindowHeight == 0) {
         mWindowWidth = mBackgroundWidth;
         mWindowHeight = mBackgroundHeight;
       }
-    } else if (leftconf == "Full Screen") {
+    }
+    else if (leftconf == "Full Screen") {
       if (canInit && (rightconf == "Yes")) {
         fullscreen = true;
       }
-    } else {
+    }
+    else {
       misc[leftconf] = rightconf;
     }
 
@@ -485,7 +490,8 @@ bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
   // Always keep this part
   if (keepOn) {
     return updateScene(evt);
-  } else {
+  }
+  else {
     return keepOn;
   }
 }
@@ -625,7 +631,8 @@ void vpAROgre::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
   if (renderOneFrame(I, cMw)) {
     mWindow->update();
     keepOn = true;
-  } else
+  }
+  else
     keepOn = false;
 }
 
@@ -640,7 +647,8 @@ void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
   if (renderOneFrame(I, cMw)) {
     mWindow->update();
     keepOn = true;
-  } else
+  }
+  else
     keepOn = false;
 }
 
@@ -801,7 +809,8 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
         mBackgroundHeight, // height
         0,                 // num of mip maps
         Ogre::PF_BYTE_L, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-  } else {
+  }
+  else {
     Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
@@ -870,8 +879,9 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
         0,                 // num of mip maps
         // Ogre::PF_BYTE_RGBA,
         Ogre::PF_BYTE_BGRA, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-  } else { // As that texture does not seem to work properly with direct3D we
-           // use a default texture
+  }
+  else { // As that texture does not seem to work properly with direct3D we
+        // use a default texture
     Ogre::TextureManager::getSingleton().createManual(
         "BackgroundTexture", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D,
         mBackgroundWidth,  // width
@@ -1025,10 +1035,10 @@ void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
   Ogre::Matrix4 ModelView
       //    = Ogre::Matrix4( (Ogre::Real)-cMo[0][0],  (Ogre::Real)-cMo[0][1],
       //    (Ogre::Real)-cMo[0][2],  (Ogre::Real)-cMo[0][3],
-      = Ogre::Matrix4((Ogre::Real)cMw[0][0], (Ogre::Real)cMw[0][1], (Ogre::Real)cMw[0][2], (Ogre::Real)cMw[0][3],
-                      (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
-                      (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
-                      (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)1);
+    = Ogre::Matrix4((Ogre::Real)cMw[0][0], (Ogre::Real)cMw[0][1], (Ogre::Real)cMw[0][2], (Ogre::Real)cMw[0][3],
+                    (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
+                    (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
+                    (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)1);
   mCamera->setCustomViewMatrix(true, ModelView);
 }
 
@@ -1075,8 +1085,8 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
-void dummy_vpAROgre(){};
+void dummy_vpAROgre() { };
 #endif

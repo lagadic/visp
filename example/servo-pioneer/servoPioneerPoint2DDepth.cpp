@@ -93,6 +93,10 @@
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpImage<unsigned char> I; // Create a gray level image container
     double depth = 1.;
@@ -228,7 +232,7 @@ int main(int argc, char **argv)
     vpFeatureBuilder::create(s_x, cam, dot);
 
     // Create the desired x* visual feature
-    s_xd.buildFrom(0, 0, depth);
+    s_xd.build(0, 0, depth);
 
     // Add the feature
     task.addFeature(s_x, s_xd);
@@ -246,9 +250,9 @@ int main(int argc, char **argv)
     Zd = Z;
 
     std::cout << "Z " << Z << std::endl;
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z,
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z,
                   0); // log(Z/Z*) = 0 that's why the last parameter is 0
-    s_Zd.buildFrom(s_x.get_x(), s_x.get_y(), Zd,
+    s_Zd.build(s_x.get_x(), s_x.get_y(), Zd,
                    0); // log(Z/Z*) = 0 that's why the last parameter is 0
 
     // Add the feature
@@ -276,7 +280,7 @@ int main(int argc, char **argv)
       // the interaction matrix
       surface = 1. / sqrt(dot.m00 / (cam.get_px() * cam.get_py()));
       Z = coef * surface;
-      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+      s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
 
       robot.get_cVe(cVe);
       task.set_cVe(cVe);

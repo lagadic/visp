@@ -31,22 +31,24 @@
  * Pioneer mobile robot equipped with a pan head simulator without display.
  */
 
-#ifndef vpSimulatorPioneerPan_H
-#define vpSimulatorPioneerPan_H
-
 /*!
  * \file vpSimulatorPioneerPan.h
  * \brief class that defines the Pioneer mobile robot simulator equipped
  * with a camera able to move in pan.
  */
 
+#ifndef vpSimulatorPioneerPan_H
+#define vpSimulatorPioneerPan_H
+
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpPioneerPan.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorPioneerPan
  *
@@ -93,7 +95,7 @@
  * \endcode
  *
  * The usage of this class is also highlighted in \ref tutorial-simu-robot-pioneer.
- */
+*/
 class VISP_EXPORT vpSimulatorPioneerPan : public vpPioneerPan, public vpRobotSimulator
 {
 
@@ -131,5 +133,5 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
   void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
-
+END_VISP_NAMESPACE
 #endif

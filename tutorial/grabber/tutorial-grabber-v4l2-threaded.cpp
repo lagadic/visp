@@ -1,15 +1,20 @@
 //! \example tutorial-grabber-v4l2-threaded.cpp
 //! [capture-multi-threaded declaration]
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_THREADS) && defined(VISP_HAVE_DISPLAY)
 
 #include <thread>
 #include <mutex>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
@@ -54,9 +59,7 @@ void displayFunction(std::mutex &mutex_capture, vpImage<unsigned char> &frame, t
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
-#if defined(VISP_HAVE_X11)
-  vpDisplayX *d_ = nullptr;
-#endif
+  vpDisplay *d_ = vpDisplayFactory::displayFactory();
 
   do {
     mutex_capture.lock();
@@ -73,11 +76,9 @@ void displayFunction(std::mutex &mutex_capture, vpImage<unsigned char> &frame, t
 
       // Check if we need to initialize the display with the first frame
       if (!display_initialized_) {
-// Initialize the display
-#if defined(VISP_HAVE_X11)
-        d_ = new vpDisplayX(I_);
+      // Initialize the display
+        d_->init(I_);
         display_initialized_ = true;
-#endif
       }
 
       // Display the image
@@ -98,9 +99,7 @@ void displayFunction(std::mutex &mutex_capture, vpImage<unsigned char> &frame, t
     }
   } while (capture_state_ != capture_stopped);
 
-#if defined(VISP_HAVE_X11)
   delete d_;
-#endif
 
   std::cout << "End of display thread" << std::endl;
 }
@@ -157,6 +156,8 @@ int main()
   std::cout << "You should enable V4L2 to make this example working..." << std::endl;
 #elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
+#elif !defined(VISP_HAVE_DISPLAY)
+  std::cout << "You should have at least one GUI library installed to use this example." << std::endl;
 #else
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif

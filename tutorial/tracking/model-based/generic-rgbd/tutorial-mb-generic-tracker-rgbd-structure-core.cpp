@@ -16,6 +16,10 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string config_color = "", config_depth = "";
   std::string model_color = "", model_depth = "";
   std::string init_file = "";

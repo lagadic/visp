@@ -36,6 +36,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
  /**
   * \brief Get the list of available vpCannyBackendType.
   *
@@ -114,17 +115,17 @@ vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(co
  * \param[in] suf The suffix of the list.
  * \return std::string The list of available items.
  */
-std::string vpImageFilter::vpCannyFilteringAndGradientTypeList(const std::string &pref, const std::string &sep,
+std::string vpImageFilter::vpGetCannyFiltAndGradTypes(const std::string &pref, const std::string &sep,
                                                                const std::string &suf)
 {
   std::string list(pref);
   for (unsigned int i = 0; i < (CANNY_COUNT_FILTERING - 1); ++i) {
     vpCannyFilteringAndGradientType type = static_cast<vpCannyFilteringAndGradientType>(i);
-    list += vpCannyFilteringAndGradientTypeToString(type);
+    list += vpCannyFiltAndGradTypeToStr(type);
     list += sep;
   }
   vpCannyFilteringAndGradientType type = static_cast<vpCannyFilteringAndGradientType>(CANNY_COUNT_FILTERING - 1);
-  list += vpCannyFilteringAndGradientTypeToString(type);
+  list += vpCannyFiltAndGradTypeToStr(type);
   list += suf;
   return list;
 }
@@ -135,7 +136,7 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeList(const std::string
  * \param[in] type The type that must be casted into a string.
  * \return std::string The corresponding name.
  */
-std::string vpImageFilter::vpCannyFilteringAndGradientTypeToString(const vpImageFilter::vpCannyFilteringAndGradientType &type)
+std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCannyFilteringAndGradientType &type)
 {
   std::string name;
   switch (type) {
@@ -158,7 +159,7 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeToString(const vpImage
  * \param[in] name The name of the backend.
  * \return vpImageFilter::vpCannyFilteringAndGradientType The corresponding enumeration value.
  */
-vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFilteringAndGradientTypeFromString(const std::string &name)
+vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFiltAndGradTypeFromStr(const std::string &name)
 {
   vpCannyFilteringAndGradientType type(CANNY_COUNT_FILTERING);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
@@ -167,7 +168,7 @@ vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFilteringAn
   unsigned int i = 0;
   while ((i < count) && notFound) {
     vpCannyFilteringAndGradientType temp = static_cast<vpCannyFilteringAndGradientType>(i);
-    if (nameLowerCase == vpCannyFilteringAndGradientTypeToString(temp)) {
+    if (nameLowerCase == vpCannyFiltAndGradTypeToStr(temp)) {
       type = temp;
       notFound = false;
     }
@@ -1128,3 +1129,4 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     Ires = edgeDetector.detect(Isrc);
   }
 }
+END_VISP_NAMESPACE

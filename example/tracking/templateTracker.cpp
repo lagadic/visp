@@ -85,8 +85,13 @@
 
 #define GETOPTARGS "cdhi:l:Lprs:t:w:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef enum {
+typedef enum
+{
   WARP_AFFINE,
   WARP_HOMOGRAPHY,
   WARP_HOMOGRAPHY_SL3,
@@ -98,7 +103,8 @@ typedef enum {
   WARP_LAST
 } WarpType;
 
-typedef enum {
+typedef enum
+{
   TRACKER_SSD_ESM,
   TRACKER_SSD_FORWARD_ADDITIONAL,
   TRACKER_SSD_FORWARD_COMPOSITIONAL,
@@ -305,7 +311,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl
-              << std::endl;
+      << std::endl;
     return false;
   }
   if ((c == 1) || (c == -1)) {
@@ -377,9 +383,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, opt_warp_type, opt_tracker_type, opt_last_frame, opt_threshold_residual);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -402,7 +408,8 @@ int main(int argc, const char **argv)
     reader.setLastFrameIndex(opt_last_frame);
     try {
       reader.open(I);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -553,7 +560,8 @@ int main(int argc, const char **argv)
           vpDisplay::displayText(I, 10, 10, "Re-init simulation", vpColor::red);
           vpDisplay::flush(I);
           tracker->initClick(I, delaunay);
-        } else {
+        }
+        else {
           std::vector<vpImagePoint> v_ip;
           vpImagePoint ip;
           ip.set_ij(146, 60);
@@ -611,7 +619,8 @@ int main(int argc, const char **argv)
     delete tracker;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

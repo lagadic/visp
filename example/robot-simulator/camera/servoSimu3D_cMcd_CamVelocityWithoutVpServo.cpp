@@ -28,7 +28,7 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description:
+ * Description
  * Simulation of a 3D visual servoing.
  *
 *****************************************************************************/
@@ -78,6 +78,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
@@ -89,6 +90,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -267,7 +272,7 @@ int main(int argc, const char **argv)
 
       // Compute the camera translational velocity
       vpColVector v(3);
-      v = lambda * (I - vpColVector::skew(tu_cRcd)) * ctcd;
+      v = lambda * (I - vpColVector::skew(vpColVector(tu_cRcd))) * ctcd;
       // Compute the camera rotational velocity
       vpColVector w(3);
       w = lambda * tu_cRcd;

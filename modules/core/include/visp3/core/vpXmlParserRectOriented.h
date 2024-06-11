@@ -37,14 +37,15 @@
   Class vpXmlParserRectOriented allows to load and save oriented rectangles in a file XML
 */
 
-#ifndef vpXmlParserRectOriented_h
-#define vpXmlParserRectOriented_h
+#ifndef _vpXmlParserRectOriented_h_
+#define _vpXmlParserRectOriented_h_
 
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpRectOriented.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserRectOriented
 
@@ -101,12 +102,13 @@ public:
   void setRectangle(const vpRectOriented &rectangle);
 
 private:
-  vpXmlParserRectOriented(const vpXmlParserRectOriented &);            // noncopyable
+  vpXmlParserRectOriented(const vpXmlParserRectOriented &ro);            // noncopyable
   vpXmlParserRectOriented &operator=(const vpXmlParserRectOriented &); //
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
 #endif
 #endif // vpXmlParserRectOriented_h

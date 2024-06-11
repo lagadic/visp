@@ -31,17 +31,19 @@
  * Velocity twist transformation matrix.
  */
 
-#ifndef vpVelocityTwistMatrix_h
-#define vpVelocityTwistMatrix_h
+#ifndef _vpVelocityTwistMatrix_h_
+#define _vpVelocityTwistMatrix_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-class vpHomogeneousMatrix;
+BEGIN_VISP_NAMESPACE
 class vpColVector;
+class vpHomogeneousMatrix;
+class vpMatrix;
 
 /*!
   \class vpVelocityTwistMatrix
@@ -145,7 +147,7 @@ int main()
   vpHomogeneousMatrix fMc; // Fix to camera frame transformation
   // ... fMc need here to be initialized
 
-  fVc.buildFrom(fMc);
+  fVc.build(fMc);
 
   vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
   // ... c_v should here have an initial value
@@ -175,14 +177,21 @@ public:
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
-  vpVelocityTwistMatrix(const vpRotationMatrix &R);
-  vpVelocityTwistMatrix(const vpThetaUVector &thetau);
+  explicit vpVelocityTwistMatrix(const vpRotationMatrix &R);
+  explicit vpVelocityTwistMatrix(const vpThetaUVector &thetau);
 
-  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
-  vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
-  vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
+#endif
+  vpVelocityTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpVelocityTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpVelocityTwistMatrix &build(const vpHomogeneousMatrix &M, bool full = true);
+  vpVelocityTwistMatrix &build(const vpRotationMatrix &R);
+  vpVelocityTwistMatrix &build(const vpThetaUVector &thetau);
 
   void extract(vpRotationMatrix &R) const;
   void extract(vpTranslationVector &t) const;
@@ -231,5 +240,5 @@ public:
 //@}
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

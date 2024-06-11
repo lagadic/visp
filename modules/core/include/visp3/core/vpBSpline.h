@@ -31,13 +31,13 @@
  * This class implements the B-Spline
  */
 
-#ifndef vpBSpline_H
-#define vpBSpline_H
-
 /*!
   \file vpBSpline.h
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 */
+
+#ifndef vpBSpline_H
+#define vpBSpline_H
 
 #include <visp3/core/vpImagePoint.h>
 
@@ -45,6 +45,7 @@
 #include <vector>
 #include <visp3/core/vpMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -234,5 +235,5 @@ public:
                                         const std::vector<double> &l_knots, const std::vector<vpImagePoint> &l_controlPoints);
   vpImagePoint *computeCurveDers(double u, unsigned int der) const;
 };
-
+END_VISP_NAMESPACE
 #endif

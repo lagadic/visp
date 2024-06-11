@@ -35,12 +35,17 @@
 
 #include <iostream>
 #include <limits>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpThetaUVector tu;
 
@@ -48,7 +53,7 @@ int main()
     vpRotationMatrix R(vpMath::rad(0.), vpMath::rad(180) + 100 * std::numeric_limits<double>::epsilon(), 0.);
 
     // Extract the theta U angles from a rotation matrix
-    tu.buildFrom(R);
+    tu.build(R);
 
     // Since the rotation vector is 3 values column vector, the
     // transpose operation produce a row vector.

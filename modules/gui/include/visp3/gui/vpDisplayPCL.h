@@ -36,14 +36,16 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
+#include <thread>
 #include <string>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpDisplayPCL
   \ingroup group_gui_plotter
@@ -79,7 +81,7 @@ private:
   std::string m_window_name;
   pcl::visualization::PCLVisualizer::Ptr m_viewer;
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

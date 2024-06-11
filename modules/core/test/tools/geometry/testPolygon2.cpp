@@ -50,6 +50,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifdef VISP_HAVE_OPENCV
 TEST_CASE("Check OpenCV-bsed convex hull")
 {
@@ -60,7 +64,7 @@ TEST_CASE("Check OpenCV-bsed convex hull")
                                                  rect.getBottomLeft() };
 
     vpPolygon poly {};
-    poly.buildFrom(rect_corners, true);
+    poly.build(rect_corners, true);
 
   // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
@@ -97,7 +101,7 @@ bool testConvexHull()
   rect_corners.push_back(rect.getBottomLeft());
 
   vpPolygon poly;
-  poly.buildFrom(rect_corners, true);
+  poly.build(rect_corners, true);
 
   // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))

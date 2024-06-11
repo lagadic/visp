@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief This class implements the Hinkley's cumulative sum test.
@@ -83,7 +84,7 @@
   If a drift is detected, the drift location is given by the last instant
   \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
   N_{k^{'}} = 0 \f$.
- */
+*/
 class VISP_EXPORT vpStatisticalTestHinkley : public vpStatisticalTestAbstract
 {
 protected:
@@ -329,5 +330,5 @@ public:
    */
   void setAlpha(const float &alpha);
 };
-
+END_VISP_NAMESPACE
 #endif

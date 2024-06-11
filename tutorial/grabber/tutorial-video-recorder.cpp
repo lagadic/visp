@@ -1,8 +1,7 @@
 /*! \example tutorial-video-recorder.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoWriter.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -12,36 +11,39 @@
 #endif
 
 /*!
- This example allows to record a video from a camera.
- It only requires that ViSP is build with OpenCV.
+  This example allows to record a video from a camera.
+  It only requires that ViSP is build with OpenCV.
 
- Example to save an mpeg video:
+  Example to save an mpeg video:
 
     ./tutorial-video-recorder --device 0 --name myvideo.mp4
 
- Example to save a sequence of png images:
+  Example to save a sequence of png images:
 
     ./tutorial-video-recorder --device 0 --name image%04d.png
 
- Example to save one imags:
+  Example to save one image:
 
     ./tutorial-video-recorder --device 0 --name image.jpeg
 
  */
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
-#if ((defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&                                            \
-     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_GTK)))
+#if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string opt_videoname = "video-recorded.mpg";
   int opt_device = 0;
 
   for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--device")
       opt_device = atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--name")
+    else if (std::string(argv[i]) == "--recorded-name")
       opt_videoname = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [--device <device number>] [--name <video name>] [--help][-h]\n"
+      std::cout << "\nUsage: " << argv[0]
+        << " [--device <device number>] [--recorded-name <video name>] [--help][-h]\n"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -55,6 +57,7 @@ int main(int argc, const char *argv [])
     vpImage<unsigned char> I; // for gray images
 
 #if defined(VISP_HAVE_V4L2)
+    std::cout << "Use v4l2 grabber..." << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
@@ -63,6 +66,7 @@ int main(int argc, const char *argv [])
     g.open(I);
     g.acquire(I);
 #elif defined(HAVE_OPENCV_VIDEOIO)
+    std::cout << "Use OpenCV grabber..." << std::endl;
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -75,16 +79,10 @@ int main(int argc, const char *argv [])
 
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d;
+#if defined(VISP_HAVE_DISPLAY)
+    vpDisplay *d = vpDisplayFactory::displayFactory();
+    d->init(I, 0, 0, "Camera view");
 #endif
-    d.init(I, 0, 0, "Camera view");
     vpVideoWriter writer;
 
 #if defined(HAVE_OPENCV_VIDEOIO)
@@ -121,6 +119,9 @@ int main(int argc, const char *argv [])
       vpDisplay::flush(I);
     }
     std::cout << "The video was recorded in \"" << opt_videoname << "\"" << std::endl;
+#ifdef VISP_HAVE_DISPLAY
+    delete d;
+#endif
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

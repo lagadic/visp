@@ -37,6 +37,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpColor
@@ -96,55 +97,55 @@
   a circle) and a specific brown color (used to draw a rectangle).
 
   \code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black grey level image
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black grey level image
 
-  vpDisplay *d;
+    vpDisplay *d;
 
-  // Depending on the detected third party libraries, we instantiate here the
-  // first video device which is available
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#endif
+    // Depending on the detected third party libraries, we instantiate here the
+    // first video device which is available
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #endif
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Draw a filled circle with the predefined blue color
-  vpDisplay::displayCircle(I, 100, 200, 30, vpColor::blue, true);
+    // Draw a filled circle with the predefined blue color
+    vpDisplay::displayCircle(I, 100, 200, 30, vpColor::blue, true);
 
-  // Creation of a new brown color with its RGB values
-  vpColor color(128, 100, 50);
+    // Creation of a new brown color with its RGB values
+    vpColor color(128, 100, 50);
 
-  // Draw a brown rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, color, true);
+    // Draw a brown rectangle in the display overlay (foreground)
+    vpDisplay::displayRectangle(I, 10, 10, 100, 20, color, true);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  delete d;
-}
+    delete d;
+  }
   \endcode
 
 */
@@ -152,7 +153,8 @@ class VISP_EXPORT vpColor : public vpRGBa
 {
 public:
   /*! Predefined colors identifier. */
-  typedef enum {
+  typedef enum
+  {
     id_black = 0,  /*!< Identifier associated to the predefined vpColor::black
                       color. */
     id_white,      /*!< Identifier associated to the predefined vpColor::white
@@ -232,7 +234,7 @@ public:
     that this color is not a predefined one.
 
   */
-  inline vpColor() : vpRGBa(), id(id_unknown) {}
+  inline vpColor() : vpRGBa(), id(id_unknown) { }
   /*!
     Construct a color from its RGB values.
 
@@ -246,8 +248,7 @@ public:
   inline vpColor(unsigned char r, unsigned char g, unsigned char b,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
     : vpRGBa(r, g, b), id(cid)
-  {
-  }
+  { }
   /*!
     Construct a color from its RGB values and alpha channel.
 
@@ -262,18 +263,17 @@ public:
   inline vpColor(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
     : vpRGBa(r, g, b, alpha), id(cid)
-  {
-  }
+  { }
   /*!
     Construct a color with an alpha channel.
 
     \param color : RGB color.
     \param alpha : Alpha channel for transparency.
   */
-  inline vpColor(const vpColor &color, unsigned char alpha) : vpRGBa(color.R, color.G, color.B, alpha), id(color.id) {}
+  inline vpColor(const vpColor &color, unsigned char alpha) : vpRGBa(color.R, color.G, color.B, alpha), id(color.id) { }
 
   /*! Default destructor. */
-  inline virtual ~vpColor() {}
+  inline virtual ~vpColor() { }
 
   friend VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2);
   friend VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2);
@@ -367,7 +367,7 @@ vpColor const __declspec(selectany) vpColor::none = vpColor(0, 0, 0, id_unknown)
 const __declspec(selectany) unsigned int vpColor::nbColors = 18;
 
 /*!< Array of available colors. */
-vpColor const __declspec(selectany) vpColor::allColors[vpColor::nbColors] = {vpColor::blue,       // 12
+vpColor const __declspec(selectany) vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 12
                                                                              vpColor::green,      // 9
                                                                              vpColor::red,        // 6
                                                                              vpColor::cyan,       // 15
@@ -384,8 +384,9 @@ vpColor const __declspec(selectany) vpColor::allColors[vpColor::nbColors] = {vpC
                                                                              vpColor::gray,       // 3
                                                                              vpColor::darkGray,   // 4
                                                                              vpColor::black,      // 0
-                                                                             vpColor::white};     // 17
+                                                                             vpColor::white
+};     // 17
 
 #endif
-
+END_VISP_NAMESPACE
 #endif

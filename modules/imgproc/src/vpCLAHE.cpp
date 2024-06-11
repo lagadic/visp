@@ -79,8 +79,9 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+namespace VISP_NAMESPACE_NAME
 {
+
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 
 void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)
@@ -127,7 +128,7 @@ void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCent
 
   for (int y = yMin; y < yMax; ++y) {
     for (int x = xMin; x < xMax; ++x) {
-      ++hist[fastRound(I[y][x] / 255.0f * bins)];
+      ++hist[fastRound((I[y][x] / 255.0f) * bins)];
     }
   }
 }
@@ -137,10 +138,15 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   clipHistogram(hist, cdfs, limit);
   int hMin = static_cast<int>(hist.size()) - 1;
 
-  for (int i = 0; i < hMin; ++i) {
+  int stopIdx = hMin;
+  bool hasNotFoundFirstNotZero = true;
+  int i = 0;
+  while ((i < stopIdx) && hasNotFoundFirstNotZero) {
     if (cdfs[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
   int cdf = 0;
   int hist_size = static_cast<int>(hist.size());
@@ -165,10 +171,15 @@ float transferValue(int v, std::vector<int> &clippedHist)
 {
   int clippedHistLength = static_cast<int>(clippedHist.size());
   int hMin = clippedHistLength - 1;
-  for (int i = 0; i < hMin; ++i) {
+  int idxStop = hMin;
+  int i = 0;
+  bool hasNotFoundFirstNotZero = true;
+  while ((i<idxStop) && hasNotFoundFirstNotZero) {
     if (clippedHist[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
 
   int cdf = 0;
@@ -191,10 +202,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 
   return transferValue(v, clippedHist);
 }
-} // namespace
 
-namespace vp
-{
 void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (blockRadius < 0) {
@@ -218,7 +226,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 
   if (fast) {
     int blockSize = (2 * blockRadius) + 1;
-    int limit = static_cast<int>((slope * blockSize * blockSize / bins) + 0.5);
+    int limit = static_cast<int>(((slope * blockSize * blockSize) / bins) + 0.5);
 
     /* div */
     int nc = I1.getWidth() / blockSize;
@@ -335,7 +343,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 
           for (int x = xMin; x < xMax; ++x) {
             float wx = static_cast<float>(cs[c1] - x) / dc;
-            int v = fastRound(I1[y][x] / 255.0f * bins);
+            int v = fastRound((I1[y][x] / 255.0f) * bins);
             float t00 = tl[v];
             float t01 = tr[v];
             float t10 = bl[v];
@@ -351,7 +359,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
               t1 = (wx * t10) + ((1.0f - wx) * t11);
             }
 
-            float t = (r0 == r1) ? t0 : (wy * t0) + ((1.0f - wy) * t1);
+            float t = (r0 == r1) ? t0 : ((wy * t0) + ((1.0f - wy) * t1));
             I2[y][x] = std::max<unsigned char>(0, std::min<unsigned char>(255, fastRound(t * 255.0f)));
           }
         }
@@ -386,10 +394,10 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         // Compute histogram for the block at (0,0)
         for (int yi = yMin; yi < yMax; ++yi) {
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound(I1[yi][xi] / 255.0f * bins)];
+            ++hist[fastRound((I1[yi][xi] / 255.0f) * bins)];
           }
         }
-      }
+        }
       else {
         hist = prev_hist;
 
@@ -397,7 +405,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMin1 = yMin - 1;
           // Sliding histogram, remove top
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            --hist[fastRound(I1[yMin1][xi] / 255.0f * bins)];
+            --hist[fastRound((I1[yMin1][xi] / 255.0f) * bins)];
           }
         }
 
@@ -405,7 +413,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMax1 = yMax - 1;
           // Sliding histogram, add bottom
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound(I1[yMax1][xi] / 255.0f * bins)];
+            ++hist[fastRound((I1[yMax1][xi] / 255.0f) * bins)];
           }
         }
       }
@@ -420,7 +428,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMin1 = xMin - 1;
           // Sliding histogram, remove left
           for (int yi = yMin; yi < yMax; ++yi) {
-            --hist[fastRound(I1[yi][xMin1] / 255.0f * bins)];
+            --hist[fastRound((I1[yi][xMin1] / 255.0f) * bins)];
           }
         }
 
@@ -428,19 +436,19 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMax1 = xMax - 1;
           // Sliding histogram, add right
           for (int yi = yMin; yi < yMax; ++yi) {
-            ++hist[fastRound(I1[yi][xMax1] / 255.0f * bins)];
+            ++hist[fastRound((I1[yi][xMax1] / 255.0f) * bins)];
           }
         }
 
-        int v = fastRound(I1[y][x] / 255.0f * bins);
+        int v = fastRound((I1[y][x] / 255.0f) * bins);
         int w = std::min<int>(static_cast<int>(I1.getWidth()), xMax) - xMin;
         int n = h * w;
-        int limit = static_cast<int>(slope * n / bins + 0.5f);
+        int limit = static_cast<int>(((slope * n) / bins) + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
+      }
       }
     }
   }
-}
 
 void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {
@@ -460,7 +468,7 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
 
   I2.resize(I1.getHeight(), I1.getWidth());
   unsigned int size = I2.getWidth() * I2.getHeight();
-  unsigned char *ptrStart = (unsigned char *)(I2.bitmap);
+  unsigned char *ptrStart = reinterpret_cast<unsigned char *>(I2.bitmap);
   unsigned char *ptrEnd = ptrStart + (size * 4);
   unsigned char *ptrCurrent = ptrStart;
 
@@ -478,7 +486,8 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
     *ptrCurrent = pa.bitmap[cpt];
     ++ptrCurrent;
 
-    cpt++;
+    ++cpt;
   }
 }
-};
+
+} // namespace

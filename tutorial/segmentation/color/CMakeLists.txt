@@ -42,6 +42,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unqualified-std-cast-call")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-missing-field-initializers")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS_RS)

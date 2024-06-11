@@ -9,6 +9,11 @@
 
 int main()
 {
+
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
@@ -84,7 +89,7 @@ int main()
       for (int i = 0; i < 4; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
-      }
+    }
 #if defined(VISP_HAVE_OGRE)
       // Update the scene from the new camera position
       ogre.display(background, cMo);
@@ -92,10 +97,12 @@ int main()
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       vpTime::wait(robot.getSamplingTime() * 1000);
-    }
-  } catch (const vpException &e) {
+  }
+}
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Catch an exception " << std::endl;
   }
 }

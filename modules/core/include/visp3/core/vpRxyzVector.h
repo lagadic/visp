@@ -32,9 +32,6 @@
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
  */
 
-#ifndef _vpRxyzVector_h_
-#define _vpRxyzVector_h_
-
 /*!
   \file vpRxyzVector.h
 
@@ -44,8 +41,14 @@
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
  */
 
+#ifndef _vpRxyzVector_h_
+#define _vpRxyzVector_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpRotationVector;
 class vpRotationMatrix;
@@ -155,7 +158,7 @@ class vpThetaUVector;
     vpRotationMatrix R(rxyz);
 
     // Extract the Euler angles around x,y,z axis from a rotation matrix
-    rxyz.buildFrom(R);
+    rxyz.build(R);
 
     // Print the extracted Euler angles. Values are the same than the
     // one used for initialization
@@ -187,15 +190,26 @@ public:
   explicit vpRxyzVector(const vpColVector &rxyz);
   explicit vpRxyzVector(const std::vector<double> &rxyz);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert a rotation matrix into Rxyz vector
-  vpRxyzVector buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpRxyzVector buildFrom(const vpRotationMatrix &R);
 
   // convert a ThetaU vector into a Rxyz vector
-  vpRxyzVector buildFrom(const vpThetaUVector &tu);
-  vpRxyzVector buildFrom(const vpColVector &rxyz);
-  vpRxyzVector buildFrom(const std::vector<double> &rxyz);
+  vp_deprecated vpRxyzVector buildFrom(const vpThetaUVector &tu);
+  vp_deprecated vpRxyzVector buildFrom(const vpColVector &rxyz);
+  vp_deprecated vpRxyzVector buildFrom(const std::vector<double> &rxyz);
 
-  void buildFrom(double phi, double theta, double psi);
+  vp_deprecated void buildFrom(double phi, double theta, double psi);
+#endif
+  // convert a rotation matrix into Rxyz vector
+  vpRxyzVector &build(const vpRotationMatrix &R);
+
+  // convert a ThetaU vector into a Rxyz vector
+  vpRxyzVector &build(const vpThetaUVector &tu);
+  vpRxyzVector &build(const vpColVector &rxyz);
+  vpRxyzVector &build(const std::vector<double> &rxyz);
+
+  vpRxyzVector &build(const double &phi, const double &theta, const double &psi);
 
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);
@@ -204,5 +218,5 @@ public:
   vpRxyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

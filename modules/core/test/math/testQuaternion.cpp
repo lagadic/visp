@@ -46,6 +46,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 TEST_CASE("Quaternion interpolation", "[quaternion]")
 {
   const double angle0 = vpMath::rad(-37.14);

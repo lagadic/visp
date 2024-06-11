@@ -36,12 +36,14 @@
   \brief Provides exponential map computation
 */
 
-#ifndef vpExponentialMap_h
-#define vpExponentialMap_h
+#ifndef _vpExponentialMap_h_
+#define _vpExponentialMap_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpExponentialMap
 
@@ -92,4 +94,5 @@ public:
   static vpColVector inverse(const vpHomogeneousMatrix &M);
   static vpColVector inverse(const vpHomogeneousMatrix &M, const double &delta_t);
 };
+END_VISP_NAMESPACE
 #endif

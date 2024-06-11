@@ -38,6 +38,7 @@
 
 #include <visp3/core/vpLinProg.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Reduces the search space induced by an equality constraint.
 
@@ -727,5 +728,5 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     std::swap(B[k], N[j]);
   }
 }
-
 #endif
+END_VISP_NAMESPACE

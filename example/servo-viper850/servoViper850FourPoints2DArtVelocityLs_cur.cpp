@@ -75,6 +75,10 @@
 
 #define L 0.05 // to deal with a 10cm by 10cm square
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Compute the pose \e cMo from the 3D coordinates of the points \e point and
@@ -114,7 +118,8 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-  } else { // init = false; use of the previous pose to initialise LOWE
+  }
+  else { // init = false; use of the previous pose to initialise LOWE
     pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
 }
@@ -140,7 +145,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -230,7 +236,7 @@ int main()
     vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
     vpRxyzVector cro(vpMath::rad(0), vpMath::rad(10), vpMath::rad(20));
     vpRotationMatrix cRo(cro); // Build the rotation matrix
-    cMo.buildFrom(cto, cRo);   // Build the homogeneous matrix
+    cMo.build(cto, cRo);   // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];
@@ -295,7 +301,8 @@ int main()
           cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      } catch (...) {
+      }
+      catch (...) {
         flog.close(); // Close the log file
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
@@ -378,7 +385,8 @@ int main()
     task.print();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

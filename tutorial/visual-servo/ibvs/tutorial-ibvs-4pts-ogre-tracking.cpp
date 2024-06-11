@@ -13,6 +13,10 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness);
 #if defined(VISP_HAVE_OGRE)
 void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &background, const vpHomogeneousMatrix &cMo,
@@ -214,13 +218,15 @@ int main()
 
       vpTime::wait(robot.getSamplingTime() * 1000);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -44,6 +44,7 @@
 #include <stdlib.h>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -68,6 +69,10 @@
 #define GETOPTARGS "dhp"
 
 #if defined(VISP_HAVE_DISPLAY) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -424,7 +429,7 @@ int main(int argc, const char **argv)
 
       // Compute the position of the external view which is fixed in the
       // object frame
-      camoMf.buildFrom(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
+      camoMf.build(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
       camoMf = camoMf * (sim.get_fMo().inverse());
 
       if (opt_plot) {

@@ -58,6 +58,8 @@
 #pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpDot
  *
@@ -107,7 +109,7 @@
  * \endcode
  *
  * \sa vpDot2
- */
+*/
 class VISP_EXPORT vpDot : public vpTracker
 {
 public:
@@ -414,4 +416,5 @@ public:
                       vpColor color = vpColor::red, unsigned int thickness = 1);
 };
 
+END_VISP_NAMESPACE
 #endif

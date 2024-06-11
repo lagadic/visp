@@ -43,6 +43,9 @@
 */
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   unsigned int size = 16;
   vpImage<int> I_int(size, size);
   vpImage<unsigned char> I_uchar(size, size);

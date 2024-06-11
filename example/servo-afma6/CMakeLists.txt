@@ -64,7 +64,7 @@ if(WINRT)
   endif()
 endif()
 
-find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
+find_package(VISP REQUIRED visp_core visp_blob visp_detection visp_vs visp_robot visp_sensor visp_vision visp_gui)
 
 set(example_cpp
   servoAfma6Ellipse2DCamVelocity.cpp
@@ -103,6 +103,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
 
   visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})

@@ -43,6 +43,9 @@
 
 int main(int /* argc */, const char ** /* argv */)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     {
       unsigned char bitmap[4];

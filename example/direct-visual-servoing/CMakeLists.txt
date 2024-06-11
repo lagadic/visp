@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(example-direct-vvs)
 
-find_package(VISP REQUIRED visp_core visp_robot visp_visual_features visp_io visp_gui)
+find_package(VISP REQUIRED visp_core visp_robot visp_visual_features visp_vs visp_io visp_gui)
 
 set(example_cpp
   photometricVisualServoing.cpp

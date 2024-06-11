@@ -47,6 +47,7 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/sensor/vpKinect.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */
@@ -61,7 +62,7 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
                  -0.0076519); //! Those are the parameters found for our
                               //! Kinect device. Note that they can differ from
                               //! one device to another.
-  rgbMir.buildFrom(r);
+  rgbMir.build(r);
   irMrgb = rgbMir.inverse();
 }
 
@@ -290,7 +291,7 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
       }
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no symbols
 void dummy_vpKinect() { };

@@ -39,7 +39,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #endif
@@ -50,6 +50,7 @@
 
 #define DEBUG_DISPLAY_DEPTH_DENSE 0
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthDense
 {
 public:
@@ -88,7 +89,7 @@ public:
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, unsigned int stepX,
                               unsigned int stepY
@@ -239,4 +240,5 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+END_VISP_NAMESPACE
 #endif

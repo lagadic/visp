@@ -230,9 +230,14 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
   def make_arg(name: str) -> str:
     return f'py::arg("{name}")'
   py_args = []
+  arg_index = 0
   for parameter in parameters:
+    parameter_name = parameter.name
+    if parameter_name is None:
+      parameter_name = f'arg{arg_index}'
+
     if parameter.default is None or not parameter_can_have_default_value(parameter, specs, env_mapping):
-      py_args.append(make_arg(parameter.name))
+      py_args.append(make_arg(parameter_name))
     else:
       t = parameter.type
       gt = lambda typename: get_typename(typename, specs, env_mapping)
@@ -260,7 +265,8 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
           default_value_rep = default_value_rep.replace('"', '\"') # Escape inner quotes in std::string args like std::string("hello"). This would break parsing at compile time
           default_value = env_mapping.get(default_value) or default_value
 
-      py_args.append(f'py::arg_v("{parameter.name}", {default_value}, "{default_value_rep}")')
+      py_args.append(f'py::arg_v("{parameter_name}", {default_value}, "{default_value_rep}")')
+    arg_index += 1
 
   return py_args
 

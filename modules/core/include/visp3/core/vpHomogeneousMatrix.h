@@ -39,6 +39,13 @@
 #ifndef _vpHomogeneousMatrix_h_
 #define _vpHomogeneousMatrix_h_
 
+#include <fstream>
+#include <vector>
+
+#include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
+
 class vpTranslationVector;
 class vpPoseVector;
 class vpMatrix;
@@ -48,19 +55,18 @@ class vpThetaUVector;
 class vpQuaternionVector;
 class vpPoint;
 
-#include <fstream>
-#include <vector>
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
-//#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpPoseVector.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHomogeneousMatrix
 
@@ -208,16 +214,25 @@ public:
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpHomogeneousMatrix(const std::initializer_list<double> &list);
+  explicit vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
 
-  void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
-  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
-  void buildFrom(const vpPoseVector &p);
-  void buildFrom(const std::vector<float> &v);
-  void buildFrom(const std::vector<double> &v);
-  void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vp_deprecated void buildFrom(const vpPoseVector &p);
+  vp_deprecated void buildFrom(const std::vector<float> &v);
+  vp_deprecated void buildFrom(const std::vector<double> &v);
+  vp_deprecated void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#endif
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vpHomogeneousMatrix &build(const vpPoseVector &p);
+  vpHomogeneousMatrix &build(const std::vector<float> &v);
+  vpHomogeneousMatrix &build(const std::vector<double> &v);
+  vpHomogeneousMatrix &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
@@ -370,7 +385,7 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T);
   friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
@@ -405,10 +420,11 @@ inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 {
   T.convert_to_json(j);
 }
+
 inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
 {
   T.parse_json(j);
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

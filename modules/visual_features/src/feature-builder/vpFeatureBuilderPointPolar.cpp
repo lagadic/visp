@@ -44,6 +44,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
 
@@ -111,7 +112,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -183,7 +185,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -251,7 +254,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -304,7 +308,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
       throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -361,12 +366,13 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

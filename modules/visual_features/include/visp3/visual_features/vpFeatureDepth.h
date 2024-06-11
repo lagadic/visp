@@ -31,20 +31,22 @@
  * 2D point visual feature.
  */
 
-#ifndef vpFeatureDepth_H
-#define vpFeatureDepth_H
-
 /*!
  * \file vpFeatureDepth.h
  * \brief Class that defines 3D point visual feature
  */
 
+#ifndef vpFeatureDepth_H
+#define vpFeatureDepth_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureDepth
  * \ingroup group_visual_features
@@ -60,7 +62,7 @@
  * \f$ are needed during the computation of the interaction matrix \f$
  * L \f$.
  *
- * The visual features can be set easily thanks to the buildFrom() method.
+ * The visual features can be set easily thanks to the build() method.
  *
  * As the visual feature \f$ s \f$ represents the current depth
  * relative to the desired depth, the desired visual feature \f$ s^*
@@ -95,7 +97,7 @@
  *   double Z;   // You have to compute the value of Z.
  *   double Zs;  // You have to define the desired depth Zs.
  *   //Set the point feature thanks to the current parameters.
- *   s.buildfrom(x, y, Z, log(Z/Zs));
+ *   s.build(x, y, Z, log(Z/Zs));
  *
  *   // Set eye-in-hand control law.
  *   // The computed velocities will be expressed in the camera frame
@@ -111,7 +113,7 @@
  *     // The new parameters x, y and Z must be computed here.
  *
  *     // Update the current point visual feature
- *     s.buildfrom(x, y, Z, log(Z/Zs));
+ *     s.build(x, y, Z, log(Z/Zs));
  *
  *     // compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -139,7 +141,7 @@
  *   double Z;   // You have to compute the value of Z.
  *   double Zs;  // You have to define the desired depth Zs.
  *   //Set the point feature thanks to the current parameters.
- *   s.buildfrom(x, y, Z, log(Z/Zs));
+ *   s.build(x, y, Z, log(Z/Zs));
  *
  *   // Compute the interaction matrix L_s for the current point feature
  *   vpMatrix L = s.interaction();
@@ -150,7 +152,7 @@
  *   s.error(s_star);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureDepth : public vpBasicFeature
 {
 
@@ -172,7 +174,10 @@ public:
     section Set coordinates
   */
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(double x, double y, double Z, double LogZoverZstar);
+#endif
+  vpFeatureDepth &build(const double &x, const double &y, const double &Z, const double &LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;
@@ -203,5 +208,5 @@ public:
 
   void set_xyZLogZoverZstar(double x, double y, double Z, double logZZs);
 };
-
+END_VISP_NAMESPACE
 #endif

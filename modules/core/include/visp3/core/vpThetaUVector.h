@@ -31,14 +31,24 @@
  * Theta U parameterization for the rotation.
  */
 
-#ifndef _vpThetaUVector_h_
-#define _vpThetaUVector_h_
-
 /*!
   \file vpThetaUVector.h
   \brief class that consider the case of the Theta U parameterization for the
   rotation
 */
+
+#ifndef _vpThetaUVector_h_
+#define _vpThetaUVector_h_
+
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpQuaternionVector.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpRzyxVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpHomogeneousMatrix;
 class vpRotationMatrix;
@@ -49,14 +59,6 @@ class vpRzyzVector;
 class vpColVector;
 class vpRotationVector;
 class vpQuaternionVector;
-
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpQuaternionVector.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpRzyxVector.h>
 
 /*!
   \class vpThetaUVector
@@ -147,7 +149,7 @@ class vpQuaternionVector;
     vpRotationMatrix R(tu);
 
     // Extract the theta U angles from a rotation matrix
-    tu.buildFrom(R);
+    tu.build(R);
 
     // Print the extracted theta U angles. Values are the same than the
     // one used for initialization
@@ -164,9 +166,6 @@ class vpQuaternionVector;
 */
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
-private:
-  static const double minimum;
-
 public:
   vpThetaUVector();
   vpThetaUVector(const vpThetaUVector &tu);
@@ -189,23 +188,42 @@ public:
 
   vpThetaUVector(double tux, double tuy, double tuz);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert an homogeneous matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
+  vp_deprecated vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
   // convert a pose vector into Theta U vector
-  vpThetaUVector buildFrom(const vpPoseVector &p);
+  vp_deprecated vpThetaUVector buildFrom(const vpPoseVector &p);
   // convert a rotation matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpThetaUVector buildFrom(const vpRotationMatrix &R);
   // convert an Rzyx vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
+  vp_deprecated vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
   // convert an Rzyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyzVector &zyz);
+  vp_deprecated vpThetaUVector buildFrom(const vpRzyzVector &zyz);
   // convert an Rxyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRxyzVector &xyz);
-  vpThetaUVector buildFrom(const vpQuaternionVector &q);
-  vpThetaUVector buildFrom(const vpColVector &tu);
-  vpThetaUVector buildFrom(const std::vector<double> &tu);
+  vp_deprecated vpThetaUVector buildFrom(const vpRxyzVector &xyz);
+  vp_deprecated vpThetaUVector buildFrom(const vpQuaternionVector &q);
+  vp_deprecated vpThetaUVector buildFrom(const vpColVector &tu);
+  vp_deprecated vpThetaUVector buildFrom(const std::vector<double> &tu);
 
-  void buildFrom(double tux, double tuy, double tuz);
+  vp_deprecated void buildFrom(double tux, double tuy, double tuz);
+#endif
+  // convert an homogeneous matrix into Theta U vector
+  vpThetaUVector &build(const vpHomogeneousMatrix &M);
+  // convert a pose vector into Theta U vector
+  vpThetaUVector &build(const vpPoseVector &p);
+  // convert a rotation matrix into Theta U vector
+  vpThetaUVector &build(const vpRotationMatrix &R);
+  // convert an Rzyx vector into Theta U vector
+  vpThetaUVector &build(const vpRzyxVector &rzyx);
+  // convert an Rzyz vector into Theta U vector
+  vpThetaUVector &build(const vpRzyzVector &zyz);
+  // convert an Rxyz vector into Theta U vector
+  vpThetaUVector &build(const vpRxyzVector &xyz);
+  vpThetaUVector &build(const vpQuaternionVector &q);
+  vpThetaUVector &build(const vpColVector &tu);
+  vpThetaUVector &build(const std::vector<double> &tu);
+
+  vpThetaUVector &build(const double &tux, const double &tuy, const double &tuz);
 
   // extract the angle and the axis from the ThetaU representation
   void extract(double &theta, vpColVector &u) const;
@@ -219,6 +237,10 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
 #endif
-};
 
+private:
+  static const double minimum;
+
+};
+END_VISP_NAMESPACE
 #endif

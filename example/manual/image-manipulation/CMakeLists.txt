@@ -1,14 +1,15 @@
-PROJECT(ImageManipulation)
+cmake_minimum_required(VERSION 3.5)
 
-FIND_PACKAGE(VISP REQUIRED)
-IF(VISP_FOUND)
-  INCLUDE(${VISP_USE_FILE})
-ENDIF(VISP_FOUND)
+project(ImageManipulation)
 
-ADD_EXECUTABLE(manDisplay        manDisplay.cpp)
-ADD_EXECUTABLE(manGrab1394-1     manGrab1394-1.cpp)
-ADD_EXECUTABLE(manGrab1394-2     manGrab1394-2.cpp)
-ADD_EXECUTABLE(manGrabDirectShow manGrabDirectShow.cpp)
-ADD_EXECUTABLE(manGrabDisk       manGrabDisk.cpp)
-ADD_EXECUTABLE(manGrabV4l2       manGrabV4l2.cpp)
+find_package(VISP REQUIRED)
+if(VISP_FOUND)
+  include(${VISP_USE_FILE})
+endif()
+
+add_executable(manDisplay        manDisplay.cpp)
+add_executable(manGrab1394       manGrab1394.cpp)
+add_executable(manGrabDirectShow manGrabDirectShow.cpp)
+add_executable(manGrabDisk       manGrabDisk.cpp)
+add_executable(manGrabV4l2       manGrabV4l2.cpp)
 

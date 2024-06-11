@@ -34,12 +34,14 @@
 
 #include <visp3/core/vpFrameGrabber.h>
 
-unsigned int vpFrameGrabber::getHeight() const 
+BEGIN_VISP_NAMESPACE
+unsigned int vpFrameGrabber::getHeight() const
 {
-  return height; 
+  return height;
 }
 
-unsigned int vpFrameGrabber::getWidth() const 
-{ 
+unsigned int vpFrameGrabber::getWidth() const
+{
   return width;
 }
+END_VISP_NAMESPACE

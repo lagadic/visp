@@ -31,25 +31,26 @@
  * Exception that can be emitted by the vpFeature class and its derivatives.
  */
 
-#ifndef _vpFeatureException_h_
-#define _vpFeatureException_h_
-
 /*!
  * \file vpFeatureException.h
  *  \brief error that can be emitted by the vpFeature class and its derivatives
  */
+
+#ifndef _vpFeatureException_h_
+#define _vpFeatureException_h_
 
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureException
  * \ingroup group_visual_features
  * \brief Error that can be emitted by the vpBasicFeature class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpFeatureException : public vpException
 {
 public:
@@ -92,5 +93,5 @@ public:
    */
   explicit vpFeatureException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

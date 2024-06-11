@@ -50,6 +50,7 @@
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 3D point visual
@@ -195,7 +196,7 @@ double vpFeaturePoint3D::get_Z() const { return s[2]; }
   ...
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point);
+  s.build(point);
 
   vpMatrix L_X = s.interaction( vpFeaturePoint3D::selectX() );
   \endcode
@@ -374,12 +375,57 @@ vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int s
       ez[0] = s[2] - s_star[2];
       e = vpColVector::stack(e, ez);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
   return e;
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated You should use build(const vpPoint &) instead.
+  Build a 3D point visual feature from the camera frame coordinates
+  \f$(X,Y,Z)\f$ of a point.
+
+  \param p : A point with camera frame coordinates \f${^c}P=(X,Y,Z)\f$
+  up to date (see vpPoint class).
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
+  behind the camera which is not possible.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is null. That means that the 3D point is
+  on the camera which is not possible.
+*/
+void vpFeaturePoint3D::buildFrom(const vpPoint &p)
+{
+  build(p);
+}
+
+/*!
+  \deprecated You should use build(const double &, const double &, const double &) instead.
+  Build a 3D point visual feature from the camera frame coordinates
+  \f$(X,Y,Z)\f$ of a point.
+
+  \param X,Y,Z : Camera frame coordinates \f$(X,Y,Z)\f$ of a 3D point.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
+  on the camera which is not possible.
+
+  \exception vpFeatureException::badInitializationError: If the depth
+  (\f$Z\f$ coordinate) is null. That means that the 3D point is
+  on the camera which is not possible.
+
+*/
+void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
+{
+  build(X, Y, Z);
+}
+#endif
 
 /*!
 
@@ -397,7 +443,7 @@ vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int s
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-void vpFeaturePoint3D::buildFrom(const vpPoint &p)
+vpFeaturePoint3D &vpFeaturePoint3D::build(const vpPoint &p)
 {
 
   // cP is expressed in homogeneous coordinates
@@ -421,8 +467,10 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -441,9 +489,8 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
   on the camera which is not possible.
 
 */
-void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
+vpFeaturePoint3D &vpFeaturePoint3D::build(const double &X, const double &Y, const double &Z)
 {
-
   s[0] = X;
   s[1] = Y;
   s[2] = Z;
@@ -462,8 +509,10 @@ void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -482,7 +531,7 @@ void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point);
+  s.build(point);
 
   s.print(); // print all the 3 components of the translation feature
   s.print(vpBasicFeature::FEATURE_ALL); // same behavior then previous line
@@ -631,3 +680,4 @@ unsigned int vpFeaturePoint3D::selectY() { return FEATURE_LINE[1]; }
 
 */
 unsigned int vpFeaturePoint3D::selectZ() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

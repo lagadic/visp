@@ -45,6 +45,7 @@
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Default constructor.
@@ -454,11 +455,11 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 
   switch (frame) {
   case END_EFFECTOR_FRAME: {
-    pose.buildFrom(fMe);
+    pose.build(fMe);
     break;
   }
   case TOOL_FRAME: {
-    pose.buildFrom(fMe * m_eMc);
+    pose.build(fMe * m_eMc);
     break;
   }
   default: {
@@ -1348,7 +1349,7 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double speed, double forc
 
   return EXIT_SUCCESS;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
 // no symbols

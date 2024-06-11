@@ -40,9 +40,11 @@
 #ifndef _vpFeatureMomentAlpha_h_
 #define _vpFeatureMomentAlpha_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 /*!
  * \class vpFeatureMomentAlpha
@@ -95,7 +97,7 @@ class vpMomentDatabase;
  * This feature depends on:
  * - vpMomentCentered
  * - vpMomentGravityCenter
- */
+*/
 class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment
 {
 public:
@@ -133,4 +135,5 @@ public:
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 };
+END_VISP_NAMESPACE
 #endif

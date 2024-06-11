@@ -48,6 +48,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpVideoReader
  *
@@ -159,7 +161,7 @@
  *   return 0;
  * }
  * \endcode
- */
+*/
 
 class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 {
@@ -374,5 +376,7 @@ private:
   bool checkImageNameFormat(const std::string &format) const;
   void getProperties();
 };
+
+END_VISP_NAMESPACE
 
 #endif

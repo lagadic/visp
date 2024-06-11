@@ -45,6 +45,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 void fprintf_rfstack(FILE *fp);
 int *get_rfstack(void);
 void load_rfstack(int i);
@@ -53,6 +54,6 @@ void push_rfstack(void);
 void swap_rfstack(void);
 void add_rfstack(int i);
 void sub_rfstack(int i);
-
+END_VISP_NAMESPACE
 #endif
 #endif

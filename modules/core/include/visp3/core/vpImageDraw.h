@@ -31,15 +31,16 @@
  * Drawing functions.
  */
 
-#ifndef _vpImageDraw_h_
-#define _vpImageDraw_h_
-
 /*!
   \file vpImageDraw.h
 
   \brief Drawing functions for image.
 */
 
+#ifndef _vpImageDraw_h_
+#define _vpImageDraw_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -47,6 +48,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageDraw
 
@@ -115,5 +117,5 @@ public:
   static void drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill = false,
                             unsigned int thickness = 1);
 };
-
+END_VISP_NAMESPACE
 #endif

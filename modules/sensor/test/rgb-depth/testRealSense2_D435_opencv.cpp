@@ -155,6 +155,9 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const int width = 640, height = 480, fps = 60;
   vpRealSense2 rs;
   rs2::config config;

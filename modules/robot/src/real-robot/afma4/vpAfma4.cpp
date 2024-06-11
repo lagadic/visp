@@ -50,6 +50,7 @@
 #include <visp3/robot/vpAfma4.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
@@ -91,7 +92,7 @@ vpAfma4::vpAfma4() : _a1(0), _d3(0), _d4(0), _etc(), _erc(), _eMc()
   this->_erc[2] = 0;
 
   vpRotationMatrix eRc(_erc);
-  this->_eMc.buildFrom(_etc, eRc);
+  this->_eMc.build(_etc, eRc);
 
   init();
 }
@@ -319,7 +320,7 @@ void vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 
   return;
 }
@@ -348,7 +349,7 @@ void vpAfma4::get_cVf(const vpColVector &q, vpVelocityTwistMatrix &cVf) const
   get_fMc(q, fMc);
   cMf = fMc.inverse();
 
-  cVf.buildFrom(cMf);
+  cVf.build(cMf);
 
   return;
 }
@@ -575,28 +576,29 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma4 &afma4)
   vpRxyzVector rxyz(eRc);
 
   os << "Joint Max:" << std::endl
-     << "\t" << afma4._joint_max[0] << "\t" << afma4._joint_max[1] << "\t" << afma4._joint_max[2] << "\t"
-     << afma4._joint_max[3] << "\t" << std::endl
+    << "\t" << afma4._joint_max[0] << "\t" << afma4._joint_max[1] << "\t" << afma4._joint_max[2] << "\t"
+    << afma4._joint_max[3] << "\t" << std::endl
 
-     << "Joint Min: " << std::endl
-     << "\t" << afma4._joint_min[0] << "\t" << afma4._joint_min[1] << "\t" << afma4._joint_min[2] << "\t"
-     << afma4._joint_min[3] << "\t" << std::endl
+    << "Joint Min: " << std::endl
+    << "\t" << afma4._joint_min[0] << "\t" << afma4._joint_min[1] << "\t" << afma4._joint_min[2] << "\t"
+    << afma4._joint_min[3] << "\t" << std::endl
 
-     << "a1: " << std::endl
-     << "\t" << afma4._a1 << "\t" << std::endl
+    << "a1: " << std::endl
+    << "\t" << afma4._a1 << "\t" << std::endl
 
-     << "d3: " << std::endl
-     << "\t" << afma4._d3 << "\t" << std::endl
+    << "d3: " << std::endl
+    << "\t" << afma4._d3 << "\t" << std::endl
 
-     << "d4: " << std::endl
-     << "\t" << afma4._d4 << "\t" << std::endl
+    << "d4: " << std::endl
+    << "\t" << afma4._d4 << "\t" << std::endl
 
-     << "eMc: " << std::endl
-     << "\tTranslation (m): " << afma4._eMc[0][3] << " " << afma4._eMc[1][3] << " " << afma4._eMc[2][3] << "\t"
-     << std::endl
-     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " " << rxyz[2] << "\t" << std::endl
-     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " " << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2])
-     << "\t" << std::endl;
+    << "eMc: " << std::endl
+    << "\tTranslation (m): " << afma4._eMc[0][3] << " " << afma4._eMc[1][3] << " " << afma4._eMc[2][3] << "\t"
+    << std::endl
+    << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " " << rxyz[2] << "\t" << std::endl
+    << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " " << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2])
+    << "\t" << std::endl;
 
   return os;
 }
+END_VISP_NAMESPACE

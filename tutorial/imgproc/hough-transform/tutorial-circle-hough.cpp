@@ -17,6 +17,10 @@
 
 #include "drawingHelpers.h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode, const bool &displayCanny)
 {
   double t0 = vpTime::measureTimeMicros();
@@ -114,7 +118,7 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
     drawingHelpers::display(edgeMap, "Edge map", true);
   }
   return drawingHelpers::display(I_disp, "Detection results", blockingMode);
-}
+      }
 
 int main(int argc, char **argv)
 {
@@ -251,7 +255,7 @@ int main(int argc, char **argv)
       i += 2;
     }
     else if (argName == "--filtering-type" && i + 1 < argc) {
-      opt_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(std::string(argv[i+1]));
+      opt_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(std::string(argv[i+1]));
       i++;
     }
     else if (argName == "--canny-backend" && i + 1 < argc) {
@@ -306,7 +310,7 @@ int main(int argc, char **argv)
         << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_circlePerfectness << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
         << "\t [--filtering-type <type-name>]"
-        << " (default: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(def_filteringAndGradientType) << ")" << std::endl
+        << " (default: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(def_filteringAndGradientType) << ")" << std::endl
         << "\t [--canny-backend <backend-name>]"
         << " (default: " << vpImageFilter::vpCannyBackendTypeToString(def_cannyBackendType) << ")" << std::endl
         << "\t [--lower-canny-ratio <value>]"
@@ -417,7 +421,7 @@ int main(int argc, char **argv)
         << std::endl
         << "\t--filtering-type" << std::endl
         << "\t\tPermit to choose the gradient filters." << std::endl
-        << "\t\tDefault: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(def_filteringAndGradientType) << ", available: " << vpImageFilter::vpCannyFilteringAndGradientTypeList() << std::endl
+        << "\t\tDefault: " << vpImageFilter::vpCannyFiltAndGradTypeToStr(def_filteringAndGradientType) << ", available: " << vpImageFilter::vpGetCannyFiltAndGradTypes() << std::endl
         << std::endl
         << "\t--canny-backend" << std::endl
         << "\t\tPermit to choose the backend used to compute the edge map." << std::endl
@@ -459,9 +463,9 @@ int main(int argc, char **argv)
         << std::endl;
       return EXIT_SUCCESS;
     }
-  }
+    }
 
-  //! [Algo params]
+    //! [Algo params]
   vpCircleHoughTransform::vpCircleHoughTransformParameters
     algoParams(opt_gaussianKernelSize
       , opt_gaussianSigma
@@ -536,4 +540,4 @@ int main(int argc, char **argv)
   }
 
   return EXIT_SUCCESS;
-}
+  }

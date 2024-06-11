@@ -46,13 +46,14 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpHandEyeCalibration
  *
  * \ingroup group_vision_calib
  *
  * \brief Tool for hand-eye calibration.
- */
+*/
 class VISP_EXPORT vpHandEyeCalibration
 {
 public:
@@ -94,5 +95,5 @@ private:
   static int calibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                             vpHomogeneousMatrix &eMc);
 };
-
+END_VISP_NAMESPACE
 #endif

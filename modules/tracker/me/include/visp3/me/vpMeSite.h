@@ -39,10 +39,13 @@
 #ifndef _vpMeSite_h_
 #define _vpMeSite_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/me/vpMe.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpMeSite
@@ -60,7 +63,7 @@
  *   amongst all edges found.
  *
  * - sample step.
- */
+*/
 class VISP_EXPORT vpMeSite
 {
 public:
@@ -391,5 +394,7 @@ private:
   vpMeSiteDisplayType m_selectDisplay; //!< Display selector
   vpMeSiteState m_state; //!< Site state
 };
+
+END_VISP_NAMESPACE
 
 #endif

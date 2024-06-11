@@ -67,6 +67,9 @@
 */
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
     int opt_no_display = 0;
@@ -75,7 +78,7 @@ int main(int argc, const char **argv)
     int opt_normalized = 1;
 
     // Parse the command line to set the variables
-    vpParseArgv::vpArgvInfo argTable [] = {
+    vpParseArgv::vpArgvInfo argTable[] = {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
       {"-d", vpParseArgv::ARGV_CONSTANT_INT, 0, (char *)&opt_no_display, "Disable display and graphics viewer."},
 #endif

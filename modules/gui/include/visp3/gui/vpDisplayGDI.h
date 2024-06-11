@@ -35,15 +35,19 @@
  * Bruno Renier
  *
 *****************************************************************************/
+
+
+#ifndef vpDisplayGDI_HH
+#define vpDisplayGDI_HH
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 
 #if (defined(VISP_HAVE_GDI))
 
-#ifndef vpDisplayGDI_HH
-#define vpDisplayGDI_HH
-
 #include <visp3/gui/vpDisplayWin32.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpDisplayGDI
@@ -137,5 +141,6 @@ public:
                vpScaleType type = SCALE_DEFAULT);
 };
 
+END_VISP_NAMESPACE
 #endif
 #endif

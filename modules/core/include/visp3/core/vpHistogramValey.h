@@ -38,11 +38,12 @@
 
 */
 
-#ifndef vpHistogramValey_h
-#define vpHistogramValey_h
+#ifndef _vpHistogramValey_h_
+#define _vpHistogramValey_h_
 
 #include <visp3/core/vpHistogramPeak.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogramValey
 
@@ -139,5 +140,5 @@ public:
  * c-basic-offset: 2
  * End:
  */
-
+END_VISP_NAMESPACE
 #endif

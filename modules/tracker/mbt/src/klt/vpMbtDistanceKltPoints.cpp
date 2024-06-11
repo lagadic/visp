@@ -47,6 +47,7 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -389,7 +390,7 @@ void vpMbtDistanceKltPoints::updateMask(
           corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
         }
 
-        polygon_area.buildFrom(corners);
+        polygon_area.build(corners);
         if (polygon_area.getArea() > max_area) {
           max_area = polygon_area.getArea();
           index_max = i;
@@ -652,7 +653,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
 
   return models;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o)
 // has no symbols

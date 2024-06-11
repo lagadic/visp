@@ -60,6 +60,7 @@ other functionalities ar useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 2D point visual feature.
 */
@@ -194,7 +195,7 @@ void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.buildFrom(0, 0, 1);
+  s.build(0, 0, 1);
 
   vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
   \endcode
@@ -204,7 +205,7 @@ void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.buildFrom(0, 0, 1);
+  s.build(0, 0, 1);
 
   vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
@@ -310,11 +311,11 @@ vpMatrix vpFeaturePoint::interaction(unsigned int select)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.buildFrom(0, 0, 1);
+  s.build(0, 0, 1);
 
   // Creation of the desired feature s*
   vpFeaturePoint s_star;
-  s_star.buildFrom(1, 1, 1);
+  s_star.build(1, 1, 1);
 
   // Compute the interaction matrix for the x feature
   vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
@@ -340,7 +341,8 @@ vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, unsigned int sel
       ey[0] = s[1] - s_star[1];
       e = vpColVector::stack(e, ey);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -359,7 +361,7 @@ vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, unsigned int sel
   vpFeaturePoint s; // Current visual feature s
 
   // Creation of the current feature s
-  s.buildFrom(0, 0, 1);
+  s.build(0, 0, 1);
 
   s.print(); // print all the 2 components of the feature
   s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
@@ -377,7 +379,9 @@ void vpFeaturePoint::print(unsigned int select) const
   std::cout << std::endl;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const double &, const double &, const double &) instead.
   Build a 2D point visual feature from the point coordinates in the image plan
   \f$ x \f$ and \f$ y \f$. The parameter Z which describes the depth, is set
   in the same time.
@@ -390,6 +394,24 @@ void vpFeaturePoint::print(unsigned int select) const
   \param Z_ : The \f$ Z \f$ parameter.
 */
 void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
+{
+  build(x_, y_, Z_);
+}
+#endif
+
+/*!
+  Build a 2D point visual feature from the point coordinates in the image plan
+  \f$ x \f$ and \f$ y \f$. The parameter Z which describes the depth, is set
+  in the same time.
+
+  See the vpFeaturePoint class description for more details about \f$ x \f$
+  and \f$ y \f$.
+
+  \param x_ : The \f$ x \f$ parameter.
+  \param y_ : The \f$ y \f$ parameter.
+  \param Z_ : The \f$ Z \f$ parameter.
+*/
+vpFeaturePoint &vpFeaturePoint::build(const double &x_, const double &y_, const double &Z_)
 {
 
   s[0] = x_;
@@ -411,8 +433,10 @@ void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -435,7 +459,8 @@ void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<unsign
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -461,7 +486,8 @@ void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<vpRGBa
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -522,3 +548,4 @@ unsigned int vpFeaturePoint::selectX() { return FEATURE_LINE[0]; }
   \endcode
 */
 unsigned int vpFeaturePoint::selectY() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

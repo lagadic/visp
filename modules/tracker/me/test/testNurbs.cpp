@@ -59,6 +59,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -292,7 +296,8 @@ int main(int argc, const char **argv)
         display[1].init(I2, 100, 100, "Points interpolation");
         vpDisplay::display(I2);
         vpDisplay::flush(I2);
-      } catch (...) {
+      }
+      catch (...) {
         vpERROR_TRACE("Error while displaying the image");
         return EXIT_FAILURE;
       }
@@ -321,7 +326,8 @@ int main(int argc, const char **argv)
         display[2].init(I3, 100, 100, "Points approximation");
         vpDisplay::display(I3);
         vpDisplay::flush(I3);
-      } catch (...) {
+      }
+      catch (...) {
         vpERROR_TRACE("Error while displaying the image");
         return EXIT_FAILURE;
       }
@@ -354,7 +360,8 @@ int main(int argc, const char **argv)
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -370,8 +377,8 @@ int main()
 int main()
 {
   std::cout << "This example requires a video device. " << std::endl
-            << "You should install X11, GTK, OpenCV, GDI or Direct3D" << std::endl
-            << "to be able to execute this example." << std::endl;
+    << "You should install X11, GTK, OpenCV, GDI or Direct3D" << std::endl
+    << "to be able to execute this example." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

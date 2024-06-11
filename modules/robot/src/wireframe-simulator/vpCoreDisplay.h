@@ -47,11 +47,12 @@
 #include "vpArit.h"
 #include "vpBound.h"
 
+BEGIN_VISP_NAMESPACE
 void open_display(void);
 void close_display(void);
 void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
 void set_Bound_face_display(Bound *bp, Byte b);
 void wireframe_Face(Face *fp, Point2i *pp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

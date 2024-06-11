@@ -47,6 +47,7 @@
 #if defined(VISP_HAVE_PUGIXML)
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpXmlConfigParserKeyPoint
  * \ingroup group_vision_keypoints
@@ -55,7 +56,7 @@
  * XML file for vpKeyPoint class.
  *
  * \warning This class is only available if pugixml is successfully built.
- */
+*/
 class VISP_EXPORT vpXmlConfigParserKeyPoint
 {
 public:
@@ -198,5 +199,6 @@ private:
   //! Pointer to implementation
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -36,8 +36,14 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpBasicFeature.cpp
+  \brief Class that defines what is a visual feature.
+*/
+
 #include <visp3/visual_features/vpBasicFeature.h>
 
+BEGIN_VISP_NAMESPACE
 const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
     (unsigned int)(1 << 0),  (unsigned int)(1 << 1),  (unsigned int)(1 << 2),  (unsigned int)(1 << 3),
     (unsigned int)(1 << 4),  (unsigned int)(1 << 5),  (unsigned int)(1 << 6),  (unsigned int)(1 << 7),
@@ -46,16 +52,13 @@ const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
     (unsigned int)(1 << 16), (unsigned int)(1 << 17), (unsigned int)(1 << 18), (unsigned int)(1 << 19),
     (unsigned int)(1 << 20), (unsigned int)(1 << 21), (unsigned int)(1 << 22), (unsigned int)(1 << 23),
     (unsigned int)(1 << 24), (unsigned int)(1 << 25), (unsigned int)(1 << 26), (unsigned int)(1 << 27),
-    (unsigned int)(1 << 28), (unsigned int)(1 << 29), (unsigned int)(1 << 30), (unsigned int)(1 << 31)};
+    (unsigned int)(1 << 28), (unsigned int)(1 << 29), (unsigned int)(1 << 30), (unsigned int)(1 << 31) };
 
-/*!
-  \file vpBasicFeature.cpp
-  \brief Class that defines what is a visual feature.
-*/
+
 /*!
   Default constructor.
 */
-vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user) {}
+vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user) { }
 
 /*!
   Destructor that free allocated memory.
@@ -157,7 +160,8 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int sel
         // std::cout << "dim_s <= 31"<<std::endl;
       }
     }
-  } else {
+  }
+  else {
     e.resize(dim_s);
     vpColVector sd = s_star.get_s();
     e = s - sd;
@@ -165,7 +169,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int sel
 
   return e;
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 4

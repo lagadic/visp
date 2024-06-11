@@ -1,6 +1,7 @@
 //! \example tutorial-mb-generic-tracker-rgbd-blender.cpp
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -11,6 +12,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(VISP_HAVE_PUGIXML)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 bool read_data(unsigned int cpt, const std::string &video_color_images, const std::string &video_depth_images,

@@ -45,6 +45,7 @@
 #include <math.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
@@ -137,7 +138,7 @@ void vpPtu46::computeMGD(const vpColVector &q, vpPoseVector &r) const
   vpHomogeneousMatrix fMc;
 
   computeMGD(q, fMc);
-  r.buildFrom(fMc.inverse());
+  r.build(fMc.inverse());
 
   return;
 }
@@ -169,10 +170,10 @@ void vpPtu46::init() { return; }
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 & /* constant */)
 {
   os << "Geometric parameters: " << std::endl
-     << "L: "
-     << "\t" << vpPtu46::L << std::endl
-     << "h: "
-     << "\t" << vpPtu46::h << std::endl;
+    << "L: "
+    << "\t" << vpPtu46::L << std::endl
+    << "h: "
+    << "\t" << vpPtu46::h << std::endl;
 
   return os;
 }
@@ -192,7 +193,7 @@ void vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -291,3 +292,4 @@ void vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   fJe[4][1] = -c1;
   fJe[5][0] = 1;
 }
+END_VISP_NAMESPACE

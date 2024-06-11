@@ -1,4 +1,5 @@
 //! \example mbot-apriltag-2D-half-vs.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpSerial.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -15,6 +16,10 @@
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -32,38 +37,50 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--without_pose_computation") {
       use_pose = false;
-    } else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = std::atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--display_tag") {
+    }
+    else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
 #if defined(VISP_HAVE_X11)
-    } else if (std::string(argv[i]) == "--display_on") {
+    }
+    else if (std::string(argv[i]) == "--display_on") {
       display_on = true;
-    } else if (std::string(argv[i]) == "--save_image") {
+    }
+    else if (std::string(argv[i]) == "--save_image") {
       save_image = true;
 #endif
-    } else if (std::string(argv[i]) == "--serial_off") {
+    }
+    else if (std::string(argv[i]) == "--serial_off") {
       serial_off = true;
-    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--input <camera input>] [--tag_size <tag_size in m>]"
-                   " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-                   " [--intrinsic <intrinsic file>] [--camera_name <camera name>] [--without_pose_computation]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-                   " [--display_tag]";
+        << " [--input <camera input>] [--tag_size <tag_size in m>]"
+        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
+        " [--intrinsic <intrinsic file>] [--camera_name <camera name>] [--without_pose_computation]"
+        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
+        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
+        " [--display_tag]";
 #if defined(VISP_HAVE_X11)
       std::cout << " [--display_on] [--save_image]";
 #endif
@@ -164,7 +181,7 @@ int main(int argc, const char **argv)
     vpFeatureBuilder::create(s_x, cam, cog);
 
     // Create the desired x* visual feature
-    s_xd.buildFrom(0, 0, Z_d);
+    s_xd.build(0, 0, Z_d);
 
     // Add the point feature
     task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
@@ -173,8 +190,8 @@ int main(int argc, const char **argv)
     vpFeatureDepth s_Z, s_Z_d;
 
     std::cout << "Z " << Z << std::endl;
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
-    s_Z_d.buildFrom(0, 0, Z_d, 0);                 // The value of s* is 0 with Z=1 meter
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
+    s_Z_d.build(0, 0, Z_d, 0);                 // The value of s* is 0 with Z=1 meter
 
     // Add the feature
     task.addFeature(s_Z, s_Z_d);
@@ -220,7 +237,8 @@ int main(int argc, const char **argv)
 
         if (use_pose) {
           Z = cMo_vec[0][2][3];
-        } else {
+        }
+        else {
           vpPolygon polygon(detector.getPolygon(0));
           double surface = polygon.getArea();
           std::cout << "Surface: " << surface << std::endl;
@@ -233,7 +251,7 @@ int main(int argc, const char **argv)
         s_x.set_Z(Z);
 
         // Update log(Z/Z*) feature
-        s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Z_d));
+        s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Z_d));
 
         std::cout << "cog: " << detector.getCog(0) << " Z: " << Z << std::endl;
 
@@ -263,8 +281,9 @@ int main(int argc, const char **argv)
         if (!serial_off) {
           serial->write(ss.str());
         }
-      } else {
-        // stop the robot
+      }
+      else {
+     // stop the robot
         if (!serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
           //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
@@ -289,19 +308,20 @@ int main(int argc, const char **argv)
 
     std::cout << "Benchmark computation time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
-              << " ; " << vpMath::getMedian(time_vec) << " ms"
-              << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+      << " ; " << vpMath::getMedian(time_vec) << " ms"
+      << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
     if (display_on)
       delete d;
     if (!serial_off) {
       delete serial;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
     if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
-    }
+}
   }
 
   return EXIT_SUCCESS;

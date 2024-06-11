@@ -44,6 +44,10 @@
 
 #if defined(VISP_HAVE_VIRTUOSE)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void CallBackVirtuose(VirtContext VC, void *ptr)
 {
   (void)VC;

@@ -38,6 +38,7 @@
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageConvert.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpGaussianFilter::Impl
 {
@@ -46,14 +47,13 @@ public:
     : m_funcPtrGray(nullptr), m_funcPtrRGBa(nullptr), m_deinterleave(deinterleave)
   {
     const float epsilon = 0.001f;
-    {
-      const size_t channels = 1;
-      m_funcPtrGray = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
-    {
-      const size_t channels = 4;
-      m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
+
+    const size_t channels_1 = 1;
+    m_funcPtrGray = SimdGaussianBlurInit(width, height, channels_1, &sigma, &epsilon);
+
+    const size_t channels_4 = 4;
+    m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels_4, &sigma, &epsilon);
+
     if (m_deinterleave) {
       m_red.resize(height, width);
       m_green.resize(height, width);
@@ -148,7 +148,7 @@ void vpGaussianFilter::apply(const vpImage<unsigned char> &I, vpImage<unsigned c
   \param[out] I_blur : output blurred color image.
 */
 void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) { m_impl->apply(I, I_blur); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
  // Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
 void dummy_vpGaussianFilter() { };

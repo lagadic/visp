@@ -55,6 +55,7 @@
 #include <string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 static void count(void);
 static void next_source(void);
 
@@ -135,7 +136,7 @@ const char *lex_errtbl[] = {/* table des messages d'erreur    */
                             "unexpected EOF in string or char constant",
                             "newline in string or char constant",
                             "string expected",
-                            ""};
+                            "" };
 
 char *mytext = NULL;
 int mylength = 0;
@@ -726,7 +727,8 @@ static void next_source(void)
     *buf = EOF;
     *topbuf = EOB; /* sentinelle de fin de fichier  */
     mysptr = buf;
-  } else {
+  }
+  else {
     topbuf = buf + size;
     *topbuf = EOB; /* sentinelle de fin de buffer  */
 
@@ -840,5 +842,5 @@ void pusherr(const char *str)
   }
   err_stack[size_stack++] = str;
 }
-
+END_VISP_NAMESPACE
 #endif

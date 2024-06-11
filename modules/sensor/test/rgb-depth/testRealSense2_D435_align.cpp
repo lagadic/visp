@@ -41,7 +41,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
-  && defined(VISP_HAVE_PCL) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+  && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -49,6 +49,10 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {

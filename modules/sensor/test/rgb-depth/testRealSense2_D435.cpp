@@ -52,6 +52,9 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   bool show_info = false;
 
   for (int i = 1; i < argc; i++) {

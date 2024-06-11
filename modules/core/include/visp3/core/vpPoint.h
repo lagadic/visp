@@ -31,19 +31,21 @@
  * Point feature.
  */
 
-#ifndef vpPoint_H
-#define vpPoint_H
-
 /*!
   \file vpPoint.h
   \brief  class that defines what is a point
 */
 
-class vpHomogeneousMatrix;
+#ifndef _vpPoint_H_
+#define _vpPoint_H_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpMatrix.h>
+
+BEGIN_VISP_NAMESPACE
+class vpHomogeneousMatrix;
 
 /*!
   \class vpPoint
@@ -148,5 +150,5 @@ protected:
   //! Basic construction.
   void init() vp_override;
 };
-
+END_VISP_NAMESPACE
 #endif

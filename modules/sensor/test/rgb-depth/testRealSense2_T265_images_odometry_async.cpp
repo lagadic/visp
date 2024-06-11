@@ -55,6 +55,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpHomogeneousMatrix cMw, cMw_0;
   vpHomogeneousMatrix cextMw(0, 0, 2, 0, 0, 0); // External camera view for pose visualization.
   vpColVector odo_vel, odo_acc, imu_acc, imu_vel;
@@ -99,7 +102,7 @@ int main()
         vpQuaternionVector cqw(static_cast<double>(pose_data.rotation.x), static_cast<double>(pose_data.rotation.y),
                                static_cast<double>(pose_data.rotation.z), static_cast<double>(pose_data.rotation.w));
 
-        cMw.buildFrom(ctw, cqw);
+        cMw.build(ctw, cqw);
 
         odo_vel.resize(6, false);
         odo_vel[0] = static_cast<double>(pose_data.velocity.x);
@@ -128,7 +131,7 @@ int main()
         vpQuaternionVector cqw(static_cast<double>(pose_data.rotation.x), static_cast<double>(pose_data.rotation.y),
                                static_cast<double>(pose_data.rotation.z), static_cast<double>(pose_data.rotation.w));
 
-        cMw.buildFrom(ctw, cqw);
+        cMw.build(ctw, cqw);
 
         odo_vel.resize(6, false);
         odo_vel[0] = static_cast<double>(pose_data.velocity.x);

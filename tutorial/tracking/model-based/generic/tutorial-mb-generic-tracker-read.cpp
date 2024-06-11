@@ -1,4 +1,5 @@
 #include <memory>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -37,7 +38,11 @@ std::unique_ptr<T> make_unique_compat(Args&&... args)
 int main(int argc, char *argv[])
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool opencv_backend = false;
   std::string npz_filename = "npz_tracking_teabox.npz";
   bool print_cMo = false;
@@ -92,7 +97,11 @@ int main(int argc, char *argv[])
   std::cout << "Color mode? " << (channel > 1) << std::endl;
 
   visp::cnpy::NpyArray arr_camera_name = npz_data["camera_name"];
-  const std::string camera_name = std::string(arr_camera_name.data<char>());
+  // For null-terminated character handling, see:
+  // https://stackoverflow.com/a/8247804
+  // https://stackoverflow.com/a/45491652
+  std::vector<char> vec_arr_camera_name = arr_camera_name.as_vec<char>();
+  const std::string camera_name = std::string(vec_arr_camera_name.begin(), vec_arr_camera_name.end());
   std::cout << "Camera name: " << camera_name << std::endl;
 
   visp::cnpy::NpyArray arr_px = npz_data["cam_px"];
@@ -197,6 +206,9 @@ int main(int argc, char *argv[])
   (void)argc;
   (void)argv;
   std::cerr << "Error, a missing display library is needed (X11, GDI or OpenCV built with HighGUI module)." << std::endl;
+#ifndef VISP_HAVE_MINIZ
+  std::cerr << "You also need to enable npz I/O functions" << std::endl;
+#endif
 #endif
 
   return EXIT_SUCCESS;

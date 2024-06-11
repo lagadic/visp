@@ -62,6 +62,7 @@
 #define LABEL_XML_TUY "theta_uy"
 #define LABEL_XML_TUZ "theta_uz"
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserHomogeneousMatrix::Impl
 {
@@ -301,7 +302,7 @@ public:
     }
 
     // Create the Homogeneous matrix
-    M.buildFrom(tx_, ty_, tz_, tux_, tuy_, tuz_);
+    M.build(tx_, ty_, tz_, tux_, tuy_, tuz_);
 
     //  --comment: std::cout << "Read values from file:" << std::endl;
     //  --comment: std::cout << "tx:" << tx_<< std::endl;
@@ -556,7 +557,7 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 {
   m_impl->setHomogeneousMatrixName(name);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
 void dummy_vpXmlParserHomogeneousMatrix() { };

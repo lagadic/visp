@@ -58,6 +58,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -73,6 +74,10 @@
 
 #if defined(VISP_HAVE_FLIR_PTU_SDK) && defined(VISP_HAVE_FLYCAPTURE) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const vpImagePoint &ip,
                               std::vector<vpImagePoint> &traj_ip)
@@ -273,7 +278,7 @@ int main(int argc, char **argv)
     if (!opt_extrinsic.empty()) {
       vpPoseVector ePc;
       ePc.loadYAML(opt_extrinsic, ePc);
-      eMc.buildFrom(ePc);
+      eMc.build(ePc);
     }
     else {
       std::cout << "***************************************************************" << std::endl;

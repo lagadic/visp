@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFeatureThetaU.cpp
+  \brief class that defines the ThetaU visual feature
+*/
+
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureThetaU.h>
@@ -44,10 +49,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
-  \file vpFeatureThetaU.cpp
-  \brief class that defines the ThetaU visual feature
-*/
 /*
 
 attributes and members directly related to the vpBasicFeature needs
@@ -55,6 +56,7 @@ other functionalities are useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for 3D \f$ \theta u \f$ visual
@@ -126,7 +128,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu, vpFeatureThetaURotationRepr
 {
   init();
 
-  buildFrom(tu);
+  build(tu);
 }
 
 /*!
@@ -151,7 +153,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R, vpFeatureThetaURotationRep
   init();
 
   vpThetaUVector tu(R);
-  buildFrom(tu);
+  build(tu);
 }
 
 /*!
@@ -179,8 +181,76 @@ vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotation
   vpRotationMatrix R;
   M.extract(R);
   vpThetaUVector tu(R);
-  buildFrom(tu);
+  build(tu);
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated You should use build(const vpThetaUVector &) instead.
+  Build a 3D visual feature from a \f$ \theta u \f$ vector that
+  represent the rotation \f$ R \f$ the camera has to achieve.
+
+  \param tu [in] : Rotation that the camera has to achieve in \f$
+  \theta u \f$ angle/axis representation. Depending on the rotation
+  representation type
+  (vpFeatureThetaU::vpFeatureThetaURotationRepresentationType) used to
+  construct this object, the parameter \e tu represents either the
+  rotation that the camera has to achieve to move from the desired
+  camera frame to the current one (\f$ ^{c^*}R_c\f$), or the rotation
+  that the camera has to achieve to move from the current camera frame
+  to the desired one (\f$ ^{c}R_{c^*}\f$).
+
+*/
+void vpFeatureThetaU::buildFrom(vpThetaUVector &tu)
+{
+  build(tu);
+}
+
+/*!
+  \deprecated You should use build(const vpRotationMatrix &) instead.
+  Build a 3D \f$ \theta u \f$ visual feature from a
+  rotation matrix \f$ R \f$ that represent the rotation that
+  the camera has to achieve.
+
+  \param R [in] : Rotation that the camera has to achieve. Depending
+  on the rotation representation type
+  (vpFeatureThetaU::vpFeatureThetaURotationRepresentationType) used to
+  construct this object, the parameter \e R represents either the
+  rotation that the camera has to achieve to move from the desired
+  camera frame to the current one (\f$ ^{c^*}R_c\f$), or the rotation
+  that the camera has to achieve to move from the current camera frame
+  to the desired one (\f$ ^{c}R_{c^*}\f$).
+
+*/
+void vpFeatureThetaU::buildFrom(const vpRotationMatrix &R)
+{
+  build(R);
+}
+
+/*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
+  Build a 3D \f$ \theta u \f$ visual feature from an
+  homogeneous matrix \f$ M \f$ that represent the displacement that
+  the camera has to achieve.
+
+  \param M [in] : Homogeneous transformation that describe the
+  movement that the camera has to achieve. Only the rotational part of
+  this homogeneous transformation is taken into consideration.
+  Depending on the rotation representation type
+  (vpFeatureThetaU::vpFeatureThetaURotationRepresentationType) used to
+  construct this object, the parameter \e M represents either the
+  rotation that the camera has to achieve to move from the desired
+  camera frame to the current one (\f$ ^{c^*}R_c\f$), or the rotation
+  that the camera has to achieve to move from the current camera frame
+  to the desired one (\f$ ^{c}R_{c^*}\f$).
+
+
+*/
+void vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
+{
+  build(M);
+}
+#endif
 
 /*!
 
@@ -198,13 +268,15 @@ vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotation
   to the desired one (\f$ ^{c}R_{c^*}\f$).
 
 */
-void vpFeatureThetaU::buildFrom(vpThetaUVector &tu)
+vpFeatureThetaU &vpFeatureThetaU::build(const vpThetaUVector &tu)
 {
   s[0] = tu[0];
   s[1] = tu[1];
   s[2] = tu[2];
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -222,10 +294,11 @@ void vpFeatureThetaU::buildFrom(vpThetaUVector &tu)
   to the desired one (\f$ ^{c}R_{c^*}\f$).
 
 */
-void vpFeatureThetaU::buildFrom(const vpRotationMatrix &R)
+vpFeatureThetaU &vpFeatureThetaU::build(const vpRotationMatrix &R)
 {
   vpThetaUVector tu(R);
-  buildFrom(tu);
+  build(tu);
+  return *this;
 }
 
 /*!
@@ -246,12 +319,13 @@ void vpFeatureThetaU::buildFrom(const vpRotationMatrix &R)
 
 
 */
-void vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
+vpFeatureThetaU &vpFeatureThetaU::build(const vpHomogeneousMatrix &M)
 {
   vpRotationMatrix R;
   M.extract(R);
   vpThetaUVector tu(R);
-  buildFrom(tu);
+  build(tu);
+  return *this;
 }
 
 /*!
@@ -373,7 +447,7 @@ double vpFeatureThetaU::get_TUz() const { return s[2]; }
 
   // Creation of the current feature s
   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
-  s.buildFrom(cdMc);
+  s.build(cdMc);
 
   vpMatrix L_x = s.interaction( vpFeatureThetaU::selectTUx() );
   \endcode
@@ -455,7 +529,8 @@ vpMatrix vpFeatureThetaU::interaction(unsigned int select)
 
   if (rotation == cdRc) {
     Lw += U2;
-  } else {
+  }
+  else {
     Lw -= U2;
   }
 
@@ -609,7 +684,7 @@ vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, unsigned int se
 
   // Creation of the current feature s
   vpFeatureThetaU s(vpFeatureThetaU::cdRc);
-  s.buildFrom(tu);
+  s.build(tu);
 
   s.print(); // print all the 3 components of the feature
   s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
@@ -763,3 +838,4 @@ unsigned int vpFeatureThetaU::selectTUy() { return FEATURE_LINE[1]; }
   \sa selectTUx(), selectTUy()
 */
 unsigned int vpFeatureThetaU::selectTUz() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

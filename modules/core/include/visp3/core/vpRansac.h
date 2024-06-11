@@ -35,15 +35,17 @@
   \file vpRansac.h
 */
 
-#ifndef vpRANSAC_HH
-#define vpRANSAC_HH
+#ifndef _vpRANSAC_H_
+#define _vpRANSAC_H_
 
 #include <ctime>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h> // debug and trace
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h> // random number generation
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRansac
   \ingroup group_core_robust
@@ -61,7 +63,7 @@
   http://www.csse.uwa.edu.au/~pk
 
   \sa vpHomography
- */
+*/
 template <class vpTransformation> class vpRansac
 {
 public:
@@ -107,9 +109,11 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
                                         vpColVector &M, vpColVector &inliers, int consensus, double not_used,
                                         int maxNbumbersOfTrials, double *residual)
 {
-  /*   bool isplanar; */
-  /*   if (s == 4) isplanar = true; */
-  /*   else isplanar = false; */
+  /*
+  // bool isplanar;
+  //   if (s == 4) isplanar = true;
+  //   else isplanar = false;
+  */
   (void)not_used;
   double eps = 1e-6;
   double p = 0.99; // Desired probability of choosing at least one sample
@@ -119,8 +123,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   int maxDataTrials = 1000;            // Max number of attempts to select a non-degenerate
   // data set.
 
-  if (s < 4)
+  if (s < 4) {
     s = 4;
+  }
 
   // Sentinel value allowing detection of solution failure.
   bool solutionFind = false;
@@ -129,7 +134,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   int bestscore = -1;
   double N = 1; // Dummy initialisation for number of trials.
 
-  vpUniRand random((const long)time(nullptr));
+  vpUniRand random(static_cast<long>(time(nullptr)));
   vpColVector bestinliers;
   unsigned int *ind = new unsigned int[s];
   int ninliers = 0;
@@ -150,8 +155,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x, ind);
+      /*
       //   degenerate = feval(degenfn, x(:,ind));
-
+      */
       // Safeguard against being stuck in this loop forever
       count = count + 1;
 
@@ -159,7 +165,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
         delete[] ind;
         vpERROR_TRACE("Unable to select a nondegenerate data set");
         throw(vpException(vpException::fatalError, "Unable to select a non degenerate data set"));
+        /*
         // return false; //Useless after a throw() function
+        */
       }
     }
     // Fit model to this random selection of data points.
@@ -178,13 +186,14 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       double resid = fabs(d[i]);
       if (resid < t) {
         inliers[i] = 1;
-        ninliers++;
+        ++ninliers;
         if (residual != nullptr) {
           *residual += fabs(d[i]);
         }
       }
-      else
+      else {
         inliers[i] = 0;
+      }
     }
 
     if (ninliers > bestscore) // Largest set of inliers so far...
@@ -197,7 +206,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       // Update estimate of N, the number of trials to ensure we pick,
       // with probability p, a data set with no outliers.
 
-      double fracinliers = (double)ninliers / (double)npts;
+      double fracinliers = static_cast<double>(ninliers) / static_cast<double>(npts);
 
       double pNoOutliers = 1 - pow(fracinliers, static_cast<int>(s));
 
@@ -234,5 +243,5 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
   return true;
 }
-
+END_VISP_NAMESPACE
 #endif

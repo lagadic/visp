@@ -74,7 +74,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
@@ -87,6 +87,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string username = vpIoTools::getUserName();
     std::string logdirname = "/tmp/" + username;
@@ -95,7 +99,8 @@ int main()
         try {
           // Create the dirname
           vpIoTools::makeDirectory(logdirname);
-        } catch (...) {
+        }
+        catch (...) {
           std::cerr << std::endl << "ERROR:" << std::endl;
           std::cerr << "  Cannot create " << logdirname << std::endl;
           return EXIT_FAILURE;
@@ -108,12 +113,17 @@ int main()
     vpImage<unsigned char> I;
     int i;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-    g.acquire(I);
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -160,6 +170,8 @@ int main()
     point[6].setWorldCoordinates(-L, D, L);
 
     vpRobotAfma6 robot;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
+
     // Update camera parameters
     robot.getCameraParameters(cam, I);
 
@@ -264,10 +276,11 @@ int main()
     std::cin >> beta;
     std::list<vpImagePoint> Lcog;
     vpImagePoint ip;
-    while (error > convergence_threshold) {
+    bool quit = false;
+    while ((error > convergence_threshold) && (!quit)) {
       std::cout << "---------------------------------------------" << iter++ << std::endl;
 
-      g.acquire(I);
+      rs.acquire(I);
       vpDisplay::display(I);
       ip.set_i(265);
       ip.set_j(150);
@@ -280,7 +293,8 @@ int main()
           dot[i].track(I);
           Lcog.push_back(dot[i].getCog());
         }
-      } catch (...) {
+      }
+      catch (...) {
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
         exit(1);
@@ -309,7 +323,6 @@ int main()
         point[i].display(I, cdMo, cam, vpColor::blue);
       }
       pose.computePose(vpPose::LOWE, cMo);
-      vpDisplay::flush(I);
 
       //! set up the Jacobian
       vpHomogeneousMatrix cMe, camrobotMe;
@@ -330,7 +343,8 @@ int main()
         else {
           gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
         }
-      } else
+      }
+      else
         gain = lambda_av;
       if (SAVE == 1)
         gain = gain / 5;
@@ -353,7 +367,7 @@ int main()
       if (error > 7) {
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
-        exit(1);
+        return EXIT_FAILURE;
       }
 
       // display the pose
@@ -371,12 +385,20 @@ int main()
         ss << ".ppm";
         vpImageIo::write(Ic, ss.str());
       }
+
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
+
+      vpDisplay::flush(I);
     }
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
     vpDisplay::getClick(I);
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

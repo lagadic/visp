@@ -31,21 +31,23 @@
  * Generic feature (used to create new feature not implemented in ViSP).
  */
 
-#ifndef vpGenericFeature_hh
-#define vpGenericFeature_hh
-
 /*!
  * \file vpGenericFeature.h
  * \brief class that defines what is a generic feature (used to create new
  * feature not implemented in ViSP2
  */
 
+#ifndef vpGenericFeature_hh
+#define vpGenericFeature_hh
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
 #include <math.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpGenericFeature
  * \ingroup group_visual_features
@@ -171,7 +173,7 @@
  *
  * If the feature needs to be use with other features, the example
  * servoSimuPoint2DhalfCamVelocity2.cpp shows how to do it.
- */
+*/
 class VISP_EXPORT vpGenericFeature : public vpBasicFeature
 {
 private:
@@ -212,5 +214,5 @@ private:
   vpColVector err;
   vpGenericFeatureErrorType errorStatus;
 };
-
+END_VISP_NAMESPACE
 #endif

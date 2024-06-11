@@ -31,14 +31,15 @@
  * 2D point visual feature.
  */
 
-#ifndef vpFeaturePoint_H
-#define vpFeaturePoint_H
-
 /*!
  * \file vpFeaturePoint.h
  * \brief Class that defines 2D point visual feature
  */
 
+#ifndef vpFeaturePoint_H
+#define vpFeaturePoint_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -46,6 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeaturePoint
  * \ingroup group_visual_features
@@ -96,7 +98,7 @@
  *   // Set the depth of the point in the camera frame.
  *   double Zd = 1;
  *   // Set the point feature thanks to the desired parameters.
- *   sd.buildFrom(xd, yd, Zd);
+ *   sd.build(xd, yd, Zd);
  *
  *   vpFeaturePoint s; //The current point feature.
  *   // Set the current features x and y
@@ -104,7 +106,7 @@
  *   double y;  // You have to compute the value of y.
  *   double Z;  // You have to compute the value of Z.
  *   // Set the point feature thanks to the current parameters.
- *   s.buildFrom(x, y, Z);
+ *   s.build(x, y, Z);
  *   // In this case the parameter Z is not necessary because the interaction matrix is computed
  *   // with the desired visual feature.
  *
@@ -122,7 +124,7 @@
  *     // The new parameters x and y must be computed here.
  *
  *     // Update the current point visual feature
- *     s.buildFrom(x, y, Z);
+ *     s.build(x, y, Z);
  *
  *     // Compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -149,7 +151,7 @@
  *   // Set the depth of the point in the camera frame.
  *   double Zd = 1;
  *   // Set the point feature thanks to the desired parameters.
- *   sd.buildFrom(xd, yd, Zd);
+ *   sd.build(xd, yd, Zd);
  *
  *   vpFeaturePoint s; //The current point feature.
  *   // Set the current features x and y
@@ -157,7 +159,7 @@
  *   double y;  // You have to compute the value of y.
  *   double Z;  // You have to compute the value of Z.
  *   // Set the point feature thanks to the current parameters.
- *   s.buildFrom(x, y, Z);
+ *   s.build(x, y, Z);
  *
  *   // Compute the interaction matrix L_s for the current point feature
  *   vpMatrix L = s.interaction();
@@ -170,7 +172,7 @@
  * \endcode
  *
  * An other fully explained example is given in the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
 private:
@@ -181,7 +183,10 @@ private:
 public:
   vpFeaturePoint();
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(double x, double y, double Z);
+#endif
+  vpFeaturePoint &build(const double &x, const double &y, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;
@@ -223,5 +228,5 @@ public:
     Y = 2  // y coordinates
   } vpFeaturePointType;
 };
-
+END_VISP_NAMESPACE
 #endif

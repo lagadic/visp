@@ -42,6 +42,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize a line feature thanks to a vpLine.
   A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are
@@ -66,7 +67,8 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t)
       B = t.cP[1];
       C = t.cP[2];
       D = t.cP[3];
-    } else {
+    }
+    else {
       A = t.cP[4];
       B = t.cP[5];
       C = t.cP[6];
@@ -75,7 +77,8 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t)
 
     s.setABCD(A, B, C, D);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -110,7 +113,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t, int line)
     double R = t.getR();
 
     double D =
-        vpMath::sqr(x0) + vpMath::sqr(y0) + vpMath::sqr(z0) - vpMath::sqr(R) - vpMath::sqr(a * x0 + b * y0 + c * z0);
+      vpMath::sqr(x0) + vpMath::sqr(y0) + vpMath::sqr(z0) - vpMath::sqr(R) - vpMath::sqr(a * x0 + b * y0 + c * z0);
 
     double alpha1 = (1 - a * a) * x0 - a * b * y0 - a * c * z0;
     double beta1 = -a * b * x0 + (1 - b * b) * y0 - b * c * z0;
@@ -131,11 +134,13 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t, int line)
 
       s.setRhoTheta(t.getRho1(), t.getTheta1());
 
-    } else {
+    }
+    else {
 
       s.setRhoTheta(t.getRho2(), t.getTheta2());
     }
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -222,10 +227,12 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, c
       theta += 2 * M_PI;
     }
 
-    s.buildFrom(rho, theta);
-  } catch (...) {
+    s.build(rho, theta);
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
 #endif //#ifdef VISP_HAVE_MODULE_ME
+END_VISP_NAMESPACE

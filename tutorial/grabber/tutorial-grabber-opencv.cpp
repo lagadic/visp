@@ -1,5 +1,6 @@
 /*! \example tutorial-grabber-opencv.cpp */
 #include <stdlib.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpImageStorageWorker.h>
@@ -71,6 +72,9 @@ void usage(const char *argv[], int error)
 // 1 to dial with a second camera attached to the computer
 int main(int argc, const char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   int opt_device = 0;
   std::string opt_seqname;
   int opt_record_mode = 0;
@@ -179,7 +183,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-  }
+}
 #else
   (void)argc;
   (void)argv;
@@ -190,4 +194,4 @@ int main(int argc, const char *argv[])
   std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
-}
+  }

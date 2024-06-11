@@ -46,6 +46,10 @@
 #include <visp3/core/vpStatisticalTestShewhart.h>
 #include <visp3/core/vpStatisticalTestSigma.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool initializeShewhartTest(const float &mean, const float &stdev, const bool &verbose, const std::string &testName, vpStatisticalTestShewhart &tester)
 {
   const bool activateWECOrules = true;

@@ -46,6 +46,7 @@
 
 #include <visp3/detection/vpDetectorBase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorFace
  * \ingroup group_detection_face
@@ -81,7 +82,7 @@
  *
  * A more complete example that works with images acquired from a camera is
  * provided in tutorial-face-detector-live.cpp.
- */
+*/
 class VISP_EXPORT vpDetectorFace : public vpDetectorBase
 {
 protected:
@@ -96,6 +97,6 @@ public:
   bool detect(const cv::Mat &frame_gray);
   void setCascadeClassifierFile(const std::string &filename);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

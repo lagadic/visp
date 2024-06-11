@@ -38,6 +38,9 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
+#include <limits> // numeric_limits
+
+BEGIN_VISP_NAMESPACE
 /*!
   Check if an image point belongs to a rectangle.
 
@@ -126,7 +129,7 @@ vpImagePoint &vpImagePoint::operator/=(double scale)
 */
 VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  // --comment: return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ));
+// --comment: return  ip1 dot get_i() eq ip2 dot get_i() and ip1 dot get_j() eq ip2 dot get_j()
 
   double i1 = ip1.get_i();
   double j1 = ip1.get_j();
@@ -144,7 +147,7 @@ VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2)
 */
 VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  // --comment: return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ));
+// --comment: return ip1 dot get_i() diff ip2 dot get_i() or ip1 dot get_j() diff ip2 dot get_j()
   double i1 = ip1.get_i();
   double j1 = ip1.get_j();
   double i2 = ip2.get_i();
@@ -451,3 +454,4 @@ double vpImagePoint::sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP
 {
   return vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j());
 }
+END_VISP_NAMESPACE

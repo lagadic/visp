@@ -50,6 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTime.h>
 
+BEGIN_VISP_NAMESPACE
 void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop,
                                              const std::string &log_folder, const vpRobot::vpControlFrameType &frame,
                                              const vpHomogeneousMatrix &eMc,
@@ -203,116 +204,116 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
     &time, &model, &q_prev, &v_cart_des, &stop, &robot_state,
     &mutex](const franka::RobotState &state,
             franka::Duration period) -> franka::JointVelocities {
-  time += period.toSec();
+              time += period.toSec();
 
-  static vpJointVelTrajGenerator joint_vel_traj_generator;
+              static vpJointVelTrajGenerator joint_vel_traj_generator;
 
-  if (time == 0.0) {
-    if (!log_folder.empty()) {
-      log_time.open(log_folder + "/time.log");
-      log_q_mes.open(log_folder + "/q-mes.log");
-      log_dq_mes.open(log_folder + "/dq-mes.log");
-      log_dq_des.open(log_folder + "/dq-des.log");
-      log_dq_cmd.open(log_folder + "/dq-cmd.log");
-      log_v_des.open(log_folder + "/v-des.log");
-    }
-    q_prev = state.q_d;
-    joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
-  }
+              if (time == 0.0) {
+                if (!log_folder.empty()) {
+                  log_time.open(log_folder + "/time.log");
+                  log_q_mes.open(log_folder + "/q-mes.log");
+                  log_dq_mes.open(log_folder + "/dq-mes.log");
+                  log_dq_des.open(log_folder + "/dq-des.log");
+                  log_dq_cmd.open(log_folder + "/dq-cmd.log");
+                  log_v_des.open(log_folder + "/v-des.log");
+                }
+                q_prev = state.q_d;
+                joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
+              }
 
-  {
-    std::lock_guard<std::mutex> lock(mutex);
-    robot_state = state;
-  }
+              {
+                std::lock_guard<std::mutex> lock(mutex);
+                robot_state = state;
+              }
 
-  // Get robot Jacobian
-  if (frame == vpRobot::END_EFFECTOR_FRAME || frame == vpRobot::TOOL_FRAME) {
-    std::array<double, 42> jacobian = model.bodyJacobian(franka::Frame::kEndEffector, state);
-    // Convert row-major to col-major
-    for (size_t i = 0; i < 6; i++) { // TODO make a function
-      for (size_t j = 0; j < 7; j++) {
-        eJe[i][j] = jacobian[j * 6 + i];
-      }
-    }
-  }
-  else if (frame == vpRobot::REFERENCE_FRAME) {
-    std::array<double, 42> jacobian = model.zeroJacobian(franka::Frame::kEndEffector, state);
-    // Convert row-major to col-major
-    for (size_t i = 0; i < 6; i++) { // TODO make a function
-      for (size_t j = 0; j < 7; j++) {
-        fJe[i][j] = jacobian[j * 6 + i];
-      }
-    }
-  }
+              // Get robot Jacobian
+              if (frame == vpRobot::END_EFFECTOR_FRAME || frame == vpRobot::TOOL_FRAME) {
+                std::array<double, 42> jacobian = model.bodyJacobian(franka::Frame::kEndEffector, state);
+                // Convert row-major to col-major
+                for (size_t i = 0; i < 6; i++) { // TODO make a function
+                  for (size_t j = 0; j < 7; j++) {
+                    eJe[i][j] = jacobian[j * 6 + i];
+                  }
+                }
+              }
+              else if (frame == vpRobot::REFERENCE_FRAME) {
+                std::array<double, 42> jacobian = model.zeroJacobian(franka::Frame::kEndEffector, state);
+                // Convert row-major to col-major
+                for (size_t i = 0; i < 6; i++) { // TODO make a function
+                  for (size_t j = 0; j < 7; j++) {
+                    fJe[i][j] = jacobian[j * 6 + i];
+                  }
+                }
+              }
 
-  // Compute joint velocity
-  vpColVector q_dot;
-  if (frame == vpRobot::END_EFFECTOR_FRAME) {
-    q_dot = eJe.pseudoInverse() * v_cart_des; // TODO introduce try catch
-  }
-  else if (frame == vpRobot::TOOL_FRAME) {
-    q_dot = (cVe * eJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
-  }
-  else if (frame == vpRobot::REFERENCE_FRAME) {
-    q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
-  }
+              // Compute joint velocity
+              vpColVector q_dot;
+              if (frame == vpRobot::END_EFFECTOR_FRAME) {
+                q_dot = eJe.pseudoInverse() * v_cart_des; // TODO introduce try catch
+              }
+              else if (frame == vpRobot::TOOL_FRAME) {
+                q_dot = (cVe * eJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
+              }
+              else if (frame == vpRobot::REFERENCE_FRAME) {
+                q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
+              }
 
-  std::array<double, 7> dq_des_eigen;
-  for (size_t i = 0; i < 7; i++) // TODO create a function to convert
-    dq_des_eigen[i] = q_dot[i];
+              std::array<double, 7> dq_des_eigen;
+              for (size_t i = 0; i < 7; i++) // TODO create a function to convert
+                dq_des_eigen[i] = q_dot[i];
 
-  std::array<double, 7> q_cmd;
-  std::array<double, 7> dq_cmd;
+              std::array<double, 7> q_cmd;
+              std::array<double, 7> dq_cmd;
 
-  auto dq_des_ = dq_des_eigen;
-  if (stop) { // Stop asked
-    for (auto &dq_ : dq_des_) {
-      dq_ = 0.0;
-    }
-  }
+              auto dq_des_ = dq_des_eigen;
+              if (stop) { // Stop asked
+                for (auto &dq_ : dq_des_) {
+                  dq_ = 0.0;
+                }
+              }
 
-  joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
+              joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
 
-  if (!log_folder.empty()) {
-    log_time << time << std::endl;
-    log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2]
-      << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6]
-      << std::endl;
-    log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2]
-      << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6]
-      << std::endl;
-    log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " "
-      << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-    log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " "
-      << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
-    log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2]
-      << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
-  }
+              if (!log_folder.empty()) {
+                log_time << time << std::endl;
+                log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2]
+                  << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6]
+                  << std::endl;
+                log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2]
+                  << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6]
+                  << std::endl;
+                log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " "
+                  << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
+                log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " "
+                  << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+                log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2]
+                  << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
+              }
 
-  franka::JointVelocities velocities = { dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6] };
+              franka::JointVelocities velocities = { dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6] };
 
-  if (stop) {
-    unsigned int nb_joint_stop = 0;
-    const double q_eps = 1e-6; // Motion finished
-    for (size_t i = 0; i < 7; i++) {
-      if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
-        nb_joint_stop++;
-      }
-    }
-    if (nb_joint_stop == 7) {
-      if (!log_folder.empty()) {
-        log_time.close();
-        log_q_mes.close();
-        log_dq_mes.close();
-        log_dq_des.close();
-        log_dq_cmd.close();
-        log_v_des.close();
-      }
-      return franka::MotionFinished(velocities);
-    }
-  }
+              if (stop) {
+                unsigned int nb_joint_stop = 0;
+                const double q_eps = 1e-6; // Motion finished
+                for (size_t i = 0; i < 7; i++) {
+                  if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
+                    nb_joint_stop++;
+                  }
+                }
+                if (nb_joint_stop == 7) {
+                  if (!log_folder.empty()) {
+                    log_time.close();
+                    log_q_mes.close();
+                    log_dq_mes.close();
+                    log_dq_des.close();
+                    log_dq_cmd.close();
+                    log_v_des.close();
+                  }
+                  return franka::MotionFinished(velocities);
+                }
+              }
 
-  q_prev = state.q_d;
+              q_prev = state.q_d;
 
 #if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
@@ -323,10 +324,10 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
     // by the robot will prevent from getting discontinuity errors.
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
-  return limitRate(ddq_max, velocities.dq, state.dq_d);
+              return limitRate(ddq_max, velocities.dq, state.dq_d);
 #else
     // With libfranka 0.5.0 franka::control enables limit_rate by default
-  return velocities;
+              return velocities;
 #endif
     };
 
@@ -623,7 +624,7 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
   }
   return limited_values;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointVelTrajGenerator() { };

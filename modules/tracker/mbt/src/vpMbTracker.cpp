@@ -97,8 +97,8 @@
 #include <mutex>
 #endif
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 namespace
 {
 #if defined(VISP_HAVE_THREADS)
@@ -283,7 +283,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     }
 
     finitpos.close();
-    last_cMo.buildFrom(init_pos);
+    last_cMo.build(init_pos);
 
     std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
@@ -1115,7 +1115,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
     finit >> init_pos[i];
   }
 
-  m_cMo.buildFrom(init_pos);
+  m_cMo.build(init_pos);
 
   if (I) {
     init(*I);
@@ -1233,7 +1233,7 @@ void vpMbTracker::savePose(const std::string &filename) const
   std::fstream finitpos;
   finitpos.open(filename.c_str(), std::ios::out);
 
-  init_pos.buildFrom(m_cMo);
+  init_pos.build(m_cMo);
   finitpos << init_pos;
   finitpos.close();
 }
@@ -1800,7 +1800,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
               }
             }
           }
-          oTo_local.buildFrom(t, tu);
+          oTo_local.build(t, tu);
 
           bool cyclic = false;
           for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
@@ -2962,7 +2962,7 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned in
   }
   else {
     vpVelocityTwistMatrix cVo;
-    cVo.buildFrom(m_cMo);
+    cVo.build(m_cMo);
     vpMatrix LVJ = (L * (cVo * oJo));
     vpMatrix LVJTLVJ = (LVJ).AtA();
     vpColVector LVJTR;
@@ -3874,3 +3874,4 @@ void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
   m_SobelY.resize(size * 2 + 1, size * 2 + 1, false, false);
   vpImageFilter::getSobelKernelY(m_SobelY.data, size);
 }
+END_VISP_NAMESPACE

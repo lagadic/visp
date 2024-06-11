@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/point_cloud.h>
 #endif
 
@@ -52,6 +52,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpMbDepthDenseTracker::vpMbDepthDenseTracker()
   : m_depthDenseHiddenFacesDisplay(), m_depthDenseListOfActiveFaces(), m_denseDepthNbFeatures(0), m_depthDenseFaces(),
   m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2), m_error_depthDense(), m_L_depthDense(),
@@ -181,7 +182,7 @@ void vpMbDepthDenseTracker::computeVVS()
       if (computeCovariance) {
         L_true = m_L_depthDense;
         if (!isoJoIdentity) {
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (m_L_depthDense * cVo * oJo);
         }
       }
@@ -193,7 +194,7 @@ void vpMbDepthDenseTracker::computeVVS()
         // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity) {
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
 
           vpMatrix K; // kernel
           unsigned int rank = (m_L_depthDense * cVo).kernel(K);
@@ -456,7 +457,7 @@ void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const s
   initFromPose(I, cMo);
 }
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthDenseTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                         const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose)
 {
@@ -550,7 +551,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(double occupanc
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   m_depthDenseListOfActiveFaces.clear();
@@ -746,7 +747,7 @@ void vpMbDepthDenseTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomo
   init(m_I);
 }
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthDenseTracker::setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                     const vpHomogeneousMatrix &cdMo)
 {
@@ -789,7 +790,7 @@ void vpMbDepthDenseTracker::track(const vpImage<vpRGBa> &)
   throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthDenseTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   segmentPointCloud(point_cloud);
@@ -824,3 +825,4 @@ void vpMbDepthDenseTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint &
 void vpMbDepthDenseTracker::initFaceFromCorners(vpMbtPolygon &polygon) { addFace(polygon, false); }
 
 void vpMbDepthDenseTracker::initFaceFromLines(vpMbtPolygon &polygon) { addFace(polygon, true); }
+END_VISP_NAMESPACE

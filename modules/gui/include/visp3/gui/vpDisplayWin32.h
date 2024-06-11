@@ -31,16 +31,17 @@
  * Windows 32 display base class
  */
 
-#include <visp3/core/vpConfig.h>
-
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #ifndef vpDisplayWin32_hh
 #define vpDisplayWin32_hh
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
+
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
+
 #include <string>
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
@@ -51,10 +52,12 @@
 #include <visp3/gui/vpWin32Window.h>
 #include <windows.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * Used to pass parameters to the window's thread.
- */
+*/
 struct threadParam
 {
   //! Pointer to the display associated with the window.
@@ -86,7 +89,7 @@ struct threadParam
  * Windows 32 displays.
  * Uses calls to a renderer to do some display.
  * (i.e. all display methods are implemented in the renderer)
- */
+*/
 class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 {
 protected:
@@ -187,5 +190,7 @@ protected:
 
   void waitForInit();
 };
+
+END_VISP_NAMESPACE
 #endif
 #endif

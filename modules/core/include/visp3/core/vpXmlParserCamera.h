@@ -38,14 +38,15 @@
 
 */
 
-#ifndef vpXMLPARSERCAMERA_H
-#define vpXMLPARSERCAMERA_H
+#ifndef _vpXMLPARSERCAMERA_H_
+#define _vpXMLPARSERCAMERA_H_
 
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpCameraParameters.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserCamera
 
@@ -191,12 +192,13 @@ public:
   void setWidth(unsigned int width);
 
 private:
-  vpXmlParserCamera(const vpXmlParserCamera &);            // noncopyable
+  vpXmlParserCamera(const vpXmlParserCamera &c);            // noncopyable
   vpXmlParserCamera &operator=(const vpXmlParserCamera &); //
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
 #endif
 #endif

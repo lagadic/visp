@@ -1,5 +1,6 @@
 //! \example tutorial-homography-from-points.cpp
 
+#include <visp3/core/vpConfig.h>
 //! [Include]
 #include <visp3/vision/vpHomography.h>
 //! [Include]
@@ -7,6 +8,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   //! [Set 3D points]
   double L = 0.1;
   std::vector<vpPoint> oP;
@@ -55,7 +59,7 @@ int main()
   std::cout << "\nEstimated displacement:" << std::endl;
   std::cout << " atb: " << atb.t() << std::endl;
   vpThetaUVector atub;
-  atub.buildFrom(aRb);
+  atub.build(aRb);
   std::cout << " athetaub: ";
   for (unsigned int i = 0; i < 3; i++)
     std::cout << vpMath::deg(atub[i]) << " ";
@@ -76,6 +80,6 @@ int main()
   //! [Project]
   // Project the position in pixel of point 3 from the homography
   std::cout << "Estimation from homography: Point 3 in pixels in frame a: " << vpHomography::project(cam, aHb, iPb)
-            << std::endl;
-  //! [Project]
+    << std::endl;
+//! [Project]
 }

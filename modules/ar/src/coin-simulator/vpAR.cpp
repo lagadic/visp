@@ -64,6 +64,7 @@
 #include <Inventor/nodes/SoGroup.h>            /* Groupement de noeuds (sans separation)*/
 #include <Inventor/nodes/SoMaterial.h>         /* Matiere (couleur) des objets.     */
 
+BEGIN_VISP_NAMESPACE
 /*!
         Basic Destructor that calls the kill() method of the vpSimulator
    class.
@@ -148,8 +149,8 @@ void vpAR::setImage(vpImage<vpRGBa> &I)
     }
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAR.cpp.o) has no symbols
-void dummy_vpAR(){};
+void dummy_vpAR() { };
 #endif

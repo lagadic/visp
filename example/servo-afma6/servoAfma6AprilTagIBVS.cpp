@@ -54,6 +54,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -67,6 +68,10 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
@@ -279,7 +284,7 @@ int main(int argc, char **argv)
         if (first_time) {
           // Introduce security wrt tag positioning in order to avoid PI rotation
           std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
-          v_oMo[1].buildFrom(0, 0, 0, 0, 0, M_PI);
+          v_oMo[1].build(0, 0, 0, 0, 0, M_PI);
           for (size_t i = 0; i < 2; i++) {
             v_cdMc[i] = cdMo * v_oMo[i] * cMo.inverse();
           }

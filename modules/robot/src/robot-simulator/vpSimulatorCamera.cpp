@@ -44,6 +44,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor that sets the transformation between
   world frame and camera frame to identity.
@@ -146,7 +147,7 @@ void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame, vpC
     vpRotationMatrix wRc;
     this->wMc_.extract(wRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(wRc);
+    rxyz.build(wRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->wMc_[i][3]; // translation x,y,z
@@ -238,3 +239,4 @@ void vpSimulatorCamera::setPosition(const vpHomogeneousMatrix &wMc)
 
   this->wMc_ = wMc;
 }
+END_VISP_NAMESPACE

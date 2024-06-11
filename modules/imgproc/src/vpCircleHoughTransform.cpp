@@ -33,13 +33,16 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace visp
+{
+#endif
+
 // Static variables
 const unsigned char vpCircleHoughTransform::edgeMapOn = 255;
 const unsigned char vpCircleHoughTransform::edgeMapOff = 0;
 
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
-namespace
-{
 // Sorting by decreasing probabilities
 bool hasBetterProba(std::pair<size_t, float> a, std::pair<size_t, float> b)
 {
@@ -92,7 +95,6 @@ scaleFilter(vpArray2D<float> &filter, const float &scale)
     }
   }
 }
-};
 #endif
 
 vpCircleHoughTransform::vpCircleHoughTransform()
@@ -186,7 +188,7 @@ vpCircleHoughTransform::initGradientFilters()
         filter[r][c] = filter[r][c] * scale;
       }
     }
-  };
+    };
 #endif
 
   if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
@@ -212,7 +214,7 @@ vpCircleHoughTransform::initGradientFilters()
   }
   else {
     std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_algoParams.m_filteringAndGradientType);
     errMsg += "\" has not been implemented yet\n";
     throw vpException(vpException::notImplementedError, errMsg);
   }
@@ -453,7 +455,7 @@ vpCircleHoughTransform::computeGradients(const vpImage<unsigned char> &I)
   }
   else {
     std::string errMsg("[computeGradients] The filtering + gradient operators \"");
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += vpImageFilter::vpCannyFiltAndGradTypeToStr(m_algoParams.m_filteringAndGradientType);
     errMsg += "\" is not implemented (yet).";
     throw(vpException(vpException::notImplementedError, errMsg));
   }
@@ -1203,3 +1205,5 @@ operator<<(std::ostream &os, const vpCircleHoughTransform &detector)
   os << detector.toString();
   return os;
 }
+
+END_VISP_NAMESPACE

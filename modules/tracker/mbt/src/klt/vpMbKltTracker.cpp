@@ -45,6 +45,7 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+BEGIN_VISP_NAMESPACE
 namespace
 {
 /*!
@@ -818,7 +819,7 @@ void vpMbKltTracker::computeVVS()
         L_true = m_L_klt;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (m_L_klt * cVo * oJo);
         }
       }
@@ -1459,7 +1460,7 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
     }
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
 void dummy_vpMbKltTracker() { };

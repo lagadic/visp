@@ -31,14 +31,15 @@
  * 2D point with polar coordinates visual feature.
  */
 
-#ifndef vpFeaturePointPolar_H
-#define vpFeaturePointPolar_H
-
 /*!
  * \file vpFeaturePointPolar.h
  * \brief Class that defines a 2D point visual feature with polar coordinates.
  */
 
+#ifndef vpFeaturePointPolar_H
+#define vpFeaturePointPolar_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -46,6 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeaturePointPolar
  * \ingroup group_visual_features
@@ -93,7 +95,7 @@
  *
  * - The first way by setting the feature values \f$(\rho,\theta,Z)\f$
  *   using vpFeaturePointPolar members like set_rho(), set_theta(),
- *   set_Z(), or set_rhoThetaZ(), or also buildFrom().
+ *   set_Z(), or set_rhoThetaZ(), or also build().
  *
  * - The second way by using the feature builder functionalities to
  *   initialize the feature from a dot tracker, like
@@ -143,7 +145,7 @@
  *
  *   // Initialize the desired pose between the camera and the object frame
  *   vpHomogeneousMatrix cMod;
- *   cMod.buildFrom(0, 0, 1, 0, 0, 0);
+ *   cMod.build(0, 0, 1, 0, 0, 0);
  *
  *   // Compute the desired position of the point
  *   for (int i = 0 ; i < 4 ; i++) {
@@ -161,7 +163,7 @@
  *
  *   // Initialize the current pose between the camera and the object frame
  *   vpHomogeneousMatrix cMo;
- *   cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI);
+ *   cMo.build(0, 0, 1.2, 0, 0, M_PI);
  *   // ... cMo need here to be computed from a pose estimation
  *
  *   for (int i = 0 ; i < 4 ; i++) {
@@ -231,12 +233,12 @@
  *   // Creation of the current feature s
  *   vpFeaturePointPolar s;
  *   // Initialize the current feature
- *   s.buildFrom(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
+ *   s.build(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
  *
  *   // Creation of the desired feature s
  *   vpFeaturePointPolar s_star;
  *   // Initialize the desired feature
- *   s.buildFrom(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
+ *   s.build(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
  *
  *   // Compute the interaction matrix L_s for the current feature
  *   vpMatrix L = s.interaction();
@@ -247,7 +249,7 @@
  *   return 0;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeaturePointPolar : public vpBasicFeature
 {
 private:
@@ -259,7 +261,10 @@ public:
   // basic constructor
   vpFeaturePointPolar();
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(double rho, double theta, double Z);
+#endif
+  vpFeaturePointPolar &build(const double &rho, const double &theta, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
     unsigned int thickness = 1) const vp_override;
@@ -305,5 +310,5 @@ public:
   static unsigned int selectTheta();
 
 };
-
+END_VISP_NAMESPACE
 #endif

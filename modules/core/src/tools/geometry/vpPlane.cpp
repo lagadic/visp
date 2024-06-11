@@ -43,6 +43,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
 /*!
   Copy operator.
 */
@@ -302,7 +303,7 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVecto
 
   double k, scal;
 
-  // --comment: if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
+  // --comment: if M0.get_X() diff 0 or M0.get_Y() diff 0 or M0.get_Z() diff 0
   if ((std::fabs(M0.get_X()) > std::numeric_limits<double>::epsilon()) ||
       (std::fabs(M0.get_Y()) > std::numeric_limits<double>::epsilon()) ||
       (std::fabs(M0.get_Z()) > std::numeric_limits<double>::epsilon())) {
@@ -312,7 +313,7 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVecto
     R[2] = M1.get_Z() - M0.get_Z();
 
     scal = (getA() * R[0]) + (getB() * R[1]) + (getC() * R[2]);
-    // --comment: if (scal != 0)
+    // --comment: if scal != 0
     if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
       k = -((getA() * M0.get_X()) + (getB() * M0.get_Y()) + (getC() * M0.get_Z()) + getD()) / scal;
     }
@@ -326,7 +327,7 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVecto
   }
   else {
     scal = (getA() * M1.get_X()) + (getB() * M1.get_Y()) + (getC() * M1.get_Z());
-    // --comment: if (scal != 0)
+    // --comment: if scal != 0
     if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
       k = -getD() / scal;
     }
@@ -347,7 +348,7 @@ double vpPlane::getIntersection(const vpColVector &M1, vpColVector &H) const
   double k, scal;
 
   scal = (A * M1[0]) + (B * M1[1]) + (C * M1[2]);
-  // --comment: if (scal != 0)
+  // --comment: if scal != 0
   if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
     k = -getD() / scal;
   }
@@ -385,7 +386,8 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
   A,B,C and D correspond to the parameters of the plane.
 
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p)
 {
   return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << "," << p.getD() << ") ");
 };
+END_VISP_NAMESPACE

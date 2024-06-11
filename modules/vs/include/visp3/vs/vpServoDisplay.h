@@ -31,25 +31,27 @@
  * Interface with the image for feature display.
  */
 
-#ifndef vpServoDisplay_H
-#define vpServoDisplay_H
-
 /*!
  * \file vpServoDisplay.h
  * \brief interface with the image for feature display
  */
 
+#ifndef vpServoDisplay_H
+#define vpServoDisplay_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpServoDisplay
  * \ingroup group_task
  * \brief Interface with the image for feature display.
- */
+*/
 class VISP_EXPORT vpServoDisplay
 {
 public:
@@ -97,5 +99,5 @@ public:
                       vpColor currentColor = vpColor::green, vpColor desiredColor = vpColor::red,
                       unsigned int thickness = 1);
 };
-
+END_VISP_NAMESPACE
 #endif

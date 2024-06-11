@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
@@ -56,6 +57,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -168,7 +173,7 @@ int main(int argc, const char **argv)
     std::cout << "Point coordinates in the camera frame: " << point.cP.t();
 
     vpFeaturePoint3D p;
-    p.buildFrom(point);
+    p.build(point);
 
     // sets the desired position of the point
     vpFeaturePoint3D pd;
@@ -202,7 +207,7 @@ int main(int argc, const char **argv)
 
       // new point position
       point.track(cMo);
-      p.buildFrom(point);
+      p.build(point);
       //   std::cout << p.cP.t() ;
       //   std::cout << (p.get_s()).t() ;
 
@@ -217,7 +222,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -227,4 +233,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -46,6 +46,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+BEGIN_VISP_NAMESPACE
 vpStatisticalTestHinkley::vpStatisticalTestHinkley()
   : vpStatisticalTestAbstract()
   , m_dmin2(0.1f)
@@ -248,3 +249,4 @@ void vpStatisticalTestHinkley::updateTestSignals(const float &signal)
   ++m_count;
   computeMean(signal);
 }
+END_VISP_NAMESPACE

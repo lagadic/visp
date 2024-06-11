@@ -39,7 +39,7 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace vp
+namespace VISP_NAMESPACE_NAME
 {
 
 void fillHoles(vpImage<unsigned char> &I
@@ -102,7 +102,7 @@ void fillHoles(vpImage<unsigned char> &I
   }
 
   // Perform flood fill
-  vp::floodFill(flood_fill_mask, vpImagePoint(0, 0), 0, 255);
+  floodFill(flood_fill_mask, vpImagePoint(0, 0), 0, 255);
 
   // Get current mask
   vpImage<unsigned char> mask(I.getHeight(), I.getWidth());
@@ -136,6 +136,7 @@ void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned ch
   vpImage<unsigned char> h_k = marker;
   h_kp1 = h_k;
 
+  bool h_kp1_eq_h_k = false;
   do {
     // Dilatation
     vpImageMorphology::dilatation<unsigned char>(h_kp1, connexity);
@@ -150,10 +151,13 @@ void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned ch
     }
 
     if (h_kp1 == h_k) {
-      break;
+      h_kp1_eq_h_k = true;
+      // break
     }
-
-    h_k = h_kp1;
-  } while (true);
+    else {
+      h_k = h_kp1;
+    }
+  } while (h_kp1_eq_h_k == false);
 }
-};
+
+} // namespace

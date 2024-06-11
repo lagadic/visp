@@ -74,6 +74,7 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
 /*--------------------------------------------------------------------
   LU Decomposition  related functions
 -------------------------------------------------------------------- */
@@ -230,9 +231,9 @@ double vpMatrix::detByLU() const
     return (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0]));
   }
   else if ((rowNum == 3) && (colNum == 3)) {
-    return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
-            (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
-            (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
+    return ((((*this)[0][0] * (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1]))) -
+             ((*this)[0][1] * (((*this)[1][0] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][0])))) +
+            ((*this)[0][2] * (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0]))));
   }
   else {
 #if defined(VISP_HAVE_LAPACK)
@@ -625,3 +626,4 @@ double vpMatrix::detByLUEigen3() const
   return M.determinant();
 }
 #endif
+END_VISP_NAMESPACE

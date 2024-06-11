@@ -40,11 +40,12 @@
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 #include <future>
 
+BEGIN_VISP_NAMESPACE
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I, const vpRect &bb)
 {
   return std::async(std::launch::async, [&I, &bb, this]() -> vpMegaPoseEstimate {
-    std::vector<vpRect> bbs = {bb};
-    m_poseEstimate = m_megapose->estimatePoses(I, {m_objectLabel}, nullptr, 0.0, &bbs, nullptr)[0];
+    std::vector<vpRect> bbs = { bb };
+    m_poseEstimate = m_megapose->estimatePoses(I, { m_objectLabel }, nullptr, 0.0, &bbs, nullptr)[0];
     m_initialized = true;
     return m_poseEstimate;
   });
@@ -65,8 +66,8 @@ std::future<vpMegaPoseEstimate> vpMegaPoseTracker::track(const vpImage<vpRGBa> &
     throw vpException(vpException::notInitialized, "MegaPose tracker was not initialized. Call init before calling track.");
   }
   return std::async(std::launch::async, [&I, this]() -> vpMegaPoseEstimate {
-    std::vector<vpHomogeneousMatrix> poses = {m_poseEstimate.cTo};
-    m_poseEstimate = m_megapose->estimatePoses(I, {m_objectLabel}, nullptr, 0.0, nullptr, &poses, m_refinerIterations)[0];
+    std::vector<vpHomogeneousMatrix> poses = { m_poseEstimate.cTo };
+    m_poseEstimate = m_megapose->estimatePoses(I, { m_objectLabel }, nullptr, 0.0, nullptr, &poses, m_refinerIterations)[0];
     return m_poseEstimate;
   });
 }
@@ -75,9 +76,9 @@ void vpMegaPoseTracker::updatePose(const vpHomogeneousMatrix &cTo)
 {
   m_poseEstimate.cTo = cTo;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPoseTracker.cpp.o) has no symbols
-void dummy_vpMegaPoseTracker(){};
+void dummy_vpMegaPoseTracker() { };
 
 #endif

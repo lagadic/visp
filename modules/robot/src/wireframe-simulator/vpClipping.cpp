@@ -54,6 +54,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+BEGIN_VISP_NAMESPACE
 static void inter(Byte mask, Index v0, Index v1);
 static void point_4D_3D(Point4f *p4, int size, Byte *cp, Point3f *p3);
 
@@ -119,7 +120,7 @@ void open_clipping(void)
     throw vpException(vpException::fatalError, "Error in open_clipping");
   }
 #else
-      || (poly_tmp = (Index *)malloc(VERTEX_NBR * sizeof(Index))) == NULL) {
+    || (poly_tmp = (Index *)malloc(VERTEX_NBR * sizeof(Index))) == NULL) {
     static char proc_name[] = "open_clipping";
     perror(proc_name);
     throw vpException(vpException::fatalError, "Error in open_clipping");
@@ -175,17 +176,20 @@ static Index clipping(Byte mask, Index vni, Index *pi, Index *po)
     if (ins == IS_INSIDE) {
       if (inp == IS_INSIDE) { /* arete interieure  */
         *po++ = vp;
-      } else { /* intersection    */
+      }
+      else { /* intersection    */
         inter(mask, vs, vp);
         *po++ = point4f_nbr++;
       }
-    } else {
+    }
+    else {
       if (inp == IS_INSIDE) { /* intersection    */
         inter(mask, vs, vp);
         *po++ = point4f_nbr++;
         *po++ = vp;
         vno++;
-      } else { /* arete exterieure  */
+      }
+      else { /* arete exterieure  */
         vno--;
       }
     }
@@ -398,7 +402,8 @@ static void point_4D_3D(Point4f *p4, int size, Byte *cp, Point3f *p3)
       p3->x = p4->x / w; /* projection 4D en 3D  */
       p3->y = p4->y / w;
       p3->z = p4->z / w;
-    } else { /* marque invisible  */
+    }
+    else { /* marque invisible  */
       p3->z = -1.0;
     }
   }
@@ -458,5 +463,5 @@ Byte where_is_Point4f(Point4f *p4)
     b |= IS_FRONT;
   return (b);
 }
-
+END_VISP_NAMESPACE
 #endif

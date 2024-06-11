@@ -51,6 +51,7 @@
 
 #define VP_MAX_UDP_PAYLOAD 508
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpUDPClient
  *
@@ -160,7 +161,7 @@
  * \endcode
  *
  * \sa vpUDPServer
- */
+*/
 class VISP_EXPORT vpUDPClient
 {
 public:
@@ -194,6 +195,6 @@ private:
 
   void close();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

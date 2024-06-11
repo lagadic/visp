@@ -37,7 +37,9 @@
 
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor that sets the sampling time by default to 40ms.
 */
-vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f) {}
+vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f) { }
+END_VISP_NAMESPACE

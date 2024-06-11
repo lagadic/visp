@@ -40,6 +40,7 @@
 */
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationVector.h>
@@ -49,6 +50,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpTranslationVector t;
     t[0] = 0.1;  // t_x in m/s
@@ -62,7 +66,7 @@ int main()
 
     // Build a ThetaU rotation vector from a Rxyz vector
     vpThetaUVector tu;
-    tu.buildFrom(rxyz);
+    tu.build(rxyz);
 
     vpColVector v(6); // Velocity vector [t, thetaU]^t
 

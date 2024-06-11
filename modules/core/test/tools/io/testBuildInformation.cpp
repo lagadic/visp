@@ -47,6 +47,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string info = vpIoTools::getBuildInformation();
   std::cout << info << std::endl;
 

@@ -42,6 +42,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpSubMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) { }
 
 /*!
@@ -75,7 +76,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     throw(vpMatrixException(vpMatrixException::subMatrixError, "SubMatrix parent matrix is not allocated"));
   }
 
-  if ((row_offset + nrows <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
+  if (((row_offset + nrows) <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
     data = m.data;
     parent = &m;
     rowNum = nrows;
@@ -180,3 +181,4 @@ vpSubMatrix &vpSubMatrix::operator=(const double &x)
 }
 
 vpSubMatrix::~vpSubMatrix() { data = nullptr; }
+END_VISP_NAMESPACE

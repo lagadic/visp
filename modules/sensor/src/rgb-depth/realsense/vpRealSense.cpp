@@ -43,6 +43,7 @@
 
 #include "vpRealSense_impl.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  */
@@ -670,7 +671,7 @@ int main()
  */
 void vpRealSense::setEnableStream(const rs::stream &stream, bool status) { m_enableStreams[stream] = status; }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 /*!
   Acquire data from RealSense device.
   \param pointcloud : Point cloud data information.
@@ -1043,7 +1044,7 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
 
   return os;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpRealSense.cpp.o) has  symbols
 void dummy_vpRealSense() { };

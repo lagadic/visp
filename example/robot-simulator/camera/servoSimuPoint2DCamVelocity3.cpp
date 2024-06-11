@@ -50,6 +50,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/io/vpParseArgv.h>
@@ -60,6 +61,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -177,7 +182,7 @@ int main(int argc, const char **argv)
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
-    pd.buildFrom(0, 0, 1); // buildFrom(x,y,Z) ;
+    pd.build(0, 0, 1); // build(x,y,Z) ;
 
     // define the task
     // - we want an eye-in-hand control law
@@ -235,7 +240,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -245,4 +251,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

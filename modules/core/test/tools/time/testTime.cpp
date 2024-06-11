@@ -58,6 +58,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if !defined(WINRT)
   try {
     double v = 0;
@@ -123,7 +126,8 @@ int main()
     std::cout << "t8-t6: ; chrono: " << chrono.getDurationMs() << std::endl;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

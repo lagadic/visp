@@ -36,7 +36,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/point_tests.h>
 #endif
 
@@ -157,6 +157,7 @@ inline float64x2_t v_fma(const float64x2_t &a, const float64x2_t &b, const float
 }
 #endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
+BEGIN_VISP_NAMESPACE
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false),
@@ -246,7 +247,7 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMb
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                                  unsigned int stepX, unsigned int stepY
@@ -1000,3 +1001,4 @@ void vpMbtFaceDepthDense::setScanLineVisibilityTest(bool v)
     (*it)->useScanLine = v;
   }
 }
+END_VISP_NAMESPACE

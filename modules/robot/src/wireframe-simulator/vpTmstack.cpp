@@ -50,6 +50,7 @@
 
 #define STACKSIZE 32
 
+BEGIN_VISP_NAMESPACE
 static Matrix stack[STACKSIZE] /* = IDENTITY_MATRIX*/; /* pile    */
 static Matrix *sp = stack;                             /* sommet   */
 
@@ -83,7 +84,8 @@ void pop_tmstack(void)
     static char proc_name[] = "pop_tmstack";
     fprintf(stderr, "%s: stack underflow\n", proc_name);
     return;
-  } else
+  }
+  else
     sp--;
 }
 
@@ -195,5 +197,5 @@ void prescale_tmstack(Vector *vp) { prescale_matrix(*sp, vp); }
  * vp    Vecteur de translation.
  */
 void pretranslate_tmstack(Vector *vp) { pretrans_matrix(*sp, vp); }
-
+END_VISP_NAMESPACE
 #endif

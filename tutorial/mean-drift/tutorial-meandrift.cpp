@@ -43,6 +43,10 @@
 #include <visp3/core/vpStatisticalTestSigma.h>
 #include <visp3/gui/vpPlot.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_DISPLAY)
 namespace TutorialMeanDrift
 {

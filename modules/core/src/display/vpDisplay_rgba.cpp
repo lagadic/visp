@@ -41,7 +41,7 @@
 // Modifications done in this file should be reported in all vpDisplay_*.cpp
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
-
+BEGIN_VISP_NAMESPACE
 /*!
   Close the display attached to I.
 */
@@ -258,8 +258,8 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpIma
   if (ips.size() <= 1) {
     return;
   }
-
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_dot_line(I, ips[i], ips[i + 1], color, thickness);
   }
 
@@ -287,7 +287,8 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImage
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
   vpImagePoint ip_prev = *(++it);
-  for (; it != ips.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ips_end = ips.end();
+  for (; it != ips_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;
@@ -515,7 +516,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImageP
     return;
   }
 
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_line(I, ips[i], ips[i + 1], color, thickness);
   }
 
@@ -543,7 +545,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoi
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
   vpImagePoint ip_prev = *(++it);
-  for (; it != ips.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ips_end = ips.end();
+  for (; it != ips_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;
@@ -1323,3 +1326,4 @@ void vpDisplay::setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy)
   \param I : Image associated to the display window.
 */
 unsigned int vpDisplay::getDownScalingFactor(const vpImage<vpRGBa> &I) { return vp_display_get_down_scaling_factor(I); }
+END_VISP_NAMESPACE

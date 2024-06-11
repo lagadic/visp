@@ -49,6 +49,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   size_t nb_elements = 1000;
   int nb_iterations = 100;
   double stdev = 0.5, mean = 0.0, noise_threshold = 1e-3;
@@ -88,8 +91,8 @@ int main()
     for (size_t i = 0; i < weights.size(); i++) {
       if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
-                     "vpMbtTukeyEstimator (double)!"
-                  << std::endl;
+          "vpMbtTukeyEstimator (double)!"
+          << std::endl;
         std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
@@ -128,8 +131,8 @@ int main()
     for (size_t i = 0; i < weights.size(); i++) {
       if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
-                     "vpMbtTukeyEstimator (float)!"
-                  << std::endl;
+          "vpMbtTukeyEstimator (float)!"
+          << std::endl;
         std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
@@ -164,8 +167,8 @@ int main()
     for (size_t i = 0; i < weights.size(); i++) {
       if (!vpMath::equal(weights[(unsigned int)i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
-                     "vpMbtTukeyEstimator (float)!"
-                  << std::endl;
+          "vpMbtTukeyEstimator (float)!"
+          << std::endl;
         std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[(unsigned int)i] << std::endl;
         return EXIT_FAILURE;

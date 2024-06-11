@@ -48,6 +48,8 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
+
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
@@ -444,12 +446,12 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const
   if ((!vpMath::equal(m_px, c.m_px, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_py, c.m_py, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_u0, c.m_u0, std::numeric_limits<double>::epsilon()))) {
-      return false;
+    return false;
   }
   if ((!vpMath::equal(m_v0, c.m_v0, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_kud, c.m_kud, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_kdu, c.m_kdu, std::numeric_limits<double>::epsilon()))) {
-      return false;
+    return false;
   }
   if ((!vpMath::equal(m_inv_px, c.m_inv_px, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_inv_py, c.m_inv_py, std::numeric_limits<double>::epsilon()))) {
@@ -467,9 +469,9 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const
     }
   }
 
-  if ( (m_isFov != c.m_isFov) || (!vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon())) ||
+  if ((m_isFov != c.m_isFov) || (!vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon())) ||
       (!vpMath::equal(m_vFovAngle, c.m_vFovAngle, std::numeric_limits<double>::epsilon()))) {
-       return false;
+    return false;
   }
   if ((m_width != c.m_width) || (m_height != c.m_height)) {
     return false;
@@ -504,7 +506,7 @@ bool vpCameraParameters::operator!=(const vpCameraParameters &c) const { return 
 void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
 {
   bool cond1 = (!m_isFov) || (w != m_width) || (h != m_height);
-  if ( cond1 && (w != 0) && (h != 0)) {
+  if (cond1 && (w != 0) && (h != 0)) {
     m_fovNormals = std::vector<vpColVector>(4);
 
     m_isFov = true;
@@ -603,16 +605,17 @@ vpMatrix vpCameraParameters::get_K_inverse() const
  */
 void vpCameraParameters::printParameters()
 {
-  unsigned int m_dist_coefs_size = m_dist_coefs.size(); 
+  unsigned int m_dist_coefs_size = m_dist_coefs.size();
   std::ios::fmtflags original_flags(std::cout.flags());
   switch (m_projModel) {
-  case vpCameraParameters::perspectiveProjWithoutDistortion:
+  case vpCameraParameters::perspectiveProjWithoutDistortion: {
     std::cout.precision(10);
     std::cout << "Camera parameters for perspective projection without distortion:" << std::endl;
     std::cout << "  px = " << m_px << "\t py = " << m_py << std::endl;
     std::cout << "  u0 = " << m_u0 << "\t v0 = " << m_v0 << std::endl;
     break;
-  case vpCameraParameters::perspectiveProjWithDistortion:
+  }
+  case vpCameraParameters::perspectiveProjWithDistortion: {
     std::cout.precision(10);
     std::cout << "Camera parameters for perspective projection with distortion:" << std::endl;
     std::cout << "  px = " << m_px << "\t py = " << m_py << std::endl;
@@ -620,14 +623,18 @@ void vpCameraParameters::printParameters()
     std::cout << "  kud = " << m_kud << std::endl;
     std::cout << "  kdu = " << m_kdu << std::endl;
     break;
-  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+  }
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
     std::cout << "  Coefficients: ";
-    // --comment: unsigned int m_dist_coefs_size = m_dist_coefs.size()
     for (unsigned int i = 0; i < m_dist_coefs_size; ++i) {
       std::cout << " " << m_dist_coefs[i];
     }
     std::cout << std::endl;
     break;
+  }
+  default: {
+    std::cout << "projection model not identified" << std::endl;
+  }
   }
   // Restore ostream format
   std::cout.flags(original_flags);
@@ -642,11 +649,12 @@ void vpCameraParameters::printParameters()
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam)
 {
   switch (cam.get_projModel()) {
-  case vpCameraParameters::perspectiveProjWithoutDistortion:
+  case vpCameraParameters::perspectiveProjWithoutDistortion: {
     os << "Camera parameters for perspective projection without distortion:" << std::endl;
     os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
     os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     break;
+  }
   case vpCameraParameters::perspectiveProjWithDistortion: {
     std::ios_base::fmtflags original_flags = os.flags();
     os.precision(10);
@@ -656,8 +664,8 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     os << "  kud = " << cam.get_kud() << std::endl;
     os << "  kdu = " << cam.get_kdu() << std::endl;
     os.flags(original_flags); // restore os to standard state
+    break;
   }
-  break;
   case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
     os << "Camera parameters for projection with Kannala-Brandt distortion:" << std::endl;
     os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
@@ -669,10 +677,12 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
       os << " " << tmp_coefs[i];
     }
     os << std::endl;
+    break;
   }
-  break;
-  default:
+  default: {
     std::cout << "Unidentified camera parameters model" << std::endl;
+  }
   }
   return os;
 }
+END_VISP_NAMESPACE

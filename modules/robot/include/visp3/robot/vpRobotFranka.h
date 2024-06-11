@@ -54,6 +54,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotFranka
  *
@@ -161,7 +162,7 @@
  *   vpHomogeneousMatrix wMe;
  *   while(1) {
  *     robot.getPosition(vpRobot::END_EFFECTOR_FRAME, wPe);
- *     wMe.buildFrom(wPe);
+ *     wMe.build(wPe);
  *     ...
  *   }
  *   \endcode
@@ -176,7 +177,7 @@
  *   vpHomogeneousMatrix wMc;
  *   while(1) {
  *     robot.getPosition(vpRobot::CAMERA_FRAME, wPc);
- *     wMc.buildFrom(wPc);
+ *     wMc.build(wPc);
  *     ...
  *   }
  *   \endcode
@@ -191,7 +192,7 @@
  *   vpHomogeneousMatrix wMt;
  *   while(1) {
  *     robot.getPosition(vpRobot::TOOL_FRAME, wPt);
- *     wMt.buildFrom(wPt);
+ *     wMt.build(wPt);
  *     ...
  *   }
  *   \endcode
@@ -217,7 +218,7 @@
  *
  * \sa \ref tutorial-franka-pbvs
  * \sa \ref tutorial-franka-ibvs
- */
+*/
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {
 private:
@@ -353,6 +354,6 @@ public:
 
   void stopMotion();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif // #ifndef __vpRobotFranka_h_

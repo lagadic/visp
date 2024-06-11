@@ -50,6 +50,10 @@
 #include <Eigen/Dense>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 
@@ -214,8 +218,8 @@ bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = 1e-9)
 TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
-                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600}};
+    std::vector<std::pair<int, int> > sizes = { {3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
+                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -273,7 +277,7 @@ TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
 
         oss.str("");
         oss << "(" << eigenA.rows() << "x" << eigenA.cols() << ")x(" << eigenB.rows() << "x" << eigenB.cols()
-            << ") - Eigen";
+          << ") - Eigen";
         BENCHMARK(oss.str().c_str())
         {
           Eigen::MatrixXd eigenC = eigenA * eigenB;
@@ -298,7 +302,7 @@ TEST_CASE("Benchmark matrix-matrix multiplication", "[benchmark]")
 TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{3, 3}};
+    std::vector<std::pair<int, int> > sizes = { {3, 3} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -365,7 +369,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
 
         oss.str("");
         oss << "(" << eigenA.rows() << "x" << eigenA.cols() << ")x(" << eigenB.rows() << "x" << eigenB.cols()
-            << ") - Eigen";
+          << ") - Eigen";
         BENCHMARK(oss.str().c_str())
         {
           Eigen::MatrixXd eigenC = eigenA * eigenB;
@@ -391,7 +395,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
 TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{4, 4}};
+    std::vector<std::pair<int, int> > sizes = { {4, 4} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -459,7 +463,7 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 
         oss.str("");
         oss << "(" << eigenA.rows() << "x" << eigenA.cols() << ")x(" << eigenB.rows() << "x" << eigenB.cols()
-            << ") - Eigen";
+          << ") - Eigen";
         BENCHMARK(oss.str().c_str())
         {
           Eigen::MatrixXd eigenC = eigenA * eigenB;
@@ -487,8 +491,8 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
 TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
-                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600}};
+    std::vector<std::pair<int, int> > sizes = { {3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
+                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -550,7 +554,7 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 
         oss.str("");
         oss << "(" << eigenA.rows() << "x" << eigenA.cols() << ")x(" << eigenB.rows() << "x" << eigenB.cols()
-            << ") - Eigen";
+          << ") - Eigen";
         BENCHMARK(oss.str().c_str())
         {
           Eigen::MatrixXd eigenC = eigenA * eigenB;
@@ -575,8 +579,8 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 TEST_CASE("Benchmark AtA", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
-                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600}};
+    std::vector<std::pair<int, int> > sizes = { {3, 3},   {6, 6},     {8, 8},    {10, 10},   {20, 20},  {6, 200},
+                                               {200, 6}, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -654,7 +658,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
   if (runBenchmark || runBenchmarkAll) {
     std::vector<std::pair<int, int> > sizes = {
         {3, 3},   {6, 6},   {8, 8},  {10, 10},
-        {20, 20}, {6, 200}, {200, 6}}; //, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
+        {20, 20}, {6, 200}, {200, 6} }; //, {207, 119}, {83, 201}, {600, 400}, {400, 600} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -730,7 +734,7 @@ TEST_CASE("Benchmark AAt", "[benchmark]")
 TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6}};
+    std::vector<std::pair<int, int> > sizes = { {6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -820,7 +824,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
 TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
 {
   if (runBenchmark || runBenchmarkAll) {
-    std::vector<std::pair<int, int> > sizes = {{6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6}};
+    std::vector<std::pair<int, int> > sizes = { {6, 6}, {20, 6}, {207, 6}, {600, 6}, {1201, 6} };
 
     for (auto sz : sizes) {
       vpMatrix A = generateRandomMatrix(sz.first, sz.second);
@@ -921,18 +925,18 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark comparing naive code with ViSP implementation") // description string for the help output
-             | Opt(runBenchmarkAll)    // bind variable to a new option, with a hint string
-                   ["--benchmark-all"] // the option names it will respond to
-             ("run benchmark comparing naive code with ViSP, OpenCV, Eigen implementation") // description string for
-                                                                                            // the help output
-             | Opt(lapackMinSize, "min size") // bind variable to a new option, with a hint string
-                   ["--lapack-min-size"]      // the option names it will respond to
-             ("matrix/vector min size to enable blas/lapack usage"); // description string for the help output
+    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+    ["--benchmark"] // the option names it will respond to
+    ("run benchmark comparing naive code with ViSP implementation") // description string for the help output
+    | Opt(runBenchmarkAll)    // bind variable to a new option, with a hint string
+    ["--benchmark-all"] // the option names it will respond to
+    ("run benchmark comparing naive code with ViSP, OpenCV, Eigen implementation") // description string for
+                                                                                   // the help output
+    | Opt(lapackMinSize, "min size") // bind variable to a new option, with a hint string
+    ["--lapack-min-size"]      // the option names it will respond to
+    ("matrix/vector min size to enable blas/lapack usage"); // description string for the help output
 
-  // Now pass the new composite back to Catch so it uses that
+// Now pass the new composite back to Catch so it uses that
   session.cli(cli);
 
   // Let Catch (using Clara) parse the command line
@@ -940,7 +944,7 @@ int main(int argc, char *argv[])
 
   vpMatrix::setLapackMatrixMinSize(lapackMinSize);
   std::cout << "Used matrix/vector min size to enable Blas/Lapack optimization: " << vpMatrix::getLapackMatrixMinSize()
-            << std::endl;
+    << std::endl;
 
   int numFailed = session.run();
 

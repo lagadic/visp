@@ -52,10 +52,12 @@
 #include <visp3/core/vpRect.h>
 
 #include <optional>
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorDNNOpenCV
  * \ingroup group_detection_dnn
@@ -77,7 +79,7 @@
  * Examples of such JSON files can be found in the tutorial folder.
  *
  * \sa \ref tutorial-detection-dnn
- */
+*/
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
 public:
@@ -615,5 +617,6 @@ vpDetectorDNNOpenCV::DetectedFeatures2D::display(const vpImage< Type > &img, con
   ss << "(" << std::setprecision(4) << m_score * 100. << "%)";
   vpDisplay::displayText(img, m_bbox.getTopRight(), ss.str(), color);
 }
+END_VISP_NAMESPACE
 #endif
 #endif

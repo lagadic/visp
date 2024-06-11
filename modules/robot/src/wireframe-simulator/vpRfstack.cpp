@@ -48,9 +48,10 @@
 #include <string.h>
 #define STACKSIZE 32
 
-static int stack[STACKSIZE] = {vpDEFAULT_REMOVE}; /* pile    */
+static int stack[STACKSIZE] = { vpDEFAULT_REMOVE }; /* pile    */
 static int *sp = stack;                           /* sommet   */
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_rfstack" affiche le sommet
  * de la pile des drapeaux d'elimination de faces.
@@ -130,7 +131,8 @@ void pop_rfstack(void)
     static char proc_name[] = "pop_rfstack";
     fprintf(stderr, "%s: stack underflow\n", proc_name);
     return;
-  } else
+  }
+  else
     sp--;
 }
 
@@ -176,5 +178,5 @@ void add_rfstack(int i) { *sp |= i; }
  * de la pile des drapeaux d'elimination de faces.
  */
 void sub_rfstack(int i) { *sp &= ~i; }
-
+END_VISP_NAMESPACE
 #endif

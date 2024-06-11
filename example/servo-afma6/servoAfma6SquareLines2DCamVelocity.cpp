@@ -67,7 +67,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpLine.h>
@@ -85,15 +85,24 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpImage<unsigned char> I;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-    g.acquire(I);
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -139,7 +148,8 @@ int main()
     }
 
     vpRobotAfma6 robot;
-    // robot.move("zero.pos") ;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
+    // robot.move("zero.pos");
 
     vpCameraParameters cam;
     // Update camera parameters
@@ -211,11 +221,12 @@ int main()
     double alpha = 0.05;
     double beta = 3;
 
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       std::cout << "---------------------------------------------" << iter << std::endl;
 
       try {
-        g.acquire(I);
+        rs.acquire(I);
         vpDisplay::display(I);
 
         // Track the lines and update the features
@@ -242,10 +253,9 @@ int main()
 
         v = task.computeControlLaw();
 
-        vpDisplay::flush(I);
-
-        if (iter == 0)
+        if (iter == 0) {
           vpDisplay::getClick(I);
+        }
         if (v.sumSquare() > 0.5) {
           v = 0;
           robot.setVelocity(vpRobot::CAMERA_FRAME, v);
@@ -255,6 +265,12 @@ int main()
 
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
+        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+        if (vpDisplay::getClick(I, false)) {
+          quit = true;
+        }
+
+        vpDisplay::flush(I);
       }
       catch (...) {
         v = 0;

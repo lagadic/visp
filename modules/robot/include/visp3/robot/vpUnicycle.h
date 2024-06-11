@@ -33,10 +33,12 @@
 #ifndef VPUNICYCLE_H
 #define VPUNICYCLE_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpUnicycle
  *
@@ -45,7 +47,7 @@
  * \brief Generic functions for unicycle mobile robots.
  *
  * This class provides common features for unicycle mobile robots.
- */
+*/
 class VISP_EXPORT vpUnicycle
 {
 public:
@@ -70,7 +72,7 @@ public:
   vpVelocityTwistMatrix get_cVe() const
   {
     vpVelocityTwistMatrix cVe;
-    cVe.buildFrom(cMe_);
+    cVe.build(cMe_);
     return cVe;
   }
 
@@ -114,5 +116,5 @@ protected:
   vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame
   vpMatrix eJe_;            // Robot jacobian
 };
-
+END_VISP_NAMESPACE
 #endif

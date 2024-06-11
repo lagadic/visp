@@ -66,8 +66,9 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace vp
+namespace VISP_NAMESPACE_NAME
 {
+
 void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
                const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {
@@ -92,9 +93,9 @@ void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const u
 
     // Find most left pixel
     while ((x1 >= 0) && (I[y][x1] == oldValue)) {
-      x1--;
+      --x1;
     }
-    x1++;
+    ++x1;
 
     bool spanAbove = false, spanBelow = false;
 
@@ -155,8 +156,9 @@ void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const u
         spanAbove = false;
       }
 
-      x1++;
+      ++x1;
     }
   }
 }
-};
+
+} // namespace

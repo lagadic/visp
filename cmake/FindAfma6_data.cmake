@@ -45,6 +45,10 @@ find_path(AFMA6_DATA_PATH
     /home/soft/Afma6/current
     /udd/fspindle/robot/Afma6/current
     Z:/robot/Afma6/current
+    /home/soft/afma6/afma6
+    /home/soft/afma6/current
+    /udd/fspindle/robot/afma6/current
+    Z:/robot/afma6/current
   )
 
 #message("DBG AFMA6_DATA_PATH=${AFMA6_DATA_PATH}")
@@ -58,4 +62,3 @@ endif()
 mark_as_advanced(
   AFMA6_DATA_PATH
 )
-

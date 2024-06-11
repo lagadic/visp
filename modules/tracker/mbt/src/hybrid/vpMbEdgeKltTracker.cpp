@@ -43,6 +43,7 @@
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
+BEGIN_VISP_NAMESPACE
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   : m_thresholdKLT(2.), m_thresholdMBT(2.), m_maxIterKlt(30), m_w_mbt(), m_w_klt(), m_error_hybrid(), m_w_hybrid()
 {
@@ -836,7 +837,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
         L_true = L;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (L * cVo * oJo);
         }
       }
@@ -1490,7 +1491,7 @@ void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std:
   m_cMo = cMo;
   init(I);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has
 // no symbols

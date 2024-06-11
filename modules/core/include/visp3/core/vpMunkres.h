@@ -46,6 +46,7 @@
 // Internal
 #include "vpMath.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMunkres
   \ingroup group_core_munkres
@@ -53,7 +54,7 @@
   Implements the Munkres Assignment Algorithm described [here](https://en.wikipedia.org/wiki/Hungarian_algorithm).
 
   \note This class is only available with c++17 enabled.
- */
+*/
 class VISP_EXPORT vpMunkres
 {
 public:
@@ -369,5 +370,5 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
 
   return ret;
 }
-
+END_VISP_NAMESPACE
 #endif

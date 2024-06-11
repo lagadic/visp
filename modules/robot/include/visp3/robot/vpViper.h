@@ -33,9 +33,6 @@
  *
 *****************************************************************************/
 
-#ifndef vpViper_h
-#define vpViper_h
-
 /*!
 
   \file vpViper.h
@@ -44,13 +41,18 @@
 
 */
 
+#ifndef vpViper_h
+#define vpViper_h
+
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpViper
@@ -111,7 +113,7 @@ class VISP_EXPORT vpViper
 {
 public:
   vpViper();
-  virtual ~vpViper(){};
+  virtual ~vpViper() { };
 
   /** @name Inherited functionalities from vpViper */
   //@{
@@ -169,5 +171,5 @@ protected:
   vpColVector joint_max; // Maximal value of the joints
   vpColVector joint_min; // Minimal value of the joints
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -52,6 +52,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #if !(GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
@@ -1009,7 +1010,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-  if (rowNum != colNum || rowNum == 0) {
+  if ((rowNum != colNum) || (rowNum == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot inverse a triangular matrix (%d, %d) that is not square",
                       rowNum, colNum));
   }
@@ -1208,3 +1209,4 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
+END_VISP_NAMESPACE

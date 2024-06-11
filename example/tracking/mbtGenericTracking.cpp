@@ -62,6 +62,10 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfColwvpT:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -592,8 +596,8 @@ int main(int argc, const char **argv)
 
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
-        c1Mo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
-        c2Mo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
+        c1Mo.build(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
+        c2Mo.build(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
         std::cout << "Test set pose" << std::endl;
         dynamic_cast<vpMbGenericTracker *>(tracker)->setPose(I1, I2, c1Mo, c2Mo);
       }

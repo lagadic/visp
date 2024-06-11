@@ -43,6 +43,7 @@
 
 #include <visp3/ar/vpAROgre.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -54,6 +55,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
 #if defined(VISP_HAVE_OGRE)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(HAVE_OPENCV_VIDEOIO)
@@ -80,7 +85,7 @@ int main()
     if (!grabber.isOpened()) {   // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
-    }
+  }
     cv::Mat frame;
     grabber >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
@@ -154,7 +159,7 @@ int main()
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
     return EXIT_SUCCESS;
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

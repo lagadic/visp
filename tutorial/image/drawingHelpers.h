@@ -30,6 +30,7 @@
 #ifndef _drawingHelpers_h_
 #define _drawingHelpers_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -38,35 +39,35 @@
 namespace drawingHelpers
 {
 #if defined(VISP_HAVE_X11)
-extern vpDisplayX d_Iinput;
-extern vpDisplayX d_dIx;
-extern vpDisplayX d_dIy;
-extern vpDisplayX d_IcannyVisp;
-extern vpDisplayX d_IcannyImgFilter;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayX d_Iinput;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayX d_dIx;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayX d_dIy;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayX d_IcannyVisp;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayX d_IcannyImgFilter;
 #elif defined(HAVE_OPENCV_HIGHGUI)
-extern vpDisplayOpenCV d_Iinput;
-extern vpDisplayOpenCV d_dIx;
-extern vpDisplayOpenCV d_dIy;
-extern vpDisplayOpenCV d_IcannyVisp;
-extern vpDisplayOpenCV d_IcannyImgFilter;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV d_Iinput;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV d_dIx;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV d_dIy;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV d_IcannyVisp;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GTK)
-extern vpDisplayGTK d_Iinput;
-extern vpDisplayGTK d_dIx;
-extern vpDisplayGTK d_dIy;
-extern vpDisplayGTK d_IcannyVisp;
-extern vpDisplayGTK d_IcannyImgFilter;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGTK d_Iinput;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGTK d_dIx;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGTK d_dIy;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGTK d_IcannyVisp;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGTK d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GDI)
-extern vpDisplayGDI d_Iinput;
-extern vpDisplayGDI d_dIx;
-extern vpDisplayGDI d_dIy;
-extern vpDisplayGDI d_IcannyVisp;
-extern vpDisplayGDI d_IcannyImgFilter;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGDI d_Iinput;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGDI d_dIx;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGDI d_dIy;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGDI d_IcannyVisp;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayGDI d_IcannyImgFilter;
 #elif defined(VISP_HAVE_D3D9)
-extern vpDisplayD3D d_Iinput;
-extern vpDisplayD3D d_dIx;
-extern vpDisplayD3D d_dIy;
-extern vpDisplayD3D d_IcannyVisp;
-extern vpDisplayD3D d_IcannyImgFilter;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayD3D d_Iinput;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayD3D d_dIx;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayD3D d_dIy;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayD3D d_IcannyVisp;
+extern VISP_NAMESPACE_ADDRESSING vpDisplayD3D d_IcannyImgFilter;
 #endif
 
 /**
@@ -79,8 +80,8 @@ extern vpDisplayD3D d_IcannyImgFilter;
  * \param[out] p_IcannyimgFilter If different from nullptr, pointer towards the result of the vpImageFilter::canny
  * method.
  */
-void init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
-          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter);
+void init(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &Iinput, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &IcannyVisp, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_dIx,
+          VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_dIy, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_IcannyimgFilter);
 
 /**
  * \brief Display a gray-scale image.
@@ -88,7 +89,7 @@ void init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vp
  * \param[out] I The gray-scale image to display.
  * \param[in] title The title of the window.
  */
-void display(vpImage<unsigned char> &I, const std::string &title);
+void display(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::string &title);
 
 /**
  * \brief Catch the user clicks to know if the user wants to stop the program.
@@ -98,7 +99,7 @@ void display(vpImage<unsigned char> &I, const std::string &title);
  * \return true The user wants to continue the application.
  * \return false The user wants to stop the application.
  */
-bool waitForClick(const vpImage<unsigned char> &I, const bool &blockingMode);
+bool waitForClick(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const bool &blockingMode);
 }
 
 #endif

@@ -54,6 +54,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
@@ -65,6 +66,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -220,11 +225,11 @@ int main(int argc, const char **argv)
 
     // Build the 3D translation feature: ctc*
     vpFeatureTranslation t(vpFeatureTranslation::cMcd);
-    t.buildFrom(cMcd);
+    t.build(cMcd);
 
     // Build the 3D rotation feature: thetaU_cRc*
     vpFeatureThetaU tu(vpFeatureThetaU::cRcd); // current feature
-    tu.buildFrom(cMcd);
+    tu.build(cMcd);
 
     // Sets the desired rotation (always zero !)  since s is the
     // rotation that the camera has to achieve. Here s* = (0, 0)^T
@@ -264,8 +269,8 @@ int main(int argc, const char **argv)
       cMcd = cMo * cdMo.inverse();
 
       // Update the current visual features
-      t.buildFrom(cMcd);
-      tu.buildFrom(cMcd);
+      t.build(cMcd);
+      tu.build(cMcd);
 
       // Compute the control law
       v = task.computeControlLaw();
@@ -302,4 +307,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

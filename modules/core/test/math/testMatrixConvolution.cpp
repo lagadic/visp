@@ -41,6 +41,10 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTime.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 bool compareMatrix(const vpMatrix &m, const double *const array)
@@ -86,8 +90,8 @@ int main()
 
       {
         vpMatrix res = vpMatrix::conv2(A, B, "full");
-        double ground_truth[5 * 5] = {16, 50, 9,  22, 39, 69,  66, 59, 96, 50, 29, 88, 89,
-                                      82, 52, 40, 72, 95, 106, 27, 16, 64, 88, 34, 2};
+        double ground_truth[5 * 5] = { 16, 50, 9,  22, 39, 69,  66, 59, 96, 50, 29, 88, 89,
+                                      82, 52, 40, 72, 95, 106, 27, 16, 64, 88, 34, 2 };
 
         std::cout << "A:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, full):\n" << res << std::endl;
 
@@ -97,7 +101,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(A, B, "same");
-        double ground_truth[4 * 4] = {66, 59, 96, 50, 88, 89, 82, 52, 72, 95, 106, 27, 64, 88, 34, 2};
+        double ground_truth[4 * 4] = { 66, 59, 96, 50, 88, 89, 82, 52, 72, 95, 106, 27, 64, 88, 34, 2 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, same):\n" << res << std::endl;
 
@@ -107,7 +111,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(A, B, "valid");
-        double ground_truth[3 * 3] = {66, 59, 96, 88, 89, 82, 72, 95, 106};
+        double ground_truth[3 * 3] = { 66, 59, 96, 88, 89, 82, 72, 95, 106 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, valid):\n" << res << std::endl;
 
@@ -130,8 +134,8 @@ int main()
 
       {
         vpMatrix res = vpMatrix::conv2(A, B, "full");
-        double ground_truth[5 * 7] = {0,  0,  1,  2,  3,  4,  5,   0,   8,   14, 20, 26, 32, 26,  12,  36,  50, 64,
-                                      78, 92, 58, 24, 64, 86, 108, 130, 152, 90, 36, 84, 97, 110, 123, 136, 77};
+        double ground_truth[5 * 7] = { 0,  0,  1,  2,  3,  4,  5,   0,   8,   14, 20, 26, 32, 26,  12,  36,  50, 64,
+                                      78, 92, 58, 24, 64, 86, 108, 130, 152, 90, 36, 84, 97, 110, 123, 136, 77 };
 
         std::cout << "A:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, full):\n" << res << std::endl;
 
@@ -141,7 +145,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(A, B, "same");
-        double ground_truth[2 * 6] = {36, 50, 64, 78, 92, 58, 64, 86, 108, 130, 152, 90};
+        double ground_truth[2 * 6] = { 36, 50, 64, 78, 92, 58, 64, 86, 108, 130, 152, 90 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, same):\n" << res << std::endl;
 
@@ -161,8 +165,8 @@ int main()
 
       {
         vpMatrix res = vpMatrix::conv2(B, A, "full");
-        double ground_truth[5 * 7] = {0,  0,  1,  2,  3,  4,  5,   0,   8,   14, 20, 26, 32, 26,  12,  36,  50, 64,
-                                      78, 92, 58, 24, 64, 86, 108, 130, 152, 90, 36, 84, 97, 110, 123, 136, 77};
+        double ground_truth[5 * 7] = { 0,  0,  1,  2,  3,  4,  5,   0,   8,   14, 20, 26, 32, 26,  12,  36,  50, 64,
+                                      78, 92, 58, 24, 64, 86, 108, 130, 152, 90, 36, 84, 97, 110, 123, 136, 77 };
 
         std::cout << "A:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(B, A, full):\n" << res << std::endl;
 
@@ -172,7 +176,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(B, A, "same");
-        double ground_truth[4 * 2] = {20, 26, 64, 78, 108, 130, 110, 123};
+        double ground_truth[4 * 2] = { 20, 26, 64, 78, 108, 130, 110, 123 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(B, A, same):\n" << res << std::endl;
 
@@ -223,9 +227,9 @@ int main()
 
       {
         vpMatrix res = vpMatrix::conv2(A, B, "full");
-        double ground_truth[6 * 6] = {128, 32,  122, 119, 31,  78,  88, 179, 252, 208, 154, 139,
+        double ground_truth[6 * 6] = { 128, 32,  122, 119, 31,  78,  88, 179, 252, 208, 154, 139,
                                       151, 275, 291, 378, 281, 154, 79, 271, 423, 366, 285, 106,
-                                      48,  171, 248, 292, 230, 31,  16, 92,  194, 167, 39,  2};
+                                      48,  171, 248, 292, 230, 31,  16, 92,  194, 167, 39,  2 };
 
         std::cout << "A:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, full):\n" << res << std::endl;
 
@@ -235,7 +239,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(A, B, "same");
-        double ground_truth[4 * 4] = {179, 252, 208, 154, 275, 291, 378, 281, 271, 423, 366, 285, 171, 248, 292, 230};
+        double ground_truth[4 * 4] = { 179, 252, 208, 154, 275, 291, 378, 281, 271, 423, 366, 285, 171, 248, 292, 230 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, same):\n" << res << std::endl;
 
@@ -245,7 +249,7 @@ int main()
       }
       {
         vpMatrix res = vpMatrix::conv2(A, B, "valid");
-        double ground_truth[2 * 2] = {291, 378, 423, 366};
+        double ground_truth[2 * 2] = { 291, 378, 423, 366 };
 
         std::cout << "\nA:\n" << A << "\nB:\n" << B << "\nvpMatrix::conv2(A, B, valid):\n" << res << std::endl;
 
@@ -254,7 +258,8 @@ int main()
         }
       }
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

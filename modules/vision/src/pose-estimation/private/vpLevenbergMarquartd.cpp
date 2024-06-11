@@ -39,6 +39,8 @@
 #include <visp3/core/vpMath.h>
 #include "vpLevenbergMarquartd.h"
 
+BEGIN_VISP_NAMESPACE
+
 #define SIGN(x) ((x) < 0 ? -1 : 1)
 #define SWAP(a, b, c)                                                                                                  \
   {                                                                                                                    \
@@ -192,7 +194,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
 
   fp = dxnorm - *delta;
 
-  if (fp > (tol1 * (*delta))) {
+  if (fp >(tol1 * (*delta))) {
     /*
      *  Si le jacobien n'a pas de rangee deficiente,l'etape de
      *  Newton fournit une limite inferieure, parl pour le
@@ -263,7 +265,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
      */
     for (;;) // iter >= 0)
     {
-      iter++;
+      ++iter;
 
       /*
        *  evaluation de la fonction a la valeur courant
@@ -296,9 +298,10 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
        *  ou parl est nul et ou le nombre d'iteration a
        *  atteint 10.
        */
-      if ((std::fabs(fp) <= (tol1 * (*delta))) ||
-          ((std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && ((fp <= temp) && (temp < 0.0))) ||
-          (iter == 10)) {
+      bool cond_part_1 = (std::fabs(fp) <= (tol1 * (*delta)));
+      bool cond_part_2 = (std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && ((fp <= temp) && (temp < 0.0));
+      bool cond_part_3 = (iter == 10);
+      if (cond_part_1 || cond_part_2 || cond_part_3) {
         // terminaison.
 
         return 0;
@@ -478,7 +481,7 @@ int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int /* lipvt 
 
           if (pivot && (std::fabs(rdiag[k]) > std::numeric_limits<double>::epsilon())) {
             temp = *MIJ(a, k, i, lda) / rdiag[k];
-            rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - temp * temp)));
+            rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - (temp * temp))));
 
             if ((tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k])) <= epsmch) {
               rdiag[k] = enorm(MIJ(a, k, ip1, lda), (n - 1 - static_cast<int>(i)));
@@ -685,8 +688,10 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
   if (factor <= 0.0) {
     return 0;
   }
-  if ((n <= 0) || (m < n) || (ldfjac < m) || (ftol < 0.0) || (xtol < 0.0) || (gtol < 0.0) || (maxfev == 0) ||
-      (factor <= 0.0)) {
+  bool cond_part_one = (n <= 0) || (m < n) || (ldfjac < m);
+  bool cond_part_two = (ftol < 0.0) || (xtol < 0.0) || (gtol < 0.0);
+  bool cond_part_three = (maxfev == 0) || (factor <= 0.0);
+  if (cond_part_one || cond_part_two || cond_part_three) {
     /*
      * termination, normal ou imposee par l'utilisateur.
      */
@@ -765,7 +770,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
    *  debut de la boucle la plus externe.
    */
   while (count < static_cast<int>(maxfev)) {
-    count++;
+    ++count;
     /*
      *  calcul de la matrice jacobienne.
      */
@@ -774,7 +779,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
     (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-    (*njev)++;
+    ++(*njev);
 
     if (iflag < 0) {
       /*
@@ -980,7 +985,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
       iflag = 1;
       (*ptr_fcn)(m, n, wa2, wa4, fjac, ldfjac, iflag);
 
-      (*nfev)++;
+      ++(*nfev);
 
       if (iflag < 0) {
         // termination, normal ou imposee par l'utilisateur.
@@ -1025,7 +1030,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
       temp1 = enorm(wa3, n) / fnorm;
       temp2 = (sqrt(par) * pnorm) / fnorm;
-      prered = (temp1 * temp1) + (temp2 * temp2) / tol5;
+      prered = (temp1 * temp1) + ((temp2 * temp2) / tol5);
       dirder = -((temp1 * temp1) + (temp2 * temp2));
 
       /*
@@ -1044,7 +1049,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
        */
 
       if (ratio > tol25) {
-        // if ((par == 0.0) || (ratio <= tol75))
+        // --comment: if par eq 0.0 or ratio lesseq tol75
         if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75)) {
           delta = pnorm / tol5;
           par *= tol5;
@@ -1055,10 +1060,10 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
           temp = tol5;
         }
         else {
-          temp = tol5 * dirder / (dirder + tol5 * actred);
+          temp = (tol5 * dirder) / (dirder + (tol5 * actred));
         }
 
-        if ((tol1 * fnorm1 >= fnorm) || (temp < tol1)) {
+        if (((tol1 * fnorm1) >= fnorm) || (temp < tol1)) {
           temp = tol1;
         }
 
@@ -1086,22 +1091,22 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
         xnorm = enorm(wa2, n);
         fnorm = fnorm1;
-        iter++;
+        ++iter;
       }
 
       /*
        *  tests pour convergence.
        */
 
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0)) {
+      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0)) {
         *info = 1;
       }
 
-      if (delta <= xtol * xnorm) {
+      if (delta <= (xtol * xnorm)) {
         *info = 2;
       }
 
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0) && *info == 2) {
+      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0) && (*info == 2)) {
         *info = 3;
       }
 
@@ -1130,11 +1135,11 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
         *info = 5;
       }
 
-      if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && (tol5 * ratio <= 1.0)) {
+      if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && ((tol5 * ratio) <= 1.0)) {
         *info = 6;
       }
 
-      if (delta <= epsmch * xnorm) {
+      if (delta <= (epsmch * xnorm)) {
         *info = 7;
       }
 
@@ -1176,14 +1181,14 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
 
   /* verification des parametres en entree qui causent des erreurs */
 
-  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) || (lwa < (5 * n + m))) {
-    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0), (lwa < (5 * n + m)));
+  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) || (lwa < ((5 * n) + m))) {
+    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0), (lwa < ((5 * n) + m)));
     return (-1);
   }
 
   /* appel a lmder  */
 
-  maxfev = (unsigned int)(100 * (n + 1));
+  maxfev = static_cast<unsigned int>(100 * (n + 1));
   ftol = tol;
   xtol = tol;
   gtol = 0.0;
@@ -1202,3 +1207,5 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
 
 #undef TRUE
 #undef FALSE
+
+END_VISP_NAMESPACE

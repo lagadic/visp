@@ -68,7 +68,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
@@ -85,8 +85,19 @@
 
 #include <visp3/blob/vpDot.h>
 
+// Define the square CAD model
+// Square dimension
+#define L 0.075
+// Distance between the camera and the square at the desired
+// position after visual servoing convergence
+#define D 0.5
+
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed joint velocities (m/s, rad/s) to achieve the task
@@ -106,7 +117,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -119,24 +131,22 @@ int main()
   std::ofstream flog(logfilename.c_str());
 
   try {
-// Define the square CAD model
-// Square dimension
-#define L 0.075
-// Distance between the camera and the square at the desired
-// position after visual servoing convergence
-#define D 0.5
-
     vpServo task;
 
     vpImage<unsigned char> I;
     int i;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-    g.acquire(I);
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -171,6 +181,7 @@ int main()
     }
 
     vpRobotAfma6 robot;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
 
     vpCameraParameters cam;
 
@@ -185,15 +196,16 @@ int main()
     // sets the desired position of the visual feature
     vpFeaturePoint pd[4];
 
-    pd[0].buildFrom(-L, -L, D);
-    pd[1].buildFrom(L, -L, D);
-    pd[2].buildFrom(L, L, D);
-    pd[3].buildFrom(-L, L, D);
+    pd[0].build(-L, -L, D);
+    pd[1].build(L, -L, D);
+    pd[2].build(L, L, D);
+    pd[3].build(-L, L, D);
 
     // We want to see a point on a point
     std::cout << std::endl;
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
       task.addFeature(p[i], pd[i]);
+    }
 
     // Set the proportional gain
     task.setLambda(0.2);
@@ -223,9 +235,10 @@ int main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       // Acquire a new image from the camera
-      g.acquire(I);
+      rs.acquire(I);
 
       // Display this image
       vpDisplay::display(I);
@@ -241,11 +254,12 @@ int main()
           // image
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      } catch (...) {
+      }
+      catch (...) {
         flog.close(); // Close the log file
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
-        exit(1);
+        return EXIT_FAILURE;
       }
 
       // Update the point feature from the dot location
@@ -299,6 +313,10 @@ int main()
       // expressed in meters in the camera frame
       flog << (task.getError()).t() << std::endl;
 
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
       // Flush the display
       vpDisplay::flush(I);
     }
@@ -307,7 +325,8 @@ int main()
     task.print();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;

@@ -1,4 +1,5 @@
 //! \example tutorial-image-simulator.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -9,6 +10,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     //! [Read image]
     vpImage<unsigned char> target;
@@ -60,7 +64,8 @@ int main()
     //! [Write image]
     try {
       vpImageIo::write(I, "./rendered_image.jpg");
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Unsupported image format" << std::endl;
     }
     //! [Write image]
@@ -80,7 +85,8 @@ int main()
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

@@ -37,6 +37,7 @@
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 const unsigned int vpBiclops::ndof = 2;
 const float vpBiclops::h = 0.048f;
 const float vpBiclops::panJointLimit = (float)(M_PI);
@@ -148,7 +149,7 @@ void vpBiclops::computeMGD(const vpColVector &q, vpPoseVector &fPc) const
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fPc.buildFrom(fMc.inverse());
+  fPc.build(fMc.inverse());
 
   return;
 }
@@ -158,7 +159,7 @@ void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fPc) const
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fPc.buildFrom(fMc.inverse());
+  fPc.build(fMc.inverse());
 
   return;
 }
@@ -181,7 +182,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*const
   return os;
 }
 
-void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(m_cMe); }
+void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.build(m_cMe); }
 
 void vpBiclops::set_cMe()
 {
@@ -257,3 +258,4 @@ void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
     fJe[5][0] = 1;
   }
 }
+END_VISP_NAMESPACE

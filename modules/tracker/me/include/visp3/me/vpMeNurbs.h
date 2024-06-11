@@ -50,6 +50,7 @@
 #include <list>
 #include <math.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMeNurbs
  *
@@ -123,7 +124,7 @@
  * setEnableCannyDetection to enable it.
  *
  * \warning : This function requires OpenCV.
- */
+*/
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -337,5 +338,5 @@ public:
    */
   static void display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
-
+END_VISP_NAMESPACE
 #endif

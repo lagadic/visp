@@ -13,6 +13,9 @@ int main(int argc, char **argv)
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
     defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     double opt_square_width = 0.12;
     int opt_camera_index = 1; // camera index: 1. Left, 2.Right

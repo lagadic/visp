@@ -51,6 +51,7 @@
 #include "../wireframe-simulator/vpScene.h"
 #include "../wireframe-simulator/vpVwstack.h"
 
+BEGIN_VISP_NAMESPACE
 const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
 /*!
@@ -320,7 +321,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
   vpRotationMatrix eRc(_erc);
 
   m_mutex_eMc.lock();
-  this->_eMc.buildFrom(_etc, eRc);
+  this->_eMc.build(_etc, eRc);
   m_mutex_eMc.unlock();
 
   setToolType(tool);
@@ -2066,7 +2067,7 @@ void vpSimulatorAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
   vpHomogeneousMatrix cMe;
   vpAfma6::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -2440,7 +2441,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
     cdMc = cdMo_ * get_cMo().inverse();
     cdMc.extract(cdRc);
     cdMc.extract(cdTc);
-    cdTUc.buildFrom(cdRc);
+    cdTUc.build(cdRc);
 
     // compute v,w and velocity
     v = -lambda * cdRc.t() * cdTc;
@@ -2467,7 +2468,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   // std::cout << "setPosition: final error " << err.t() << std::endl;
   return (err.frobeniusNorm() <= errMax);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols

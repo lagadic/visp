@@ -40,6 +40,7 @@
   \brief Histogram manipulation.
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImage.h>
@@ -54,6 +55,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "i:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
   \example histogram.cpp
@@ -84,7 +89,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output histogram path>]\n\
      [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -207,7 +212,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], nullptr, ipath, opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
@@ -222,8 +228,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -232,9 +238,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath, opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -300,7 +306,8 @@ int main(int argc, const char **argv)
     nbpeaks = h.getPeaks(distance, peak1, peak2);
     if (nbpeaks != 2) {
       std::cout << "Not a bimodal histogram..." << std::endl;
-    } else {
+    }
+    else {
       vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d", peak1.getLevel(), peak1.getValue(),
               peak2.getLevel(), peak2.getValue());
     }
@@ -309,7 +316,8 @@ int main(int argc, const char **argv)
     vpHistogramValey valey;
     if (h.getValey(peak1, peak2, valey) == false) {
       vpTRACE("No valey found...");
-    } else {
+    }
+    else {
       vpTRACE("Valey: %d-%d", valey.getLevel(), valey.getValue());
     }
 
@@ -320,13 +328,16 @@ int main(int argc, const char **argv)
       unsigned ret = h.getValey(distance, peak1, valeyl, valeyr);
       if (ret == 0x00) {
         vpTRACE("No left and right valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
-      } else if (ret == 0x10) {
+      }
+      else if (ret == 0x10) {
         vpTRACE("No right valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
-      } else if (ret == 0x01) {
+      }
+      else if (ret == 0x01) {
         vpTRACE("No left valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
-      } else if (ret == 0x11) {
+      }
+      else if (ret == 0x11) {
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
       }
@@ -336,13 +347,16 @@ int main(int argc, const char **argv)
       unsigned ret = h.getValey(distance, peak2, valeyl, valeyr);
       if (ret == 0x00) {
         vpTRACE("No left and right valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
-      } else if (ret == 0x10) {
+      }
+      else if (ret == 0x10) {
         vpTRACE("No right valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
-      } else if (ret == 0x01) {
+      }
+      else if (ret == 0x01) {
         vpTRACE("No left valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
-      } else if (ret == 0x11) {
+      }
+      else if (ret == 0x11) {
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
       }
@@ -354,12 +368,14 @@ int main(int argc, const char **argv)
     vpHistogramPeak peakl, peakr;
     if (h.getPeaks(distance, peakl, peakr, valey) == false) {
       std::cout << "Not a bimodal histogram..." << std::endl;
-    } else {
+    }
+    else {
       vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d", valey.getLevel(), valey.getValue(),
               peakl.getLevel(), peakl.getValue(), peakr.getLevel(), peakr.getValue());
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

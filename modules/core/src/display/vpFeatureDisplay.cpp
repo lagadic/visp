@@ -49,6 +49,7 @@
 
 #include <visp3/core/vpImagePoint.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Display a 2D point with coordinates (x, y) expressed in the image plane.
   These coordinates are obtained after perspective projection of the point.
@@ -81,11 +82,11 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam,
                                    const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
-  //  --comment:  x cos(theta) + y sin(theta) - rho = 0
+  //  --comment: x times cos(theta) plus y times sin(theta) minus rho equals 0
   double rhop, thetap;
   vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  //  --comment:  u cos(thetap) + v sin(thetap) - rhop = 0
+  //  --comment: u times cos thetap plus v times sin thetap minus rhop equals 0
   double co = cos(thetap);
   double si = sin(thetap);
   double c = -rhop;
@@ -99,7 +100,8 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
     double h = I.getHeight() - 1;
     ip2.set_ij(h, (-c - (a * h)) / b);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  } else {
+  }
+  else {
     ip1.set_ij((-c) / a, 0);
     double w = I.getWidth() - 1;
     ip2.set_ij((-c - (b * w)) / a, w);
@@ -193,11 +195,11 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                                    const vpColor &color, unsigned int thickness)
 {
-  // --comment: x cos(theta) + y sin(theta) - rho = 0
+  // --comment: x times cos of theta plus y times sin of theta minus rho equals 0
   double rhop, thetap;
   vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  // --comment: u cos(thetap) + v sin(thetap) - rhop = 0
+  // --comment: u times cos of thetap plus v times sin of thetap minus rhop equals 0
   double co = cos(thetap);
   double si = sin(thetap);
   double c = -rhop;
@@ -211,7 +213,8 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
     double h = I.getHeight() - 1;
     ip2.set_ij(h, (-c - (a * h)) / b);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  } else {
+  }
+  else {
     ip1.set_ij((-c) / a, 0);
     double w = I.getWidth() - 1;
     ip2.set_ij((-c - (b * w)) / a, w);
@@ -271,3 +274,4 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11
   vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
   vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);
 }
+END_VISP_NAMESPACE

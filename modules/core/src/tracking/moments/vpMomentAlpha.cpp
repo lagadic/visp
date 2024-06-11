@@ -41,6 +41,7 @@
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Empty constructor. Initializes alpha moment as a reference alpha with a
   value in \f$[-\pi/2 ; \pi/2]\f$. A default-constructed alpha moment may be
@@ -67,7 +68,7 @@ vpMomentAlpha::vpMomentAlpha()
 */
 vpMomentAlpha::vpMomentAlpha(const std::vector<double> &mu3_ref, double alpha_ref, double threshold)
   : vpMoment(), m_isRef(false), m_symmetric(true), m_mu3Ref(mu3_ref), m_alphaRef(alpha_ref),
-    m_symmetricThreshold(threshold)
+  m_symmetricThreshold(threshold)
 {
   for (std::vector<double>::const_iterator it = mu3_ref.begin(); it != mu3_ref.end(); ++it) {
     if (std::fabs(*it) > m_symmetricThreshold) {
@@ -89,7 +90,7 @@ void vpMomentAlpha::compute()
   bool found_moment_centered;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -100,7 +101,8 @@ void vpMomentAlpha::compute()
 
   if (m_isRef) {
     m_alphaRef = alpha;
-  } else {
+  }
+  else {
     if (!m_symmetric) {
       double r11 = cos(alpha - m_alphaRef);
       double r12 = sin(alpha - m_alphaRef);
@@ -145,23 +147,14 @@ void vpMomentAlpha::compute()
       if (signChange) {
         if (alpha < 0) {
           alpha += M_PI;
-        } else {
+        }
+        else {
           alpha -= M_PI;
         }
       }
     }
   }
   values[0] = alpha;
-}
-
-/*!
-  Prints the value of the major-axis orientation in degrees and rad
- */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &c)
-{
-  os << (__FILE__) << std::endl;
-  os << "Alpha = " << c.values[0] << "rad = " << vpMath::deg(c.values[0]) << "deg " << std::endl;
-  return os;
 }
 
 /*!
@@ -172,7 +165,7 @@ void vpMomentAlpha::printDependencies(std::ostream &os) const
   os << (__FILE__) << std::endl;
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
@@ -180,3 +173,18 @@ void vpMomentAlpha::printDependencies(std::ostream &os) const
   os << "mu20 = " << momentCentered.get(2, 0) << "\t";
   os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
 }
+
+/*!
+  Prints the value of the major-axis orientation in degrees and rad
+ */
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &c)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  os << (__FILE__) << std::endl;
+  os << "Alpha = " << c.values[0] << "rad = " << vpMath::deg(c.values[0]) << "deg " << std::endl;
+  return os;
+}
+
+END_VISP_NAMESPACE

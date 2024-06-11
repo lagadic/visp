@@ -31,13 +31,6 @@
  * Luminance based feature.
  */
 
-#ifndef vpFeatureLuminance_h
-#define vpFeatureLuminance_h
-
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
-
 /*!
  * \file vpFeatureLuminance.h
  * \brief Class that defines the image luminance visual feature
@@ -45,14 +38,23 @@
  * For more details see \cite Collewet08c.
  */
 
+#ifndef vpFeatureLuminance_h
+#define vpFeatureLuminance_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/visual_features/vpBasicFeature.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpLuminance
  * \brief Class that defines the luminance and gradient of a point.
  *
  * \sa vpFeatureLuminance
- */
+*/
 class VISP_EXPORT vpLuminance
 {
 public:
@@ -95,7 +97,10 @@ public:
   //! Destructor.
   virtual ~vpFeatureLuminance() vp_override;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void buildFrom(vpImage<unsigned char> &I);
+#endif
+  vpFeatureLuminance &build(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;
@@ -125,5 +130,5 @@ public:
 public:
   vpCameraParameters cam;
 };
-
+END_VISP_NAMESPACE
 #endif

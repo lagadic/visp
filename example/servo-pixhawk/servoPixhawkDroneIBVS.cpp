@@ -69,6 +69,10 @@
 // Comment next line to disable sending commands to the robot
 #define CONTROL_UAV
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)
 {
   return (p1.second.get_v() < p2.second.get_v());

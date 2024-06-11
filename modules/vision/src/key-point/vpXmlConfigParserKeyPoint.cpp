@@ -48,6 +48,7 @@
 
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlConfigParserKeyPoint::Impl
 {
@@ -546,7 +547,7 @@ bool vpXmlConfigParserKeyPoint::getUseRansacVVSPoseEstimation() const
 {
   return m_impl->getUseRansacVVSPoseEstimation();
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlConfigParserKeyPoint.cpp.o) has no symbols
 void dummy_vpXmlConfigParserKeyPoint() { };

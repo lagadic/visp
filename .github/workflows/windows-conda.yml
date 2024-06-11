@@ -1,0 +1,96 @@
+name: Windows-conda-CI
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visp-conda:
+    name: ${{ matrix.os }} ${{ matrix.compiler }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
+        compiler: ["cl", "clang-cl"]
+        build_type: [Release]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install miniconda on windows
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: visp
+        auto-update-conda: true
+        environment-file: .github/workflows/conda/environment_windows.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+
+    - name: Show conda config
+      shell: cmd /C CALL {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
+
+    - name: Build visp python bindings
+      shell: cmd /C CALL {0}
+      env:
+        CC: ${{ matrix.compiler }}
+        CXX: ${{ matrix.compiler }}
+      run: |
+        :: start building
+        call "%programfiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        if errorlevel 1 exit 1
+
+        mkdir build
+        cd build
+
+        cmake .. ^
+          -G "Ninja" ^
+          -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% ^
+          -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library ^
+          -DVISP_LIB_INSTALL_PATH="lib" ^
+          -DVISP_BIN_INSTALL_PATH="bin" ^
+          -DVISP_CONFIG_INSTALL_PATH="cmake" ^
+          -DBUILD_TESTS=OFF ^
+          -DBUILD_EXAMPLES=OFF ^
+          -DBUILD_TUTORIALS=OFF ^
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        if errorlevel 1 exit 1
+
+        :: Build visp libs & install them
+        cmake --build . --target install
+
+        :: Build bindings
+        cmake --build . --target visp_python_bindings
+        if errorlevel 1 exit 1
+
+        :: Tests
+        cmake --build . --target visp_python_bindings_test
+        if errorlevel 1 exit 1
+
+  check:
+    if: always()
+    name: check-windows-conda
+
+    needs:
+    - visp-conda
+
+    runs-on: Ubuntu-latest
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}

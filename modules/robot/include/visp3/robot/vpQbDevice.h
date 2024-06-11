@@ -44,6 +44,7 @@
 #include <mutex>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpQbDevice
@@ -112,6 +113,6 @@ protected:
   int m_max_repeats; //!< Max number of trials to send a command.
   bool m_init_done;  //!< Flag used to indicate if the device is initialized.
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

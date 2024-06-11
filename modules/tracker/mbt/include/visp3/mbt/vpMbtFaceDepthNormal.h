@@ -39,7 +39,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #endif
@@ -50,6 +50,7 @@
 
 #define DEBUG_DISPLAY_DEPTH_NORMAL 0
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthNormal
 {
 public:
@@ -63,7 +64,7 @@ public:
   {
     ROBUST_FEATURE_ESTIMATION = 0,
     ROBUST_SVD_PLANE_ESTIMATION = 1,
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
     PCL_PLANE_ESTIMATION = 2
 #endif
   };
@@ -91,7 +92,7 @@ public:
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                               vpColVector &desired_features, unsigned int stepX, unsigned int stepY
@@ -128,7 +129,7 @@ public:
 
   void computeNormalVisibility(double nx, double ny, double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
   void computeNormalVisibility(float nx, float ny, float nz, const pcl::PointXYZ &centroid_point,
                                pcl::PointXYZ &face_normal);
 #endif
@@ -279,7 +280,7 @@ protected:
   //!
   std::vector<PolygonLine> m_polygonLines;
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
   bool computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
                                  vpColVector &desired_features, vpColVector &desired_normal,
                                  vpColVector &centroid_point);
@@ -312,19 +313,20 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
-#ifdef VISP_HAVE_PCL
-NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
-    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
-    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
-    {vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
+NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
 });
 #else
-NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
-    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
-    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
+NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
 });
 #endif
 #endif

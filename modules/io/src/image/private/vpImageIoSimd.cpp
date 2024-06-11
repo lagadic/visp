@@ -42,6 +42,8 @@
 #include "vpImageIoBackend.h"
 #include <Simd/SimdLib.h>
 
+BEGIN_VISP_NAMESPACE
+
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
 {
   size_t stride = 0, width = 0, height = 0;
@@ -91,4 +93,7 @@ void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)
   SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth() * 4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32,
                       SimdImageFilePng, 90, filename.c_str());
 }
+
+END_VISP_NAMESPACE
+
 #endif

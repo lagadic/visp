@@ -31,11 +31,28 @@
  * Matrix manipulation.
  */
 
-#ifndef vpMatrix_H
-#define vpMatrix_H
+/*!
+  \file vpMatrix.h
+
+  \brief Definition of matrix class as well as a set of operations on
+  these matrices.
+*/
+
+#ifndef _vpMatrix_H_
+#define _vpMatrix_H_
+
+#include <visp3/core/vpConfig.h>
+BEGIN_VISP_NAMESPACE
+
+class vpRowVector;
+class vpColVector;
+class vpTranslationVector;
+class vpHomogeneousMatrix;
+class vpVelocityTwistMatrix;
+class vpForceTwistMatrix;
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -46,19 +63,7 @@
 #include <iostream>
 #include <math.h>
 
-class vpRowVector;
-class vpColVector;
-class vpTranslationVector;
-class vpHomogeneousMatrix;
-class vpVelocityTwistMatrix;
-class vpForceTwistMatrix;
-
-/*!
-  \file vpMatrix.h
-
-  \brief Definition of matrix class as well as a set of operations on
-  these matrices.
-*/
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMatrix
@@ -217,7 +222,9 @@ public:
       free(rowPtrs);
       rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   //-------------------------------------------------
@@ -269,7 +276,7 @@ public:
   //---------------------------------
   /** @name Assignment operators */
   //@{
-  vpMatrix &operator<<(double *);
+  vpMatrix &operator<<(double *p);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
@@ -346,6 +353,16 @@ public:
 #endif
 #if defined(VISP_HAVE_OPENCV)
   double detByLUOpenCV() const;
+#endif
+  vpMatrix cholesky() const;
+#if defined(VISP_HAVE_EIGEN3)
+  vpMatrix choleskyByEigen3() const;
+#endif
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix choleskyByLapack() const;
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  vpMatrix choleskyByOpenCV() const;
 #endif
 
   // Compute the exponential matrix of a square matrix
@@ -1188,4 +1205,6 @@ __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lap
 VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
+
+END_VISP_NAMESPACE
 #endif

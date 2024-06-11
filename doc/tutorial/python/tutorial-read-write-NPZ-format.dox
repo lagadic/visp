@@ -1,0 +1,111 @@
+/**
+
+\page tutorial-read-write-NPZ-format Tutorial: NumPy NPY/NPZ file format for reading/writing large arrays of data
+
+\tableofcontents
+
+\section tutorial-read-write-NPZ-format-intro Introduction
+
+\note
+Please refer to the <a href="tutorial-npz.html">C++ tutorial</a> for an overview of the NPZ format and a quick usage
+from a C++ point of view.
+
+
+NumPy offers the possibility to save and read arrays of data in binary format. This is an alternative to the NumPy
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html">`numpy.savetxt`</a> function, which
+allows the user to save 1D/2D arrays in plain text.
+
+The NPY format, and the NPZ format which is a collection of NPY data zipped into a single file, offer the following
+advantages:
+  - easy usage with <a href="https://numpy.org/doc/stable/reference/generated/numpy.savez.html">`numpy.savez`</a>
+and <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">`numpy.load`</a> for saving and reading
+arrays of data,
+  - binary format contrary to using a plain text file, which reduces the file size,
+  - no data loss when saving, this can be problematic when dealing with floating-point numbers,
+  - easy access to the different saved variables since the returned loaded object is a dictionnary.
+
+In contrary, the main disadvantages are:
+  - it is a non-human readable format,
+  - it is meant to be use with arrays of basic data type, hierarchical structures of data are not suitables for instance.
+
+\note
+You can refer to this Wikipedia page for an exhaustive comparison of
+<a href="https://en.wikipedia.org/wiki/Comparison_of_data-serialization_formats">data-serialization formats</a>.
+\n You can refer to the following page for a more thorough description of the
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html">NPY format</a>.
+
+
+\section tutorial-read-write-NPZ-format-examples Examples
+
+\subsection tutorial-read-write-NPZ-format-examples-quick Quick overview in Python
+
+The following code snippet illustrates how to save 1-D vector, multi-dimensional array and append data to file.
+
+\code{.py}
+
+#! python3
+# -*- coding: utf-8 -*-
+import numpy as np
+from tempfile import TemporaryFile
+import matplotlib.pyplot as plt
+
+def main():
+    # https://numpy.org/doc/stable/reference/generated/numpy.savez.html
+    outfile = TemporaryFile()
+    x_vec = np.arange(10)
+    sin_x = np.sin(x_vec)
+    np.savez(outfile, x=x_vec, y=sin_x)
+
+    _ = outfile.seek(0) # Only needed here to simulate closing & reopening file
+    npzfile = np.load(outfile)
+    print(f"npzfile.filesz: {npzfile.files}")
+
+    # append data to the file: https://stackoverflow.com/a/71183105
+    img = np.random.randint(low=0, high=256, size=(48, 64, 3), dtype=np.uint8)
+    print(f"img: {img.shape}")
+    data_dict = dict(npzfile)
+    data_dict["img"] = img
+    np.savez(outfile, **data_dict)
+
+    _ = outfile.seek(0) # Only needed here to simulate closing & reopening file
+    npzfile = np.load(outfile)
+    print(f"npzfile.filesz: {npzfile.files}")
+
+    plt.imshow(npzfile["img"])
+    plt.show()
+
+if __name__ == '__main__':
+    main()
+
+\endcode
+
+
+\subsection tutorial-read-write-NPZ-format-examples-realsense Demo: read and display data from RealSense sensors
+
+In this demo, we will first use \ref example/device/framegrabber/saveRealSenseData.cpp "saveRealSenseData.cpp" to
+save data on disk:
+  - save "[-s]" color "[-c]" infrared "[-i]" depth "[-d]" and pointcloud "[-p]" data on disk:
+    - \code ./saveRealSenseData -s -c -i -d -p \endcode
+  - use "[-e <pattern>]" to specify the filename pattern:
+    - \code ./saveRealSenseData -s -c -i -d -p -e %06d \endcode
+  - use "[-o <output folder>]" to specify the output folder, a folder with the current timestamp will be
+automatically created inside it:
+    - \code ./saveRealSenseData -s -c -i -d -p -o output_dir \endcode
+  - use "[-C]" to save data on user click:
+    - \code ./saveRealSenseData -s -c -i -d -p -C \endcode
+  - use "[-f <fps>]" to specify the acquisition framerate:
+    - \code ./saveRealSenseData -s -c -i -d -p -f 60 \endcode
+  - use "[-b]" to force depth and pointcloud data to be saved in little-endian binary format:
+    - \code ./saveRealSenseData -s -c -i -d -p -b \endcode
+  - use "[-z]" to save pointcloud data in NumPy NPZ format (if this option is not passed and ViSP is not built with
+the PCL library as dependency, the NPZ format is used by default, unless the "[-b]" option is passed):
+    - \code ./saveRealSenseData -s -c -i -d -p -z \endcode
+
+\note
+Saving pointcloud data is very time consuming. If you need acquisition data to be as close as possible to the camera
+framerate, you can save instead the depth data and compute the 3D pointcloud later using the stereo-camera parameters.
+
+Then, you can use the PlotRGBIrDepthData.py Python script to display the data:
+  - \code python3 PlotRGBIrDepthData.py -i <folder> \endcode
+
+*/

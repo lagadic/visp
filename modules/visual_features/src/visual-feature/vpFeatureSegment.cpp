@@ -31,6 +31,11 @@
  * Segment visual feature.
  */
 
+/*!
+ * \file vpFeatureSegment.cpp
+ * \brief class that defines the vpFeatureSegment visual feature
+ */
+
 #include <cmath>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImagePoint.h>
@@ -45,10 +50,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
- * \file vpFeatureSegment.cpp
- * \brief class that defines the vpFeatureSegment visual feature
- */
+BEGIN_VISP_NAMESPACE
 
 /*!
  * Initialise the memory space requested for segment visual feature.
@@ -156,7 +158,7 @@ vpFeatureSegment::vpFeatureSegment(bool normalized)
  *
  *   // Build the segment visual feature
  *   vpFeatureSegment s;
- *   s.buildFrom(p1.get_x(), p1.get_y(), p1.get_Z(), p2.get_x(), p2.get_y(), p2.get_Z());
+ *   s.build(p1.get_x(), p1.get_y(), p1.get_Z(), p2.get_x(), p2.get_y(), p2.get_Z());
  *
  *   // Compute the interaction matrix
  *   vpMatrix L = s.interaction( vpBasicFeature::FEATURE_ALL );
@@ -533,7 +535,9 @@ void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRG
   vpDisplay::displayCircle(I, ip2, 5, vpColor::yellow, true);
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+ * \deprecated You should use build(const double &, const double &, const double &, const double &, const double &, const double &) instead.
  * Build a segment visual feature from two points and their Z coordinates.
  *
  * \param x1, y1 : coordinates of the first point in the image plane.
@@ -550,6 +554,27 @@ void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRG
  * x_2}) \f]
  */
 void vpFeatureSegment::buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2)
+{
+  build(x1, y1, Z1, x2, y2, Z2);
+}
+#endif
+/*!
+ * Build a segment visual feature from two points and their Z coordinates.
+ *
+ * \param x1, y1 : coordinates of the first point in the image plane.
+ * \param Z1 : depth of the first point in the camera frame.
+ *
+ * \param x2, y2 : coordinates of the second point in the image plane.
+ * \param Z2 : depth of the second point in the camera frame.
+ *
+ * Depending on the feature set that is considered, the features \f${\bf s} =
+ * (x_c, y_c, l, \alpha)\f$ or \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$ are
+ * computed from the two points using the following formulae: \f[ x_c =
+ * \frac{x_1 + x_2}{2} \f] \f[ y_c = \frac{y_1 + y_2}{2} \f] \f[ l = \sqrt{{x_1
+ * - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 -
+ * x_2}) \f]
+ */
+vpFeatureSegment &vpFeatureSegment::build(const double &x1, const double &y1, const double &Z1, const double &x2, const double &y2, const double &Z2)
 {
   double l = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   double x_c = (x1 + x2) / 2.;
@@ -574,6 +599,7 @@ void vpFeatureSegment::buildFrom(double x1, double y1, double Z1, double x2, dou
     setZ1(Z1);
     setZ2(Z2);
   }
+  return *this;
 }
 
 /*!
@@ -671,3 +697,4 @@ unsigned int vpFeatureSegment::selectL() { return FEATURE_LINE[2]; }
  */
 
 unsigned int vpFeatureSegment::selectAlpha() { return FEATURE_LINE[3]; }
+END_VISP_NAMESPACE

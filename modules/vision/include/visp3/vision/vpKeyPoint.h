@@ -73,6 +73,7 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpKeyPoint
  * \ingroup group_vision_keypoints group_detection_keypoint group_detection_mbt_object
@@ -207,7 +208,7 @@
  * \endcode
  *
  * This class is also described in \ref tutorial-matching.
- */
+*/
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint
 {
 public:
@@ -2252,6 +2253,6 @@ private:
 
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

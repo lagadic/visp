@@ -98,6 +98,10 @@ void usage(const char **argv, int error, const std::string &device, int baudrate
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifdef _WIN32
   std::string opt_device = "COM4";
 #else
@@ -219,7 +223,7 @@ int main(int argc, const char **argv)
     vpFeaturePoint p, pd;
     // Sets the desired position of the visual feature
     // Here we set Z desired to 1 meter, and (x,y)=(0,0) to center the tag in the image
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // Define the task
     // - we want an eye-in-hand control law

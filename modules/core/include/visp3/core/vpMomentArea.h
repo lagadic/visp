@@ -33,8 +33,10 @@
 #ifndef _vpMomentArea_h_
 #define _vpMomentArea_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 class vpMomentCentered; // Required for discrete case of vpMomentObject
 
@@ -52,7 +54,7 @@ class vpMomentCentered; // Required for discrete case of vpMomentObject
  * corresponds to the number of points. Since this is of no use in a servoing
  * scheme, this class uses in this case \f$ a = \mu_{20} + \mu_{02} \f$, which is
  * invariant to planar translation and rotation.
- */
+*/
 class VISP_EXPORT vpMomentArea : public vpMoment
 {
 public:
@@ -67,5 +69,5 @@ public:
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m);
 };
-
+END_VISP_NAMESPACE
 #endif

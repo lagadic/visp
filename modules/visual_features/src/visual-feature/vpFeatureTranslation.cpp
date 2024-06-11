@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFeatureTranslation.cpp
+  \brief class that defines 3D translation visual feature
+*/
+
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureTranslation.h>
 
@@ -45,10 +50,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
-  \file vpFeatureTranslation.cpp
-  \brief class that defines 3D translation visual feature
-*/
 /*
 
 attributes and members directly related to the vpBasicFeature needs
@@ -56,6 +57,7 @@ other functionalities are useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for 3D translation visual
@@ -112,10 +114,12 @@ vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1_, vpFeatur
 {
   init();
 
-  buildFrom(f2Mf1_);
+  build(f2Mf1_);
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
   Build a 3D translation visual feature from an homogeneous
   matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D
   transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
@@ -126,12 +130,28 @@ vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1_, vpFeatur
 */
 void vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
 {
+  build(f2Mf1_);
+}
+#endif
+
+/*!
+  Build a 3D translation visual feature from an homogeneous
+  matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D
+  transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
+
+  \param f2Mf1_ [in] : 3D displacement that the camera has to achieve to
+  move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$
+  ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$).
+*/
+vpFeatureTranslation &vpFeatureTranslation::build(const vpHomogeneousMatrix &f2Mf1_)
+{
   this->f2Mf1 = f2Mf1_;
   s[0] = f2Mf1[0][3];
   s[1] = f2Mf1[1][3];
   s[2] = f2Mf1[2][3];
 
   flags[0] = true;
+  return *this;
 }
 
 /*!
@@ -267,7 +287,7 @@ double vpFeatureTranslation::get_Tz() const { return s[2]; }
   ...
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
-  s.buildFrom(cdMc);
+  s.build(cdMc);
 
   vpMatrix L_x = s.interaction( vpFeatureTranslation::selectTx() );
   \endcode
@@ -550,7 +570,7 @@ vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, unsigned i
 
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
-  s.buildFrom(cdMc);
+  s.build(cdMc);
 
   s.print(); // print all the 3 components of the translation feature
   s.print(vpBasicFeature::FEATURE_ALL); // same behavior then previous line
@@ -767,3 +787,4 @@ unsigned int vpFeatureTranslation::selectTy() { return FEATURE_LINE[1]; }
   \sa selectTx(), selectTy()
 */
 unsigned int vpFeatureTranslation::selectTz() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

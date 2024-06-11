@@ -3,8 +3,8 @@ name: Other-architectures
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 # https://github.com/uraimo/run-on-arch-action
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 

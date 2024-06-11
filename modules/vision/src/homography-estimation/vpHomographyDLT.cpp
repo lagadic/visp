@@ -45,6 +45,8 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 void vpHomography::hartleyNormalization(const std::vector<double> &x, const std::vector<double> &y,
@@ -308,3 +310,5 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     aHb = aHbn;
   }
 }
+
+END_VISP_NAMESPACE

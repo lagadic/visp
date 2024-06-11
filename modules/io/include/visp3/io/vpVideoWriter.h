@@ -48,6 +48,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 /*!
   \class vpVideoWriter
 
@@ -257,5 +259,7 @@ private:
   vpVideoFormatType getFormat(const std::string &filename);
   static std::string getExtension(const std::string &filename);
 };
+
+END_VISP_NAMESPACE
 
 #endif

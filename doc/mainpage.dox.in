@@ -7,23 +7,72 @@
 \section intro_sec Introduction
 
 <p>ViSP \cite Marchand05b is a modular C++ library that allows fast development of visual
-servoing applications. ViSP is developed and maintained by the Inria
+servoing and visual tracking applications. ViSP is developed and maintained by the Inria
 <a href="https://team.inria.fr/rainbow/" target="_parent">Rainbow</a>
 (former <a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a>) team located at <a
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
 <p>ViSP official site is <a href="https://visp.inria.fr" target="_parent">https://visp.inria.fr</a></p>
 
-<p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
+<p>ViSP wiki is available here <a href="https://github.com/lagadic/visp/wiki" target="_parent">
+https://github.com/lagadic/visp/wiki</a></p>
 
 <p>ViSP source code is available on GitHub
-<a href="https://github.com/lagadic/visp" target="_parent">https://github.com/lagadic/visp</a></p>
+<a href="https://github.com/lagadic/visp/" target="_parent">https://github.com/lagadic/visp/</a></p>
+
+<p>ViSP daily updated C++ documentation is available here
+<a href="https://visp-doc.inria.fr/doxygen/visp-daily/" target="_parent">https://visp-doc.inria.fr/doxygen/visp-daily</a></p>
+
+<p>It is also possible to use the version under development in Python by compiling the Python bindings.
+See \ref tutorial_python. Daily updated documentation specific to Python bindings is available here
+<a href="https://visp-doc.inria.fr/doxygen/visp-python-daily/" target="_parent">
+https://visp-doc.inria.fr/doxygen/visp-python-daily/</a>.</p>
 
 <p>If you have any problems or find any bugs, please report them in
 <a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available
 <a href="https://github.com/lagadic/visp/discussions" target="_parent">discussion forum</a>.<p>
 
 It is also possible to contact ViSP main developers using: <a href="mailto:visp@inria.fr?subject=[visp]">visp@inria.fr</a>
+
+\section description Description
+
+Since 2005, we develop and release ViSP \cite Marchand05b, an open source library.
+ViSP standing for Visual Servoing Platform allows prototyping and developing applications using visual tracking and
+visual servoing techniques at the heart of the [Rainbow](https://team.inria.fr/rainbow) research. ViSP was designed to
+be independent from the hardware,  to be simple to use, expandable and cross-platform. ViSP allows designing
+vision-based tasks for eye-in-hand and  eye-to-hand systems from the most classical visual features that are used in
+practice. It involves a large set of  elementary positioning tasks with respect to various visual features
+(points, segments, straight lines, circles, spheres, cylinders, image moments, pose...) that can be combined together,
+and image processing algorithms that allow tracking of visual cues (dots, segments, ellipses...), or 3D model-based
+tracking of known objects or template tracking. Simulation capabilities are also available.
+
+We have extended ViSP with a new open-source dynamical simulator named FrankaSim based on CoppeliaSim and ROS for the
+popular Franka Emika Robot \cite Oliva22c. The simulator fully integrated in the ViSP ecosystem features a dynamic
+model that has been accurately identified from a real robot, leading to more realistic simulations.
+Conceived as a multipurpose research simulation platform, it is well suited for visual servoing applications as well
+as, in general, for any pedagogical purpose in robotics. All the software, models and CoppeliaSim scenes presented
+in this work are publicly available under free GPL-2.0 license.
+
+We have also recently introduced a module dedicated to deep neural networks (DNN) to facilitate image classification
+and object detection. This module is used to infer the convolutional networks Faster-RCNN, SSD-MobileNet, ResNet 10,
+Yolo v3, Yolo v4, Yolo v5, Yolo v7 and Yolo v8, which simultaneously predict object boundaries and prediction
+scores at each position.
+
+From a software point of view, ViSP provides simple ways to integrate and validate new algorithms with already
+existing tools. It follows a module-based software engineering design where data types, algorithms, sensors, viewers
+and user interaction are made available. Written in C++, ViSP is based on open-source cross-platform libraries
+(such as OpenCV) and builds with CMake. Several platforms are supported, including OSX, iOS, Windows and Linux.
+ViSP online documentation allows to ease learning. More than 307 fully documented classes organized in 18 different
+modules, with more than 475 examples and 114 tutorials are proposed to the user. ViSP is released under a dual
+licensing model. It is open-source with a GNU GPLv2 or GPLv3 license. A professional edition license that replaces
+GNU GPL is also available.
+
+ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras,
+RGB cameras, and motion capture system that you can use for learning visual-servoing or building robotics applications
+on top of them based on ViSP. See \ref supported-material section.
+
+To not reinvent the wheel, ViSP is interfaced with various third parties like OpenCV, MavSDK, libur_rtde...
+See the complete list of \ref supported-third-parties.
 
 \section arch_sec Software architecture
 
@@ -35,43 +84,45 @@ depend on core.
 
 \image html soft_archi_v6.png "ViSP modules and their optional dependencies"
 
-\section hardware Supported Hardware
-
-ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras,
-RGB cameras, and motion capture system that you can use for learning visual-servoing or building robotics applications
-on top of them based on ViSP. See \ref supported-material section.
-
-\section software Supported Third-Party Libraries
-
-To not reinvent the wheel, ViSP is interfaced with various third parties like OpenCV, MavSDK, libur_rtde...
-See the complete list of \ref supported-third-parties.
-
 \section download_sec Download
 
 <p>From <a
-href="https://visp.inria.fr/download" target="_parent">https://visp.inria.fr/download</a>
+href="https://visp.inria.fr/download/" target="_parent">https://visp.inria.fr/download/</a> page
 you can either download the latest stable release, a daily snapshot or the current
-development distribution using git.</p>
+development distribution using git</p>
+
+\verbatim
+$ git clone https://github.com/lagadic/visp
+\endverbatim
 
 \section install_sec Installation
 
 <p>Because ViSP is a multi platform library that works under Linux, OSX
 and Windows, to install ViSP from source you need the CMake configuration tool
-available from <a href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>.
+available from <a href="http://www.cmake.org/" target="_parent">http://www.cmake.org/</a>.
 Furthermore, depending on your operation system and the capabilities (framegrabber,
 display, simulation, ...) you need, prior to install ViSP,
 install \ref supported-third-parties. There is also this page
-<a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>
+<a href="https://visp.inria.fr/software-architecture/" target="_parent">https://visp.inria.fr/software-architecture/</a>
 that gives an overview of the third-parties used by each ViSP module.</p>
 
 <p>ViSP full installation procedure explaining how to install CMake and third-parties is detailed in the
 \ref tutorial_install page. \ref tutorial_started and documents in pdf are also available from <a
-href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
+href="https://visp.inria.fr/publications/" target="_parent">https://visp.inria.fr/publications/</a>.</p>
 
 \section tutorial Tutorials
 
 To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> in
 \ref tutorial_users.
+
+<p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project
+implementation.</p>
+
+<p>From the <a href="examples.html">example</a> page, you will also find
+examples showing how to use ViSP to acquire and display an
+image, compute a camera pose, estimate an homography, servo a real
+robot or a simulated one using a 2D, 2D half or 3D visual servoing
+scheme, ...</p>
 
 @VISP_MAINPAGE_EXTENSION@
 
@@ -116,17 +167,6 @@ To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms 
    Year = {2016}
 }
 ```
-
-\section Examples_sec Using ViSP
-
-<p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project
-implementation.</p>
-
-<p>From the <a href="examples.html">example</a> page, you will also find
-examples showing how to use the library to acquire and display an
-image, compute a camera pose, estimate an homography, servo a real
-robot or a simulated one using a 2D, 2D half or 3D visual servoing
-scheme, ...</p>
 
 \section Howto_sec How to help ?
 
@@ -697,6 +737,11 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup module_vision
   \defgroup group_vision_keypoints Keypoints detection, matching and classifiers
   Keypoints detection and matching algorithms but also classifiers.
+*/
+/*!
+  \ingroup module_vision
+  \defgroup group_vision_plane Plane estimation
+  Plane estimation algorithms.
 */
 /*******************************************
  * Module vs

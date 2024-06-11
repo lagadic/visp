@@ -48,6 +48,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerMIForwardAdditional
   \ingroup group_tt_mi_tracker
@@ -75,10 +76,9 @@ public:
   //! Default constructor.
   vpTemplateTrackerMIForwardAdditional()
     : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
-  {
-  }
+  { }
   explicit vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
   void setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method) { minimizationMethod = method; }
 };
-
+END_VISP_NAMESPACE
 #endif

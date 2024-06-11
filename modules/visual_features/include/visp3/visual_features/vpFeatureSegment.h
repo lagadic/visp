@@ -31,20 +31,22 @@
  * Segment visual feature.
  */
 
-#ifndef vpFeatureSegment_H
-#define vpFeatureSegment_H
-
 /*!
  * \file vpFeatureSegment.h
  * \brief class that defines the Segment visual feature
  */
 
+#ifndef vpFeatureSegment_H
+#define vpFeatureSegment_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeatureSegment
  * \ingroup group_visual_features
@@ -60,15 +62,19 @@
  *
  * The selection of the feature set is done either during construction using
  * vpFeatureSegment(bool), or by setNormalized(bool).
- */
+*/
 class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
   // empty constructor
   explicit vpFeatureSegment(bool normalized = false);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // change values of the segment
   void buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2);
+#endif
+// change values of the segment
+  vpFeatureSegment &build(const double &x1, const double &y1, const double &Z1, const double &x2, const double &y2, const double &Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const vp_override;
@@ -286,5 +292,5 @@ private:
   double sin_a_;
   bool normalized_;
 };
-
+END_VISP_NAMESPACE
 #endif

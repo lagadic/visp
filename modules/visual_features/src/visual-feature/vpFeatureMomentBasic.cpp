@@ -31,11 +31,12 @@
  * Implementation for all supported moment features.
  */
 
-#include <limits>
 #include <vector>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * \param data_base : Database of moment primitives.
@@ -44,8 +45,8 @@
  * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param featureMoments : Database of features.
  */
-vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                                           vpFeatureMomentDatabase *featureMoments)
+  vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                                             vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(data_base, A_, B_, C_, featureMoments), order(0)
 { }
 
@@ -158,3 +159,4 @@ vpMatrix vpFeatureMomentBasic::interaction(unsigned int select_one, unsigned int
                                              "specify a higher order.");
   return interaction_matrices[select_two * order + select_one];
 }
+END_VISP_NAMESPACE

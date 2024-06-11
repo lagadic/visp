@@ -2349,6 +2349,7 @@ INCLUDE_FILE_PATTERNS  =
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
 PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
+                         HAVE_OPENCV_DNN \
                          VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
@@ -2389,6 +2390,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBUSB_1 \
                          VISP_HAVE_MAVSDK \
+                         VISP_HAVE_MINIZ \
                          VISP_HAVE_NLOHMANN_JSON \
                          VISP_HAVE_NULLPTR \
                          VISP_HAVE_OCCIPITAL_STRUCTURE \
@@ -2472,7 +2474,8 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VP_TRACE \
                          __APPLE__ \
                          __MACH__ \
-                         RS2_API_VERSION=23101
+                         RS2_API_VERSION=23101 \
+                         __cplusplus=201703L
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

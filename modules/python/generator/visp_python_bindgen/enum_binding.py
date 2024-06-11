@@ -103,7 +103,7 @@ def get_cpp_identifier_scope(fully_qualified_name: str, root_scope: Union[Namesp
         return get_cpp_identifier_scope('::'.join(remainder), root_scope.namespaces[ns])
   return root_scope
 
-def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tuple[List[EnumRepr], List[EnumRepr]]:
+def resolve_enums_and_typedefs_to_enums(root_scope: NamespaceScope, mapping: Dict) -> Tuple[List[EnumRepr], List[EnumRepr]]:
   final_data: List[EnumRepr] = []
   temp_data: List[EnumRepr] = [] # Data that is incomplete for preprocessing
   match_id = lambda repr, enum_id: repr.id is not None and enum_id is not None and repr.id == enum_id
@@ -175,7 +175,7 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
 
 def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule, header: 'HeaderFile') -> List[SingleObjectBindings]:
 
-  final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
+  final_data, filtered_reprs = resolve_enums_and_typedefs_to_enums(root_scope, mapping)
 
   for repr in filtered_reprs:
     logging.info(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')

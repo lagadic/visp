@@ -43,6 +43,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * ENTREE  :
  * n     Ordre de la matrice "r".
@@ -458,5 +460,7 @@ int VISP_EXPORT lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, d
 int VISP_EXPORT lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag),
                        int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info,
                        int *ipvt, int lwa, double *wa);
+
+END_VISP_NAMESPACE
 
 #endif

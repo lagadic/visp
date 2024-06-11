@@ -49,6 +49,10 @@
 int main()
 {
 #if defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
@@ -106,15 +110,16 @@ int main()
     plot.saveData(0, "dataCos.txt", "# ");
     plot.saveData(1, "dataSin.txt", "# ");
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 
 #else
   std::cout << "Plot functionalities are not avalaible since no display is "
-               "available."
-            << std::endl;
+    "available."
+    << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

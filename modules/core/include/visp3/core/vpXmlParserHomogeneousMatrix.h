@@ -39,14 +39,15 @@
 
 */
 
-#ifndef vpXMLPARSERHOMOGENEOUSMATRIX_H
-#define vpXMLPARSERHOMOGENEOUSMATRIX_H
+#ifndef _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
+#define _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
 
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserHomogeneousMatrix
 
@@ -164,12 +165,13 @@ public:
   void setHomogeneousMatrixName(const std::string &name);
 
 private:
-  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &);            // noncopyable
+  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &hm);            // noncopyable
   vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &); //
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
 #endif
 #endif

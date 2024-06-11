@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 
-#ifndef vpRobotFlirPtu_h
-#define vpRobotFlirPtu_h
-
 /*!
   \file vpRobotFlirPtu.h
   Interface for Flir Ptu Cpi robot.
 */
+
+#ifndef vpRobotFlirPtu_h
+#define vpRobotFlirPtu_h
 
 #include <visp3/core/vpConfig.h>
 
@@ -49,6 +49,7 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotFlirPtu
   \ingroup group_robot_real_arm
@@ -166,6 +167,6 @@ protected:
   int m_njoints;
   double m_positioning_velocity;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

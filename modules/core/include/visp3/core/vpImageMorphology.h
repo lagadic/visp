@@ -31,14 +31,16 @@
  * Morphology tools.
  */
 
-#ifndef _vpImageMorphology_h_
-#define _vpImageMorphology_h_
-
 /*!
   \file vpImageMorphology.h
   \brief Various mathematical morphology tools, erosion, dilatation...
 
 */
+
+#ifndef _vpImageMorphology_h_
+#define _vpImageMorphology_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMatrix.h>
@@ -48,6 +50,7 @@
 #include <math.h>
 #include <string.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageMorphology
 
@@ -73,33 +76,6 @@ public:
                       right, up, down, and the 4 pixels located on the
                     diagonal) */
   } vpConnexityType;
-
-private:
-  /**
-   * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
-   * grid.
-   *
-   * \tparam T Either a class such as vpRGBa or a type such as double, unsigned char ...
-   * \param[out] I The image we want to modify.
-   * \param[in] null_value The value that is padded to the input image to manage the borders.
-   * \param[in] operation The operation to apply to its elements on a 3x3 grid.
-   * \param[in] connexity Either a 4-connexity, if we want to take into account only the horizontal
-   * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
-   */
-  template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
-
-  /**
-   * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
-   * grid.
-   *
-   * \tparam T Any type such as double, unsigned char ...
-   * \param[out] I The image we want to modify.
-   * \param[in] operation The operation to apply to its elements on a the grid.
-   * \param[in] size Size of the kernel of the operation.
-   */
-  template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
 
 public:
   template <class Type>
@@ -159,6 +135,34 @@ public:
   }
   //@}
 #endif
+
+private:
+  /**
+   * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
+   * grid.
+   *
+   * \tparam T Either a class such as vpRGBa or a type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] null_value The value that is padded to the input image to manage the borders.
+   * \param[in] operation The operation to apply to its elements on a 3x3 grid.
+   * \param[in] connexity Either a 4-connexity, if we want to take into account only the horizontal
+   * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
+   */
+  template <typename T>
+  static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
+
+  /**
+   * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
+   * grid.
+   *
+   * \tparam T Any type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] operation The operation to apply to its elements on a the grid.
+   * \param[in] size Size of the kernel of the operation.
+   */
+  template <typename T>
+  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
+
 };
 
 /*!
@@ -188,9 +192,11 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
 
   vpImage<Type> J(I.getHeight() + 2, I.getWidth() + 2);
   // Copy I to J and add border
-  for (unsigned int i = 0; i < J.getHeight(); ++i) {
-    if (i == 0 || i == J.getHeight() - 1) {
-      for (unsigned int j = 0; j < J.getWidth(); ++j) {
+  unsigned int j_height = J.getHeight();
+  unsigned int j_width = J.getWidth();
+  for (unsigned int i = 0; i < j_height; ++i) {
+    if ((i == 0) || (i == (j_height - 1))) {
+      for (unsigned int j = 0; j < j_width; ++j) {
         J[i][j] = value;
       }
     }
@@ -202,8 +208,10 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
   }
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_height = I.getHeight();
+    unsigned int i_width = I.getWidth();
+    for (unsigned int i = 0; i < i_height; ++i) {
+      for (unsigned int j = 0; j < i_width; ++j) {
         if (J[i + 1][j + 1] == value) {
           // Consider 4 neighbors
           if ((J[i][j + 1] == value_out) ||     // Top
@@ -217,14 +225,19 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
     }
   }
   else {
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_height = I.getHeight();
+    unsigned int i_width = I.getWidth();
+    for (unsigned int i = 0; i < i_height; ++i) {
+      for (unsigned int j = 0; j < i_width; ++j) {
         if (J[i + 1][j + 1] == value) {
           // Consider 8 neighbors
-          if ((J[i][j] == value_out) || (J[i][j + 1] == value_out) || (J[i][j + 2] == value_out) ||
-            (J[i + 1][j] == value_out) || (J[i + 1][j + 2] == value_out) || (J[i + 2][j] == value_out) ||
-            (J[i + 2][j + 1] == value_out) || (J[i + 2][j + 2] == value_out))
+          bool cond4firstneighbors = (J[i][j] == value_out) || (J[i][j + 1] == value_out) ||
+            (J[i][j + 2] == value_out) || (J[i + 1][j] == value_out);
+          bool cond4secondneighbors = (J[i + 1][j + 2] == value_out) || (J[i + 2][j] == value_out) ||
+            (J[i + 2][j + 1] == value_out) || (J[i + 2][j + 2] == value_out);
+          if (cond4firstneighbors || cond4secondneighbors) {
             I[i][j] = value_out;
+          }
         }
       }
     }
@@ -258,9 +271,11 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 
   vpImage<Type> J(I.getHeight() + 2, I.getWidth() + 2);
   // Copy I to J and add border
-  for (unsigned int i = 0; i < J.getHeight(); ++i) {
-    if (i == 0 || i == J.getHeight() - 1) {
-      for (unsigned int j = 0; j < J.getWidth(); ++j) {
+  unsigned int j_height = J.getHeight();
+  unsigned int j_width = J.getWidth();
+  for (unsigned int i = 0; i < j_height; ++i) {
+    if ((i == 0) || (i == (j_height - 1))) {
+      for (unsigned int j = 0; j < j_width; ++j) {
         J[i][j] = value_out;
       }
     }
@@ -272,8 +287,10 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
   }
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_height = I.getHeight();
+    unsigned int i_width = I.getWidth();
+    for (unsigned int i = 0; i < i_height; ++i) {
+      for (unsigned int j = 0; j < i_width; ++j) {
         if (J[i + 1][j + 1] == value_out) {
           // Consider 4 neighbors
           if ((J[i][j + 1] == value) ||     // Top
@@ -287,13 +304,16 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
     }
   }
   else {
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_height = I.getHeight();
+    unsigned int i_width = I.getWidth();
+    for (unsigned int i = 0; i < i_height; ++i) {
+      for (unsigned int j = 0; j < i_width; ++j) {
         if (J[i + 1][j + 1] == value_out) {
           // Consider 8 neighbors
-          if ((J[i][j] == value) || (J[i][j + 1] == value) || (J[i][j + 2] == value) || (J[i + 1][j] == value) ||
-            (J[i + 1][j + 2] == value) || (J[i + 2][j] == value) || (J[i + 2][j + 1] == value) ||
-            (J[i + 2][j + 2] == value)) {
+          bool cond4firstneighbors = (J[i][j] == value) || (J[i][j + 1] == value) || (J[i][j + 2] == value) || (J[i + 1][j] == value);
+          bool cond4secondneighbors = (J[i + 1][j + 2] == value) || (J[i + 2][j] == value) || (J[i + 2][j + 1] == value) ||
+            (J[i + 2][j + 2] == value);
+          if (cond4firstneighbors || cond4secondneighbors) {
             I[i][j] = value;
           }
         }
@@ -423,20 +443,20 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
   for (int r = 0; r < height_in; ++r) {
     // Computing the rows we can explore without going outside the limits of the image
     int r_iterator_start = -halfKernelSize, r_iterator_stop = halfKernelSize + 1;
-    if (r - halfKernelSize < 0) {
+    if ((r - halfKernelSize) < 0) {
       r_iterator_start = -r;
     }
-    else if (r + halfKernelSize >= height_in) {
+    else if ((r + halfKernelSize) >= height_in) {
       r_iterator_stop = height_in - r;
     }
     for (int c = 0; c < width_in; ++c) {
       T value = I[r][c];
       // Computing the columns we can explore without going outside the limits of the image
       int c_iterator_start = -halfKernelSize, c_iterator_stop = halfKernelSize + 1;
-      if (c - halfKernelSize < 0) {
+      if ((c - halfKernelSize) < 0) {
         c_iterator_start = -c;
       }
-      else if (c + halfKernelSize >= width_in) {
+      else if ((c + halfKernelSize) >= width_in) {
         c_iterator_stop = width_in - c;
       }
       for (int r_iterator = r_iterator_start; r_iterator < r_iterator_stop; ++r_iterator) {
@@ -513,6 +533,7 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, operation, size);
 }
+END_VISP_NAMESPACE
 #endif
 
 /*

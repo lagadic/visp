@@ -57,6 +57,7 @@
 #include <Simd/SimdLib.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
   if (getRows() != v.getRows()) {
@@ -517,13 +518,6 @@ vpRowVector vpColVector::transpose() const { return t(); }
 
 void vpColVector::transpose(vpRowVector &v) const { v = t(); }
 
-vpColVector operator*(const double &x, const vpColVector &v)
-{
-  vpColVector vout;
-  vout = v * x;
-  return vout;
-}
-
 double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
   if (a.data == nullptr) {
@@ -583,15 +577,15 @@ vpColVector vpColVector::invSort(const vpColVector &v)
   unsigned int i = 0;
   while (nb_permutation != 0) {
     nb_permutation = 0;
-    for (unsigned int j = v.getRows() - 1; j >= (i + 1); j--) {
+    for (unsigned int j = v.getRows() - 1; j >= (i + 1); --j) {
       if (tab[j] > tab[j - 1]) {
         double tmp = tab[j];
         tab[j] = tab[j - 1];
         tab[j - 1] = tmp;
-        nb_permutation++;
+        ++nb_permutation;
       }
     }
-    i++;
+    ++i;
   }
 
   return tab;
@@ -608,15 +602,15 @@ vpColVector vpColVector::sort(const vpColVector &v)
   unsigned int i = 0;
   while (nb_permutation != 0) {
     nb_permutation = 0;
-    for (unsigned int j = v.getRows() - 1; j >= (i + 1); j--) {
+    for (unsigned int j = v.getRows() - 1; j >= (i + 1); --j) {
       if (tab[j] < tab[j - 1]) {
         double tmp = tab[j];
         tab[j] = tab[j - 1];
         tab[j - 1] = tmp;
-        nb_permutation++;
+        ++nb_permutation;
       }
     }
-    i++;
+    ++i;
   }
 
   return tab;
@@ -775,11 +769,11 @@ void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
 
 void vpColVector::insert(unsigned int i, const vpColVector &v)
 {
-  if ((i + v.size()) > (this->size())) {
+  if ((i + v.size()) >(this->size())) {
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
   }
 
-  if ( (data != nullptr) && (v.data != nullptr) && (v.rowNum > 0)) {
+  if ((data != nullptr) && (v.data != nullptr) && (v.rowNum > 0)) {
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
 }
@@ -907,7 +901,7 @@ double vpColVector::frobeniusNorm() const
 
 vpColVector vpColVector::hadamard(const vpColVector &v) const
 {
-  if ( (v.getRows() != rowNum) || (v.getCols() != colNum)) {
+  if ((v.getRows() != rowNum) || (v.getCols() != colNum)) {
     throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
   }
 
@@ -1012,3 +1006,11 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 
 double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+vpColVector operator*(const double &x, const vpColVector &v)
+{
+  vpColVector vout;
+  vout = v * x;
+  return vout;
+}
+END_VISP_NAMESPACE

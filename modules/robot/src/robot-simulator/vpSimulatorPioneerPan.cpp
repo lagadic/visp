@@ -45,6 +45,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpSimulatorPioneerPan.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Constructor.
 
@@ -141,7 +142,7 @@ void vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame,
 
     vpRotationMatrix wRm(0, 0, theta_);
     vpTranslationVector wtm(xm_, ym_, 0);
-    wMm_.buildFrom(wtm, wRm);
+    wMm_.build(wtm, wRm);
 
     // Update the end effector pose
     set_pMe(q_pan_);
@@ -214,7 +215,7 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
     vpRotationMatrix wRc;
     this->wMc_.extract(wRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(wRc);
+    rxyz.build(wRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->wMc_[i][3]; // translation x,y,z
@@ -231,3 +232,4 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
     break;
   }
 }
+END_VISP_NAMESPACE

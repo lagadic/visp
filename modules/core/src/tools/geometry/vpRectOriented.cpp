@@ -36,6 +36,7 @@
 
 #include <cmath>
 
+BEGIN_VISP_NAMESPACE
 /// Default constructor.
 vpRectOriented::vpRectOriented()
   : m_center(), m_width(), m_height(), m_theta(), m_topLeft(), m_topRight(), m_bottomLeft(), m_bottomRight()
@@ -54,12 +55,12 @@ vpRectOriented::vpRectOriented(const vpImagePoint &center, double width, double 
   m_height = height;
   m_theta = theta;
   m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2.0));
-  m_topLeft.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2.0));
-  m_bottomLeft.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2.0));
+  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / 2.0));
+  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / 2.0));
   m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2.0));
   m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2.0));
-  m_bottomRight.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2.0));
-  m_topRight.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2.0));
+  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / 2.0));
+  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / 2.0));
   m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2.0));
 }
 
@@ -149,8 +150,8 @@ void vpRectOriented::setPoints(const vpImagePoint &topLeft, const vpImagePoint &
   m_topRight = topRight;
   m_center.set_i((m_topLeft.get_i() + m_bottomLeft.get_i() + m_bottomRight.get_i() + m_topRight.get_i()) / 4.0);
   m_center.set_j((m_topLeft.get_j() + m_bottomLeft.get_j() + m_bottomRight.get_j() + m_topRight.get_j()) / 4.0);
-  m_width = sqrt((m_topRight.get_i() - m_topLeft.get_i()) * (m_topRight.get_i() - m_topLeft.get_i()) +
-                 (m_topRight.get_j() - m_topLeft.get_j()) * (m_topRight.get_j() - m_topLeft.get_j()));
+  m_width = sqrt(((m_topRight.get_i() - m_topLeft.get_i()) * (m_topRight.get_i() - m_topLeft.get_i())) +
+                 ((m_topRight.get_j() - m_topLeft.get_j()) * (m_topRight.get_j() - m_topLeft.get_j())));
   m_height = sqrt(((m_bottomLeft.get_i() - m_topLeft.get_i()) * (m_bottomLeft.get_i() - m_topLeft.get_i())) +
                   ((m_bottomLeft.get_j() - m_topLeft.get_j()) * (m_bottomLeft.get_j() - m_topLeft.get_j())));
   m_theta = atan2(m_topRight.get_i() - m_topLeft.get_i(), m_topRight.get_j() - m_topLeft.get_j());
@@ -187,12 +188,12 @@ void vpRectOriented::setSize(double width, double height)
   m_width = width;
   m_height = height;
   m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
-  m_topLeft.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
-  m_bottomLeft.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
+  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / 2));
+  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / 2));
   m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
   m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
-  m_bottomRight.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
-  m_topRight.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
+  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / 2));
+  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / 2));
   m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
 }
 
@@ -207,12 +208,12 @@ void vpRectOriented::setOrientation(double theta)
 {
   m_theta = theta;
   m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
-  m_topLeft.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
-  m_bottomLeft.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
+  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / 2));
+  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / 2));
   m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
   m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
-  m_bottomRight.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
-  m_topRight.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
+  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / 2));
+  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / 2));
   m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
 }
 
@@ -246,3 +247,4 @@ bool vpRectOriented::isLeft(const vpImagePoint &pointToTest, const vpImagePoint 
   double d = (a * pointToTest.get_i()) + (b * pointToTest.get_j()) + c;
   return (d > 0);
 }
+END_VISP_NAMESPACE

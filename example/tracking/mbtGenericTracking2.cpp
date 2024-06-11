@@ -62,6 +62,10 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfColwvpT:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -661,7 +665,7 @@ int main(int argc, const char **argv)
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
         vpHomogeneousMatrix c1Moi;
-        c1Moi.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
+        c1Moi.build(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
         std::map<std::string, vpHomogeneousMatrix> mapOfSetPoses;
         mapOfSetPoses["Camera1"] = c1Moi;
 

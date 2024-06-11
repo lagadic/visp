@@ -32,16 +32,17 @@
  * Translation vector.
  */
 
-#include <stdio.h>
-#include <string.h>
-
-#include <visp3/core/vpTranslationVector.h>
-
 /*!
   \file vpTranslationVector.cpp
   \brief Class that consider the case of a translation vector.
 */
 
+#include <stdio.h>
+#include <string.h>
+
+#include <visp3/core/vpTranslationVector.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
@@ -118,7 +119,9 @@ vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<doubl
   }
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should use build(const vpHomogeneousMatrix &) instead.
   Build a 3 dimension translation vector \f$ \bf t\f$ from
   an homogeneous matrix \f$ \bf M \f$.
 
@@ -130,6 +133,70 @@ vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<doubl
 
 */
 vpTranslationVector vpTranslationVector::buildFrom(const vpHomogeneousMatrix &M)
+{
+  build(M);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpPoseVector &) instead.
+  Build a 3 dimension translation vector \f$ \bf t\f$ from
+  the translation contained in a pose vector.
+
+  \param p : Pose vector where translations are in meters.
+
+  \return The build translation vector.
+
+*/
+vpTranslationVector vpTranslationVector::buildFrom(const vpPoseVector &p)
+{
+  build(p);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const vpColVector &) instead.
+  Build a 3 dimension translation vector \f$ \bf t\f$ from
+  a 3-dimension column vector.
+
+  \param v : 3-dimension column vector.
+
+  \return The build translation vector.
+*/
+vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
+{
+  build(v);
+  return *this;
+}
+
+/*!
+  \deprecated You should use build(const double &, const double &, const double &) instead.
+  Build a 3 dimension translation vector \f$ \bf t\f$ from 3 doubles.
+
+  \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
+
+  \return The build translation vector.
+  \sa build()
+*/
+vpTranslationVector vpTranslationVector::buildFrom(double tx, double ty, double tz)
+{
+  build(tx, ty, tz);
+  return *this;
+}
+#endif
+
+/*!
+  Build a 3 dimension translation vector \f$ \bf t\f$ from
+  an homogeneous matrix \f$ \bf M \f$.
+
+  \param M : Homogeneous matrix \f$ \bf M \f$ from which translation \f$
+  \bf t \f$ and \f$\theta \bf u \f$ vectors are extracted to initialize
+  the pose vector.
+
+  \return The build translation vector.
+
+*/
+vpTranslationVector &vpTranslationVector::build(const vpHomogeneousMatrix &M)
 {
   M.extract(*this);
   return *this;
@@ -144,7 +211,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpHomogeneousMatrix &M)
   \return The build translation vector.
 
 */
-vpTranslationVector vpTranslationVector::buildFrom(const vpPoseVector &p)
+vpTranslationVector &vpTranslationVector::build(const vpPoseVector &p)
 {
   (*this)[0] = p[0];
   (*this)[1] = p[1];
@@ -161,7 +228,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpPoseVector &p)
   \return The build translation vector.
 
 */
-vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
+vpTranslationVector &vpTranslationVector::build(const vpColVector &v)
 {
   if (v.size() != 3) {
     throw(vpException(vpException::dimensionError,
@@ -182,7 +249,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
   \return The build translation vector.
   \sa set()
 */
-vpTranslationVector vpTranslationVector::buildFrom(double tx, double ty, double tz)
+vpTranslationVector &vpTranslationVector::build(const double &tx, const double &ty, const double &tz)
 {
   set(tx, ty, tz);
   return *this;
@@ -598,7 +665,7 @@ vpTranslationVector &vpTranslationVector::operator<<(double val)
  */
 vpTranslationVector &vpTranslationVector::operator,(double val)
 {
-  m_index++;
+  ++m_index;
   if (m_index >= size()) {
     throw(vpException(
       vpException::dimensionError,
@@ -702,7 +769,7 @@ vpMatrix vpTranslationVector::skew() const
 vpTranslationVector vpTranslationVector::cross(const vpTranslationVector &a, const vpTranslationVector &b)
 {
   vpMatrix skew_a = vpTranslationVector::skew(a);
-  return (vpTranslationVector)(skew_a * b);
+  return static_cast<vpTranslationVector>(skew_a * b);
 }
 
 /*!
@@ -774,7 +841,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
   vpColVector meanT(3);
   size_t vec_m_size = vec_M.size();
   for (size_t i = 0; i < vec_m_size; ++i) {
-    meanT += (vpColVector)vec_M[i].getTranslationVector();
+    meanT += static_cast<vpColVector>(vec_M[i].getTranslationVector());
   }
   meanT /= static_cast<double>(vec_M.size());
 
@@ -795,10 +862,11 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
   vpColVector meanT(3);
   size_t l_vec_t_size = vec_t.size();
   for (size_t i = 0; i < l_vec_t_size; ++i) {
-    meanT += (vpColVector)vec_t[i];
+    meanT += static_cast<vpColVector>(vec_t[i]);
   }
   meanT /= static_cast<double>(vec_t.size());
 
   vpTranslationVector t(meanT);
   return t;
 }
+END_VISP_NAMESPACE

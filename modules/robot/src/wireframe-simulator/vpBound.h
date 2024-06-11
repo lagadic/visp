@@ -78,34 +78,40 @@
 #define VECTOR_NBR 6144
 #endif // face_normal
 
+BEGIN_VISP_NAMESPACE
 #ifdef face_edge
-typedef struct {
+typedef struct
+{
   Index v0, v1; /* extremites    */
   Index f0, f1; /* faces    */
 } Edge;
 #endif // face_edge
 
 #ifdef face_edge
-typedef struct {
+typedef struct
+{
   Index nbr; /* nombre d'aretes  */
   Edge *ptr; /* liste  dynamique  */
 } Edge_list;
 #endif // face_edge
 
 #ifdef face_normal
-typedef struct {
+typedef struct
+{
   Index nbr;   /* nombre de vecteurs  */
   Vector *ptr; /* liste  dynamique  */
 } Vector_list;
 #endif // face_normal
 
-typedef struct {
+typedef struct
+{
   float xmin, xmax; /* bornes sur l'axe x  */
   float ymin, ymax; /* bornes sur l'axe y  */
   float zmin, zmax; /* bornes sur l'axe z  */
 } Bounding_box;
 
-typedef struct {
+typedef struct
+{
   Index nbr;        /* nombre de scenes  */
   Bound_scene *ptr; /* liste  dynamique  */
 } Bound_scene_list;
@@ -116,6 +122,6 @@ void free_Bound_scene(Bound_scene *bsp);
 void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn);
 void malloc_huge_Bound(Bound *bp);
 void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn);
-
+END_VISP_NAMESPACE
 #endif
 #endif

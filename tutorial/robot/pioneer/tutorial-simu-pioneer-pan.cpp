@@ -19,6 +19,7 @@
   */
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/gui/vpPlot.h>
@@ -30,6 +31,9 @@
 
 int main()
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     // Set the position the camera has to reach
     vpHomogeneousMatrix cdMo;
@@ -79,7 +83,7 @@ int main()
     vpFeatureBuilder::create(s_x, point);
 
     // Create the desired x* visual feature
-    s_xd.buildFrom(0, 0, cdMo[2][3]);
+    s_xd.build(0, 0, cdMo[2][3]);
 
     // Add the feature
     task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
@@ -90,8 +94,8 @@ int main()
     double Z = point.get_Z();
     // Desired depth Z* of the target.
     double Zd = cdMo[2][3];
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
-    s_Zd.buildFrom(0, 0, Zd,
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+    s_Zd.build(0, 0, Zd,
                    0); // log(Z/Z*) = 0 that's why the last parameter is 0
 
     // Add the feature
@@ -129,7 +133,7 @@ int main()
       // Update log(Z/Z*) feature. Since the depth Z change, we need to update
       // the intection matrix
       Z = point.get_Z();
-      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+      s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
 
       robot.get_cVe(cVe);
       task.set_cVe(cVe);
@@ -164,7 +168,8 @@ int main()
 
     // Kill the servo task
     task.print();
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

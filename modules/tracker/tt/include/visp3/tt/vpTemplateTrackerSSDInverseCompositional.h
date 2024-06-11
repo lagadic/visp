@@ -45,13 +45,15 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \ingroup group_tt_tracker
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
- */
+*/
 class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional : public vpTemplateTrackerSSD
 {
 protected:
@@ -72,4 +74,5 @@ public:
    * this feature is disabled. */
   void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
 };
+END_VISP_NAMESPACE
 #endif

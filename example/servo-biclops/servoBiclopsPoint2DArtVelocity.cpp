@@ -67,6 +67,10 @@
 // List of allowed command line options
 #define GETOPTARGS "c:d:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
  * Print the program options.
  *
@@ -246,7 +250,7 @@ int main(int argc, const char **argv)
     vpFeaturePoint p, pd;
     // Sets the desired position of the visual feature
     // Here we set Z desired to 1 meter, and (x,y)=(0,0) to center the tag in the image
-    pd.buildFrom(0, 0, 1);
+    pd.build(0, 0, 1);
 
     // Define the task
     // - we want an eye-in-hand control law

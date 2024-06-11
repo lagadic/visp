@@ -40,7 +40,9 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeEllipse.h>
 
-// #define VP_ME_ELLIPSE_REGULAR_SAMPLING
+BEGIN_VISP_NAMESPACE
+
+// --comment: define the VP_ME_ELLIPSE_REGULAR_SAMPLING flag
 #ifndef VP_ME_ELLIPSE_REGULAR_SAMPLING
 #define VP_ME_ELLIPSE_TWO_CONCENTRIC_CIRCLES
 #endif
@@ -190,7 +192,7 @@ void vpMeEllipse::computeAbeFromNij()
     m_e = 0.0; // case n20 = n02 and n11 = 0 : circle, e undefined
     m_ce = 1.0;
     m_se = 0.0;
-    m_a = (m_b = 2.0 * sqrt(m_n20));         // = sqrt(2.0*(n20+n02))
+    m_a = (m_b = (2.0 * sqrt(m_n20)));         // = sqrt(2.0*(n20+n02))
   }
   else {                             // real ellipse
     m_e = atan2(2.0 * m_n11, num) / 2.0; // e in [-Pi/2 ; Pi/2]
@@ -211,7 +213,7 @@ void vpMeEllipse::computeKiFromNij()
   m_K[2] = -m_n11;
   m_K[3] = (m_n11 * m_vc) - (m_n02 * m_uc);
   m_K[4] = (m_n11 * m_uc) - (m_n20 * m_vc);
-  m_K[5] = (m_n02 * m_uc * m_uc) + (m_n20 * m_vc * m_vc) - (2.0 * m_n11 * m_uc * m_vc) + (4.0 * ((m_n11 * m_n11) - (m_n20 * m_n02)));
+  m_K[5] = (((m_n02 * m_uc * m_uc) + (m_n20 * m_vc * m_vc)) - (2.0 * m_n11 * m_uc * m_vc)) + (4.0 * ((m_n11 * m_n11) - (m_n20 * m_n02)));
 }
 
 void vpMeEllipse::computeNijFromAbe()
@@ -493,7 +495,7 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       pix.init(iP.get_i(), iP.get_j(), theta);
       pix.setDisplay(m_selectDisplay);
       pix.setState(vpMeSite::NO_SUPPRESSION);
-      //pix.setContrastThreshold(pix1.getContrastThreshold(), *m_me);
+      // --comment: pix dot setContrastThreshold of pix1 dot getContrastThreshold() comma *m_me
       double convolution = pix.convolution(I, m_me);
       double contrastThreshold = fabs(convolution) * marginRatio;
       pix.setContrastThreshold(contrastThreshold, *m_me);
@@ -617,7 +619,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
     // A circle is a particular ellipse. Going from x for circle to K for ellipse
     // using inverse normalization to go back to pixel values
     double ratio = vm / um;
-    m_K[0] = (m_K[1] = 1.0 / (um * um));
+    m_K[0] = (m_K[1] = (1.0 / (um * um)));
     m_K[2] = 0.0;
     m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
     m_K[4] = -(ratio + (x[1] / 2.0)) / um;
@@ -746,7 +748,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
       // A circle is a particular ellipse. Going from x for circle to K for ellipse
       // using inverse normalization to go back to pixel values
       double ratio = vm / um;
-      m_K[0] = (m_K[1] = 1.0 / (um * um));
+      m_K[0] = (m_K[1] = (1.0 / (um * um)));
       m_K[2] = 0.0;
       m_K[3] = -(1.0 + (x[0] / 2.0)) / um;
       m_K[4] = -(ratio + (x[1] / 2.0)) / um;
@@ -1438,3 +1440,5 @@ void vpMeEllipse::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &c
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }
+
+END_VISP_NAMESPACE

@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits a simple test comparing the current value to the
@@ -63,7 +64,7 @@
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 
 class VISP_EXPORT vpStatisticalTestSigma : public vpStatisticalTestAbstract
 {
@@ -169,5 +170,5 @@ public:
    */
   void init(const float &h, const float &mean, const float &stdev);
 };
-
+END_VISP_NAMESPACE
 #endif

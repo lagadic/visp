@@ -39,7 +39,7 @@
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 typedef unsigned short Index;
 typedef char Type;
 typedef float Matrix[4][4];
@@ -64,13 +64,15 @@ typedef float Matrix[4][4];
  * sommets: si (nbr > DEFAULT_VSIZE) |  alors ptr est alloue et libere
  * dynamiquement |  sinon ptr = tbl fsi;
  */
-typedef struct {
+typedef struct
+{
   Index nbr;  /* nombre de sommets  */
   Index *ptr; /* liste  dynamique  */
   Index tbl[DEFAULT_VSIZE];
 } Vertex_list;
 
-typedef struct {
+typedef struct
+{
   unsigned is_polygonal : 1; /* face polygonale  */
   unsigned is_visible : 1;   /* face affichable  */
 #ifdef face_edge
@@ -82,21 +84,25 @@ typedef struct {
 #endif           // face_normal
 } Face;
 
-typedef struct {
+typedef struct
+{
   Index nbr; /* nombre de faces  */
   Face *ptr; /* liste  dynamique  */
 } Face_list;
 
-typedef struct {
+typedef struct
+{
   float x, y, z;
 } Point3f;
 
-typedef struct {
+typedef struct
+{
   Index nbr;    /* nombre de points  */
   Point3f *ptr; /* liste  dynamique  */
 } Point3f_list;
 
-typedef struct {
+typedef struct
+{
   unsigned is_display : 1;   /* surface affichable  */
   unsigned is_polygonal : 1; /* surface polyedrique  */
   Type type;                 /* type de la primitive  */
@@ -110,15 +116,17 @@ typedef struct {
 #endif                // face_normal
 } Bound;
 
-typedef struct {
+typedef struct
+{
   Index nbr;  /* nombre de surfaces  */
   Bound *ptr; /* liste  dynamique  */
 } Bound_list;
 
-typedef struct {
+typedef struct
+{
   char *name;       /* nom de la scene  */
   Bound_list bound; /* liste de surfaces  */
 } Bound_scene;
-
+END_VISP_NAMESPACE
 #endif
 #endif

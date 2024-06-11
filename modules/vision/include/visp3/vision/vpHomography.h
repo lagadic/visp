@@ -51,6 +51,8 @@
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpHomography
  * \ingroup group_vision_homography
@@ -163,7 +165,7 @@
   }
   \endcode
  *
- */
+*/
 class VISP_EXPORT vpHomography : public vpArray2D<double>
 {
 public:
@@ -184,7 +186,8 @@ public:
   //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
 
-  //! Construction from translation and rotation and a plane
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+//! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
@@ -192,6 +195,15 @@ public:
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
+#endif
+//! Construction from translation and rotation and a plane
+  vpHomography &build(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation and a plane
+  vpHomography &build(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
+  //! Construction from translation and rotation  and a plane
+  vpHomography &build(const vpPoseVector &arb, const vpPlane &bP);
+  //! Construction from homogeneous matrix and a plane
+  vpHomography &build(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   /*!
    * Transform an homography from pixel space to calibrated domain.
@@ -611,7 +623,6 @@ public:
                      double weights_threshold = 0.4, unsigned int niter = 4, bool normalization = true);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! build the homography from aMb and Rb
   static void build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
   static void computeDisplacement(const vpHomography &aHb, const vpColVector &nd, vpRotationMatrix &aRb,
@@ -645,7 +656,7 @@ public:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
-  static const double m_sing_threshold; // = 0.0001;
+  static const double m_sing_threshold; /* equals 0.0001 */
   static const double m_threshold_rotation;
   static const double m_threshold_displacement;
   vpHomogeneousMatrix m_aMb;
@@ -688,5 +699,7 @@ private:
 
   static void initRansac(unsigned int n, double *xb, double *yb, double *xa, double *ya, vpColVector &x);
 };
+
+END_VISP_NAMESPACE
 
 #endif

@@ -41,7 +41,11 @@
 #ifndef vpBAYERCONVERSION_H
 #define vpBAYERCONVERSION_H
 
+#include <visp3/core/vpConfig.h>
+
+#ifndef VISP_SKIP_BAYER_CONVERSION
 #include <cassert>
+
 
 #include <visp3/core/vpMath.h>
 
@@ -75,7 +79,7 @@ template <typename T> T demosaicCrossBilinear(const T *bayer, unsigned int width
 // Malvar
 template <typename T> T demosaicPhiMalvar(const T *bayer, unsigned int width, unsigned int i, unsigned int j)
 {
-  return vpMath::saturate<T>(
+  return VISP_NAMESPACE_ADDRESSING vpMath::saturate<T>(
       (-bayer[(i - 2) * width + j] - bayer[(i - 1) * width + j - 1] + 4 * bayer[(i - 1) * width + j] -
        bayer[(i - 1) * width + j + 1] + 0.5f * bayer[i * width + j - 2] + 5 * bayer[i * width + j] +
        0.5f * bayer[i * width + j + 2] - bayer[(i + 1) * width + j - 1] + 4 * bayer[(i + 1) * width + j] -
@@ -85,17 +89,17 @@ template <typename T> T demosaicPhiMalvar(const T *bayer, unsigned int width, un
 
 template <typename T> T demosaicThetaMalvar(const T *bayer, unsigned int width, unsigned int i, unsigned int j)
 {
-  return vpMath::saturate<T>((0.5f * bayer[(i - 2) * width + j] - bayer[(i - 1) * width + j - 1] -
-                              bayer[(i - 1) * width + j + 1] - bayer[i * width + j - 2] + 4 * bayer[i * width + j - 1] +
-                              5 * bayer[i * width + j] + 4 * bayer[i * width + j + 1] - bayer[i * width + j + 2] -
-                              bayer[(i + 1) * width + j - 1] - bayer[(i + 1) * width + j + 1] +
-                              0.5f * bayer[(i + 2) * width + j]) *
+  return VISP_NAMESPACE_ADDRESSING vpMath::saturate<T>((0.5f * bayer[(i - 2) * width + j] - bayer[(i - 1) * width + j - 1] -
+                                                        bayer[(i - 1) * width + j + 1] - bayer[i * width + j - 2] + 4 * bayer[i * width + j - 1] +
+                                                        5 * bayer[i * width + j] + 4 * bayer[i * width + j + 1] - bayer[i * width + j + 2] -
+                                                        bayer[(i + 1) * width + j - 1] - bayer[(i + 1) * width + j + 1] +
+                                                        0.5f * bayer[(i + 2) * width + j]) *
                              0.125f);
 }
 
 template <typename T> T demosaicCheckerMalvar(const T *bayer, unsigned int width, unsigned int i, unsigned int j)
 {
-  return vpMath::saturate<T>(
+  return VISP_NAMESPACE_ADDRESSING vpMath::saturate<T>(
       (-1.5f * bayer[(i - 2) * width + j] + 2 * bayer[(i - 1) * width + j - 1] + 2 * bayer[(i - 1) * width + j + 1] -
        1.5f * bayer[i * width + j - 2] + 6 * bayer[i * width + j] - 1.5f * bayer[i * width + j + 2] +
        2 * bayer[(i + 1) * width + j - 1] + 2 * bayer[(i + 1) * width + j + 1] - 1.5f * bayer[(i + 2) * width + j]) *
@@ -104,9 +108,9 @@ template <typename T> T demosaicCheckerMalvar(const T *bayer, unsigned int width
 
 template <typename T> T demosaicCrossMalvar(const T *bayer, unsigned int width, unsigned int i, unsigned int j)
 {
-  return vpMath::saturate<T>((-bayer[(i - 2) * width + j] + 2 * bayer[(i - 1) * width + j] - bayer[i * width + j - 2] +
-                              2 * bayer[i * width + j - 1] + 4 * bayer[i * width + j] + 2 * bayer[i * width + j + 1] -
-                              bayer[i * width + j + 2] + 2 * bayer[(i + 1) * width + j] - bayer[(i + 2) * width + j]) *
+  return VISP_NAMESPACE_ADDRESSING vpMath::saturate<T>((-bayer[(i - 2) * width + j] + 2 * bayer[(i - 1) * width + j] - bayer[i * width + j - 2] +
+                                                        2 * bayer[i * width + j - 1] + 4 * bayer[i * width + j] + 2 * bayer[i * width + j + 1] -
+                                                        bayer[i * width + j + 2] + 2 * bayer[(i + 1) * width + j] - bayer[(i + 2) * width + j]) *
                              0.125f);
 }
 
@@ -1391,4 +1395,5 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
   }
 }
 
+#endif
 #endif

@@ -59,6 +59,7 @@ using std::chrono::seconds;
 using std::this_thread::sleep_for;
 using namespace std::chrono_literals;
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpRobotMavsdk::vpRobotMavsdkImpl
 {
@@ -294,7 +295,7 @@ public:
     auto posvel = m_telemetry.get()->position_velocity_ned();
     vpQuaternionVector q { quat.x, quat.y, quat.z, quat.w };
     vpTranslationVector t { posvel.position.north_m, posvel.position.east_m, posvel.position.down_m };
-    ned_M_frd.buildFrom(t, q);
+    ned_M_frd.build(t, q);
   }
 
   void getPosition(float &ned_north, float &ned_east, float &ned_down, float &ned_yaw) const
@@ -1578,7 +1579,9 @@ void vpRobotMavsdk::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
  * all the other vehicles are considered with flying capabilities.
  */
 bool vpRobotMavsdk::hasFlyingCapability() { return m_impl->getFlyingCapability(); }
-
+#ifdef ENABLE_VISP_NAMESPACE
+  }
+#endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no symbols
 void dummy_vpRobotMavsdk() { };

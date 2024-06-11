@@ -50,6 +50,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if defined(VISP_HAVE_VIRTUOSE) && defined(VISP_HAVE_AFMA6)
   vpRobotAfma6 robot;
   try {
@@ -111,11 +114,13 @@ int main()
           force_feedback_robot[i] = (max[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] <= -force_limit)
             force_feedback_robot[i] = -force_limit;
-        } else if (robot_cart_position[i] <= min[i]) {
+        }
+        else if (robot_cart_position[i] <= min[i]) {
           force_feedback_robot[i] = (min[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] >= force_limit)
             force_feedback_robot[i] = force_limit;
-        } else
+        }
+        else
           force_feedback_robot[i] = 0;
       }
       vpColVector force_feedback_virt = rMv.getRotationMatrix().inverse() * force_feedback_robot;
@@ -137,10 +142,11 @@ int main()
     robot.stopMotion();
     virtuose.setPowerOff();
     std::cout << "The end" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     robot.stopMotion();
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-  }
+}
 #else
   std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif

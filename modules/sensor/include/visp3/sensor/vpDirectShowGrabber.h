@@ -47,6 +47,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 class vpDirectShowGrabberImpl;
 
 /*!
@@ -110,5 +111,6 @@ public:
   // Get current capture MediaType
   int getMediaType();
 };
+END_VISP_NAMESPACE
 #endif
 #endif

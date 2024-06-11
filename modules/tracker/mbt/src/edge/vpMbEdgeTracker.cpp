@@ -58,6 +58,7 @@
 #include <sstream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor
 */
@@ -230,7 +231,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
       if (computeCovariance) {
         L_true = m_L_edge;
         if (!isoJoIdentity) {
-          cVo.buildFrom(m_cMo);
+          cVo.build(m_cMo);
           LVJ_true = (m_L_edge * cVo * oJo);
         }
       }
@@ -686,7 +687,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
   // estimated This is particularly useful when considering circles (rank 5) and
   // cylinders (rank 4)
   if (isoJoIdentity) {
-    cVo.buildFrom(m_cMo);
+    cVo.build(m_cMo);
 
     vpMatrix K; // kernel
     unsigned int rank = (m_L_edge * cVo).kernel(K);
@@ -712,7 +713,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
     v = -0.7 * LTL.pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR;
   }
   else {
-    cVo.buildFrom(m_cMo);
+    cVo.build(m_cMo);
     vpMatrix LVJ = (m_L_edge * cVo * oJo);
     vpMatrix LVJTLVJ = (LVJ).AtA();
     vpColVector LVJTR;
@@ -2984,3 +2985,4 @@ void vpMbEdgeTracker::setUseEdgeTracking(const std::string &name, const bool &us
     }
   }
 }
+END_VISP_NAMESPACE

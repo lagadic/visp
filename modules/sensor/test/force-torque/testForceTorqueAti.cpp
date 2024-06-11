@@ -56,6 +56,10 @@
 
 typedef enum { BIAS_DONE, UNBIAS_DONE, TO_BIAS, TO_UNBIAS } BiasState;
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct
 {
@@ -142,7 +146,7 @@ void scopeFunction(std::mutex &mutex_data, std::mutex &mutex_state, t_shared_dat
   }
 
   std::cout << "End of scope thread" << std::endl;
-}
+  }
 
 int main(int argc, char **argv)
 {

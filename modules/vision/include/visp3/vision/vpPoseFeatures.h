@@ -62,6 +62,8 @@
 #include <vector>
 #include <tuple>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 //#################################################
 //##  Call a function with a tuple as parameters
@@ -806,6 +808,8 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr
   if (m_featureSpecific_list.size() > m_maxSize)
     m_maxSize = static_cast<unsigned int>(m_featureSpecific_list.size());
 }
+
+END_VISP_NAMESPACE
 #endif
 
 #endif

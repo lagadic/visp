@@ -49,6 +49,10 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 static const double maxMeanPixelError = 1.5; // conversion to gray produce an error = 1.0
 static const unsigned int width = 223, height = 151;
 

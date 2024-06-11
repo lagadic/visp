@@ -45,114 +45,14 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+/**
+ * \brief Class that implements the Canny's edge detector.
+ * It is possible to use a boolean mask to ignore some pixels of
+ * the input gray-scale image.
+*/
 class VISP_EXPORT vpCannyEdgeDetection
 {
-private:
-  typedef enum EdgeType
-  {
-    STRONG_EDGE, /*!< This pixel exceeds the upper threshold of the double hysteresis phase, it is thus for sure an edge point.*/
-    WEAK_EDGE,/*!< This pixel is between the lower and upper threshold of the double hysteresis phase, it is an edge point only if it is linked at some point to an edge point.*/
-    ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
-  } EdgeType;
-
-  // Filtering + gradient methods choice
-  vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Choice of the filter and
-      gradient operator to apply before the edge detection step*/
-
-  // // Gaussian smoothing attributes
-  int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
-  float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
-  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
-
-  // // Gradient computation attributes
-  bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
-  unsigned int m_gradientFilterKernelSize; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
-  vpArray2D<float> m_gradientFilterX; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the X-axis.*/
-  vpArray2D<float> m_gradientFilterY; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the Y-axis.*/
-  vpImage<float> m_dIx; /*!< X-axis gradient.*/
-  vpImage<float> m_dIy; /*!< Y-axis gradient.*/
-
-  // // Edge thining attributes
-  std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
-
-  // // Hysteresis thresholding attributes
-  float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced
-                               as from m_upperThreshold. */
-  float m_lowerThresholdRatio; /*!< If the thresholds must be computed, the ratio of the upper threshold the lower
-                                    threshold is equal: m_lowerThreshold = m_lowerThresholdRatio * m_upperThreshold. */
-  float m_upperThreshold; /*!< Upper threshold for the hysteresis step.*/
-  float m_upperThresholdRatio; /*!< If the thresholds must be computed, the ratio of pixels of the gradient image that
-                                    must be lower than the upper threshold \b m_upperThreshold.*/
-
-  // // Edge tracking attributes
-  std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
-                                                and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
-  vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
-  const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
-
-  /** @name Constructors and initialization */
-  //@{
-  /**
-   * \brief Initialize the Gaussian filters used to filter the input image.
-   */
-  void initGaussianFilters();
-
-  /**
-   * \brief Initialize the gradient filters (Sobel or Scharr) used to compute the input image gradients.
-   */
-  void initGradientFilters();
-  //@}
-
-  /** @name Different steps methods */
-  /**
-   * \brief Step 1: filtering + Step 2: gradient computation
-   * \details First, perform Gaussian blur to the input image.
-   * Then, compute the x-axis and y-axis gradients of the image.
-   * \param[in] I : The image we want to compute the gradients.
-   */
-  void performFilteringAndGradientComputation(const vpImage<unsigned char> &I);
-
-  /**
-   * \brief Step 3: Edge thining.
-   * \details Perform the edge thining step.
-   * Perform a non-maximum suppression to keep only local maxima as edge candidates.
-   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
-   * edges.
-   */
-  void performEdgeThinning(const float &lowerThreshold);
-
-  /**
-   * \brief Perform hysteresis thresholding.
-   * \details Edge candidates that are greater than \b m_upperThreshold are saved in \b m_strongEdgePoints
-   * and will be kept in the final edge map.
-   * Edge candidates that are between \b m_lowerThreshold and \b m_upperThreshold are saved in
-   * \b m_weakEdgePoints and will be kept in the final edge map only if they are connected
-   * to a strong edge point.
-   * Edge candidates that are below \b m_lowerThreshold are discarded.
-   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
-   * edges.
-   * \param[in] upperThreshold Edge candidates that are greater than this threshold are classified
-   * as strong edges.
-   */
-  void performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold);
-
-  /**
-   * \brief Search recursively for a strong edge in the neighborhood of a weak edge.
-   *
-   * \param[in] coordinates : The coordinates we are checking.
-   * \return true We found a strong edge point in its 8-connected neighborhood.
-   * \return false We did not found a strong edge point in its 8-connected neighborhood.
-   */
-  bool recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates);
-
-  /**
-   * \brief Perform edge tracking.
-   * \details For each weak edge, we will recursively check if they are 8-connected to a strong edge point.
-   * If so, the weak edge will be saved in \b m_strongEdgePoints and will be kept in the final edge map.
-   * Otherwise, the edge point will be discarded.
-   */
-  void performEdgeTracking();
-  //@}
 
 public:
   /** @name Constructors and initialization */
@@ -212,19 +112,7 @@ public:
    * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector : The detector that will be initialized from the JSON data.
    */
-  friend inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
-  {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
-    filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
-    detector.m_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(filteringAndGradientName);
-    detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
-    detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
-    detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
-    detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
-    detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
-    detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
-    detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
-  }
+  friend void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector);
 
   /**
    * \brief Parse a vpCannyEdgeDetection object into JSON format.
@@ -232,20 +120,7 @@ public:
    * \param[out] j : A JSON parser object.
    * \param[in] detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
-  friend inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
-  {
-    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
-    j = nlohmann::json {
-            {"filteringAndGradientType", filteringAndGradientName},
-            {"gaussianSize", detector.m_gaussianKernelSize},
-            {"gaussianStdev", detector.m_gaussianStdev},
-            {"lowerThreshold", detector.m_lowerThreshold},
-            {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
-            {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
-            {"upperThreshold", detector.m_upperThreshold},
-            {"upperThresholdRatio", detector.m_upperThresholdRatio}
-    };
-  }
+  friend void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector);
 #endif
   //@}
 
@@ -382,5 +257,112 @@ public:
     mp_mask = p_mask;
   }
   //@}
+private:
+  typedef enum EdgeType
+  {
+    STRONG_EDGE, /*!< This pixel exceeds the upper threshold of the double hysteresis phase, it is thus for sure an edge point.*/
+    WEAK_EDGE,/*!< This pixel is between the lower and upper threshold of the double hysteresis phase, it is an edge point only if it is linked at some point to an edge point.*/
+    ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
+  } EdgeType;
+
+  // Filtering + gradient methods choice
+  vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Choice of the filter and
+      gradient operator to apply before the edge detection step*/
+
+  // // Gaussian smoothing attributes
+  int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
+  float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
+
+  // // Gradient computation attributes
+  bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
+  unsigned int m_gradientFilterKernelSize; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
+  vpArray2D<float> m_gradientFilterX; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the X-axis.*/
+  vpArray2D<float> m_gradientFilterY; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the Y-axis.*/
+  vpImage<float> m_dIx; /*!< X-axis gradient.*/
+  vpImage<float> m_dIy; /*!< Y-axis gradient.*/
+
+  // // Edge thining attributes
+  std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
+
+  // // Hysteresis thresholding attributes
+  float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced
+                               as from m_upperThreshold. */
+  float m_lowerThresholdRatio; /*!< If the thresholds must be computed, the ratio of the upper threshold the lower
+                                    threshold is equal: m_lowerThreshold = m_lowerThresholdRatio * m_upperThreshold. */
+  float m_upperThreshold; /*!< Upper threshold for the hysteresis step.*/
+  float m_upperThresholdRatio; /*!< If the thresholds must be computed, the ratio of pixels of the gradient image that
+                                    must be lower than the upper threshold \b m_upperThreshold.*/
+
+  // // Edge tracking attributes
+  std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
+                                                and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
+  vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
+  const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
+
+  /** @name Constructors and initialization */
+  //@{
+  /**
+   * \brief Initialize the Gaussian filters used to filter the input image.
+   */
+  void initGaussianFilters();
+
+  /**
+   * \brief Initialize the gradient filters (Sobel or Scharr) used to compute the input image gradients.
+   */
+  void initGradientFilters();
+  //@}
+
+  /** @name Different steps methods */
+  /**
+   * \brief Step 1: filtering + Step 2: gradient computation
+   * \details First, perform Gaussian blur to the input image.
+   * Then, compute the x-axis and y-axis gradients of the image.
+   * \param[in] I : The image we want to compute the gradients.
+   */
+  void computeFilteringAndGradient(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Step 3: Edge thining.
+   * \details Perform the edge thining step.
+   * Perform a non-maximum suppression to keep only local maxima as edge candidates.
+   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
+   * edges.
+   */
+  void performEdgeThinning(const float &lowerThreshold);
+
+  /**
+   * \brief Perform hysteresis thresholding.
+   * \details Edge candidates that are greater than \b m_upperThreshold are saved in \b m_strongEdgePoints
+   * and will be kept in the final edge map.
+   * Edge candidates that are between \b m_lowerThreshold and \b m_upperThreshold are saved in
+   * \b m_weakEdgePoints and will be kept in the final edge map only if they are connected
+   * to a strong edge point.
+   * Edge candidates that are below \b m_lowerThreshold are discarded.
+   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
+   * edges.
+   * \param[in] upperThreshold Edge candidates that are greater than this threshold are classified
+   * as strong edges.
+   */
+  void performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold);
+
+  /**
+   * \brief Search recursively for a strong edge in the neighborhood of a weak edge.
+   *
+   * \param[in] coordinates : The coordinates we are checking.
+   * \return true We found a strong edge point in its 8-connected neighborhood.
+   * \return false We did not found a strong edge point in its 8-connected neighborhood.
+   */
+  bool recursiveSearchForStrongEdge(const std::pair<unsigned int, unsigned int> &coordinates);
+
+  /**
+   * \brief Perform edge tracking.
+   * \details For each weak edge, we will recursively check if they are 8-connected to a strong edge point.
+   * If so, the weak edge will be saved in \b m_strongEdgePoints and will be kept in the final edge map.
+   * Otherwise, the edge point will be discarded.
+   */
+  void performEdgeTracking();
+  //@}
 };
+END_VISP_NAMESPACE
 #endif

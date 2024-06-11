@@ -49,6 +49,9 @@
 #include <visp3/robot/vpVirtuose.h>
 
 #if defined(VISP_HAVE_VIRTUOSE)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void CallBackVirtuose(VirtContext VC, void *ptr)
 {
@@ -221,11 +224,13 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
       forceFeedback[i] = (p_min[i] - localPosition[i]) * force_increase_rate;
       if (forceFeedback[i] >= force_limit)
         forceFeedback[i] = force_limit;
-    } else if ((p_max[i] <= localPosition[i])) {
+    }
+    else if ((p_max[i] <= localPosition[i])) {
       forceFeedback[i] = (p_max[i] - localPosition[i]) * force_increase_rate;
       if (forceFeedback[i] <= -force_limit)
         forceFeedback[i] = -force_limit;
-    } else
+    }
+    else
       forceFeedback[i] = 0;
   }
 
@@ -249,19 +254,19 @@ int main(int argc, char **argv)
       opt_port = std::atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-                << " [--ip <localhost>] [--port <port>]"
-                   " [--help] [-h]\n"
-                << std::endl
-                << "Description: " << std::endl
-                << " --ip <localhost>" << std::endl
-                << "\tHost IP address. Default value: \"localhost\"." << std::endl
-                << std::endl
-                << " --port <port>" << std::endl
-                << "\tCommunication port. Default value: 5000." << std::endl
-                << "\tSuggested values: " << std::endl
-                << "\t- 5000 to communicate with the Virtuose." << std::endl
-                << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
-                << std::endl;
+        << " [--ip <localhost>] [--port <port>]"
+        " [--help] [-h]\n"
+        << std::endl
+        << "Description: " << std::endl
+        << " --ip <localhost>" << std::endl
+        << "\tHost IP address. Default value: \"localhost\"." << std::endl
+        << std::endl
+        << " --port <port>" << std::endl
+        << "\tCommunication port. Default value: 5000." << std::endl
+        << "\tSuggested values: " << std::endl
+        << "\t- 5000 to communicate with the Virtuose." << std::endl
+        << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -288,7 +293,8 @@ int main(int argc, char **argv)
       vpTime::sleepMs(1000);
     }
     std::cout << "The end" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }
@@ -299,8 +305,8 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "You should install pthread and/or Virtuose API to use this "
-               "binary..."
-            << std::endl;
+    "binary..."
+    << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

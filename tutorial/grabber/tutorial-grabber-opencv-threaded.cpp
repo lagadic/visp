@@ -2,6 +2,7 @@
 //! [capture-multi-threaded declaration]
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -14,6 +15,10 @@
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // Possible capture states
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;

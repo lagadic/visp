@@ -66,6 +66,10 @@
 // List of allowed command line options
 #define GETOPTARGS "hldc"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
   Print the program options.
 
@@ -274,7 +278,7 @@ template <typename Type> static void draw(vpImage<Type> &I)
   vip.push_back(vpImagePoint(350, 350));
   vip.push_back(vpImagePoint(400, 300));
   vip.push_back(vpImagePoint(350, 250));
-  polygon.buildFrom(vip);
+  polygon.build(vip);
   vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
 }
 
@@ -415,16 +419,16 @@ int main(int argc, const char **argv)
         std::cout << "  No display is available\n";
       }
       return EXIT_FAILURE;
-    }
+  }
 
-    // Create a color image for each display.
+  // Create a color image for each display.
     runTest<vpRGBa>(opt_display, opt_click_allowed);
 
     // Create a grayscale image for each display.
     runTest<unsigned char>(opt_display, opt_click_allowed);
 
     return EXIT_SUCCESS;
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

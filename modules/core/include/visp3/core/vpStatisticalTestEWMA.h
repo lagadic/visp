@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits to perform Exponentially Weighted Moving Average mean drft tests.
@@ -66,7 +67,7 @@
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 class VISP_EXPORT vpStatisticalTestEWMA : public vpStatisticalTestAbstract
 {
 protected:
@@ -179,4 +180,5 @@ public:
    */
   void setAlpha(const float &alpha);
 };
+END_VISP_NAMESPACE
 #endif

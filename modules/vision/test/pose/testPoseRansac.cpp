@@ -52,6 +52,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     std::cout << "Pose computation with matched points" << std::endl;
@@ -117,7 +120,8 @@ int main()
 
     std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
     return (test_fail ? EXIT_FAILURE : EXIT_SUCCESS);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -125,4 +129,4 @@ int main()
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -46,6 +46,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpTranslationVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Compute the covariance matrix of the parameters x from a least squares
   minimization defined as: Ax = b
@@ -107,10 +108,10 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
   //  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) ); // Should
   //  be equivalent to line bellow.
-  double sigma2 = ((W * b) - (W * A * x)).t() * (W * b - (W * A * x));
+  double sigma2 = ((W * b) - (W * A * x)).t() * ((W * b) - (W * A * x));
   sigma2 /= denom;
 
-  return (A.t() * (W2)*A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
+  return (A.t() * W2 * A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
 }
 
 /*!
@@ -184,11 +185,11 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
 
   double theta = sqrt(tu.sumSquare());
 
-  // --comment:   vpMatrix Lthetau(3,3);
+  // --comment: declare variable Lthetau of three by three of type vpMatrix
   vpMatrix LthetauInvAnalytic(3, 3);
   vpMatrix I3(3, 3);
   I3.eye();
-  // --comment:   Lthetau = -I3;
+  // --comment:   Lthetau equals -I3;
   LthetauInvAnalytic = -I3;
 
   if ((theta / (2.0 * M_PI)) > std::numeric_limits<double>::epsilon()) {
@@ -205,13 +206,11 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
     }
     vpMatrix u_skew = vpColVector::skew(u);
 
-    // --comment:      Lthetau += (theta2u_skew -
-    // --comment:      (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
     LthetauInvAnalytic +=
       -((vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew) - ((1.0 - vpMath::sinc(theta)) * u_skew * u_skew));
   }
 
-  // --comment:  vpMatrix LthetauInv = Lthetau.inverseByLU();
+  // --comment:  vpMatrix LthetauInv equals Lthetau dot inverseByLU()
 
   ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
 
@@ -231,5 +230,6 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   Js = Ls * LpInv;
 
   // building deltaP
-  deltaP = (Js).pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
+  deltaP = Js.pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
 }
+END_VISP_NAMESPACE

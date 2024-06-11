@@ -78,6 +78,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -251,10 +255,10 @@ int main(int argc, const char **argv)
     // sets the desired position of the feature point s*
     vpFeaturePoint pd[4];
 
-    pd[0].buildFrom(-0.1, -0.1, 1);
-    pd[1].buildFrom(0.1, -0.1, 1);
-    pd[2].buildFrom(0.1, 0.1, 1);
-    pd[3].buildFrom(-0.1, 0.1, 1);
+    pd[0].build(-0.1, -0.1, 1);
+    pd[1].build(0.1, -0.1, 1);
+    pd[2].build(0.1, 0.1, 1);
+    pd[3].build(-0.1, 0.1, 1);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -306,10 +310,10 @@ int main(int argc, const char **argv)
       }
       // since vpServo::MEAN interaction matrix is used, we need also to
       // update the desired features at each iteration
-      pd[0].buildFrom(-0.1, -0.1, 1);
-      pd[1].buildFrom(0.1, -0.1, 1);
-      pd[2].buildFrom(0.1, 0.1, 1);
-      pd[3].buildFrom(-0.1, 0.1, 1);
+      pd[0].build(-0.1, -0.1, 1);
+      pd[1].build(0.1, -0.1, 1);
+      pd[2].build(0.1, 0.1, 1);
+      pd[3].build(-0.1, 0.1, 1);
 
       if (opt_display) {
         vpDisplay::display(Iint);
@@ -341,7 +345,8 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(Iint);
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -356,7 +361,7 @@ int main()
 int main()
 {
   std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

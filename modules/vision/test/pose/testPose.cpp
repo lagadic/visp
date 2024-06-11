@@ -59,6 +59,10 @@
 
 */
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend);
 int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
   const std::string &legend, const double &translation3DThresh, const double &rotationRadian3DThresh, const double &pose2DThresh, const double &posePixThresh);

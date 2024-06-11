@@ -91,6 +91,10 @@
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpImage<unsigned char> I; // Create a gray level image container
     double depth = 1.;
@@ -211,7 +215,7 @@ int main(int argc, char **argv)
     vpFeatureBuilder::create(s_x, cam, dot);
 
     // Create the desired x* visual feature
-    s_xd.buildFrom(0, 0, depth);
+    s_xd.build(0, 0, depth);
     vpMatrix L_x = s_xd.interaction(vpFeaturePoint::selectX());
 
     // Create the current log(Z/Z*) visual feature
@@ -225,7 +229,7 @@ int main(int argc, char **argv)
     // Desired depth Z* of the blob. This depth is learned and equal to the
     // initial depth
     Zd = Z;
-    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z,
+    s_Z.build(s_x.get_x(), s_x.get_y(), Z,
                   0); // log(Z/Z*) = 0 that's why the last parameter is 0
     vpMatrix L_Z = s_Z.interaction();
 
@@ -241,7 +245,7 @@ int main(int argc, char **argv)
     vpColVector v; // vz, wx
 
     vpFeatureDepth s_Zd;
-    s_Zd.buildFrom(0, 0, 1, 0); // The value of s* is 0 with Z=1 meter.
+    s_Zd.build(0, 0, 1, 0); // The value of s* is 0 with Z=1 meter.
 
     while (1) {
       // Acquire a new image
@@ -263,7 +267,7 @@ int main(int argc, char **argv)
       // the intection matrix
       surface = 1. / sqrt(dot.m00 / (cam.get_px() * cam.get_py()));
       Z = coef * surface;
-      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
+      s_Z.build(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
       L_Z = s_Z.interaction();
 
       // Update the global interaction matrix

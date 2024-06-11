@@ -42,13 +42,15 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/vision/vpHomography.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpTemplateTrackerWarpHomographySL3
  * \ingroup group_tt_warp
- */
+*/
 class VISP_EXPORT vpTemplateTrackerWarpHomographySL3 : public vpTemplateTrackerWarp
 {
 protected:
@@ -92,4 +94,5 @@ public:
   void warpXInv(const vpColVector &, vpColVector &, const vpColVector &) { }
 #endif
 };
+END_VISP_NAMESPACE
 #endif

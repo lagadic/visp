@@ -44,8 +44,10 @@
 #ifndef vpTemplateTrackerSSDESM_hh
 #define vpTemplateTrackerSSDESM_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerSSDESM
   \ingroup group_tt_tracker
@@ -69,4 +71,5 @@ protected:
 public:
   explicit vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
 };
+END_VISP_NAMESPACE
 #endif

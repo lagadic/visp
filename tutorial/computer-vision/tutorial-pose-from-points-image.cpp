@@ -1,5 +1,6 @@
 /*! \example tutorial-pose-from-points-image.cpp */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -12,6 +13,9 @@
 
 int main(int, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     //! [Read image]
     vpImage<unsigned char> I;
@@ -82,7 +86,8 @@ int main(int, char *argv[])
       vpTime::wait(40);
       //! [Slow down]
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 }

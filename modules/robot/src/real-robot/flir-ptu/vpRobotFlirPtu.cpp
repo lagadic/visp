@@ -52,6 +52,7 @@ extern "C" {
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotFlirPtu.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Emergency stops the robot if the program is interrupted by a SIGINT
@@ -108,7 +109,7 @@ void vpRobotFlirPtu::init()
  */
 vpRobotFlirPtu::vpRobotFlirPtu()
   : m_eMc(), m_cer(nullptr), m_status(0), m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
-    m_connected(false), m_njoints(2), m_positioning_velocity(20.)
+  m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
   signal(SIGINT, vpRobotFlirPtu::emergencyStop);
   signal(SIGSEGV, vpRobotFlirPtu::emergencyStop);
@@ -236,7 +237,7 @@ vpMatrix vpRobotFlirPtu::get_fMe()
 vpVelocityTwistMatrix vpRobotFlirPtu::get_cVe() const
 {
   vpVelocityTwistMatrix cVe;
-  cVe.buildFrom(m_eMc.inverse());
+  cVe.build(m_eMc.inverse());
 
   return cVe;
 }
@@ -439,7 +440,8 @@ void vpRobotFlirPtu::getPosition(const vpRobot::vpControlFrameType frame, vpColV
 {
   if (frame == JOINT_STATE) {
     getJointPosition(q);
-  } else {
+  }
+  else {
     std::cout << "Not implemented ! " << std::endl;
   }
 }
@@ -799,9 +801,10 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
         throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
       }
 
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     break;
   }
@@ -944,9 +947,9 @@ double vpRobotFlirPtu::tics2deg(int axis, int tics) { return (tics * m_res[axis]
    \sa pos2rad()
  */
 double vpRobotFlirPtu::tics2rad(int axis, int tics) { return vpMath::rad(tics2deg(axis, tics)); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFlirPtu.cpp.o) has
 // no symbols
-void dummy_vpRobotFlirPtu(){};
+void dummy_vpRobotFlirPtu() { };
 #endif

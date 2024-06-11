@@ -31,19 +31,20 @@
  * Basic class used to make robot simulators.
  */
 
-#ifndef vpRobotSimulator_HH
-#define vpRobotSimulator_HH
-
 /*!
  * \file vpRobotSimulator.h
  * \brief Basic class used to make robot simulators.
  */
+
+#ifndef vpRobotSimulator_HH
+#define vpRobotSimulator_HH
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotSimulator
  *
@@ -52,7 +53,7 @@
  *
  * \brief This class aims to be a basis used to create all the
  * robot simulators.
- */
+*/
 class VISP_EXPORT vpRobotSimulator : public vpRobot
 {
 protected:
@@ -80,5 +81,5 @@ public:
   virtual inline void setSamplingTime(const double &delta_t) { this->delta_t_ = delta_t; }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

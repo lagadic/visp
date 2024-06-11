@@ -49,11 +49,12 @@
 
 #include "vpMy.h"
 
+BEGIN_VISP_NAMESPACE
 void fscanf_float(float *fp);
 void fscanf_Index(Index *ip);
 void fscanf_int(int *ip);
 void fscanf_string(char **str);
 void fscanf_Type(Type *ip);
-
+END_VISP_NAMESPACE
 #endif
 #endif

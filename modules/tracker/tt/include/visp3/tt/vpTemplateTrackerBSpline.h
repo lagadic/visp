@@ -49,7 +49,7 @@
 #include <visp3/core/vpMath.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpTemplateTrackerBSpline
 {
 public:
@@ -57,5 +57,6 @@ public:
 
   static double getSubPixBspline4(const vpImage<double> &I, double r, double t);
 };
+END_VISP_NAMESPACE
 #endif
 #endif

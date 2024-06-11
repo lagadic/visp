@@ -40,16 +40,17 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+namespace VISP_NAMESPACE_NAME
 {
+
 bool isBimodal(const std::vector<float> &hist_float)
 {
   int modes = 0;
 
   size_t hist_float_size_m_1 = hist_float.size() - 1;
   for (size_t cpt = 1; cpt < hist_float_size_m_1; ++cpt) {
-    if (hist_float[cpt - 1] < hist_float[cpt] && hist_float[cpt] > hist_float[cpt + 1]) {
-      modes++;
+    if ((hist_float[cpt - 1] < hist_float[cpt]) && (hist_float[cpt] > hist_float[cpt + 1])) {
+      ++modes;
     }
 
     if (modes > 2) {
@@ -72,11 +73,12 @@ int computeThresholdHuang(const vpHistogram &hist)
 
   // Find first and last non-empty bin
   size_t first, last;
-  for (first = 0; (first < static_cast<size_t>(hist.getSize())) && (hist[static_cast<unsigned char>(first)] == 0); first++) {
+  size_t hist_size = hist.getSize();
+  for (first = 0; (first < hist_size) && (hist[static_cast<unsigned char>(first)] == 0); ++first) {
     // do nothing
   }
 
-  for (last = static_cast<size_t>(hist.getSize()) - 1; (last > first) && (hist[static_cast<unsigned char>(last)] == 0); last--) {
+  for (last = (hist_size - 1); (last > first) && (hist[static_cast<unsigned char>(last)] == 0); --last) {
     // do nothing
   }
 
@@ -169,9 +171,9 @@ int computeThresholdIntermodes(const vpHistogram &hist)
     hist_float[0] = (hist_float[0] + hist_float[1]) / 2.0f;
 
     // Last value
-    hist_float[hist_float.size() - 1] = (hist_float.size() - 2 + hist_float.size() - 1) / 2.0f;
+    hist_float[hist_float.size() - 1] = (((hist_float.size() - 2) + hist_float.size()) - 1) / 2.0f;
 
-    iter++;
+    ++iter;
 
     if (iter > 10000) {
       std::cerr << "Intermodes Threshold not found after 10000 iterations!" << std::endl;
@@ -189,7 +191,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
     }
   }
 
-  return static_cast<int>(std::floor(tt / 2.0)); // vpMath::round(tt / 2.0);
+  return static_cast<int>(std::floor(tt / 2.0)); // vpMath round of tt div 2.0
 }
 
 int computeThresholdIsoData(const vpHistogram &hist, unsigned int imageSize)
@@ -263,28 +265,32 @@ int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
   float max_sigma_b = 0.0f;
   int threshold = 0;
 
-  for (int cpt = 0; cpt < 256; ++cpt) {
+  bool w_f_eq_nul = false;
+  int cpt = 0;
+  while ((cpt < 256) && (!w_f_eq_nul)) {
     w_B += hist[cpt];
-    if (vpMath::nul(w_B, std::numeric_limits<float>::epsilon())) {
-      continue;
-    }
+    bool w_b_eq_nul = vpMath::nul(w_B, std::numeric_limits<float>::epsilon());
+    if (!w_b_eq_nul) {
 
-    w_F = static_cast<int>(imageSize) - w_B;
-    if (vpMath::nul(w_F, std::numeric_limits<float>::epsilon())) {
-      break;
-    }
+      w_F = static_cast<int>(imageSize) - w_B;
+      w_f_eq_nul = vpMath::nul(w_F, std::numeric_limits<float>::epsilon());
+      if (!w_f_eq_nul) {
 
-    // Mean Background / Foreground
-    float mu_B = sum_ip_all[cpt] / static_cast<float>(w_B);
-    float mu_F = (mu_T - sum_ip_all[cpt]) / static_cast<float>(w_F);
-    // If there is a case where (w_B * w_F) exceed FLT_MAX, normalize
-    // histogram
-    float sigma_b_sqr = w_B * w_F * (mu_B - mu_F) * (mu_B - mu_F);
+      // Mean Background / Foreground
+        float mu_B = sum_ip_all[cpt] / static_cast<float>(w_B);
+        float mu_F = (mu_T - sum_ip_all[cpt]) / static_cast<float>(w_F);
+        // If there is a case where (w_B * w_F) exceed FLT_MAX, normalize
+        // histogram
+        float sigma_b_sqr = w_B * w_F * (mu_B - mu_F) * (mu_B - mu_F);
 
-    if (sigma_b_sqr >= max_sigma_b) {
-      threshold = cpt;
-      max_sigma_b = sigma_b_sqr;
+        if (sigma_b_sqr >= max_sigma_b) {
+          threshold = cpt;
+          max_sigma_b = sigma_b_sqr;
+        }
+      }
+      // else exit the loop
     }
+    ++cpt;
   }
 
   return threshold;
@@ -317,8 +323,8 @@ int computeThresholdTriangle(vpHistogram &hist)
   }
 
   // First / last index when hist(cpt) == 0
-  left_bound = left_bound > 0 ? left_bound - 1 : left_bound;
-  right_bound = right_bound < static_cast<int>(hist.getSize()) - 1 ? right_bound + 1 : right_bound;
+  left_bound = left_bound > 0 ? (left_bound - 1) : left_bound;
+  right_bound = right_bound < (static_cast<int>(hist.getSize()) - 1) ? (right_bound + 1) : right_bound;
 
   // Use the largest bound
   bool flip = false;
@@ -328,7 +334,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
     int cpt_left = 0;
     int cpt_right = static_cast<int>(hist.getSize()) - 1;
-    for (; cpt_left < cpt_right; cpt_left++, cpt_right--) {
+    for (; cpt_left < cpt_right; ++cpt_left, --cpt_right) {
       unsigned int temp = hist[cpt_left];
       hist.set(cpt_left, hist[cpt_right]);
       hist.set(cpt_right, temp);
@@ -357,7 +363,7 @@ int computeThresholdTriangle(vpHistogram &hist)
       threshold = cpt;
     }
   }
-  threshold--;
+  --threshold;
 
   if (flip) {
     threshold = static_cast<int>(hist.getSize()) - 1 - threshold;
@@ -365,10 +371,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
   return threshold;
 }
-} // namespace
 
-namespace vp
-{
 unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                             const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
@@ -417,4 +420,5 @@ unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMeth
 
   return threshold;
 }
-};
+
+} // namespace

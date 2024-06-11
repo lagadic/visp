@@ -32,10 +32,6 @@
  * Generic laser scanner.
  *
 *****************************************************************************/
-#ifndef vpLaserScanner_h
-#define vpLaserScanner_h
-
-#include "visp3/core/vpConfig.h"
 
 /*!
 
@@ -44,13 +40,19 @@
   \brief Implements a generic laser scanner.
  */
 
+#ifndef vpLaserScanner_h
+#define vpLaserScanner_h
+
+#include "visp3/core/vpConfig.h"
+
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpLaserScanner
   \ingroup group_sensor_laserscanner
 
   \brief Class that defines a generic laser scanner.
- */
+*/
 class /*VISP_EXPORT*/ vpLaserScanner
 {
 public:
@@ -72,5 +74,5 @@ protected:
   std::string ip;
   int port;
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -101,15 +101,15 @@ bool cpu_x86::detect_OS_AVX()
 
   bool avxSupported = false;
 
-  int cpuInfo[4];
+  uint32_t cpuInfo[4];
   cpuid(cpuInfo, 1);
 
-  bool osUsesXSAVE_XRSTORE = (cpuInfo[2] & (1 << 27)) != 0;
-  bool cpuAVXSuport = (cpuInfo[2] & (1 << 28)) != 0;
+  bool osUsesXSAVE_XRSTORE = (cpuInfo[2] & (1U << 27)) != 0;
+  bool cpuAVXSuport = (cpuInfo[2] & (1U << 28)) != 0;
 
   if (osUsesXSAVE_XRSTORE && cpuAVXSuport) {
     uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-    avxSupported = (xcrFeatureMask & 0x6) == 0x6;
+    avxSupported = (xcrFeatureMask & 0x6U) == 0x6U;
   }
 
   return avxSupported;
@@ -120,11 +120,12 @@ bool cpu_x86::detect_OS_AVX()
 bool cpu_x86::detect_OS_AVX512()
 {
 #ifndef UNKNOWN_ARCH
-  if (!detect_OS_AVX())
+  if (!detect_OS_AVX()) {
     return false;
+  }
 
   uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-  return (xcrFeatureMask & 0xe6) == 0xe6;
+  return (xcrFeatureMask & 0xe6U) == 0xe6U;
 #else
   return false;
 #endif
@@ -132,7 +133,7 @@ bool cpu_x86::detect_OS_AVX512()
 std::string cpu_x86::get_vendor_string()
 {
 #ifndef UNKNOWN_ARCH
-  int32_t CPUInfo[4];
+  uint32_t CPUInfo[4];
   char name[13];
 
   cpuid(CPUInfo, 0);
@@ -167,7 +168,7 @@ void cpu_x86::detect_host()
     Vendor_AMD = true;
   }
 
-  int info[4];
+  uint32_t info[4];
   cpuid(info, 0);
   int nIds = info[0];
 
@@ -177,49 +178,49 @@ void cpu_x86::detect_host()
   //  Detect Features
   if (nIds >= 0x00000001) {
     cpuid(info, 0x00000001);
-    HW_MMX = (info[3] & ((int)1 << 23)) != 0;
-    HW_SSE = (info[3] & ((int)1 << 25)) != 0;
-    HW_SSE2 = (info[3] & ((int)1 << 26)) != 0;
-    HW_SSE3 = (info[2] & ((int)1 << 0)) != 0;
+    HW_MMX = (info[3] & (1U << 23)) != 0U;
+    HW_SSE = (info[3] & (1U << 25)) != 0U;
+    HW_SSE2 = (info[3] & (1U << 26)) != 0U;
+    HW_SSE3 = (info[2] & (1U << 0)) != 0U;
 
-    HW_SSSE3 = (info[2] & ((int)1 << 9)) != 0;
-    HW_SSE41 = (info[2] & ((int)1 << 19)) != 0;
-    HW_SSE42 = (info[2] & ((int)1 << 20)) != 0;
-    HW_AES = (info[2] & ((int)1 << 25)) != 0;
+    HW_SSSE3 = (info[2] & (1U << 9)) != 0U;
+    HW_SSE41 = (info[2] & (1U << 19)) != 0U;
+    HW_SSE42 = (info[2] & (1U << 20)) != 0U;
+    HW_AES = (info[2] & (1U << 25)) != 0U;
 
-    HW_AVX = (info[2] & ((int)1 << 28)) != 0;
-    HW_FMA3 = (info[2] & ((int)1 << 12)) != 0;
+    HW_AVX = (info[2] & (1U << 28)) != 0U;
+    HW_FMA3 = (info[2] & (1U << 12)) != 0U;
 
-    HW_RDRAND = (info[2] & ((int)1 << 30)) != 0;
+    HW_RDRAND = (info[2] & (1U << 30)) != 0U;
   }
   if (nIds >= 0x00000007) {
     cpuid(info, 0x00000007);
-    HW_AVX2 = (info[1] & ((int)1 << 5)) != 0;
+    HW_AVX2 = (info[1] & (1U << 5)) != 0U;
 
-    HW_BMI1 = (info[1] & ((int)1 << 3)) != 0;
-    HW_BMI2 = (info[1] & ((int)1 << 8)) != 0;
-    HW_ADX = (info[1] & ((int)1 << 19)) != 0;
-    HW_MPX = (info[1] & ((int)1 << 14)) != 0;
-    HW_SHA = (info[1] & ((int)1 << 29)) != 0;
-    HW_PREFETCHWT1 = (info[2] & ((int)1 << 0)) != 0;
+    HW_BMI1 = (info[1] & (1U << 3)) != 0U;
+    HW_BMI2 = (info[1] & (1U << 8)) != 0U;
+    HW_ADX = (info[1] & (1U << 19)) != 0U;
+    HW_MPX = (info[1] & (1U << 14)) != 0U;
+    HW_SHA = (info[1] & (1U << 29)) != 0U;
+    HW_PREFETCHWT1 = (info[2] & (1U << 0)) != 0U;
 
-    HW_AVX512_F = (info[1] & ((int)1 << 16)) != 0;
-    HW_AVX512_CD = (info[1] & ((int)1 << 28)) != 0;
-    HW_AVX512_PF = (info[1] & ((int)1 << 26)) != 0;
-    HW_AVX512_ER = (info[1] & ((int)1 << 27)) != 0;
-    HW_AVX512_VL = (info[1] & ((int)1 << 31)) != 0;
-    HW_AVX512_BW = (info[1] & ((int)1 << 30)) != 0;
-    HW_AVX512_DQ = (info[1] & ((int)1 << 17)) != 0;
-    HW_AVX512_IFMA = (info[1] & ((int)1 << 21)) != 0;
-    HW_AVX512_VBMI = (info[2] & ((int)1 << 1)) != 0;
+    HW_AVX512_F = (info[1] & (1U << 16)) != 0U;
+    HW_AVX512_CD = (info[1] & (1U << 28)) != 0U;
+    HW_AVX512_PF = (info[1] & (1U << 26)) != 0U;
+    HW_AVX512_ER = (info[1] & (1U << 27)) != 0U;
+    HW_AVX512_VL = (info[1] & (1U << 31)) != 0U;
+    HW_AVX512_BW = (info[1] & (1U << 30)) != 0U;
+    HW_AVX512_DQ = (info[1] & (1U << 17)) != 0U;
+    HW_AVX512_IFMA = (info[1] & (1U << 21)) != 0U;
+    HW_AVX512_VBMI = (info[2] & (1U << 1)) != 0U;
   }
   if (nExIds >= 0x80000001) {
     cpuid(info, 0x80000001);
-    HW_x64 = (info[3] & ((int)1 << 29)) != 0;
-    HW_ABM = (info[2] & ((int)1 << 5)) != 0;
-    HW_SSE4a = (info[2] & ((int)1 << 6)) != 0;
-    HW_FMA4 = (info[2] & ((int)1 << 16)) != 0;
-    HW_XOP = (info[2] & ((int)1 << 11)) != 0;
+    HW_x64 = (info[3] & (1U << 29)) != 0U;
+    HW_ABM = (info[2] & (1U << 5)) != 0U;
+    HW_SSE4a = (info[2] & (1U << 6)) != 0U;
+    HW_FMA4 = (info[2] & (1U << 16)) != 0U;
+    HW_XOP = (info[2] & (1U << 11)) != 0U;
   }
 #endif
 }

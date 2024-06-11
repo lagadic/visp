@@ -32,14 +32,22 @@
  * frame to an other.
  */
 
-#ifndef vpForceTwistMatrix_h
-#define vpForceTwistMatrix_h
+#ifndef _vpForceTwistMatrix_h_
+#define _vpForceTwistMatrix_h_
 
+#include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
+class vpMatrix;
+END_VISP_NAMESPACE
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpForceTwistMatrix
 
@@ -132,30 +140,30 @@ sFp:
   from probe frame to a sensor frame.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpForceTwistMatrix.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  // Twist transformation matrix from sensor to probe frame
-  vpForceTwistMatrix sFp;
+  int main()
+  {
+    // Twist transformation matrix from sensor to probe frame
+    vpForceTwistMatrix sFp;
 
-  // Force/torque sensor frame to probe frame transformation
-  vpHomogeneousMatrix sMp;
-  // ... sMp need here to be initialized
+    // Force/torque sensor frame to probe frame transformation
+    vpHomogeneousMatrix sMp;
+    // ... sMp need here to be initialized
 
-  sFp.buildFrom(sMp);
+    sFp.build(sMp);
 
-  // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
-  vpColVector p_H(6);
-  // ... p_H should here have an initial value
+    // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
+    vpColVector p_H(6);
+    // ... p_H should here have an initial value
 
-  // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
-  vpColVector s_H(6);
+    // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
+    vpColVector s_H(6);
 
-  // Compute the value of the force/torque in the sensor frame
-  s_H = sFp * p_H;
-}
+    // Compute the value of the force/torque in the sensor frame
+    s_H = sFp * p_H;
+  }
   \endcode
 */
 class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
@@ -174,15 +182,23 @@ public:
   vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
-  vpForceTwistMatrix(const vpRotationMatrix &R);
-  vpForceTwistMatrix(const vpThetaUVector &thetau);
+  explicit vpForceTwistMatrix(const vpRotationMatrix &R);
+  explicit vpForceTwistMatrix(const vpThetaUVector &thetau);
 
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
 
-  vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
-  vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
+  vp_deprecated vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
+#endif
+  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpForceTwistMatrix &build(const vpHomogeneousMatrix &M, bool full = true);
+
+  vpForceTwistMatrix &build(const vpThetaUVector &thetau);
+  vpForceTwistMatrix &build(const vpRotationMatrix &R);
 
   // Basic initialisation (identity)
   void eye();
@@ -227,5 +243,5 @@ public:
   //@}
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -33,11 +33,13 @@
 #ifndef VPPIONEERPAN_H
 #define VPPIONEERPAN_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/robot/vpUnicycle.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpPioneerPan
  *
@@ -86,7 +88,7 @@
  *
  * with \f$p_x, p_y\f$ the position of the head base frame in the mobile
  * platform frame located at the middle point between the two wheels.
- */
+*/
 class VISP_EXPORT vpPioneerPan : public vpUnicycle
 {
 public:
@@ -173,7 +175,7 @@ protected:
     eRc[2][0] = -1;
 
     vpHomogeneousMatrix eMc;
-    eMc.buildFrom(etc, eRc);
+    eMc.build(etc, eRc);
 
     cMe_ = eMc.inverse();
   }
@@ -222,5 +224,5 @@ protected:
   vpHomogeneousMatrix mMp_; // constant
   vpHomogeneousMatrix pMe_; // depends on q pan
 };
-
+END_VISP_NAMESPACE
 #endif

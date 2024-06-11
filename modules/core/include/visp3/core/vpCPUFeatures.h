@@ -31,16 +31,17 @@
  * CPU features (hardware capabilities).
  */
 
-#ifndef _vpCPUFeatures_h_
-#define _vpCPUFeatures_h_
-
 /*!
   \file vpCPUFeatures.h
   \brief Check CPU features (hardware capabilities).
 */
 
+#ifndef _vpCPUFeatures_h_
+#define _vpCPUFeatures_h_
+
 #include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \ingroup group_core_cpu_features
   \brief Check CPU features (hardware capabilities).
@@ -48,14 +49,14 @@
   The example below shows how to check or get CPU capabilities.
 
   \code
-#include <visp3/core/vpCPUFeatures.h>
+  #include <visp3/core/vpCPUFeatures.h>
 
-int main()
-{
-  std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << std::endl;
-  std::cout << "CPU info: " << vpCPUFeatures::printCPUInfo() << std::endl;
-  return 0;
-}
+  int main()
+  {
+    std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << std::endl;
+    std::cout << "CPU info: " << vpCPUFeatures::printCPUInfo() << std::endl;
+    return 0;
+  }
   \endcode
 */
 
@@ -77,5 +78,5 @@ VISP_EXPORT size_t getCPUCacheL3();
 #endif
 VISP_EXPORT void printCPUInfo();
 } // namespace vpCPUFeatures
-
+END_VISP_NAMESPACE
 #endif

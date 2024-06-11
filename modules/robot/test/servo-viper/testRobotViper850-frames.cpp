@@ -43,7 +43,9 @@
 #include <visp3/robot/vpRobotViper850.h>
 
 #ifdef VISP_HAVE_VIPER850
-
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 bool pose_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2, double epsilon = 1e-6)
 {
   vpTranslationVector t1, t2;
@@ -99,7 +101,7 @@ int main()
     // In this case, we set tool frame to the PTGrey Flea2 camera frame
     vpTranslationVector etc(-0.04437278107, -0.001192883711, 0.07808296844);
     vpRxyzVector erxyzc(vpMath::rad(0.7226737722), vpMath::rad(2.103893926), vpMath::rad(-90.46213439));
-    eMt.buildFrom(etc, vpRotationMatrix(erxyzc));
+    eMt.build(etc, vpRotationMatrix(erxyzc));
 #endif
     std::cout << "eMt:\n" << eMt << std::endl;
 
@@ -364,7 +366,8 @@ int main()
     std::cout << "The end" << std::endl;
     std::cout << "Test succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

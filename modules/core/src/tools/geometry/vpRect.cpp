@@ -42,6 +42,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRect.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Constructs a default rectangle with the \e top, \e left corner set to (0,0)
   and \e width and \e height set to 1.
@@ -168,8 +169,10 @@ void vpRect::set(const std::vector<vpImagePoint> &ip)
   }
   double minu, maxu;
   double minv, maxv;
-  minu = maxu = ip[0].get_u();
-  minv = maxv = ip[0].get_v();
+  maxu = ip[0].get_u();
+  maxv = ip[0].get_v();
+  minu = maxu;
+  minv = maxv;
 
   size_t ip_size = ip.size();
   for (size_t i = 1; i < ip_size; ++i) {
@@ -222,8 +225,7 @@ void vpRect::set(const vpRect &r) { *this = r; }
  */
 bool vpRect::operator==(const vpRect &r) const
 {
-  // --comment: return (top == r.top && left == r.left && width == r.width && height ==
-  // --comment: r.height);
+  // --comment: return top == r.top and left == r.left and width == r.width and height == r.height
   return ((std::fabs(top - r.top) <= (std::fabs(top) * std::numeric_limits<double>::epsilon())) &&
           (std::fabs(left - r.left) <= (std::fabs(left) * std::numeric_limits<double>::epsilon())) &&
           (std::fabs(width - r.width) <= (std::fabs(width) * std::numeric_limits<double>::epsilon())) &&
@@ -236,6 +238,7 @@ bool vpRect::operator==(const vpRect &r) const
  */
 bool vpRect::operator!=(const vpRect &r) const
 {
+  /*
   // --comment: return (top != r.top || left != r.left || width != r.width || height !=
   // --comment: r.height);
   // --comment:  return (std::fabs(top-r.top) >
@@ -245,7 +248,8 @@ bool vpRect::operator!=(const vpRect &r) const
   // --comment:          || std::fabs(width-r.width) >
   // --comment:          std::fabs(width)*std::numeric_limits<double>::epsilon()
   // --comment:          || std::fabs(height-r.height) >
-  // --comment:          std::fabs(height)*std::numeric_limits<double>::epsilon());
+  // --comment:          std::fabs(height)*std::numeric_limits<double>::epsilon()
+  */
   return !(*this == r);
 }
 
@@ -268,3 +272,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)
   os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
   return os;
 }
+END_VISP_NAMESPACE

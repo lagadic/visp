@@ -30,20 +30,22 @@
  *
  * Description:
  * Firewire cameras video capture.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file test1394TwoResetBus.cpp
 
   \brief Resets the IEEE1394 bus using libdc1394-2.x library.
-
 */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
 #include <iostream>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #if defined(VISP_HAVE_DC1394)
 
@@ -61,7 +63,6 @@
   is if a program shuts down uncleanly and needs to free leftover ISO
   channels or bandwidth.  A bus reset will free those things as a side
   effect.
-
 */
 int main()
 {
@@ -75,21 +76,16 @@ int main()
     g.acquire(I);
     //     std::cout << "write /tmp/test.pgm" << std::endl;
     //     vpImageIo::write(I, "/tmp/test.pgm");
-  } catch (...) {
+  }
+  catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
 #else
 int main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-          "You should install libdc1394-2 to use this binary.");
+  vpTRACE("Ieee 1394 grabber capabilities are not available...");
+  vpTRACE("You should install libdc1394-2 to use this binary.");
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -58,6 +58,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -75,6 +76,10 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_portname;
   int opt_baudrate = 9600;
   bool opt_network = false;
@@ -177,7 +182,7 @@ int main(int argc, char **argv)
     if (!opt_extrinsic.empty()) {
       vpPoseVector ePc;
       ePc.loadYAML(opt_extrinsic, ePc);
-      eMc.buildFrom(ePc);
+      eMc.build(ePc);
     }
 
     std::cout << "Considered extrinsic transformation eMc:\n" << eMc << std::endl;

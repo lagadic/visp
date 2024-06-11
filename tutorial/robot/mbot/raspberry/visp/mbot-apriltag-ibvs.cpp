@@ -1,4 +1,5 @@
 //! \example mbot-apriltag-ibvs.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMomentAreaNormalized.h>
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentCentered.h>
@@ -11,7 +12,7 @@
 #include <visp3/core/vpSerial.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpUnicycle.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -22,6 +23,10 @@
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   int device = 0;
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   double tagSize = 0.065;
@@ -29,19 +34,21 @@ int main(int argc, const char **argv)
   int nThreads = 2;
   std::string intrinsic_file = "";
   std::string camera_name = "";
-  bool display_tag = false;
   bool display_on = false;
   bool serial_off = false;
+#if defined(VISP_HAVE_DISPLAY)
+  bool display_tag = false;
   bool save_image = false; // Only possible if display_on = true
+#endif
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
@@ -50,39 +57,37 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--display_tag") {
+#if defined(VISP_HAVE_DISPLAY)
+    else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
-#if defined(VISP_HAVE_X11)
     }
-    else if (std::string(argv[i]) == "--display_on") {
+    else if (std::string(argv[i]) == "--display-on") {
       display_on = true;
     }
-    else if (std::string(argv[i]) == "--save_image") {
+    else if (std::string(argv[i]) == "--save-image") {
       save_image = true;
-#endif
     }
-    else if (std::string(argv[i]) == "--serial_off") {
+#endif
+    else if (std::string(argv[i]) == "--serial-off") {
       serial_off = true;
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)std::atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--input <camera input>] [--tag_size <tag_size in m>]"
-        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-        " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
-        "TAG_36ARTOOLKIT,"
-        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-        " [--display_tag]";
-#if defined(VISP_HAVE_X11)
-      std::cout << " [--display_on] [--save_image]";
+        << " [--input <camera input>] [--tag-size <tag_size in m>]"
+        " [--quad-decimate <quad_decimate>] [--nthreads <nb>]"
+        " [--intrinsic <intrinsic file>] [--camera-name <camera name>]"
+        " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
+        " [--display-tag]";
+#if defined(VISP_HAVE_DISPLAY)
+      std::cout << " [--display-on] [--save-image]";
 #endif
-      std::cout << " [--serial_off] [--help]" << std::endl;
+      std::cout << " [--serial-off] [--help]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -114,9 +119,9 @@ int main(int argc, const char **argv)
 
     vpDisplay *d = nullptr;
     vpImage<vpRGBa> O;
-#ifdef VISP_HAVE_X11
+#ifdef VISP_HAVE_DISPLAY
     if (display_on) {
-      d = new vpDisplayX(I);
+      d = vpDisplayFactory::displayFactory(I);
     }
 #endif
 
@@ -138,14 +143,18 @@ int main(int argc, const char **argv)
 
     detector.setAprilTagQuadDecimate(quad_decimate);
     detector.setAprilTagNbThreads(nThreads);
+#ifdef VISP_HAVE_DISPLAY
     detector.setDisplayTag(display_tag);
+#endif
 
     vpServo task;
     vpAdaptiveGain lambda;
-    if (display_on)
+    if (display_on) {
       lambda.initStandard(2.5, 0.4, 30); // lambda(0)=2.5, lambda(oo)=0.4 and lambda'(0)=30
-    else
+    }
+    else {
       lambda.initStandard(4, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+    }
 
     vpUnicycle robot;
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
@@ -243,7 +252,9 @@ int main(int argc, const char **argv)
     for (;;) {
       g.acquire(I);
 
+#ifdef VISP_HAVE_DISPLAY
       vpDisplay::display(I);
+#endif
 
       double t = vpTime::measureTimeMs();
       std::vector<vpHomogeneousMatrix> cMo_vec;
@@ -254,7 +265,9 @@ int main(int argc, const char **argv)
       {
         std::stringstream ss;
         ss << "Detection time: " << t << " ms";
+#ifdef VISP_HAVE_DISPLAY
         vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+#endif
       }
 
       if (detector.getNbObjects() == 1) {
@@ -274,12 +287,14 @@ int main(int argc, const char **argv)
           vec_P.push_back(P);
         }
 
+#ifdef VISP_HAVE_DISPLAY
         // Display visual features
         vpDisplay::displayPolygon(I, vec_ip, vpColor::green, 3); // Current polygon used to compure an moment
         vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
                                 3); // Current polygon used to compure an moment
         vpDisplay::displayLine(I, 0, cam.get_u0(), I.getHeight() - 1, cam.get_u0(), vpColor::red,
                                3); // Vertical line as desired x position
+#endif
 
         // Current moments
         m_obj.setType(vpMomentObject::DENSE_POLYGON); // Consider the AprilTag as a polygon
@@ -330,7 +345,7 @@ int main(int argc, const char **argv)
         }
       }
       else {
-     // stop the robot
+        // stop the robot
         if (!serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
           //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
@@ -339,6 +354,7 @@ int main(int argc, const char **argv)
         }
       }
 
+#ifdef VISP_HAVE_DISPLAY
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I);
 
@@ -346,9 +362,12 @@ int main(int argc, const char **argv)
         vpDisplay::getImage(I, O);
         vpImageIo::write(O, "image.png");
       }
-      if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I, false)) {
         break;
+      }
+#endif
     }
+
 
     if (!serial_off) {
       serial->write("LED_RING=0,0,0,0\n"); // Switch off all led
@@ -359,8 +378,9 @@ int main(int argc, const char **argv)
       << " ; " << vpMath::getMedian(time_vec) << " ms"
       << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
-    if (display_on)
+    if (display_on) {
       delete d;
+    }
     if (!serial_off) {
       delete serial;
     }

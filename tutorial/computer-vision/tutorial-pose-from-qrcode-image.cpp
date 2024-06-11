@@ -1,4 +1,5 @@
 /*! \example tutorial-pose-from-qrcode-image.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/detection/vpDetectorQRCode.h>
@@ -13,6 +14,9 @@
 int main(int, char *argv[])
 {
 #if defined(VISP_HAVE_ZBAR)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpImage<unsigned char> I;
     vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.pgm");
@@ -64,7 +68,7 @@ int main(int, char *argv[])
 
           computePose(point, p, cam, init, cMo); // resulting pose is available in cMo var
           std::cout << "Pose translation (meter): " << cMo.getTranslationVector().t() << std::endl
-                    << "Pose rotation (quaternion): " << vpQuaternionVector(cMo.getRotationMatrix()).t() << std::endl;
+            << "Pose rotation (quaternion): " << vpQuaternionVector(cMo.getRotationMatrix()).t() << std::endl;
           vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
         }
       }
@@ -76,7 +80,8 @@ int main(int, char *argv[])
 
       vpTime::wait(40);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #else

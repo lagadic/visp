@@ -45,6 +45,7 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -57,9 +58,9 @@
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(col), Ig(), Ic(),
-    rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
+  visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+  vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(col), Ig(), Ic(),
+  rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   for (int i = 0; i < 4; i++)
     X[i].resize(3);
@@ -94,10 +95,10 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(GRAY_SCALED), Ig(),
-    Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
-    needClipping(false)
+  visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+  vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(GRAY_SCALED), Ig(),
+  Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
+  needClipping(false)
 {
   pt.resize(4);
   for (unsigned int i = 0; i < 4; i++) {
@@ -224,11 +225,12 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             unsigned char pixelgrey =
-                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
             *(bitmap + i * width + j) = pixelgrey;
           }
         }
@@ -344,12 +346,13 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               unsigned char pixelgrey =
-                  (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
               *(bitmap + i * width + j) = pixelgrey;
               zBuffer[i][j] = Xinter_optim[2];
             }
@@ -407,7 +410,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
             pixelcolor.B = Ipixelplan;
             *(bitmap + i * width + j) = pixelcolor;
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
@@ -528,7 +532,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
@@ -724,11 +729,12 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
           unsigned char Ipixelplan = 255;
           simList[indice]->getPixel(ip, Ipixelplan);
           *(bitmap + i * width + j) = Ipixelplan;
-        } else if (simList[indice]->colorI == COLORED) {
+        }
+        else if (simList[indice]->colorI == COLORED) {
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           unsigned char pixelgrey =
-              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+            (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
           *(bitmap + i * width + j) = pixelgrey;
         }
       }
@@ -926,7 +932,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> 
           pixelcolor.G = Ipixelplan;
           pixelcolor.B = Ipixelplan;
           *(bitmap + i * width + j) = pixelcolor;
-        } else if (simList[indice]->colorI == COLORED) {
+        }
+        else if (simList[indice]->colorI == COLORED) {
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           // unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 *
@@ -977,7 +984,8 @@ void vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
   if (angle > 0) {
     visible = true;
-  } else {
+  }
+  else {
     visible = false;
   }
 
@@ -1263,7 +1271,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelpla
     else if (interp == SIMPLE)
       Ipixelplan = Ig[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1316,7 +1325,8 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint
     else if (interp == SIMPLE)
       Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1368,7 +1378,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
     else if (interp == SIMPLE)
       Ipixelplan = Ic[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1420,7 +1431,8 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, v
     else if (interp == SIMPLE)
       Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1536,3 +1548,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImageSimulator & 
   os << "";
   return os;
 }
+END_VISP_NAMESPACE

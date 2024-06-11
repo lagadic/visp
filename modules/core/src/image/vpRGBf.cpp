@@ -45,6 +45,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBf.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Copy operator (from a floating-point value)
 
@@ -234,7 +235,7 @@ bool vpRGBf::operator>(const vpRGBf &v) const
   return (gray1 > gray2);
 }
 
-vpRGBf operator*(double x, const vpRGBf &rgb) { return rgb * x; }
+VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const vpRGBf &rgb) { return rgb * x; }
 
 /*!
   \relates vpRGBf
@@ -262,3 +263,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb)
   os << "(" << rgb.R << "," << rgb.G << "," << rgb.B << ")";
   return os;
 }
+END_VISP_NAMESPACE

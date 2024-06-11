@@ -35,17 +35,19 @@
 #define _vpDisplayOpenCV_h_
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
 #include <functional>
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \file vpDisplayOpenCV.h
@@ -131,7 +133,7 @@
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
 private:
@@ -262,5 +264,6 @@ protected:
   void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
 };
 
+END_VISP_NAMESPACE
 #endif
 #endif

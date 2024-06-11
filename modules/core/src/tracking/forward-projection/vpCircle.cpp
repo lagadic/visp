@@ -37,6 +37,7 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+BEGIN_VISP_NAMESPACE
 void vpCircle::init()
 {
   oP.resize(7);
@@ -121,7 +122,7 @@ vpCircle::vpCircle(double oA, double oB, double oC, double oX, double oY, double
 /*!
  * Default destructor that does nothing.
  */
-vpCircle::~vpCircle() {}
+vpCircle::~vpCircle() { }
 
 /*!
   Perspective projection of the circle.
@@ -160,31 +161,31 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
   p_.resize(5, false);
 
   vpColVector K(6);
-{
-  double A = cP_[0];
-  double B = cP_[1];
-  double C = cP_[2];
+  {
+    double A = cP_[0];
+    double B = cP_[1];
+    double C = cP_[2];
 
-  double X0 = cP_[3];
-  double Y0 = cP_[4];
-  double Z0 = cP_[5];
+    double X0 = cP_[3];
+    double Y0 = cP_[4];
+    double Z0 = cP_[5];
 
-  double r = cP_[6];
+    double r = cP_[6];
 
-  // projection
-  double s = (X0 * X0) + (Y0 * Y0) + (Z0 * Z0) - (r * r);
-  double det = (A * X0) + (B * Y0) + (C * Z0);
-  A = A / det;
-  B = B / det;
-  C = C / det;
+    // projection
+    double s = ((X0 * X0) + (Y0 * Y0) + (Z0 * Z0)) - (r * r);
+    double det = (A * X0) + (B * Y0) + (C * Z0);
+    A = A / det;
+    B = B / det;
+    C = C / det;
 
-  K[0] = (1 - (2 * A * X0)) + (A * A * s);
-  K[1] = (1 - (2 * B * Y0)) + (B * B * s);
-  K[2] = ((-A * Y0) - (B * X0)) + (A * B * s);
-  K[3] = ((-C * X0) - (A * Z0)) + (A * C * s);
-  K[4] = ((-C * Y0) - (B * Z0)) + (B * C * s);
-  K[5] = (1 - (2 * C * Z0)) + (C * C * s);
-}
+    K[0] = (1 - (2 * A * X0)) + (A * A * s);
+    K[1] = (1 - (2 * B * Y0)) + (B * B * s);
+    K[2] = ((-A * Y0) - (B * X0)) + (A * B * s);
+    K[3] = ((-C * X0) - (A * Z0)) + (A * C * s);
+    K[4] = ((-C * Y0) - (B * Z0)) + (B * C * s);
+    K[5] = (1 - (2 * C * Z0)) + (C * C * s);
+  }
 
   double det = (K[2] * K[2]) - (K[0] * K[1]);
   if (fabs(det) < det_threshold) {
@@ -204,16 +205,19 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
     if (K[0] > K[1]) {
       A = sqrt(s / ((K[0] + K[1]) + c));
       B = sqrt(s / ((K[0] + K[1]) - c));
-    } else {
+    }
+    else {
       A = sqrt(s / ((K[0] + K[1]) - c));
       B = sqrt(s / ((K[0] + K[1]) + c));
     }
-  } else {
-    E = ( (K[1] - K[0]) + c) / (2 * K[2]);
+  }
+  else {
+    E = ((K[1] - K[0]) + c) / (2 * K[2]);
     if (fabs(E) > 1.0) {
       A = sqrt(s / ((K[0] + K[1]) + c));
       B = sqrt(s / ((K[0] + K[1]) - c));
-    } else {
+    }
+    else {
       A = sqrt(s / ((K[0] + K[1]) - c));
       B = sqrt(s / ((K[0] + K[1]) + c));
       E = -1.0 / E;
@@ -363,10 +367,10 @@ void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
 void vpCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  projection(v_cP, v_p);
+  vpFeatureDisplay::displayEllipse(v_p[0], v_p[1], v_p[2], v_p[3], v_p[4], cam, I, color, thickness);
 }
 
 //! For memory issue (used by the vpServo class only)
@@ -418,14 +422,15 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double ctheta2 = vpMath::sqr(ctheta);
   double m02xg = n02 * Xg;
   double m11stheta = n11 * stheta;
-  j = ((n11 * Xg * sctheta - (n20 * Yg * sctheta) + (n20 * rho * ctheta) - m11yg + (m11yg * ctheta2) + m02xg -
-        (m02xg * ctheta2) + (m11stheta * rho)) /
-       ((n20 * ctheta2) + (2.0 * m11stheta * ctheta) + n02 - (n02 * ctheta2)));
+  j = ((((((((n11 * Xg * sctheta) - (n20 * Yg * sctheta)) + (n20 * rho * ctheta)) - m11yg) + (m11yg * ctheta2) + m02xg) -
+         (m02xg * ctheta2)) + (m11stheta * rho)) /
+       (((n20 * ctheta2) + (2.0 * m11stheta * ctheta) + n02) - (n02 * ctheta2)));
   // Optimised calculation for Y
   double rhom02 = rho * n02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-(-rho * n11 * stheta * ctheta - rhom02 + (rhom02 * ctheta2) + (n11 * Xg * sctheta2) - (n20 * Yg * sctheta2) -
-         (ctheta * n11 * Yg) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg) - (ctheta3 * n02 * Xg)) /
-       ((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02 - (n02 * ctheta2)) / stheta);
+  i = (-(((((((-rho * n11 * stheta * ctheta) - rhom02) + (rhom02 * ctheta2) + (n11 * Xg * sctheta2)) - (n20 * Yg * sctheta2)) -
+           (ctheta * n11 * Yg)) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg)) - (ctheta3 * n02 * Xg)) /
+       (((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02) - (n02 * ctheta2)) / stheta);
 }
+END_VISP_NAMESPACE

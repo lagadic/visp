@@ -41,6 +41,7 @@
  */
 
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -48,6 +49,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     // Create a grey level image
     vpImage<vpRGBa> I;

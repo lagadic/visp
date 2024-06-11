@@ -36,6 +36,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpPylonGrabber.h
+  \brief Wrapper over Basler Pylon SDK to capture images from Basler
+  cameras.
+*/
+
 #ifndef _vpPylonGrabber_h_
 #define _vpPylonGrabber_h_
 
@@ -58,12 +64,7 @@
 
 #include <pylon/PylonIncludes.h>
 
-/*!
-  \file vpPylonGrabber.h
-  \brief Wrapper over Basler Pylon SDK to capture images from Basler
-  cameras.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabber
   \ingroup group_sensor_camera
@@ -92,18 +93,19 @@
   - acA1600-60gm
 
   This class is inspired by vpFlyCaptureGrabber with much simplified methods.
- */
+*/
 class VISP_EXPORT vpPylonGrabber : public vpFrameGrabber
 {
 public:
   /*!
      Default destructor.
    */
-  virtual ~vpPylonGrabber(){};
+  virtual ~vpPylonGrabber() { };
 
   /*! Valid values for user set names.
    */
-  enum UserSetName {
+  enum UserSetName
+  {
     USERSET_DEFAULT,  //!< The default user set.
     USERSET_USERSET1, //!< User set 1.
     USERSET_USERSET2, //!< User set 2.
@@ -390,6 +392,6 @@ public:
    */
   virtual void stopCapture() = 0;
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabber_h_

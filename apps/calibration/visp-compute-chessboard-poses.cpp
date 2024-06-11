@@ -57,6 +57,10 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpPose.h>
 
+#if defined(ENABLE_VISP_NAMESPACE)
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners)
@@ -224,7 +228,7 @@ int main(int argc, const char **argv)
 #elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK(I);
 #endif
-    }
+  }
 #endif
 
     std::vector<vpPoint> corners_pts;
@@ -335,7 +339,7 @@ int main(int argc, const char **argv)
       }
     }
 #endif
-  }
+}
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }

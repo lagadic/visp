@@ -66,8 +66,23 @@ typedef unsigned short uint16_t;
 #include <inttypes.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 class vpDisplay;
+// Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
+template <class Type> class vpImage; // forward declare to make function declaration possible
 
+// declarations
+template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I);
+
+std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
+END_VISP_NAMESPACE
+
+template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second);
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImage
 
@@ -117,20 +132,6 @@ value = I[i][j]; // Here we will get the pixel value at position (101, 80)
 \endcode
 
 */
-
-// Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
-template <class Type> class vpImage; // forward declare to make function declaration possible
-
-// declarations
-template <class Type> std::ostream &operator<<(std::ostream &, const vpImage<Type> &);
-
-std::ostream &operator<<(std::ostream &, const vpImage<unsigned char> &);
-std::ostream &operator<<(std::ostream &, const vpImage<char> &);
-std::ostream &operator<<(std::ostream &, const vpImage<float> &);
-std::ostream &operator<<(std::ostream &, const vpImage<double> &);
-
-template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second);
-
 template <class Type> class vpImage
 {
   friend class vpImageConvert;
@@ -142,10 +143,10 @@ public:
   //! constructor
   vpImage();
   //! copy constructor
-  vpImage(const vpImage<Type> &);
+  vpImage(const vpImage<Type> &img);
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   //! move constructor
-  vpImage(vpImage<Type> &&);
+  vpImage(vpImage<Type> &&img);
 #endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
@@ -272,13 +273,13 @@ public:
 
     \return Value of the image point (i, j).
   */
-  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[i * width + j]; }
+  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[(i * width) + j]; }
 
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
   */
-  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[(i * width) + j] = v; }
 
   /*!
     Get the value of an image point.
@@ -292,10 +293,10 @@ public:
   */
   inline Type operator()(const vpImagePoint &ip) const
   {
-    unsigned int i = (unsigned int)ip.get_i();
-    unsigned int j = (unsigned int)ip.get_j();
+    unsigned int i = static_cast<unsigned int>(ip.get_i());
+    unsigned int j = static_cast<unsigned int>(ip.get_j());
 
-    return bitmap[i * width + j];
+    return bitmap[(i * width) + j];
   }
 
   /*!
@@ -308,10 +309,10 @@ public:
   */
   inline void operator()(const vpImagePoint &ip, const Type &v)
   {
-    unsigned int i = (unsigned int)ip.get_i();
-    unsigned int j = (unsigned int)ip.get_j();
+    unsigned int i = static_cast<unsigned int>(ip.get_i());
+    unsigned int j = static_cast<unsigned int>(ip.get_j());
 
-    bitmap[i * width + j] = v;
+    bitmap[(i * width) + j] = v;
   }
 
   vpImage<Type> operator-(const vpImage<Type> &B) const;
@@ -328,7 +329,7 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
-  // Perform a look-up table transformation
+    // Perform a look-up table transformation
   void performLut(const Type(&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
@@ -343,7 +344,7 @@ public:
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C) const;
   void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
 
-  friend void swap<>(vpImage<Type> &first, vpImage<Type> &second);
+  friend void ::swap<>(vpImage<Type> &first, vpImage<Type> &second);
 
   //@}
 
@@ -361,16 +362,18 @@ template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Ty
     return s;
   }
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < (i_width - 1); ++j) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() - 1];
+    s << I[i][i_width - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight() - 1) {
+    if (i < (i_height - 1)) {
       s << std::endl;
     }
   }
@@ -386,8 +389,10 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I
 
   std::ios_base::fmtflags original_flags = s.flags();
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < (i_width - 1); ++j) {
       s << std::setw(3) << static_cast<unsigned>(I[i][j]) << " ";
     }
 
@@ -395,7 +400,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I
     s << std::setw(3) << static_cast<unsigned>(I[i][I.getWidth() - 1]);
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight() - 1) {
+    if (i < (i_height - 1)) {
       s << std::endl;
     }
   }
@@ -412,16 +417,18 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
 
   std::ios_base::fmtflags original_flags = s.flags();
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < (i_width - 1); ++j) {
       s << std::setw(4) << static_cast<int>(I[i][j]) << " ";
     }
 
     // We don't add "  " after the last column element
-    s << std::setw(4) << static_cast<int>(I[i][I.getWidth() - 1]);
+    s << std::setw(4) << static_cast<int>(I[i][i_width - 1]);
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight() - 1) {
+    if (i < (i_height - 1)) {
       s << std::endl;
     }
   }
@@ -439,16 +446,18 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
   std::ios_base::fmtflags original_flags = s.flags();
   s.precision(9); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < (i_width - 1); ++j) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() - 1];
+    s << I[i][i_width - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight() - 1) {
+    if (i < (i_height - 1)) {
       s << std::endl;
     }
   }
@@ -466,16 +475,18 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
   std::ios_base::fmtflags original_flags = s.flags();
   s.precision(17); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < (i_width - 1); ++j) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() - 1];
+    s << I[i][i_width - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight() - 1) {
+    if (i < (i_height - 1)) {
       s << std::endl;
     }
   }
@@ -552,7 +563,7 @@ struct vpImageLutRGBa_Param_t
   unsigned int m_start_index;
   unsigned int m_end_index;
 
-  vpRGBa m_lut[256];
+  VISP_NAMESPACE_ADDRESSING vpRGBa m_lut[256];
   unsigned char *m_bitmap;
 
   vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
@@ -619,9 +630,10 @@ void performLutRGBaThread(vpImageLutRGBa_Param_t *imageLut_param)
 template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
   init(h, w);
-
+  /*
   //  for (unsigned int i = 0; i < npixels; ++i)
   //    bitmap[i] = value;
+  */
   std::fill(bitmap, bitmap + npixels, value);
 }
 
@@ -658,14 +670,16 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
   if (bitmap == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
-  if (row == nullptr)
+  if (row == nullptr) {
     row = new Type *[height];
+  }
   if (row == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
-  for (unsigned int i = 0; i < height; ++i)
-    row[i] = bitmap + i * width;
+  for (unsigned int i = 0; i < height; ++i) {
+    row[i] = bitmap + (i * width);
+  }
 }
 
 /*!
@@ -681,7 +695,7 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
   }
 
   // Delete bitmap if copyData==false, otherwise only if the dimension differs
-  if ((copyData && ((h != this->height) || (w != this->width))) || !copyData) {
+  if ((copyData && ((h != this->height) || (w != this->width))) || (!copyData)) {
     if (bitmap != nullptr) {
       if (hasOwnership) {
         delete[] bitmap;
@@ -697,29 +711,31 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
   npixels = width * height;
 
   if (copyData) {
-    if (bitmap == nullptr)
+    if (bitmap == nullptr) {
       bitmap = new Type[npixels];
+    }
 
     if (bitmap == nullptr) {
       throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
     }
 
     // Copy the image data
-    memcpy(static_cast<void *>(bitmap), static_cast<void *>(array), (size_t)(npixels * sizeof(Type)));
+    memcpy(static_cast<void *>(bitmap), static_cast<void *>(array), static_cast<size_t>(npixels * sizeof(Type)));
   }
   else {
     // Copy the address of the array in the bitmap
     bitmap = array;
   }
 
-  if (row == nullptr)
+  if (row == nullptr) {
     row = new Type *[height];
+  }
   if (row == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
   for (unsigned int i = 0; i < height; ++i) {
-    row[i] = bitmap + i * width;
+    row[i] = bitmap + (i * width);
   }
 }
 
@@ -873,8 +889,9 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
  */
 template <class Type> Type vpImage<Type>::getMaxValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] > m) {
@@ -895,19 +912,22 @@ template <class Type> Type vpImage<Type>::getMaxValue(bool onlyFiniteVal) const
  */
 template <> inline double vpImage<double>::getMaxValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
   double m = bitmap[0];
   if (onlyFiniteVal) {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
+      if ((bitmap[i] > m) && (vpMath::isFinite(bitmap[i]))) {
         m = bitmap[i];
+      }
     }
   }
   else {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] > m)
+      if (bitmap[i] > m) {
         m = bitmap[i];
+      }
     }
   }
   return m;
@@ -923,19 +943,22 @@ template <> inline double vpImage<double>::getMaxValue(bool onlyFiniteVal) const
  */
 template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
   float m = bitmap[0];
   if (onlyFiniteVal) {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
+      if ((bitmap[i] > m) && (vpMath::isFinite(bitmap[i]))) {
         m = bitmap[i];
+      }
     }
   }
   else {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] > m)
+      if (bitmap[i] > m) {
         m = bitmap[i];
+      }
     }
   }
   return m;
@@ -1015,7 +1038,7 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean, const v
   double sum = 0.;
   unsigned int nbPointsInMask = 0;
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
     }
     for (unsigned int i = 0; i < size; ++i) {
@@ -1066,7 +1089,7 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const vp
   double sum = 0.;
   unsigned int nbPointsInMask = 0;
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
     }
     for (unsigned int i = 0; i < size; ++i) {
@@ -1118,7 +1141,7 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const vp
   double sum = 0.;
   unsigned int nbPointsInMask = 0;
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
     }
     for (unsigned int i = 0; i < size; ++i) {
@@ -1153,8 +1176,9 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const vp
  */
 template <class Type> Type vpImage<Type>::getMinValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
+  }
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] < m) {
@@ -1175,18 +1199,23 @@ template <class Type> Type vpImage<Type>::getMinValue(bool onlyFiniteVal) const
  */
 template <> inline double vpImage<double>::getMinValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
+  }
   double m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; ++i)
-      if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if ((bitmap[i] < m) && (vpMath::isFinite(bitmap[i]))) {
         m = bitmap[i];
+      }
+    }
   }
   else {
-    for (unsigned int i = 0; i < npixels; ++i)
-      if (bitmap[i] < m)
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if (bitmap[i] < m) {
         m = bitmap[i];
+      }
+    }
   }
   return m;
 }
@@ -1201,18 +1230,23 @@ template <> inline double vpImage<double>::getMinValue(bool onlyFiniteVal) const
  */
 template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
+  }
   float m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; ++i)
-      if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if ((bitmap[i] < m) && (vpMath::isFinite(bitmap[i]))) {
         m = bitmap[i];
+      }
+    }
   }
   else {
-    for (unsigned int i = 0; i < npixels; ++i)
-      if (bitmap[i] < m)
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if (bitmap[i] < m) {
         m = bitmap[i];
+      }
+    }
   }
   return m;
 }
@@ -1229,15 +1263,19 @@ template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
  */
 template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max, bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
 
-  min = max = bitmap[0];
+  min = bitmap[0];
+  max = bitmap[0];
   for (unsigned int i = 0; i < npixels; ++i) {
-    if (bitmap[i] < min)
+    if (bitmap[i] < min) {
       min = bitmap[i];
-    if (bitmap[i] > max)
+    }
+    if (bitmap[i] > max) {
       max = bitmap[i];
+    }
   }
   (void)onlyFiniteVal;
 }
@@ -1255,26 +1293,32 @@ template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max, b
  */
 template <> inline void vpImage<double>::getMinMaxValue(double &min, double &max, bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
 
-  min = max = bitmap[0];
+  min = bitmap[0];
+  max = bitmap[0];
   if (onlyFiniteVal) {
     for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i])) {
-        if (bitmap[i] < min)
+        if (bitmap[i] < min) {
           min = bitmap[i];
-        if (bitmap[i] > max)
+        }
+        if (bitmap[i] > max) {
           max = bitmap[i];
+        }
       }
     }
   }
   else {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] < min)
+      if (bitmap[i] < min) {
         min = bitmap[i];
-      if (bitmap[i] > max)
+      }
+      if (bitmap[i] > max) {
         max = bitmap[i];
+      }
     }
   }
 }
@@ -1292,26 +1336,32 @@ template <> inline void vpImage<double>::getMinMaxValue(double &min, double &max
  */
 template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
 
-  min = max = bitmap[0];
+  min = bitmap[0];
+  max = bitmap[0];
   if (onlyFiniteVal) {
     for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i])) {
-        if (bitmap[i] < min)
+        if (bitmap[i] < min) {
           min = bitmap[i];
-        if (bitmap[i] > max)
+        }
+        if (bitmap[i] > max) {
           max = bitmap[i];
+        }
       }
     }
   }
   else {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i] < min)
+      if (bitmap[i] < min) {
         min = bitmap[i];
-      if (bitmap[i] > max)
+      }
+      if (bitmap[i] > max) {
         max = bitmap[i];
+      }
     }
   }
 }
@@ -1328,48 +1378,62 @@ template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, b
 */
 template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max, bool onlyFiniteVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
 
-  min = max = bitmap[0];
+  min = bitmap[0];
+  max = bitmap[0];
   if (onlyFiniteVal) {
     for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i].R)) {
-        if (bitmap[i].R < min.R)
+        if (bitmap[i].R < min.R) {
           min.R = bitmap[i].R;
-        if (bitmap[i].R > max.R)
+        }
+        if (bitmap[i].R > max.R) {
           max.R = bitmap[i].R;
+        }
       }
       if (vpMath::isFinite(bitmap[i].G)) {
-        if (bitmap[i].G < min.G)
+        if (bitmap[i].G < min.G) {
           min.G = bitmap[i].G;
-        if (bitmap[i].G > max.G)
+        }
+        if (bitmap[i].G > max.G) {
           max.G = bitmap[i].G;
+        }
       }
       if (vpMath::isFinite(bitmap[i].B)) {
-        if (bitmap[i].B < min.B)
+        if (bitmap[i].B < min.B) {
           min.B = bitmap[i].B;
-        if (bitmap[i].B > max.B)
+        }
+        if (bitmap[i].B > max.B) {
           max.B = bitmap[i].B;
+        }
       }
     }
   }
   else {
     for (unsigned int i = 0; i < npixels; ++i) {
-      if (bitmap[i].R < min.R)
+      if (bitmap[i].R < min.R) {
         min.R = bitmap[i].R;
-      if (bitmap[i].R > max.R)
+      }
+      if (bitmap[i].R > max.R) {
         max.R = bitmap[i].R;
+      }
 
-      if (bitmap[i].G < min.G)
+      if (bitmap[i].G < min.G) {
         min.G = bitmap[i].G;
-      if (bitmap[i].G > max.G)
+      }
+      if (bitmap[i].G > max.G) {
         max.G = bitmap[i].G;
+      }
 
-      if (bitmap[i].B < min.B)
+      if (bitmap[i].B < min.B) {
         min.B = bitmap[i].B;
-      if (bitmap[i].B > max.B)
+      }
+      if (bitmap[i].B > max.B) {
         max.B = bitmap[i].B;
+      }
     }
   }
 }
@@ -1398,9 +1462,10 @@ template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max
 template <class Type>
 void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal, Type *maxVal) const
 {
-  if (npixels == 0)
+  if (npixels == 0) {
     throw(vpException(vpException::fatalError, "Cannot get location of minimum/maximum "
                       "values of an empty image"));
+  }
 
   Type min = bitmap[0], max = bitmap[0];
   vpImagePoint minLoc_, maxLoc_;
@@ -1418,17 +1483,21 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
     }
   }
 
-  if (minLoc != nullptr)
+  if (minLoc != nullptr) {
     *minLoc = minLoc_;
+  }
 
-  if (maxLoc != nullptr)
+  if (maxLoc != nullptr) {
     *maxLoc = maxLoc_;
+  }
 
-  if (minVal != nullptr)
+  if (minVal != nullptr) {
     *minVal = min;
+  }
 
-  if (maxVal != nullptr)
+  if (maxVal != nullptr) {
     *maxVal = max;
+  }
 }
 
 /*!
@@ -1436,9 +1505,10 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
-  swap(*this, other);
-  if (other.display != nullptr)
+  ::swap(*this, other);
+  if (other.display != nullptr) {
     display = other.display;
+  }
 
   return *this;
 }
@@ -1451,8 +1521,9 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> othe
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(const Type &v)
 {
-  for (unsigned int i = 0; i < npixels; ++i)
+  for (unsigned int i = 0; i < npixels; ++i) {
     bitmap[i] = v;
+  }
 
   return *this;
 }
@@ -1464,17 +1535,23 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(const Type &v)
 */
 template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I) const
 {
-  if (this->width != I.getWidth())
+  if (this->width != I.getWidth()) {
     return false;
-  if (this->height != I.getHeight())
+  }
+  if (this->height != I.getHeight()) {
     return false;
+  }
 
+  /*
   //  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap,
   //  I.bitmap);
+  */
   for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] != I.bitmap[i]) {
+      /*
       //      std::cout << "differ for pixel " << i << " (" << i%this->height
       //      << ", " << i - i%this->height << ")" << std::endl;
+      */
       return false;
     }
   }
@@ -1532,48 +1609,57 @@ template <class Type> vpImage<Type> vpImage<Type>::operator-(const vpImage<Type>
 */
 template <class Type> void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint &topLeft)
 {
-  int itl = (int)topLeft.get_i();
-  int jtl = (int)topLeft.get_j();
+  int itl = static_cast<int>(topLeft.get_i());
+  int jtl = static_cast<int>(topLeft.get_j());
 
   int dest_ibegin = 0;
   int dest_jbegin = 0;
   int src_ibegin = 0;
   int src_jbegin = 0;
-  int dest_w = (int)this->getWidth();
-  int dest_h = (int)this->getHeight();
-  int src_w = (int)src.getWidth();
-  int src_h = (int)src.getHeight();
-  int wsize = (int)src.getWidth();
-  int hsize = (int)src.getHeight();
+  int dest_w = static_cast<int>(this->getWidth());
+  int dest_h = static_cast<int>(this->getHeight());
+  int src_w = static_cast<int>(src.getWidth());
+  int src_h = static_cast<int>(src.getHeight());
+  int wsize = static_cast<int>(src.getWidth());
+  int hsize = static_cast<int>(src.getHeight());
 
-  if (itl >= dest_h || jtl >= dest_w)
+  if ((itl >= dest_h) || (jtl >= dest_w)) {
     return;
+  }
 
-  if (itl < 0)
+  if (itl < 0) {
     src_ibegin = -itl;
-  else
+  }
+  else {
     dest_ibegin = itl;
+  }
 
-  if (jtl < 0)
+  if (jtl < 0) {
     src_jbegin = -jtl;
-  else
+  }
+  else {
     dest_jbegin = jtl;
+  }
 
-  if (src_w - src_jbegin > dest_w - dest_jbegin)
+  if ((src_w - src_jbegin) >(dest_w - dest_jbegin)) {
     wsize = dest_w - dest_jbegin;
-  else
+  }
+  else {
     wsize = src_w - src_jbegin;
+  }
 
-  if (src_h - src_ibegin > dest_h - dest_ibegin)
+  if ((src_h - src_ibegin) > (dest_h - dest_ibegin)) {
     hsize = dest_h - dest_ibegin;
-  else
+  }
+  else {
     hsize = src_h - src_ibegin;
+  }
 
   for (int i = 0; i < hsize; ++i) {
-    Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
-    Type *destBitmap = this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
+    Type *srcBitmap = src.bitmap + (((src_ibegin + i) * src_w) + src_jbegin);
+    Type *destBitmap = this->bitmap + (((dest_ibegin + i) * dest_w) + dest_jbegin);
 
-    memcpy(static_cast<void *>(destBitmap), static_cast<void *>(srcBitmap), (size_t)wsize * sizeof(Type));
+    memcpy(static_cast<void *>(destBitmap), static_cast<void *>(srcBitmap), static_cast<size_t>(wsize) * sizeof(Type));
   }
 }
 
@@ -1612,9 +1698,11 @@ template <class Type> void vpImage<Type>::halfSizeImage(vpImage<Type> &res) cons
   unsigned int h = height / 2;
   unsigned int w = width / 2;
   res.resize(h, w);
-  for (unsigned int i = 0; i < h; ++i)
-    for (unsigned int j = 0; j < w; ++j)
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       res[i][j] = (*this)[i << 1][j << 1];
+    }
+  }
 }
 
 /*!
@@ -1637,16 +1725,18 @@ template <class Type> void vpImage<Type>::halfSizeImage(vpImage<Type> &res) cons
 template <class Type>
 void vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const
 {
-  if (v_scale == 1 && h_scale == 1) {
+  if ((v_scale == 1) && (h_scale == 1)) {
     sampled = (*this);
     return;
   }
   unsigned int h = height / v_scale;
   unsigned int w = width / h_scale;
   sampled.resize(h, w);
-  for (unsigned int i = 0; i < h; ++i)
-    for (unsigned int j = 0; j < w; ++j)
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       sampled[i][j] = (*this)[i * v_scale][j * h_scale];
+    }
+  }
 }
 
 /*!
@@ -1676,9 +1766,11 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
   unsigned int h = height / 4;
   unsigned int w = width / 4;
   res.resize(h, w);
-  for (unsigned int i = 0; i < h; ++i)
-    for (unsigned int j = 0; j < w; ++j)
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       res[i][j] = (*this)[i << 2][j << 2];
+    }
+  }
 }
 
 /*!
@@ -1715,14 +1807,16 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
 */
 template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 {
-  int h = height * 2;
-  int w = width * 2;
+  unsigned int h = height * 2;
+  unsigned int w = width * 2;
 
   res.resize(h, w);
 
-  for (int i = 0; i < h; ++i)
-    for (int j = 0; j < w; ++j)
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       res[i][j] = (*this)[i >> 1][j >> 1];
+    }
+  }
 
   /*
     A B C
@@ -1733,20 +1827,26 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   */
 
   // interpolate pixels B and I
-  for (int i = 0; i < h; i += 2)
-    for (int j = 1; j < w - 1; j += 2)
-      res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
+  for (unsigned int i = 0; i < h; i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
+      res[i][j] = static_cast<Type>(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
+    }
+  }
 
   // interpolate pixels E and G
-  for (int i = 1; i < h - 1; i += 2)
-    for (int j = 0; j < w; j += 2)
-      res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 0; j < w; j += 2) {
+      res[i][j] = static_cast<Type>(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
+    }
+  }
 
   // interpolate pixel F
-  for (int i = 1; i < h - 1; i += 2)
-    for (int j = 1; j < w - 1; j += 2)
-      res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
-                                 (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
+      res[i][j] = static_cast<Type>(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
+                                            (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
+    }
+  }
 }
 
 /*!
@@ -1763,7 +1863,7 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 */
 template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsigned int j) const
 {
-  if (i >= height || j >= width) {
+  if ((i >= height) || (j >= width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
   }
 
@@ -1788,10 +1888,10 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 */
 template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
-  if (height * width == 0) {
+  if ((height * width) == 0) {
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
@@ -1808,9 +1908,9 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
   unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double value =
-    (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
-    (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround]) * rfrac) + (static_cast<double>(row[iround_1][jround]) * rratio)) * cfrac) +
+    (((static_cast<double>(row[iround][jround_1]) * rfrac) + (static_cast<double>(row[iround_1][jround_1]) * rratio)) *
+    cratio);
 
   return static_cast<Type>(vpMath::round(value));
 }
@@ -1820,10 +1920,10 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 */
 template <> inline double vpImage<double>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
-  if (height * width == 0) {
+  if ((height * width) == 0) {
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
@@ -1839,8 +1939,8 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
   unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
   unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
-  return (row[iround][jround] * rfrac + row[iround_1][jround] * rratio) * cfrac +
-    (row[iround][jround_1] * rfrac + row[iround_1][jround_1] * rratio) * cratio;
+  return (((row[iround][jround] * rfrac) + (row[iround_1][jround] * rratio)) * cfrac) +
+    (((row[iround][jround_1] * rfrac) + (row[iround_1][jround_1] * rratio)) * cratio);
 }
 
 /*!
@@ -1848,45 +1948,45 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
  */
 template <> inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
-  if (height * width == 0) {
+  if ((height * width) == 0) {
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
   // alpha architecture is bi-endianness. The following optimization makes testImageGetValue failing
 #if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN)) && !(defined(__alpha__) || defined(_M_ALPHA))
   // Fixed-point arithmetic
-  const int32_t precision = 1 << 16;
-  int64_t y = static_cast<int64_t>(i * precision);
-  int64_t x = static_cast<int64_t>(j * precision);
+  const uint32_t precision = 1U << 16;
+  uint64_t y = static_cast<uint64_t>(i * precision);
+  uint64_t x = static_cast<uint64_t>(j * precision);
 
-  int64_t iround = y & (~0xFFFF);
-  int64_t jround = x & (~0xFFFF);
+  uint64_t iround = y & (~0xFFFFU);
+  uint64_t jround = x & (~0xFFFFU);
 
-  int64_t rratio = y - iround;
-  int64_t cratio = x - jround;
+  uint64_t rratio = y - iround;
+  uint64_t cratio = x - jround;
 
-  int64_t rfrac = precision - rratio;
-  int64_t cfrac = precision - cratio;
+  uint64_t rfrac = precision - rratio;
+  uint64_t cfrac = precision - cratio;
 
-  int64_t x_ = x >> 16;
-  int64_t y_ = y >> 16;
+  uint64_t x_ = x >> 16;
+  uint64_t y_ = y >> 16;
 
-  if (y_ + 1 < height && x_ + 1 < width) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
-    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ + 1) * width + x_);
+  if (((y_ + 1) < height) && ((x_ + 1) < width)) {
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
+    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + ((y_ + 1) * width) + x_);
 
     return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
                                        ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >>
                                       32);
   }
-  else if (y_ + 1 < height) {
-    return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
+  else if ((y_ + 1) < height) {
+    return static_cast<unsigned char>((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio) >> 16);
   }
-  else if (x_ + 1 < width) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
+  else if ((x_ + 1) < width) {
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
     return static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
   }
   else {
@@ -1923,10 +2023,10 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
  */
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
-  if (height * width == 0) {
+  if ((height * width) == 0) {
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
@@ -1943,20 +2043,20 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
-    (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].R) * rfrac) + (static_cast<double>(row[iround_1][jround].R) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].R) * rfrac) + (static_cast<double>(row[iround_1][jround_1].R) * rratio)) *
+    cratio);
   double valueG =
-    (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].G) * rfrac) + (static_cast<double>(row[iround_1][jround].G) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].G) * rfrac) + (static_cast<double>(row[iround_1][jround_1].G) * rratio)) *
+    cratio);
   double valueB =
-    (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].B) * rfrac) + (static_cast<double>(row[iround_1][jround].B) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].B) * rfrac) + (static_cast<double>(row[iround_1][jround_1].B) * rratio)) *
+    cratio);
 
   return vpRGBa(static_cast<unsigned char>(vpMath::round(valueR)), static_cast<unsigned char>(vpMath::round(valueG)),
                 static_cast<unsigned char>(vpMath::round(valueB)));
@@ -1967,10 +2067,10 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
  */
 template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
-  if (height * width == 0) {
+  if ((height * width) == 0) {
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
@@ -1987,20 +2087,20 @@ template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
   unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
-    (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].R) * rfrac) + (static_cast<double>(row[iround_1][jround].R) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].R) * rfrac) + (static_cast<double>(row[iround_1][jround_1].R) * rratio)) *
+    cratio);
   double valueG =
-    (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].G) * rfrac) + (static_cast<double>(row[iround_1][jround].G) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].G) * rfrac) + (static_cast<double>(row[iround_1][jround_1].G) * rratio)) *
+    cratio);
   double valueB =
-    (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) *
-    cfrac +
-    (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) *
-    cratio;
+    (((static_cast<double>(row[iround][jround].B) * rfrac) + (static_cast<double>(row[iround_1][jround].B) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].B) * rfrac) + (static_cast<double>(row[iround_1][jround_1].B) * rratio)) *
+    cratio);
 
   return vpRGBf(static_cast<float>(valueR), static_cast<float>(valueG), static_cast<float>(valueB));
 }
@@ -2070,7 +2170,7 @@ template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p
     return 0.0;
   }
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
     }
   }
@@ -2119,7 +2219,7 @@ template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, u
   unsigned int nbPointsInMask = 0;
   unsigned int size = height * width;
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
     }
     for (unsigned int i = 0; i < size; ++i) {
@@ -2130,7 +2230,7 @@ template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, u
     }
   }
   else {
-    for (unsigned int i = 0; i < height * width; ++i) {
+    for (unsigned int i = 0; i < (height * width); ++i) {
       res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
     }
     nbPointsInMask = size;
@@ -2161,7 +2261,7 @@ template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, u
   unsigned int nbPointsInMask = 0;
   unsigned int size = height * width;
   if (p_mask) {
-    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    if ((p_mask->getWidth() != width) || (p_mask->getHeight() != height)) {
       throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
     }
     for (unsigned int i = 0; i < size; ++i) {
@@ -2172,7 +2272,7 @@ template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, u
     }
   }
   else {
-    for (unsigned int i = 0; i < height * width; ++i) {
+    for (unsigned int i = 0; i < (height * width); ++i) {
       res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
     }
     nbPointsInMask = size;
@@ -2217,8 +2317,9 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Ty
 {
 
   try {
-    if ((this->getHeight() != C.getHeight()) || (this->getWidth() != C.getWidth()))
+    if ((this->getHeight() != C.getHeight()) || (this->getWidth() != C.getWidth())) {
       C.resize(this->getHeight(), this->getWidth());
+    }
   }
   catch (const vpException &me) {
     std::cout << me << std::endl;
@@ -2229,7 +2330,9 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Ty
     throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction"));
   }
 
-  for (unsigned int i = 0; i < this->getWidth() * this->getHeight(); ++i) {
+  unsigned int this_width = this->getWidth();
+  unsigned int this_height = this->getHeight();
+  for (unsigned int i = 0; i < (this_width * this_height); ++i) {
     *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -2249,8 +2352,9 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
 {
 
   try {
-    if ((A.getHeight() != C.getHeight()) || (A.getWidth() != C.getWidth()))
+    if ((A.getHeight() != C.getHeight()) || (A.getWidth() != C.getWidth())) {
       C.resize(A.getHeight(), A.getWidth());
+    }
   }
   catch (const vpException &me) {
     std::cout << me << std::endl;
@@ -2261,7 +2365,9 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
     throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction "));
   }
 
-  for (unsigned int i = 0; i < A.getWidth() * A.getHeight(); ++i) {
+  unsigned int a_width = A.getWidth();
+  unsigned int a_height = A.getHeight();
+  for (unsigned int i = 0; i < (a_width * a_height); ++i) {
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -2292,16 +2398,16 @@ template <class Type> void vpImage<Type>::performLut(const Type(&)[256], unsigne
 template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
-  unsigned char *ptrStart = (unsigned char *)bitmap;
+  unsigned char *ptrStart = static_cast<unsigned char *>(bitmap);
   unsigned char *ptrEnd = ptrStart + size;
   unsigned char *ptrCurrent = ptrStart;
 
-  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+  bool use_single_thread = ((nbThreads == 0) || (nbThreads == 1));
 #if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
-  if (!use_single_thread && getSize() <= nbThreads) {
+  if ((!use_single_thread) && (getSize() <= nbThreads)) {
     use_single_thread = true;
   }
 
@@ -2371,16 +2477,16 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
 template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
-  unsigned char *ptrStart = (unsigned char *)bitmap;
-  unsigned char *ptrEnd = ptrStart + size * 4;
+  unsigned char *ptrStart = reinterpret_cast<unsigned char *>(bitmap);
+  unsigned char *ptrEnd = ptrStart + (size * 4);
   unsigned char *ptrCurrent = ptrStart;
 
-  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+  bool use_single_thread = ((nbThreads == 0) || (nbThreads == 1));
 #if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
-  if (!use_single_thread && getSize() <= nbThreads) {
+  if ((!use_single_thread) && (getSize() <= nbThreads)) {
     use_single_thread = true;
   }
 
@@ -2444,8 +2550,8 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
 #endif
   }
 }
-
-template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
+END_VISP_NAMESPACE
+template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second)
 {
   using std::swap;
   swap(first.bitmap, second.bitmap);
@@ -2455,5 +2561,4 @@ template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
   swap(first.height, second.height);
   swap(first.row, second.row);
 }
-
 #endif

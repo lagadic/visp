@@ -1,5 +1,5 @@
 //! \example tutorial-image-filter.cpp
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -7,6 +7,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display(vpImage<unsigned char> &I, const std::string &title);
 void display(vpImage<double> &D, const std::string &title);

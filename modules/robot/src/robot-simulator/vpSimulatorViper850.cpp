@@ -51,6 +51,7 @@
 #include "../wireframe-simulator/vpScene.h"
 #include "../wireframe-simulator/vpVwstack.h"
 
+BEGIN_VISP_NAMESPACE
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 
 /*!
@@ -261,7 +262,7 @@ void vpSimulatorViper850::init(vpViper850::vpToolType tool, vpCameraParameters::
   vpRotationMatrix eRc(erc);
 
   m_mutex_eMc.lock();
-  this->eMc.buildFrom(etc, eRc);
+  this->eMc.build(etc, eRc);
   m_mutex_eMc.unlock();
 
   setToolType(tool);
@@ -2055,7 +2056,7 @@ void vpSimulatorViper850::get_cVe(vpVelocityTwistMatrix &cVe)
   vpHomogeneousMatrix cMe;
   vpViper850::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -2358,7 +2359,7 @@ void vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMa
   fMo = fMit[7] * cMo_;
   m_mutex_scene.unlock();
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
 // has no symbols

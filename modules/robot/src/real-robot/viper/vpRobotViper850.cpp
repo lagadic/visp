@@ -51,6 +51,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotViper850.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -204,8 +205,9 @@ vpRobotViper850::vpRobotViper850(bool verbose) : vpViper850(), vpRobot()
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
-    //  vpERROR_TRACE("Error caught") ;
+  }
+  catch (...) {
+ //  vpERROR_TRACE("Error caught") ;
     throw;
   }
   m_positioningVelocity = m_defaultPositioningVelocity;
@@ -268,8 +270,8 @@ void vpRobotViper850::init(void)
     throw(vpException(vpException::ioError, "ATI F/T calib file \"%s\" doesn't exist", calibfile.c_str()));
 #else
   throw(vpException(vpException::ioError, "You don't have access to Viper850 "
-                                          "data to retrieve ATI F/T calib "
-                                          "file"));
+                    "data to retrieve ATI F/T calib "
+                    "file"));
 #endif
   m_ati.setCalibrationFile(calibfile);
   m_ati.open();
@@ -722,9 +724,10 @@ vpRobot::vpRobotStateType vpRobotViper850::setRobotState(vpRobot::vpRobotStateTy
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       Try(PrimitiveSTOP_Viper850());
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     this->powerOn();
     break;
@@ -796,22 +799,25 @@ void vpRobotViper850::powerOn(void)
     if (EStopStatus == ESTOP_AUTO) {
       m_controlMode = AUTO;
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_MANUAL) {
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
       m_controlMode = MANUAL;
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_ACTIVATED) {
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       m_controlMode = ESTOP;
       if (firsttime) {
         std::cout << "Emergency stop is activated! \n"
-                  << "Check the emergency stop button and push the yellow "
-                     "button before continuing."
-                  << std::endl;
+          << "Check the emergency stop button and push the yellow "
+          "button before continuing."
+          << std::endl;
         firsttime = false;
       }
       fprintf(stdout, "Remaining time %us  \r", nitermax - i);
       fflush(stdout);
       CAL_Wait(1);
-    } else {
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
@@ -920,7 +926,7 @@ void vpRobotViper850::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpViper850::get_cMe(cMe);
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 /*!
@@ -963,7 +969,8 @@ void vpRobotViper850::get_eJe(vpMatrix &eJe)
 
   try {
     vpViper850::get_eJe(q, eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -996,7 +1003,8 @@ void vpRobotViper850::get_fJe(vpMatrix &fJe)
 
   try {
     vpViper850::get_fJe(q, fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1172,8 +1180,9 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
       destination.rad2deg();
       Try(PrimitiveMOVE_J_Viper850(destination.data, m_positioningVelocity));
       Try(WaitState_Viper850(ETAT_ATTENTE_VIPER850, 1000));
-    } else {
-      // Cartesian position is out of range
+    }
+    else {
+   // Cartesian position is out of range
       error = -1;
     }
 
@@ -1227,8 +1236,9 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
       std::cout << " : Joint position out of range.\n";
     else
       std::cout << " : Cartesian position leads to a joint position out of "
-                   "range.\n";
-  } else if (TryStt < 0)
+      "range.\n";
+  }
+  else if (TryStt < 0)
     std::cout << " : Unknown error (see Fabien).\n";
   else if (error == -1)
     std::cout << "Position out of range.\n";
@@ -1318,7 +1328,8 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, doubl
     position[5] = pos6;
 
     setPosition(frame, position);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1474,7 +1485,7 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.buildFrom(fRc);
+    rxyz.build(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1703,7 +1714,8 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
 
       for (unsigned int i = 0; i < 6; i++)
         vel_max[i] = getMaxRotationVelocity();
-    } else {
+    }
+    else {
       for (unsigned int i = 0; i < 5; i++)
         vel_max[i] = getMaxRotationVelocity();
       vel_max[5] = getMaxRotationVelocityJoint6();
@@ -1766,12 +1778,14 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
         if (axisInJoint[i])
           std::cout << "\nWarning: Velocity control stopped: axis " << i + 1 << " on joint limit!" << std::endl;
       }
-    } else {
+    }
+    else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != nullptr) {
         // The statement is in TryString, but we need to check the validity
         printf(" Error sentence %s\n", TryString); // Print the TryString
-      } else {
+      }
+      else {
         printf("\n");
       }
     }
@@ -1913,7 +1927,7 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
       vpRotationMatrix cRc;
       cMc.extract(cRc);
       vpThetaUVector thetaU;
-      thetaU.buildFrom(cRc);
+      thetaU.build(cRc);
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame
@@ -1931,7 +1945,8 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
                         "vpRobotViper850::getVelocity() not implemented in end-effector"));
     }
     }
-  } else {
+  }
+  else {
     m_first_time_getvel = false;
   }
 
@@ -2230,7 +2245,8 @@ void vpRobotViper850::move(const std::string &filename)
     this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
     this->setPositioningVelocity(10);
     this->setPosition(vpRobot::ARTICULAR_FRAME, q);
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 }
@@ -2296,7 +2312,8 @@ void vpRobotViper850::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
       return;
     }
     }
-  } else {
+  }
+  else {
     m_first_time_getdis = false;
   }
 
@@ -2324,7 +2341,7 @@ void vpRobotViper850::biasForceTorqueSensor()
   m_ati.bias();
 #else
   throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo "
-                                             "apt-get install libcomedi-dev"));
+                    "apt-get install libcomedi-dev"));
 #endif
 #else // Use serial link
   InitTry;
@@ -2356,7 +2373,7 @@ void vpRobotViper850::unbiasForceTorqueSensor()
   m_ati.unbias();
 #else
   throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo "
-                                             "apt-get install libcomedi-dev"));
+                    "apt-get install libcomedi-dev"));
 #endif
 #else // Use serial link
 // Not implemented
@@ -2410,7 +2427,7 @@ void vpRobotViper850::getForceTorque(vpColVector &H) const
 #else
   (void)H;
   throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo "
-                                             "apt-get install libcomedi-dev"));
+                    "apt-get install libcomedi-dev"));
 #endif
 #else // Use serial link
   InitTry;
@@ -2472,7 +2489,7 @@ vpColVector vpRobotViper850::getForceTorque() const
   return H;
 #else
   throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo "
-                                             "apt-get install libcomedi-dev"));
+                    "apt-get install libcomedi-dev"));
 #endif
 #else // Use serial link
   InitTry;
@@ -2615,9 +2632,9 @@ void vpRobotViper850::setMaxRotationVelocityJoint6(double w6_max)
   \return Maximum rotation velocity on joint 6 expressed in rad/s.
 */
 double vpRobotViper850::getMaxRotationVelocityJoint6() const { return maxRotationVelocity_joint6; }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotViper850.cpp.o) has
 // no symbols
-void dummy_vpRobotViper850(){};
+void dummy_vpRobotViper850() { };
 #endif

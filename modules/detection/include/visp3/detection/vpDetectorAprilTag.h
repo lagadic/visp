@@ -46,6 +46,14 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+BEGIN_VISP_NAMESPACE
+class vpDetectorAprilTag;
+END_VISP_NAMESPACE
+
+// Forward declaration to have the operator in the global namespace
+VISP_EXPORT void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2);
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorAprilTag
  * \ingroup group_detection_tag
@@ -213,7 +221,7 @@
  * Other examples are also provided in tutorial-apriltag-detector.cpp and
  * tutorial-apriltag-detector-live.cpp
  */
-class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
+  class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
 public:
   enum vpAprilTagFamily
@@ -300,7 +308,7 @@ public:
     m_displayTagThickness = thickness;
   }
 
-  friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
+  VISP_EXPORT friend void ::swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 
@@ -417,6 +425,8 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
 
   return os;
 }
+
+END_VISP_NAMESPACE
 
 #endif
 #endif

@@ -60,6 +60,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed,
                 bool &display);
@@ -83,7 +87,7 @@ SYNOPSIS\n\
   %s [-i <input video path>] \n\
      [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -212,8 +216,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -222,9 +226,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath, opt_ppath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  video path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  video path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -239,7 +243,8 @@ int main(int argc, const char **argv)
 
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "video/cube.mpeg");
-    } else {
+    }
+    else {
       filename.assign(opt_ppath);
     }
 
@@ -305,7 +310,8 @@ int main(int argc, const char **argv)
       std::cout << "Click to exit this example" << std::endl;
       vpDisplay::getClick(I);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return EXIT_SUCCESS;

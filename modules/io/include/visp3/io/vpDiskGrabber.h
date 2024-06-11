@@ -45,6 +45,8 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpDiskGrabber
  *
@@ -99,7 +101,7 @@
  *   }
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDiskGrabber : public vpFrameGrabber
 {
 private:
@@ -268,5 +270,7 @@ public:
    */
   void setStep(long step) { m_image_step = step; }
 };
+
+END_VISP_NAMESPACE
 
 #endif

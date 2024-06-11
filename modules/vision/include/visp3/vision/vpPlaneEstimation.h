@@ -52,12 +52,14 @@
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPolygon.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpPlaneEstimation
- * \ingroup group_vision
+ * \ingroup group_vision_plane
  *
  * \note This class is only available with c++17 enabled.
- */
+*/
 class VISP_EXPORT vpPlaneEstimation
 {
 public:
@@ -83,5 +85,5 @@ private:
   //! Maximal subsampling factor applied to the point cloud to estimate a plane
   static constexpr auto MaxSubSampFactorToEstimatePlane { 20u };
 };
-
+END_VISP_NAMESPACE
 #endif

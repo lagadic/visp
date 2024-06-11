@@ -55,6 +55,7 @@
 //#define VP_DEBUG_MODE 12 // Activate debug level up to 12
 #include <visp3/core/vpDebug.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
@@ -431,7 +432,7 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   cMe = vpBiclops::get_cMe();
 
-  cVe.buildFrom(cMe);
+  cVe.build(cMe);
 }
 
 void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }
@@ -852,7 +853,7 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 
   m_q_previous = q_current; // Update for next call of this method
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no symbols
 void dummy_vpRobotBiclops() { };

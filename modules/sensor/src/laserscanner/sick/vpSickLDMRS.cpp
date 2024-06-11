@@ -33,6 +33,13 @@
  *
 *****************************************************************************/
 
+/*!
+
+  \file vpSickLDMRS.cpp
+
+  \brief Driver for the Sick LD-MRS laser scanner.
+*/
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
 #include <errno.h>
@@ -52,13 +59,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-/*!
-
-  \file vpSickLDMRS.cpp
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   Default constructor that initialize the Ethernet address to
@@ -139,9 +140,11 @@ bool vpSickLDMRS::setup()
     if (res < 0 && errno != EINTR) {
       fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno));
       return false;
-    } else if (res > 0) {
+    }
+    else if (res > 0) {
       fprintf(stderr, "ok");
-    } else {
+    }
+    else {
       fprintf(stderr, "Timeout in select() - Cancelling!\n");
       return false;
     }
@@ -275,5 +278,5 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
   return true;
 }
-
+END_VISP_NAMESPACE
 #endif

@@ -33,12 +33,11 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
-
-#include <thread>
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/gui/vpDisplayPCL.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
@@ -228,7 +227,7 @@ void vpDisplayPCL::setVerbose(bool verbose)
 {
   m_verbose = verbose;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayPCL.cpp.o) has no symbols
 void dummy_vpDisplayPCL() { };

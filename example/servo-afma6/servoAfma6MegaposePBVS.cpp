@@ -63,6 +63,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -87,6 +88,10 @@
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 using json = nlohmann::json; //! json namespace shortcut
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
@@ -241,8 +246,8 @@ int main(int argc, const char *argv[])
     vpHomogeneousMatrix cdTc = cdTo * cTo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    t.buildFrom(cdTc);
-    tu.buildFrom(cdTc);
+    t.build(cdTc);
+    tu.build(cdTc);
 
     vpFeatureTranslation td(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
@@ -320,8 +325,8 @@ int main(int argc, const char *argv[])
 
       // Update visual features
       cdTc = cdTo * cTo.inverse();
-      t.buildFrom(cdTc);
-      tu.buildFrom(cdTc);
+      t.build(cdTc);
+      tu.build(cdTc);
       v = task.computeControlLaw();
       velocities.push_back(v);
 
