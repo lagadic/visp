@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,30 +46,30 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, std::shared_ptr<
 {
   pyMbGenericTracker.def("track", [](vpMbGenericTracker &self, std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {
-    std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-    std::map<std::string, vpMatrix> mapOfVectors;
-    for (const auto &point_cloud_pair: mapOfPointClouds) {
+                                       std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+                                       std::map<std::string, vpMatrix> mapOfVectors;
+                                       for (const auto &point_cloud_pair: mapOfPointClouds) {
 
-      py::buffer_info buffer = point_cloud_pair.second.request();
-      if (buffer.ndim != 3 && buffer.shape[2] != 3) {
-        std::stringstream ss;
-        ss << "Pointcloud error: pointcloud at key: " << point_cloud_pair.first <<
-          " should be a 3D numpy array of dimensions H X W x 3";
-        throw std::runtime_error(ss.str());
-      }
-      const auto shape = buffer.shape;
-      mapOfHeights[point_cloud_pair.first] = shape[0];
-      mapOfWidths[point_cloud_pair.first] = shape[1];
-      vpMatrix pc(shape[0] * shape[1], 3);
-      const double *data = point_cloud_pair.second.unchecked<3>().data(0, 0, 0);
-      memcpy(pc.data, data, shape[0] * shape[1] * 3 * sizeof(double));
-      mapOfVectors[point_cloud_pair.first] = std::move(pc);
-    }
-    std::map<std::string, const vpMatrix * > mapOfVectorPtrs;
-    for (const auto &p: mapOfVectors) {
-      mapOfVectorPtrs[p.first] = &(p.second);
-    }
-    self.track(mapOfImages, mapOfVectorPtrs, mapOfWidths, mapOfHeights);
+                                         py::buffer_info buffer = point_cloud_pair.second.request();
+                                         if (buffer.ndim != 3 && buffer.shape[2] != 3) {
+                                           std::stringstream ss;
+                                           ss << "Pointcloud error: pointcloud at key: " << point_cloud_pair.first <<
+                                             " should be a 3D numpy array of dimensions H X W x 3";
+                                           throw std::runtime_error(ss.str());
+                                         }
+                                         const auto shape = buffer.shape;
+                                         mapOfHeights[point_cloud_pair.first] = shape[0];
+                                         mapOfWidths[point_cloud_pair.first] = shape[1];
+                                         vpMatrix pc(shape[0] * shape[1], 3);
+                                         const double *data = point_cloud_pair.second.unchecked<3>().data(0, 0, 0);
+                                         memcpy(pc.data, data, shape[0] * shape[1] * 3 * sizeof(double));
+                                         mapOfVectors[point_cloud_pair.first] = std::move(pc);
+                                       }
+                                       std::map<std::string, const vpMatrix * > mapOfVectorPtrs;
+                                       for (const auto &p: mapOfVectors) {
+                                         mapOfVectorPtrs[p.first] = &(p.second);
+                                       }
+                                       self.track(mapOfImages, mapOfVectorPtrs, mapOfWidths, mapOfHeights);
   }, R"doc(
 Perform tracking, with point clouds being represented as numpy arrays
 

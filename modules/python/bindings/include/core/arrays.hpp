@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +232,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>, std::shared_ptr<vpArray2D<T>>> 
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }), R"doc(
+                         }), R"doc(
 Construct a 2D ViSP array by **copying** a 2D numpy array.
 
 :param np_array: The numpy array to copy.
@@ -256,7 +256,7 @@ void bindings_vpMatrix(py::class_<vpMatrix, std::shared_ptr<vpMatrix>, vpArray2D
     vpMatrix result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }), R"doc(
+                        }), R"doc(
 Construct a matrix by **copying** a 2D numpy array.
 
 :param np_array: The numpy array to copy.
@@ -288,7 +288,7 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, std::shared_ptr<vpRo
       throw std::runtime_error("Input numpy array is not a valid rotation matrix");
     }
     return result;
-  }), R"doc(
+                                }), R"doc(
 Construct a rotation matrix by **copying** a 2D numpy array.
 This numpy array should be of dimensions :math:`3 \times 3` and be a valid rotation matrix.
 If it is not a rotation matrix, an exception will be raised.
@@ -315,7 +315,7 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, std::shared_pt
       throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
     }
     return result;
-  }), R"doc(
+                                   }), R"doc(
 Construct a homogeneous matrix by **copying** a 2D numpy array.
 This numpy array should be of dimensions :math:`4 \times 4` and be a valid homogeneous matrix.
 If it is not a homogeneous matrix, an exception will be raised.
@@ -343,7 +343,7 @@ void bindings_vpTranslationVector(py::class_<vpTranslationVector, std::shared_pt
     vpTranslationVector result;
     copy_data_from_np(np_array, result.data);
     return result;
-  }), R"doc(
+                                   }), R"doc(
 Construct a Translation vector by **copying** a 1D numpy array of size 3.
 
 :param np_array: The numpy 1D array to copy.
@@ -367,7 +367,7 @@ void bindings_vpColVector(py::class_<vpColVector, std::shared_ptr<vpColVector>, 
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }), R"doc(
+                           }), R"doc(
 Construct a column vector by **copying** a 1D numpy array.
 
 :param np_array: The numpy 1D array to copy.
@@ -394,7 +394,7 @@ void bindings_vpRowVector(py::class_<vpRowVector, std::shared_ptr<vpRowVector>, 
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }), R"doc(
+                           }), R"doc(
 Construct a row vector by **copying** a 1D numpy array.
 
 :param np_array: The numpy 1D array to copy.
