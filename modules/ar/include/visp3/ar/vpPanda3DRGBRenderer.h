@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef vpPanda3DRGBRenderer_h
-#define vpPanda3DRGBRenderer_h
+#ifndef VP_PANDA3D_RGB_RENDERER_H
+#define VP_PANDA3D_RGB_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -40,6 +39,7 @@
 #include <visp3/ar/vpPanda3DLight.h>
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d_3d
  * \brief Implementation of a traditional RGB renderer in Panda3D
@@ -60,7 +60,7 @@
  *  - run gltf2bam path/to/yourObject.gltf path/to/yourObject.bam
  *  - then, in the code, use `renderer.addNodeToScene("/path/to/yourObject.bam");`
  *
- */
+*/
 class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer, public vpPanda3DLightableScene
 {
 public:
@@ -115,5 +115,6 @@ private:
 
 };
 
+END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D
 #endif

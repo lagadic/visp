@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef vpPand3DLight_h
-#define vpPand3DLight_h
+#ifndef VP_PANDA3D_LIGHT_H
+#define VP_PANDA3D_LIGHT_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -47,6 +46,7 @@
 #include "pointLight.h"
 #include "directionalLight.h"
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d_lighting
  *
@@ -57,7 +57,7 @@
  *
  * \see https://docs.panda3d.org/1.10/cpp/programming/render-attributes/lighting
  *
- */
+*/
 class VISP_EXPORT vpPanda3DLight
 {
 public:
@@ -269,7 +269,7 @@ private:
   NodePath m_lightableScene; //! Scene that should be lit when calling addLight
 };
 
-
+END_VISP_NAMESPACE
 
 #endif
 #endif

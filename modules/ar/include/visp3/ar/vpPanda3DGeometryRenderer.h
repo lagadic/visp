@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef vpPanda3DGeometryRenderer_h
-#define vpPanda3DGeometryRenderer_h
+#ifndef VP_PANDA3D_GEOMETRY_RENDERER_H
+#define VP_PANDA3D_GEOMETRY_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -39,6 +38,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d_3d
  *
@@ -48,7 +48,7 @@
  *
  * - Normals in the world frame or in the camera frame.
  * - Depth information
- */
+*/
 class VISP_EXPORT vpPanda3DGeometryRenderer : public vpPanda3DBaseRenderer
 {
 public:
@@ -78,10 +78,9 @@ public:
   void getRender(vpImage<vpRGBf> &colorData) const;
   /**
    * @brief Get render results into ViSP readable structures. This version only retrieves the depth data.
-   * @param colorData Depending on the vpRenderType, normals in the world or camera frame may be stored in this image.
+   * @param depth Depending on the vpRenderType, rendered depth may be stored in this image.
    */
   void getRender(vpImage<float> &depth) const;
-
 
   GraphicsOutput *getMainOutputBuffer() vp_override { return m_normalDepthBuffer; }
 
@@ -99,6 +98,6 @@ private:
   static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
 
 };
-
+END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D
 #endif

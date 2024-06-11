@@ -1,8 +1,7 @@
 
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +35,7 @@
 #include <matrixLens.h>
 #include <camera.h>
 
+BEGIN_VISP_NAMESPACE
 void vpPanda3DRenderParameters::setupPandaCamera(Camera *camera)
 {
   // Adapted from Megapose code (https://github.com/megapose6d/megapose6d/blob/master/src/megapose/panda3d_renderer/types.py#L59),
@@ -64,5 +64,11 @@ void vpPanda3DRenderParameters::setupPandaCamera(Camera *camera)
   lens->set_film_offset(m_width * 0.5 - cx, m_height * 0.5 - cy);
   camera->set_lens(lens);
 }
+
+END_VISP_NAMESPACE
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_ar.a(vpPanda3DRenderParameters.cpp.o) has no symbols
+void dummy_vpPanda3DRenderParameters() { };
 
 #endif

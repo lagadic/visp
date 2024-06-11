@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +30,7 @@
  * Description:
  * Use to display an image behind the internal view of the simulator
  * used for augmented reality application
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpAR.cpp
@@ -66,17 +64,16 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
-        Basic Destructor that calls the kill() method of the vpSimulator
-   class.
+  Basic Destructor that calls the kill() method of the vpSimulator class.
 */
 vpAR::~vpAR() { kill(); }
 
 /*!
-        Initialisation of the internal view of the simulator.
+  Initialisation of the internal view of the simulator.
 
-        \param width : Width of the internal view.
-        \param height : Height of the internal view.
-        \param type : Type of background image ie gray scaled or color.
+  \param width : Width of the internal view.
+  \param height : Height of the internal view.
+  \param type : Type of background image ie gray scaled or color.
 */
 void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageType type)
 {
@@ -99,9 +96,9 @@ void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageTy
 }
 
 /*!
-        Set the background image and turn it to deal with the frame of OpenGL.
+  Set the background image and turn it to deal with the frame of OpenGL.
 
-        \param I : Gray scaled image for the background.
+  \param I : Gray scaled image for the background.
 */
 // Grey pictures SetBackGroundImage
 void vpAR::setImage(vpImage<unsigned char> &I)
@@ -122,14 +119,13 @@ void vpAR::setImage(vpImage<unsigned char> &I)
 }
 
 /*!
-        Set the background image and turn it to deal with the frame of OpenGL.
+  Set the background image and turn it to deal with the frame of OpenGL.
 
-        \param I : Color image for the background.
+  \param I : Color image for the background.
 */
 // Color pictures SetBackGroundImage
 void vpAR::setImage(vpImage<vpRGBa> &I)
 {
-
   if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
     throw(vpException(vpException::dimensionError), "The image size is different from the view size");

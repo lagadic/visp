@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *  \brief Error that can be emitted by the vpSimulator class and its derivatives
  */
 
-#ifndef _vpSimulatorException_h_
-#define _vpSimulatorException_h_
+#ifndef VP_SIMULATOR_EXCEPTION_H
+#define VP_SIMULATOR_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>

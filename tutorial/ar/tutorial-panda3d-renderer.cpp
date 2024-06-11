@@ -1,36 +1,4 @@
-/****************************************************************************
- *
- * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
- *
- * This software is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact Inria about acquiring a ViSP Professional
- * Edition License.
- *
- * See https://visp.inria.fr for more information.
- *
- * This software was developed at:
- * Inria Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- *
- * If you have questions regarding the use of this file, please contact
- * Inria at visp@inria.fr
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
-
 //! \example tutorial-panda3d-renderer.cpp
-
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
@@ -53,10 +21,16 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DCommonFilters.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void displayNormals(const vpImage<vpRGBf> &normalsImage,
                     vpImage<vpRGBa> &normalDisplayImage)
 {
+#if defined(_OPENMP)
 #pragma omp parallel for
+#endif
   for (int i = 0; i < normalsImage.getSize(); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
@@ -66,10 +40,13 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage,
   vpDisplay::display(normalDisplayImage);
   vpDisplay::flush(normalDisplayImage);
 }
+
 void displayDepth(const vpImage<float> &depthImage,
                   vpImage<unsigned char> &depthDisplayImage, float nearV, float farV)
 {
+#if defined(_OPENMP)
 #pragma omp parallel for
+#endif
   for (int i = 0; i < depthImage.getSize(); ++i) {
     float val = std::max(0.f, (depthImage.bitmap[i] - nearV) / (farV - nearV));
     depthDisplayImage.bitmap[i] = static_cast<unsigned char>(val * 255.f);
@@ -78,10 +55,11 @@ void displayDepth(const vpImage<float> &depthImage,
   vpDisplay::flush(depthDisplayImage);
 }
 
-
 void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpRGBa> &colorDiffuseOnly, vpImage<unsigned char> &lightDifference)
 {
+#if defined(_OPENMP)
 #pragma omp parallel for
+#endif
   for (int i = 0; i < colorImage.getSize(); ++i) {
     float I1 = 0.299 * colorImage.bitmap[i].R + 0.587 * colorImage.bitmap[i].G + 0.114 * colorImage.bitmap[i].B;
     float I2 = 0.299 * colorDiffuseOnly.bitmap[i].R + 0.587 * colorDiffuseOnly.bitmap[i].G + 0.114 * colorDiffuseOnly.bitmap[i].B;
@@ -90,10 +68,13 @@ void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpR
   vpDisplay::display(lightDifference);
   vpDisplay::flush(lightDifference);
 }
+
 void displayCanny(const vpImage<vpRGBf> &cannyRawData,
                   vpImage<unsigned char> &canny)
 {
+#if defined(_OPENMP)
 #pragma omp parallel for
+#endif
   for (int i = 0; i < cannyRawData.getSize(); ++i) {
     vpRGBf &px = cannyRawData.bitmap[i];
     canny.bitmap[i] = 255 * (px.R * px.R + px.G * px.G > 0);
@@ -174,21 +155,14 @@ int main(int argc, const char **argv)
   //! [Renderer set]
 
   //! [Subrenderers init]
-  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer =
-    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
-  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer =
-    std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer =
-    std::make_shared<vpPanda3DRGBRenderer>();
-  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer =
-    std::make_shared<vpPanda3DRGBRenderer>(false);
-  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter =
-    std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
-  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter =
-    std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
-  std::shared_ptr<vpPanda3DCanny> cannyFilter =
-    std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
-  //! [Subrenderers]
+  std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
+  std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
+  std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
+  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
+  //! [Subrenderers init]
 
   //! [Adding subrenderers]
   renderer.addSubRenderer(geometryRenderer);
@@ -219,25 +193,19 @@ int main(int argc, const char **argv)
   vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
 
-  <<<<<<< HEAD
-    rgbRenderer->printStructure();
   if (!backgroundPath.empty()) {
     vpImage<vpRGBa> background;
     vpImageIo::read(background, backgroundPath);
     rgbRenderer->setBackgroundImage(background);
   }
 
+  rgbRenderer->printStructure();
 
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
-  ====== =
-    renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
-    //! [Scene configuration]
+  //! [Scene configuration]
 
-  rgbRenderer->printStructure();
-
-  >>>>>>> c386b93ae(tutorial structure)
-    unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   std::cout << "Creating display and data images" << std::endl;
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;

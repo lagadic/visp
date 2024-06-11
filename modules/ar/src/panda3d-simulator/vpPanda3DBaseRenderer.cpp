@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +37,7 @@
 #include "load_prc_file.h"
 #include <antialiasAttrib.h>
 
+BEGIN_VISP_NAMESPACE
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
   1.0, 0.0, 0.0, 0.0,
   0.0, 0.0, -1., 0.0,
@@ -73,7 +73,6 @@ void vpPanda3DBaseRenderer::initFramework()
   setupRenderTarget();
   //m_window->get_display_region_3d()->set_camera(m_cameraPath);
 }
-
 
 void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
 {
@@ -208,10 +207,7 @@ void vpPanda3DBaseRenderer::enableDebugLog()
 {
   load_prc_file_data("", "gl-debug 1");
   load_prc_file_data("", "notify-level-display spam");
-
 }
-
-
 
 vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
 {
@@ -225,12 +221,15 @@ vpColVector vpPanda3DBaseRenderer::vispVectorToPanda(const vpColVector &point)
   return pandaPos;
 }
 
-
-
 void vpPanda3DBaseRenderer::printStructure()
 {
   m_renderRoot.ls();
 }
 
+END_VISP_NAMESPACE
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_ar.a(vpPanda3DBaseRenderer.cpp.o) has no symbols
+void dummy_vpPanda3DBaseRenderer() { };
 
 #endif

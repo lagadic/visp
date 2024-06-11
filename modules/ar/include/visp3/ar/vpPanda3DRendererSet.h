@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +28,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef vpPanda3DRendererSet_h
-#define vpPanda3DRendererSet_h
+#ifndef VP_PANDA3D_RENDERER_SET_H
+#define VP_PANDA3D_RENDERER_SET_H
+
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PANDA3D)
@@ -40,6 +40,7 @@
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 #include <visp3/ar/vpPanda3DLight.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d
  *
@@ -55,7 +56,7 @@
  *  3. Add the subrenderers to the set with addSubRenderer
  *  4. Call renderFrame() on the rendererSet. Each subrenderer now has its output computed and ready to be retrieved
  *  5. Retrieve relevant outputs in ViSP format with something similar to `rendererSet.getRenderer<RendererType>("MyRendererName").getRender(I)` where RendererType is the relevant subclass of vpPanda3DBaseRenderer and "MyRendererName" its name (see vpPanda3DBaseRenderer::getName)
- */
+*/
 class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer, public vpPanda3DLightable
 {
 public:
@@ -125,12 +126,11 @@ public:
    *
    * \throws vpException, as this method is not supported
    * @param object
-   * @param wTo
    */
   vpHomogeneousMatrix getNodePose(NodePath &object) vp_override;
 
   /**
-   * \warn this method is not supported and will throw
+   * \warning This method is not supported and will throw
    */
   void addNodeToScene(const NodePath &object) vp_override;
 
@@ -193,6 +193,6 @@ protected:
 private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

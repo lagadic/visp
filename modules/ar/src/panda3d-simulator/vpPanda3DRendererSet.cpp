@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +34,7 @@
 
 #include "load_prc_file.h"
 
+BEGIN_VISP_NAMESPACE
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
@@ -167,7 +167,7 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
     ++it;
   }
   m_subRenderers.insert(it, renderer);
-  for (const auto r: m_subRenderers) {
+  for (const auto &r: m_subRenderers) {
     std::cout << r->getName() << " ";
   }
   std::cout << std::endl;
@@ -178,5 +178,11 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
     renderer->setCameraPose(getCameraPose());
   }
 }
+
+END_VISP_NAMESPACE
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols
+void dummy_vpPanda3DRendererSet() { };
 
 #endif

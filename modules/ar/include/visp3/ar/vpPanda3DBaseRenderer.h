@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef vpPanda3DBaseRenderer_h
-#define vpPanda3DBaseRenderer_h
+#ifndef VP_PANDA3D_BASE_RENDERER_H
+#define VP_PANDA3D_BASE_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -42,6 +41,7 @@
 #include <pandaFramework.h>
 #include <pandaSystem.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d
  *
@@ -53,7 +53,7 @@
  * - setupScene: This is where you should apply your shaders.
  * - setupCamera: This is where cameras are created and intrinsics parameters are applied
  * - setupRenderTarget: This is where you should create the texture buffers, where the render results should be stored.
- */
+*/
 class VISP_EXPORT vpPanda3DBaseRenderer
 {
 public:
@@ -69,8 +69,6 @@ public:
    * @brief Initialize the whole Panda3D framework. Create a new PandaFramework object and a new window.
    *
    * Will also perform the renderer setup (scene, camera and render targets)
-   *
-   * @param showWindow whether the created window should be visible
    */
   virtual void initFramework();
 
@@ -291,5 +289,6 @@ protected:
   std::vector<GraphicsOutput *> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
 };
 
+END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D
 #endif

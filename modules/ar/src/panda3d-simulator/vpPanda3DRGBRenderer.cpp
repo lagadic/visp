@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +36,7 @@
 #include "cardMaker.h"
 #include "texturePool.h"
 
+BEGIN_VISP_NAMESPACE
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT = R"shader(
 #version 330
 
@@ -146,7 +146,6 @@ vec3 F(vec3 F0, float vh)
   return F0 + (vec3(1.f, 1.f, 1.f) - F0) * pow(1.f - vh, 5);
 }
 
-
 void main()
 {
   vec3 n = normalize(oNormal); // normalized normal vector
@@ -241,7 +240,6 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
   setNodePose(objectInScene, vpHomogeneousMatrix());
 }
 
-
 void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
 {
 
@@ -287,7 +285,6 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
       destRow[j * 4 + 3] = srcRow[j].A;
     }
   }
-
 }
 
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
@@ -311,8 +308,6 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
     }
     data += rowIncrement;
   }
-
-
 }
 
 void vpPanda3DRGBRenderer::setupScene()
@@ -333,7 +328,6 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   fbp.set_depth_bits(16);
   fbp.set_rgba_bits(8, 8, 8, 8);
   fbp.set_srgb_color(true);
-
 
   WindowProperties win_prop;
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
@@ -365,5 +359,11 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   region->set_camera(m_cameraPath);
   region->set_clear_color(LColor(0.f));
 }
+
+END_VISP_NAMESPACE
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_ar.a(vpPanda3DRGBRenderer.cpp.o) has no symbols
+void dummy_vpPanda3DRGBRenderer() { };
 
 #endif
