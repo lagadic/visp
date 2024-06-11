@@ -51,6 +51,10 @@
 
 #include <visp3/core/vpTranslationVector.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 template <typename Type> bool test(const std::string &s, const vpArray2D<Type> &A, const std::vector<Type> &bench)
 {
   static unsigned int cpt = 0;

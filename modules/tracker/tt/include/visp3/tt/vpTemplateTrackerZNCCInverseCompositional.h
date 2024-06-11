@@ -46,8 +46,10 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerZNCC.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerZNCCInverseCompositional
   \ingroup group_tt_tracker
@@ -68,4 +70,5 @@ protected:
 public:
   explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
 };
+END_VISP_NAMESPACE
 #endif

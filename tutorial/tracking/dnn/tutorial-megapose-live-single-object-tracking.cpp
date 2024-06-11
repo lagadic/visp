@@ -27,6 +27,10 @@
 
 using json = nlohmann::json; //! json namespace shortcut
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*
  * Interpolate two vpColors. Linear interpolation between each components (R, G, B)
  *

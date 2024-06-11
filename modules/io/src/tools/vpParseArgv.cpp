@@ -32,6 +32,8 @@
 #include <string.h>
 #include <visp3/io/vpParseArgv.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*
  * Default table of argument descriptors.  These are normally available
  * in every application.
@@ -39,7 +41,7 @@
 
 vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
     {"-help", ARGV_HELP, (char *)nullptr, (char *)nullptr, "Print summary of command-line options and abort.\n"},
-    {nullptr, ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr}};
+    {nullptr, ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr} };
 
 int (*handlerProc1)(const char *dst, const char *key, const char *argument);
 int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **argument);
@@ -94,7 +96,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   if (flags & ARGV_DONT_SKIP_FIRST_ARG) {
     srcIndex = dstIndex = 0;
     argc = *argcPtr;
-  } else {
+  }
+  else {
     srcIndex = dstIndex = 1;
     argc = *argcPtr - 1;
   }
@@ -116,7 +119,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
     for (unsigned int i = 0; i < 2; ++i) {
       if (i == 0) {
         infoPtr = argTable;
-      } else {
+      }
+      else {
         infoPtr = defaultTable;
       }
       for (; infoPtr->type != ARGV_END; ++infoPtr) {
@@ -175,7 +179,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
-        } else {
+        }
+        else {
           char *endPtr = nullptr;
 
           *(((int *)infoPtr->dst) + i) = (int)strtol(argv[srcIndex], &endPtr, 0);
@@ -195,7 +200,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
-        } else {
+        }
+        else {
           char *endPtr = nullptr;
 
           *(((long *)infoPtr->dst) + i) = strtol(argv[srcIndex], &endPtr, 0);
@@ -215,7 +221,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
-        } else {
+        }
+        else {
           *(((const char **)infoPtr->dst) + i) = argv[srcIndex];
           srcIndex++;
           argc--;
@@ -232,7 +239,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
-        } else {
+        }
+        else {
           char *endPtr;
 
           *(((float *)infoPtr->dst) + i) = (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
@@ -253,7 +261,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
-        } else {
+        }
+        else {
           char *endPtr;
 
           *(((double *)infoPtr->dst) + i) = strtod(argv[srcIndex], &endPtr);
@@ -379,7 +388,8 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);
-        } else {
+        }
+        else {
           FPRINTF(stderr, "%s", spaces + NUM_SPACES - numSpaces);
         }
         numSpaces -= NUM_SPACES;
@@ -522,38 +532,45 @@ int vpParseArgv::parse(int argc, const char **argv, const char *validOpts, const
                 // next argv is the param
                 iArg++;
                 pszParam = psz;
-              } else {
-                // reached end of args looking for param
-                // option specified without parameter
+              }
+              else {
+             // reached end of args looking for param
+             // option specified without parameter
                 chOpt = -1;
                 pszParam = &(argv[iArg][0]);
               }
 
-            } else {
-              // param is attached to option
+            }
+            else {
+           // param is attached to option
               pszParam = psz;
             }
-          } else {
-            // option is alone, has no parameter
           }
-        } else {
-          // option specified is not in list of valid options
+          else {
+         // option is alone, has no parameter
+          }
+        }
+        else {
+       // option specified is not in list of valid options
           chOpt = -1;
           pszParam = &(argv[iArg][0]);
         }
-      } else {
-        // though option specifier was given, option character
-        // is not alpha or was was not specified
+      }
+      else {
+     // though option specifier was given, option character
+     // is not alpha or was was not specified
         chOpt = -1;
         pszParam = &(argv[iArg][0]);
       }
-    } else {
-      // standalone arg given with no option specifier
+    }
+    else {
+   // standalone arg given with no option specifier
       chOpt = 1;
       pszParam = &(argv[iArg][0]);
     }
-  } else {
-    // end of argument list
+  }
+  else {
+ // end of argument list
     chOpt = 0;
   }
 
@@ -561,3 +578,5 @@ int vpParseArgv::parse(int argc, const char **argv, const char *validOpts, const
   *param = pszParam;
   return (chOpt);
 }
+
+END_VISP_NAMESPACE

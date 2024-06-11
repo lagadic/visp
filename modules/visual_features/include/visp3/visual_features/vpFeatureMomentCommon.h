@@ -40,6 +40,7 @@
 
 #ifndef _vpFeatureMomentCommon_h_
 #define _vpFeatureMomentCommon_h_
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMomentAlpha.h>
 #include <visp3/visual_features/vpFeatureMomentArea.h>
 #include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
@@ -51,6 +52,7 @@
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 class vpServo;
 /*!
@@ -212,7 +214,7 @@ class vpServo;
  * Gain : Zero= 1  Inf= 1  Deriv= 0
  *
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureMomentCommon : public vpFeatureMomentDatabase
 {
 private:
@@ -266,5 +268,5 @@ public:
    */
   vpFeatureMomentGravityCenter &getFeatureGravityCenter() { return featureGravity; }
 };
-
+END_VISP_NAMESPACE
 #endif

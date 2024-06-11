@@ -52,6 +52,7 @@
 
 extern char *mytext; /* chaine du symbole courant  */
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fscanf_float" lit en ascii un nombre flottant.
  * Entree :
@@ -123,5 +124,5 @@ void fscanf_Type(Type *ip)
     lexerr("start", "integer expected", NULL);
   *ip = (Type)myint;
 }
-
+END_VISP_NAMESPACE
 #endif

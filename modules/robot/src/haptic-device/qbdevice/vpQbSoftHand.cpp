@@ -40,6 +40,7 @@
 
 #include <visp3/robot/vpQbSoftHand.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that does nothing.
  * To connect to a device call init().
@@ -204,4 +205,5 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
     vpTime::wait(t0, delta_t);
   } while (!vpMath::equal(q[0], position[0], precision) && !(current_failures > 1));
 }
+END_VISP_NAMESPACE
 #endif

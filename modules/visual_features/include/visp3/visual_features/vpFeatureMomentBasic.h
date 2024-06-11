@@ -44,6 +44,7 @@
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 /*!
  * \class vpFeatureMomentBasic
@@ -72,7 +73,7 @@ class vpMomentDatabase;
  *
  * This feature depends on:
  * - vpMomentBasic
- */
+*/
 class VISP_EXPORT vpFeatureMomentBasic : public vpFeatureMoment
 {
 protected:
@@ -110,4 +111,5 @@ public:
     return "vpFeatureMomentBasic";
   }
 };
+END_VISP_NAMESPACE
 #endif

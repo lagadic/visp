@@ -60,6 +60,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 
+BEGIN_VISP_NAMESPACE
 const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;
 const unsigned int vpV4l2Grabber::DEFAULT_SCALE = 2;
 const __u32 vpV4l2Grabber::MAX_INPUTS = 16;
@@ -1465,7 +1466,7 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
   this->acquire(I);
   return *this;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
 void dummy_vpV4l2Grabber() { };

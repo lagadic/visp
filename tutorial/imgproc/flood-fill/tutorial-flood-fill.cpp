@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -11,6 +12,10 @@
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -251,7 +256,7 @@ int main()
       switch (button) {
       case vpMouseButton::button1:
         //! [Flood fill]
-        vp::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
+        VISP_NAMESPACE_NAME::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
         //! [Flood fill]
 
         //! [Bucket fill]

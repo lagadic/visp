@@ -42,6 +42,7 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   To set the values of centred moments. Required when normalizing the moment
   values.
@@ -68,7 +69,7 @@ void vpMomentCentered::compute()
   values.resize((getObject().getOrder() + 1) * (getObject().getOrder() + 1));
 
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
   if (!found_moment_gravity)
     throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
@@ -92,7 +93,7 @@ void vpMomentCentered::compute()
 /*!
   Default constructor.
 */
-vpMomentCentered::vpMomentCentered() : vpMoment() {}
+vpMomentCentered::vpMomentCentered() : vpMoment() { }
 
 /*!
   Gets the desired moment using indexes.
@@ -110,42 +111,6 @@ double vpMomentCentered::get(unsigned int i, unsigned int j) const
                                              "specify a higher order.");
 
   return values[j * (order + 1) + i];
-}
-
-/*!
-  Outputs the centered moment's values \f$\mu_{ij}\f$ to a stream presented as
-a matrix. The first line corresponds to \f$\mu_{0[0:order]}\f$, the second one
-to \f$\mu_{1[0:order]}\f$ Values in table corresponding to a higher order are
-marked with an "x" and not computed.
-
-  For example, if the maximal order is 3, the following values are provided:
-
-  \code
-u00 u10 u20 u30
-u01 u11 u21 x
-u02 u12  x  x
-u30 x    x  x
-  \endcode
-
- This output will be followed by an output with indexes as produced by
-printWithIndices() function
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &m)
-{
-  for (unsigned int i = 0; i < m.values.size(); i++) {
-    if (i % (m.getObject().getOrder() + 1) == 0)
-      os << std::endl;
-
-    if ((i % (m.getObject().getOrder() + 1) + i / (m.getObject().getOrder() + 1)) < m.getObject().getOrder() + 1)
-      os << m.values[i];
-    else
-      os << "x";
-
-    os << "\t";
-  }
-  os << std::endl;
-  m.printWithIndices(os);
-  return os;
 }
 
 /*!
@@ -183,9 +148,46 @@ void vpMomentCentered::printDependencies(std::ostream &os) const
   */
   bool found_moment_gravity;
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
   if (!found_moment_gravity)
     throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   os << "Xg = " << momentGravity.getXg() << "\t"
-     << "Yg = " << momentGravity.getYg() << std::endl;
+    << "Yg = " << momentGravity.getYg() << std::endl;
 }
+
+/*!
+  Outputs the centered moment's values \f$\mu_{ij}\f$ to a stream presented as
+a matrix. The first line corresponds to \f$\mu_{0[0:order]}\f$, the second one
+to \f$\mu_{1[0:order]}\f$ Values in table corresponding to a higher order are
+marked with an "x" and not computed.
+
+  For example, if the maximal order is 3, the following values are provided:
+
+  \code
+u00 u10 u20 u30
+u01 u11 u21 x
+u02 u12  x  x
+u30 x    x  x
+  \endcode
+
+ This output will be followed by an output with indexes as produced by
+printWithIndices() function
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &m)
+{
+  for (unsigned int i = 0; i < m.values.size(); i++) {
+    if (i % (m.getObject().getOrder() + 1) == 0)
+      os << std::endl;
+
+    if ((i % (m.getObject().getOrder() + 1) + i / (m.getObject().getOrder() + 1)) < m.getObject().getOrder() + 1)
+      os << m.values[i];
+    else
+      os << "x";
+
+    os << "\t";
+  }
+  os << std::endl;
+  m.printWithIndices(os);
+  return os;
+}
+END_VISP_NAMESPACE

@@ -39,6 +39,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Construct an homography model with 8 parameters initialized to zero.
  */
@@ -151,7 +152,8 @@ void vpTemplateTrackerWarpHomography::computeDenom(vpColVector &X, const vpColVe
 
   if (std::fabs(value) > std::numeric_limits<double>::epsilon()) {
     denom = (1. / value);
-  } else {
+  }
+  else {
     throw(vpTrackingException(vpTrackingException::fatalError,
                               "Division by zero in vpTemplateTrackerWarpHomography::computeDenom()"));
   }
@@ -259,10 +261,11 @@ void vpTemplateTrackerWarpHomography::warpXInv(const vpColVector &X1, vpColVecto
   if (std::fabs(value) > std::numeric_limits<double>::epsilon()) {
     X2[0] = ((1 + p[0]) * X1[0] + p[3] * X1[1] + p[6]) / value;
     X2[1] = (p[1] * X1[0] + (1 + p[4]) * X1[1] + p[7]) / value;
-  } else {
+  }
+  else {
     throw(vpTrackingException(vpTrackingException::fatalError, "Division by zero in "
-                                                               "vpTemplateTrackerWarpHomography::"
-                                                               "warpXInv()"));
+                              "vpTemplateTrackerWarpHomography::"
+                              "warpXInv()"));
   }
 }
 
@@ -400,3 +403,4 @@ void vpTemplateTrackerWarpHomography::pRondp(const vpColVector &p1, const vpColV
   p12[2] = (h1_20 * h2_00 + h1_21 * h2_10 + h2_20) / h12_22;
   p12[5] = (h1_20 * h2_01 + h1_21 * h2_11 + h2_21) / h12_22;
 }
+END_VISP_NAMESPACE

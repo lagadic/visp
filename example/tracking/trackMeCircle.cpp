@@ -70,6 +70,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam, std::string ipath);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
 

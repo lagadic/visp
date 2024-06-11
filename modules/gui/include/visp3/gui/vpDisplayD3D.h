@@ -31,14 +31,15 @@
  * Windows 32 display using D3D
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplay.h>
-#if (defined(VISP_HAVE_D3D9))
-
 #ifndef VPDISPLAYD3D_HH
 #define VPDISPLAYD3D_HH
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
+#if (defined(VISP_HAVE_D3D9))
 #include <visp3/gui/vpDisplayWin32.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpDisplayD3D
@@ -96,7 +97,7 @@
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayD3D : public vpDisplayWin32
 {
 public:
@@ -110,5 +111,7 @@ public:
                vpScaleType type = SCALE_DEFAULT);
 
 };
+
+END_VISP_NAMESPACE
 #endif
 #endif

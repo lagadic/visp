@@ -40,8 +40,9 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+namespace VISP_NAMESPACE_NAME
 {
+
 bool isBimodal(const std::vector<float> &hist_float)
 {
   int modes = 0;
@@ -265,14 +266,15 @@ int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
   int threshold = 0;
 
   bool w_f_eq_nul = false;
-  for (int cpt = 0; (cpt < 256) && (w_f_eq_nul == false); ++cpt) {
+  int cpt = 0;
+  while ((cpt < 256) && (!w_f_eq_nul)) {
     w_B += hist[cpt];
     bool w_b_eq_nul = vpMath::nul(w_B, std::numeric_limits<float>::epsilon());
-    if (w_b_eq_nul == false) {
+    if (!w_b_eq_nul) {
 
       w_F = static_cast<int>(imageSize) - w_B;
       w_f_eq_nul = vpMath::nul(w_F, std::numeric_limits<float>::epsilon());
-      if (w_f_eq_nul == false) {
+      if (!w_f_eq_nul) {
 
       // Mean Background / Foreground
         float mu_B = sum_ip_all[cpt] / static_cast<float>(w_B);
@@ -288,6 +290,7 @@ int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
       }
       // else exit the loop
     }
+    ++cpt;
   }
 
   return threshold;
@@ -368,10 +371,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
   return threshold;
 }
-} // namespace
 
-namespace vp
-{
 unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                             const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
@@ -420,4 +420,5 @@ unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMeth
 
   return threshold;
 }
-};
+
+} // namespace

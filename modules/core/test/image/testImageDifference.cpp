@@ -44,6 +44,10 @@
 
   \brief Test vpImageTools::imageDifference()
 */
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -94,7 +98,7 @@ int main()
   unsigned int width = 501, height = 447;
   vpImage<unsigned char> I1(height, width), I2(height, width), Idiff_regular(height, width), Idiff_sse(height, width);
   vpImage<vpRGBa> I1_color(height, width), I2_color(height, width), Idiff_regular_color(height, width),
-      Idiff_sse_color(height, width);
+    Idiff_sse_color(height, width);
   for (unsigned int i = 0; i < I1.getRows(); i++) {
     for (unsigned int j = 0; j < I1.getCols(); j++) {
       I1[i][j] = static_cast<unsigned char>(i * I1.getCols() + j);
@@ -212,7 +216,7 @@ int main()
     }
   }
 
-    {
+  {
     std::cout << "Test vpRGBf" << std::endl;
     vpRGBf rgbf_1(10.f, 20.f, 30.f);
     vpRGBf rgbf_2(10.f, 20.f, 30.f);

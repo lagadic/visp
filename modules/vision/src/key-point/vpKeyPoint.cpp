@@ -43,6 +43,8 @@
 #include <pugixml.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 namespace
 {
 // Specific Type transformation functions
@@ -4215,6 +4217,8 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
 }
 #endif
 #endif
+
+END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols

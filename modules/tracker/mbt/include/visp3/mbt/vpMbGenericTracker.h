@@ -50,6 +50,7 @@
 #include <visp3/core/vpJsonParsing.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbGenericTracker
  * \ingroup group_mbt_trackers
@@ -195,7 +196,7 @@
  *   "version": "1.0"
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:
@@ -866,7 +867,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
-  });
+});
 #endif
 
 /**
@@ -1071,5 +1072,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
 }
 
 #endif
+
+END_VISP_NAMESPACE
 
 #endif

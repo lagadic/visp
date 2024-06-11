@@ -54,17 +54,18 @@
 
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 class vpForceTorqueGenerator
 {
 public:
-  vpForceTorqueGenerator() {}
-  virtual ~vpForceTorqueGenerator() {}
+  vpForceTorqueGenerator() { }
+  virtual ~vpForceTorqueGenerator() { }
 
   void control_thread(franka::Robot *robot, std::atomic_bool &stop, const std::string &log_folder,
                       const vpRobot::vpControlFrameType &frame, const std::array<double, 7> &tau_J_des,
                       const vpColVector &ft_cart_des, franka::RobotState &robot_state, std::mutex &mutex,
                       const double &filter_gain, const bool &activate_pi_controller);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

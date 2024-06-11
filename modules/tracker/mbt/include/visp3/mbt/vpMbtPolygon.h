@@ -39,6 +39,7 @@
 #ifndef vpMbtPolygon_HH
 #define vpMbtPolygon_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
@@ -46,6 +47,7 @@
 
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbtPolygon
  *
@@ -53,7 +55,7 @@
  * tracker.
  *
  * \ingroup group_mbt_faces
- */
+*/
 class VISP_EXPORT vpMbtPolygon : public vpPolygon3D
 {
 public:
@@ -155,5 +157,5 @@ public:
    */
   inline void setIsPolygonOriented(const bool &oriented) { this->hasOrientation = oriented; }
 };
-
+END_VISP_NAMESPACE
 #endif

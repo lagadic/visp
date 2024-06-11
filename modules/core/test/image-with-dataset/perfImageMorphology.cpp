@@ -46,6 +46,9 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
 
 TEST_CASE("Benchmark binary image morphology", "[benchmark]")
@@ -238,7 +241,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 }
 #endif
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
 

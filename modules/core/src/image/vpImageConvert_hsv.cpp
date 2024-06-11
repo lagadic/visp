@@ -45,6 +45,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Convert an HSV image to a RGB or RGBa image depending on the value of \e step.
  * \param[in] hue_ : Image hue channel in range [0,1].
@@ -555,3 +556,4 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsi
 {
   vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3, h_full);
 }
+END_VISP_NAMESPACE

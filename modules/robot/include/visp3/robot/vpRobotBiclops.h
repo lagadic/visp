@@ -57,6 +57,7 @@
 /* --- CLASS -------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotBiclops
  *
@@ -86,7 +87,7 @@
  * \warning With the understanding that hitting the hard limits at full
  * speed/power can damage the unit, damage due to velocity mode commanding is
  * under user responsibility.
- */
+*/
 class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
 {
 public:
@@ -439,7 +440,7 @@ private:
   //  }
   //#endif
 };
-
+END_VISP_NAMESPACE
 #endif /* #ifndef _vpRobotBiclops_h_ */
 
 #endif

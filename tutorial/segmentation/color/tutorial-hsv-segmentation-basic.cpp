@@ -1,3 +1,4 @@
+#include <visp3/core/vpConfig.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
@@ -5,6 +6,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<vpRGBa> I;
   vpImageIo::read(I, "ballons.jpg");
 

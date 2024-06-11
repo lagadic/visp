@@ -42,6 +42,7 @@
 #include <stdlib.h>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -58,6 +59,10 @@
 #define GETOPTARGS "cdh"
 
 #ifdef VISP_HAVE_DISPLAY
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &display, bool &click);
@@ -265,17 +270,17 @@ Create a display for each different cameras.
 
     std::cout << std::endl;
     std::cout << "Here are presented the effect of the basic functions of "
-                 "the simulator"
-              << std::endl;
+      "the simulator"
+      << std::endl;
     std::cout << std::endl;
 
     if (opt_display) {
       if (opt_click) {
         std::cout << "Click on the internal view window to continue. the "
-                     "object will move. The external cameras are fixed. The "
-                     "main camera moves too because the homogeneous matrix "
-                     "cMo didn't change."
-                  << std::endl;
+          "object will move. The external cameras are fixed. The "
+          "main camera moves too because the homogeneous matrix "
+          "cMo didn't change."
+          << std::endl;
         vpDisplay::getClick(Iint);
       }
       vpDisplay::display(Iint);
@@ -313,9 +318,9 @@ Create a display for each different cameras.
     }
     std::cout << std::endl;
     std::cout << "Now you can move the main external camera. Click inside "
-                 "the corresponding window with one of the three buttons of "
-                 "your mouse and move the pointer."
-              << std::endl;
+      "the corresponding window with one of the three buttons of "
+      "your mouse and move the pointer."
+      << std::endl;
     std::cout << std::endl;
     std::cout << "Click on the internal view window when you are finished" << std::endl;
 
@@ -334,12 +339,13 @@ Create a display for each different cameras.
 
     std::cout << std::endl;
     std::cout << "You have seen the main capabilities of the simulator. "
-                 "Other specific functionalities are available. Please "
-                 "refers to the html documentation to access the list of all "
-                 "functions"
-              << std::endl;
+      "Other specific functionalities are available. Please "
+      "refers to the html documentation to access the list of all "
+      "functions"
+      << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_SUCCESS;
   }
@@ -348,12 +354,12 @@ Create a display for each different cameras.
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

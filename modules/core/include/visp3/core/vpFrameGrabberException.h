@@ -32,25 +32,25 @@
  * derivates.
  */
 
-#ifndef _vpFrameGrabberException_h_
-#define _vpFrameGrabberException_h_
-
 /*!
  * \file vpFrameGrabberException.h
  *  \brief error that can be emitted by the vpFrameGrabber class and its
  *  derivates
  */
 
+#ifndef _vpFrameGrabberException_h_
+#define _vpFrameGrabberException_h_
+
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \brief Error that can be emitted by the vpFrameGrabber class and its
  * derivates.
- */
+*/
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:
@@ -88,5 +88,5 @@ public:
    */
   explicit vpFrameGrabberException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

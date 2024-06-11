@@ -44,6 +44,7 @@
    Describe a curve thanks to a BSpline.
  */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
 #include <visp3/core/vpBSpline.h>
@@ -70,6 +71,10 @@
 
  // List of allowed command line options
 #define GETOPTARGS "cdh"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
@@ -284,11 +289,11 @@ int main(int argc, const char **argv)
     }
 
     if (N != nullptr)
-      delete [] N;
+      delete[] N;
     if (N2 != nullptr) {
       for (unsigned int j = 0; j <= 2; j++)
-        delete [] N2[j];
-      delete [] N2;
+        delete[] N2[j];
+      delete[] N2;
     }
 
     return EXIT_SUCCESS;
@@ -310,5 +315,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif

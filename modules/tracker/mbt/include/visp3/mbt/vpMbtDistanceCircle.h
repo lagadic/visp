@@ -41,6 +41,7 @@
 #ifndef vpMbtDistanceCircle_HH
 #define vpMbtDistanceCircle_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCircle.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
@@ -48,6 +49,7 @@
 #include <visp3/mbt/vpMbtMeEllipse.h>
 #include <visp3/visual_features/vpFeatureEllipse.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtDistanceCircle
 
@@ -249,5 +251,5 @@ public:
 private:
   void project(const vpHomogeneousMatrix &cMo);
 };
-
+END_VISP_NAMESPACE
 #endif

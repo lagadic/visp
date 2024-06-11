@@ -56,6 +56,7 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 double computeDelta(double deltai, double deltaj);
 void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt);
 vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP);
@@ -1094,3 +1095,4 @@ void vpMeNurbs::display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &col
     u += 0.01;
   }
 }
+END_VISP_NAMESPACE

@@ -1,4 +1,5 @@
 /*! \example tutorial-grabber-multiple-realsense.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -14,6 +15,9 @@ int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) \
   && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::vector<std::pair<std::string, std::string> > type_serial_nb;
   std::vector<bool> cam_found;
 
@@ -116,7 +120,7 @@ int main(int argc, char **argv)
     if (clicked) {
       break;
     }
-  }
+}
 #else
   (void)argc;
   (void)argv;

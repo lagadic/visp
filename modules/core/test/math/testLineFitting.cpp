@@ -48,6 +48,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void convertLineEquation(double A, double B, double C, double &a, double &b)
@@ -121,7 +125,7 @@ TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]")
     double y = a * x + b;
     imPts.push_back(vpImagePoint(y + gauss(), x + gauss()));
     std::cout << "x: " << x << " ; y: " << y << " ; imPts: (" << imPts.back().get_u() << ", " << imPts.back().get_v()
-              << ")" << std::endl;
+      << ")" << std::endl;
   }
 
   double A = 0, B = 0, C = 0;

@@ -45,8 +45,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 void skip_cmd(void);
 void skip_keyword(int token, const char *err);
-
+END_VISP_NAMESPACE
 #endif
 #endif

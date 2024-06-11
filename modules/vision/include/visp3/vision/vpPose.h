@@ -62,6 +62,8 @@
 
 #include <visp3/core/vpUniRand.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpPose
  * \ingroup group_vision_pose
@@ -73,7 +75,7 @@
  * vpPoseFeatures class.
  *
  * To see how to use this class you can follow the \ref tutorial-pose-estimation.
- */
+*/
 class VISP_EXPORT vpPose
 {
 public:
@@ -880,5 +882,7 @@ private:
     bool poseRansacImpl();
   };
 };
+
+END_VISP_NAMESPACE
 
 #endif

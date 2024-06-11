@@ -58,6 +58,7 @@
 
 #include <visp3/core/vpUDPClient.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 
@@ -66,11 +67,10 @@
 vpUDPClient::vpUDPClient()
   : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    ,
-    m_wsa()
+  ,
+  m_wsa()
 #endif
-{
-}
+{ }
 
 /*!
   Create a (IPv4) UDP client.
@@ -81,8 +81,8 @@ vpUDPClient::vpUDPClient()
 vpUDPClient::vpUDPClient(const std::string &hostname, int port)
   : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    ,
-    m_wsa()
+  ,
+  m_wsa()
 #endif
 {
   init(hostname, port);
@@ -345,8 +345,8 @@ int vpUDPClient::send(const void *msg, size_t len)
   return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength);
 #endif
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPClient.cpp.o) has no symbols
-void dummy_vpUDPClient(){};
+void dummy_vpUDPClient() { };
 #endif

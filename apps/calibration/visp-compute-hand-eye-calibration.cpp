@@ -34,6 +34,7 @@
 //! \example visp-compute-hand-eye-calibration.cpp
 #include <map>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpHandEyeCalibration.h>
 
@@ -74,6 +75,10 @@ void usage(const char *argv[], int error)
 
 int main(int argc, const char *argv[])
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_data_path = "./";
   std::string opt_fPe_files = "pose_fPe_%d.yaml";
   std::string opt_cPo_files = "pose_cPo_%d.yaml";

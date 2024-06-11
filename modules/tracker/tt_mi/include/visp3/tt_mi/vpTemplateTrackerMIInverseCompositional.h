@@ -48,6 +48,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerMIInverseCompositional
   \ingroup group_tt_mi_tracker
@@ -84,9 +85,8 @@ public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
     : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false), p_prec(),
-      G_prec(), KQuasiNewton()
-  {
-  }
+    G_prec(), KQuasiNewton()
+  { }
   explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
@@ -94,4 +94,5 @@ public:
   void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
   void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method) { minimizationMethod = method; }
 };
+END_VISP_NAMESPACE
 #endif

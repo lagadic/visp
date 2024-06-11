@@ -46,6 +46,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Check if vpForceTorqueAtiNetFTSensor can be used since inet_ntop() used to
   // communicate by UDP with the sensor is not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
@@ -63,9 +66,9 @@ int main(int argc, char **argv)
       opt_no_display = true;
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-                << " [--ip <Net F/T IP address (default: 192.168.1.1)>] [--port <Ethernet port (default: 49152)>]"
-                << " [--no-display] [-d] [--help] [-h]\n"
-                << std::endl;
+        << " [--ip <Net F/T IP address (default: 192.168.1.1)>] [--port <Ethernet port (default: 49152)>]"
+        << " [--no-display] [-d] [--help] [-h]\n"
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -117,7 +120,8 @@ int main(int argc, char **argv)
         vpDisplay::displayText(plotter->I, 20, 80, "Left click to quit", vpColor::red);
         if (bias) {
           vpDisplay::displayText(plotter->I, 40, 80, "Right click to unbias", vpColor::red);
-        } else {
+        }
+        else {
           vpDisplay::displayText(plotter->I, 40, 80, "Right click to bias", vpColor::red);
         }
         vpMouseButton::vpMouseButtonType button;
@@ -125,19 +129,22 @@ int main(int argc, char **argv)
         if (vpDisplay::getClick(plotter->I, button, false)) {
           if (button == vpMouseButton::button1) {
             end = true;
-          } else if (button == vpMouseButton::button3) {
+          }
+          else if (button == vpMouseButton::button3) {
             bias = !bias;
             if (bias) {
               std::cout << "Bias F/T sensor" << std::endl;
               ati_net_ft.bias();
-            } else {
+            }
+            else {
               std::cout << "Unbias F/T sensor" << std::endl;
               ati_net_ft.unbias();
             }
           }
         }
         vpDisplay::flush(plotter->I);
-      } else {
+      }
+      else {
         std::cout << "F/T: " << ft.t() << std::endl;
         if (nbacq > 30) {
           end = true;

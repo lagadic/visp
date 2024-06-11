@@ -57,6 +57,9 @@
 */
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     for (int i = 0; i < 3; i++) {
       vpServo task;
@@ -85,7 +88,8 @@ int main()
       std::cout << "End, call vpServo destructors..." << std::endl;
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

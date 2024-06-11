@@ -31,17 +31,19 @@
  * Visual servoing control law.
  */
 
-#include <sstream>
-
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/vs/vpServo.h>
 
 /*!
   \file vpServo.cpp
   \brief  Class required to compute the visual servoing control law
 */
 
+#include <sstream>
+
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/vs/vpServo.h>
+
+BEGIN_VISP_NAMESPACE
 vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
   featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
@@ -800,7 +802,7 @@ vpColVector vpServo::computeControlLaw()
     J1p.print(std::cout, 10, "J1p");
 #endif
     e1 = WpW * J1p * error;
-  }
+    }
   e = -lambda(e1) * e1;
 
   I.eye(J1.getCols());
@@ -810,7 +812,7 @@ vpColVector vpServo::computeControlLaw()
 
   m_first_iteration = false;
   return e;
-}
+  }
 
 vpColVector vpServo::computeControlLaw(double t)
 {
@@ -909,10 +911,10 @@ vpColVector vpServo::computeControlLaw(double t)
     std::cout << "J1p" << std::endl << J1p;
 #endif
     e1 = WpW * J1p * error;
-  }
+    }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
+    // memorize the initial e1 value if the function is called the first time
+    // or if the time given as parameter is equal to 0.
   if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
     e1_initial = e1;
   }
@@ -930,7 +932,7 @@ vpColVector vpServo::computeControlLaw(double t)
 
   m_first_iteration = false;
   return e;
-}
+  }
 
 vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
@@ -1029,10 +1031,10 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     std::cout << "J1p" << std::endl << J1p;
 #endif
     e1 = WpW * J1p * error;
-  }
+    }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
+    // memorize the initial e1 value if the function is called the first time
+    // or if the time given as parameter is equal to 0.
   if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
     e1_initial = e1;
   }
@@ -1050,7 +1052,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 
   m_first_iteration = false;
   return e;
-}
+  }
 
 void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
                                          const vpColVector &error_, vpMatrix &P_) const
@@ -1104,8 +1106,8 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
 #endif
       //    std::cout << "I-WpW" << std::endl << I_WpW <<std::endl ;
       sec = I_WpW * de2dt;
-    }
   }
+}
 
   else {
     computeProjectionOperators(J1, I, I_WpW, error, P);
@@ -1233,3 +1235,4 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
   }
   return q2;
 }
+END_VISP_NAMESPACE

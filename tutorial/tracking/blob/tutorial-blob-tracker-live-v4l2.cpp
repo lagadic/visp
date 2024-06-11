@@ -18,6 +18,10 @@ int main(int argc, char **argv)
 #if ((defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&                                            \
      (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
 
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   int device = 0;
   if (argc == 2) {
     device = std::atoi(argv[1]);

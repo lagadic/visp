@@ -42,6 +42,7 @@
 #define vpDot2_hh
 
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPolygon.h>
@@ -50,6 +51,8 @@
 
 #include <list>
 #include <vector>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpDot2
@@ -119,7 +122,7 @@
  * \ref tutorial-tracking-blob, section \ref tracking_blob_tracking.
  *
  * \sa vpDot
- */
+*/
 class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:
@@ -534,4 +537,5 @@ private:
 
 };
 
+END_VISP_NAMESPACE
 #endif

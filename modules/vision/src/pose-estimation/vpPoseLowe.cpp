@@ -41,6 +41,8 @@
 #include "private/vpLevenbergMarquartd.h"
 #include <visp3/vision/vpPose.h>
 
+BEGIN_VISP_NAMESPACE
+
 #define NBR_PAR 6
 #define X3_SIZE 3
 #define MINIMUM 0.000001
@@ -329,3 +331,5 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 #undef MINIMUM
 
 #undef DEBUG_LEVEL1
+
+END_VISP_NAMESPACE

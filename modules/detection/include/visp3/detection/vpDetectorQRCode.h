@@ -47,6 +47,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorQRCode
  * \ingroup group_detection_barcode
@@ -105,7 +106,7 @@
  *
  * Other examples are also provided in tutorial-barcode-detector.cpp and
  * tutorial-barcode-detector-live.cpp
- */
+*/
 class VISP_EXPORT vpDetectorQRCode : public vpDetectorBase
 {
 protected:
@@ -115,6 +116,6 @@ public:
   vpDetectorQRCode();
   bool detect(const vpImage<unsigned char> &I) vp_override;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

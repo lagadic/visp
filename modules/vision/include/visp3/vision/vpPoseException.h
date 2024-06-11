@@ -39,11 +39,13 @@
 #include <iostream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpPoseException
  * \ingroup group_vision_pose
  * \brief Error that can be emitted by the vpPose class and its derivatives.
- */
+*/
 class VISP_EXPORT vpPoseException : public vpException
 {
 public:
@@ -88,5 +90,7 @@ public:
    */
   explicit vpPoseException(int id) : vpException(id) { }
 };
+
+END_VISP_NAMESPACE
 
 #endif

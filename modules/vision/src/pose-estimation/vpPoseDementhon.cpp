@@ -34,6 +34,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpPose.h>
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 #define DEBUG_LEVEL3 0
@@ -477,7 +479,8 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.));
   double svdThreshold = m_dementhonSvThresh;
   int irank = 0;
-  for (int i = 0; (i < nbMaxIter) && (!isRankEqualTo3); ++i) {
+  int i = 0;
+  while ((i < nbMaxIter) && (!isRankEqualTo3)) {
     irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
     if (irank == 3) {
       isRankEqualTo3 = true;
@@ -486,6 +489,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
       isRankEqualTo3 = false;
       svdThreshold *= svdFactorUsedWhenFailure;
     }
+    ++i;
   }
 
   if (!isRankEqualTo3) {
@@ -612,3 +616,5 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
 #undef DEBUG_LEVEL3
+
+END_VISP_NAMESPACE

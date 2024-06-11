@@ -31,6 +31,11 @@
  * Kalman filtering.
  */
 
+/*!
+  \file vpKalmanFilter.h
+  \brief Generic kalman filtering implementation
+*/
+
 #ifndef vpKalmanFilter_h
 #define vpKalmanFilter_h
 
@@ -39,11 +44,7 @@
 
 #include <math.h>
 
-/*!
-  \file vpKalmanFilter.h
-  \brief Generic kalman filtering implementation
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpKalmanFilter
   \ingroup group_core_kalman
@@ -125,7 +126,7 @@ public:
   explicit vpKalmanFilter(unsigned int n_signal);
   vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int n_signal);
   /*! Destructor that does noting. */
-  virtual ~vpKalmanFilter(){};
+  virtual ~vpKalmanFilter() { };
   /*!
     Set the number of signal to filter.
   */
@@ -211,5 +212,5 @@ protected:
   //! Identity matrix \f$ \bf I\f$.
   vpMatrix I;
 };
-
+END_VISP_NAMESPACE
 #endif

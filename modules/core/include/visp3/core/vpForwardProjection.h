@@ -31,20 +31,22 @@
  * Forward projection.
  */
 
-#ifndef vpForwardProjection_H
-#define vpForwardProjection_H
-
 /*!
  * \file vpForwardProjection.h
  * \brief  class that defines what is a generic geometric feature
  */
 
+#ifndef _vpForwardProjection_H_
+#define _vpForwardProjection_H_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTracker.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpForwardProjection
  * \brief Class that defines what is a generic geometric feature.
@@ -58,7 +60,7 @@
  * - in the image plane \e p. These parameters are located in the public
  *   attribute vpTracker::p. They correspond to normalized coordinates
  *   of the feature expressed in meters.
- */
+*/
 class VISP_EXPORT vpForwardProjection : public vpTracker
 {
 public:
@@ -218,5 +220,5 @@ protected:
 private:
   vpForwardProjectionDeallocatorType deallocate;
 };
-
+END_VISP_NAMESPACE
 #endif

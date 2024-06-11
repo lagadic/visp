@@ -85,6 +85,10 @@
 #include <visp3/core/vpUnscentedKalman.h>
 //! [UKF_includes]
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 //! [Process_function]
 /**

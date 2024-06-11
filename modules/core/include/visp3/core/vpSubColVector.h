@@ -31,17 +31,19 @@
  * Mask on a vpColVector.
  */
 
-#ifndef _vpSubColVector_h_
-#define _vpSubColVector_h_
-
-#include <visp3/core/vpColVector.h>
-
 /*!
  * \file vpSubColVector.h
  *
  * \brief Definition of the vpSubColVector class
  */
 
+#ifndef _vpSubColVector_h_
+#define _vpSubColVector_h_
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColVector.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSubColVector
  * \ingroup group_core_matrices
@@ -51,7 +53,7 @@
  * a vpSubColVector.
  *
  * \sa vpMatrix vpColVector vpRowVector
- */
+*/
 class VISP_EXPORT vpSubColVector : public vpColVector
 {
 public:
@@ -85,5 +87,5 @@ private:
 
 
 };
-
+END_VISP_NAMESPACE
 #endif

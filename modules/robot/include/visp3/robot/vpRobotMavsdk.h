@@ -51,6 +51,7 @@
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotMavsdk
  *
@@ -157,6 +158,6 @@ private:
   class vpRobotMavsdkImpl;
   vpRobotMavsdkImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_MAVSDK
 #endif // #ifndef vpRobotMavsdk_h_

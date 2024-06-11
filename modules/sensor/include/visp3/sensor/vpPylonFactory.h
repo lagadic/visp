@@ -35,6 +35,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpPylonFactory.h
+  \brief Description: Factory class used to create vpPylonGrabber
+  instances.
+*/
+
 #ifndef _vpPylonFactory_h_
 #define _vpPylonFactory_h_
 
@@ -44,12 +50,7 @@
 
 #ifdef VISP_HAVE_PYLON
 
-/*!
-  \file vpPylonFactory.h
-  \brief Description: Factory class used to create vpPylonGrabber
-  instances.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Factory singleton class to create vpPylonGrabber subclass
   instances.
@@ -64,7 +65,7 @@
   vpPylonFactory &factory = vpPylonFactory::instance();
   vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
- */
+*/
 class VISP_EXPORT vpPylonFactory
 {
 public:
@@ -72,7 +73,8 @@ public:
 
   /*! Device class of cameras.
    */
-  enum DeviceClass {
+  enum DeviceClass
+  {
     BASLER_GIGE, //!< Basler GigE camera.
     BASLER_USB   //!< Basler USB camera.
   };
@@ -81,12 +83,12 @@ public:
 
 private:
   //! Default constructor.
-  vpPylonFactory(){};
+  vpPylonFactory() { };
   vpPylonFactory(vpPylonFactory const &);
   void operator=(vpPylonFactory const &);
 
   Pylon::PylonAutoInitTerm m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonFactory_h_

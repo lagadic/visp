@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpSerial
   \ingroup group_core_com_serial
@@ -68,7 +69,8 @@ public:
   /*!
    * Defines the possible byte sizes for the serial port.
    */
-  typedef enum {
+  typedef enum
+  {
     fivebits = 5,  //!< Data is encoded with 5 bits
     sixbits = 6,   //!< Data is encoded with 6 bits
     sevenbits = 7, //!< Data is encoded with 7 bits
@@ -78,7 +80,8 @@ public:
   /*!
    * Defines the possible parity types for the serial port.
    */
-  typedef enum {
+  typedef enum
+  {
     parity_none = 0, //!< No parity check
     parity_odd = 1,  //!< Check for odd parity
     parity_even = 2  //!< Check for even parity
@@ -87,7 +90,8 @@ public:
   /*!
    * Defines the possible stopbit types for the serial port.
    */
-  typedef enum {
+  typedef enum
+  {
     stopbits_one = 1, //!< 1 stop bit is used
     stopbits_two = 2, //!< 2 stop bits are used
   } stopbits_t;
@@ -95,7 +99,8 @@ public:
   /*!
    * Defines the possible flowcontrol types for the serial port.
    */
-  typedef enum {
+  typedef enum
+  {
     flowcontrol_none = 0, //!< No flow control
     flowcontrol_software, //!< Software flow control
     flowcontrol_hardware  //!< Hardware flow control
@@ -173,6 +178,6 @@ private:
   stopbits_t m_stopbits;
   flowcontrol_t m_flowcontrol;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

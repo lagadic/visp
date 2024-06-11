@@ -77,6 +77,10 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 static void *mainLoop(void *_simu)
 {
   // pointer copy of the vpSimulator instance

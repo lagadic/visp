@@ -44,6 +44,8 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTrackingException.h>
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
@@ -291,3 +293,5 @@ void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w, unsig
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
+
+END_VISP_NAMESPACE

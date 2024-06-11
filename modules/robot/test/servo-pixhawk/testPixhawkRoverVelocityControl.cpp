@@ -69,6 +69,9 @@ void usage(const std::string &bin_name)
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   if (argc != 2) {
     usage(argv[0]);
     return EXIT_SUCCESS;

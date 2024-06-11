@@ -31,6 +31,11 @@
  * Segment visual feature.
  */
 
+/*!
+ * \file vpFeatureSegment.cpp
+ * \brief class that defines the vpFeatureSegment visual feature
+ */
+
 #include <cmath>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImagePoint.h>
@@ -45,10 +50,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
- * \file vpFeatureSegment.cpp
- * \brief class that defines the vpFeatureSegment visual feature
- */
+BEGIN_VISP_NAMESPACE
 
 /*!
  * Initialise the memory space requested for segment visual feature.
@@ -695,3 +697,4 @@ unsigned int vpFeatureSegment::selectL() { return FEATURE_LINE[2]; }
  */
 
 unsigned int vpFeatureSegment::selectAlpha() { return FEATURE_LINE[3]; }
+END_VISP_NAMESPACE

@@ -12,9 +12,9 @@
 class ClassUsingPclViewer
 {
 private:
-  vpTranslationVector m_t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
-  vpRotationMatrix m_R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
-  vpHomogeneousMatrix m_cMo; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
+  VISP_NAMESPACE_ADDRESSING vpTranslationVector m_t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
+  VISP_NAMESPACE_ADDRESSING vpRotationMatrix m_R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
+  VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix m_cMo; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
 
   double m_minX; /*!< The minimum value of the X coordinate, expressed in the noise-free frame.*/
   double m_maxX; /*!< The maximum value of the X coordinate, expressed in the noise-free frame.*/
@@ -25,7 +25,7 @@ private:
   unsigned int m_m;  /*!< Number of points along the Y-axis.*/
   double m_dY; // m_dY = (m_maxY - m_minY)/(m_m-1)
 
-  vpPclViewer m_visualizer; /*!< The PCL-based visualizer.*/
+  VISP_NAMESPACE_ADDRESSING vpPclViewer m_visualizer; /*!< The PCL-based visualizer.*/
 
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.
@@ -34,7 +34,7 @@ private:
    * @param order The order of the polynomial surface that is generated.
    * @return std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr>
    */
-  std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
+  std::pair<VISP_NAMESPACE_ADDRESSING vpPclViewer::pclPointCloudPointXYZRGBPtr, VISP_NAMESPACE_ADDRESSING vpPclViewer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, VISP_NAMESPACE_ADDRESSING vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.

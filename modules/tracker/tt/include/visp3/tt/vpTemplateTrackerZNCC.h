@@ -46,6 +46,7 @@
 
 #include <math.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
@@ -57,6 +58,7 @@
 
 #define APPROX_NCC
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerZNCC
   \ingroup group_tt_tracker
@@ -82,4 +84,5 @@ public:
 
   void setGain(double _gain) { gain = _gain; }
 };
+END_VISP_NAMESPACE
 #endif

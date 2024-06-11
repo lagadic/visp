@@ -38,10 +38,11 @@
 #ifndef vpRobust_h
 #define vpRobust_h
 
-#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobust
   \ingroup group_core_robust
@@ -244,5 +245,5 @@ private:
   double select(vpColVector &a, int l, int r, int k);
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

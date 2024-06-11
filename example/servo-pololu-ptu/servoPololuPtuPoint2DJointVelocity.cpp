@@ -98,6 +98,10 @@ void usage(const char **argv, int error, const std::string &device, int baudrate
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifdef _WIN32
   std::string opt_device = "COM4";
 #else

@@ -31,17 +31,19 @@
  * Interface for the ADEPT Viper 650 robot.
  */
 
-#ifndef vpViper650_h
-#define vpViper650_h
-
-#include <visp3/robot/vpViper.h>
-
 /*!
  * \file vpViper650.h
  *
  * Modelization of the ADEPT Viper 650 robot.
  */
 
+#ifndef vpViper650_h
+#define vpViper650_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpViper.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpViper650
  *
@@ -88,7 +90,7 @@
  *   set this tool during robot initialisation or using set_eMc().
  *
  * - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
- */
+*/
 class VISP_EXPORT vpViper650 : public vpViper
 {
 public:
@@ -165,5 +167,5 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+END_VISP_NAMESPACE
 #endif

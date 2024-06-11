@@ -49,6 +49,8 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 
 vpPose::vpPose()
@@ -663,3 +665,5 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   P.computePose(vpPose::DEMENTHON_LOWE, cMo);
   return lx / s;
 }
+
+END_VISP_NAMESPACE

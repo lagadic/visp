@@ -39,6 +39,7 @@
 
 #include <visp3/core/vpStatisticalTestEWMA.h>
 
+BEGIN_VISP_NAMESPACE
 void vpStatisticalTestEWMA::computeDeltaAndLimits()
 {
   float delta = 3.f * m_stdev * std::sqrt(m_alpha / (2.f - m_alpha));
@@ -126,3 +127,4 @@ void vpStatisticalTestEWMA::setAlpha(const float &alpha)
 {
   init(alpha);
 }
+END_VISP_NAMESPACE

@@ -31,24 +31,25 @@
  * Exception that can be emitted by the vpDisplay class and its derivatives.
  */
 
-#ifndef _vpDisplayException_h_
-#define _vpDisplayException_h_
-
 /*!
  * \file vpDisplayException.h
  *  \brief error that can be emitted by the vpDisplay class and its derivatives
  */
+
+#ifndef _vpDisplayException_h_
+#define _vpDisplayException_h_
 
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDisplayException
  * \ingroup group_core_debug
  * \brief Error that can be emitted by the vpDisplay class and its derivatives.
- */
+*/
 class VISP_EXPORT vpDisplayException : public vpException
 {
 public:
@@ -90,5 +91,5 @@ public:
    */
   explicit vpDisplayException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

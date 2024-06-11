@@ -39,6 +39,13 @@
 #ifndef _vpHomogeneousMatrix_h_
 #define _vpHomogeneousMatrix_h_
 
+#include <fstream>
+#include <vector>
+
+#include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
+
 class vpTranslationVector;
 class vpPoseVector;
 class vpMatrix;
@@ -48,10 +55,8 @@ class vpThetaUVector;
 class vpQuaternionVector;
 class vpPoint;
 
-#include <fstream>
-#include <vector>
+END_VISP_NAMESPACE
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
@@ -61,6 +66,7 @@ class vpPoint;
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHomogeneousMatrix
 
@@ -379,7 +385,7 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T);
   friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
@@ -414,10 +420,11 @@ inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 {
   T.convert_to_json(j);
 }
+
 inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
 {
   T.parse_json(j);
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

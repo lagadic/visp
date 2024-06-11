@@ -60,6 +60,7 @@ other functionalities ar useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 2D point visual feature.
 */
@@ -547,3 +548,4 @@ unsigned int vpFeaturePoint::selectX() { return FEATURE_LINE[0]; }
   \endcode
 */
 unsigned int vpFeaturePoint::selectY() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

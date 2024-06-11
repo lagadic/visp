@@ -149,23 +149,29 @@
 #define M_POLY2(x, a, b, c) (M_POLY1((x), (a), (b)) * (x) + (c))
 #define M_POLY3(x, a, b, c, d) (M_POLY2((x), (a), (b), (c)) * (x) + (d))
 
-typedef struct {
+BEGIN_VISP_NAMESPACE
+typedef struct
+{
   int x, y;
 } Point2i;
 
-typedef struct {
+typedef struct
+{
   short x, y;
 } Point2s;
 
-typedef struct {
+typedef struct
+{
   int x, y, z;
 } Point3i;
 
-typedef struct {
+typedef struct
+{
   float x, y, z, w;
 } Point4f;
 
-typedef struct {
+typedef struct
+{
   float x, y, z;
 } Vector;
 
@@ -185,7 +191,8 @@ typedef struct {
  *  S = Sx.Sy.Sz  Matrice d'homothetie sur les axes;
  *  T = Tx.Ty.Tz  Matrice de translation sur les axes.
  */
-typedef struct {
+typedef struct
+{
   Vector rotate;    /* vecteur rotation  */
   Vector scale;     /* vecteur homothetie  */
   Vector translate; /* vecteur translation  */
@@ -242,6 +249,6 @@ void Translate_to_Matrix(Vector *vp, Matrix m);
 
 void fscanf_Point3f(Point3f *pp);
 void fscanf_Vector(Vector *vp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

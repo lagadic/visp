@@ -77,6 +77,10 @@ static void on_high_V_thresh_trackbar(int, void *)
 
 int main(int argc, const char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   bool opt_save_img = false;
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   std::string opt_img_filename;

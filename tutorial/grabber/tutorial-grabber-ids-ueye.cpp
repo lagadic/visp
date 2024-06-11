@@ -1,4 +1,5 @@
 /*! \example tutorial-grabber-ids-ueye.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -108,6 +109,9 @@ void usage(const char *argv[], int error)
 int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_UEYE) && defined(VISP_HAVE_THREADS)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     unsigned int opt_device = 0;
     std::string opt_seqname;
@@ -362,7 +366,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-  }
+}
 #else
   (void)argc;
   (void)argv;

@@ -41,6 +41,8 @@
 
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentGravityCenter.h>
+
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -56,7 +58,7 @@ class vpMomentObject;
  * vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get
  * access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
  * \f$(x_g,y_g)\f$ .
- */
+*/
 class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:
@@ -67,5 +69,6 @@ public:
   void printDependencies(std::ostream &os) const;
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };
+END_VISP_NAMESPACE
 
 #endif

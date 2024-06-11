@@ -42,17 +42,18 @@
 #include <list>
 #include <math.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/me/vpMeEllipse.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbtMeEllipse
  * \ingroup group_mbt_features
  *
  * \brief Class that tracks an ellipse moving edges with specific capabilities for
  * model-based tracking.
- */
+*/
 class VISP_EXPORT vpMbtMeEllipse : public vpMeEllipse
 {
 public:
@@ -77,6 +78,6 @@ private:
   void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
   void suppressPoints();
 };
-
+END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #endif

@@ -54,6 +54,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
  /*!
    \class vpOccipitalStructure
 
@@ -359,6 +360,6 @@ protected:
   void getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

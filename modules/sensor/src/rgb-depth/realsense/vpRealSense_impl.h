@@ -44,6 +44,7 @@
 #include <pcl/pcl_config.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 template <class Type>
 void vp_rs_get_frame_data_impl(const rs::device *m_device, const std::map<rs::stream, rs::intrinsics> &m_intrinsics,
                                const rs::stream &stream, vpImage<Type> &data)
@@ -443,4 +444,5 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
   }
 }
 #endif
+END_VISP_NAMESPACE
 #endif

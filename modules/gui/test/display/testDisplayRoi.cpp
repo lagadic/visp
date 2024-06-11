@@ -54,6 +54,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -203,10 +207,10 @@ int main(int argc, const char **argv)
       std::cout << "A click in the image to exit..." << std::endl;
       vpDisplay::getClick(C);
     }
-  }
+    }
 #else
   (void)argc;
   (void)argv;
 #endif
   return EXIT_SUCCESS;
-}
+  }

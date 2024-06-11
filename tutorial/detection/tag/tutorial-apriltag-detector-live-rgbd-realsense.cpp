@@ -17,6 +17,9 @@ int main(int argc, const char **argv)
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_REALSENSE2)
   //! [Macro defined]
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -264,7 +267,7 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+}
 
   return EXIT_SUCCESS;
 #else

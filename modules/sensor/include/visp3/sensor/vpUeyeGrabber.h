@@ -41,6 +41,7 @@
 
 #ifdef VISP_HAVE_UEYE
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpUeyeGrabber
  * \ingroup group_sensor_camera
@@ -79,7 +80,7 @@
  *   g.acquire(I);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpUeyeGrabber
 {
 public:
@@ -120,6 +121,6 @@ private:
   class vpUeyeGrabberImpl;
   vpUeyeGrabberImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

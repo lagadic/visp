@@ -79,8 +79,9 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace
+namespace VISP_NAMESPACE_NAME
 {
+
 int fastRound(float value) { return static_cast<int>(value + 0.5f); }
 
 void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)
@@ -137,10 +138,15 @@ std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::
   clipHistogram(hist, cdfs, limit);
   int hMin = static_cast<int>(hist.size()) - 1;
 
-  for (int i = 0; i < hMin; ++i) {
+  int stopIdx = hMin;
+  bool hasNotFoundFirstNotZero = true;
+  int i = 0;
+  while ((i < stopIdx) && hasNotFoundFirstNotZero) {
     if (cdfs[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
   int cdf = 0;
   int hist_size = static_cast<int>(hist.size());
@@ -165,10 +171,15 @@ float transferValue(int v, std::vector<int> &clippedHist)
 {
   int clippedHistLength = static_cast<int>(clippedHist.size());
   int hMin = clippedHistLength - 1;
-  for (int i = 0; i<hMin; ++i) {
+  int idxStop = hMin;
+  int i = 0;
+  bool hasNotFoundFirstNotZero = true;
+  while ((i<idxStop) && hasNotFoundFirstNotZero) {
     if (clippedHist[i] != 0) {
       hMin = i;
+      hasNotFoundFirstNotZero = false;
     }
+    ++i;
   }
 
   int cdf = 0;
@@ -191,10 +202,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 
   return transferValue(v, clippedHist);
 }
-} // namespace
 
-namespace vp
-{
 void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (blockRadius < 0) {
@@ -389,7 +397,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
             ++hist[fastRound((I1[yi][xi] / 255.0f) * bins)];
           }
         }
-      }
+        }
       else {
         hist = prev_hist;
 
@@ -438,9 +446,9 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         int limit = static_cast<int>(((slope * n) / bins) + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
+      }
     }
   }
-}
 
 void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {
@@ -481,4 +489,5 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
     ++cpt;
   }
 }
-};
+
+} // namespace

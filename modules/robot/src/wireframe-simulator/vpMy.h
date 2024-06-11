@@ -85,7 +85,8 @@
     (B) = (T);                                                                                                         \
   }
 
+BEGIN_VISP_NAMESPACE
 typedef unsigned char Byte;
-
+END_VISP_NAMESPACE
 #endif
 #endif

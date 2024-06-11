@@ -47,6 +47,7 @@
 #include "vpArit.h"
 #include "vpMy.h"
 
+BEGIN_VISP_NAMESPACE
 Matrix *get_tmstack(void);
 void load_tmstack(Matrix m);
 void pop_tmstack(void);
@@ -61,6 +62,6 @@ void premult_tmstack(Matrix m);
 void prerotate_tmstack(Vector *vp);
 void prescale_tmstack(Vector *vp);
 void pretranslate_tmstack(Vector *vp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

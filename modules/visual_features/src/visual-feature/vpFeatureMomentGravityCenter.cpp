@@ -35,7 +35,6 @@
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentObject.h>
@@ -43,6 +42,7 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for gravity center moment. Called internally.
  * The moment primitives must be computed before calling this.
@@ -51,7 +51,7 @@
  *
  $ Minimum vpMomentObject order needed to compute this feature: 2.
  */
-void vpFeatureMomentGravityCenter::compute_interaction()
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_featuremoment_basic;
 
@@ -72,10 +72,9 @@ void vpFeatureMomentGravityCenter::compute_interaction()
     featureMomentBasic.interaction(0, 1) / momentObject.get(0, 0) -
     momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
 }
-
+END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentCentered.h>
@@ -84,6 +83,7 @@ void vpFeatureMomentGravityCenter::compute_interaction()
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for gravity center moment. Called internally.
  * The moment primitives must be computed before calling this.
@@ -93,7 +93,7 @@ void vpFeatureMomentGravityCenter::compute_interaction()
  *
  * Minimum vpMomentObject order needed to compute this feature: 2.
  */
-void vpFeatureMomentGravityCenter::compute_interaction()
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_gravity;
@@ -155,5 +155,5 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   interaction_matrices[1][0][WY] = Ygwy;
   interaction_matrices[1][0][WZ] = -Xg;
 }
-
+END_VISP_NAMESPACE
 #endif

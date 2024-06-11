@@ -43,7 +43,9 @@
 #include <visp3/robot/vpRobotViper850.h>
 
 #ifdef VISP_HAVE_VIPER850
-
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 bool pose_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2, double epsilon = 1e-6)
 {
   vpTranslationVector t1, t2;
@@ -364,7 +366,8 @@ int main()
     std::cout << "The end" << std::endl;
     std::cout << "Test succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

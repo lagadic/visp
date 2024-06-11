@@ -42,7 +42,7 @@
 #include <visp3/robot/vpVirtuose.h>
 
 #ifdef VISP_HAVE_VIRTUOSE
-
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * Set command type to virtual mechanism by default (impedance mode).
@@ -1043,7 +1043,7 @@ void vpVirtuose::stopPeriodicFunction()
   else
     std::cout << "Haptic loop closed." << std::endl;
 }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning
 void dummy_vpVirtuose() { };

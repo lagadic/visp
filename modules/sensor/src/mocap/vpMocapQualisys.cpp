@@ -46,15 +46,15 @@
 #include <qualisys_cpp_sdk/RTPacket.h>
 #include <qualisys_cpp_sdk/RTProtocol.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpMocapQualisys::vpMocapQualisysImpl
 {
 public:
   vpMocapQualisysImpl()
     : m_rtProtocol(), m_basePort(22222), m_udpPort(6734), m_majorVersion(1), m_minorVersion(19), m_bigEndian(false),
-      m_dataAvailable(false), m_streamFrames(false), m_verbose(false), m_serverAddr()
-  {
-  }
+    m_dataAvailable(false), m_streamFrames(false), m_verbose(false), m_serverAddr()
+  { }
 
   virtual ~vpMocapQualisysImpl() { close(); }
 
@@ -75,7 +75,8 @@ public:
 
           vpTime::sleepMs(1000);
         }
-      } else {
+      }
+      else {
         if (m_verbose) {
           std::cout << "Qualisys connected" << std::endl;
         }
@@ -101,7 +102,8 @@ public:
 
           vpTime::sleepMs(1000);
         }
-      } else {
+      }
+      else {
         if (m_verbose && !readSettingsOK) {
           std::cout << "Reading 6DOF settings succeded." << std::endl;
         }
@@ -114,7 +116,8 @@ public:
         std::cout << "Reading 6DOF settings timeout: " << std::endl;
       }
       return false;
-    } else {
+    }
+    else {
       for (auto i = 0; i < 6; i++) {
         if (!m_streamFrames) {
           if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d)) {
@@ -125,7 +128,8 @@ public:
             vpTime::sleepMs(1000);
           }
           m_streamFrames = true;
-        } else {
+        }
+        else {
           if (m_verbose) {
             std::cout << "Starting to stream 6DOF data" << std::endl;
           }
@@ -148,7 +152,8 @@ public:
       const char *pTmpStr = m_rtProtocol.Get6DOFBodyName(iBody);
       if (pTmpStr) {
         name = std::string(pTmpStr);
-      } else {
+      }
+      else {
         if (m_verbose) {
           std::cout << "Unknown body" << std::endl;
         }
@@ -167,7 +172,8 @@ public:
       }
 
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
@@ -190,7 +196,8 @@ public:
           }
           if (all_bodies) {
             bodies_pose[bodyName] = bodyPose;
-          } else if (bodyPose.isValid()) {
+          }
+          else if (bodyPose.isValid()) {
             bodies_pose[bodyName] = bodyPose;
           }
         }
@@ -210,13 +217,15 @@ public:
           std::cout << "I found bodyName" << body_name << std::endl;
         }
         return true;
-      } else {
+      }
+      else {
         std::cout << "The body " << body_name << " was not found in Qualisys. Please check the name you typed."
-                  << std::endl;
+          << std::endl;
 
         return false;
       }
-    } else {
+    }
+    else {
       std::cout << "Error : could not process data from Qualisys" << std::endl;
 
       return false;
@@ -248,7 +257,7 @@ private:
 /*!
  * Default constructor.
  */
-vpMocapQualisys::vpMocapQualisys() : m_impl(new vpMocapQualisysImpl()) {}
+vpMocapQualisys::vpMocapQualisys() : m_impl(new vpMocapQualisysImpl()) { }
 
 /*!
  * Destructor.
@@ -302,9 +311,9 @@ void vpMocapQualisys::setServerAddress(const std::string &serverAddr) { m_impl->
  * \param[in] verbose : When true enable verbose mode, otherwise disable verbose mode.
  */
 void vpMocapQualisys::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapQualisys.cpp.o) has no symbols
-void dummy_vpMocapQualisys(){};
+void dummy_vpMocapQualisys() { };
 #endif

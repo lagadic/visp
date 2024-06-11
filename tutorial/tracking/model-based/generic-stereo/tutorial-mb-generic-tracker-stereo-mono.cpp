@@ -14,6 +14,10 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string opt_videoname = "teabox.mp4";
     int opt_tracker = vpMbGenericTracker::EDGE_TRACKER;
@@ -161,7 +165,7 @@ int main(int argc, char **argv)
   }
   catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
-  }
+}
 
   return EXIT_SUCCESS;
 #else

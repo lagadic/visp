@@ -59,6 +59,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpRobotPtu46 robot;
     vpColVector q(2);
@@ -83,21 +87,21 @@ int main()
     vpColVector qdot(2);
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 #if 0
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(10) ;
-    qdot[1] = vpMath::rad(10) ;
-    vpCTRACE << "Set camera frame velocity " << qdot.t() ;
+    qdot = 0;
+    qdot[0] = vpMath::rad(10);
+    qdot[1] = vpMath::rad(10);
+    vpCTRACE << "Set camera frame velocity " << qdot.t();
 
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot);
+    sleep(2);
 
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(-10) ;
-    qdot[1] = vpMath::rad(-10) ;
+    qdot = 0;
+    qdot[0] = vpMath::rad(-10);
+    qdot[1] = vpMath::rad(-10);
 
-    vpCTRACE << "Set camera frame velocity " << qdot.t() ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
+    vpCTRACE << "Set camera frame velocity " << qdot.t();
+    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot);
+    sleep(2);
 #endif
 
     qdot = 0;
@@ -114,7 +118,8 @@ int main()
     vpCTRACE << "Set articular frame velocity " << qdot.t();
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
     sleep(2);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
     return EXIT_FAILURE
   }

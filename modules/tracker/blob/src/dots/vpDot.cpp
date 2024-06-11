@@ -48,6 +48,8 @@
 
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
+
 /*
   \class vpDot
   \brief Track a white dot
@@ -947,3 +949,5 @@ void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std
   documentation) to the stream \e os, and returns a reference to the stream.
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot &d) { return (os << "(" << d.getCog() << ")"); };
+
+END_VISP_NAMESPACE

@@ -51,6 +51,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
 
+BEGIN_VISP_NAMESPACE
 //! Copy operator.   Allow operation such as A = v
 vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 {
@@ -769,7 +770,7 @@ v: 0  10  11  3
  */
 void vpRowVector::insert(unsigned int i, const vpRowVector &v)
 {
-  if ( (i + v.size()) > this->size()) {
+  if ((i + v.size()) > this->size()) {
     throw(vpException(vpException::dimensionError,
                       "Unable to insert (1x%d) row vector in (1x%d) row "
                       "vector at position (%d)",
@@ -1067,7 +1068,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
       }
       else {
         assert(maxAfter > 1);
-        s.width( static_cast<std::streamsize> (maxAfter));
+        s.width(static_cast<std::streamsize> (maxAfter));
         s << ".0";
       }
     }
@@ -1079,16 +1080,6 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   s.flags(original_flags); // restore s to standard state
 
   return static_cast<int>(maxBefore + maxAfter);
-}
-
-/*!
-  Allows to multiply a scalar by row vector.
-*/
-vpRowVector operator*(const double &x, const vpRowVector &v)
-{
-  vpRowVector vout;
-  vout = v * x;
-  return vout;
 }
 
 /*!
@@ -1366,3 +1357,14 @@ std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
   os << "]" << std::endl;
   return os;
 }
+
+/*!
+  Allows to multiply a scalar by row vector.
+*/
+vpRowVector operator*(const double &x, const vpRowVector &v)
+{
+  vpRowVector vout;
+  vout = v * x;
+  return vout;
+}
+END_VISP_NAMESPACE

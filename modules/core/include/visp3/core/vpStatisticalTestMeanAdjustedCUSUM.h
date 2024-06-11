@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits to perform a mean adjusted Cumulative Sum test.
@@ -76,7 +77,7 @@
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 class VISP_EXPORT vpStatisticalTestMeanAdjustedCUSUM : public vpStatisticalTestAbstract
 {
 protected:
@@ -271,4 +272,5 @@ public:
     m_limitUp = limitUp;
   }
 };
+END_VISP_NAMESPACE
 #endif

@@ -17,6 +17,10 @@ int main()
 {
 #if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)) &&             \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   vpImage<unsigned char> I; // Create a gray level image container
 
 #if defined(VISP_HAVE_DC1394)
@@ -85,6 +89,6 @@ int main()
     catch (...) {
       init_done = false;
     }
-  }
+}
 #endif
 }

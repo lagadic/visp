@@ -47,6 +47,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDetectorDataMatrixCode
  * \ingroup group_detection_barcode
@@ -112,6 +113,6 @@ public:
   vpDetectorDataMatrixCode();
   bool detect(const vpImage<unsigned char> &I) vp_override;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

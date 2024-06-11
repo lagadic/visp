@@ -35,7 +35,6 @@
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -46,7 +45,7 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
-
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for centered and normalized moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -56,7 +55,7 @@
  * - vpMomentAreaNormalized
  * - vpFeatureMomentAreaNormalized
  */
-void vpFeatureMomentGravityCenterNormalized::compute_interaction()
+  void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 {
   bool found_moment_gravity;
   bool found_moment_surface_normalized;
@@ -91,10 +90,9 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   interaction_matrices[1] = momentGravity.get()[1] * featureMomentAreaNormalized.interaction(1) +
     momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(2);
 }
-
+END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -104,6 +102,7 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for centered and normalized moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -112,7 +111,7 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
  * - vpMomentAreaNormalized
  * - vpMomentGravityCenter
  */
-void vpFeatureMomentGravityCenterNormalized::compute_interaction()
+  void vpFeatureMomentGravityCenterNormalized::compute_interaction()
 {
   bool found_moment_surface_normalized;
   bool found_moment_gravity;
@@ -221,4 +220,5 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   interaction_matrices[1][0][WY] = Ynwy;
   interaction_matrices[1][0][WZ] = -Xn;
 }
+END_VISP_NAMESPACE
 #endif

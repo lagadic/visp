@@ -47,6 +47,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_FUNC_INET_NTOP
   try {
     int port = 35000;
@@ -73,7 +76,8 @@ int main()
       }
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -81,4 +85,4 @@ int main()
   std::cout << "This test doesn't work on win XP where inet_ntop() is not available" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -36,6 +36,9 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
     (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
      defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   try {
     std::string opt_modelname = "model/teabox/teabox.cao";
@@ -548,4 +551,4 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
 #endif
-}
+  }

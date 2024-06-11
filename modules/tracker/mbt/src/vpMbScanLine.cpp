@@ -57,7 +57,7 @@
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 vpMbScanLine::vpMbScanLine()
   : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(), visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
@@ -771,5 +771,5 @@ double vpMbScanLine::norm(const vpPoint &a, const vpPoint &b)
   return sqrt(vpMath::sqr(a.get_X() - b.get_X()) + vpMath::sqr(a.get_Y() - b.get_Y()) +
               vpMath::sqr(a.get_Z() - b.get_Z()));
 }
-
+END_VISP_NAMESPACE
 #endif

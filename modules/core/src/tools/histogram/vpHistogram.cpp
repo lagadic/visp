@@ -47,6 +47,7 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 
+BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_THREADS)
 #include <thread>
 
@@ -1194,3 +1195,4 @@ bool vpHistogram::write(const char *filename)
 
   return true;
 }
+END_VISP_NAMESPACE

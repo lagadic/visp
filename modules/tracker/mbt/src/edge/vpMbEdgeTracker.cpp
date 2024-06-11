@@ -58,6 +58,7 @@
 #include <sstream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor
 */
@@ -2984,3 +2985,4 @@ void vpMbEdgeTracker::setUseEdgeTracking(const std::string &name, const bool &us
     }
   }
 }
+END_VISP_NAMESPACE

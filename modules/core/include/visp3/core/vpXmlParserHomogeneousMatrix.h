@@ -39,14 +39,15 @@
 
 */
 
-#ifndef VP_XMLPARSERHOMOGENEOUSMATRIX_H
-#define VP_XMLPARSERHOMOGENEOUSMATRIX_H
+#ifndef _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
+#define _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
 
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserHomogeneousMatrix
 
@@ -171,5 +172,6 @@ private:
   class Impl;
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -378,17 +378,17 @@ enum
 //  Function returns a pointer to the decompressed data, or NULL on failure.
 //  *pOut_len will be set to the decompressed data's size, which could be larger than src_buf_len on uncompressible data.
 //  The caller must call mz_free() on the returned block when it's no longer needed.
-void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, int flags);
+void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, mz_uint flags);
 
 // tinfl_decompress_mem_to_mem() decompresses a block in memory to another block in memory.
 // Returns TINFL_DECOMPRESS_MEM_TO_MEM_FAILED on failure, or the number of bytes written on success.
 #define TINFL_DECOMPRESS_MEM_TO_MEM_FAILED ((size_t)(-1))
-size_t tinfl_decompress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, int flags);
+size_t tinfl_decompress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, mz_uint flags);
 
 // tinfl_decompress_mem_to_callback() decompresses a block in memory to an internal 32KB buffer, and a user provided callback function will be called to flush the buffer.
 // Returns 1 on success or 0 on failure.
 typedef int (*tinfl_put_buf_func_ptr)(const void *pBuf, int len, void *pUser);
-int tinfl_decompress_mem_to_callback(const void *pIn_buf, size_t *pIn_buf_size, tinfl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, int flags);
+int tinfl_decompress_mem_to_callback(const void *pIn_buf, size_t *pIn_buf_size, tinfl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, mz_uint flags);
 
 struct tinfl_decompressor_tag; typedef struct tinfl_decompressor_tag tinfl_decompressor;
 
@@ -490,11 +490,11 @@ enum
 //  Function returns a pointer to the compressed data, or NULL on failure.
 //  *pOut_len will be set to the compressed data's size, which could be larger than src_buf_len on uncompressible data.
 //  The caller must free() the returned block when it's no longer needed.
-void *tdefl_compress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, int flags);
+void *tdefl_compress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, mz_uint flags);
 
 // tdefl_compress_mem_to_mem() compresses a block in memory to another block in memory.
 // Returns 0 on failure.
-size_t tdefl_compress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, int flags);
+size_t tdefl_compress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, mz_uint flags);
 
 // Compresses an image to a compressed PNG file in memory.
 // On entry:
@@ -506,14 +506,14 @@ size_t tdefl_compress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void 
 //  Function returns a pointer to the compressed data, or NULL on failure.
 //  *pLen_out will be set to the size of the PNG image file.
 //  The caller must mz_free() the returned heap block (which will typically be larger than *pLen_out) when it's no longer needed.
-void *tdefl_write_image_to_png_file_in_memory_ex(const void *pImage, int w, int h, int num_chans, size_t *pLen_out, mz_uint level, mz_bool flip);
-void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+void *tdefl_write_image_to_png_file_in_memory_ex(const void *pImage, mz_uint8 w, mz_uint8 h, int num_chans, size_t *pLen_out, mz_uint level, mz_bool flip);
+void *tdefl_write_image_to_png_file_in_memory(const void *pImage, mz_uint8 w, mz_uint8 h, int num_chans, size_t *pLen_out);
 
 // Output stream interface. The compressor uses this interface to write compressed data. It'll typically be called TDEFL_OUT_BUF_SIZE at a time.
 typedef mz_bool(*tdefl_put_buf_func_ptr)(const void *pBuf, int len, void *pUser);
 
 // tdefl_compress_mem_to_output() compresses a block to an output stream. The above helpers use this function internally.
-mz_bool tdefl_compress_mem_to_output(const void *pBuf, size_t buf_len, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, int flags);
+mz_bool tdefl_compress_mem_to_output(const void *pBuf, size_t buf_len, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, mz_uint flags);
 
 enum { TDEFL_MAX_HUFF_TABLES = 3, TDEFL_MAX_HUFF_SYMBOLS_0 = 288, TDEFL_MAX_HUFF_SYMBOLS_1 = 32, TDEFL_MAX_HUFF_SYMBOLS_2 = 19, TDEFL_LZ_DICT_SIZE = 32768, TDEFL_LZ_DICT_SIZE_MASK = TDEFL_LZ_DICT_SIZE - 1, TDEFL_MIN_MATCH_LEN = 3, TDEFL_MAX_MATCH_LEN = 258 };
 
@@ -575,7 +575,7 @@ typedef struct
 // pBut_buf_func: If NULL, output data will be supplied to the specified callback. In this case, the user should call the tdefl_compress_buffer() API for compression.
 // If pBut_buf_func is NULL the user should always call the tdefl_compress() API.
 // flags: See the above enums (TDEFL_HUFFMAN_ONLY, TDEFL_WRITE_ZLIB_HEADER, etc.)
-tdefl_status tdefl_init(tdefl_compressor *d, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, int flags);
+tdefl_status tdefl_init(tdefl_compressor *d, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, mz_uint flags);
 
 // Compresses a block of data, consuming as much of the specified input buffer as possible, and writing as much compressed data to the specified output buffer as possible.
 tdefl_status tdefl_compress(tdefl_compressor *d, const void *pIn_buf, size_t *pIn_buf_size, void *pOut_buf, size_t *pOut_buf_size, tdefl_flush flush);
@@ -1224,7 +1224,8 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
             *pOut_buf_cur++ = (mz_uint8)counter;
           }
           else {
-            int sym2; mz_uint code_len;
+            mz_uint sym2;
+            mz_uint code_len;
 #if TINFL_USE_64BIT_BITBUF
             if (num_bits < 30) { bit_buf |= (((tinfl_bit_buf_t)MZ_READ_LE32(pIn_buf_cur)) << num_bits); pIn_buf_cur += 4; num_bits += 32; }
 #else
@@ -1345,7 +1346,7 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
 }
 
 // Higher level helper functions.
-void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, int flags)
+void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, size_t *pOut_len, mz_uint flags)
 {
   tinfl_decompressor decomp; void *pBuf = NULL, *pNew_buf; size_t src_buf_ofs = 0, out_buf_capacity = 0;
   *pOut_len = 0;
@@ -1370,14 +1371,14 @@ void *tinfl_decompress_mem_to_heap(const void *pSrc_buf, size_t src_buf_len, siz
   return pBuf;
 }
 
-size_t tinfl_decompress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, int flags)
+size_t tinfl_decompress_mem_to_mem(void *pOut_buf, size_t out_buf_len, const void *pSrc_buf, size_t src_buf_len, mz_uint flags)
 {
   tinfl_decompressor decomp; tinfl_status status; tinfl_init(&decomp);
   status = tinfl_decompress(&decomp, (const mz_uint8 *)pSrc_buf, &src_buf_len, (mz_uint8 *)pOut_buf, (mz_uint8 *)pOut_buf, &out_buf_len, (flags & ~TINFL_FLAG_HAS_MORE_INPUT) | TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF);
   return (status != TINFL_STATUS_DONE) ? TINFL_DECOMPRESS_MEM_TO_MEM_FAILED : out_buf_len;
 }
 
-int tinfl_decompress_mem_to_callback(const void *pIn_buf, size_t *pIn_buf_size, tinfl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, int flags)
+int tinfl_decompress_mem_to_callback(const void *pIn_buf, size_t *pIn_buf_size, tinfl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, mz_uint flags)
 {
   int result = 0;
   tinfl_decompressor decomp;
@@ -1661,7 +1662,8 @@ static mz_bool tdefl_compress_lz_codes(tdefl_compressor *d)
 #define TDEFL_PUT_BITS_FAST(b, l) { bit_buffer |= (((mz_uint64)(b)) << bits_in); bits_in += (l); }
 
   flags = 1;
-  for (pLZ_codes = d->m_lz_code_buf; pLZ_codes < pLZ_code_buf_end; flags >>= 1) {
+  pLZ_codes = d->m_lz_code_buf;
+  while (pLZ_codes < pLZ_code_buf_end) {
     if (flags == 1)
       flags = *pLZ_codes++ | 0x100;
 
@@ -1712,6 +1714,7 @@ static mz_bool tdefl_compress_lz_codes(tdefl_compressor *d)
     pOutput_buf += (bits_in >> 3);
     bit_buffer >>= (bits_in & ~7);
     bits_in &= 7;
+    flags >>= 1;
   }
 
 #undef TDEFL_PUT_BITS_FAST
@@ -2269,10 +2272,12 @@ tdefl_status tdefl_compress_buffer(tdefl_compressor *d, const void *pIn_buf, siz
   MZ_ASSERT(d->m_pPut_buf_func); return tdefl_compress(d, pIn_buf, &in_buf_size, NULL, NULL, flush);
 }
 
-tdefl_status tdefl_init(tdefl_compressor *d, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, int flags)
+tdefl_status tdefl_init(tdefl_compressor *d, tdefl_put_buf_func_ptr pPut_buf_func, void *pPut_buf_user, mz_uint flags)
 {
   d->m_pPut_buf_func = pPut_buf_func; d->m_pPut_buf_user = pPut_buf_user;
-  d->m_flags = (mz_uint)(flags); d->m_max_probes[0] = 1 + ((flags & 0xFFF) + 2) / 3; d->m_greedy_parsing = (flags & TDEFL_GREEDY_PARSING_FLAG) != 0;
+  d->m_flags = (mz_uint)(flags);
+  d->m_max_probes[0] = 1 + ((flags & 0xFFF) + 2) / 3;
+  d->m_greedy_parsing = (flags & TDEFL_GREEDY_PARSING_FLAG) != 0;
   d->m_max_probes[1] = 1 + (((flags & 0xFFF) >> 2) + 2) / 3;
   if (!(flags & TDEFL_NONDETERMINISTIC_PARSING_FLAG)) MZ_CLEAR_OBJ(d->m_hash);
   d->m_lookahead_pos = d->m_lookahead_size = d->m_dict_size = d->m_total_lz_bytes = d->m_lz_code_buf_dict_pos = d->m_bits_in = 0;
@@ -2373,7 +2378,7 @@ mz_uint tdefl_create_comp_flags_from_zip_params(int level, int window_bits, int 
 // Simple PNG writer function by Alex Evans, 2011. Released into the public domain: https://gist.github.com/908299, more context at
 // http://altdevblogaday.org/2011/04/06/a-smaller-jpg-encoder/.
 // This is actually a modification of Alex's original code so PNG files generated by this function pass pngcheck.
-void *tdefl_write_image_to_png_file_in_memory_ex(const void *pImage, int w, int h, int num_chans, size_t *pLen_out, mz_uint level, mz_bool flip)
+void *tdefl_write_image_to_png_file_in_memory_ex(const void *pImage, mz_uint8 w, mz_uint8 h, int num_chans, size_t *pLen_out, mz_uint level, mz_bool flip)
 {
   // Using a local copy of this array here in case MINIZ_NO_ZLIB_APIS was defined.
   static const mz_uint s_tdefl_png_num_probes[11] = { 0, 1, 6, 32,  16, 32, 128, 256,  512, 768, 1500 };
@@ -2402,7 +2407,7 @@ void *tdefl_write_image_to_png_file_in_memory_ex(const void *pImage, int w, int 
   // compute final size of file, grab compressed data buffer and return
   *pLen_out += 57; MZ_FREE(pComp); return out_buf.m_pBuf;
 }
-void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out)
+void *tdefl_write_image_to_png_file_in_memory(const void *pImage, mz_uint8 w, mz_uint8 h, int num_chans, size_t *pLen_out)
 {
   // Level 6 corresponds to TDEFL_DEFAULT_MAX_PROBES or MZ_DEFAULT_LEVEL (but we can't depend on MZ_DEFAULT_LEVEL being available in case the zlib API's where #defined out)
   return tdefl_write_image_to_png_file_in_memory_ex(pImage, w, h, num_chans, pLen_out, 6, MZ_FALSE);

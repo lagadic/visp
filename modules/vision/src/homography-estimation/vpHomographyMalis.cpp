@@ -47,8 +47,8 @@
 #include <visp3/vision/vpHomography.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
@@ -623,7 +623,9 @@ void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> 
     q_cible = 3;
   }
 
-  ::hlm(q_cible, xa, ya, xb, yb, H);
+  hlm(q_cible, xa, ya, xb, yb, H);
 
   aHb = H;
 }
+
+END_VISP_NAMESPACE

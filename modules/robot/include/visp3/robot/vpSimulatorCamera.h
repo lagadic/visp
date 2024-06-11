@@ -31,20 +31,22 @@
  * Defines the simplest robot : a free flying camera.
  */
 
-#ifndef vpSimulatorCamera_H
-#define vpSimulatorCamera_H
-
 /*!
  * \file vpSimulatorCamera.h
  * \brief class that defines the simplest robot : a free flying camera
  */
 
+#ifndef vpSimulatorCamera_H
+#define vpSimulatorCamera_H
+
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpSimulatorCamera
  *
@@ -98,7 +100,7 @@
  *
  * To know how this class can be used to achieve a visual servoing simulation,
  * you can follow the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpSimulatorCamera : public vpRobotSimulator
 {
 protected:
@@ -128,5 +130,5 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
   void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
-
+END_VISP_NAMESPACE
 #endif

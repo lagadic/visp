@@ -51,6 +51,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
         This class is needed in order to implement a callback function
         associated with the grabber
@@ -96,7 +97,7 @@ private:
 
   friend class vpDirectShowGrabberImpl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

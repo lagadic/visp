@@ -46,6 +46,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if !defined(_WIN32)
   std::string port;
 
@@ -55,7 +58,8 @@ int main(int argc, char **argv)
       port = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--baud") {
       baud = (unsigned long)atol(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help") {
+    }
+    else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;
       return EXIT_SUCCESS;
     }
@@ -84,4 +88,4 @@ int main(int argc, char **argv)
   std::cout << "Serial test is only working on unix-like OS." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }

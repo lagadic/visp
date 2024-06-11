@@ -51,6 +51,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotViper650.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -2557,7 +2558,7 @@ void vpRobotViper650::closeGripper() const
     throw vpRobotException(vpRobotException::lowLevelError, "Cannot close the gripper.");
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotViper650.cpp.o) has
 // no symbols

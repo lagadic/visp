@@ -56,7 +56,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <functional>
-#include <limits>
+#include <limits> // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -104,7 +104,7 @@
 #define VP_STAT stat
 #endif
 
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_MINIZ)
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
@@ -486,6 +486,7 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 
 #endif
 
+BEGIN_VISP_NAMESPACE
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -498,6 +499,7 @@ const char vpIoTools::separator =
 #else
 '/';
 #endif
+END_VISP_NAMESPACE
 
 namespace
 {
@@ -538,10 +540,11 @@ std::string &rtrim(std::string &s)
 }
 } // namespace
 
+BEGIN_VISP_NAMESPACE
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
-const std::string &vpIoTools::getBuildInformation()
+  const std::string &vpIoTools::getBuildInformation()
 {
   static std::string build_info =
 #include "version_string.inc"
@@ -1527,7 +1530,8 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
         value = static_cast<float>(M_PI);
@@ -1543,8 +1547,9 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
       }
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1561,7 +1566,8 @@ bool vpIoTools::readConfigVar(const std::string &var, double &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
         value = M_PI;
@@ -1577,8 +1583,9 @@ bool vpIoTools::readConfigVar(const std::string &var, double &value)
       }
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1596,13 +1603,15 @@ bool vpIoTools::readConfigVar(const std::string &var, int &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = atoi(configValues[k].c_str());
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1668,13 +1677,15 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 {
   bool found = false;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = configValues[k];
       found = true;
     }
+    ++k;
   }
-  if (found == false) {
+  if (!found) {
     std::cout << var << " not found in config file" << std::endl;
   }
   return found;
@@ -1699,7 +1710,8 @@ bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, 
   bool found = false;
   std::string nb;
   unsigned int configvars_size = configVars.size();
-  for (unsigned int k = 0; (k < configvars_size) && (found == false); ++k) {
+  unsigned int k = 0;
+  while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       found = true;
       // resize or not
@@ -1729,6 +1741,7 @@ bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, 
         }
       }
     }
+    ++k;
   }
   if (found == false) {
     std::cout << var << " not found in config file" << std::endl;
@@ -2693,3 +2706,4 @@ bool vpIoTools::parseBoolean(std::string input)
    Remove leading and trailing whitespaces from a string.
  */
 std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }
+END_VISP_NAMESPACE

@@ -31,9 +31,6 @@
  * Quaternion definition.
  */
 
-#ifndef _vpQuaternionVector_h_
-#define _vpQuaternionVector_h_
-
 /*!
  * \file vpQuaternionVector.h
  *
@@ -41,11 +38,15 @@
  * operations on it.
  */
 
+#ifndef _vpQuaternionVector_h_
+#define _vpQuaternionVector_h_
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpThetaUVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpQuaternionVector
 
@@ -100,7 +101,7 @@
   double z = q.z();
   double w = q.w();
   \endcode
- */
+*/
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
 public:
@@ -164,5 +165,5 @@ private:
   static const double minimum;
 
 };
-
+END_VISP_NAMESPACE
 #endif

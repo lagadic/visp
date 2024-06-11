@@ -47,6 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Constructor.
 
@@ -246,7 +247,7 @@ void vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMw)
 
   this->cMw_ = cMw;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no symbols
 void dummy_vpRobotCamera() { };

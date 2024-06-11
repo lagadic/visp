@@ -37,6 +37,7 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 const double vpRobot::maxTranslationVelocityDefault = 0.2;
 const double vpRobot::maxRotationVelocityDefault = 0.7;
 
@@ -49,17 +50,16 @@ const double vpRobot::maxRotationVelocityDefault = 0.7;
 
 vpRobot::vpRobot(void)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
-    verbose_(true)
-{
-}
+  maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
+  verbose_(true)
+{ }
 
 vpRobot::vpRobot(const vpRobot &robot)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
-    verbose_(true)
+  maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
+  verbose_(true)
 {
   *this = robot;
 }
@@ -268,3 +268,4 @@ void vpRobot::setMaxRotationVelocity(double w_max)
   \return Maximum rotation velocity expressed in rad/s.
 */
 double vpRobot::getMaxRotationVelocity(void) const { return this->maxRotationVelocity; }
+END_VISP_NAMESPACE

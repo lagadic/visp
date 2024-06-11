@@ -43,6 +43,7 @@
 #include "../wireframe-simulator/vpScene.h"
 #include "../wireframe-simulator/vpVwstack.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor
 */
@@ -354,7 +355,7 @@ vpHomogeneousMatrix vpRobotWireFrameSimulator::get_cMo()
   delete[] fMit;
   return cMoTemp;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotWireFrameSimulator.cpp.o) has no symbols

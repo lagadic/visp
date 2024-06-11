@@ -54,7 +54,8 @@
 
 #define STACKSIZE 4
 
-static View_parameters stack[STACKSIZE] = {vpDEFAULT_VIEW};
+BEGIN_VISP_NAMESPACE
+static View_parameters stack[STACKSIZE] = { vpDEFAULT_VIEW };
 static View_parameters *sp = stack;
 
 /*
@@ -147,7 +148,8 @@ void pop_vwstack(void)
     static char proc_name[] = "pop_vwstack";
     fprintf(stderr, "%s: stack underflow\n", proc_name);
     return;
-  } else
+  }
+  else
     sp--;
 }
 
@@ -197,15 +199,18 @@ void add_vwstack(const char *path, ...)
   if (strcmp(argv, "cop") == 0) {
     /* initialise le centre de projection  */
     SET_COORD3(sp->cop, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
-  } else if (strcmp(argv, "depth") == 0) {
-    /* initialise les distances des plans de decoupage  */
+  }
+  else if (strcmp(argv, "depth") == 0) {
+ /* initialise les distances des plans de decoupage  */
     sp->depth.front = (float)va_arg(ap, double);
     sp->depth.back = (float)va_arg(ap, double);
-  } else if (strcmp(argv, "type") == 0) {
-    /* initialise le type de projection  */
+  }
+  else if (strcmp(argv, "type") == 0) {
+ /* initialise le type de projection  */
     sp->type = (Type)va_arg(ap, int);
-  } else if (strcmp(argv, "vpn") == 0) {
-    /* initialise le vecteur normal au plan  */
+  }
+  else if (strcmp(argv, "vpn") == 0) {
+ /* initialise le vecteur normal au plan  */
     float x = (float)va_arg(ap, double);
     float y = (float)va_arg(ap, double);
     float z = (float)va_arg(ap, double);
@@ -216,14 +221,17 @@ void add_vwstack(const char *path, ...)
         std::fabs(z) <= std::numeric_limits<double>::epsilon()) {
       static char proc_name[] = "add_vwstack";
       fprintf(stderr, "%s: bad vpn\n", proc_name);
-    } else {
+    }
+    else {
       SET_COORD3(sp->vpn, x, y, z);
     }
-  } else if (strcmp(argv, "vrp") == 0) {
-    /* initialise le vecteur de reference  */
+  }
+  else if (strcmp(argv, "vrp") == 0) {
+ /* initialise le vecteur de reference  */
     SET_COORD3(sp->vrp, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
-  } else if (strcmp(argv, "vup") == 0) {
-    /* initialise le vecteur haut du plan  */
+  }
+  else if (strcmp(argv, "vup") == 0) {
+ /* initialise le vecteur haut du plan  */
     float x = (float)va_arg(ap, double);
     float y = (float)va_arg(ap, double);
     float z = (float)va_arg(ap, double);
@@ -234,20 +242,23 @@ void add_vwstack(const char *path, ...)
         std::fabs(z) <= std::numeric_limits<double>::epsilon()) {
       static char proc_name[] = "add_vwstack";
       fprintf(stderr, "%s: bad vup\n", proc_name);
-    } else {
+    }
+    else {
       SET_COORD3(sp->vup, x, y, z);
     }
-  } else if (strcmp(argv, "window") == 0) {
-    /* initialise la fenetre de projection  */
+  }
+  else if (strcmp(argv, "window") == 0) {
+ /* initialise la fenetre de projection  */
     sp->vwd.umin = (float)va_arg(ap, double);
     sp->vwd.umax = (float)va_arg(ap, double);
     sp->vwd.vmin = (float)va_arg(ap, double);
     sp->vwd.vmax = (float)va_arg(ap, double);
-  } else {
+  }
+  else {
     static char proc_name[] = "add_vwstack";
     fprintf(stderr, "%s: bad argument\n", proc_name);
   }
   va_end(ap);
 }
-
+END_VISP_NAMESPACE
 #endif

@@ -45,6 +45,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpMatrix M;
   vpMatrix M1(2, 3);
   vpMatrix M3(2, 2);
@@ -53,7 +56,8 @@ int main()
 
   try {
     M = M1 * M3;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 
@@ -61,7 +65,8 @@ int main()
 
   try {
     M = M1 + M3;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 

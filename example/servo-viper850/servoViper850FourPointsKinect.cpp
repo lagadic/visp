@@ -80,6 +80,10 @@
 #include <visp3/blob/vpDot2.h>
 #define L 0.05 // to deal with a 10cm by 10cm square
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Compute the pose \e cMo from the 3D coordinates of the points \e point and

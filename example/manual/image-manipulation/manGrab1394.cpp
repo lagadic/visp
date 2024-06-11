@@ -47,12 +47,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
 #ifdef VISP_HAVE_DC1394
+
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     unsigned int ncameras; // Number of cameras on the bus
     vp1394TwoGrabber g;

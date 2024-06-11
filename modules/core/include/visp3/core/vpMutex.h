@@ -48,6 +48,10 @@
 #include <windows.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
    \class vpMutex
@@ -184,6 +188,8 @@ private:
   HANDLE m_mutex;
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

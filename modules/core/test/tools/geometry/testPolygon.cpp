@@ -103,6 +103,9 @@ OPTIONS: \n\
 */
 bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click, int &method)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
@@ -148,6 +151,9 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     bool opt_display = true;
     bool opt_click = true;

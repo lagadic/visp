@@ -51,6 +51,8 @@
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpHomography
  * \ingroup group_vision_homography
@@ -163,7 +165,7 @@
   }
   \endcode
  *
- */
+*/
 class VISP_EXPORT vpHomography : public vpArray2D<double>
 {
 public:
@@ -697,5 +699,7 @@ private:
 
   static void initRansac(unsigned int n, double *xb, double *yb, double *xa, double *ya, vpColVector &x);
 };
+
+END_VISP_NAMESPACE
 
 #endif

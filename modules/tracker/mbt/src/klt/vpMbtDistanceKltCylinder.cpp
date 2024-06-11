@@ -47,6 +47,7 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -681,6 +682,7 @@ double vpMbtDistanceKltCylinder::computeZ(const double &x, const double &y)
 
   return cylinder.computeZ(x, y);
 }
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_mbt.a(vpMbtDistanceKltCylinder.cpp.o) has no symbols

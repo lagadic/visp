@@ -57,6 +57,8 @@
 
 #include <list>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
   \class vpProjectionDisplay
   \ingroup group_gui_projection
@@ -95,18 +97,18 @@ public:
   vpProjectionDisplay()
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
-      dIcam(), dIext(),
+    dIcam(), dIext(),
 #endif
-      listFp(), o(), x(), y(), z(), traj()
+    listFp(), o(), x(), y(), z(), traj()
   {
     init();
   }
   explicit vpProjectionDisplay(int select)
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
-      dIcam(), dIext(),
+    dIcam(), dIext(),
 #endif
-      listFp(), o(), x(), y(), z(), traj()
+    listFp(), o(), x(), y(), z(), traj()
   {
     init(select);
   }
@@ -127,11 +129,7 @@ private:
   vpMatrix traj;
 };
 
-#endif
-#endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+END_VISP_NAMESPACE
+#endif
+#endif

@@ -64,6 +64,7 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpTime.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpAR
 
@@ -143,13 +144,13 @@ private:
   bool background;
 
 public:
-  vpAR() : background(false){};
+  vpAR() : background(false) { };
 
   virtual ~vpAR();
   void initInternalViewer(unsigned int width, unsigned int height, vpImageType type = grayImage);
   void setImage(vpImage<unsigned char> &I);
   void setImage(vpImage<vpRGBa> &I);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

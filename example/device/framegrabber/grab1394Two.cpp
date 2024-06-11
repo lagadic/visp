@@ -70,6 +70,10 @@
 #define GETOPTARGS "b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
 #define DUAL_ACQ
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -685,6 +689,6 @@ int main()
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install libdc1394-2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

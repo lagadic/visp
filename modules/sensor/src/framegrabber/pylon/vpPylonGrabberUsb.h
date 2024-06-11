@@ -52,6 +52,7 @@
 
 #include <pylon/usb/BaslerUsbInstantCamera.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabberUsb
 
@@ -61,7 +62,7 @@
   vpPylonFactory::createPylonGrabber() instead.
 
   \headerfile vpPylonGrabberUsb.h ""
- */
+*/
 class VISP_EXPORT vpPylonGrabberUsb : public vpPylonGrabber
 {
 public:
@@ -122,6 +123,6 @@ private:
   unsigned int m_numCameras;               //!< Number of connected USB cameras
   bool m_connected;                        //!< true if camera connected
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabberUsb_h_

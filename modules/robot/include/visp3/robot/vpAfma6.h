@@ -33,9 +33,6 @@
  *
 *****************************************************************************/
 
-#ifndef _vpAfma6_h
-#define _vpAfma6_h
-
 /*!
 
   \file vpAfma6.h
@@ -44,6 +41,18 @@
 
 */
 
+#ifndef _vpAfma6_h
+#define _vpAfma6_h
+
+#include <visp3/core/vpConfig.h>
+
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpAfma6
@@ -65,13 +74,6 @@
   set this tool during robot initialisation or using set_eMc().
 
 */
-
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-
 class VISP_EXPORT vpAfma6
 {
 public:
@@ -120,7 +122,8 @@ public:
   static const char *const CONST_INTEL_D435_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
-  typedef enum {
+  typedef enum
+  {
     TOOL_CCMOP,             /*!< Pneumatic CCMOP gripper. */
     TOOL_GRIPPER,           /*!< Pneumatic gripper with 2 fingers. */
     TOOL_VACUUM,            /*!< Pneumatic vaccum gripper. */
@@ -135,7 +138,7 @@ public:
 public:
   vpAfma6();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma6(){};
+  virtual ~vpAfma6() { };
 
   /** @name Inherited functionalities from vpAfma6 */
   //@{
@@ -145,8 +148,8 @@ public:
   void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc_);
   void
-  init(vpAfma6::vpAfma6ToolType tool,
-       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+    init(vpAfma6::vpAfma6ToolType tool,
+         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
   int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q, const bool &nearest = true,
@@ -211,5 +214,5 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+END_VISP_NAMESPACE
 #endif

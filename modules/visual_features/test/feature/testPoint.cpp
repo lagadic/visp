@@ -51,6 +51,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpHomogeneousMatrix cMo;
     cMo[0][3] = 0.1;
@@ -130,9 +133,11 @@ int main()
       vpTRACE("\t selectAll");
       e = p.error(pd, vpFeaturePoint::selectAll());
       std::cout << e << std::endl;
-    } catch (vpFeatureException &me) {
+    }
+    catch (vpFeatureException &me) {
       std::cout << me << std::endl;
-    } catch (const vpException &me) {
+    }
+    catch (const vpException &me) {
       std::cout << me << std::endl;
     }
     std::cout << "------------------------------------------------------" << std::endl;
@@ -158,7 +163,8 @@ int main()
     dim = p.getDimension(vpFeaturePoint::selectAll());
     std::cout << "Dimension = " << dim << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

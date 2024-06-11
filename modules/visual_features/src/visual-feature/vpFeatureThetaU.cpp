@@ -33,6 +33,11 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFeatureThetaU.cpp
+  \brief class that defines the ThetaU visual feature
+*/
+
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureThetaU.h>
@@ -44,10 +49,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
-  \file vpFeatureThetaU.cpp
-  \brief class that defines the ThetaU visual feature
-*/
 /*
 
 attributes and members directly related to the vpBasicFeature needs
@@ -55,6 +56,7 @@ other functionalities are useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for 3D \f$ \theta u \f$ visual
@@ -836,3 +838,4 @@ unsigned int vpFeatureThetaU::selectTUy() { return FEATURE_LINE[1]; }
   \sa selectTUx(), selectTUy()
 */
 unsigned int vpFeatureThetaU::selectTUz() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

@@ -58,6 +58,10 @@
 // List of allowed command line options
 #define GETOPTARGS "dhn:o:"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -94,7 +98,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          nframes, opath.c_str());
+nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
@@ -254,7 +258,8 @@ int main(int argc, const char **argv)
     // Release the framegrabber
     delete grabber;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -264,7 +269,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

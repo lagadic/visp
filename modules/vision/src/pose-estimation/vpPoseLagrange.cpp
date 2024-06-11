@@ -33,6 +33,8 @@
 
 #include <visp3/vision/vpPose.h>
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
@@ -586,3 +588,5 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
+
+END_VISP_NAMESPACE

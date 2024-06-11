@@ -31,13 +31,13 @@
  * List data structure.
  */
 
-#ifndef VP_LIST_H
-#define VP_LIST_H
-
 /*!
  * \file vpList.h
  * \brief Definition of the list management class
  */
+
+#ifndef _VP_LIST_H_
+#define _VP_LIST_H_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -47,6 +47,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpListElement
   \brief Each element of a list
@@ -704,7 +705,7 @@ template <class type> void vpList<type>::display()
   }
   std::cout << std::endl << std::endl;
 }
-
+END_VISP_NAMESPACE
 #endif /* #ifndef VP_LIST_H */
 
 /*

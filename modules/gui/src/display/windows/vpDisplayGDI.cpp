@@ -46,6 +46,8 @@
 
 #include <visp3/gui/vpDisplayGDI.h>
 
+BEGIN_VISP_NAMESPACE
+
 // A vpDisplayGDI is just a vpDisplayWin32 which uses a vpGDIRenderer to do
 // the drawing.
 
@@ -188,7 +190,9 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const 
   init(I, winx, winy, title);
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayGDI.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpDisplayGDI.cpp.o) has no symbols
 void dummy_vpDisplayGDI() { };
 #endif

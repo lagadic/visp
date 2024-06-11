@@ -40,6 +40,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
 {
   bspline = (int)newbs;
@@ -758,3 +759,4 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
   }
   return MI;
 }
+END_VISP_NAMESPACE

@@ -50,6 +50,7 @@
 
 #define DEBUG_DISPLAY_DEPTH_NORMAL 0
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthNormal
 {
 public:
@@ -312,19 +313,20 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
-NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
-    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
-    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
-    {vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
+NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
 });
 #else
-NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
-    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
-    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
+NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
 });
 #endif
 #endif

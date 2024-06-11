@@ -52,6 +52,7 @@
 #include <math.h>
 #include <visp3/core/vpDebug.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the rotation matrix as identity.
 
@@ -945,25 +946,6 @@ vpRotationMatrix &vpRotationMatrix::build(const vpQuaternionVector &q)
 }
 
 /*!
-  Allow to multiply a scalar by a rotation matrix.
-*/
-vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
-{
-  vpRotationMatrix C;
-
-  unsigned int Rrow = R.getRows();
-  unsigned int Rcol = R.getCols();
-
-  for (unsigned int i = 0; i < Rrow; ++i) {
-    for (unsigned int j = 0; j < Rcol; ++j) {
-      C[i][j] = R[i][j] * x;
-    }
-  }
-
-  return C;
-}
-
-/*!
   Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation
   matrix.
  */
@@ -1138,3 +1120,23 @@ void vpRotationMatrix::orthogonalize()
 void vpRotationMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+/*!
+  Allow to multiply a scalar by a rotation matrix.
+*/
+vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
+{
+  vpRotationMatrix C;
+
+  unsigned int Rrow = R.getRows();
+  unsigned int Rcol = R.getCols();
+
+  for (unsigned int i = 0; i < Rrow; ++i) {
+    for (unsigned int j = 0; j < Rcol; ++j) {
+      C[i][j] = R[i][j] * x;
+    }
+  }
+
+  return C;
+}
+END_VISP_NAMESPACE

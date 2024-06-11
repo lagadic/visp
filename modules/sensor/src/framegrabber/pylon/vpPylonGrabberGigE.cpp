@@ -48,6 +48,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpTime.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that consider the first camera found on the bus as
    active.
@@ -116,7 +117,8 @@ Pylon::CInstantCamera *vpPylonGrabberGigE::getCameraHandler()
 
   if (m_connected == true) {
     return &m_camera;
-  } else {
+  }
+  else {
     return nullptr;
   }
 }
@@ -379,10 +381,12 @@ float vpPylonGrabberGigE::setGain(bool gain_auto, float gain_value)
   if (GenApi::IsWritable(m_camera.GainAbs)) {
     m_camera.GainAbs.SetValue(gain_value);
     return m_camera.GainAbs.GetValue();
-  } else if (GenApi::IsWritable(m_camera.GainRaw)) {
+  }
+  else if (GenApi::IsWritable(m_camera.GainRaw)) {
     m_camera.GainRaw.SetValue(gain_value);
     return m_camera.GainRaw.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set gain.");
 }
 
@@ -407,10 +411,12 @@ float vpPylonGrabberGigE::setBlackLevel(float blacklevel_value)
   if (GenApi::IsWritable(m_camera.BlackLevelAbs)) {
     m_camera.BlackLevelAbs.SetValue(blacklevel_value);
     return m_camera.BlackLevelAbs.GetValue();
-  } else if (GenApi::IsWritable(m_camera.BlackLevelRaw)) {
+  }
+  else if (GenApi::IsWritable(m_camera.BlackLevelRaw)) {
     m_camera.BlackLevelRaw.SetValue(blacklevel_value);
     return m_camera.BlackLevelRaw.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set blacklevel.");
 }
 
@@ -448,10 +454,12 @@ float vpPylonGrabberGigE::setExposure(bool exposure_on, bool exposure_auto, floa
   if (GenApi::IsWritable(m_camera.ExposureTimeAbs)) {
     m_camera.ExposureTimeAbs.SetValue(exposure_value * 1000);
     return m_camera.ExposureTimeAbs.GetValue() * 0.001;
-  } else if (GenApi::IsWritable(m_camera.ExposureTimeRaw)) {
+  }
+  else if (GenApi::IsWritable(m_camera.ExposureTimeRaw)) {
     m_camera.ExposureTimeRaw.SetValue(exposure_value);
     return m_camera.ExposureTimeRaw.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set exposure.");
 }
 
@@ -477,7 +485,8 @@ float vpPylonGrabberGigE::setGamma(bool gamma_on, float gamma_value)
   if (GenApi::IsWritable(m_camera.Gamma)) {
     m_camera.Gamma.SetValue(gamma_value);
     return m_camera.Gamma.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set gamma.");
 }
 
@@ -802,9 +811,9 @@ vpPylonGrabber &vpPylonGrabberGigE::operator>>(vpImage<vpRGBa> &I)
   acquire(I);
   return *this;
 }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonGrabberGigE.cpp.o) has no symbols
-void dummy_vpPylonGrabberGigE(){};
+void dummy_vpPylonGrabberGigE() { };
 #endif // #ifdef VISP_HAVE_PYLON

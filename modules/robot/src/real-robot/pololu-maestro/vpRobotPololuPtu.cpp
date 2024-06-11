@@ -40,6 +40,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotPololuPtu.h>
 
+BEGIN_VISP_NAMESPACE
 vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, int baudrate, bool verbose)
   : m_verbose(verbose)
 {
@@ -289,7 +290,7 @@ void vpRobotPololuPtu::getPosition(const vpRobot::vpControlFrameType frame, vpCo
   q[0] = m_pan.getAngularPosition();
   q[1] = m_tilt.getAngularPosition();
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotPololuPtu.cpp.o) has no symbols
 void dummy_vpRobotPololuPtu() { };

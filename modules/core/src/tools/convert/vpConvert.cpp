@@ -44,6 +44,7 @@
 #include <visp3/core/vpConvert.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
+BEGIN_VISP_NAMESPACE
 /*!
   Unary function used to transform a cv::KeyPoint to a vpImagePoint.
   \param keypoint : KeyPoint to convert.
@@ -461,6 +462,7 @@ void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv
     std::transform(from.begin(), from.end(), to.begin(), vpObjectPointToPoint3d);
   }
 }
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpConvert.cpp.o) has no symbols
 void dummy_vpConvert() { };

@@ -16,8 +16,12 @@
 using json = nlohmann::json; //! json namespace shortcut
 
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string config_file = "";
   std::string model = "";
   std::string init_file = "";

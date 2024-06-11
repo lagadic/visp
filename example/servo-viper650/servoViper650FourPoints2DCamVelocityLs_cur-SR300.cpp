@@ -78,6 +78,10 @@
 
 #define L 0.05 // to deal with a 10cm by 10cm square
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Compute the pose \e cMo from the 3D coordinates of the points \e point and
@@ -114,7 +118,8 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCamer
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-  } else {
+  }
+  else {
     pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
 }
@@ -140,7 +145,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -178,7 +184,7 @@ int main()
 
     // Update camera parameters
     vpCameraParameters cam =
-        g.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion);
+      g.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << "Camera intrinsic parameters: \n" << cam << std::endl;
 
     g.acquire(I);
@@ -269,7 +275,8 @@ int main()
           vpImagePoint cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Error detected while tracking visual features.." << std::endl;
         break;
       }
@@ -343,7 +350,8 @@ int main()
     task.print();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

@@ -33,7 +33,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentCentered.h>
@@ -44,6 +43,7 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * \param moments_ : Database of moment primitives.
@@ -52,8 +52,8 @@
  * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param featureMoments : Database of features.
  */
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
-                                                 vpFeatureMomentDatabase *featureMoments)
+  vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
+                                                   vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(moments_, A_, B_, C_, featureMoments), order(0)
 { }
 
@@ -332,3 +332,4 @@ std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
   }
   return os;
 }
+END_VISP_NAMESPACE

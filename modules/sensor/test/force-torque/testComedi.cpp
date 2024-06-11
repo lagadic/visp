@@ -47,6 +47,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_COMEDI
   vpComedi comedi;
   comedi.setDevice("/dev/comedi0");

@@ -52,6 +52,7 @@
 #include <visp3/mbt/vpMbHiddenFaces.h>
 #include <visp3/vision/vpHomography.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtDistanceKltCylinder
 
@@ -212,7 +213,7 @@ public:
 
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif // VISP_HAVE_OPENCV

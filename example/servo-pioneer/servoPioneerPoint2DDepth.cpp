@@ -93,6 +93,10 @@
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpImage<unsigned char> I; // Create a gray level image container
     double depth = 1.;

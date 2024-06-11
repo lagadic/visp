@@ -1,4 +1,5 @@
 //! \example tutorial-mb-generic-tracker.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -12,6 +13,10 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string opt_videoname = "model/teabox/teabox.mp4";
     std::string opt_modelname = "model/teabox/teabox.cao";

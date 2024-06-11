@@ -35,12 +35,17 @@
 
 #include <iostream>
 #include <limits>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpThetaUVector tu;
 

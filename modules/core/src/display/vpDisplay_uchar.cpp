@@ -41,7 +41,7 @@
 // Modifications done in this file should be reported in all vpDisplay_*.cpp
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
-
+BEGIN_VISP_NAMESPACE
 /*!
   Close the display attached to I.
 */
@@ -1336,3 +1336,4 @@ unsigned int vpDisplay::getDownScalingFactor(const vpImage<unsigned char> &I)
 {
   return vp_display_get_down_scaling_factor(I);
 }
+END_VISP_NAMESPACE

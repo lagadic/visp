@@ -1,4 +1,5 @@
 /*! \example tutorial-ibvs-4pts-plotter.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -6,6 +7,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
@@ -91,7 +96,8 @@ int main()
 
     vpDisplay::getClick(plotter.I);
 #endif
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

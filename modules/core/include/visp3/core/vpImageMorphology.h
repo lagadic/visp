@@ -31,14 +31,16 @@
  * Morphology tools.
  */
 
-#ifndef _vpImageMorphology_h_
-#define _vpImageMorphology_h_
-
 /*!
   \file vpImageMorphology.h
   \brief Various mathematical morphology tools, erosion, dilatation...
 
 */
+
+#ifndef _vpImageMorphology_h_
+#define _vpImageMorphology_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMatrix.h>
@@ -48,6 +50,7 @@
 #include <math.h>
 #include <string.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageMorphology
 
@@ -530,6 +533,7 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, operation, size);
 }
+END_VISP_NAMESPACE
 #endif
 
 /*

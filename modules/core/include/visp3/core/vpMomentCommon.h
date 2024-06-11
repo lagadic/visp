@@ -49,6 +49,7 @@
 
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -137,4 +138,5 @@ public:
 
   void updateAll(vpMomentObject &object) vp_override;
 };
+END_VISP_NAMESPACE
 #endif // VPCOMMONMOMENTS_H

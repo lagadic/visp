@@ -55,6 +55,10 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   const int n = 20; // x dim
   const int m = 10; // equality m < n
   const int p = 30; // inequality

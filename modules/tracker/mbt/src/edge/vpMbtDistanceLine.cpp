@@ -48,6 +48,7 @@
 #include <visp3/mbt/vpMbtDistanceLine.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
+BEGIN_VISP_NAMESPACE
 void buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane);
 void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
 
@@ -927,3 +928,4 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
   }
   return false;
 }
+END_VISP_NAMESPACE

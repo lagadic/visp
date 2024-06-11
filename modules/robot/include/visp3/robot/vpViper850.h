@@ -31,19 +31,19 @@
  * Interface for the ADEPT Viper 850 robot.
  */
 
-#ifndef vpViper850_h
-#define vpViper850_h
-
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpViper.h>
-
 /*!
  * \file vpViper850.h
  *
  * Modelization of the ADEPT Viper 850 robot.
  */
 
+#ifndef vpViper850_h
+#define vpViper850_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpViper.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpViper850
  *
@@ -90,7 +90,7 @@
  *   set this during robot initialisation or using set_eMc().
  *
  * - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
- */
+*/
 class VISP_EXPORT vpViper850 : public vpViper
 {
 public:
@@ -167,5 +167,5 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+END_VISP_NAMESPACE
 #endif

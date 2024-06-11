@@ -50,6 +50,7 @@
 
 #if defined(VISP_HAVE_JPEG)
 
+BEGIN_VISP_NAMESPACE
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
@@ -332,4 +333,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
   jpeg_destroy_decompress(&cinfo);
   fclose(file);
 }
+
+END_VISP_NAMESPACE
+
 #endif

@@ -75,6 +75,10 @@
 // List of allowed command line options
 #define GETOPTARGS "ci:p:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -730,5 +734,5 @@ int main()
   std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif

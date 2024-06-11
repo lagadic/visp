@@ -36,6 +36,7 @@
 #include <visp3/core/vpBSpline.h>
 #include <visp3/core/vpDebug.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -517,3 +518,4 @@ vpImagePoint *vpBSpline::computeCurveDers(double u, unsigned int der) const
 
   return derivate;
 }
+END_VISP_NAMESPACE

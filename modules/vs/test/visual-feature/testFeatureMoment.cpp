@@ -44,6 +44,10 @@
 #include <iostream>
 #include <limits>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // initialize scene in the interface
 void initScene(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
   vpMomentObject &dst);

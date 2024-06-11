@@ -38,21 +38,21 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle()
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
-{
-}
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+{ }
 
 /*!
   Copy constructor.
  */
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpTemplateTrackerTriangle &T)
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   *this = T;
 }
@@ -104,7 +104,7 @@ vpTemplateTrackerTriangle &vpTemplateTrackerTriangle::operator=(const vpTemplate
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpColVector &c1, const vpColVector &c2,
                                                      const vpColVector &c3)
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]);
 }
@@ -125,7 +125,7 @@ vpTemplateTrackerTriangle vpTemplateTrackerTriangle::getPyramidDown() const
   */
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(x1, y1, x2, y2, x3, y3);
 }
@@ -139,7 +139,7 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1, int y1, int x2, int
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2,
                                                      const vpImagePoint &c3)
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
 }
@@ -151,7 +151,7 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1, con
   */
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
   : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
-    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
+  uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(x1, y1, x2, y2, x3, y3);
 }
@@ -236,7 +236,8 @@ void vpTemplateTrackerTriangle::init(double x1, double y1, double x2, double y2,
   try {
     uvinv = uv.inverseByLU();
     not_good = false;
-  } catch (...) {
+  }
+  catch (...) {
     not_good = true;
     std::cout << "Triangle vide" << std::endl;
   }
@@ -423,3 +424,4 @@ double vpTemplateTrackerTriangle::getMaxx() const { return minx_temp + l_t + 1; 
   that are in the triangle. \sa getMaxx()
  */
 double vpTemplateTrackerTriangle::getMaxy() const { return miny_temp + h_t + 1; }
+END_VISP_NAMESPACE

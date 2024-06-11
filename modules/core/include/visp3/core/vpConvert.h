@@ -31,13 +31,13 @@
  * Directory management.
  */
 
-#ifndef _vpConvert_h_
-#define _vpConvert_h_
-
 /*!
   \file vpConvert.h
   \brief Tools for type or general conversion.
  */
+
+#ifndef _vpConvert_h_
+#define _vpConvert_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -47,11 +47,12 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpConvert
   \ingroup group_core_bridges
   Bridges over other frameworks like OpenCV.
- */
+*/
 class VISP_EXPORT vpConvert
 {
 public:
@@ -98,6 +99,6 @@ private:
   static cv::Point3d vpObjectPointToPoint3d(const vpPoint &point);
 
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -50,6 +50,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void usage(const char *name, const char *badparam, std::string ipath)
@@ -174,8 +178,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -184,9 +188,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -218,7 +222,7 @@ int main(int argc, const char **argv)
       for (unsigned int j = 0; j < I_score.getWidth(); j++) {
         if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
           std::cerr << "Issue with normalizedCorrelation, gold: " << std::setprecision(17) << I_score_gold[i][j]
-                    << " ; compute: " << I_score[i][j] << std::endl;
+            << " ; compute: " << I_score[i][j] << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -240,7 +244,8 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "\nCatch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

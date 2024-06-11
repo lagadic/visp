@@ -31,15 +31,15 @@
  * Image tools.
  */
 
-#ifndef vpImageTools_H
-#define vpImageTools_H
-
 /*!
   \file vpImageTools.h
 
   \brief Various image tools; sub-image extraction, modification of
   the look up table, binarisation...
 */
+
+#ifndef _vpImageTools_H_
+#define _vpImageTools_H_
 
 #include <visp3/core/vpImage.h>
 
@@ -63,6 +63,7 @@
 #include <omp.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageTools
 
@@ -1464,9 +1465,9 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
 {
   if (fixedPoint && (!centerCorner)) {
     const int nbits = 16;
-    const int64_t precision = 1 << nbits;
+    const uint64_t precision = 1 << nbits;
     const float precision_1 = 1 / static_cast<float>(precision);
-    const int64_t precision2 = 1ULL << (2 * nbits);
+    const uint64_t precision2 = 1ULL << (2 * nbits);
     const float precision_2 = 1 / static_cast<float>(precision2);
 
     int64_t a0_i64 = static_cast<int64_t>(T[0][0] * precision);
@@ -1937,5 +1938,5 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     }
   }
 }
-
+END_VISP_NAMESPACE
 #endif

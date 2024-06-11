@@ -72,6 +72,7 @@ extern "C" {
     + z : down
 */
 
+BEGIN_VISP_NAMESPACE
 bool vpRobotBebop2::m_running = false;
 ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = nullptr;
 
@@ -2002,7 +2003,7 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
 }
 
 #undef TAG
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBebop2.cpp.o) has
 // no symbols

@@ -38,10 +38,13 @@
 #ifndef _vpFeatureMomentCentered_h_
 #define _vpFeatureMomentCentered_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
+
 /*!
  * \class vpFeatureMomentCentered
  *
@@ -70,7 +73,7 @@ class vpMomentDatabase;
  * - vpFeatureMomentBasic
  * - vpFeatureMomentGravityCenter
  * - vpMomentGravityCenter
- */
+*/
 class VISP_EXPORT vpFeatureMomentCentered : public vpFeatureMoment
 {
 protected:
@@ -116,5 +119,5 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
 };
-
+END_VISP_NAMESPACE
 #endif

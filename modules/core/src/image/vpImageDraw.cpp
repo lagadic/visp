@@ -63,6 +63,9 @@
 
 namespace
 {
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 template <class Type>
 void DrawLine(vpImage<Type> &canvas, int x1, int y1, int x2, int y2, const Type &color, unsigned int width = 1)
 {
@@ -234,6 +237,7 @@ void DrawRectangle(vpImage<Type> &canvas, const vpRect &rect, const Type &color,
 }
 } // namespace
 
+BEGIN_VISP_NAMESPACE
 /*!
   Draw an arrow from image point \e ip1 to image point \e ip2.
   \param[in,out] I : Image where to draw the arrow.
@@ -976,3 +980,4 @@ void vpImageDraw::drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, con
     DrawRectangle(I, rectangle, vpRGBa(color.R, color.G, color.B), thickness);
   }
 }
+END_VISP_NAMESPACE

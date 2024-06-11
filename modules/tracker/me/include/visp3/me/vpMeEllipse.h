@@ -53,6 +53,8 @@
 #include <optional>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpMeEllipse
  * \ingroup module_me
@@ -89,7 +91,7 @@
  *
  * \include tutorial-me-ellipse-tracker.cpp
  *
- */
+*/
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:
@@ -588,5 +590,7 @@ protected:
    */
   void updateTheta();
 };
+
+END_VISP_NAMESPACE
 
 #endif

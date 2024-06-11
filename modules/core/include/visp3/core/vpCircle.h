@@ -36,15 +36,17 @@
   \brief  class that defines what is a circle
 */
 
-#ifndef vpCircle_hh
-#define vpCircle_hh
+#ifndef _vpCircle_h_
+#define _vpCircle_h_
 
 #include <math.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpCircle
  * \ingroup group_core_geometry
@@ -81,7 +83,7 @@
  *   projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
  *   get_n11() and get_n02(). They correspond to 2D normalized circle parameters with values expressed in meters.
  *   To get theses parameters use get_p().
- */
+*/
 class VISP_EXPORT vpCircle : public vpForwardProjection
 {
 public:
@@ -164,7 +166,6 @@ public:
 #endif
 protected:
   void init() vp_override;
-
 };
-
+END_VISP_NAMESPACE
 #endif
