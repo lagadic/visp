@@ -95,7 +95,6 @@ void vpLuminancePCA::init(const std::shared_ptr<vpMatrix> &basis, const std::sha
   m_border = vpFeatureLuminance::DEFAULT_BORDER;
 }
 
-
 vpLuminancePCA::vpLuminancePCA(const vpLuminancePCA &other) : vpLuminanceMapping(other.m_mappingSize)
 {
   *this = other;
@@ -496,7 +495,6 @@ void vpLuminanceDCT::interaction(const vpImage<unsigned char> &, const vpMatrix 
   }
 }
 
-
 // Feature luminance mapping
 
 vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpCameraParameters &cam,
@@ -541,7 +539,6 @@ void vpFeatureLuminanceMapping::init(const vpFeatureLuminance &luminance, std::s
   s.resize(dim_s, true);
 }
 
-
 vpFeatureLuminanceMapping &vpFeatureLuminanceMapping::operator=(const vpFeatureLuminanceMapping &f)
 {
   dim_s = f.dim_s;
@@ -555,15 +552,12 @@ vpFeatureLuminanceMapping *vpFeatureLuminanceMapping::duplicate() const
   return new vpFeatureLuminanceMapping(*this);
 }
 
-
 void vpFeatureLuminanceMapping::build(vpImage<unsigned char> &I)
 {
   m_featI.build(I);
   m_featI.interaction(m_LI);
   m_mapping->map(I, s);
 }
-
-
 
 vpColVector vpFeatureLuminanceMapping::error(const vpBasicFeature &s_star, unsigned int select)
 {
@@ -598,7 +592,6 @@ void vpFeatureLuminanceMapping::interaction(vpMatrix &L)
   m_featI.interaction(m_LI);
   m_mapping->interaction(I, m_LI, s, L);
 }
-
 
 void vpFeatureLuminanceMapping::print(unsigned int /*select*/) const
 {

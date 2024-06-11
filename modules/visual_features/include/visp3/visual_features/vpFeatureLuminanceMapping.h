@@ -116,16 +116,13 @@ public:
    */
   void setBorder(unsigned border) { m_border = border; }
 
-
   static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
   static void imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix &Imat, unsigned border);
-
 
 protected:
   unsigned m_mappingSize; //! Final vector size
   unsigned m_border; //! Borders that were removed during raw photometric VS computation
 };
-
 
 /**
  * \brief Implementation of \cite Marchand19a.
@@ -148,7 +145,6 @@ protected:
 class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
-
   vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
 
   /**
@@ -164,7 +160,6 @@ public:
    * \brief Copy constructor: does not make a deep copy of the basis and mean
    */
   vpLuminancePCA(const vpLuminancePCA &other);
-
 
   vpLuminancePCA &operator=(const vpLuminancePCA &other);
 
@@ -224,6 +219,7 @@ public:
    * \throws if files cannot be read, or if basis and mean dimensions are incorrect.
    */
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName, const std::string &explainedVarianceFile);
+
 #ifdef VISP_HAVE_MODULE_IO
   /**
    * \brief Compute a new Principal Component Analysis on set of images, stored on disk.
@@ -238,6 +234,7 @@ public:
    */
   static vpLuminancePCA learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int imageBorder = 0);
 #endif
+
   /**
    * \brief Compute a new Principal Component Analysis on set of images.
    *
@@ -279,7 +276,6 @@ private:
 class VISP_EXPORT vpLuminanceDCT : public vpLuminanceMapping
 {
 public:
-
   /**
    * \brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
    *
@@ -321,7 +317,6 @@ public:
     unsigned m_cols;
   };
 
-
   /**
    * \brief Build a new DCT object
    *
@@ -347,9 +342,7 @@ public:
    */
   vpLuminanceDCT(const vpLuminanceDCT &other);
 
-
   vpLuminanceDCT &operator=(const vpLuminanceDCT &other) = default;
-
 
   void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
@@ -366,7 +359,6 @@ protected:
   vpMatrix m_Dcols, m_Drows; //! the computed DCT matrices. The separable property of DCt is used so that a 1D DCT is computed on rows and another on columns of the result of the first dct;
   std::array<vpMatrix, 6> m_dIdrPlanes; //! Luminance interaction matrix, seen as six image planes
   vpLuminanceDCT::vpMatrixZigZagIndex m_zigzag; //! zigzag indexing helper
-
 };
 
 /**
@@ -385,7 +377,6 @@ protected:
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
 public:
-
   vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const std::shared_ptr<vpLuminanceMapping> mapping);
   vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping);
   void init() vp_override;
@@ -407,7 +398,6 @@ public:
                unsigned int = 1) const vp_override
   { }
 
-
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
@@ -420,12 +410,10 @@ public:
   std::shared_ptr<vpLuminanceMapping> &getMapping() { return m_mapping; }
 
 private:
-
   std::shared_ptr<vpLuminanceMapping> m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
   vpImage<unsigned char> I;
-
 };
 END_VISP_NAMESPACE
 #endif

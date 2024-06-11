@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Luminance feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureLuminance.cpp
@@ -112,7 +110,7 @@ vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(DEFAULT_BO
 }
 
 /*!
- Copy constructor.
+  Copy constructor.
  */
 vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
   : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(DEFAULT_BORDER), pixInfo(nullptr), firstTimeIn(0), cam()
@@ -121,7 +119,7 @@ vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
 }
 
 /*!
- Copy operator.
+  Copy operator.
  */
 vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
 {
@@ -237,7 +235,6 @@ vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
 }
 
 /*!
-
   Compute and return the interaction matrix \f$ L_I \f$. The computation is
   made thanks to the values of the luminance features \f$ I \f$
 */
@@ -379,8 +376,3 @@ vpFeatureLuminance *vpFeatureLuminance::duplicate() const
 }
 
 END_VISP_NAMESPACE
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
