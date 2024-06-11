@@ -176,15 +176,6 @@ public:
   typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpAddSubFunction;
 
   /**
-   * \brief Residual function, which computes either the equivalent of the substraction in the
-   * state space or the equivalent of the substraction in the measurement space.
-   * The first argument is the vector to which we must substract something
-   * and the second argument is the thing to be substracted. The return is the
-   * result of this "substraction".
-   */
-  typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpAddFunction;
-
-  /**
    * \brief Construct a new vpUnscentedKalman object.
    *
    * \param[in] Q The covariance introduced by performing the prediction step.
