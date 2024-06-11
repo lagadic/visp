@@ -2,7 +2,12 @@
   "ignored_headers": [
     "vpFeatureException.h"
   ],
+  "user_defined_headers": ["visual_features.hpp"],
   "classes": {
+    "vpBasicFeature": {
+      "trampoline": "TrampolineBasicFeature",
+      "use_publicist": true
+    },
     "vpGenericFeature": {
       "methods": [
         {

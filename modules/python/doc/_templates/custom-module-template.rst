@@ -19,7 +19,7 @@
    .. rubric:: {{ _('Functions') }}
 
    .. autosummary::
-      :nosignatures:
+      :toctree:
    {% for item in functions %}
       {{ item }}
    {%- endfor %}
