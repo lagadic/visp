@@ -38,29 +38,29 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageTools.h>
-#include <visp3/io/vpImageIo.h>
-
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/robot/vpSimulatorCamera.h>
-
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/robot/vpImageSimulator.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
 #include <stdlib.h>
-#include <visp3/robot/vpImageSimulator.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:n:p:m:k:hl:"

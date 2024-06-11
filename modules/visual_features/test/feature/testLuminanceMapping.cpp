@@ -1,5 +1,6 @@
 
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
+
 #include <visp3/core/vpSubMatrix.h>
 
 #include <visp3/core/vpUniRand.h>
@@ -8,6 +9,10 @@
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 
 vpMatrix orthogonalBasis(unsigned n, unsigned seed)

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Luminance based feature.
  */
 
-#ifndef vpFeatureLuminanceMapping_h
-#define vpFeatureLuminanceMapping_h
+#ifndef VP_FEATURE_LUMINANCE_MAPPING_H
+#define VP_FEATURE_LUMINANCE_MAPPING_H
 #include <visp3/core/vpConfig.h>
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <array>
@@ -43,14 +43,14 @@
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
 
-
+BEGIN_VISP_NAMESPACE
 /**
  * @brief Base class for functions that map an image and its interaction matrix to a different domain.
  * * The mapping\f$ \mathbf{I} \rightarrow \mathbf{z}\f$ is done via vpLuminanceMapping::map
  * * The projection of the interaction matrix \f$ \mathbf{L_I} \rightarrow \mathbf{L_z}\f$ is performed in vpLuminanceMapping::interaction
  * * If possible the inverse mapping (i.e., image reconstruction) is available throug vpLuminanceMapping::inverse
  */
-class VISP_EXPORT vpLuminanceMapping
+  class VISP_EXPORT vpLuminanceMapping
 {
 public:
   /**
@@ -416,6 +416,6 @@ private:
   vpImage<unsigned char> I;
 
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif
