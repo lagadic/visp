@@ -44,24 +44,28 @@
 #include <visp3/visual_features/vpFeatureLuminance.h>
 
 BEGIN_VISP_NAMESPACE
-/**
- * @brief Base class for functions that map an image and its interaction matrix to a different domain.
- * * The mapping\f$ \mathbf{I} \rightarrow \mathbf{z}\f$ is done via vpLuminanceMapping::map
- * * The projection of the interaction matrix \f$ \mathbf{L_I} \rightarrow \mathbf{L_z}\f$ is performed in vpLuminanceMapping::interaction
- * * If possible the inverse mapping (i.e., image reconstruction) is available throug vpLuminanceMapping::inverse
- */
-  class VISP_EXPORT vpLuminanceMapping
+
+/*!
+ * \brief Base class for functions that map an image and its interaction matrix to a different domain.
+ *
+ * \ingroup group_visual_features
+ *
+ * - The mapping\f$ \mathbf{I} \rightarrow \mathbf{z}\f$ is done via vpLuminanceMapping::map
+ * - The projection of the interaction matrix \f$ \mathbf{L_I} \rightarrow \mathbf{L_z}\f$ is performed in vpLuminanceMapping::interaction
+ * - If possible the inverse mapping (i.e., image reconstruction) is available throug vpLuminanceMapping::inverse
+*/
+class VISP_EXPORT vpLuminanceMapping
 {
 public:
   /**
-   * @brief Construct a new vp Luminance Mapping object
+   * \brief Construct a new vp Luminance Mapping object
    *
    * @param mappingSize The size of the space that this transformation maps to.
    */
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
 
   /**
-   * @brief Map an image \p I to a representation \p s.
+   * \brief Map an image \p I to a representation \p s.
    * This representation s has getProjectionSize() rows.
    *
    * Note that when combined with vpFeatureLuminanceMapping,
@@ -73,7 +77,7 @@ public:
   virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
 
   /**
-   * @brief Compute the interaction matrix associated with the representation \p s
+   * \brief Compute the interaction matrix associated with the representation \p s
    *
    * @param I input image used to compute s
    * @param LI Photometric interaction matrix associated to \p I (see vpFeatureLuminance)
@@ -83,7 +87,7 @@ public:
   virtual void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) = 0;
 
   /**
-   * @brief Reconstruct \p I from a representation \p s
+   * \brief Reconstruct \p I from a representation \p s
    *
    * @param s the representation
    * @param I Output lossy reconstruction
@@ -91,21 +95,21 @@ public:
   virtual void inverse(const vpColVector &s, vpImage<unsigned char> &I) = 0;
 
   /**
-   * @brief Returns the size of the space to which an image is mapped to.
+   * \brief Returns the size of the space to which an image is mapped to.
    *
    * @return space size
    */
   unsigned int getProjectionSize() const { return m_mappingSize; }
 
   /**
-   * @brief Returns the number of pixels that are removed by the photometric VS computation
+   * \brief Returns the number of pixels that are removed by the photometric VS computation
    *
    * @return space size
    */
   unsigned int getBorder() const { return m_border; }
 
   /**
-   * @brief Set the number of pixels that are removed by the photometric VS computation
+   * \brief Set the number of pixels that are removed by the photometric VS computation
    * This function should be called by vpFeatureLuminanceMapping
    *
    * @param border
@@ -124,7 +128,9 @@ protected:
 
 
 /**
- * @brief Implementation of \cite Marchand19a.
+ * \brief Implementation of \cite Marchand19a.
+ *
+ * \ingroup group_visual_features
  *
  * Projects an image onto an orthogonal subspace,
  * obtained via Principal Component Analysis (PCA).
@@ -146,7 +152,7 @@ public:
   vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
 
   /**
-   * @brief Build a new PCA object
+   * \brief Build a new PCA object
    *
    * @param basis \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix
    * @param mean  \f$ vec(\mathbf{\bar I}) \f$ the mean image represented as a vector
@@ -155,7 +161,7 @@ public:
   vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance);
 
   /**
-   * @brief Copy constructor: does not make a deep copy of the basis and mean
+   * \brief Copy constructor: does not make a deep copy of the basis and mean
    */
   vpLuminancePCA(const vpLuminancePCA &other);
 
@@ -163,7 +169,7 @@ public:
   vpLuminancePCA &operator=(const vpLuminancePCA &other);
 
   /**
-   * @brief Initialize the PCA object with a basis, mean and explained variance vector
+   * \brief Initialize the PCA object with a basis, mean and explained variance vector
    *
    * \sa vpLuminancePCA()
    * @param basis
@@ -173,19 +179,19 @@ public:
   void init(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &variance);
 
   /**
-   * @brief Get \f$ \mathbf{U}^\top \f$, the subspace projection matrix (\f$ k \times dim(\mathbf{I}) \f$)
+   * \brief Get \f$ \mathbf{U}^\top \f$, the subspace projection matrix (\f$ k \times dim(\mathbf{I}) \f$)
    *
    * @return std::shared_ptr<vpColVector>
    */
   std::shared_ptr<vpMatrix> getBasis() const { return m_basis; }
   /**
-   * @brief Get \f$ vec(\mathbf{\bar I}) \f$, the mean image computed from the dataset.
+   * \brief Get \f$ vec(\mathbf{\bar I}) \f$, the mean image computed from the dataset.
    * @return std::shared_ptr<vpColVector>
    */
   std::shared_ptr<vpColVector> getMean() const { return m_mean; }
 
   /**
-   * @brief Get the values of explained variance by each of the eigen vectors.
+   * \brief Get the values of explained variance by each of the eigen vectors.
    *
    * When all eigenvectors of the dataset are considered, the explained variance total is 1.
    * When they are not all considered (as should be the case), their sum should be below 1.
@@ -198,7 +204,7 @@ public:
   void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
 
   /**
-   * @brief Save the PCA basis to multiple text files, for later use via the \ref load function.
+   * \brief Save the PCA basis to multiple text files, for later use via the \ref load function.
    *
    * @param basisFilename The file in which \f$ \mathbf{U}^\top \f$ is stored
    * @param meanFileName The file in which \f$ \mathbf{\bar I} \f$ is stored
@@ -209,7 +215,7 @@ public:
   void save(const std::string &basisFilename, const std::string &meanFileName, const std::string &explainedVarianceFile) const;
 
   /**
-   * @brief Save the PCA basis to multiple text files, for later use via the \ref load function.
+   * \brief Save the PCA basis to multiple text files, for later use via the \ref load function.
    *
    * @param basisFilename The file in which \f$ \mathbf{U}^\top \f$ is stored
    * @param meanFileName The file in which \f$ \mathbf{\bar I} \f$ is stored
@@ -220,7 +226,7 @@ public:
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName, const std::string &explainedVarianceFile);
 #ifdef VISP_HAVE_MODULE_IO
   /**
-   * @brief Compute a new Principal Component Analysis on set of images, stored on disk.
+   * \brief Compute a new Principal Component Analysis on set of images, stored on disk.
    *
    * @param imageFiles The list of image paths to load and use to compute the PCA
    * @param projectionSize the number of eigenvectors that are kept for the final projection
@@ -233,7 +239,7 @@ public:
   static vpLuminancePCA learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int imageBorder = 0);
 #endif
   /**
-   * @brief Compute a new Principal Component Analysis on set of images.
+   * \brief Compute a new Principal Component Analysis on set of images.
    *
    * @param images The list of images used to compute the PCA
    * @param projectionSize the number of eigenvectors that are kept for the final projection
@@ -245,7 +251,7 @@ public:
    */
   static vpLuminancePCA learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder = 0);
   /**
-   * @brief Compute a new Principal Component Analysis on dataset
+   * \brief Compute a new Principal Component Analysis on dataset
    *
    * @param images The data matrix, where each column represents a single data point (image)
    * @param projectionSize the number of eigenvectors that are kept for the final projection
@@ -263,7 +269,9 @@ private:
 };
 
 /**
- * @brief Implementation of \cite Marchand20a.
+ * \brief Implementation of \cite Marchand20a.
+ *
+ * \ingroup group_visual_features
  *
  * Computes the Discrete Cosine Transform (DCT) representation of the image.
  * Only the K first components are preserved and stored into a vector when calling map. These components correspond to the lowest frequencies of the input image.
@@ -273,7 +281,7 @@ class VISP_EXPORT vpLuminanceDCT : public vpLuminanceMapping
 public:
 
   /**
-   * @brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
+   * \brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
    *
    */
   class VISP_EXPORT vpMatrixZigZagIndex
@@ -281,14 +289,14 @@ public:
   public:
     vpMatrixZigZagIndex();
     /**
-     * @brief Initalize the ZigZag object. Computes and stores the zigzag indexing for a given matrix size
+     * \brief Initalize the ZigZag object. Computes and stores the zigzag indexing for a given matrix size
      *
      * @param rows the matrix's number of rows
      * @param cols the matrix's number of cols
      */
     void init(unsigned rows, unsigned cols);
     /**
-     * @brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
+     * \brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
      *
      * @param m the matrix
      * @param start The first value. Use 0 to start with the matrix's top left value
@@ -298,7 +306,7 @@ public:
     void getValues(const vpMatrix &m, unsigned int start, unsigned int end, vpColVector &s) const;
 
     /**
-     * @brief set the values in the matrix, according to the values stored in the vector s and the zigzag indexing strategy
+     * \brief set the values in the matrix, according to the values stored in the vector s and the zigzag indexing strategy
      *
      * @param s The vector from which to set the values
      * @param start the zigzag index at which to start filling values
@@ -315,7 +323,7 @@ public:
 
 
   /**
-   * @brief Build a new DCT object
+   * \brief Build a new DCT object
    *
    * @param k the number of components to keep from the DCT matrix and use as servoing features
    */
@@ -325,7 +333,7 @@ public:
   }
 
   /**
-   * @brief Initialize the DCT object with the number of required components
+   * \brief Initialize the DCT object with the number of required components
    */
   void init(const unsigned int k)
   {
@@ -335,7 +343,7 @@ public:
   }
 
   /**
-   * @brief Copy constructor
+   * \brief Copy constructor
    */
   vpLuminanceDCT(const vpLuminanceDCT &other);
 
@@ -362,7 +370,10 @@ protected:
 };
 
 /**
- * @brief Class to combine luminance features (photometric servoing)
+ * \brief Class to combine luminance features (photometric servoing)
+ *
+ * \ingroup group_visual_features
+ *
  * with a mapping \f$ f(\mathbf{I}) \f$ that projects an image to a low dimensional representation \f$ \mathbf{s} \f$ (see vpLuminanceMapping::map).
  * The interaction matrix of \f$ \mathbf{s} \f$ is computed as a function of \f$ \mathbf{I}, \mathbf{L_I} \f$ (see vpLuminanceMapping::interaction)
  *
