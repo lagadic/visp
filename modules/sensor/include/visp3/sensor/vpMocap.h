@@ -41,22 +41,23 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMocap
  * \ingroup group_sensor_mocap
  * Generic motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocap
 {
 public:
   /*!
    * Default constructor that turns off the verbose mode.
    */
-  vpMocap() : m_verbose(false), m_serverAddr(){};
+  vpMocap() : m_verbose(false), m_serverAddr() { };
   /*!
    * Destructor.
    */
-  virtual ~vpMocap(){};
+  virtual ~vpMocap() { };
 
   /*!
    * Close connexion with the motion capture device.
@@ -104,5 +105,5 @@ protected:
   bool m_verbose;
   std::string m_serverAddr;
 };
-
+END_VISP_NAMESPACE
 #endif // vpMocap_h

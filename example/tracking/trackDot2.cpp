@@ -63,6 +63,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdf:i:l:p:s:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
   \example trackDot2.cpp
   Example of dot tracking on an image sequence using vpDot2.
@@ -254,8 +258,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -264,11 +268,11 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath, opt_ppath, opt_first, opt_last, opt_step);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << "  Use -p <personal image path> option if you want to " << std::endl
-                << "  use personal images." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << "  Use -p <personal image path> option if you want to " << std::endl
+        << "  use personal images." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -300,7 +304,8 @@ int main(int argc, const char **argv)
       s.setf(std::ios::right, std::ios::adjustfield);
       s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
       filename = vpIoTools::createFilePath(dirname, s.str());
-    } else {
+    }
+    else {
       snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
@@ -314,13 +319,14 @@ int main(int argc, const char **argv)
       vpCTRACE << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
-    } catch (...) {
-      // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
+    }
+    catch (...) {
+   // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       if (opt_ppath.empty()) {
         std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                  << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+          << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       }
       else {
         std::cerr << "  Check your -p " << opt_ppath << " option " << std::endl;
@@ -367,7 +373,8 @@ int main(int argc, const char **argv)
       // The default of this setting is that it is time consuming
 
       d.setGraphics(true);
-    } else {
+    }
+    else {
 
       d.setGraphics(false);
     }
@@ -386,7 +393,8 @@ int main(int argc, const char **argv)
     if (opt_display && opt_click_allowed) {
       std::cout << "Click on a dot to track it." << std::endl;
       d.initTracking(I);
-    } else {
+    }
+    else {
       vpImagePoint ip;
       ip.set_u(160);
       ip.set_v(212);
@@ -416,7 +424,8 @@ int main(int argc, const char **argv)
         s.str("");
         s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
-      } else {
+      }
+      else {
         snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
@@ -481,7 +490,8 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -492,9 +502,9 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
-               "functionalities are required..."
-            << std::endl;
+    "functionalities are required..."
+    << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

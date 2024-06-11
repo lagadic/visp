@@ -40,11 +40,13 @@
 #define vpCylinder_hh
 
 #include <math.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 
 #include <visp3/core/vpForwardProjection.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpCylinder
  * \ingroup group_core_geometry
@@ -94,7 +96,7 @@
  * Perspective projection is achieved using projection() methods. The methods
  * get_p(), getRho1(), getTheta1() and getRho2(), getTheta2() allow to access to the
  * projected line parameters.
- */
+*/
 class VISP_EXPORT vpCylinder : public vpForwardProjection
 {
 public:
@@ -193,5 +195,5 @@ public:
   void setWorldCoordinates(const vpColVector &oP) vp_override;
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 };
-
+END_VISP_NAMESPACE
 #endif

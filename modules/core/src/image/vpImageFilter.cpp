@@ -36,6 +36,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
  /**
   * \brief Get the list of available vpCannyBackendType.
   *
@@ -1128,3 +1129,4 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     Ires = edgeDetector.detect(Isrc);
   }
 }
+END_VISP_NAMESPACE

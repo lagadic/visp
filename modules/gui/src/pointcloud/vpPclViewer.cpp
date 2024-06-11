@@ -44,6 +44,7 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
 
+BEGIN_VISP_NAMESPACE
 const std::vector<vpColorBlindFriendlyPalette::Palette> gcolor = { vpColorBlindFriendlyPalette::Palette::Green, vpColorBlindFriendlyPalette::Palette::Vermillon,vpColorBlindFriendlyPalette::Palette::Blue,
                                      vpColorBlindFriendlyPalette::Palette::Black, vpColorBlindFriendlyPalette::Palette::Orange, vpColorBlindFriendlyPalette::Palette::Purple,
                                      vpColorBlindFriendlyPalette::Palette::Yellow };
@@ -485,7 +486,7 @@ void vpPclViewer::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRG
 
   m_vpmutex[id]->unlock();
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
 void dummy_vpPCLPointCLoudVisualization() { };

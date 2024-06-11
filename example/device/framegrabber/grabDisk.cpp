@@ -33,6 +33,16 @@
  *
 *****************************************************************************/
 
+/*!
+  \file grabDisk.cpp
+
+  \brief Example of image sequence reading from the disk using vpDiskGrabber
+  class.
+
+  The sequence is made of separate images. Each image corresponds to a PGM
+  file.
+*/
+
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -47,18 +57,12 @@
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \file grabDisk.cpp
-
-  \brief Example of image sequence reading from the disk using vpDiskGrabber
-  class.
-
-  The sequence is made of separate images. Each image corresponds to a PGM
-  file.
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "b:de:f:hi:l:s:z:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*
 
@@ -357,5 +361,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif

@@ -35,10 +35,11 @@
 #define vpDisplayGTK_h
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_GTK))
-
 #include <visp3/core/vpDisplay.h>
+#if (defined(VISP_HAVE_GTK))
 #include <visp3/core/vpImage.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \file vpDisplayGTK.h
@@ -123,7 +124,7 @@
  * #endif
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayGTK : public vpDisplay
 {
 private:
@@ -228,5 +229,6 @@ private:
   Impl *m_impl;
 };
 
+END_VISP_NAMESPACE
 #endif
 #endif

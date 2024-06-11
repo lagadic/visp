@@ -189,6 +189,7 @@ set(VISP_BIN_INSTALL_PATH "@VISP_BIN_INSTALL_PATH@")
 #----------------------------------------------------------------------
 # Remember VISP third party libs configuration
 #----------------------------------------------------------------------
+set(ENABLE_VISP_NAMESPACE    "@ENABLE_VISP_NAMESPACE@")
 set(VISP_HAVE_AFMA4          "@VISP_HAVE_AFMA4@")
 set(VISP_HAVE_AFMA6          "@VISP_HAVE_AFMA6@")
 set(VISP_HAVE_APRILTAG       "@VISP_HAVE_APRILTAG@")
@@ -228,6 +229,7 @@ set(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES "@VISP_HAVE_LIBFREENECT_AND_DEPENDENC
 set(VISP_HAVE_LIBFREENECT_OLD "@VISP_HAVE_LIBFREENECT_OLD@")
 set(VISP_HAVE_LIBUSB_1       "@VISP_HAVE_LIBUSB_1@")
 set(VISP_HAVE_MAVSDK         "@VISP_HAVE_MAVSDK@")
+set(VISP_HAVE_MINIZ          "@VISP_HAVE_MINIZ@")
 set(VISP_HAVE_MKL            "@VISP_HAVE_MKL@")
 set(VISP_HAVE_NETLIB         "@VISP_HAVE_NETLIB@")
 set(VISP_HAVE_NULLPTR        "@VISP_HAVE_NULLPTR@")

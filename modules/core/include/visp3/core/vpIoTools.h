@@ -31,13 +31,13 @@
  * Directory management.
  */
 
-#ifndef _vpIoTools_h_
-#define _vpIoTools_h_
-
 /*!
  * \file vpIoTools.h
  * \brief File and directories basic tools.
  */
+
+#ifndef _vpIoTools_h_
+#define _vpIoTools_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -63,7 +63,7 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
 {
   static const unsigned int s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
     0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
-  unsigned int crcu32 = (unsigned int)crc;
+  unsigned int crcu32 = static_cast<unsigned int>(crc);
   if (!ptr) return 0;
   crcu32 = ~crcu32;
   while (buf_len--) {
@@ -74,6 +74,7 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
   return ~crcu32;
 }
 
+#ifdef VISP_HAVE_MINIZ
 namespace cnpy
 {
 // Copyright (C) 2011  Carl Rogers
@@ -274,42 +275,42 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   //build the local header
   std::vector<char> local_header;
   local_header += "PK"; //first part of sig
-  local_header += (uint16_t)0x0403; //second part of sig
-  local_header += (uint16_t)20; //min version to extract
-  local_header += (uint16_t)0; //general purpose bit flag
-  local_header += (uint16_t)0; //compression method
-  local_header += (uint16_t)0; //file last mod time
-  local_header += (uint16_t)0;     //file last mod date
-  local_header += (uint32_t)crc; //crc
-  local_header += (uint32_t)nbytes; //compressed size
-  local_header += (uint32_t)nbytes; //uncompressed size
-  local_header += (uint16_t)fname.size(); //fname length
-  local_header += (uint16_t)0; //extra field length
+  local_header += static_cast<uint16_t>(0x0403); //second part of sig
+  local_header += static_cast<uint16_t>(20); //min version to extract
+  local_header += static_cast<uint16_t>(0); //general purpose bit flag
+  local_header += static_cast<uint16_t>(0); //compression method
+  local_header += static_cast<uint16_t>(0); //file last mod time
+  local_header += static_cast<uint16_t>(0);     //file last mod date
+  local_header += static_cast<uint32_t>(crc); //crc
+  local_header += static_cast<uint32_t>(nbytes); //compressed size
+  local_header += static_cast<uint32_t>(nbytes); //uncompressed size
+  local_header += static_cast<uint16_t>(fname.size()); //fname length
+  local_header += static_cast<uint16_t>(0); //extra field length
   local_header += fname;
 
   //build global header
   global_header += "PK"; //first part of sig
-  global_header += (uint16_t)0x0201; //second part of sig
-  global_header += (uint16_t)20; //version made by
+  global_header += static_cast<uint16_t>(0x0201); //second part of sig
+  global_header += static_cast<uint16_t>(20); //version made by
   global_header.insert(global_header.end(), local_header.begin()+4, local_header.begin()+30);
-  global_header += (uint16_t)0; //file comment length
-  global_header += (uint16_t)0; //disk number where file starts
-  global_header += (uint16_t)0; //internal file attributes
-  global_header += (uint32_t)0; //external file attributes
-  global_header += (uint32_t)global_header_offset; //relative offset of local file header, since it begins where the global header used to begin
+  global_header += static_cast<uint16_t>(0); //file comment length
+  global_header += static_cast<uint16_t>(0); //disk number where file starts
+  global_header += static_cast<uint16_t>(0); //internal file attributes
+  global_header += static_cast<uint32_t>(0); //external file attributes
+  global_header += static_cast<uint32_t>(global_header_offset); //relative offset of local file header, since it begins where the global header used to begin
   global_header += fname;
 
   //build footer
   std::vector<char> footer;
   footer += "PK"; //first part of sig
-  footer += (uint16_t)0x0605; //second part of sig
-  footer += (uint16_t)0; //number of this disk
-  footer += (uint16_t)0; //disk where footer starts
-  footer += (uint16_t)(nrecs+1); //number of records on this disk
-  footer += (uint16_t)(nrecs+1); //total number of records
-  footer += (uint32_t)global_header.size(); //nbytes of global headers
-  footer += (uint32_t)(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
-  footer += (uint16_t)0; //zip file comment length
+  footer += static_cast<uint16_t>(0x0605); //second part of sig
+  footer += static_cast<uint16_t>(0); //number of this disk
+  footer += static_cast<uint16_t>(0); //disk where footer starts
+  footer += static_cast<uint16_t>(nrecs+1); //number of records on this disk
+  footer += static_cast<uint16_t>(nrecs+1); //total number of records
+  footer += static_cast<uint32_t>(global_header.size()); //nbytes of global headers
+  footer += static_cast<uint32_t>(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
+  footer += static_cast<uint16_t>(0); //zip file comment length
 
   //write everything
   fwrite(&local_header[0], sizeof(char), local_header.size(), fp);
@@ -374,18 +375,19 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
   dict.back() = '\n';
 
   std::vector<char> header;
-  header += (char)0x93;
+  header += static_cast<char>(0x93);
   header += "NUMPY";
-  header += (char)0x01; //major version of numpy format
-  header += (char)0x00; //minor version of numpy format
-  header += (uint16_t)dict.size();
+  header += static_cast<char>(0x01); //major version of numpy format
+  header += static_cast<char>(0x00); //minor version of numpy format
+  header += static_cast<uint16_t>(dict.size());
   header.insert(header.end(), dict.begin(), dict.end());
 
   return header;
 }
 
 } // namespace cnpy
-} // namespace visp
+#endif
+} // namespace VISP_NAMESPACE_NAME
 #endif
 
 /*!
@@ -487,6 +489,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * }
  * \endcode
  */
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpIoTools
 {
 
@@ -589,4 +592,5 @@ protected:
   static int mkdir_p(const std::string &path, int mode);
 #endif
 };
+END_VISP_NAMESPACE
 #endif

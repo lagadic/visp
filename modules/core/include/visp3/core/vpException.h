@@ -45,6 +45,7 @@
 #include <stdarg.h>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpException
  * \ingroup group_core_debug
@@ -54,22 +55,9 @@
  * STL.
  * It is therefore possible to catch vpException with any other derivative of
  * std::exception in the same catch.
- */
+*/
 class VISP_EXPORT vpException : public std::exception
 {
-protected:
-  //! Contains the error code, see the errorCodeEnum table for details.
-  int code;
-
-  //! Contains an error message (can be empty)
-  std::string message;
-
-  //! Set the message container
-  void setMessage(const char *format, va_list args);
-
-  //!  forbid the empty constructor (protected)
-  vpException() : code(notInitialized), message("") { }
-
 public:
   enum generalExceptionEnum
   {
@@ -143,6 +131,20 @@ public:
    * Print the error structure.
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
-};
 
+protected:
+  //! Contains the error code, see the errorCodeEnum table for details.
+  int code;
+
+  //! Contains an error message (can be empty)
+  std::string message;
+
+  //! Set the message container
+  void setMessage(const char *format, va_list args);
+
+  //!  forbid the empty constructor (protected)
+  vpException() : code(notInitialized), message("") { }
+
+};
+END_VISP_NAMESPACE
 #endif

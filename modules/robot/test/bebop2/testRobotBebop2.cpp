@@ -50,6 +50,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_ARSDK
   try {
     int stream_res = 0;
@@ -60,29 +63,33 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         ip_address = std::string(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--hd-resolution") {
+      }
+      else if (std::string(argv[i]) == "--hd-resolution") {
         stream_res = 1;
-      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+      }
+      else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         verbose = true;
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage:\n"
-                  << "  " << argv[0] << " [--ip <drone ip>] [--hd-resolution] [--verbose] [-v]"
-                  << " [--help] [-h]\n"
-                  << std::endl
-                  << "Description:\n"
-                  << "  --ip <drone ip>\n"
-                  << "     IP address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
-                  << "  --hd-resolution\n"
-                  << "     Enables HD 720p video instead of default 480p.\n\n"
-                  << "  --verbose, -v\n"
-                  << "      Enables verbose (drone information messages are then displayed).\n\n"
-                  << "  --help, -h\n"
-                  << "     Print help message.\n\n"
-                  << std::endl;
+          << "  " << argv[0] << " [--ip <drone ip>] [--hd-resolution] [--verbose] [-v]"
+          << " [--help] [-h]\n"
+          << std::endl
+          << "Description:\n"
+          << "  --ip <drone ip>\n"
+          << "     IP address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
+          << "  --hd-resolution\n"
+          << "     Enables HD 720p video instead of default 480p.\n\n"
+          << "  --verbose, -v\n"
+          << "      Enables verbose (drone information messages are then displayed).\n\n"
+          << "  --help, -h\n"
+          << "     Print help message.\n\n"
+          << std::endl;
         return EXIT_SUCCESS;
-      } else {
+      }
+      else {
         std::cout << "Error : unknown parameter " << argv[i] << std::endl
-                  << "See " << argv[0] << " --help" << std::endl;
+          << "See " << argv[0] << " --help" << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -132,12 +139,14 @@ int main(int argc, char **argv)
 
       drone.land();
 
-    } else {
+    }
+    else {
       std::cout << "Error : failed to setup drone control" << std::endl;
     }
 
     std::cout << "-- End of test --" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
   }
 #else

@@ -43,6 +43,7 @@
 
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 const int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
 const bool vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = { true, true, true, true };
 
@@ -306,3 +307,4 @@ void vpStatisticalTestShewhart::init(const bool &activateWECOrules, const bool a
   computeLimits();
   m_areStatisticsComputed = true;
 }
+END_VISP_NAMESPACE

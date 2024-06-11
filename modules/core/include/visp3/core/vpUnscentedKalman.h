@@ -44,6 +44,7 @@
 #include <functional> // std::function
 #include <memory> // std::shared_ptr
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUnscentedKalman
   \ingroup group_core_kalman
@@ -426,6 +427,6 @@ private:
   static vpUnscentedTransformResult unscentedTransform(const std::vector<vpColVector> &sigmaPoints, const std::vector<double> &wm,
     const std::vector<double> &wc, const vpMatrix &cov, const vpAddSubFunction &resFunc, const vpMeanFunction &meanFunc);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

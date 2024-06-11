@@ -39,10 +39,10 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerSSDForwardCompositional.h>
 
+BEGIN_VISP_NAMESPACE
 vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), compoInitialised(false)
-{
-}
+{ }
 
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> & /*I*/)
 {
@@ -141,7 +141,8 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 
     try {
       dp = HLM.inverseByLU() * G;
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       delete[] tempt;
       throw(e);
     }
@@ -169,3 +170,4 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 
   nbIteration = iteration;
 }
+END_VISP_NAMESPACE

@@ -35,6 +35,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpHomography.h>
 
+BEGIN_VISP_NAMESPACE
+
 //#define DEBUG_Homographie 0
 
 /* ---------------------------------------------------------------------- */
@@ -137,28 +139,33 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -220,7 +227,8 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
     n[0] = normaleDesiree[0];
     n[1] = normaleDesiree[1];
     n[2] = normaleDesiree[2];
-  } else {
+  }
+  else {
 #ifdef DEBUG_Homographie
     printf("\nCas general\n");
 #endif
@@ -318,7 +326,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
         de la solution retenue (cf. ci-dessous)
   *****/
   sinusTheta =
-      (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
+    (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
 
   cosinusTheta = ((sv[1] * sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
@@ -434,28 +442,33 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -517,7 +530,8 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
     n[0] = normaleDesiree[0];
     n[1] = normaleDesiree[1];
     n[2] = normaleDesiree[2];
-  } else {
+  }
+  else {
 #ifdef DEBUG_Homographie
     printf("\nCas general\n");
 #endif
@@ -550,7 +564,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         for (unsigned int i = 0; i < 3; ++i) {
           normaleEstimee[i] = 0.0;
           for (unsigned int j = 0; j < 3; ++j) {
-            normaleEstimee[i] += ((2.0 * k )- 1.0) * mV[i][j] * mX[j][w];
+            normaleEstimee[i] += ((2.0 * k)- 1.0) * mV[i][j] * mX[j][w];
           }
         }
 
@@ -615,7 +629,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         de la solution retenue (cf. ci-dessous)
   *****/
   sinusTheta =
-      (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
+    (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
 
   cosinusTheta = ((sv[1] * sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
@@ -713,28 +727,33 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -764,10 +783,10 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
   // calcul du determinant de U et V
   determinantU = (U[0][0] * ((U[1][1] * U[2][2]) - (U[1][2] * U[2][1]))) + (U[0][1] * ((U[1][2] * U[2][0]) - (U[1][0] * U[2][2]))) +
-                 (U[0][2] * ((U[1][0] * U[2][1]) - (U[1][1] * U[2][0])));
+    (U[0][2] * ((U[1][0] * U[2][1]) - (U[1][1] * U[2][0])));
 
   determinantV = (V[0][0] * ((V[1][1] * V[2][2]) - (V[1][2] * V[2][1]))) + (V[0][1] * ((V[1][2] * V[2][0]) - (V[1][0] * V[2][2]))) +
-                 (V[0][2] * ((V[1][0] * V[2][1]) - (V[1][1] * V[2][0])));
+    (V[0][2] * ((V[1][0] * V[2][1]) - (V[1][1] * V[2][0])));
 
   s = determinantU * determinantV;
 
@@ -807,7 +826,8 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
     else {
       cas = cas2;
     }
-  } else {
+  }
+  else {
     if ((sv[1] - sv[2]) < m_sing_threshold) {
       cas = cas3;
     }
@@ -930,7 +950,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim1[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim1[0][2] = -Rprim1[2][0];
 
@@ -952,7 +972,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim2[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim2[0][2] = -Rprim2[2][0];
 
@@ -974,7 +994,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim3[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim3[0][2] = -Rprim3[2][0];
 
@@ -996,7 +1016,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim4[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim4[0][2] = -Rprim4[2][0];
 
@@ -1061,7 +1081,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim1[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim1[0][2] = Rprim1[2][0];
 
@@ -1083,7 +1103,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim2[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim2[0][2] = Rprim2[2][0];
 
@@ -1105,7 +1125,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim3[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim3[0][2] = Rprim3[2][0];
 
@@ -1126,7 +1146,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
         // sin theta
         Rprim4[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim4[0][2] = Rprim4[2][0];
 
@@ -1232,14 +1252,15 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       vT.push_back(T4);
       vN.push_back(N4);
     }
-  } else {
+  }
+  else {
     std::cout << "On tombe dans le cas particulier ou le mouvement n'est pas "
-                 "estimable!"
-              << std::endl;
+      "estimable!"
+      << std::endl;
   }
 
-  #ifdef DEBUG_Homographie
-  // on peut ensuite afficher les resultats...
+#ifdef DEBUG_Homographie
+// on peut ensuite afficher les resultats...
   std::cout << "Analyse des resultats : "<< std::endl;
   if (cas==cas1) {
     std::cout << "On est dans le cas 1" << std::endl;
@@ -1260,10 +1281,12 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   else {
     std::cout << "d'>0" << std::endl;
   }
-  #endif
+#endif
 
 #ifdef DEBUG_Homographie
   printf("fin : Homographie_EstimationDeplacementCamera\n");
 #endif
 }
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+END_VISP_NAMESPACE

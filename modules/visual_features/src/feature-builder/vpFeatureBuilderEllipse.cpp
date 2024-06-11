@@ -42,6 +42,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize an ellipse feature thanks to a vpCircle.
   The vpFeatureEllipse is initialized thanks to the parameters of the circle
@@ -196,3 +197,4 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
 }
 
 #endif //#ifdef VISP_HAVE_MODULE_ME
+END_VISP_NAMESPACE

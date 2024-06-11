@@ -50,6 +50,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -541,9 +545,9 @@ int main(int argc, const char *argv[])
     std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
-  }
+    }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }
-}
+  }

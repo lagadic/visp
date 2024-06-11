@@ -46,11 +46,13 @@
 
 #include <math.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTracker
   \ingroup group_tt_tracker
@@ -146,17 +148,16 @@ public:
   //! Default constructor.
   vpTemplateTracker()
     : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(nullptr), ptTemplatePyr(nullptr), ptTemplateInit(false),
-      templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr), ptTemplateSelectPyr(nullptr),
-      ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(nullptr), ptTemplateSuppPyr(nullptr),
-      ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr), pyr_IDes(nullptr), H(),
-      Hdesire(), HdesirePyr(nullptr), HLM(), HLMdesire(), HLMdesirePyr(nullptr), HLMdesireInverse(),
-      HLMdesireInversePyr(nullptr), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
-      useBrent(false), nbIterBrent(0), taillef(0), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(0), mod_j(0),
-      nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
-      useCompositionnal(false), useInverse(false), Warp(nullptr), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
-      zoneRef_()
-  {
-  }
+    templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr), ptTemplateSelectPyr(nullptr),
+    ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(nullptr), ptTemplateSuppPyr(nullptr),
+    ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr), pyr_IDes(nullptr), H(),
+    Hdesire(), HdesirePyr(nullptr), HLM(), HLMdesire(), HLMdesirePyr(nullptr), HLMdesireInverse(),
+    HLMdesireInversePyr(nullptr), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
+    useBrent(false), nbIterBrent(0), taillef(0), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(0), mod_j(0),
+    nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
+    useCompositionnal(false), useInverse(false), Warp(nullptr), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
+    zoneRef_()
+  { }
   explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
@@ -232,7 +233,7 @@ public:
     l0Pyr = level_to_stop;
     if (l0Pyr >= nlevels) {
       std::cout << "Warning: level_to_stop: " << level_to_stop << " higher than level_to_start: " << nlevels - 1
-                << " (nlevels-1)" << std::endl;
+        << " (nlevels-1)" << std::endl;
       std::cout << "Level to stop put to: " << nlevels - 1 << std::endl;
       l0Pyr = nlevels - 1;
     }
@@ -297,4 +298,5 @@ protected:
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   virtual void trackPyr(const vpImage<unsigned char> &I);
 };
+END_VISP_NAMESPACE
 #endif

@@ -49,6 +49,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string robot_ip = "192.168.0.100";
 
   for (int i = 1; i < argc; i++) {

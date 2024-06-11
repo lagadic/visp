@@ -36,7 +36,6 @@
  *
 *****************************************************************************/
 #include <cassert>
-#include <limits>
 #include <limits> // numeric_limits
 #include <vector>
 #include <visp3/core/vpConfig.h>
@@ -48,6 +47,7 @@
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Computes interaction matrix for the normalized surface moment. Called
   internally. The moment primitives must be computed before calling this. This
@@ -74,11 +74,12 @@ void vpFeatureMomentArea::compute_interaction()
     if (!found_centered)
       throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
     interaction_matrices[0] = momentCentered.interaction(2, 0) + momentCentered.interaction(0, 2);
-  } else {
-    // Get Xg and Yg
+  }
+  else {
+ // Get Xg and Yg
     bool found_xgyg;
     const vpMomentGravityCenter &momentGravity =
-        static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_xgyg));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_xgyg));
     if (!found_xgyg)
       throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
@@ -102,3 +103,4 @@ void vpFeatureMomentArea::compute_interaction()
     interaction_matrices[0][0][5] = 0.;
   }
 }
+END_VISP_NAMESPACE

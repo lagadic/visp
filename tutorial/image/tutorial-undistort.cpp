@@ -1,4 +1,5 @@
 //! \example tutorial-undistort.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -6,6 +7,10 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_input_image = "chessboard.jpg";
   std::string opt_camera_file = "camera.xml";
   std::string opt_camera_name = "Camera";

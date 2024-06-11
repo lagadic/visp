@@ -50,6 +50,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
 /*
   Get the extension of the file and return it
 */
@@ -138,7 +139,8 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
     sceneGraphVRML2 = tovrml2.getVRML2SceneGraph();
     sceneGraphVRML2->ref();
     sceneGraph->unref();
-  } else {
+  }
+  else {
     sceneGraphVRML2 = SoDB::readAllVRML(&in);
     if (sceneGraphVRML2 == NULL) {
       /*return -1;*/
@@ -256,7 +258,8 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
         nbFace++;
         indSize.push_back(indice);
         indice = 0;
-      } else
+      }
+      else
         indice++;
     }
   }
@@ -280,7 +283,8 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
       if (ifs->index[j] != -1) {
         bptr->face.ptr[indice].vertex.ptr[iter] = (Index)(ifs->index[j] + offset);
         iter++;
-      } else {
+      }
+      else {
         iter = 0;
         indice++;
       }
@@ -297,7 +301,7 @@ void destroyIfs(std::list<indexFaceSet *> &ifs_list)
   ifs_list.clear();
 }
 #else
-void set_scene_wrl(const char * /*str*/, Bound_scene * /*sc*/, float /*factor*/) {}
+void set_scene_wrl(const char * /*str*/, Bound_scene * /*sc*/, float /*factor*/) { }
 #endif
 
 /*
@@ -310,5 +314,5 @@ void vp2jlc_matrix(const vpHomogeneousMatrix &vpM, Matrix &jlcM)
       jlcM[j][i] = (float)vpM[i][j];
   }
 }
-
+END_VISP_NAMESPACE
 #endif

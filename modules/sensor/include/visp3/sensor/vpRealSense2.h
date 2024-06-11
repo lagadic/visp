@@ -50,6 +50,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
  /*!
    \class vpRealSense2
 
@@ -283,7 +284,7 @@
 
    \note Additional information can be found in the
    [librealsense wiki](https://github.com/IntelRealSense/librealsense/wiki/).
- */
+*/
 class VISP_EXPORT vpRealSense2
 {
 public:
@@ -405,6 +406,6 @@ protected:
                      pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

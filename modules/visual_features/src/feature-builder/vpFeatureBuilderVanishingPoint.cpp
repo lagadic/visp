@@ -45,6 +45,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize a vpFeatureVanishingPoint thanks to a vpPoint.
   The vpFeatureVanishingPoint is initialized thanks to the parameters of the
@@ -66,8 +67,9 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &p, unsi
   if ((vpFeatureVanishingPoint::selectX() & select) || (vpFeatureVanishingPoint::selectY() & select)) {
     s.set_x(p.get_x());
     s.set_y(p.get_y());
-  } else if ((vpFeatureVanishingPoint::selectOneOverRho() & select) ||
-             (vpFeatureVanishingPoint::selectAlpha() & select)) {
+  }
+  else if ((vpFeatureVanishingPoint::selectOneOverRho() & select) ||
+          (vpFeatureVanishingPoint::selectAlpha() & select)) {
     double x = p.get_x();
     double y = p.get_y();
 
@@ -113,8 +115,8 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L
     if (fabs(theta_r - theta_l) < min || fabs(fabs(theta_r - theta_l) - M_PI) < min ||
         fabs(fabs(theta_r - theta_l) - 2 * M_PI) < min) {
       vpCERROR << "There is no vanishing point : the lines are parallel in the "
-                  "image plane"
-               << std::endl;
+        "image plane"
+        << std::endl;
       throw(vpFeatureException(vpFeatureException::badInitializationError,
                                "There is no vanishing point : the lines are "
                                "parallel in the image plane"));
@@ -125,8 +127,9 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L
 
     s.set_x(x);
     s.set_y(y);
-  } else if ((vpFeatureVanishingPoint::selectOneOverRho() & select) ||
-             (vpFeatureVanishingPoint::selectAlpha() & select)) {
+  }
+  else if ((vpFeatureVanishingPoint::selectOneOverRho() & select) ||
+          (vpFeatureVanishingPoint::selectAlpha() & select)) {
     double rho_1 = L1.getRho();
     double theta_1 = L1.getTheta();
     double rho_2 = L2.getRho();
@@ -225,7 +228,8 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpCameraParamete
 
     s.set_x(x);
     s.set_y(y);
-  } else if ((vpFeatureVanishingPoint::selectOneOverRho() & select)) {
+  }
+  else if ((vpFeatureVanishingPoint::selectOneOverRho() & select)) {
     double theta_diff = theta_1 - theta_2;
     double denom = sqrt(rho_1 * rho_1 + rho_2 * rho_2 - 2 * rho_1 * rho_2 * cos(theta_diff));
     double one_over_rho = sin(theta_diff) / denom;
@@ -236,7 +240,8 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpCameraParamete
 
     s.setOneOverRho(one_over_rho);
     s.setAlpha(alpha);
-  } else if ((vpFeatureVanishingPoint::selectAtanOneOverRho() & select)) {
+  }
+  else if ((vpFeatureVanishingPoint::selectAtanOneOverRho() & select)) {
     double theta_diff = theta_1 - theta_2;
     double denom = sqrt(rho_1 * rho_1 + rho_2 * rho_2 - 2 * rho_1 * rho_2 * cos(theta_diff));
     double alpha = atan2(rho_1 * cos(theta_2) - rho_2 * cos(theta_1), rho_2 * sin(theta_1) - rho_1 * sin(theta_2));
@@ -252,3 +257,4 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpCameraParamete
     s.setAlpha(alpha);
   }
 }
+END_VISP_NAMESPACE

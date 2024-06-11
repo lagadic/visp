@@ -95,6 +95,10 @@ void signalCtrC(int signumber)
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::cout << std::endl;
   std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << " Test program for vpServo " << std::endl;

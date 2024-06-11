@@ -42,6 +42,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpSubMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) { }
 
 /*!
@@ -180,3 +181,4 @@ vpSubMatrix &vpSubMatrix::operator=(const double &x)
 }
 
 vpSubMatrix::~vpSubMatrix() { data = nullptr; }
+END_VISP_NAMESPACE

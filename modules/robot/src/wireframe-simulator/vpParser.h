@@ -47,7 +47,8 @@
 
 #include "vpBound.h"
 
+BEGIN_VISP_NAMESPACE
 void parser(Bound_scene *bsp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

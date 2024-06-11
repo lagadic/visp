@@ -31,13 +31,13 @@
  * Basic class used to make robot simulators.
  */
 
-#ifndef vpRobotWireFrameSimulator_HH
-#define vpRobotWireFrameSimulator_HH
-
 /*!
  * \file vpRobotWireFrameSimulator.h
  * \brief Basic class used to make robot simulators.
  */
+
+#ifndef vpRobotWireFrameSimulator_HH
+#define vpRobotWireFrameSimulator_HH
 
 #include <visp3/core/vpConfig.h>
 
@@ -58,6 +58,7 @@
 #include <visp3/robot/vpRobotSimulator.h>
 #include <visp3/robot/vpWireFrameSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotWireFrameSimulator
  *
@@ -74,7 +75,7 @@
  * \warning This class uses threading capabilities. Thus on Unix-like
  * platforms, the libpthread third-party library need to be
  * installed. On Windows, we use the native threading capabilities.
- */
+*/
 class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, public vpRobotSimulator
 {
 public:
@@ -411,6 +412,6 @@ protected:
   virtual void get_fMi(vpHomogeneousMatrix *fMit) = 0;
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

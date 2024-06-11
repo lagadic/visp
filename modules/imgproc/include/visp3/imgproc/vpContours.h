@@ -74,9 +74,9 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPolygon.h>
 
-
-namespace
+namespace VISP_NAMESPACE_NAME
 {
+
 /*!
  * Possible directions to find a contour.
  */
@@ -141,7 +141,7 @@ struct vpDirection
   {
     vpDirection direction;
     int directionSize = LAST_DIRECTION;
-    direction.m_direction = vpDirectionType(((int)m_direction + 1) % directionSize);
+    direction.m_direction = vpDirectionType((static_cast<int>(m_direction) + 1) % directionSize);
 
     return direction;
   }
@@ -153,8 +153,8 @@ struct vpDirection
   vpDirection counterClockwise()
   {
     vpDirection direction;
-    int directionSize = (int)LAST_DIRECTION;
-    int idx = vpMath::modulo((int)m_direction - 1, directionSize);
+    int directionSize = static_cast<int>(LAST_DIRECTION);
+    int idx = VISP_NAMESPACE_ADDRESSING vpMath::modulo(static_cast<int>(m_direction) - 1, directionSize);
     direction.m_direction = vpDirectionType(idx);
 
     return direction;
@@ -166,23 +166,20 @@ struct vpDirection
    * @param point Current point coordinate.
    * @return Next point coordinate along the contour.
    */
-  vpImagePoint active(const vpImage<int> &I, const vpImagePoint &point)
+  VISP_NAMESPACE_ADDRESSING vpImagePoint active(const VISP_NAMESPACE_ADDRESSING vpImage<int> &I, const VISP_NAMESPACE_ADDRESSING vpImagePoint &point)
   {
-    int yy = (int)(point.get_i() + m_diry[(int)m_direction]);
-    int xx = (int)(point.get_j() + m_dirx[(int)m_direction]);
+    int yy = static_cast<int>(point.get_i() + m_diry[static_cast<int>(m_direction)]);
+    int xx = static_cast<int>(point.get_j() + m_dirx[static_cast<int>(m_direction)]);
 
-    if (xx < 0 || xx >= (int)I.getWidth() || yy < 0 || yy >= (int)I.getHeight()) {
-      return vpImagePoint(-1, -1);
+    if ((xx < 0) || (xx >= static_cast<int>(I.getWidth())) || (yy < 0) || (yy >= static_cast<int>(I.getHeight()))) {
+      return VISP_NAMESPACE_ADDRESSING vpImagePoint(-1, -1);
     }
 
     int pixel = I[yy][xx];
-    return pixel != 0 ? vpImagePoint(yy, xx) : vpImagePoint(-1, -1);
+    return pixel != 0 ? VISP_NAMESPACE_ADDRESSING vpImagePoint(yy, xx) : VISP_NAMESPACE_ADDRESSING vpImagePoint(-1, -1);
   }
 };
-} // namespace
 
-namespace vp
-{
 /*!
  * Type of contour.
  */
@@ -215,17 +212,17 @@ struct vpContour
   //! Parent contour
   vpContour *m_parent;
   //! Vector of points belonging to the contour
-  std::vector<vpImagePoint> m_points;
+  std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> m_points;
 
   /*!
    * Default constructor.
    */
-  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(nullptr), m_points() { }
+  vpContour() : m_children(), m_contourType(CONTOUR_HOLE), m_parent(nullptr), m_points() { }
 
   /*!
    * Constructor of a given contour type.
    */
-  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
+  explicit vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
 
   /*!
    * Copy constructor.
@@ -235,7 +232,8 @@ struct vpContour
   {
 
     // Copy the underlying contours
-    for (std::vector<vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+    std::vector<vpContour *>::const_iterator contour_m_children_end = contour.m_children.end();
+    for (std::vector<vpContour *>::const_iterator it = contour.m_children.begin(); it != contour_m_children_end;
          ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
@@ -248,7 +246,8 @@ struct vpContour
    */
   virtual ~vpContour()
   {
-    for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+    std::vector<vpContour *>::iterator m_children_end = m_children.end();
+    for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children_end; ++it) {
       (*it)->m_parent = nullptr;
       if (*it != nullptr) {
         delete *it;
@@ -266,7 +265,8 @@ struct vpContour
 
     if (m_parent == nullptr) {
       // We are a root or an uninitialized contour so delete everything
-      for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+      std::vector<vpContour *>::iterator m_children_end = m_children.end();
+      for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children_end; ++it) {
         (*it)->m_parent = nullptr;
         if (*it != nullptr) {
           delete *it;
@@ -281,7 +281,8 @@ struct vpContour
     }
 
     m_children.clear();
-    for (std::vector<vpContour *>::const_iterator it = other.m_children.begin(); it != other.m_children.end(); ++it) {
+    std::vector<vpContour *>::const_iterator other_m_children_end = other.m_children.end();
+    for (std::vector<vpContour *>::const_iterator it = other.m_children.begin(); it != other_m_children_end; ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
       m_children.push_back(copy);
@@ -312,7 +313,7 @@ struct vpContour
  * \param contours : Detected contours.
  * \param grayValue : Drawing grayscale color.
  */
-VISP_EXPORT void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
+VISP_EXPORT void drawContours(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::vector<std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> > &contours,
                               unsigned char grayValue = 255);
 
 /*!
@@ -324,8 +325,8 @@ VISP_EXPORT void drawContours(vpImage<unsigned char> &I, const std::vector<std::
  * \param contours : Detected contours.
  * \param color : Drawing color.
  */
-VISP_EXPORT void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours,
-                              const vpColor &color);
+VISP_EXPORT void drawContours(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, const std::vector<std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> > &contours,
+                              const VISP_NAMESPACE_ADDRESSING vpColor &color);
 
 /*!
  * \ingroup group_imgproc_contours
@@ -338,9 +339,10 @@ VISP_EXPORT void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<
  * \param contourPts : List of contours, each contour contains a list of contour points.
  * \param retrievalMode : Contour retrieval mode.
  */
-VISP_EXPORT void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
-                              std::vector<std::vector<vpImagePoint> > &contourPts,
-                              const vpContourRetrievalType &retrievalMode = vp::CONTOUR_RETR_TREE);
-} // namespace vp
+VISP_EXPORT void findContours(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I_original, vpContour &contours,
+                              std::vector<std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> > &contourPts,
+                              const vpContourRetrievalType &retrievalMode = CONTOUR_RETR_TREE);
+
+} // namespace
 
 #endif

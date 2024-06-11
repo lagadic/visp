@@ -38,9 +38,12 @@
 #ifndef _vpFeatureMomentCInvariant_h_
 #define _vpFeatureMomentCInvariant_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
+BEGIN_VISP_NAMESPACE
+
 /*!
  * \class vpFeatureMomentCInvariant
  *
@@ -85,7 +88,7 @@
  *
  * An example of how to use vpFeatureMomentCInvariant in a complete visual
  * servoing example is given in vpFeatureMomentCommon.
- */
+*/
 class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment
 {
 public:
@@ -179,8 +182,9 @@ public:
    */
   static unsigned int selectPy() { return 1 << 13; }
 };
-
+END_VISP_NAMESPACE
 #else
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 
 /*!
@@ -329,5 +333,6 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
 };
+END_VISP_NAMESPACE
 #endif
 #endif

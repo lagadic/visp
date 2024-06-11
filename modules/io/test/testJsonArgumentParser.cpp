@@ -49,6 +49,10 @@ using json = nlohmann::json; //! json namespace shortcut
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 std::pair<int, std::vector<char *>> convertToArgcAndArgv(const std::vector<std::string> &args)
 {
   std::vector<char *> argvs;
@@ -93,7 +97,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     json j = loadJson(jsonPath);
     modify(j);
     saveJson(j, jsonPath);
-  };
+    };
 
   GIVEN("Some specific arguments")
   {
@@ -139,7 +143,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser without any argument fails")
       {
         const int argc = 1;
-        const char *argv [] = {
+        const char *argv[] = {
           "program"
         };
 
@@ -149,7 +153,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser with only the JSON file works")
       {
         const int argc = 3;
-        const char *argv [] = {
+        const char *argv[] = {
           "program",
           "--config",
           jsonPath.c_str()
@@ -165,7 +169,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser by specifying the json argument but leaving the file path empty throws an error")
       {
         const int argc = 2;
-        const char *argv [] = {
+        const char *argv[] = {
           "program",
           "--config",
         };
@@ -176,7 +180,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
           modifyJson([&jsonElem](json &j) { j.erase(jsonElem.key()); });
-          const char *argv [] = {
+          const char *argv[] = {
             "program",
             "--config",
             jsonPath.c_str()
@@ -189,7 +193,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
           modifyJson([&jsonElem](json &j) { j[jsonElem.key()] = nullptr; });
-          const char *argv [] = {
+          const char *argv[] = {
             "program",
             "--config",
             jsonPath.c_str()
@@ -200,7 +204,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       THEN("Calling the parser with an invalid json file path throws an error")
       {
         const int argc = 3;
-        const char *argv [] = {
+        const char *argv[] = {
           "program",
           "--config",
           "some_invalid_json/file/path.json"
@@ -289,7 +293,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     {
       float bcopy = b;
       const int argc = 1;
-      const char *argv [] = {
+      const char *argv[] = {
         "program"
       };
 
@@ -308,7 +312,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     {
       float bcopy = b;
       const int argc = 1;
-      const char *argv [] = {
+      const char *argv[] = {
         "program"
       };
 
@@ -351,7 +355,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
 
   }
 }
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

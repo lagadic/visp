@@ -52,6 +52,7 @@
 
 #include <visp3/io/vpParallelPortException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpParallelPort
@@ -92,7 +93,7 @@ private:
   int fd; // parallel port descriptor
   std::string device;
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

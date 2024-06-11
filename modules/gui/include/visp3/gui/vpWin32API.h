@@ -49,6 +49,8 @@
 #include <string>
 #include <windows.h>
 
+BEGIN_VISP_NAMESPACE
+
 DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
 void vpPrepareImageWithPen(CRITICAL_SECTION *CriticalSection, HWND hWnd, HBITMAP bmp, COLORREF color,
@@ -63,5 +65,7 @@ BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC 
 BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase);
 COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor);
 HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits);
+
+END_VISP_NAMESPACE
 #endif
 #endif

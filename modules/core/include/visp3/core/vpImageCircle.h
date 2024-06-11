@@ -49,9 +49,10 @@
 #include <opencv2/core/core.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /**
  * \brief Class that defines a 2D circle in an image.
- */
+*/
 class VISP_EXPORT vpImageCircle
 {
 public:
@@ -141,4 +142,5 @@ private:
   vpImagePoint m_center;
   float m_radius;
 };
+END_VISP_NAMESPACE
 #endif

@@ -64,6 +64,10 @@
 
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void usage(const char *name, const char *badparam)
@@ -758,7 +762,7 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-    }
+      }
 
     std::cout << "\nFinal poses, cMo:\n" << cMo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
@@ -773,12 +777,12 @@ int main(int argc, const char **argv)
     tracker = nullptr;
 
     return EXIT_SUCCESS;
-  }
+    }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-}
+    }
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

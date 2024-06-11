@@ -33,7 +33,6 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -44,6 +43,7 @@
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for the normalized surface moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -53,7 +53,7 @@
  * - vpMomentAreaNormalized
  * - vpFeatureMomentBasic
  */
-void vpFeatureMomentAreaNormalized::compute_interaction()
+  void vpFeatureMomentAreaNormalized::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_surface_normalized;
@@ -97,10 +97,9 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
     (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredArea() / a);
   interaction_matrices[0] = normalized_multiplier * La;
 }
-
+END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -110,6 +109,7 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
 #include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Computes interaction matrix for the normalized surface moment. Called
  * internally. The moment primitives must be computed before calling this. This
@@ -118,7 +118,7 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
  * - vpMomentAreaNormalized
  * - vpMomentGravityCenter
  */
-void vpFeatureMomentAreaNormalized::compute_interaction()
+  void vpFeatureMomentAreaNormalized::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_surface_normalized;
@@ -199,5 +199,5 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   interaction_matrices[0][0][WY] = Anwy;
   interaction_matrices[0][0][WZ] = 0.;
 }
-
+END_VISP_NAMESPACE
 #endif

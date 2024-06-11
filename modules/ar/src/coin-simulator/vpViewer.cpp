@@ -48,6 +48,7 @@
 #include <Inventor/events/SoKeyboardEvent.h>
 #include <Inventor/nodes/SoEventCallback.h>
 
+BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent, vpSimulator *_simu, vpViewerType type)
   : SoWinExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
@@ -67,7 +68,7 @@ vpViewer::vpViewer(Widget parent, vpSimulator *_simu, vpViewerType type)
   setAutoRedraw(false);
 }
 
-vpViewer::~vpViewer() {}
+vpViewer::~vpViewer() { }
 
 void vpViewer::actualRedraw(void)
 {
@@ -231,8 +232,8 @@ SbBool vpViewer::processSoEvent(const SoEvent *const event)
   return SoXtExaminerViewer::processSoEvent(event);
 #endif
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpViewer.cpp.o) has no symbols
-void dummy_vpViewer(){};
+void dummy_vpViewer() { };
 #endif

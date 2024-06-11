@@ -36,12 +36,13 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpConfig.h>
-
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #ifndef vpWin32Renderer_HH
 #define vpWin32Renderer_HH
+
+#include <visp3/core/vpConfig.h>
+
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -53,6 +54,8 @@
 #include <visp3/core/vpDebug.h>
 #include <windows.h>
 
+BEGIN_VISP_NAMESPACE
+
 class VISP_EXPORT vpWin32Renderer
 {
 
@@ -63,9 +66,9 @@ protected:
   unsigned int m_rscale;
 
 public:
-  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1){};
+  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) { };
   //! Destructor.
-  virtual ~vpWin32Renderer(){};
+  virtual ~vpWin32Renderer() { };
 
   //! Inits the display .
   virtual bool init(HWND hWnd, unsigned int w, unsigned int h) = 0;
@@ -171,6 +174,8 @@ public:
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
 };
 
+
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

@@ -1,4 +1,5 @@
 //! \example tutorial-klt-tracker-with-reinit.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpVideoReader.h>
@@ -7,6 +8,10 @@
 int main()
 {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && defined(HAVE_OPENCV_VIDEOIO)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpVideoReader reader;
     reader.setFileName("video-postcard.mp4");
@@ -90,7 +95,8 @@ int main()
 
     vpDisplay::getClick(I);
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

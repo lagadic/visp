@@ -63,6 +63,10 @@
 // List of allowed command line options
 #define GETOPTARGS "mh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -80,7 +84,7 @@ of the Afma4 robot.\n\
 SYNOPSIS\n\
   %s [-m] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -184,39 +188,39 @@ int main(int argc, const char **argv)
     //
     std::cout << "Velocity control: in articular..." << std::endl;
 
-    q = 0 ;
-    q[0] = vpMath::rad(2) ; // rotation around vertical axis
+    q = 0;
+    q[0] = vpMath::rad(2); // rotation around vertical axis
     std::cout << "  rotation around vertical axis: " << q[0] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[1] = 0.2 ; // Vertical translation
+    q = 0;
+    q[1] = 0.2; // Vertical translation
     std::cout << "  vertical translation: " << q[1] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[1] = -0.2 ; // Vertical translation
+    q = 0;
+    q[1] = -0.2; // Vertical translation
     std::cout << "  vertical translation: " << q[1] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
-    q = 0 ;
-    q[2] = vpMath::rad(3) ; // pan
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
+    q = 0;
+    q[2] = vpMath::rad(3); // pan
     std::cout << "  pan rotation: " << q[2] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[3] = vpMath::rad(2) ; // tilt
+    q = 0;
+    q[3] = vpMath::rad(2); // tilt
     std::cout << "  tilt rotation: " << q[3] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 #endif
     //
     // Velocity control in camera frame
@@ -241,7 +245,8 @@ int main(int argc, const char **argv)
 
     std::cout << "The end" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

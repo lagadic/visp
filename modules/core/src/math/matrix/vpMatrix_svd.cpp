@@ -43,7 +43,6 @@
 
 #include <cmath> // std::fabs
 #include <iostream>
-#include <limits> // numeric_limits
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>
@@ -73,6 +72,8 @@ extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *l
 #include <string.h>
 #endif
 #endif
+
+BEGIN_VISP_NAMESPACE
 /*---------------------------------------------------------------------
 
 SVD related functions
@@ -466,3 +467,4 @@ void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
   U_ = svd.matrixU();
 }
 #endif
+END_VISP_NAMESPACE

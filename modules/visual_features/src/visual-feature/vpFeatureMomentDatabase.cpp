@@ -37,6 +37,7 @@
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Add a moment and it's corresponding name to the database
  * \param featureMoment : database for moment features
@@ -91,3 +92,4 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
   }
 #endif
 }
+END_VISP_NAMESPACE

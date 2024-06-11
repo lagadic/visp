@@ -2,8 +2,8 @@ name: Code-coverage
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 
@@ -65,14 +65,14 @@ jobs:
           '/usr/*' \
           '*/private/*' \
           '*/test/*' \
-          "/home/runner/work/visp/visp/3rdparty/*" \
-          "/home/runner/work/visp/visp/demo/*" \
-          "/home/runner/work/visp/visp/example/*" \
-          "/home/runner/work/visp/visp/samples/*" \
-          "/home/runner/work/visp/visp/modules/gui*" \
-          "/home/runner/work/visp/visp/modules/io/src/parallel-port*" \
-          "/home/runner/work/visp/visp/modules/robot*" \
-          "/home/runner/work/visp/visp/modules/sensor*" \
+          "/*/3rdparty/*" \
+          "/*/demo/*" \
+          "/*/example/*" \
+          "/*/samples/*" \
+          "/*/modules/gui*" \
+          "/*/modules/io/src/parallel-port*" \
+          "/*/modules/robot*" \
+          "/*/modules/sensor*" \
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov

@@ -32,7 +32,6 @@
  */
 
 #include <iostream>
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpCameraParameters.h>
@@ -49,6 +48,10 @@
   Compute the pose from different visual features.
 
 */
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

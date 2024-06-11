@@ -41,9 +41,13 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 TEST_CASE("Test reinterpret_cast_uchar_to_uint16_LE", "[vpEndian_test]")
 {
-  unsigned char bitmap[] = {100, 110, 120, 130};
+  unsigned char bitmap[] = { 100, 110, 120, 130 };
   uint16_t val01 = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap);
   uint16_t val12 = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + 2);
 

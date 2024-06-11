@@ -1,4 +1,5 @@
 //! \example tutorial-mb-generic-tracker-full.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -11,6 +12,10 @@
 #include <visp3/io/vpVideoWriter.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
@@ -37,7 +42,9 @@ int main(int argc, char **argv)
   bool opt_display_scale_auto = false;
   vpColVector opt_dof_to_estimate(6, 1.); // Here we consider 6 dof estimation
   std::string opt_save;
+#ifdef VISP_HAVE_MINIZ
   std::string opt_save_results;
+#endif
   unsigned int thickness = 2;
 
   vpImage<unsigned char> I;
@@ -65,9 +72,11 @@ int main(int argc, char **argv)
       else if (std::string(argv[i]) == "--save") {
         opt_save = std::string(argv[++i]);
       }
+#ifdef VISP_HAVE_MINIZ
       else if (std::string(argv[i]) == "--save-results") {
         opt_save_results = std::string(argv[++i]);
       }
+#endif
       else if (std::string(argv[i]) == "--plot") {
         opt_plot = true;
       }
@@ -99,7 +108,9 @@ int main(int argc, char **argv)
           << " [--downscale-img <scale factor>]"
           << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
           << " [--save <e.g. results-%04d.png>]"
+#ifdef VISP_HAVE_MINIZ
           << " [--save-results <e.g. tracking_poses.npz>]"
+#endif
           << " [--display-scale-auto]"
           << " [--plot]"
           << " [--verbose,-v]"
@@ -146,12 +157,14 @@ int main(int argc, char **argv)
           << "      is created if it doesn't exist."
           << "      Example: \"result/image-%04d.png\"." << std::endl
           << std::endl
+#ifdef VISP_HAVE_MINIZ
           << "  --save-results <e.g. tracking_results.npz>" << std::endl
           << "      Name of the npz file containing cMo data estimated from MBT." << std::endl
           << "      When the name contains a folder like in the next example, the folder" << std::endl
           << "      is created if it doesn't exist."
           << "      Example: \"result/tracking_results.npz\"." << std::endl
           << std::endl
+#endif
           << "  --display-scale-auto" << std::endl
           << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
           << "      visible on the screen. Useful for large images." << std::endl
@@ -193,6 +206,7 @@ int main(int argc, char **argv)
         vpIoTools::makeDirectory(parent);
       }
     }
+#ifdef VISP_HAVE_MINIZ
     if (!opt_save_results.empty()) {
       std::string parent = vpIoTools::getParent(opt_save_results);
       if (!parent.empty()) {
@@ -200,8 +214,9 @@ int main(int argc, char **argv)
         vpIoTools::makeDirectory(parent);
       }
     }
+#endif
 
-    //! [Image]
+//! [Image]
     vpImage<unsigned char> Ivideo;
     //! [Image]
     //! [cMo]
@@ -376,6 +391,7 @@ int main(int argc, char **argv)
     std::cout << "Initialize tracker on image size: " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
     std::vector<double> vec_poses;
+#ifdef VISP_HAVE_MINIZ
     if (!opt_save_results.empty()) {
       const unsigned int height = I.getHeight(), width = I.getWidth();
       visp::cnpy::npz_save(opt_save_results, "height", &height, { 1 }, "w");
@@ -387,6 +403,7 @@ int main(int argc, char **argv)
       visp::cnpy::npz_save(opt_save_results, "cam_u0", &cam_u0, { 1 }, "a");
       visp::cnpy::npz_save(opt_save_results, "cam_v0", &cam_v0, { 1 }, "a");
     }
+#endif
 
     //! [Init]
     tracker.initClick(I, objectname + ".init", true);
@@ -459,19 +476,23 @@ int main(int argc, char **argv)
         writer->saveFrame(O);
       }
 
+#ifdef VISP_HAVE_MINIZ
       if (!opt_save_results.empty()) {
         std::vector<double> vec_pose = poseToVec(cMo);
         vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
       }
+#endif
 
       if (vpDisplay::getClick(I, false))
         break;
     }
     vpDisplay::getClick(I);
 
+#ifdef VISP_HAVE_MINIZ
     if (!opt_save_results.empty()) {
       visp::cnpy::npz_save(opt_save_results, "vec_poses", vec_poses.data(), { static_cast<size_t>(vec_poses.size()/6), 6 }, "a");
     }
+#endif
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
@@ -489,4 +510,4 @@ int main(int argc, char **argv)
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+      }

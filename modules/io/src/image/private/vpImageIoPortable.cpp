@@ -41,6 +41,8 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpEndian.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * Decode the PNM image header.
@@ -837,3 +839,5 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
   fflush(f);
   fclose(f);
 }
+
+END_VISP_NAMESPACE

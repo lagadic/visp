@@ -37,6 +37,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 const vpArray2D<double> null(0, 0);
 
 /*!
@@ -443,5 +444,5 @@ inline void vpGEMM(const vpArray2D<double> &A, const vpArray2D<double> &B, const
     break;
   }
 }
-
+END_VISP_NAMESPACE
 #endif

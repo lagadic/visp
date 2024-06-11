@@ -31,6 +31,12 @@
  * Image display.
  */
 
+/*!
+ * \file vpDisplay.h
+ * \brief Generic class for image display, also provide the interface
+ * with the image.
+ */
+
 #ifndef _vpDisplay_h_
 #define _vpDisplay_h_
 
@@ -48,12 +54,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
 
-/*!
- * \file vpDisplay.h
- * \brief Generic class for image display, also provide the interface
- * with the image.
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpDisplay
  *
@@ -168,7 +169,7 @@
  *
  * Other examples are available in tutorial-image-viewer.cpp and
  * tutorial-viewer.cpp.
- */
+*/
 class VISP_EXPORT vpDisplay
 {
 public:
@@ -200,21 +201,6 @@ public:
     SCALE_DEFAULT /*!< Display and image have the same size. Similar to
                      vpDisplay::SCALE_1. */
   } vpScaleType;
-
-protected:
-  //! display has been initialized
-  bool m_displayHasBeenInitialized;
-  //! display position
-  int m_windowXPosition;
-  //! display position
-  int m_windowYPosition;
-  unsigned int m_width;
-  unsigned int m_height;
-  std::string m_title;
-  unsigned int m_scale;
-  vpScaleType m_scaleType;
-
-  void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
 
 public:
   vpDisplay();
@@ -925,9 +911,24 @@ public:
   //@}
 #endif
 
+protected:
+  //! display has been initialized
+  bool m_displayHasBeenInitialized;
+  //! display position
+  int m_windowXPosition;
+  //! display position
+  int m_windowYPosition;
+  unsigned int m_width;
+  unsigned int m_height;
+  std::string m_title;
+  unsigned int m_scale;
+  vpScaleType m_scaleType;
+
+  void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
+
 private:
   //! Get the window pixmap and put it in vpRGBa image.
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
 };
-
+END_VISP_NAMESPACE
 #endif

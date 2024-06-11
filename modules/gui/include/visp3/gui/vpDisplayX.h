@@ -31,19 +31,22 @@
  * Image display.
  */
 
-#ifndef vpDisplayX_h
-#define vpDisplayX_h
-
-#include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_X11
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRect.h>
-
 /*!
  * \file vpDisplayX.h
  * \brief Define the X11 console to display images.
  */
+
+#ifndef vpDisplayX_h
+#define vpDisplayX_h
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
+
+#ifdef VISP_HAVE_X11
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRect.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpDisplayX
@@ -123,7 +126,7 @@
  *   vpDisplay::getClick(I);
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpDisplayX : public vpDisplay
 {
   // private:
@@ -224,5 +227,6 @@ private:
   Impl *m_impl;
 };
 
+END_VISP_NAMESPACE
 #endif
 #endif

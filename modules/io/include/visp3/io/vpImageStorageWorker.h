@@ -41,6 +41,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpImageQueue.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageStorageWorker
 
@@ -132,6 +133,6 @@ private:
   std::ofstream m_ofs_data;
   bool m_data_file_created;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

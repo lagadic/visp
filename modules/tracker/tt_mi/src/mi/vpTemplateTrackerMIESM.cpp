@@ -43,9 +43,10 @@
 #include <omp.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), CompoInitialised(false), HDirect(), HInverse(),
-    HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
+  HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
 {
   useCompositionnal = false;
   useInverse = false;
@@ -293,7 +294,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-    } else {
+    }
+    else {
       computeProba(Nbpoint);
       computeMI(MI);
       if (hessianComputation != vpTemplateTrackerMI::USE_HESSIEN_DESIRE) {
@@ -377,7 +379,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           case vpTemplateTrackerMI::USE_HESSIEN_BEST_COND:
             if (HLM.cond() > HLMdesire.cond()) {
               dp = gain * HLMdesireInverse * G;
-            } else {
+            }
+            else {
               dp = gain * 0.3 * HLM.inverseByLU() * G;
             }
             break;
@@ -386,7 +389,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
             break;
           }
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         throw(e);
       }
 
@@ -411,3 +415,4 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   nbIteration = iteration;
 }
+END_VISP_NAMESPACE

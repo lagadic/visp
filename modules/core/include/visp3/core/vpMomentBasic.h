@@ -39,7 +39,10 @@
 #ifndef _vpMomentBasic_h_
 #define _vpMomentBasic_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMomentBasic
@@ -81,4 +84,5 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &v);
   void printDependencies(std::ostream &os) const;
 };
+END_VISP_NAMESPACE
 #endif

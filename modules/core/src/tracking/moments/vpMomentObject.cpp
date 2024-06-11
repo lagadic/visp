@@ -51,6 +51,7 @@
 #endif
 #include <cassert>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Computes moments from a vector of points describing a polygon (\cite Steger96).
   The points must be stored in a clockwise order. Used internally.
@@ -236,7 +237,8 @@ void vpMomentObject::fromVector(std::vector<vpPoint> &points)
     for (unsigned int j = 0; j < order * order; j++) {
       values[j] = calc_mom_polygon(j % order, j / order, points);
     }
-  } else {
+  }
+  else {
     std::vector<double> cache(order * order, 0.);
     values.assign(order * order, 0);
     for (unsigned int i = 0; i < points.size(); i++) {
@@ -415,8 +417,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCame
         }
       }
     }
-  } else {
-    /////////// BLACK BACKGROUND ///////////
+  }
+  else {
+ /////////// BLACK BACKGROUND ///////////
     for (unsigned int j = 0; j < image.getRows(); j++) {
       for (unsigned int i = 0; i < image.getCols(); i++) {
         x = 0;
@@ -560,39 +563,6 @@ void vpMomentObject::set(unsigned int i, unsigned int j, const double &value_ij)
 }
 
 /*!
-  Outputs the basic moment's values \f$m_{ij}\f$ to a stream presented as a
-  matrix. The first line corresponds to \f$m_{0[0:order]}\f$, the second one
-  to \f$m_{1[0:order]}\f$ Values in table corresponding to a higher order are
-  marked with an "x" and not computed.
-
-  For example, if the maximal order is 3, the following values are provided:
-
-  \code
-  m00 m10 m20 m30
-  m01 m11 m21 x
-  m02 m12  x  x
-  m03 x    x  x
-  \endcode
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
-{
-  for (unsigned int i = 0; i < m.values.size(); i++) {
-
-    if (i % (m.order) == 0)
-      os << std::endl;
-
-    if ((i % (m.order) + i / (m.order)) < m.order)
-      os << m.values[i];
-    else
-      os << "x";
-
-    os << "\t";
-  }
-
-  return os;
-}
-
-/*!
   Outputs the raw moment values \f$m_{ij}\f$ in indexed form.
   The moment values are same as provided by the operator << which outputs x
   for uncalculated moments.
@@ -662,3 +632,39 @@ vpMomentObject::~vpMomentObject()
 {
   // deliberate empty
 }
+
+/*!
+  Outputs the basic moment's values \f$m_{ij}\f$ to a stream presented as a
+  matrix. The first line corresponds to \f$m_{0[0:order]}\f$, the second one
+  to \f$m_{1[0:order]}\f$ Values in table corresponding to a higher order are
+  marked with an "x" and not computed.
+
+  For example, if the maximal order is 3, the following values are provided:
+
+  \code
+  m00 m10 m20 m30
+  m01 m11 m21 x
+  m02 m12  x  x
+  m03 x    x  x
+  \endcode
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
+{
+  for (unsigned int i = 0; i < m.values.size(); ++i) {
+
+    if (i % (m.order) == 0)
+      os << std::endl;
+
+    if ((i % (m.order) + i / (m.order)) < m.order) {
+      os << m.values[i];
+    }
+    else {
+      os << "x";
+    }
+
+    os << "\t";
+  }
+
+  return os;
+}
+END_VISP_NAMESPACE

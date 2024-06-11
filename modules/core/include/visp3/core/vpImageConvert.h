@@ -75,6 +75,7 @@
 #include <pcl/point_cloud.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageConvert
 
@@ -182,9 +183,9 @@ public:
                               unsigned char &b)
   {
     double dr, dg, db;
-    dr = floor(0.9999695 * y - 0.0009508 * (u - 128) + 1.1359061 * (v - 128));
-    dg = floor(0.9999695 * y - 0.3959609 * (u - 128) - 0.5782955 * (v - 128));
-    db = floor(0.9999695 * y + 2.04112 * (u - 128) - 0.0016314 * (v - 128));
+    dr = floor(((0.9999695 * y) - (0.0009508 * (u - 128))) + (1.1359061 * (v - 128)));
+    dg = floor(((0.9999695 * y) - (0.3959609 * (u - 128))) - (0.5782955 * (v - 128)));
+    db = floor(((0.9999695 * y) + (2.04112 * (u - 128))) - (0.0016314 * (v - 128)));
 
     dr = dr < 0. ? 0. : dr;
     dg = dg < 0. ? 0. : dg;
@@ -270,6 +271,7 @@ public:
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
                        unsigned int size, bool h_full = true);
 
+#ifndef VISP_SKIP_BAYER_CONVERSION
   static void demosaicBGGRToRGBaBilinear(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height,
                                          unsigned int nThreads = 0);
   static void demosaicBGGRToRGBaBilinear(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height,
@@ -309,6 +311,7 @@ public:
                                        unsigned int nThreads = 0);
   static void demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height,
                                        unsigned int nThreads = 0);
+#endif
 
 private:
   static void computeYCbCrLUT();
@@ -329,5 +332,5 @@ private:
   static int vpCgr[256];
   static int vpCbb[256];
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,4 +1,5 @@
 //! \example tutorial-grabber-1394.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -59,6 +60,9 @@ void usage(const char *argv[], int error)
 int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_THREADS)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -173,7 +177,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-  }
+}
 #else
   (void)argc;
   (void)argv;

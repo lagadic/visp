@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
@@ -54,6 +55,9 @@
 int main()
 {
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     // We want to calibrate the hand-eye extrinsic camera parameters from 6
     // couple of poses: cMo and wMe
@@ -167,4 +171,4 @@ int main()
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

@@ -36,15 +36,17 @@
 #define vpDisplayFactory_h
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_gui_display
- */
+*/
 namespace vpDisplayFactory
 {
 /**
@@ -140,5 +142,5 @@ vpDisplay *displayFactory(vpImage<T> &I, vpDisplay::vpScaleType scale_type)
 #endif
 }
 }
-
+END_VISP_NAMESPACE
 #endif

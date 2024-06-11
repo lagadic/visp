@@ -49,6 +49,10 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void checkSize(const vpPoseVector &pose, const std::vector<double> &ref)
@@ -112,7 +116,7 @@ TEST_CASE("vpPoseVector constructor", "[vpColVector]")
 
 TEST_CASE("vpPoseVector copy constructor", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2(pose1);
@@ -123,7 +127,7 @@ TEST_CASE("vpPoseVector copy constructor", "[vpColVector]")
 
 TEST_CASE("vpPoseVector object assignment", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2 = pose1;
@@ -134,7 +138,7 @@ TEST_CASE("vpPoseVector object assignment", "[vpColVector]")
 
 TEST_CASE("vpPoseVector set", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2;
@@ -146,7 +150,7 @@ TEST_CASE("vpPoseVector set", "[vpColVector]")
 
 TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
 
@@ -158,7 +162,7 @@ TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]")
 
 TEST_CASE("vpPoseVector build t, tu", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
 
@@ -171,7 +175,7 @@ TEST_CASE("vpPoseVector build t, tu", "[vpColVector]")
 
 TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpHomogeneousMatrix M(t, tu);
@@ -184,7 +188,7 @@ TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]")
 
 TEST_CASE("vpPoseVector build vpHomogeneousMatrix", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpHomogeneousMatrix M(t, tu);
@@ -198,7 +202,7 @@ TEST_CASE("vpPoseVector build vpHomogeneousMatrix", "[vpColVector]")
 
 TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpRotationMatrix R(tu);
@@ -211,7 +215,7 @@ TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]")
 
 TEST_CASE("vpPoseVector build t, R", "[vpColVector]")
 {
-  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
+  std::vector<double> ref = { 0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpRotationMatrix R(tu);

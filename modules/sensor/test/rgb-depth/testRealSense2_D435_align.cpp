@@ -50,6 +50,10 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 void createDepthHist(std::vector<uint32_t> &histogram2, const pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,

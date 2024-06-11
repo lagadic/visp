@@ -34,6 +34,7 @@
 #ifndef _vpMbDepthDenseTracker_h_
 #define _vpMbDepthDenseTracker_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPlane.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
@@ -43,6 +44,7 @@
 #include <visp3/core/vpDisplay.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbDepthDenseTracker : public virtual vpMbTracker
 {
 public:
@@ -170,4 +172,5 @@ protected:
   void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
   void segmentPointCloud(const vpMatrix &point_cloud, unsigned int width, unsigned int height);
 };
+END_VISP_NAMESPACE
 #endif

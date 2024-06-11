@@ -97,8 +97,8 @@
 #include <mutex>
 #endif
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 namespace
 {
 #if defined(VISP_HAVE_THREADS)
@@ -3874,3 +3874,4 @@ void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
   m_SobelY.resize(size * 2 + 1, size * 2 + 1, false, false);
   vpImageFilter::getSobelKernelY(m_SobelY.data, size);
 }
+END_VISP_NAMESPACE

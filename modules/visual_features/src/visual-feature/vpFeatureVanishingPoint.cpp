@@ -55,6 +55,7 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Vanishing point visual feature initialization.
  */
@@ -457,3 +458,4 @@ unsigned int vpFeatureVanishingPoint::selectAtanOneOverRho() { return FEATURE_LI
  * Select \f$ s = \theta \f$ visual feature.
  */
 unsigned int vpFeatureVanishingPoint::selectAlpha() { return FEATURE_LINE[4]; }
+END_VISP_NAMESPACE

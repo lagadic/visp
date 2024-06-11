@@ -52,6 +52,7 @@ extern "C" {
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotFlirPtu.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Emergency stops the robot if the program is interrupted by a SIGINT
@@ -946,7 +947,7 @@ double vpRobotFlirPtu::tics2deg(int axis, int tics) { return (tics * m_res[axis]
    \sa pos2rad()
  */
 double vpRobotFlirPtu::tics2rad(int axis, int tics) { return vpMath::rad(tics2deg(axis, tics)); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFlirPtu.cpp.o) has
 // no symbols

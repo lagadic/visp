@@ -35,6 +35,7 @@
 
 #include <visp3/core/vpColor.h>
 
+BEGIN_VISP_NAMESPACE
 // FS: Sould be improved to avoid the #if preprocessor line. Not a good idea
 // to define colors in static.
 //     See also vpColor.h where things need to be improved.
@@ -98,7 +99,7 @@ vpColor const vpColor::none = vpColor(0, 0, 0, id_unknown);
 const unsigned int vpColor::nbColors = 18;
 
 /*!< Array of available colors. */
-vpColor const vpColor::allColors[vpColor::nbColors] = {vpColor::blue,       // 12
+vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 12
                                                        vpColor::green,      // 9
                                                        vpColor::red,        // 6
                                                        vpColor::cyan,       // 15
@@ -115,10 +116,10 @@ vpColor const vpColor::allColors[vpColor::nbColors] = {vpColor::blue,       // 1
                                                        vpColor::gray,       // 3
                                                        vpColor::darkGray,   // 4
                                                        vpColor::black,      // 0
-                                                       vpColor::white};     // 17
+                                                       vpColor::white };     // 17
 #endif
 
-vpColor colors[6] = {vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple};
+vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
 
 /*!
   Compare two colors.
@@ -144,3 +145,5 @@ VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2)
 {
   return ((c1.R != c2.R) || (c1.G != c2.G) || (c1.B == c2.B));
 }
+
+END_VISP_NAMESPACE

@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 
-#ifndef vpRobotCamera_H
-#define vpRobotCamera_H
-
 /*!
   \file vpRobotCamera.h
   \brief class that defines the simplest robot : a free flying camera
 */
+
+#ifndef vpRobotCamera_H
+#define vpRobotCamera_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -50,6 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotCamera
   \ingroup group_robot_simu_camera
@@ -132,6 +133,6 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
   void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -53,12 +53,13 @@
 #include "vpBound.h"
 #include "vpMy.h"
 
+BEGIN_VISP_NAMESPACE
 void open_clipping(void);
 void open_clipping(void);
 void close_clipping(void);
 Bound *clipping_Bound(Bound *bp, Matrix m);
 void set_Point4f_code(Point4f *p4, int size, Byte *cp);
 Byte where_is_Point4f(Point4f *p4);
-
+END_VISP_NAMESPACE
 #endif
 #endif

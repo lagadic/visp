@@ -50,6 +50,7 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpArray2D
  *  \ingroup group_core_matrices
@@ -912,48 +913,49 @@ public:
     file.close();
     return true;
   }
-  /*!
-    Save an array in a YAML-formatted file.
 
-    \param filename : absolute file name.
-    \param A : array to be saved in the file.
-    \param header : optional lines that will be saved at the beginning of the
-    file. Should be YAML-formatted and will adapt to the indentation if any.
+    /*!
+      Save an array in a YAML-formatted file.
 
-    \return Returns true if success.
+      \param filename : absolute file name.
+      \param A : array to be saved in the file.
+      \param header : optional lines that will be saved at the beginning of the
+      file. Should be YAML-formatted and will adapt to the indentation if any.
 
-    Here is an example of outputs.
-    \code
-    vpArray2D<double> M(3,4);
-    vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
-    vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
-    header\n    - with inner indentation");
-    \endcode
-    Content of matrix.yml:
-    \code
-    example: a YAML-formatted header
-    rows: 3
-    cols: 4
-    data:
-      - [0, 0, 0, 0]
-      - [0, 0, 0, 0]
-      - [0, 0, 0, 0]
-    \endcode
-    Content of matrixIndent.yml:
-    \code
-    example:
-        - a YAML-formatted header
-        - with inner indentation
-    rows: 3
-    cols: 4
-    data:
+      \return Returns true if success.
+
+      Here is an example of outputs.
+      \code
+      vpArray2D<double> M(3,4);
+      vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
+      vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
+      header\n    - with inner indentation");
+      \endcode
+      Content of matrix.yml:
+      \code
+      example: a YAML-formatted header
+      rows: 3
+      cols: 4
+      data:
         - [0, 0, 0, 0]
         - [0, 0, 0, 0]
         - [0, 0, 0, 0]
-    \endcode
+      \endcode
+      Content of matrixIndent.yml:
+      \code
+      example:
+          - a YAML-formatted header
+          - with inner indentation
+      rows: 3
+      cols: 4
+      data:
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+      \endcode
 
-    \sa loadYAML()
-  */
+      \sa loadYAML()
+    */
   static bool saveYAML(const std::string &filename, const vpArray2D<Type> &A, const char *header = "")
   {
     std::fstream file;
@@ -1325,8 +1327,6 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-
-
 template <class Type>
 inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
 {
@@ -1397,4 +1397,7 @@ inline void to_json(nlohmann::json &j, const vpArray2D<Type> &array)
   j["data"] = data;
 }
 #endif
+
+END_VISP_NAMESPACE
+
 #endif

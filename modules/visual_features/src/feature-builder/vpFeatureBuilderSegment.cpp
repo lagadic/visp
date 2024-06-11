@@ -39,6 +39,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MODULE_BLOB
 
 /*!
@@ -162,3 +163,4 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2)
 
   s.build(x1, y1, Z1, x2, y2, Z2);
 }
+END_VISP_NAMESPACE

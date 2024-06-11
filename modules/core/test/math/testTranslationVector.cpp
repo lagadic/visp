@@ -40,10 +40,13 @@
 */
 
 #include <cmath>
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpTranslationVector.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<double> &bench)
 {

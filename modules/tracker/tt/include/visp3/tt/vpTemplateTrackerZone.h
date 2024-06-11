@@ -41,6 +41,7 @@
 
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -48,6 +49,7 @@
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerZone
   \ingroup group_tt_tools
@@ -57,7 +59,7 @@
   A zone can be initialized either by user interaction using mouse click in a
   display device throw initClick(), or by a list of points throw
   initFromPoints().
- */
+*/
 class VISP_EXPORT vpTemplateTrackerZone
 {
 protected:
@@ -119,4 +121,5 @@ public:
 
   vpTemplateTrackerZone &operator=(const vpTemplateTrackerZone &z);
 };
+END_VISP_NAMESPACE
 #endif

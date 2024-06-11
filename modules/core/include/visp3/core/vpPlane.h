@@ -31,12 +31,15 @@
  * Plane geometrical structure.
  */
 
-#ifndef vpPlane_hh
-#define vpPlane_hh
+#ifndef _vpPlane_h_
+#define _vpPlane_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpPlane
@@ -145,7 +148,7 @@ public:
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;
@@ -155,5 +158,5 @@ public:
   double getIntersection(const vpColVector &M1, vpColVector &H) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
 };
-
+END_VISP_NAMESPACE
 #endif

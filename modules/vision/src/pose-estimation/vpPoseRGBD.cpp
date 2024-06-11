@@ -37,8 +37,8 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
-namespace
-{
+BEGIN_VISP_NAMESPACE
+
 // See also vpPlaneEstimation.cpp that implements the same functionaly in c++17
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
                               vpColVector &centroid, double &normalized_weights)
@@ -56,7 +56,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
   vpColVector normal;
 
   double fabs_error_m_prev_error = std::fabs(error - prev_error);
-  for (unsigned int iter = 0; (iter < max_iter) && (fabs_error_m_prev_error > 1e-6); ++iter) {
+  unsigned int iter = 0;
+  while ((iter < max_iter) && (fabs_error_m_prev_error > 1e-6)) {
     if (iter != 0) {
       tukey.MEstimator(vpRobust::TUKEY, residues, weights);
     }
@@ -116,6 +117,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
     error /= total_w;
     // evaluate one of the end conditions of the for
     fabs_error_m_prev_error = std::fabs(error - prev_error);
+
+    ++iter;
   }
 
   // Update final weights
@@ -145,8 +148,6 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
 
   normalized_weights = total_w / nPoints;
 }
-
-} // namespace
 
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
                                              const vpCameraParameters &colorIntrinsics,
@@ -445,3 +446,5 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
   }
   return false;
 }
+
+END_VISP_NAMESPACE

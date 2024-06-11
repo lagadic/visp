@@ -51,6 +51,8 @@
 #include <optional>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 /**
  * \ingroup group_hough_transform
  * \brief Class that permits to detect 2D circles in a image using
@@ -58,7 +60,7 @@
  * Please find more information on the algorithm
  * [here](https://theailearner.com/tag/hough-gradient-method-opencv/)
  *
- */
+*/
 class VISP_EXPORT vpCircleHoughTransform
 {
 public:
@@ -1281,4 +1283,7 @@ protected:
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the final circles.*/
   std::vector<std::vector<std::pair<unsigned int, unsigned int> > > m_finalCirclesVotingPoints; /*!< Points that voted for each final circle.*/
 };
+
+END_VISP_NAMESPACE
+
 #endif

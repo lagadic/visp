@@ -41,11 +41,13 @@
 
 #include <visp3/sensor/vpMocap.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
  *\class vpMocapVicon
  * \ingroup group_sensor_mocap
  * Vicon motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocapVicon : public vpMocap
 {
 public:
@@ -67,6 +69,6 @@ private:
   class vpMocapViconImpl;
   vpMocapViconImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif // vpMocapVicon_h

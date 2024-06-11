@@ -44,6 +44,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/
                          {"above", T_ABOVE},
                          {"back", T_BACK},
@@ -67,6 +68,6 @@ Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/
                          {"vrp", T_VRP},
                          {"vup", T_VUP},
                          {"window", T_WINDOW},
-                         {NULL, T_NULL}};
-
+                         {NULL, T_NULL} };
+END_VISP_NAMESPACE
 #endif

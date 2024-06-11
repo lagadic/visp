@@ -46,6 +46,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+BEGIN_VISP_NAMESPACE
 namespace
 {
 
@@ -252,3 +253,4 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 #endif
   return depth_pixel;
 }
+END_VISP_NAMESPACE

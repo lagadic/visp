@@ -54,6 +54,7 @@
   select the layers to proceed.
 
 */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -73,6 +74,10 @@
 
 #include <thread>
 #include <mutex>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 static int save = 0;
 static int layerToDisplay = 0xF; // 0xF = 1111 => all the layers are selected
@@ -355,6 +360,6 @@ int main()
   std::cout << "This example is only working on unix-like platforms \n"
     << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif // #ifdef UNIX

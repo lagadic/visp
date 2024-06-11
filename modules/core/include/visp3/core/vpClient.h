@@ -44,6 +44,7 @@
  // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpClient
  *
@@ -158,7 +159,7 @@
  * \sa vpClient
  * \sa vpRequest
  * \sa vpNetwork
- */
+*/
 class VISP_EXPORT vpClient : public vpNetwork
 {
 private:
@@ -203,6 +204,6 @@ public:
 
   void stop();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -31,14 +31,13 @@
  * Meter to pixel conversion.
  */
 
-#ifndef _vpMeterPixelConversion_h_
-#define _vpMeterPixelConversion_h_
-
 /*!
   \file vpMeterPixelConversion.h
   \brief Meter to pixel conversion.
-
 */
+
+#ifndef _vpMeterPixelConversion_h_
+#define _vpMeterPixelConversion_h_
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpCircle.h>
@@ -51,6 +50,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMeterPixelConversion
 
@@ -321,9 +321,9 @@ public:
     double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
       theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
-    double r_d = theta + k[0] * theta3 + k[1] * theta5 + k[2] * theta7 + k[3] * theta9;
+    double r_d = theta + (k[0] * theta3) + (k[1] * theta5) + (k[2] * theta7) + (k[3] * theta9);
 
-    double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : r_d / r;
+    double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : (r_d / r);
 
     double x_d = x * scale;
     double y_d = y * scale;
@@ -353,5 +353,5 @@ public:
   //@}
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

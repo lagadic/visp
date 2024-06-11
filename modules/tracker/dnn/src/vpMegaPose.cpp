@@ -55,6 +55,8 @@
 #include <thread>
 using json = nlohmann::json; //! json namespace shortcut
 
+BEGIN_VISP_NAMESPACE
+
 //// Network message utils
 
 /*Encode elements to a buffer of bytes*/
@@ -392,7 +394,7 @@ vpMegaPose::vpMegaPose(const std::string &host, int port, const vpCameraParamete
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
-  }
+}
 
 vpMegaPose::~vpMegaPose()
 {
@@ -615,7 +617,7 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   std::vector<std::string> result = jsonValue;
   return result;
 }
-
+END_VISP_NAMESPACE
 #else
 
 // Work around to avoid libvisp_dnn_tracker library empty when threads are not used

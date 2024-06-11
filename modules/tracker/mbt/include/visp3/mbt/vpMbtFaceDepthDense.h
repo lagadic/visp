@@ -50,6 +50,7 @@
 
 #define DEBUG_DISPLAY_DEPTH_DENSE 0
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthDense
 {
 public:
@@ -239,4 +240,5 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+END_VISP_NAMESPACE
 #endif

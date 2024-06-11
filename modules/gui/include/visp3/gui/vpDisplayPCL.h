@@ -45,6 +45,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpDisplayPCL
   \ingroup group_gui_plotter
@@ -80,7 +81,7 @@ private:
   std::string m_window_name;
   pcl::visualization::PCLVisualizer::Ptr m_viewer;
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

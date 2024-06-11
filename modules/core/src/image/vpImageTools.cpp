@@ -42,6 +42,7 @@
 #include <Simd/SimdLib.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Change the look up table (LUT) of an image. Considering pixel gray
   level values \f$ l \f$ in the range \f$[A, B]\f$, this method allows
@@ -155,7 +156,7 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
   SimdImageDifference(I1.bitmap, I2.bitmap, I1.getSize(), Idiff.bitmap);
 #else
   for (unsigned int i = 0; i < I1.getSize(); ++i) {
-    int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
+    int diff = (I1.bitmap[i] - I2.bitmap[i]) + 128;
     Idiff.bitmap[i] = static_cast<unsigned char>(std::max<unsigned char>(std::min<unsigned char>(diff, 255), 0));
   }
 #endif
@@ -191,11 +192,12 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
   SimdImageDifference(reinterpret_cast<unsigned char *>(I1.bitmap), reinterpret_cast<unsigned char *>(I2.bitmap),
                       I1.getSize() * 4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
 #else
-  for (unsigned int i = 0; i < I1.getSize() * 4; ++i) {
-    int diffR = I1.bitmap[i].R - I2.bitmap[i].R + 128;
-    int diffG = I1.bitmap[i].G - I2.bitmap[i].G + 128;
-    int diffB = I1.bitmap[i].B - I2.bitmap[i].B + 128;
-    int diffA = I1.bitmap[i].A - I2.bitmap[i].A + 128;
+  unsigned int i1_size = I1.getSize();
+  for (unsigned int i = 0; i < (i1_size * 4); ++i) {
+    int diffR = (I1.bitmap[i].R - I2.bitmap[i].R) + 128;
+    int diffG = (I1.bitmap[i].G - I2.bitmap[i].G) + 128;
+    int diffB = (I1.bitmap[i].B - I2.bitmap[i].B) + 128;
+    int diffA = (I1.bitmap[i].A - I2.bitmap[i].A) + 128;
     Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
     Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
     Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
@@ -328,8 +330,9 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
   unsigned char *ptr_I1 = I1.bitmap;
   unsigned char *ptr_I2 = I2.bitmap;
   unsigned char *ptr_Ires = Ires.bitmap;
-  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 + (short int)*ptr_I2) : *ptr_I1 + *ptr_I2;
+  unsigned int ires_size = Ires.getSize();
+  for (unsigned int cpt = 0; cpt < ires_size; ++cpt, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) + static_cast<short int>(*ptr_I2)) : ((*ptr_I1) + (*ptr_I2));
   }
 #endif
 }
@@ -370,10 +373,11 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
   unsigned char *ptr_I1 = I1.bitmap;
   unsigned char *ptr_I2 = I2.bitmap;
   unsigned char *ptr_Ires = Ires.bitmap;
-  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+  unsigned int ires_size = Ires.getSize();
+  for (unsigned int cpt = 0; cpt < ires_size; ++cpt, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
     *ptr_Ires = saturate ?
       vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) - static_cast<short int>(*ptr_I2)) :
-      *ptr_I1 - *ptr_I2;
+      ((*ptr_I1) - (*ptr_I2));
   }
 #endif
 }
@@ -556,7 +560,8 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 #if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation(I1.bitmap, a, I2.bitmap, b, I1.getSize(), a2, b2, ab, useOptimized);
 #else
-  for (unsigned int cpt = 0; cpt < I1.getSize(); ++cpt) {
+  unsigned int i1_size = I1.getSize();
+  for (unsigned int cpt = 0; cpt < i1_size; ++cpt) {
     ab += (I1.bitmap[cpt] - a) * (I2.bitmap[cpt] - b);
     a2 += vpMath::sqr(I1.bitmap[cpt] - a);
     b2 += vpMath::sqr(I2.bitmap[cpt] - b);
@@ -833,8 +838,10 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 #if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation2(I1.bitmap, I1.getWidth(), I2.bitmap, I2.getWidth(), I2.getHeight(), i0, j0, ab);
 #else
-  for (unsigned int i = 0; i < I2.getHeight(); ++i) {
-    for (unsigned int j = 0; j < I2.getWidth(); ++j) {
+  unsigned int i2_height = I2.getHeight();
+  unsigned int i2_width = I2.getWidth();
+  for (unsigned int i = 0; i < i2_height; ++i) {
+    for (unsigned int j = 0; j < i2_width; ++j) {
       ab += (I1[i0 + i][j0 + j]) * I2[i][j];
     }
   }
@@ -924,7 +931,8 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
 #else
     const unsigned int i_ = static_cast<unsigned int>(i);
-    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_width = I.getWidth();
+    for (unsigned int j = 0; j < i_width; ++j) {
 
       int u_round = mapU[i_][j];
       int v_round = mapV[i_][j];
@@ -932,8 +940,8 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
       float du = mapDu[i_][j];
       float dv = mapDv[i_][j];
 
-      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
-          && v_round < static_cast<int>(I.getHeight()) - 1) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (static_cast<int>(I.getWidth()) - 1))
+          && (v_round < (static_cast<int>(I.getHeight()) - 1))) {
         // process interpolation
         float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
         float col1 = lerp(I[v_round + 1][u_round].R, I[v_round + 1][u_round + 1].R, du);
@@ -1184,3 +1192,4 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
   }
   return cpt_in_range;
 }
+END_VISP_NAMESPACE

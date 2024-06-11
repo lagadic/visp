@@ -45,49 +45,56 @@
 #define vpTemplateTrackerHeader_hh
 
 #include <stdio.h>
+#include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \struct vpTemplateTrackerZPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerZPoint {
+struct vpTemplateTrackerZPoint
+{
   int x, y;
 
-  vpTemplateTrackerZPoint() : x(0), y(0) {}
+  vpTemplateTrackerZPoint() : x(0), y(0) { }
 };
 /*!
   \struct vpTemplateTrackerDPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerDPoint {
+struct vpTemplateTrackerDPoint
+{
   double x, y;
 
-  vpTemplateTrackerDPoint() : x(0), y(0) {}
+  vpTemplateTrackerDPoint() : x(0), y(0) { }
 };
 /*!
   \struct vpTemplateTrackerPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerPoint {
+struct vpTemplateTrackerPoint
+{
   int x, y;
   double dx, dy;
   double val;
   double *dW;
   double *HiG;
 
-  vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(nullptr), HiG(nullptr) {}
+  vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(nullptr), HiG(nullptr) { }
 };
 /*!
   \struct vpTemplateTrackerPointCompo
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerPointCompo {
+struct vpTemplateTrackerPointCompo
+{
   double *dW;
-  vpTemplateTrackerPointCompo() : dW(nullptr) {}
+  vpTemplateTrackerPointCompo() : dW(nullptr) { }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-struct vpTemplateTrackerPointSuppMIInv {
+struct vpTemplateTrackerPointSuppMIInv
+{
   double et;
   int ct;
   double *BtInit;
@@ -97,9 +104,9 @@ struct vpTemplateTrackerPointSuppMIInv {
   double *d2Wx;
   double *d2Wy;
   vpTemplateTrackerPointSuppMIInv() : et(0), ct(0), BtInit(nullptr), Bt(nullptr), dBt(nullptr), d2W(nullptr), d2Wx(nullptr), d2Wy(nullptr)
-  {
-  }
+  { }
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
+END_VISP_NAMESPACE
 
 #endif

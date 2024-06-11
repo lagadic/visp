@@ -43,8 +43,8 @@
 int main()
 {
   std::cout << "\nThis example requires Aria 3rd party library. You should "
-               "install it.\n"
-            << std::endl;
+    "install it.\n"
+    << std::endl;
   return EXIT_SUCCESS;
 }
 
@@ -64,13 +64,17 @@ int main()
 */
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::cout << "\nWARNING: this program does no sensing or avoiding of "
-                 "obstacles, \n"
-                 "the robot WILL collide with any objects in the way! Make sure "
-                 "the \n"
-                 "robot has approximately 3 meters of free space on all sides.\n"
-              << std::endl;
+      "obstacles, \n"
+      "the robot WILL collide with any objects in the way! Make sure "
+      "the \n"
+      "robot has approximately 3 meters of free space on all sides.\n"
+      << std::endl;
 
     vpRobotPioneer robot;
 
@@ -138,7 +142,8 @@ int main(int argc, char **argv)
     // exit
     ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

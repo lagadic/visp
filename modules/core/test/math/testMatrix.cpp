@@ -51,6 +51,10 @@
 
 #include <iterator> // for std::back_inserter
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 bool test_memory(unsigned int nrows, unsigned int ncols, const vpMatrix &M, const std::string &matrix_name, bool pointer_is_null)

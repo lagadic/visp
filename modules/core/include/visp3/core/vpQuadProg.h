@@ -31,6 +31,11 @@
  * Quadratic Programming
  */
 
+/*!
+ * \file vpQuadProg.h
+ * \brief Implementation of Quadratic Program with Active Sets.
+ */
+
 #ifndef _vpQuadProg_h_
 #define _vpQuadProg_h_
 
@@ -41,11 +46,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMatrixException.h>
 
-/*!
- * \file vpQuadProg.h
- * \brief Implementation of Quadratic Program with Active Sets.
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpQuadProg
  * \ingroup group_core_optim
@@ -65,7 +66,7 @@
  *
  * \warning The solvers are only available if c++11 or higher is activated during build.
  * Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
- */
+*/
 class VISP_EXPORT vpQuadProg
 {
 public:
@@ -159,4 +160,5 @@ protected:
   }
 #endif
 };
+END_VISP_NAMESPACE
 #endif

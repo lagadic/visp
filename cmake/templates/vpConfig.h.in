@@ -112,6 +112,24 @@
                                         VISP_VERSION_MINOR, \
                                         VISP_VERSION_PATCH)
 
+// Defined if the user wants to protect the classes in a dedicated visp namespace
+#cmakedefine ENABLE_VISP_NAMESPACE
+#define VISP_NAMESPACE_NAME visp
+#ifdef ENABLE_VISP_NAMESPACE
+#define VISP_NAMESPACE_ADDRESSING visp::
+#define BEGIN_VISP_NAMESPACE namespace visp {
+#define END_VISP_NAMESPACE }
+// Create an empty namespace to ensure that "using VISP_NAMESPACE_NAME;" does not raise an error
+namespace VISP_NAMESPACE_NAME {}
+
+// Create an alias for compatibility with older versions of ViSP
+namespace vp = VISP_NAMESPACE_NAME;
+#else
+#define VISP_NAMESPACE_ADDRESSING
+#define BEGIN_VISP_NAMESPACE
+#define END_VISP_NAMESPACE
+#endif
+
 // Enable debug and trace printings
 #cmakedefine VP_TRACE
 #cmakedefine VP_DEBUG
@@ -142,6 +160,9 @@
 
 // Always define pugixml for compatibility.
 #cmakedefine VISP_HAVE_PUGIXML
+
+// Defined if basisu_miniz is used internally
+#cmakedefine VISP_HAVE_MINIZ
 
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
@@ -569,6 +590,9 @@
 #ifdef VISP_HAVE_DATASET
 #  define VISP_HAVE_DATASET_VERSION ${VISP_HAVE_DATASET_VERSION}
 #endif
+
+// Defined if Bayer conversion has to be skipped
+#cmakedefine VISP_SKIP_BAYER_CONVERSION
 
 // Defined if nullptr is available
 #cmakedefine VISP_HAVE_NULLPTR

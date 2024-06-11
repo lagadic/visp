@@ -51,6 +51,7 @@
 #include <math.h>
 #include <visp3/core/vpColVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpScale
   \ingroup group_core_robust
@@ -63,7 +64,7 @@
 
   \author Andrew Comport
   \date 24/10/03
- */
+*/
 class VISP_EXPORT vpScale
 {
 
@@ -85,5 +86,5 @@ public:
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
   double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
 };
-
+END_VISP_NAMESPACE
 #endif

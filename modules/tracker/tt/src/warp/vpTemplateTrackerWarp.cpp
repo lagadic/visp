@@ -38,13 +38,14 @@
 *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 
+BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p,
                                          vpTemplateTrackerTriangle &out)
 {
   if (p.size() < 2) {
     vpCTRACE << "Bad template tracker warp parameters dimension. Should "
-                "never occur. "
-             << std::endl;
+      "never occur. "
+      << std::endl;
     throw(vpException(vpException::dimensionError, "Bad template tracker warp parameters dimension"));
   }
   vpColVector S1(2), S2(2), S3(2);
@@ -149,8 +150,9 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0, const
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       p += (vpColVector)(HLM.inverseByLU() * G, 0u);
-    } catch (const vpException &e) {
-      // std::cout<<"Cannot inverse the matrix by LU " << std::endl;
+    }
+    catch (const vpException &e) {
+   // std::cout<<"Cannot inverse the matrix by LU " << std::endl;
       throw(e);
     }
     cpt++;
@@ -158,3 +160,4 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0, const
   // std::cout<<"erreur apres transformation="<<erreur<<std::endl;
 }
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+END_VISP_NAMESPACE

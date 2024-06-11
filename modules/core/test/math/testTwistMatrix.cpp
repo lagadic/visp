@@ -55,6 +55,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpTRACE("--------------------------");
     vpTRACE("--- TEST vpVelocityTwistMatrix ---");
@@ -102,7 +105,8 @@ int main()
     vpTRACE("cv = cVe * ev:");
     cv.print(std::cout, 6);
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

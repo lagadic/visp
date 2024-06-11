@@ -46,6 +46,10 @@
 #include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpMath.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 bool test(const std::string &s, const vpColVector &v, const std::vector<double> &bench)

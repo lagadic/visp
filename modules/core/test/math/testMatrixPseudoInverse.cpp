@@ -51,6 +51,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.

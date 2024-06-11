@@ -31,23 +31,25 @@
  * Exception that can be emitted by the vpRobot class and its derivatives.
  */
 
-#ifndef _vpRobotException_h_
-#define _vpRobotException_h_
-
 /*!
  * \file vpRobotException.h
  * \brief error that can be emitted by the vpRobot class and its derivatives
  */
 
+#ifndef _vpRobotException_h_
+#define _vpRobotException_h_
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
 #include <iostream>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotException
  * \brief Error that can be emitted by the vpRobot class and its derivatives.
- */
+*/
 class VISP_EXPORT vpRobotException : public vpException
 {
 public:
@@ -115,5 +117,5 @@ public:
    */
   explicit vpRobotException(int id) : vpException(id) { }
 };
-
+END_VISP_NAMESPACE
 #endif

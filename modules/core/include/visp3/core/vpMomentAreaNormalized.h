@@ -37,8 +37,10 @@
 #ifndef _vpMomentAreaNormalized_h_
 #define _vpMomentAreaNormalized_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 class vpMomentCentered;
 
@@ -128,7 +130,7 @@ class vpMomentCentered;
  * \code
  * An:1.41421
  * \endcode
- */
+*/
 class VISP_EXPORT vpMomentAreaNormalized : public vpMoment
 {
 private:
@@ -181,5 +183,5 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
   void printDependencies(std::ostream &os) const;
 };
-
+END_VISP_NAMESPACE
 #endif

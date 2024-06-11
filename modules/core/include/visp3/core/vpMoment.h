@@ -45,6 +45,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 class vpMomentObject;
 
@@ -100,7 +101,7 @@ class vpMomentObject;
  * - vpMomentCInvariant
  * - vpMomentGravityCenter
  * - vpMomentGravityCenterNormalized
- */
+*/
 class VISP_EXPORT vpMoment
 {
 private:
@@ -154,4 +155,5 @@ public:
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m);
 };
+END_VISP_NAMESPACE
 #endif

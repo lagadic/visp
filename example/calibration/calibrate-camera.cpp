@@ -101,6 +101,10 @@ void usage(const char *argv[], int error)
 
 int main(int argc, const char *argv[])
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     if (argc == 1) {
       usage(argv, 0);
@@ -679,5 +683,5 @@ int main()
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }
 #endif

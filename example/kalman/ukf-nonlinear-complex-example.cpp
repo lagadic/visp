@@ -83,6 +83,11 @@
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
 /**

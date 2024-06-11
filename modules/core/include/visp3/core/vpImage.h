@@ -66,8 +66,23 @@ typedef unsigned short uint16_t;
 #include <inttypes.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 class vpDisplay;
+// Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
+template <class Type> class vpImage; // forward declare to make function declaration possible
 
+// declarations
+template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I);
+
+std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
+std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
+END_VISP_NAMESPACE
+
+template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second);
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImage
 
@@ -117,20 +132,6 @@ value = I[i][j]; // Here we will get the pixel value at position (101, 80)
 \endcode
 
 */
-
-// Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
-template <class Type> class vpImage; // forward declare to make function declaration possible
-
-// declarations
-template <class Type> std::ostream &operator<<(std::ostream &, const vpImage<Type> &);
-
-std::ostream &operator<<(std::ostream &, const vpImage<unsigned char> &);
-std::ostream &operator<<(std::ostream &, const vpImage<char> &);
-std::ostream &operator<<(std::ostream &, const vpImage<float> &);
-std::ostream &operator<<(std::ostream &, const vpImage<double> &);
-
-template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second);
-
 template <class Type> class vpImage
 {
   friend class vpImageConvert;
@@ -272,13 +273,13 @@ public:
 
     \return Value of the image point (i, j).
   */
-  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[i * width + j]; }
+  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[(i * width) + j]; }
 
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
   */
-  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[(i * width) + j] = v; }
 
   /*!
     Get the value of an image point.
@@ -328,7 +329,7 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
-  // Perform a look-up table transformation
+    // Perform a look-up table transformation
   void performLut(const Type(&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
@@ -343,7 +344,7 @@ public:
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C) const;
   void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
 
-  friend void swap<>(vpImage<Type> &first, vpImage<Type> &second);
+  friend void ::swap<>(vpImage<Type> &first, vpImage<Type> &second);
 
   //@}
 
@@ -562,7 +563,7 @@ struct vpImageLutRGBa_Param_t
   unsigned int m_start_index;
   unsigned int m_end_index;
 
-  vpRGBa m_lut[256];
+  VISP_NAMESPACE_ADDRESSING vpRGBa m_lut[256];
   unsigned char *m_bitmap;
 
   vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
@@ -1504,7 +1505,7 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
-  swap(*this, other);
+  ::swap(*this, other);
   if (other.display != nullptr) {
     display = other.display;
   }
@@ -1806,13 +1807,13 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
 */
 template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 {
-  int h = height * 2;
-  int w = width * 2;
+  unsigned int h = height * 2;
+  unsigned int w = width * 2;
 
   res.resize(h, w);
 
-  for (int i = 0; i < h; ++i) {
-    for (int j = 0; j < w; ++j) {
+  for (unsigned int i = 0; i < h; ++i) {
+    for (unsigned int j = 0; j < w; ++j) {
       res[i][j] = (*this)[i >> 1][j >> 1];
     }
   }
@@ -1826,24 +1827,24 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   */
 
   // interpolate pixels B and I
-  for (int i = 0; i < h; i += 2) {
-    for (int j = 1; j < (w - 1); j += 2) {
-      res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
+  for (unsigned int i = 0; i < h; i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
+      res[i][j] = static_cast<Type>(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
     }
   }
 
   // interpolate pixels E and G
-  for (int i = 1; i < (h - 1); i += 2) {
-    for (int j = 0; j < w; j += 2) {
-      res[i][j] = (Type)(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 0; j < w; j += 2) {
+      res[i][j] = static_cast<Type>(0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
     }
   }
 
   // interpolate pixel F
-  for (int i = 1; i < (h - 1); i += 2) {
-    for (int j = 1; j < (w - 1); j += 2) {
-      res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
-                                 (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
+  for (unsigned int i = 1; i < (h - 1); i += 2) {
+    for (unsigned int j = 1; j < (w - 1); j += 2) {
+      res[i][j] = static_cast<Type>(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
+                                            (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
     }
   }
 }
@@ -1957,35 +1958,35 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   // alpha architecture is bi-endianness. The following optimization makes testImageGetValue failing
 #if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN)) && !(defined(__alpha__) || defined(_M_ALPHA))
   // Fixed-point arithmetic
-  const int32_t precision = 1 << 16;
-  int64_t y = static_cast<int64_t>(i * precision);
-  int64_t x = static_cast<int64_t>(j * precision);
+  const uint32_t precision = 1U << 16;
+  uint64_t y = static_cast<uint64_t>(i * precision);
+  uint64_t x = static_cast<uint64_t>(j * precision);
 
-  int64_t iround = y & (~0xFFFF);
-  int64_t jround = x & (~0xFFFF);
+  uint64_t iround = y & (~0xFFFFU);
+  uint64_t jround = x & (~0xFFFFU);
 
-  int64_t rratio = y - iround;
-  int64_t cratio = x - jround;
+  uint64_t rratio = y - iround;
+  uint64_t cratio = x - jround;
 
-  int64_t rfrac = precision - rratio;
-  int64_t cfrac = precision - cratio;
+  uint64_t rfrac = precision - rratio;
+  uint64_t cfrac = precision - cratio;
 
-  int64_t x_ = x >> 16;
-  int64_t y_ = y >> 16;
+  uint64_t x_ = x >> 16;
+  uint64_t y_ = y >> 16;
 
   if (((y_ + 1) < height) && ((x_ + 1) < width)) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
-    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ + 1) * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
+    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + ((y_ + 1) * width) + x_);
 
     return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
                                        ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >>
                                       32);
   }
   else if ((y_ + 1) < height) {
-    return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
+    return static_cast<unsigned char>((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio) >> 16);
   }
   else if ((x_ + 1) < width) {
-    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
     return static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
   }
   else {
@@ -2549,8 +2550,8 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
 #endif
   }
 }
-
-template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
+END_VISP_NAMESPACE
+template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second)
 {
   using std::swap;
   swap(first.bitmap, second.bitmap);
@@ -2560,5 +2561,4 @@ template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
   swap(first.height, second.height);
   swap(first.row, second.row);
 }
-
 #endif

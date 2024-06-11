@@ -48,6 +48,8 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
+BEGIN_VISP_NAMESPACE
+
 vpHomography::vpHomography() : vpArray2D<double>(3, 3), m_aMb(), m_bP() { eye(); }
 
 vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), m_aMb(), m_bP() { *this = H; }
@@ -713,3 +715,5 @@ vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam
 
   return H;
 }
+
+END_VISP_NAMESPACE

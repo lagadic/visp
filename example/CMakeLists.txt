@@ -98,6 +98,6 @@ visp_add_subdirectory(servo-universal-robots   REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(servo-viper650           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(servo-viper850           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(tools                    REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)
-visp_add_subdirectory(tracking                 REQUIRED_DEPS visp_core visp_io visp_gui)
+visp_add_subdirectory(tracking                 REQUIRED_DEPS visp_core visp_core visp_blob visp_io visp_gui visp_mbt visp_me visp_tt visp_tt_mi)
 visp_add_subdirectory(video                    REQUIRED_DEPS visp_core visp_io visp_gui)
 visp_add_subdirectory(wireframe-simulator      REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)

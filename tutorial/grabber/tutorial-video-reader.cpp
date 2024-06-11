@@ -1,4 +1,5 @@
 //! \example tutorial-video-reader.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayFactory.h>
 //! [Include]
 #include <visp3/core/vpTime.h>
@@ -14,6 +15,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string videoname = "video.mp4";
 

@@ -31,13 +31,13 @@
  * 2D point visual feature.
  */
 
-#ifndef vpFeaturePoint_H
-#define vpFeaturePoint_H
-
 /*!
  * \file vpFeaturePoint.h
  * \brief Class that defines 2D point visual feature
  */
+
+#ifndef vpFeaturePoint_H
+#define vpFeaturePoint_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -47,6 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFeaturePoint
  * \ingroup group_visual_features
@@ -171,7 +172,7 @@
  * \endcode
  *
  * An other fully explained example is given in the \ref tutorial-ibvs.
- */
+*/
 class VISP_EXPORT vpFeaturePoint : public vpBasicFeature
 {
 private:
@@ -227,5 +228,5 @@ public:
     Y = 2  // y coordinates
   } vpFeaturePointType;
 };
-
+END_VISP_NAMESPACE
 #endif

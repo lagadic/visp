@@ -39,6 +39,7 @@
 
 #include <visp3/core/vpStatisticalTestMeanAdjustedCUSUM.h>
 
+BEGIN_VISP_NAMESPACE
 void vpStatisticalTestMeanAdjustedCUSUM::computeDeltaAndLimits()
 {
   setDelta(m_k * m_stdev);
@@ -153,3 +154,4 @@ void vpStatisticalTestMeanAdjustedCUSUM::init(const float &delta, const float &l
   m_sumForMean = 0.f;
   m_areStatisticsComputed = true;
 }
+END_VISP_NAMESPACE

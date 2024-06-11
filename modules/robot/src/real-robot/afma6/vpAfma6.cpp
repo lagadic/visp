@@ -58,6 +58,7 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
+BEGIN_VISP_NAMESPACE
 static const char *opt_Afma6[] = { "JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
                                   "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 
@@ -1590,3 +1591,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma6 &afma6)
 
   return os;
 }
+END_VISP_NAMESPACE

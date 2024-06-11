@@ -45,6 +45,7 @@
 
 #ifdef VISP_HAVE_PIONEER
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor that initializes Aria.
   */
@@ -234,7 +235,7 @@ vpColVector vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
   getVelocity(frame, velocity);
   return velocity;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no symbols
 void dummy_vpRobotPioneer() { };

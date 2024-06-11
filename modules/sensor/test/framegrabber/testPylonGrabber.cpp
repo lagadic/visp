@@ -58,6 +58,9 @@
 */
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::cout << "Basler camera test with Pylon in progress..." << std::endl;
 
@@ -121,17 +124,23 @@ int main()
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     vpCERROR << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     vpCERROR << e.what() << std::endl;
-  } catch (...) {
+  }
+  catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
 #else
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpTRACE("Basler Pylon grabber capabilities are not available...\n"
           "You should install pylon SDK to use this binary.");
 }

@@ -87,6 +87,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string username = vpIoTools::getUserName();
     std::string logdirname = "/tmp/" + username;

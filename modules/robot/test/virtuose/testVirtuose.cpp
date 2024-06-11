@@ -43,6 +43,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if defined(VISP_HAVE_VIRTUOSE)
   std::string opt_ip = "localhost";
   int opt_port = 5000;
@@ -90,7 +93,7 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
-  }
+}
 #else
   (void)argc;
   (void)argv;

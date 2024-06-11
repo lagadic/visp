@@ -37,6 +37,7 @@
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
 
+BEGIN_VISP_NAMESPACE
 std::vector<std::string> vpColorBlindFriendlyPalette::s_paletteNames =
 {
   "black"     ,
@@ -193,20 +194,21 @@ std::string vpColorBlindFriendlyPalette::to_string(const vpColorBlindFriendlyPal
   return nameColor;
 }
 
-std::ostream &operator<<(std::ostream &os, const vpColorBlindFriendlyPalette &color)
+END_VISP_NAMESPACE
+
+std::ostream &operator<<(std::ostream &os, const VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color)
 {
   os << color.to_string();
   return os;
 }
 
-std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color)
+std::istream &operator>>(std::istream &is, VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color)
 {
   std::string nameColor;
   is >> nameColor;
   color.set_fromString(nameColor);
   return is;
 }
-
 #else
 void dummy_vpColorBlindFriendlyPalette() { }
 #endif

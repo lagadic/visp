@@ -33,6 +33,13 @@
  *
 *****************************************************************************/
 
+/*!
+  \file vpFeatureLuminance.cpp
+  \brief Class that defines the image luminance visual feature
+
+  For more details see \cite Collewet08c.
+*/
+
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -43,12 +50,7 @@
 
 #include <visp3/visual_features/vpFeatureLuminance.h>
 
-/*!
-  \file vpFeatureLuminance.cpp
-  \brief Class that defines the image luminance visual feature
-
-  For more details see \cite Collewet08c.
-*/
+BEGIN_VISP_NAMESPACE
 
 const int vpFeatureLuminance::DEFAULT_BORDER = 10;
 
@@ -376,6 +378,7 @@ vpFeatureLuminance *vpFeatureLuminance::duplicate() const
   return feature;
 }
 
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

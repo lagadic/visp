@@ -39,11 +39,13 @@
 
 #include <cstdlib>
 #include <utility>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
 class vpCameraParameters;
 
 /*!
@@ -310,5 +312,6 @@ private:
   void cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points);
 };
+END_VISP_NAMESPACE
 
 #endif

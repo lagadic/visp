@@ -50,10 +50,15 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpParseArgv.h>
 // List of allowed command line options
 #define GETOPTARGS "d:f:i:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, int i_val, float f_val, double d_val);
 bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val);
@@ -77,7 +82,7 @@ Parsing command line arguments example.\n\
 SYNOPSIS\n\
   %s [-i <integer>] [-f <float>] [-d <double> [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -173,7 +178,8 @@ int main(int argc, const char **argv)
     cout << "Call  " << argv[0] << " -h to see how to change these parameters." << endl;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

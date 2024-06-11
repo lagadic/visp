@@ -46,6 +46,8 @@
 #include <iostream>
 #include <stdio.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
   \class vpImageIo
 
@@ -185,4 +187,7 @@ public:
   static void writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer,
       int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
+
+END_VISP_NAMESPACE
+
 #endif

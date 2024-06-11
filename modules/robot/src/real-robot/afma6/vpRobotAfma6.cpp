@@ -51,6 +51,7 @@
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -2307,7 +2308,7 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
 
   return status;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
 void dummy_vpRobotAfma6() { };

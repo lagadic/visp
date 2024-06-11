@@ -47,6 +47,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 class vpMomentDatabase;
 class vpFeatureMomentDatabase;
@@ -152,7 +153,7 @@ class vpMoment;
  *   std::cout << fmb.interaction(1,1) << std::endl;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpFeatureMoment : public vpBasicFeature
 {
 protected:
@@ -277,5 +278,5 @@ public:
    */
   virtual const std::string name() const { return std::string(); }
 };
-
+END_VISP_NAMESPACE
 #endif

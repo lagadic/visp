@@ -32,9 +32,6 @@
  * a rotation vector (theta u representation) and t is a translation vector.
  */
 
-#ifndef vpPOSEVECTOR_H
-#define vpPOSEVECTOR_H
-
 /*!
   \file vpPoseVector.h
 
@@ -43,11 +40,8 @@
     translation vector.
 */
 
-class vpRotationMatrix;
-class vpHomogeneousMatrix;
-class vpTranslationVector;
-class vpThetaUVector;
-class vpRowVector;
+#ifndef _vpPOSEVECTOR_H_
+#define _vpPOSEVECTOR_H_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -55,9 +49,12 @@ class vpRowVector;
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-#endif
+BEGIN_VISP_NAMESPACE
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
+class vpTranslationVector;
+class vpThetaUVector;
+class vpRowVector;
 
 /*!
   \class vpPoseVector
@@ -200,6 +197,8 @@ public:
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
+  virtual ~vpPoseVector() { }
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   vp_deprecated vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
@@ -331,10 +330,11 @@ inline void to_json(nlohmann::json &j, const vpPoseVector &r)
 {
   r.convert_to_json(j);
 }
+
 inline void from_json(const nlohmann::json &j, vpPoseVector &r)
 {
   r.parse_json(j);
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

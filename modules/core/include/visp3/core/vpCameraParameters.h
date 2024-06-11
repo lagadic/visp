@@ -41,6 +41,7 @@
 #ifndef _vpCameraParameters_h_
 #define _vpCameraParameters_h_
 
+#include <iostream>
 #include <vector>
 
 #include <visp3/core/vpColVector.h>
@@ -52,6 +53,7 @@
 #include<nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpCameraParameters
 
@@ -299,7 +301,8 @@
   $ cat cam.json
   {"model":"perspectiveWithoutDistortion","px":801.0,"py":802.0,"u0":325.0,"v0":245.0}
   \endcode
- */
+*/
+
 class VISP_EXPORT vpCameraParameters
 {
   friend class vpMeterPixelConversion;
@@ -544,5 +547,5 @@ inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
   }
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

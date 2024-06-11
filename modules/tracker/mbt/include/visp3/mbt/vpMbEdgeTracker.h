@@ -39,6 +39,7 @@
 #ifndef vpMbEdgeTracker_HH
 #define vpMbEdgeTracker_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
@@ -72,6 +73,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
+
+BEGIN_VISP_NAMESPACE
 
 /*!
  * \class vpMbEdgeTracker
@@ -233,7 +236,7 @@
  *   return 0;
  * }
  $ \endcode
- */
+*/
 class VISP_EXPORT vpMbEdgeTracker : public virtual vpMbTracker
 {
 protected:
@@ -518,5 +521,5 @@ protected:
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

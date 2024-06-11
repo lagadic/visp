@@ -41,11 +41,12 @@
 
 #include <visp3/sensor/vpMocap.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMocapQualisys
  * \ingroup group_sensor_mocap
  * Qualisys motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocapQualisys : public vpMocap
 {
 public:
@@ -67,6 +68,6 @@ private:
   class vpMocapQualisysImpl;
   vpMocapQualisysImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif // vpMocapQualisys_h

@@ -65,6 +65,7 @@
 
 #include <visp3/core/vpUDPServer.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Create a (IPv4) UDP server.
 
@@ -74,8 +75,8 @@
 vpUDPServer::vpUDPServer(int port)
   : m_clientAddress(), m_clientLength(0), m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
-    ,
-    m_wsa()
+  ,
+  m_wsa()
 #endif
 {
   init("", port);
@@ -90,8 +91,8 @@ vpUDPServer::vpUDPServer(int port)
 vpUDPServer::vpUDPServer(const std::string &hostname, int port)
   : m_clientAddress(), m_clientLength(0), m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
-    ,
-    m_wsa()
+  ,
+  m_wsa()
 #endif
 {
   init(hostname, port);
@@ -145,7 +146,8 @@ void vpUDPServer::init(const std::string &hostname, int port)
     m_serverAddress.sin_family = AF_INET;
     m_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
     m_serverAddress.sin_port = htons((unsigned short)port);
-  } else {
+  }
+  else {
     std::stringstream ss;
     ss << port;
     struct addrinfo hints;
@@ -234,7 +236,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
                                            (struct sockaddr *)&m_clientAddress, (socklen_t *)&m_clientLength));
 #else
     int length =
-        recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress, &m_clientLength);
+      recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress, &m_clientLength);
 #endif
     if (length <= 0) {
       return length < 0 ? -1 : 0;
@@ -251,7 +253,8 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
     std::string hostName = "", hostIp = "", hostPort = "";
     if (dwRetval != 0) {
       std::cerr << "getnameinfo failed with error: " << WSAGetLastError() << std::endl;
-    } else {
+    }
+    else {
       hostName = hostname;
       hostPort = servInfo;
     }
@@ -260,7 +263,8 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
     const char *ptr = inet_ntop(AF_INET, (void *)&m_clientAddress.sin_addr, result, sizeof(result));
     if (ptr == nullptr) {
       std::cerr << "inet_ntop failed with error: " << WSAGetLastError() << std::endl;
-    } else {
+    }
+    else {
       hostIp = result;
     }
 
@@ -330,8 +334,8 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
                 m_clientLength);
 #endif
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
-void dummy_vpUDPServer(){};
+void dummy_vpUDPServer() { };
 #endif

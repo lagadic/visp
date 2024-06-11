@@ -49,6 +49,8 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
+BEGIN_VISP_NAMESPACE
+
 #define DEBUG_LEVEL1 0
 
 vpPose::vpPose()
@@ -331,7 +333,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
     vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), u_moved, v_moved);
 
     double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
-    residuals[i++] = squaredResidual;
+    residuals[i] = squaredResidual;
+    i++;
     squared_error += squaredResidual;
   }
   return squared_error;
@@ -662,3 +665,5 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   P.computePose(vpPose::DEMENTHON_LOWE, cMo);
   return lx / s;
 }
+
+END_VISP_NAMESPACE

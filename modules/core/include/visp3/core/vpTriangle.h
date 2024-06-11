@@ -34,6 +34,11 @@
 #ifndef vpTriangle_h
 #define vpTriangle_h
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTriangle
   \ingroup group_core_geometry
@@ -45,11 +50,6 @@
   vpImagePoint class documentation for more details about the frame.) are \f$
   (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMatrix.h>
-
 class VISP_EXPORT vpTriangle
 {
 private:
@@ -107,5 +107,5 @@ public:
 private:
   void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 };
-
+END_VISP_NAMESPACE
 #endif

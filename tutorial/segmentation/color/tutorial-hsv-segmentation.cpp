@@ -15,6 +15,10 @@
 int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_X11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   std::string opt_video_filename;
   bool show_helper = false;
@@ -175,7 +179,7 @@ int main(int argc, const char *argv[])
     nb_iter++;
     loop_time = vpTime::measureTimeMs() - t;
     total_loop_time += loop_time;
-  }
+}
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
 #else

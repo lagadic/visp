@@ -36,11 +36,13 @@
 
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpBiclops
  *
@@ -57,7 +59,7 @@
  * See http://www.traclabs.com/tracbiclops.htm for more details concerning the
  * hardware.
  *
- */
+*/
 class VISP_EXPORT vpBiclops
 {
 public:
@@ -319,5 +321,5 @@ public:
  */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops &dummy);
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -80,6 +80,10 @@
 #if defined(VISP_HAVE_PIONEER) && defined(VISP_HAVE_BICLOPS)
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   try {
@@ -266,7 +270,7 @@ int main(int argc, char **argv)
 
     // Use here a feature segment builder
     vpFeatureSegment s_segment(normalized),
-        s_segment_d(normalized); // From the segment feature we use only alpha
+      s_segment_d(normalized); // From the segment feature we use only alpha
     vpFeatureBuilder::create(s_segment, cam, dot[0], dot[1]);
     s_segment.setZ1(Z[0]);
     s_segment.setZ2(Z[1]);
@@ -378,7 +382,7 @@ int main(int argc, char **argv)
         v_biclops[1] = 0;
 
         std::cout << "Send velocity to the pionner: " << v_pioneer[0] << " m/s " << vpMath::deg(v_pioneer[1])
-                  << " deg/s" << std::endl;
+          << " deg/s" << std::endl;
         std::cout << "Send velocity to the Biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
 
         pioneer.setVelocity(vpRobot::REFERENCE_FRAME, v_pioneer);
@@ -397,7 +401,8 @@ int main(int argc, char **argv)
         iter++;
         // break;
       }
-    } catch (...) {
+    }
+    catch (...) {
     }
 
 #ifdef USE_REAL_ROBOT
@@ -411,7 +416,8 @@ int main(int argc, char **argv)
     // Kill the servo task
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

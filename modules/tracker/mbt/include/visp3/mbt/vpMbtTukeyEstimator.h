@@ -37,10 +37,12 @@
 #define _vpMbtTukeyEstimator_h_
 
 #include <vector>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 template <typename T> class vpMbtTukeyEstimator
 {
 public:
@@ -57,6 +59,7 @@ private:
   std::vector<T> m_normres;
   std::vector<T> m_residues;
 };
+END_VISP_NAMESPACE
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*
@@ -111,7 +114,7 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if HAVE_TRANSFORM
-namespace
+  namespace
 {
 // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
@@ -125,6 +128,7 @@ template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
 } // namespace
 #endif
 
+BEGIN_VISP_NAMESPACE
 template class vpMbtTukeyEstimator<float>;
 template class vpMbtTukeyEstimator<double>;
 
@@ -471,6 +475,7 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
     }
   }
 }
+END_VISP_NAMESPACE
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

@@ -46,6 +46,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_FT_IIT_SDK
   bool opt_no_display = false;
   bool opt_filtered = false;
@@ -113,7 +116,8 @@ int main(int argc, char **argv)
         }
       }
       vpDisplay::flush(plotter->I);
-    } else {
+    }
+    else {
       std::cout << "F/T: " << ft.t() << std::endl;
       if (nbacq > 30) {
         end = true;

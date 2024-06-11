@@ -14,6 +14,10 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string opt_videoname_left = "teabox_left.mp4";
     std::string opt_videoname_right = "teabox_right.mp4";
@@ -162,7 +166,7 @@ int main(int argc, char **argv)
       }
     }
     vpDisplay::getClick(I_left);
-  }
+}
   catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
   }

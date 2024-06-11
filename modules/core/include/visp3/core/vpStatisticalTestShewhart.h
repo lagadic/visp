@@ -42,6 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpStatisticalTestSigma.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits a Shewhart's test.
@@ -68,7 +69,7 @@
  * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
  * testUpwardMeanDrift(). To detect both, downward and upward drifts use
  * testDownUpwardMeanDrift().
- */
+*/
 
 class VISP_EXPORT vpStatisticalTestShewhart : public vpStatisticalTestSigma
 {
@@ -238,5 +239,5 @@ public:
    */
   void init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev);
 };
-
+END_VISP_NAMESPACE
 #endif

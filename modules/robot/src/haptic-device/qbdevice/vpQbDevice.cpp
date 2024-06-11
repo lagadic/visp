@@ -43,6 +43,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpQbDevice.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpQbDevice::Impl
 {
@@ -737,5 +738,5 @@ void vpQbDevice::setMaxRepeats(const int &max_repeats)
   m_max_repeats = max_repeats;
   m_impl->setMaxRepeats(m_max_repeats);
 }
-
+END_VISP_NAMESPACE
 #endif

@@ -52,6 +52,7 @@
 
 #define MANUAL_POINTCLOUD 1
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  */
@@ -1216,5 +1217,5 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
 }
 
 #endif
-
+END_VISP_NAMESPACE
 #endif

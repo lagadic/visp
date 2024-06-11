@@ -39,6 +39,7 @@
   robot
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h> //the basic tracker
 
 #include <iostream> //some console output
@@ -51,9 +52,13 @@
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h> //init the feature database using the information about moment dependencies
 #include <visp3/vs/vpServo.h>                            //visual servoing task
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // this function converts the plane defined by the cMo to 1/Z=Ax+By+C plane
 // form
-
 void cMoToABC(vpHomogeneousMatrix &cMo, double &A, double &B, double &C);
 
 void cMoToABC(vpHomogeneousMatrix &cMo, double &A, double &B, double &C)

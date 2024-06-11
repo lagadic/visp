@@ -58,6 +58,10 @@
 using std::chrono::seconds;
 using std::this_thread::sleep_for;
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 // ------------------------------------------------------------------------------
 //   Modifications Qualisys
 // ------------------------------------------------------------------------------

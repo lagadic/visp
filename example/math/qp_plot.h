@@ -43,18 +43,18 @@
 #include <visp3/gui/vpPlot.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-vpMatrix randM(int n, int m)
+VISP_NAMESPACE_ADDRESSING vpMatrix randM(int n, int m)
 {
-  vpMatrix M(n, m);
+  VISP_NAMESPACE_ADDRESSING vpMatrix M(n, m);
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < m; ++j)
       M[i][j] = (2. * rand()) / RAND_MAX - 1;
   return M;
 }
 
-vpColVector randV(int n)
+VISP_NAMESPACE_ADDRESSING vpColVector randV(int n)
 {
-  vpColVector M(n);
+  VISP_NAMESPACE_ADDRESSING vpColVector M(n);
   for (int i = 0; i < n; ++i)
     M[i] = (2. * rand()) / RAND_MAX - 1;
   return M;
@@ -67,12 +67,12 @@ public:
   virtual ~QPlot() { delete P; }
   QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
-    P = new vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
+    P = new VISP_NAMESPACE_ADDRESSING vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
 
     for (int i = 0; i < graphNum; ++i) {
       P->initGraph(i, 2);
-      P->setColor(i, 0, vpColor::red);
-      P->setColor(i, 1, vpColor::blue);
+      P->setColor(i, 0, VISP_NAMESPACE_ADDRESSING vpColor::red);
+      P->setColor(i, 1, VISP_NAMESPACE_ADDRESSING vpColor::blue);
       P->setGraphThickness(i, 2);
       P->initRange(i, 0, total, 0, 0.1);
       P->setUnitY(i, "ms");
@@ -82,10 +82,10 @@ public:
     }
   }
 
-  void plot(int g, int c, int i, double t) { P->plot(g, c, i, vpTime::measureTimeMs() - t); }
+  void plot(int g, int c, int i, double t) { P->plot(g, c, i, VISP_NAMESPACE_ADDRESSING vpTime::measureTimeMs() - t); }
 
   void wait() { P->I.display->getClick(); }
-  vpPlot *P;
+  VISP_NAMESPACE_ADDRESSING vpPlot *P;
 
 private:
   // Copy constructor not allowed.

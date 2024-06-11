@@ -68,6 +68,8 @@
 #include <gdk/gdkrgb.h>
 #include <gtk/gtk.h>
 
+BEGIN_VISP_NAMESPACE
+
 class vpDisplayGTK::Impl
 {
 public:
@@ -1588,7 +1590,9 @@ unsigned int vpDisplayGTK::getScreenHeight()
   return height;
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayGTK.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_gui.a(vpDisplayGTK.cpp.o) has no symbols
 void dummy_vpDisplayGTK() { };
 #endif

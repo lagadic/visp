@@ -40,6 +40,7 @@
 
 #include <visp3/sensor/vpDirectShowGrabberImpl.h>
 
+BEGIN_VISP_NAMESPACE
 vpDirectShowDevice *vpDirectShowGrabberImpl::deviceList = nullptr;
 unsigned int vpDirectShowGrabberImpl::nbDevices;
 
@@ -237,7 +238,8 @@ bool vpDirectShowGrabberImpl::createDeviceList(CComPtr<IEnumMoniker> &ppVideoInp
       // if we can't get the device properties, skip to the next device
       j++;
       nbDevices--;
-    } else {
+    }
+    else {
       i++;
       j++;
     }
@@ -288,7 +290,8 @@ bool vpDirectShowGrabberImpl::getDevice(unsigned int n, CComPtr<IBaseFilter> &pp
         // now the device is in use
         deviceList[n].setInUse();
         deviceFound = true;
-      } else {
+      }
+      else {
         break;
       } // we can't get the device's filter, quit
     }
@@ -438,16 +441,16 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin> &pCapSourcePin)
 
     // get the fourcc code
     format = ((bmpInfo.biCompression & 0xFF000000) >> 24) | ((bmpInfo.biCompression & 0x00FF0000) >> 8) |
-             ((bmpInfo.biCompression & 0x0000FF00) << 8) | (bmpInfo.biCompression & 0x000000FF) << 24;
+      ((bmpInfo.biCompression & 0x0000FF00) << 8) | (bmpInfo.biCompression & 0x000000FF) << 24;
 
     std::cout << "This format is not one of the standard YUV or RGB format "
-                 "supported by DirectShow.\n"
-              << "FourCC : " << (char)(bmpInfo.biCompression & 0x000000FF)
-              << (char)((bmpInfo.biCompression & 0x0000FF00) >> 8) << (char)((bmpInfo.biCompression & 0x00FF0000) >> 16)
-              << (char)((bmpInfo.biCompression & 0xFF000000) >> 24) << std::endl;
+      "supported by DirectShow.\n"
+      << "FourCC : " << (char)(bmpInfo.biCompression & 0x000000FF)
+      << (char)((bmpInfo.biCompression & 0x0000FF00) >> 8) << (char)((bmpInfo.biCompression & 0x00FF0000) >> 16)
+      << (char)((bmpInfo.biCompression & 0xFF000000) >> 24) << std::endl;
 
-    // Y800 is top-down oriented so the image doesn't have to be flipped
-    // vertically
+// Y800 is top-down oriented so the image doesn't have to be flipped
+// vertically
     if (format == 'Y800') {
       sgCB.invertedSource = false;
     }
@@ -461,8 +464,8 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin> &pCapSourcePin)
     // needs invertedSource sets to true
     else {
       std::cout << "Unknown FourCC compression type, assuming top-down "
-                   "orientation. Image may be inverted."
-                << std::endl;
+        "orientation. Image may be inverted."
+        << std::endl;
       sgCB.invertedSource = false; // consider that the image is topdown oriented by default
     }
   }
@@ -812,17 +815,18 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
               LONGLONG ActualFrameDuration;
               if (FAILED(hr = pVideoControl->GetCurrentActualFrameRate(pCapSourcePin, &ActualFrameDuration)))
                 std::cout << "Current format (not sure): " << width << " x " << height << " at "
-                          << 10000000 / pVih->AvgTimePerFrame << " fps" << std::endl
-                          << std::endl;
+                << 10000000 / pVih->AvgTimePerFrame << " fps" << std::endl
+                << std::endl;
               else {
                 std::cout << "Current format : " << width << " x " << height << " at " << 10000000 / ActualFrameDuration
-                          << " fps" << std::endl
-                          << std::endl;
+                  << " fps" << std::endl
+                  << std::endl;
                 pVih->AvgTimePerFrame = ActualFrameDuration;
               }
               found = true;
             }
-          } else {
+          }
+          else {
             if ((unsigned int)lWidth == width && (unsigned int)lHeight == height) {
               pVih->AvgTimePerFrame = scc.MinFrameInterval;
               // set the capture media type and the grabber media type
@@ -834,8 +838,8 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
               pVih = (VIDEOINFOHEADER *)sgCB.connectedMediaType.pbFormat;
               found = true;
               std::cout << "Current format : " << width << " x " << height << " at "
-                        << (10000000 / pVih->AvgTimePerFrame) << " fps" << std::endl
-                        << std::endl;
+                << (10000000 / pVih->AvgTimePerFrame) << " fps" << std::endl
+                << std::endl;
             }
           }
         }
@@ -847,11 +851,11 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
   if (!found)
     if (framerate != nullptr)
       std::cout << "The " << width << " x " << height << " at " << framerate
-                << " fps source image format is not available. " << std::endl
-                << std::endl;
+      << " fps source image format is not available. " << std::endl
+      << std::endl;
     else
       std::cout << "The " << width << " x " << height << "source image size is not available. " << std::endl
-                << std::endl;
+      << std::endl;
 
   return found;
 }
@@ -947,29 +951,29 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
           std::cout << "subtype : I420" << std::endl;
         else
           std::cout << "subtype (not supported) :" << (char)(pVih->bmiHeader.biCompression & 0x000000FF)
-                    << (char)((pVih->bmiHeader.biCompression & 0x0000FF00) >> 8)
-                    << (char)((pVih->bmiHeader.biCompression & 0x00FF0000) >> 16)
-                    << (char)((pVih->bmiHeader.biCompression & 0xFF000000) >> 24) << std::endl;
+          << (char)((pVih->bmiHeader.biCompression & 0x0000FF00) >> 8)
+          << (char)((pVih->bmiHeader.biCompression & 0x00FF0000) >> 16)
+          << (char)((pVih->bmiHeader.biCompression & 0xFF000000) >> 24) << std::endl;
 
         std::cout << "image size : " << pVih->bmiHeader.biWidth << " x " << pVih->bmiHeader.biHeight << std::endl;
         std::cout << "framerate range: [" << 10000000 / scc.MaxFrameInterval << "," << 10000000 / scc.MinFrameInterval
-                  << "]" << std::endl
-                  << std::endl;
+          << "]" << std::endl
+          << std::endl;
 
-        /*
-                                        long frameRateNum;
-                                        LONGLONG *frameRateList;
-                                        if(FAILED(hr =
-           pVideoControl->GetFrameRateList(pCapSourcePin,iFormat,dimensions,
-           //inputs &frameRateNum, &frameRateList))) //outputs return false;
-                                        for(int i=0; i<(int)frameRateNum ;
-           i++)
-                                        {
-                                                std::cout<<(float)(10000000/frameRateList[i])<<"
-           fps"<<std::endl;
-                                        }
-                                        std::cout<<std::endl;
-        */
+/*
+                                long frameRateNum;
+                                LONGLONG *frameRateList;
+                                if(FAILED(hr =
+   pVideoControl->GetFrameRateList(pCapSourcePin,iFormat,dimensions,
+   //inputs &frameRateNum, &frameRateList))) //outputs return false;
+                                for(int i=0; i<(int)frameRateNum ;
+   i++)
+                                {
+                                        std::cout<<(float)(10000000/frameRateList[i])<<"
+   fps"<<std::endl;
+                                }
+                                std::cout<<std::endl;
+*/
       }
       // Delete the media type when you are done.
       MyDeleteMediaType(pmtConfig);
@@ -1097,10 +1101,10 @@ void vpDirectShowGrabberImpl::MyFreeMediaType(AM_MEDIA_TYPE &mt)
     mt.pUnk = nullptr;
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowGrabberImpl.cpp.o) has no symbols
-void dummy_vpDirectShowGrabberImpl(){};
+void dummy_vpDirectShowGrabberImpl() { };
 #endif
 #endif

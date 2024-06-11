@@ -68,6 +68,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:p:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -459,5 +463,5 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif

@@ -2,8 +2,8 @@ name: Ubuntu-dep-src
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 
@@ -74,7 +74,7 @@ jobs:
         pwd
         echo "GIT_CLONE_PROTECTION_ACTIVE=false" >> $GITHUB_ENV
         export GIT_CLONE_PROTECTION_ACTIVE=false
-        git clone --recursive --depth 1 https://github.com/Kitware/VTK.git ${HOME}/VTK
+        git clone --recursive --depth 1 --branch v9.3.0 https://github.com/Kitware/VTK.git ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
         cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \

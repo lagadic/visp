@@ -35,9 +35,10 @@
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/detection/vpDetectorBase.h>
+BEGIN_VISP_NAMESPACE
 
 /*!
-        Default constructor.
+  Default constructor.
 */
 vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0), m_timeout_ms(0) { }
 
@@ -120,3 +121,5 @@ vpRect vpDetectorBase::getBBox(size_t i) const
   vpRect roi(vpImagePoint(top, left), vpImagePoint(bottom, right));
   return roi;
 }
+
+END_VISP_NAMESPACE

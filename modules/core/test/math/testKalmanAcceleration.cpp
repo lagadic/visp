@@ -46,6 +46,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     unsigned int nsignal = 1; // Number of signal to filter
     unsigned int niter = 100;
@@ -105,7 +109,8 @@ int main()
 
     flog.close();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

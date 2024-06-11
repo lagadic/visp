@@ -1,4 +1,5 @@
 //! \example tutorial-mb-tracker.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -13,6 +14,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   try {
     std::string opt_videoname = "teabox.mp4";
@@ -159,7 +163,7 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
-  }
+}
 #else
   (void)argc;
   (void)argv;

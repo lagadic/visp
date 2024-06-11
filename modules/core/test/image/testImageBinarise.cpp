@@ -46,6 +46,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::cout << "Test vpImageTools::binarise() with different data types." << std::endl;
 
   unsigned int width = 5, height = 4;
@@ -82,8 +85,8 @@ int main()
   for (unsigned int i = 0; i < I_rgba.getHeight(); i++) {
     for (unsigned int j = 0; j < I_rgba.getWidth(); j++) {
       std::cout << static_cast<unsigned>(I_rgba[i][j].R) << " ; " << static_cast<unsigned>(I_rgba[i][j].G) << " ; "
-                << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned int>(I_rgba[i][j].A)
-                << std::endl;
+        << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned int>(I_rgba[i][j].A)
+        << std::endl;
     }
     std::cout << std::endl;
   }
@@ -113,7 +116,7 @@ int main()
   for (unsigned int i = 0; i < I_rgba.getHeight(); i++) {
     for (unsigned int j = 0; j < I_rgba.getWidth(); j++) {
       std::cout << static_cast<unsigned>(I_rgba[i][j].R) << " ; " << static_cast<unsigned>(I_rgba[i][j].G) << " ; "
-                << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned>(I_rgba[i][j].A) << std::endl;
+        << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned>(I_rgba[i][j].A) << std::endl;
     }
     std::cout << std::endl;
   }

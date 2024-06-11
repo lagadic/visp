@@ -48,6 +48,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpConvert.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 bool areSame(double a, double b) { return fabs(a - b) < std::numeric_limits<double>::epsilon(); }
 
 void testConvertFromImagePointToPoint2f()

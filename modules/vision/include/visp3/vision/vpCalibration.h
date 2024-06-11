@@ -50,13 +50,14 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/vision/vpCalibrationException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  *  \class vpCalibration
  *
  * \ingroup group_vision_calib
  *
  * \brief Tools for perspective camera calibration.
- */
+*/
 class VISP_EXPORT vpCalibration
 {
 public:
@@ -339,5 +340,5 @@ private:
   static unsigned int m_nbIterMax;
   static double m_gain;
 };
-
+END_VISP_NAMESPACE
 #endif

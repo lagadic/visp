@@ -12,9 +12,12 @@
 #include <opencv2/videoio.hpp>
 #endif
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
     unsigned int opt_device = 0;

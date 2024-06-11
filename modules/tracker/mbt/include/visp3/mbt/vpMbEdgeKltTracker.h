@@ -52,6 +52,7 @@
 #include <visp3/mbt/vpMbKltTracker.h>
 #include <visp3/mbt/vpMbTracker.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMbEdgeKltTracker
  * \ingroup group_mbt_trackers
@@ -202,7 +203,7 @@
  *   return 0;
  * }
  * \endcode
- */
+*/
 class VISP_EXPORT vpMbEdgeKltTracker :
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   public vpMbKltTracker,
@@ -350,7 +351,7 @@ protected:
   void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error,
                        const vpHomogeneousMatrix &cMo, unsigned int lvl = 0);
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif // VISP_HAVE_OPENCV

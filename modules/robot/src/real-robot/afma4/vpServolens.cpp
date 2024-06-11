@@ -59,13 +59,14 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpServolens.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor. Does nothing.
 
   \sa open()
 
 */
-vpServolens::vpServolens() : remfd(0), isinit(false) {}
+vpServolens::vpServolens() : remfd(0), isinit(false) { }
 
 /*!
   Open and initialize the Servolens serial link at 9600 bauds, 7
@@ -512,16 +513,19 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
         if (c >= '0' && c <= '9') {
           *pt_posit++ = c; /* sauvegarde de la position */
           lecture_posit_en_cours = 1;
-        } else if (lecture_posit_en_cours) {
+        }
+        else if (lecture_posit_en_cours) {
           fin_lect_posit = 1;
           *pt_posit = '\0';
-        } else
+        }
+        else
           posit_car = 0;
         break;
       }
 
-    } else {
-      // Timout sur la lecture, on retoure FALSE
+    }
+    else {
+   // Timout sur la lecture, on retoure FALSE
       return false;
     }
   } while (!fin_lect_posit);
@@ -710,7 +714,7 @@ bool vpServolens::read(char *c, long timeout_s) const
   }
 
   fd_set readfds;                          /* list of fds for select to listen to */
-  struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
+  struct timeval timeout = { timeout_s, 0 }; // seconde, micro-sec
 
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
@@ -793,5 +797,5 @@ bool vpServolens::clean(const char *in, char *out) const
   }
   return (error);
 }
-
+END_VISP_NAMESPACE
 #endif

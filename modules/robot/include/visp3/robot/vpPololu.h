@@ -44,6 +44,7 @@
 
 class RPMSerialInterface;
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpPololu
  * \ingroup group_robot_real_arm
@@ -70,7 +71,7 @@ class RPMSerialInterface;
  * Each servo has a pwm position range that could be retrieved using calibrate() and set using set using setPwmRange().
  *
  * It is the user responsability to set the corresponding angular range using setAngularRange().
- */
+*/
 class VISP_EXPORT vpPololu
 {
 public:
@@ -328,6 +329,6 @@ private:
    */
   void VelocityCmdThread();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -32,16 +32,17 @@
  * Translation vector.
  */
 
-#include <stdio.h>
-#include <string.h>
-
-#include <visp3/core/vpTranslationVector.h>
-
 /*!
   \file vpTranslationVector.cpp
   \brief Class that consider the case of a translation vector.
 */
 
+#include <stdio.h>
+#include <string.h>
+
+#include <visp3/core/vpTranslationVector.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
@@ -868,3 +869,4 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
   vpTranslationVector t(meanT);
   return t;
 }
+END_VISP_NAMESPACE

@@ -35,6 +35,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 class CameraList
 {
 public:
@@ -84,13 +85,16 @@ public:
         if (is_GetCameraList(m_pCamList) == IS_SUCCESS) {
           // SelectCamera (0);
           ret = true;
-        } else {
+        }
+        else {
           ret = false;
         }
-      } else {
+      }
+      else {
         ret = false;
       }
-    } else {
+    }
+    else {
       ret = false;
     }
 
@@ -173,7 +177,8 @@ public:
   {
     if (m_pCamList) {
       return (unsigned int)m_pCamList->dwCount;
-    } else {
+    }
+    else {
       return 0;
     }
   }
@@ -182,6 +187,7 @@ private:
   PUEYE_CAMERA_LIST m_pCamList;
   UEYE_CAMERA_INFO m_CamInfo;
 };
+END_VISP_NAMESPACE
 
 /*
  **********************************************************************************************
