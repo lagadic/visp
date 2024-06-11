@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpUKSigmaDrawerAbstract_h_
-#define _vpUKSigmaDrawerAbstract_h_
+#ifndef VP_UK_SIGMA_DRAWER_ABSTRACT_H
+#define VP_UK_SIGMA_DRAWER_ABSTRACT_H
 
 #include <vector>
 

@@ -1,35 +1,3 @@
-/****************************************************************************
- *
- * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
- *
- * This software is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact Inria about acquiring a ViSP Professional
- * Edition License.
- *
- * See https://visp.inria.fr for more information.
- *
- * This software was developed at:
- * Inria Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- *
- * If you have questions regarding the use of this file, please contact
- * Inria at visp@inria.fr
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
-
 /** \example tutorial-ukf.cpp
  * Tutorial on how to use the Unscented Kalman Filter (UKF) on a complex non-linear use-case.
  * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
@@ -38,21 +6,25 @@
  * fixed to the ceiling.
  *
  * The state vector of the UKF is:
- *  \f{eqnarray*}{
-        \textbf{x}[0] &=& {}^WX_x \\
-        \textbf{x}[1] &=& {}^WX_y \\
-        \textbf{x}[2] &=& {}^WX_z \\
-        \textbf{x}[3] &=& \omega \Delta t
-   \f}
-
-   The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
-   Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
-   The measurement vector can be written as:
-   \f{eqnarray*}{
-        \textbf{z}[2i] &=& u_i \\
-        \textbf{z}[2i+1] &=& v_i
-   \f}
-
+ * \f[
+ * \begin{array}{lcl}
+ *   \textbf{x}[0] &=& {}^WX_x \\
+ *   \textbf{x}[1] &=& {}^WX_y \\
+ *   \textbf{x}[2] &=& {}^WX_z \\
+ *   \textbf{x}[3] &=& \omega \Delta t
+ * \end{array}
+ * \f]
+ *
+ * The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
+ * Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+ * The measurement vector can be written as:
+ * \f[
+ *   \begin{array}{lcl}
+ *       \textbf{z}[2i] &=& u_i \\
+ *       \textbf{z}[2i+1] &=& v_i
+ *   \end{array}
+ * \f]
+ *
  * Some noise is added to the measurement vector to simulate measurements which are
  * not perfect.
 */

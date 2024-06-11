@@ -23,3 +23,14 @@ Tracking
     :maxdepth: 2
 
     tracking/*
+
+
+
+Other tools
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 2
+
+    misc/*

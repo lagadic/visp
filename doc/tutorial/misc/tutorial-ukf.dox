@@ -13,11 +13,13 @@ frame is denoted \f$ {F}_C \f$. The object is supposed plane and having four mar
 
 The equations that describe the motion of the object in the world frame are the following:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   {}^W \textbf{X}_x &=& R cos(\omega t + \phi) \\
   {}^W \textbf{X}_y &=& R sin(\omega t + \phi) \\
   {}^W \textbf{X}_z &=& constant
-\f}
+  \end{array}
+\f]
 
 where \f$ \omega \f$ and \f$ \phi \f$ are respectively the pulsation and the phase of the motion, while \f$ R \f$ is the
 radius of the revolution around the origin of the world frame.
@@ -38,10 +40,12 @@ The first step of the UKF is the prediction step. During this step, some particu
 \f$ \chi \f$, are drawn along with associated weights \f$ \textbf{w}^m \f$ for the computation of the mean and
 \f$ \textbf{w}^c \f$ for the computation of the covariance:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
   \textbf{w}^m, \textbf{w}^c &=& weight-function(n, parameters)
-\f}
+  \end{array}
+\f]
 
 There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
 proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe in \cite Merwe00.
@@ -55,11 +59,13 @@ to project them forward in time, forming the new prior:
 Finally, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
 and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
     \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
     \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
     \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
- \f}
+  \end{array}
+\f]
 
 where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
 
@@ -71,11 +77,13 @@ the prior into measurements using the measurement function  \f$ h: {R}^n \righta
 Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in {R}^m \f$ and the
 covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
     \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
     \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
     \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
-\f}
+  \end{array}
+\f]
 
 where \f$ \textbf{R} \f$ is the measurement covariance matrix.
 
@@ -93,10 +101,12 @@ The Kalman's gain is then defined as:
 
 Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new covariance \f$ \textbf{P} \f$:
 
-\f{eqnarray*}{
- \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
- \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
-\f}
+\f[
+  \begin{array}{lcl}
+  \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
+  \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
+  \end{array}
+\f]
 
 \section tuto-ukf-tutorial Explanations about the tutorial
 
@@ -122,21 +132,25 @@ Press `Return` to leave the program.
 For this tutorial, we use the main program tutorial-ukf.cpp . The internal state of the UKF is
 the 3D position of the object expressed in the world frame, along with the pulsation \f$ \omega \f$ of the motion:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   \textbf{x}[0] &=& {}^WX_x \\
   \textbf{x}[1] &=& {}^WX_y \\
   \textbf{x}[2] &=& {}^WX_z \\
   \textbf{x}[3] &=& \omega \Delta t
-\f}
+  \end{array}
+\f]
 
 The measurement \f$ \textbf{z} \f$ corresponds to the perspective projection of the different markers in the image.
 Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
 The measurement vector can be written as:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   \textbf{z}[2i] &=& u_i \\
   \textbf{z}[2i+1] &=& v_i
-\f}
+  \end{array}
+\f]
 
 Be \f$ \textbf{K}_{intr} \f$ the camera instrinsic parameters matrix defined by:
 
@@ -194,42 +208,52 @@ previous state \f$ \textbf{x}_{t} \f$.
 
 As stated in the \ref tuto-ukf-intro, the equations of motion of the object are the following:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   {}^W X_x(t) &=& R cos(\omega t + \phi) \\
   {}^W X_y(t) &=& R sin(\omega t + \phi) \\
   {}^W X_z(t) &=& constant
-\f}
+  \end{array}
+\f]
 
 Thus, we have:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   {}^WX_x( t + \Delta t) &=& R cos(\omega (t + \Delta t) + \phi) &=& R cos((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_y( t + \Delta t) &=& R sin(\omega (t + \Delta t) + \phi) &=& R sin((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_z( t + \Delta t) &=& constant
-\f}
+  \end{array}
+\f]
 
 Which can be rewritten:
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   {}^WX_x( t + \Delta t) &=& R cos((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R sin((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t)\\
   {}^WX_z( t + \Delta t) &=& constant
-\f}
+  \end{array}
+\f]
 
 And can be finally written as:
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W X_x( t) cos(\omega \Delta t) - {}^W X_y(t) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W X_x( t) sin(\omega \Delta t) + {}^W X_y(t) cos(\omega \Delta t) \\
   {}^WX_z( t + \Delta t) &=& constant
-\f}
+  \end{array}
+\f]
 
 This motivates us to choose the following non-linear process function:
 
-\f{eqnarray*}{
+\f[
+  \begin{array}{lcl}
   \textbf{x}[0]_{t + \Delta t} &=& {}^WX_x (t + \Delta t) &=& \textbf{x}[0]_{t} cos(\textbf{x}[3]_{t}) - \textbf{x}[1]_{t} sin(\textbf{x}[3]_{t}) \\
   \textbf{x}[1]_{t + \Delta t} &=& {}^WX_y (t + \Delta t) &=& \textbf{x}[0]_{t} sin(\textbf{x}[3]_{t}) + \textbf{x}[1]_{t} cos(\textbf{x}[3]_{t}) \\
   \textbf{x}[2]_{t + \Delta t} &=& {}^WX_z (t + \Delta t) &=& \textbf{x}[2]_{t} \\
   \textbf{x}[3]_{t + \Delta t} &=& \omega \Delta t &=& \textbf{x}[3]_{t}
-\f}
+  \end{array}
+\f]
 
 As the process function is pretty simple, a simple function called here `fx()` is enough:
 

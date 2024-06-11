@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,25 +40,29 @@
  The system we are interested in is a system moving on a 2D-plane.
 
  The state vector of the UKF is:
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
         \textbf{x}[0] &=& x \\
         \textbf{x}[1] &=& \dot{x} \\
         \textbf{x}[1] &=& y \\
         \textbf{x}[2] &=& \dot{y}
-  \f}
+  \end{array}
+  \f]
 
  The measurement \f$ \textbf{z} \f$ corresponds to the position along the x-axis
  and y-axis. The measurement vector can be written as:
- \f{eqnarray*}{
+ \f[
+  \begin{array}{lcl}
       \textbf{z}[0] &=& x \\
       \textbf{z}[1] &=& y
- \f}
+ \end{array}
+  \f]
 
  Some noise is added to the measurement vector to simulate a sensor which is
  not perfect.
 """
 
-from visp.core import ColVector, Matrix, UnscentedKalman, UKSigmaDrawerMerwe, GaussRand
+from visp.core import ColVector, Matrix, UnscentedKalman, UKSigmaDrawerMerwe
 
 # For the Graphical User Interface
 try:
@@ -70,12 +74,12 @@ import numpy as np
 
 def fx(x: ColVector, dt: float) -> ColVector:
   """
-  @brief Process function that projects in time the internal state of the UKF.
+  Process function that projects in time the internal state of the UKF.
 
-  @param x The internal state of the UKF.
-  @param dt The sampling time: how far in the future are we projecting x.
+  :param x: The internal state of the UKF.
+  :param dt: The sampling time: how far in the future are we projecting x.
 
-  @return ColVector The updated internal state, projected in time, also known as the prior.
+  :return ColVector: The updated internal state, projected in time, also known as the prior.
   """
   return ColVector([
   	x[0] + dt * x[1],
@@ -87,11 +91,11 @@ def fx(x: ColVector, dt: float) -> ColVector:
 
 def hx(x: ColVector) -> ColVector:
   """
-  @brief Measurement function that expresses the internal state of the UKF in the measurement space.
+  Measurement function that expresses the internal state of the UKF in the measurement space.
 
-  @param x The internal state of the UKF.
+  :param x: The internal state of the UKF.
 
-  @return ColVector The internal state, expressed in the measurement space.
+  :return ColVector: The internal state, expressed in the measurement space.
   """
   return ColVector([
   	x[0],
@@ -100,34 +104,34 @@ def hx(x: ColVector) -> ColVector:
 
 def add_state_vectors(a, b) -> ColVector:
   """
-  @brief Method that permits to add two state vectors.
+  Method that permits to add two state vectors.
 
-  @param a The first state vector to which another state vector must be added.
-  @param b The other state vector that must be added to a.
+  :param a: The first state vector to which another state vector must be added.
+  :param b: The other state vector that must be added to a.
 
-  @return ColVector The sum a + b.
+  :return ColVector: The sum a + b.
   """
   return a + b
 
 def residual_state_vectors(a, b) -> ColVector:
   """
-  @brief Method that permits to substract a state vector to another.
+  Method that permits to substract a state vector to another.
 
-  @param a The first state vector to which another state vector must be substracted.
-  @param b The other state vector that must be substracted to a.
+  :param a: The first state vector to which another state vector must be substracted.
+  :param b: The other state vector that must be substracted to a.
 
-  @return ColVector The substraction a - b.
+  :return ColVector: The substraction a - b.
   """
   return a - b
 
 def generate_Q_matrix(dt: float) -> Matrix:
   """
-  @brief Method that generates the process covariance matrix for a process for which the
+  Method that generates the process covariance matrix for a process for which the
   state vector can be written as (x, dx/dt)^T
 
-  @param dt The sampling period.
+  :param dt: The sampling period.
 
-  @return Matrix The corresponding process covariance matrix.
+  :return Matrix: The corresponding process covariance matrix.
   """
   return Matrix(
   	[[dt**3/3, dt**2/2, 0, 0],
@@ -142,16 +146,16 @@ if __name__ == '__main__':
   gt_dX = ColVector([gt_dx, gt_dy]) # The displacement vector between two timesteps
   gt_vx = gt_dx / dt # The velocity along the x-axis
   gt_vy = gt_dy / dt # The velocity along the y-axis
-  procVar = 0.000004 # The variance of the process function
-  sigmaXmeas = 0.05 # The standard deviation of the measurement noise for the x-axis measurement
-  sigmaYmeas = 0.05 # The standard deviation of the measurement noise for the y-axis measurement
+  proc_var = 0.000004 # The variance of the process function
+  sigma_x_meas = 0.05 # The standard deviation of the measurement noise for the x-axis measurement
+  sigma_y_meas = 0.05 # The standard deviation of the measurement noise for the y-axis measurement
 
   # The object that draws the sigma points used by the UKF
   drawer = UKSigmaDrawerMerwe(n=4, alpha=0.3, beta=2, kappa=-1, resFunc=residual_state_vectors, addFunc=add_state_vectors)
 
   P0 = Matrix(np.eye(4) * 1.) # The initial estimate of the state covariance matrix
   R = Matrix(np.eye(2) * 0.01) # The measurement covariance matrix
-  Q = generate_Q_matrix(dt) * procVar # The process covariance matrix
+  Q = generate_Q_matrix(dt) * proc_var # The process covariance matrix
   ukf = UnscentedKalman(Q, R, drawer, fx, hx) # The Unscented Kalman Filter instance
 
   # Initializing the state vector and state covariance matrix estimates
@@ -184,12 +188,10 @@ if __name__ == '__main__':
   z_prec = ColVector(2, 0.) # Previous measurement vector
   np.random.seed(4224)
 
-  rngX = GaussRand(sigmaXmeas, 0., 4224) # Gaussian noise random generator for x-axis measurement
-  rngY = GaussRand(sigmaYmeas, 0., 2112) # Gaussian noise random generator for y-axis measurement
   for i in range(100):
     # Creating noisy measurements
-    x_meas = gt_X[0] + np.random.normal(0.0, sigmaXmeas)
-    y_meas = gt_X[1] + np.random.normal(0.0, sigmaYmeas)
+    x_meas = gt_X[0] + np.random.normal(0.0, sigma_x_meas)
+    y_meas = gt_X[1] + np.random.normal(0.0, sigma_y_meas)
     z = ColVector([x_meas, y_meas])
 
     # Filtering using the UKF

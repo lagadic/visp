@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpUnscentedKalman_h_
-#define _vpUnscentedKalman_h_
+#ifndef VP_UNSCENTED_KALMAN_H
+#define VP_UNSCENTED_KALMAN_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -62,10 +62,12 @@ BEGIN_VISP_NAMESPACE
   Be \f$ \textbf{x} \in {R}^n \f$ the internal state of the UKF and \f$ \textbf{P} \in {R}^{n\text{ x }n} \f$ the process covariance matrix.
   We have:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
       \textbf{w}^m, \textbf{w}^c &=& weight-function(n, parameters)
-   \f}
+   \end{array}
+  \f]
 
   There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
   proposed by Julier or the one proposed by E. A. Wan and R. van der Merwe.
@@ -80,11 +82,13 @@ BEGIN_VISP_NAMESPACE
   Then, we apply the Unscented Transform to compute the mean \f$ \boldsymbol{\mu} \f$
   and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
       \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
       \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
-   \f}
+  \end{array}
+  \f]
 
   where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
 
@@ -96,11 +100,13 @@ BEGIN_VISP_NAMESPACE
   Then, we use once again the Unscented Transform to compute the mean \f$ \boldsymbol{\mu}_z \in {R}^m \f$ and the
   covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
       \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
       \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
       \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
-   \f}
+   \end{array}
+  \f]
 
   where \f$ \textbf{R} \f$ is the measurement covariance matrix.
 
@@ -118,11 +124,12 @@ BEGIN_VISP_NAMESPACE
 
   Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new covariance \f$ \textbf{P} \f$:
 
-  \f{eqnarray*}{
+  \f[
+  \begin{array}{lcl}
    \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
    \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
-  \f}
-
+  \end{array}
+  \f]
 */
 class VISP_EXPORT vpUnscentedKalman
 {
@@ -283,6 +290,26 @@ public:
   }
 
   /**
+   * \brief Permit to change the covariance introduced at each prediction step.
+   *
+   * \param[in] Q The process covariance matrix.
+   */
+  inline void setProcessCovariance(const vpMatrix &Q)
+  {
+    m_Q = Q;
+  }
+
+  /**
+   * \brief Permit to change the covariance introduced at each update step.
+   *
+   * \param[in] R The measurement covariance matrix.
+   */
+  inline void setMeasurementCovariance(const vpMatrix &R)
+  {
+    m_R = R;
+  }
+
+  /**
    * \brief Perform first the prediction step and then the filtering step.
    *
    * \param[in] z The new measurement.
@@ -311,6 +338,26 @@ public:
    * \param[in] z The measurements at the current timestep.
    */
   void update(const vpColVector &z);
+
+  /**
+   * \brief Get the estimated (i.e. filtered) covariance of the state.
+   *
+   * \return vpMatrix The filtered covariance matrix.
+   */
+  inline vpMatrix getPest() const
+  {
+    return m_Pest;
+  }
+
+  /**
+   * \brief Get the predicted covariance of the state, i.e. the covariance of the prior.
+   *
+   * \return vpMatrix The predicted covariance matrix.
+   */
+  inline vpMatrix getPpred() const
+  {
+    return m_Ppred;
+  }
 
   /**
    * \brief Get the estimated (i.e. filtered) state.
@@ -378,6 +425,7 @@ public:
     return mean;
   }
 private:
+  bool m_hasUpdateBeenCalled; /*!< Set to true when update is called, reset at the beginning of predict.*/
   vpColVector m_Xest; /*!< The estimated (i.e. filtered) state variables.*/
   vpMatrix m_Pest; /*!< The estimated (i.e. filtered) covariance matrix.*/
   vpMatrix m_Q; /*!< The covariance introduced by performing the prediction step.*/
@@ -386,7 +434,7 @@ private:
   std::vector<double> m_wc; /*!< The weights for the covariance computation.*/
   std::vector<vpColVector> m_Y; /*!< The projection forward in time of the sigma points according to the process model, called the prior.*/
   vpColVector m_mu; /*!< The mean of the prior.*/
-  vpMatrix m_P; /*!< The covariance matrix of the prior.*/
+  vpMatrix m_Ppred; /*!< The covariance matrix of the prior.*/
   vpMatrix m_R; /*!< The covariance introduced by performing the update step.*/
   std::vector<vpColVector> m_Z; /*!< The sigma points of the prior expressed in the measurement space, called the measurement sigma points.*/
   vpColVector m_muz; /*!< The mean of the measurement sigma points.*/
