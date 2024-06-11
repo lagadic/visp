@@ -36,9 +36,9 @@
 #if defined(VISP_HAVE_PANDA3D)
 #include <visp3/core/vpCameraParameters.h>
 
-BEGIN_VISP_NAMESPACE
 class Camera;
 
+BEGIN_VISP_NAMESPACE
 /**
  * @brief Rendering parameters for a panda3D simulation
  *
