@@ -18,7 +18,7 @@ The equations that describe the motion of the object in the world frame are the 
   {}^W \textbf{X}_x &=& R cos(\omega t + \phi) \\
   {}^W \textbf{X}_y &=& R sin(\omega t + \phi) \\
   {}^W \textbf{X}_z &=& constant
-\end{array}
+  \end{array}
 \f]
 
 where \f$ \omega \f$ and \f$ \phi \f$ are respectively the pulsation and the phase of the motion, while \f$ R \f$ is the
@@ -44,7 +44,7 @@ The first step of the UKF is the prediction step. During this step, some particu
   \begin{array}{lcl}
   \chi &=& sigma-function(\textbf{x}, \textbf{P}) \\
   \textbf{w}^m, \textbf{w}^c &=& weight-function(n, parameters)
-\end{array}
+  \end{array}
 \f]
 
 There are different ways of drawing the sigma points and associated weights in the litterature, such as the one
@@ -64,7 +64,7 @@ and covariance \f$ \overline{\textbf{P}} \f$ of the prior:
     \boldsymbol{\mu},  \overline{\textbf{P}} &=& UT({Y}, \textbf{w}^m, \textbf{w}^c, \textbf{Q}) \\
     \boldsymbol{\mu} &=& \sum_{i=0}^{2n} w_i^m {Y}_i \\
     \overline{\textbf{P}} &=& \sum_{i=0}^{2n} ( w_i^c ({Y}_i - \boldsymbol{\mu}) ({Y}_i - \boldsymbol{\mu})^T ) + \textbf{Q}
- \end{array}
+  \end{array}
 \f]
 
 where \f$ \textbf{Q} \f$ is the covariance of the error introduced by the process function.
@@ -82,7 +82,7 @@ covariance \f$ \textbf{P}_z \in {R}^{m\text{ x }m} \f$ of these points:
     \boldsymbol{\mu}_z,  \textbf{P}_z &=& UT({Z}, \textbf{w}^m, \textbf{w}^c, \textbf{R}) \\
     \boldsymbol{\mu}_z &=& \sum_{i=0}^{2n} w_i^m {Z}_i \\
     \textbf{P}_z &=& \sum_{i=0}^{2n} ( w_i^c ({Z}_i - \boldsymbol{\mu}_z) ({Z}_i - \boldsymbol{\mu}_z)^T ) + \textbf{R}
-\end{array}
+  \end{array}
 \f]
 
 where \f$ \textbf{R} \f$ is the measurement covariance matrix.
@@ -103,9 +103,9 @@ Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new co
 
 \f[
   \begin{array}{lcl}
- \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
- \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
-\end{array}
+  \textbf{x} &=& \boldsymbol{\mu} + \textbf{K} \textbf{y} \\
+  \textbf{P} &=& \overline{\textbf{P}} - \textbf{K} \textbf{P}_z \textbf{K}^T
+  \end{array}
 \f]
 
 \section tuto-ukf-tutorial Explanations about the tutorial
@@ -138,7 +138,7 @@ the 3D position of the object expressed in the world frame, along with the pulsa
   \textbf{x}[1] &=& {}^WX_y \\
   \textbf{x}[2] &=& {}^WX_z \\
   \textbf{x}[3] &=& \omega \Delta t
-\end{array}
+  \end{array}
 \f]
 
 The measurement \f$ \textbf{z} \f$ corresponds to the perspective projection of the different markers in the image.
@@ -149,7 +149,7 @@ The measurement vector can be written as:
   \begin{array}{lcl}
   \textbf{z}[2i] &=& u_i \\
   \textbf{z}[2i+1] &=& v_i
-\end{array}
+  \end{array}
 \f]
 
 Be \f$ \textbf{K}_{intr} \f$ the camera instrinsic parameters matrix defined by:
@@ -213,7 +213,7 @@ As stated in the \ref tuto-ukf-intro, the equations of motion of the object are 
   {}^W X_x(t) &=& R cos(\omega t + \phi) \\
   {}^W X_y(t) &=& R sin(\omega t + \phi) \\
   {}^W X_z(t) &=& constant
-\end{array}
+  \end{array}
 \f]
 
 Thus, we have:
@@ -223,7 +223,7 @@ Thus, we have:
   {}^WX_x( t + \Delta t) &=& R cos(\omega (t + \Delta t) + \phi) &=& R cos((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_y( t + \Delta t) &=& R sin(\omega (t + \Delta t) + \phi) &=& R sin((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_z( t + \Delta t) &=& constant
-\end{array}
+  \end{array}
 \f]
 
 Which can be rewritten:
@@ -232,7 +232,7 @@ Which can be rewritten:
   {}^WX_x( t + \Delta t) &=& R cos((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R sin((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t)\\
   {}^WX_z( t + \Delta t) &=& constant
-\end{array}
+  \end{array}
 \f]
 
 And can be finally written as:
@@ -241,7 +241,7 @@ And can be finally written as:
   {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W X_x( t) cos(\omega \Delta t) - {}^W X_y(t) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W X_x( t) sin(\omega \Delta t) + {}^W X_y(t) cos(\omega \Delta t) \\
   {}^WX_z( t + \Delta t) &=& constant
-\end{array}
+  \end{array}
 \f]
 
 This motivates us to choose the following non-linear process function:
@@ -252,7 +252,7 @@ This motivates us to choose the following non-linear process function:
   \textbf{x}[1]_{t + \Delta t} &=& {}^WX_y (t + \Delta t) &=& \textbf{x}[0]_{t} sin(\textbf{x}[3]_{t}) + \textbf{x}[1]_{t} cos(\textbf{x}[3]_{t}) \\
   \textbf{x}[2]_{t + \Delta t} &=& {}^WX_z (t + \Delta t) &=& \textbf{x}[2]_{t} \\
   \textbf{x}[3]_{t + \Delta t} &=& \omega \Delta t &=& \textbf{x}[3]_{t}
-\end{array}
+  \end{array}
 \f]
 
 As the process function is pretty simple, a simple function called here `fx()` is enough:

@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpUnscentedKalman_h_
-#define _vpUnscentedKalman_h_
+#ifndef VP_UNSCENTED_KALMAN_H
+#define VP_UNSCENTED_KALMAN_H
 
 #include <visp3/core/vpConfig.h>
 
