@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Luminance feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureLuminance.cpp
@@ -51,6 +49,8 @@
 #include <visp3/visual_features/vpFeatureLuminance.h>
 
 BEGIN_VISP_NAMESPACE
+
+const int vpFeatureLuminance::DEFAULT_BORDER = 10;
 
 /*!
   Initialize the memory space requested for vpFeatureLuminance visual feature.
@@ -97,26 +97,29 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 /*!
   Default constructor that build a visual feature.
 */
-vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
+vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(DEFAULT_BORDER), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   nbParameters = 1;
   dim_s = 0;
+  if (flags != nullptr) {
+    delete[] flags;
+  }
   flags = nullptr;
 
   init();
 }
 
 /*!
- Copy constructor.
+  Copy constructor.
  */
 vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
-  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
+  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(DEFAULT_BORDER), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   *this = f;
 }
 
 /*!
- Copy operator.
+  Copy operator.
  */
 vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
 {
@@ -126,11 +129,13 @@ vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
   bord = f.bord;
   firstTimeIn = f.firstTimeIn;
   cam = f.cam;
+  dim_s = f.dim_s;
   if (pixInfo)
     delete[] pixInfo;
   pixInfo = new vpLuminance[dim_s];
   for (unsigned int i = 0; i < dim_s; i++)
     pixInfo[i] = f.pixInfo[i];
+  s.resize(dim_s);
   return (*this);
 }
 
@@ -163,8 +168,9 @@ void vpFeatureLuminance::set_Z(double Z_)
   \return The value of \f$ Z \f$.
 */
 double vpFeatureLuminance::get_Z() const { return Z; }
+unsigned int vpFeatureLuminance::getBorder() const { return bord; }
 
-void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam) { cam = _cam; }
+void vpFeatureLuminance::setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
@@ -194,9 +200,9 @@ vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
   if (firstTimeIn == 0) {
     firstTimeIn = 1;
     l = 0;
-    for (unsigned int i = bord; i < (nbr - bord); ++i) {
-      //   cout << i << endl ;
-      for (unsigned int j = bord; j < (nbc - bord); ++j) {
+    for (unsigned int i = bord; i < nbr - bord; i++) {
+      for (unsigned int j = bord; j < nbc - bord; j++) {
+
         double x = 0, y = 0;
         vpPixelMeterConversion::convertPoint(cam, j, i, x, y);
 
@@ -210,6 +216,7 @@ vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
   }
 
   l = 0;
+
   for (unsigned int i = bord; i < (nbr - bord); ++i) {
     for (unsigned int j = bord; j < (nbc - bord); ++j) {
       Ix = px * vpImageFilter::derivativeFilterX(I, i, j);
@@ -228,7 +235,6 @@ vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
 }
 
 /*!
-
   Compute and return the interaction matrix \f$ L_I \f$. The computation is
   made thanks to the values of the luminance features \f$ I \f$
 */
@@ -370,8 +376,3 @@ vpFeatureLuminance *vpFeatureLuminance::duplicate() const
 }
 
 END_VISP_NAMESPACE
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
