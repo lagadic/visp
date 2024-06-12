@@ -46,7 +46,123 @@
 
 BEGIN_VISP_NAMESPACE
 
-vpColVector vpParticleFilter::simpleMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
+vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed, const int &nbThreads)
+  : m_N(N)
+  , m_particles(N)
+  , m_useProcessFunction(false)
+  , m_useCommandStateFunction(false)
+{
+#ifndef VISP_HAVE_OPENMP
+  m_nbMaxThreads = 1;
+  if (nbThreads > 1) {
+    std::cout << "[vpParticleFilter::vpParticleFilter] WARNING: OpenMP is not available, maximum number of threads to use clamped to 1" << std::endl;
+  }
+#else
+  int maxThreads = omp_get_max_threads();
+  if (nbThreads <= 0) {
+    m_nbMaxThreads = maxThreads;
+  }
+  else if (nbThreads > maxThreads) {
+    m_nbMaxThreads = maxThreads;
+    std::cout << "[vpParticleFilter::vpParticleFilter] WARNING: maximum number of threads to use clamped to "
+      << maxThreads << " instead of " << nbThreads << " due to OpenMP restrictions." << std::endl;
+    std::cout << "[vpParticleFilter::vpParticleFilter] If you want more, consider to use omp_set_num_threads before." << std::endl;
+  }
+  else {
+    m_nbMaxThreads = nbThreads;
+  }
+#endif
+  // Generating the random generators
+  unsigned int sizeState = stdev.size();
+  m_noiseGenerators.resize(m_nbMaxThreads);
+  unsigned long long seedForGenerator;
+  if (seed > 0) {
+    seedForGenerator = seed;
+  }
+  else {
+    seedForGenerator = vpTime::measureTimeMicros();
+  }
+  vpUniRand seedGenerator(seedForGenerator);
+  for (unsigned int threadId = 0; threadId < m_nbMaxThreads; ++threadId) {
+    for (unsigned int stateId = 0; stateId < sizeState; ++stateId) {
+      m_noiseGenerators[threadId].push_back(vpGaussRand(stdev[stateId], 0., seedGenerator.uniform(0., 1e9)));
+    }
+  }
+}
+
+void vpParticleFilter::init(const vpColVector &x0, const vpProcessFunction &f,
+            const vpLikelihoodFunction &l,
+            const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
+            const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
+{
+  m_f = f;
+  m_stateFilterFunc = filterFunc;
+  m_likelihood = l;
+  m_checkIfResample = checkResamplingFunc;
+  m_resampling = resamplingFunc;
+  m_stateAdd = addFunc;
+  m_useProcessFunction = true;
+  m_useCommandStateFunction = false;
+
+  // Initialize the different particles
+  initParticles(x0);
+}
+
+void vpParticleFilter::init(const vpColVector &x0, const vpCommandStateFunction &bx,
+            const vpLikelihoodFunction &l,
+            const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
+            const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
+{
+  m_bx = bx;
+  m_stateFilterFunc = filterFunc;
+  m_likelihood = l;
+  m_checkIfResample = checkResamplingFunc;
+  m_resampling = resamplingFunc;
+  m_stateAdd = addFunc;
+  m_useProcessFunction = false;
+  m_useCommandStateFunction = true;
+
+  // Initialize the different particles
+  initParticles(x0);
+}
+
+void vpParticleFilter::filter(const vpColVector &z, const double &dt, const vpColVector &u)
+{
+  predict(dt, u);
+  update(z);
+}
+
+void vpParticleFilter::predict(const double &dt, const vpColVector &u)
+{
+  if (m_nbMaxThreads == 1) {
+    predictMonothread(dt, u);
+  }
+#ifdef VISP_HAVE_OPENMP
+  else {
+    predictMultithread(dt, u);
+  }
+#endif
+}
+
+void vpParticleFilter::update(const vpColVector &z)
+{
+  if (m_nbMaxThreads == 1) {
+    updateMonothread(z);
+  }
+#ifdef VISP_HAVE_OPENMP
+  else {
+    updateMultithread(z);
+  }
+#endif
+  bool shouldResample = m_checkIfResample(m_N, m_w);
+  if (shouldResample) {
+    vpParticlesWithWeights particles_weights = m_resampling(m_particles, m_w);
+    m_particles = std::move(particles_weights.m_particles);
+    m_w = std::move(particles_weights.m_weights);
+  }
+}
+
+vpColVector vpParticleFilter::weightedMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpStateAddFunction &addFunc)
 {
   size_t nbParticles = particles.size();
   if (nbParticles == 0) {
@@ -54,7 +170,7 @@ vpColVector vpParticleFilter::simpleMean(const std::vector<vpColVector> &particl
   }
   vpColVector res = particles[0] * weights[0];
   for (size_t i = 1; i < nbParticles; ++i) {
-    res += particles[i] * weights[i];
+    res = addFunc(res, particles[i] * weights[i]);
   }
   return res;
 }
@@ -72,7 +188,7 @@ bool vpParticleFilter::simpleResamplingCheck(const unsigned int &N, const std::v
   return N_eff < N / 2.0;
 }
 
-std::pair<std::vector<vpColVector>, std::vector<double>> vpParticleFilter::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
+vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
 {
   static vpUniRand sampler(vpTime::measureTimeMicros());
   unsigned int nbParticles = particles.size();
@@ -94,20 +210,58 @@ std::pair<std::vector<vpColVector>, std::vector<double>> vpParticleFilter::simpl
   }
 
   // Draw the randomly chosen particles corresponding to the indices
-  std::pair<std::vector<vpColVector>, std::vector<double>> newParticlesWeights;
-  newParticlesWeights.first.resize(nbParticles);
+  vpParticlesWithWeights newParticlesWeights;
+  newParticlesWeights.m_particles.resize(nbParticles);
   for (unsigned int i = 0; i < nbParticles; ++i) {
-    newParticlesWeights.first[i] = particles[idx[i]];
+    newParticlesWeights.m_particles[i] = particles[idx[i]];
   }
 
   // Reinitialize the weights
-  newParticlesWeights.second.resize(nbParticles, 1.0/ static_cast<double>(nbParticles));
+  newParticlesWeights.m_weights.resize(nbParticles, 1.0/ static_cast<double>(nbParticles));
   return newParticlesWeights;
 }
 
+void vpParticleFilter::initParticles(const vpColVector &x0)
+{
+  unsigned int sizeState = x0.size();
+  unsigned int chunkSize = m_N / m_nbMaxThreads;
+  for (unsigned int i = 0; i < m_nbMaxThreads; ++i) {
+    unsigned int idStart = chunkSize * i;
+    unsigned int idStop = chunkSize * (i + 1) - 1;
+    // Last chunk must go until the end
+    if (i == m_nbMaxThreads - 1) {
+      idStop = m_N;
+    }
+    for (unsigned int id = idStart; id < idStop; ++id) {
+      vpColVector noise(sizeState);
+      for (unsigned int idState = 0; idState < sizeState; ++idState) {
+        noise[idState] = m_noiseGenerators[i][idState]();
+      }
+      m_particles[id] = m_stateAdd(x0, noise);
+    }
+  }
+}
+
+#ifdef VISP_HAVE_OPENMP
+void vpParticleFilter::predictMultithread(const double &dt, const vpColVector &u)
+{
+  (void)dt;
+  (void)u;
+  throw(vpException(vpException::notImplementedError, "Multithreading has not been implemented yet."));
+}
+
+void vpParticleFilter::updateMultithread(const vpColVector &z)
+{
+  (void)z;
+  throw(vpException(vpException::notImplementedError, "Multithreading has not been implemented yet."));
+}
+#endif
+
 void vpParticleFilter::predictMonothread(const double &dt, const vpColVector &u)
 {
+  unsigned int sizeState = m_particles[0].size();
   for (unsigned int i = 0; i < m_N; ++i) {
+    // Updating the particle following the process (or command) function
     if (m_useCommandStateFunction) {
       m_particles[i] = m_bx(u, m_particles[i], dt);
     }
@@ -117,6 +271,15 @@ void vpParticleFilter::predictMonothread(const double &dt, const vpColVector &u)
     else {
       throw(vpException(vpException::notInitialized, "vpParticleFilter has not been initialized before calling predict"));
     }
+
+    // Generating noise to add to the particle
+    vpColVector noise(sizeState);
+    for (unsigned int j = 0; j < sizeState; ++j) {
+      noise[j] = m_noiseGenerators[0][j]();
+    }
+
+    // Adding the noise to the particle
+    m_particles[i] = m_stateAdd(m_particles[i], noise);
   }
 }
 
