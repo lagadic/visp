@@ -162,6 +162,11 @@ void vpParticleFilter::update(const vpColVector &z)
   }
 }
 
+vpColVector vpParticleFilter::computeFilteredState()
+{
+  return m_stateFilterFunc(m_particles, m_w, m_stateAdd);
+}
+
 vpColVector vpParticleFilter::weightedMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpStateAddFunction &addFunc)
 {
   size_t nbParticles = particles.size();
@@ -177,15 +182,12 @@ vpColVector vpParticleFilter::weightedMean(const std::vector<vpColVector> &parti
 
 bool vpParticleFilter::simpleResamplingCheck(const unsigned int &N, const std::vector<double> &weights)
 {
-  double sumWeights = 0.;
   double sumSquare = 0.;
   for (unsigned int i = 0; i < N; ++i) {
-    sumWeights += weights[i];
     sumSquare += weights[i] * weights[i];
   }
-  double temp = (2 * sumWeights * sumWeights) / sumSquare;
-  double N_eff = 1.0 / temp;
-  return N_eff < N / 2.0;
+  double N_eff = 1.0 / sumSquare;
+  return N_eff < (N / 2.0);
 }
 
 vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
@@ -233,10 +235,12 @@ void vpParticleFilter::initParticles(const vpColVector &x0)
       idStop = m_N;
     }
     for (unsigned int id = idStart; id < idStop; ++id) {
+      // Generating noise
       vpColVector noise(sizeState);
       for (unsigned int idState = 0; idState < sizeState; ++idState) {
         noise[idState] = m_noiseGenerators[i][idState]();
       }
+      // Adding noise to the initial state
       m_particles[id] = m_stateAdd(x0, noise);
     }
   }
@@ -285,8 +289,15 @@ void vpParticleFilter::predictMonothread(const double &dt, const vpColVector &u)
 
 void vpParticleFilter::updateMonothread(const vpColVector &z)
 {
+  double sumWeights = 0.;
+  // Compute the weights depending on the likelihood of a particle with regard to the measurements
   for (unsigned int i = 0; i < m_N; ++i) {
     m_w[i] = m_likelihood(m_particles[i], z);
+    sumWeights += m_w[i];
+  }
+  // Normalize the weights
+  for (unsigned int i = 0; i < m_N; ++i) {
+    m_w[i] = m_w[i] / sumWeights;
   }
 }
 END_VISP_NAMESPACE

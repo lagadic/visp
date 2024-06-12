@@ -206,10 +206,18 @@ public:
 
   /**
    * \brief Update the weights of the particles based on a new measurement.
+   * The weights will be normalized (i.e. each weight will be divided by the sum of the weights).
    *
    * \param[in] z The measurements at the current timestep.
    */
   void update(const vpColVector &z);
+
+  /**
+   * \brief Compute the filtered state from the particles and their associated weights.
+   *
+   * \return vpColVector The filtered state.
+   */
+  vpColVector computeFilteredState();
 
   /**
    * \brief Set the process function to use when projecting the particles in the future.
