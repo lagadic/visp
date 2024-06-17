@@ -104,8 +104,27 @@ vpColVector hx(const vpColVector &chi)
   return point;
 }
 
-int main(/*const int argc, const char *argv[]*/)
+int main(const int argc, const char *argv[])
 {
+  bool opt_useDisplay = true;
+  for (int i = 1; i < argc; ++i) {
+    std::string arg(argv[i]);
+    if (arg == "-d") {
+      opt_useDisplay = false;
+    }
+    else if ((arg == "-h") || (arg == "--help")) {
+      std::cout << "SYNOPSIS" << std::endl;
+      std::cout << "  " << argv[0] << " [-d][-h]" << std::endl;
+      std::cout << std::endl << std::endl;
+      std::cout << "DETAILS" << std::endl;
+      std::cout << "  -d" << std::endl;
+      std::cout << "    Deactivate display." << std::endl;
+      std::cout << std::endl;
+      std::cout << "  -h, --help" << std::endl;
+      return 0;
+    }
+  }
+
   const double dt = 0.01; // Period of 1s
   const double gt_dx = 0.01; // Ground truth displacement along x axis between two measurements
   const double gt_dy = 0.005; // Ground truth displacement along x axis between two measurements
@@ -143,39 +162,42 @@ int main(/*const int argc, const char *argv[]*/)
   ukf.init(vpColVector({ 0., 0.75 * gt_vx, 0., 0.75 * gt_vy }), P0);
 
 #ifdef VISP_HAVE_DISPLAY
+  vpPlot *plot = nullptr;
   // Initialize the plot
-  vpPlot plot(4);
-  plot.initGraph(0, 3);
-  plot.setTitle(0, "Position along X-axis");
-  plot.setUnitX(0, "Time (s)");
-  plot.setUnitY(0, "Position (m)");
-  plot.setLegend(0, 0, "GT");
-  plot.setLegend(0, 1, "Measure");
-  plot.setLegend(0, 2, "Filtered");
+  if (opt_useDisplay) {
+    plot = new vpPlot(4);
+    plot->initGraph(0, 3);
+    plot->setTitle(0, "Position along X-axis");
+    plot->setUnitX(0, "Time (s)");
+    plot->setUnitY(0, "Position (m)");
+    plot->setLegend(0, 0, "GT");
+    plot->setLegend(0, 1, "Measure");
+    plot->setLegend(0, 2, "Filtered");
 
-  plot.initGraph(1, 3);
-  plot.setTitle(1, "Velocity along X-axis");
-  plot.setUnitX(1, "Time (s)");
-  plot.setUnitY(1, "Velocity (m/s)");
-  plot.setLegend(1, 0, "GT");
-  plot.setLegend(1, 1, "Measure");
-  plot.setLegend(1, 2, "Filtered");
+    plot->initGraph(1, 3);
+    plot->setTitle(1, "Velocity along X-axis");
+    plot->setUnitX(1, "Time (s)");
+    plot->setUnitY(1, "Velocity (m/s)");
+    plot->setLegend(1, 0, "GT");
+    plot->setLegend(1, 1, "Measure");
+    plot->setLegend(1, 2, "Filtered");
 
-  plot.initGraph(2, 3);
-  plot.setTitle(2, "Position along Y-axis");
-  plot.setUnitX(2, "Time (s)");
-  plot.setUnitY(2, "Position (m)");
-  plot.setLegend(2, 0, "GT");
-  plot.setLegend(2, 1, "Measure");
-  plot.setLegend(2, 2, "Filtered");
+    plot->initGraph(2, 3);
+    plot->setTitle(2, "Position along Y-axis");
+    plot->setUnitX(2, "Time (s)");
+    plot->setUnitY(2, "Position (m)");
+    plot->setLegend(2, 0, "GT");
+    plot->setLegend(2, 1, "Measure");
+    plot->setLegend(2, 2, "Filtered");
 
-  plot.initGraph(3, 3);
-  plot.setTitle(3, "Velocity along Y-axis");
-  plot.setUnitX(3, "Time (s)");
-  plot.setUnitY(3, "Velocity (m/s)");
-  plot.setLegend(3, 0, "GT");
-  plot.setLegend(3, 1, "Measure");
-  plot.setLegend(3, 2, "Filtered");
+    plot->initGraph(3, 3);
+    plot->setTitle(3, "Velocity along Y-axis");
+    plot->setUnitX(3, "Time (s)");
+    plot->setUnitY(3, "Velocity (m/s)");
+    plot->setLegend(3, 0, "GT");
+    plot->setLegend(3, 1, "Measure");
+    plot->setLegend(3, 2, "Filtered");
+  }
 #endif
 
   // Initialize measurement noise
@@ -198,32 +220,42 @@ int main(/*const int argc, const char *argv[]*/)
     vpColVector Xest = ukf.getXest();
 
 #ifdef VISP_HAVE_DISPLAY
+    if (opt_useDisplay) {
     // Plot the ground truth, measurement and filtered state
-    plot.plot(0, 0, i, gt_X[0]);
-    plot.plot(0, 1, i, x_meas);
-    plot.plot(0, 2, i, Xest[0]);
+      plot->plot(0, 0, i, gt_X[0]);
+      plot->plot(0, 1, i, x_meas);
+      plot->plot(0, 2, i, Xest[0]);
 
-    double vX_meas = (x_meas - z_prec[0]) / dt;
-    plot.plot(1, 0, i, gt_vx);
-    plot.plot(1, 1, i, vX_meas);
-    plot.plot(1, 2, i, Xest[1]);
+      double vX_meas = (x_meas - z_prec[0]) / dt;
+      plot->plot(1, 0, i, gt_vx);
+      plot->plot(1, 1, i, vX_meas);
+      plot->plot(1, 2, i, Xest[1]);
 
-    plot.plot(2, 0, i, gt_X[1]);
-    plot.plot(2, 1, i, y_meas);
-    plot.plot(2, 2, i, Xest[2]);
+      plot->plot(2, 0, i, gt_X[1]);
+      plot->plot(2, 1, i, y_meas);
+      plot->plot(2, 2, i, Xest[2]);
 
-    double vY_meas = (y_meas - z_prec[1]) / dt;
-    plot.plot(3, 0, i, gt_vy);
-    plot.plot(3, 1, i, vY_meas);
-    plot.plot(3, 2, i, Xest[3]);
+      double vY_meas = (y_meas - z_prec[1]) / dt;
+      plot->plot(3, 0, i, gt_vy);
+      plot->plot(3, 1, i, vY_meas);
+      plot->plot(3, 2, i, Xest[3]);
+    }
 #endif
 
     // Update
     gt_X += gt_dX;
     z_prec = z;
   }
-  std::cout << "Press Enter to quit..." << std::endl;
-  std::cin.get();
+
+#ifdef VISP_HAVE_DISPLAY
+  if (opt_useDisplay) {
+    delete plot;
+  }
+#endif
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
   return 0;
 }
 #else

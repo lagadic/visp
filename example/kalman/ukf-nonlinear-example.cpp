@@ -300,8 +300,27 @@ private:
   vpGaussRand m_rngVel; // Random generator for slight variations of the velocity of the aircraft
 };
 
-int main(/*const int argc, const char *argv[]*/)
+int main(const int argc, const char *argv[])
 {
+  bool opt_useDisplay = true;
+  for (int i = 1; i < argc; ++i) {
+    std::string arg(argv[i]);
+    if (arg == "-d") {
+      opt_useDisplay = false;
+    }
+    else if ((arg == "-h") || (arg == "--help")) {
+      std::cout << "SYNOPSIS" << std::endl;
+      std::cout << "  " << argv[0] << " [-d][-h]" << std::endl;
+      std::cout << std::endl << std::endl;
+      std::cout << "DETAILS" << std::endl;
+      std::cout << "  -d" << std::endl;
+      std::cout << "    Deactivate display." << std::endl;
+      std::cout << std::endl;
+      std::cout << "  -h, --help" << std::endl;
+      return 0;
+    }
+  }
+
   const double dt = 3.; // Period of 3s
   const double sigmaRange = 5; // Standard deviation of the range measurement: 5m
   const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
@@ -354,35 +373,38 @@ int main(/*const int argc, const char *argv[]*/)
   ukf.setMeasurementResidualFunction(measurementResidual);
 
 #ifdef VISP_HAVE_DISPLAY
+  vpPlot *plot = nullptr;
+  if (opt_useDisplay) {
   // Initialize the plot
-  vpPlot plot(4);
-  plot.initGraph(0, 2);
-  plot.setTitle(0, "Position along X-axis");
-  plot.setUnitX(0, "Time (s)");
-  plot.setUnitY(0, "Position (m)");
-  plot.setLegend(0, 0, "GT");
-  plot.setLegend(0, 1, "Filtered");
+    plot = new vpPlot(4);
+    plot->initGraph(0, 2);
+    plot->setTitle(0, "Position along X-axis");
+    plot->setUnitX(0, "Time (s)");
+    plot->setUnitY(0, "Position (m)");
+    plot->setLegend(0, 0, "GT");
+    plot->setLegend(0, 1, "Filtered");
 
-  plot.initGraph(1, 2);
-  plot.setTitle(1, "Velocity along X-axis");
-  plot.setUnitX(1, "Time (s)");
-  plot.setUnitY(1, "Velocity (m/s)");
-  plot.setLegend(1, 0, "GT");
-  plot.setLegend(1, 1, "Filtered");
+    plot->initGraph(1, 2);
+    plot->setTitle(1, "Velocity along X-axis");
+    plot->setUnitX(1, "Time (s)");
+    plot->setUnitY(1, "Velocity (m/s)");
+    plot->setLegend(1, 0, "GT");
+    plot->setLegend(1, 1, "Filtered");
 
-  plot.initGraph(2, 2);
-  plot.setTitle(2, "Position along Y-axis");
-  plot.setUnitX(2, "Time (s)");
-  plot.setUnitY(2, "Position (m)");
-  plot.setLegend(2, 0, "GT");
-  plot.setLegend(2, 1, "Filtered");
+    plot->initGraph(2, 2);
+    plot->setTitle(2, "Position along Y-axis");
+    plot->setUnitX(2, "Time (s)");
+    plot->setUnitY(2, "Position (m)");
+    plot->setLegend(2, 0, "GT");
+    plot->setLegend(2, 1, "Filtered");
 
-  plot.initGraph(3, 2);
-  plot.setTitle(3, "Velocity along Y-axis");
-  plot.setUnitX(3, "Time (s)");
-  plot.setUnitY(3, "Velocity (m/s)");
-  plot.setLegend(3, 0, "GT");
-  plot.setLegend(3, 1, "Filtered");
+    plot->initGraph(3, 2);
+    plot->setTitle(3, "Velocity along Y-axis");
+    plot->setUnitX(3, "Time (s)");
+    plot->setUnitY(3, "Velocity (m/s)");
+    plot->setLegend(3, 0, "GT");
+    plot->setLegend(3, 1, "Filtered");
+  }
 #endif
 
   // Initialize the simulation
@@ -405,24 +427,34 @@ int main(/*const int argc, const char *argv[]*/)
     vpColVector Xest = ukf.getXest();
 
 #ifdef VISP_HAVE_DISPLAY
+    if (opt_useDisplay) {
     // Plot the ground truth, measurement and filtered state
-    plot.plot(0, 0, i, gt_X[0]);
-    plot.plot(0, 1, i, Xest[0]);
+      plot->plot(0, 0, i, gt_X[0]);
+      plot->plot(0, 1, i, Xest[0]);
 
-    plot.plot(1, 0, i, gt_V[0]);
-    plot.plot(1, 1, i, Xest[1]);
+      plot->plot(1, 0, i, gt_V[0]);
+      plot->plot(1, 1, i, Xest[1]);
 
-    plot.plot(2, 0, i, gt_X[1]);
-    plot.plot(2, 1, i, Xest[2]);
+      plot->plot(2, 0, i, gt_X[1]);
+      plot->plot(2, 1, i, Xest[2]);
 
-    plot.plot(3, 0, i, gt_V[1]);
-    plot.plot(3, 1, i, Xest[3]);
+      plot->plot(3, 0, i, gt_V[1]);
+      plot->plot(3, 1, i, Xest[3]);
+    }
 #endif
 
     gt_Xprec = gt_X;
   }
-  std::cout << "Press Enter to quit..." << std::endl;
-  std::cin.get();
+
+#ifdef VISP_HAVE_DISPLAY
+  if (opt_useDisplay) {
+    delete plot;
+  }
+#endif
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
   return 0;
 }
 #else
