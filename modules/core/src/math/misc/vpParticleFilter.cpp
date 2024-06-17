@@ -49,6 +49,7 @@ BEGIN_VISP_NAMESPACE
 vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed, const int &nbThreads)
   : m_N(N)
   , m_particles(N)
+  , m_w(N)
   , m_useProcessFunction(false)
   , m_useCommandStateFunction(false)
 {
@@ -56,7 +57,7 @@ vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<doub
   m_nbMaxThreads = 1;
   if (nbThreads > 1) {
     std::cout << "[vpParticleFilter::vpParticleFilter] WARNING: OpenMP is not available, maximum number of threads to use clamped to 1" << std::endl;
-  }
+}
 #else
   int maxThreads = omp_get_max_threads();
   if (nbThreads <= 0) {
