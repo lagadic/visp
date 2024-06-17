@@ -387,8 +387,8 @@ public:
   vpLandmarkMeasurements(const double &x, const double &y, const double &range_std, const double &rel_angle_std)
     : m_x(x)
     , m_y(y)
-    , m_rngRange(range_std, 0., vpTime::measureTimeMicros())
-    , m_rngRelativeAngle(rel_angle_std, 0., vpTime::measureTimeMicros() + 4221)
+    , m_rngRange(range_std, 0., 4224)
+    , m_rngRelativeAngle(rel_angle_std, 0., 2112)
   { }
 
   /**
@@ -662,6 +662,13 @@ int main(const int argc, const char *argv[])
   if (opt_useDisplay) {
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
+  }
+
+  vpColVector finalError = grid.state_to_measurement(ukf.getXest()) - grid.measureGT(robot_pos);
+  const double maxError = 0.3;
+  if (finalError.frobeniusNorm() > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+    return -1;
   }
   return 0;
 }

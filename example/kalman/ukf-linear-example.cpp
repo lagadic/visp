@@ -256,6 +256,14 @@ int main(const int argc, const char *argv[])
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
   }
+
+  vpColVector X_GT({ gt_X[0], gt_vx, gt_X[1], gt_vy });
+  vpColVector finalError = ukf.getXest() - X_GT;
+  const double maxError = 0.12;
+  if (finalError.frobeniusNorm() > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+    return -1;
+  }
   return 0;
 }
 #else

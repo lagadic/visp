@@ -416,6 +416,7 @@ int main(const int argc, const char *argv[])
   ac_vel[1] = gt_vY_init;
   vpACSimulator ac(ac_pos, ac_vel, stdevAircraftVelocity);
   vpColVector gt_Xprec = ac_pos;
+  vpColVector gt_Vprec = ac_vel;
   for (int i = 0; i < 500; ++i) {
     // Perform the measurement
     vpColVector gt_X = ac.update(dt);
@@ -444,6 +445,7 @@ int main(const int argc, const char *argv[])
 #endif
 
     gt_Xprec = gt_X;
+    gt_Vprec = gt_V;
   }
 
 #ifdef VISP_HAVE_DISPLAY
@@ -455,6 +457,15 @@ int main(const int argc, const char *argv[])
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
   }
+
+  vpColVector X_GT({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
+  vpColVector finalError = ukf.getXest() - X_GT;
+  const double maxError = 2.5;
+  if (finalError.frobeniusNorm() > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+    return -1;
+  }
+
   return 0;
 }
 #else
