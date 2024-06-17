@@ -343,8 +343,16 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     # Updates VISP_SCRIPT_PC_LIBS (for visp.pc used by pkg-config)
     #----------------------------------------------------------------------
     set(exec_prefix "\${prefix}")
-    set(includedir  "\${prefix}/${VISP_INC_INSTALL_PATH}")
-    set(libdir      "\${prefix}/${VISP_LIB_INSTALL_PATH}")
+    if(IS_ABSOLUTE ${VISP_INC_INSTALL_PATH})
+      set(includedir  "${VISP_INC_INSTALL_PATH}")
+    else()
+      set(includedir  "\${prefix}/${VISP_INC_INSTALL_PATH}")
+    endif()
+    if(IS_ABSOLUTE ${VISP_LIB_INSTALL_PATH})
+      set(libdir      "${VISP_LIB_INSTALL_PATH}")
+    else()
+      set(libdir      "\${prefix}/${VISP_LIB_INSTALL_PATH}")
+    endif()
 
     # prepend with ViSP own include dir
     set(VISP_SCRIPT_PC_CFLAGS
@@ -356,18 +364,33 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     vp_list_remove_separator(VISP_SCRIPT_PC_CFLAGS)
 
     # prepend with ViSP own modules first
-    set(VISP_SCRIPT_PC_LIBS
-      "-L\${exec_prefix}/${VISP_LIB_INSTALL_PATH}"
-      "${_modules}"
-    )
+    if(IS_ABSOLUTE ${VISP_LIB_INSTALL_PATH})
+      set(VISP_SCRIPT_PC_LIBS
+        "-L${VISP_LIB_INSTALL_PATH}"
+        "${_modules}"
+      )
+    else()
+      set(VISP_SCRIPT_PC_LIBS
+        "-L\${exec_prefix}/${VISP_LIB_INSTALL_PATH}"
+        "${_modules}"
+      )
+    endif()
     if(BUILD_SHARED_LIBS)
       set(VISP_SCRIPT_PC_LIBS_PRIVATE "${_extra_opt}")
     else()
-      set(VISP_SCRIPT_PC_LIBS_PRIVATE
-        "-L\${exec_prefix}/${VISP_3P_LIB_INSTALL_PATH}"
-        "${_3rdparty}"
-        "${_extra_opt}"
-      )
+      if(IS_ABSOLUTE ${VISP_3P_LIB_INSTALL_PATH})
+        set(VISP_SCRIPT_PC_LIBS_PRIVATE
+          "-L${VISP_3P_LIB_INSTALL_PATH}"
+          "${_3rdparty}"
+          "${_extra_opt}"
+        )
+      else()
+        set(VISP_SCRIPT_PC_LIBS_PRIVATE
+          "-L\${exec_prefix}/${VISP_3P_LIB_INSTALL_PATH}"
+          "${_3rdparty}"
+          "${_extra_opt}"
+        )
+      endif()
     endif()
 
     vp_list_remove_separator(VISP_SCRIPT_PC_LIBS)

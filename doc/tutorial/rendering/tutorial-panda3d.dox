@@ -1,0 +1,267 @@
+/**
+\page tutorial-panda3d Rendering a 3D scene with Panda3D
+\tableofcontents
+
+\section tutorial-panda3d-intro Introduction
+
+In the context of providing a render-based tracker, this tutorial introduces a new, easy to use renderer based on
+Panda3D.
+
+This renderer can output:
+- A color image, with support for textures and lighting
+- Depth image
+- Normal maps
+  - In world space
+  - In camera space
+
+It only supports camera models with no distortion.
+
+It is also possible to compute camera clipping values, depending on the pose of an object in the camera frame.
+This ensures that the depth buffer is as accurate as possible when considering this object.
+
+Below is a set of renders for a textured cube object.
+\image html img-cube-rendering-panda3d.png
+
+Multi-output rendering is performed via the vpPanda3DRendererSet class, which duplicates the scene across multiple
+renders and synchronizes changes to objects and the camera. Each Sub renderer implements a specific type of render:
+geometric (vpPanda3DGeometryRenderer) or color-based (vpPanda3DRGBRenderer) etc. They all inherit from
+vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
+
+\section tutorial-panda3d-install Panda3D installation
+\subsection tutorial-panda3d-install-ubuntu Installation on Ubuntu
+
+- Installer are available for Ubuntu browsing the [download](https://www.panda3d.org/download/) page.
+
+- Hereafter you will find the instructions to build and install Panda3D from source on Ubuntu 22.04
+  \code{.sh}
+  $ mkdir -p $VISP_WS/3rdparty/panda3d
+  $ cd $VISP_WS/3rdparty/panda3d
+  $ git clone https://github.com/panda3d/panda3d
+  $ cd panda3d
+  $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv
+  \endcode
+  At this point you can either:
+  1. install the produced Debian package (recommended) with
+    \code{.sh}
+    $ sudo dpkg -i panda3d1.11_1.11.0_amd64.deb
+    \endcode
+  2. use the Panda3D libraries located in the `built` folder without installing the Debian package
+    `panda3d1.11_1.11.0_amd64.deb`, but in that case you need to set `LD_LIBRARY_PATH` environment var:
+    \code{.sh}
+    $ export LD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$LD_LIBRARY_PATH
+    \endcode
+    Without setting `LD_LIBRARY_PATH` you may experience the following error when running a binary that uses
+    Panda3D capabilities:
+    \code{.sh}
+    $ ./tutorial-panda3d-renderer
+    ./tutorial-panda3d-renderer: error while loading shared libraries: libp3dtoolconfig.so.1.11: cannot open shared object file: No such file or directory
+    \endcode
+
+- Now to build ViSP with Panda3D support when Debian package `panda3d1.11_1.11.0_amd64.deb` is installed as described
+  in option (1), you may notice that there is nothing specific to do, just run `cmake` as usual:
+    \code{.sh}
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp
+    $ make -j$(nproc)
+    \endcode
+
+- There is also the possibility to build ViSP with Panda3D support without installing Debian package
+  `panda3d1.11_1.11.0_amd64.deb` as described in option (2):
+  - By setting `Panda3D_DIR` cmake var to the Panda3D cloned folder
+    \code{.sh}
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+    $ make -j$(nproc)
+    \endcode
+  - By setting `Panda3D_DIR` environment variable
+    \code{.sh}
+    $ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp
+    $ make -j$(nproc)
+    \endcode
+
+\subsection tutorial-panda3d-install-macos Installation on macOS
+
+- Installer are available for macOS browsing the [download](https://www.panda3d.org/download/) page.
+\note For the latest Panda3D 1.10.14 SDK there is an `Installer for macOS X 10.9+` that is only compatible with
+  architecture `x86_64`. If you are using a Mac M1 or M2, there is no Panda3D SDK available yet for `arm64`
+  architecture. The solution is to build Panda3D from source.
+
+- Hereafter you will find the instructions to build Panda3D from source on macOS.
+
+  - On macOS, you will need to download a set of precompiled third-party packages in order to compile Panda3D.
+    Navigate to PandaED [download page](https://www.panda3d.org/download/), select the lastest SDK
+    (in our case SDK 1.10.14), and under `</> Source Code` section, download
+    [Thirdparty tools for macOS](https://www.panda3d.org/download/panda3d-1.10.14/panda3d-1.10.14-tools-mac.tar.gz)
+    (in our case `panda3d-1.10.14-tools-mac.tar.gz`).
+  - Extract third-party tools for macOS from downloaded archive
+    \code{.sh}
+    $ cd ~/Downloads
+    $ tar xvzf panda3d-1.10.14-tools-mac.tar.gz
+    \endcode
+  - Once done clone Panda3D:
+    \code{.sh}
+    $ mkdir -p $VISP_WS/3rdparty/panda3d
+    $ cd $VISP_WS/3rdparty/panda3d
+    $ git clone https://github.com/panda3d/panda3d
+    $ cd panda3d
+    \endcode
+  - Move the downloaded third-party tools in Panda3D source code folder
+    \code{.sh}
+    $ mv ~/Downloads/panda3d-1.10.14/thirdparty .
+    \endcode
+  - Build Panda3D from source
+    \code{.sh}
+    $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
+    \endcode
+
+- At this point you can either
+  1. install the produced `Panda3D-1.11.0-py3.9.dmg` file (recommended) just by double clicking on it. In the
+    installer window, don't forget to enable the `C++ Header Files` check box before pressing the installation button.
+    After that you have to set `DYLIB_LIBRARY_PATH` environment var:
+    \code{.sh}
+    $ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
+    \endcode
+
+  2. or use the Panda3D libraries located in the `built` folder without installing `.dmg` file, but in that case you
+    need to set `DYLIB_LIBRARY_PATH` environment var:
+    \code{.sh}
+    $ export DYLD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$DYLD_LIBRARY_PATH
+    \endcode
+    Without setting `DYLD_LIBRARY_PATH` you may experience the following error when running a binary that uses
+    Panda3D capabilities:
+    \code{.sh}
+    $ ./tutorial-panda3d-renderer
+    dyld[257]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
+    \endcode
+
+- Now to build ViSP with Panda3D support when `.dmg` file `Panda3D-1.11.0-py3.9.dmg` is installed, you can just
+  run cmake as usual. Note that PCL is not compatible with Panda3D, that's why we disable here PCL usage
+  (see \ref tutorial-panda3d-issue-macOS).
+    \code{.sh}
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp -DUSE_PCL=OFF
+    $ make -j$(sysctl -n hw.logicalcpu)
+    \endcode
+
+- There is also the possibility to build ViSP with Panda3D support without installing the `.dmg` file
+  - By setting `Panda3D_DIR` cmake var to the Panda3D cloned folder
+    \code{.sh}
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp -DUSE_PCL=OFF -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+    $ make -j$(sysctl -n hw.logicalcpu)
+    \endcode
+
+  - Or by setting `Panda3D_DIR` environment variable
+    \code{.sh}
+    $ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+    $ cd $VISP_WS/visp-build
+    $ cmake ../visp -DUSE_PCL=OFF
+    $ make -j$(sysctl -n hw.logicalcpu)
+    \endcode
+
+\subsection tutorial-panda3d-install-windows Installation on Windows
+
+- Installer are available for Windows browsing the [download](https://www.panda3d.org/download/) page.
+
+\section tutorial-panda3d-usage Rendere based on Panda3D usage
+
+An example that shows how to exploit Panda3D in ViSP to render a color image with support for textures and lighting, a
+depth image, normals in world space and in camera space is given in tutorial-panda3d-renderer.cpp.
+
+Here you will find the code used to create the renderer:
+\snippet tutorial-panda3d-renderer.cpp Renderer set
+
+Here you will find the code used to create the sub renderers:
+\snippet tutorial-panda3d-renderer.cpp Subrenderers init
+
+Here you will find the code used to add the sub renderers to the main renderer:
+\snippet tutorial-panda3d-renderer.cpp Adding subrenderers
+
+Here you will find the code used to configure the scene:
+\snippet tutorial-panda3d-renderer.cpp Scene configuration
+
+\section tutorial-panda3d-full-code Tutorial full code
+
+The full code of tutorial-panda3d-renderer.cpp is given below.
+\include tutorial-panda3d-renderer.cpp
+
+\section tutorial-panda3d-run Execute the tutorial
+
+- Once ViSP is build, you may run the tutorial by:
+  \code{.sh}
+  $ cd $VISP_WS/visp-build
+  $ ./tutorial/ar/tutorial-panda3d-renderer
+  \endcode
+  It downloads the object located by default in `tutorial/ar/data/suzanne.bam` file.
+- You should see something similar to the following video
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/oqRuPwzXlD4?si=eYYta_eGWN3AbR51" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+\endhtmlonly
+
+\section tutorial-panda3d-issue Known issues
+\subsection tutorial-panda3d-issue-macOS Known issue on macOS
+
+- Segfault: `:framework(error): Unable to create window`
+  ```
+  % ./tutorial-panda3d-renderer
+  Initializing Panda3D rendering framework
+  Known pipe types:
+    CocoaGLGraphicsPipe
+  (all display modules loaded.)
+  :framework(error): Unable to create window.
+  zsh: segmentation fault  ./tutorial-panda3d-renderer
+  ```
+  This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building ViSP with Panda3D support:
+  ```
+  $ cd visp-build
+  $ make
+  ...
+  [100%] Building CXX object tutorial/ar/CMakeFiles/tutorial-panda3d-renderer.dir/tutorial-panda3d-renderer.cpp.o
+  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
+  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:40:9: warning: 'HAVE_PNG' macro redefined [-Wmacro-redefined]
+  #define HAVE_PNG 1
+          ^
+  /opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:53:9: note: previous definition is here
+  #define HAVE_PNG
+      ^
+  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
+  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:64:9: warning: 'HAVE_ZLIB' macro redefined [-Wmacro-redefined]
+  #define HAVE_ZLIB 1
+          ^
+  /opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:55:9: note: previous definition is here
+  #define HAVE_ZLIB
+          ^
+  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:432:9: warning: 'EIGEN_MAX_ALIGN_BYTES' macro redefined [-Wmacro-redefined]
+  #define EIGEN_MAX_ALIGN_BYTES MEMORY_HOOK_ALIGNMENT
+          ^
+  /opt/homebrew/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h:175:11: note: previous definition is here
+    #define EIGEN_MAX_ALIGN_BYTES EIGEN_IDEAL_MAX_ALIGN_BYTES
+            ^
+  3 warnings generated.
+  [100%] Linking CXX executable tutorial-panda3d-renderer
+  [100%] Built target tutorial-panda3d-renderer
+  ```
+  The work around consists in disabling `PCL` usage during ViSP configuration
+  ```
+  $ cd $VISP_WS/visp-build
+  $ cmake ../visp -DUSE_PCL=OFF
+  $ make -j$(sysctl -n hw.logicalcpu)
+  ```
+*/

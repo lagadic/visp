@@ -33,11 +33,16 @@
 #
 #############################################################################
 
-vp_add_module(visual_features visp_core OPTIONAL visp_blob visp_me)
+vp_add_module(visual_features visp_core OPTIONAL visp_blob visp_me visp_io)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
 vp_add_tests()
+
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
 
 if(USE_OPENCV)
   vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderEllipse.cpp -Wno-float-equal)

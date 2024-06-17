@@ -41,6 +41,7 @@ find_package(VISP REQUIRED visp_core visp_robot visp_visual_features visp_vs vis
 
 set(example_cpp
   photometricVisualServoing.cpp
+  photometricMappingVisualServoing.cpp
   photometricVisualServoingWithoutVpServo.cpp
 )
 
@@ -53,7 +54,9 @@ endforeach()
 
 visp_set_source_file_compile_flag(photometricVisualServoing.cpp -Wno-strict-overflow)
 visp_set_source_file_compile_flag(photometricVisualServoingWithoutVpServo.cpp -Wno-strict-overflow)
-
+visp_set_source_file_compile_flag(photometricMappingVisualServoing.cpp -Wno-strict-overflow)
 # Only if dataset found for isolated build
 visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
 visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(photometricMappingPCAVisualServoing photometricMappingVisualServoing -c -n 200 -m pca -k 64 -p 100 -l 30.0 ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(photometricMappingDCTVisualServoing photometricMappingVisualServoing -c -n 200  -m dct -k 64 -l 30.0  ${OPTION_TO_DESACTIVE_DISPLAY})

@@ -145,6 +145,7 @@ class Submodule():
       header.generate_binding_code(module_bindings)
       includes.extend(header.includes)
     submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
+    publicists = module_bindings.get_publicists()
     bindings = module_bindings.get_definitions()
     declarations = module_bindings.get_declarations()
     user_defined_headers = '\n'.join(self.get_user_defined_headers())
@@ -164,12 +165,15 @@ class Submodule():
 
 /*User-defined headers (e.g. additional bindings)*/
 {user_defined_headers}
+
 /*Required headers that are not retrieved in submodule headers (e.g. there are forward definitions but no includes) */
 {additional_required_headers}
 /*Submodule headers*/
 {includes_str}
 
 namespace py = pybind11;
+
+{publicists}
 
 void {self.generation_function_name()}(py::module_ &m) {{
 py::options options;
@@ -231,7 +235,9 @@ options.disable_enum_members_docstring();
       'use_buffer_protocol': False,
       'additional_bindings': None,
       'ignore_repr': False,
-      'is_virtual': False
+      'is_virtual': False,
+      'use_publicist': False,
+      'trampoline': None
     }
     if 'classes' not in self.config:
       return default_config
@@ -274,8 +280,6 @@ options.disable_enum_members_docstring();
       if method_matches_config(method, function_config, owner_specs, header_mapping):
         res.update(function_config)
         return res
-
-    #import sys; sys.exit()
     return res
 
 def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:

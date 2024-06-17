@@ -1,0 +1,12 @@
+*.nix
+.clang-format
+.git*
+.nixignore
+.vscode
+appveyor.yml
+ChangeLog.txt
+ci
+codecov.yml
+CONTRIBUTING.md
+INSTALL.txt
+README.md

@@ -101,6 +101,8 @@ class ClassBindingDefinitions:
   '''
   fields: Dict[str, str]
   methods: Dict[str, List[MethodBinding]] # Mapping from python method name to the bindings definitions. There can be overloads
+  publicist: Optional[str] # Additional class to expose protected members of this class
+
 
 @dataclass
 class SingleObjectBindings:
@@ -131,6 +133,17 @@ class BindingsContainer:
       if sob.declaration is not None:
         decls.append(sob.declaration)
     return '\n'.join(decls)
+
+  def get_publicists(self) -> str:
+    publicists = []
+    for sob in self.object_bindings:
+      odefs = sob.definitions
+      if isinstance(odefs, ClassBindingDefinitions):
+        if odefs.publicist is not None:
+          publicists.append(odefs.publicist)
+
+    return '\n'.join(publicists)
+
 
   def get_definitions(self) -> str:
     defs = []

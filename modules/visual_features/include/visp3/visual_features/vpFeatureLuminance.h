@@ -113,6 +113,8 @@ public:
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
   double get_Z() const;
+  unsigned int getBorder() const;
+
 
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
 
@@ -124,8 +126,10 @@ public:
   vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
 
-  void setCameraParameters(vpCameraParameters &_cam);
+  void setCameraParameters(const vpCameraParameters &_cam);
   void set_Z(double Z);
+
+  static const int DEFAULT_BORDER;
 
 public:
   vpCameraParameters cam;

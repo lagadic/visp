@@ -1,0 +1,17 @@
+name: "Nix CI"
+
+on: [pull_request, push]
+
+jobs:
+  tests:
+    name: "Nix build on ${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os: [ubuntu] # TODO: macos
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
+      - run: nix build

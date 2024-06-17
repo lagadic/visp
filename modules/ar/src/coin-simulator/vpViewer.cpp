@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Simulator based on Coin3d.
- *
-*****************************************************************************/
+ */
 /*!
   \file vpViewer.cpp
   Viewer used by the simulator. Under Windows, the viewer is

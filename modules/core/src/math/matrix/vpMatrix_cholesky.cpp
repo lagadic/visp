@@ -193,8 +193,11 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
     vpMatrix A = *this;
     dpotrf_((char *)"L", &rowNum_, A.data, &lda, &info);
 
-    if (info != 0)
-      throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
+    if (info != 0) {
+      std::stringstream errMsg;
+      errMsg << "Cannot inverse by Cholesky with Lapack: error "<< info << " in dpotrf_()";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
 
     dpotri_((char *)"L", &rowNum_, A.data, &lda, &info);
     if (info != 0) {

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -173,12 +173,33 @@ if(USE_COIN3D)
   endif()
 endif()
 
+if(USE_PANDA3D)
+  if(Panda3D_INCLUDE_DIRS)
+    list(APPEND opt_incs ${Panda3D_INCLUDE_DIRS})
+  endif()
+  if(Panda3D_LIBRARIES)
+  list(APPEND opt_libs ${Panda3D_LIBRARIES})
+  endif()
+endif()
+
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
 
 if(USE_OGRE)
   # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
   vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
+endif()
+
+if(USE_PANDA3D)
+  set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra -Wno-reorder-ctor)
+  set(PANDA3D_MODULE_SOURCES
+    vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
+    vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
+    vpPanda3DRendererSet.cpp vpPanda3DPostProcessFilter.cpp vpPanda3DCommonFilters.cpp
+  )
+  foreach(panda_src_name ${PANDA3D_MODULE_SOURCES})
+    vp_set_source_file_compile_flag(src/panda3d-simulator/${panda_src_name} ${PANDA3D_CXX_FLAGS})
+  endforeach()
 endif()
 
 vp_module_include_directories(${opt_incs})

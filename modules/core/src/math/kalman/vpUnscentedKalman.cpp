@@ -41,7 +41,8 @@
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
 vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::shared_ptr<vpUKSigmaDrawerAbstract> &drawer, const vpProcessFunction &f, const vpMeasurementFunction &h)
-  : m_Q(Q)
+  : m_hasUpdateBeenCalled(false)
+  , m_Q(Q)
   , m_R(R)
   , m_f(f)
   , m_h(h)
@@ -69,8 +70,23 @@ void vpUnscentedKalman::filter(const vpColVector &z, const double &dt, const vpC
 
 void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
 {
+  vpColVector x;
+  vpMatrix P;
+
+  if (m_hasUpdateBeenCalled) {
+    // Update is the last function that has been called, starting from the filtered values.
+    x = m_Xest;
+    P = m_Pest;
+    m_hasUpdateBeenCalled = false;
+  }
+  else {
+    // Predict is the last function that has been called, starting from the predicted values.
+    x = m_mu;
+    P = m_Ppred;
+  }
+
   // Drawing the sigma points
-  m_chi = m_sigmaDrawer->drawSigmaPoints(m_Xest, m_Pest);
+  m_chi = m_sigmaDrawer->drawSigmaPoints(x, P);
 
   // Computation of the attached weights
   vpUKSigmaDrawerAbstract::vpSigmaPointsWeights weights = m_sigmaDrawer->computeWeights();
@@ -96,7 +112,7 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
   // Computation of the mean and covariance of the prior
   vpUnscentedTransformResult transformResults = unscentedTransform(m_Y, m_wm, m_wc, m_Q, m_stateResFunc, m_stateMeanFunc);
   m_mu = transformResults.m_mu;
-  m_P = transformResults.m_P;
+  m_Ppred = transformResults.m_P;
 }
 
 void vpUnscentedKalman::update(const vpColVector &z)
@@ -124,7 +140,8 @@ void vpUnscentedKalman::update(const vpColVector &z)
 
   // Updating the estimate
   m_Xest = m_stateAddFunction(m_mu, m_K * m_measResFunc(z, m_muz));
-  m_Pest = m_P - m_K * m_Pz * m_K.transpose();
+  m_Pest = m_Ppred - m_K * m_Pz * m_K.transpose();
+  m_hasUpdateBeenCalled = true;
 }
 
 vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints,
