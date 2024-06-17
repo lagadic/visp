@@ -654,15 +654,16 @@ int main(const int argc, const char *argv[])
 #endif
   }
 
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
+
 #ifdef VISP_HAVE_DISPLAY
   if (opt_useDisplay) {
     delete plot;
   }
 #endif
-  if (opt_useDisplay) {
-    std::cout << "Press Enter to quit..." << std::endl;
-    std::cin.get();
-  }
 
   vpColVector finalError = grid.state_to_measurement(ukf.getXest()) - grid.measureGT(robot_pos);
   const double maxError = 0.3;

@@ -247,15 +247,16 @@ int main(const int argc, const char *argv[])
     z_prec = z;
   }
 
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
+
 #ifdef VISP_HAVE_DISPLAY
   if (opt_useDisplay) {
     delete plot;
   }
 #endif
-  if (opt_useDisplay) {
-    std::cout << "Press Enter to quit..." << std::endl;
-    std::cin.get();
-  }
 
   vpColVector X_GT({ gt_X[0], gt_vx, gt_X[1], gt_vy });
   vpColVector finalError = ukf.getXest() - X_GT;

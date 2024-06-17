@@ -448,15 +448,16 @@ int main(const int argc, const char *argv[])
     gt_Vprec = gt_V;
   }
 
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
+
 #ifdef VISP_HAVE_DISPLAY
   if (opt_useDisplay) {
     delete plot;
   }
 #endif
-  if (opt_useDisplay) {
-    std::cout << "Press Enter to quit..." << std::endl;
-    std::cin.get();
-  }
 
   vpColVector X_GT({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
   vpColVector finalError = ukf.getXest() - X_GT;
