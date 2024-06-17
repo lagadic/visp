@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-/** \example example-pf-nonlinear.cpp
+/** \example pf-nonlinear-example.cpp
  * Example on how to use a Particle Filter (PF) on a complex non-linear use-case.
  * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
  * The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
@@ -178,8 +178,8 @@ public:
     , m_rng(noise_stdev, 0., seed)
   {
     double sigmaDistanceSquared = sigmaDistance * sigmaDistance;
-    m_den = std::sqrt(2. * M_PI * sigmaDistanceSquared);
-    m_denExp = -1. / (2. * sigmaDistanceSquared);
+    m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
+    m_constantExpDenominator = -1. / (2. * sigmaDistanceSquared);
   }
 
   //! [Likelihood_function]
@@ -204,12 +204,15 @@ public:
     wMo.build(wTo, m_wRo);
     const unsigned int sizePt2D = 2;
     const unsigned int idX = 0, idY = 1, idZ = 2;
+    double sumError = 0.;
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       vpImagePoint projParticle;
       vpMeterPixelConversion::convertPoint(m_cam, cX[idX] / cX[idZ], cX[idY] / cX[idZ], projParticle);
       vpImagePoint measPt(meas[sizePt2D * i + 1], meas[sizePt2D * i]);
-      likelihood += std::exp(m_denExp * vpImagePoint::sqrDistance(projParticle, measPt)) / m_den;
+      double error = vpImagePoint::sqrDistance(projParticle, measPt);
+      likelihood += std::exp(m_constantExpDenominator * error) * m_constantDenominator;
+      sumError += error;
     }
     likelihood /= static_cast<double>(nbMarkers);
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
@@ -292,8 +295,8 @@ private:
   vpHomogeneousMatrix m_cMw; // The pose of the world frame with regard to the camera frame.
   vpRotationMatrix m_wRo; // The rotation matrix that expresses the rotation between the world frame and object frame.
   std::vector<vpColVector> m_markers; // The position of the markers in the object frame.
-  double m_den; // Denominator of the Gaussian function used for the likelihood computation.
-  double m_denExp; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
+  double m_constantDenominator; // Denominator of the Gaussian function used for the likelihood computation.
+  double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
   vpGaussRand m_rng; // Noise simulator for the measurements
 };
 //! [Markers_class]
@@ -388,10 +391,11 @@ int main(const int argc, const char *argv[])
 
   // Initialize the attributes of the PF
   //! [Constants_for_the_PF]
-  const double sigmaLikelihood = 2.; // The standard deviation of likelihood function. An error greater than 3 times
+  const double sigmaLikelihood = 40.; // The standard deviation of likelihood function. An error greater than 3 times
                                      // this standard deviation will lead to a likelihood equal to 0.
-  const unsigned int nbParticles = 300; // Number of particles to use
-  const std::vector<double> stdevsPF = { 0.0333, 0.0333, 0.0333, 0.0333 }; // Standard deviation for each state component
+  const unsigned int nbParticles = 10000; // Number of particles to use
+  const double ampliMaxX = 0.03, ampliMaxY = 0.03, ampliMaxZ = 0.03, ampliMaxOmega = 0.02;
+  const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxOmega/3. }; // Standard deviation for each state component
   const long seedPF = 4224; // Seed for the random generators of the PF
   const unsigned int nbThread = 1;
   //! [Constants_for_the_PF]
@@ -401,7 +405,7 @@ int main(const int argc, const char *argv[])
   X0[0] = radius; // wX = radius m
   X0[1] = 0.; // wY = 0m
   X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
-  X0[3] = 0.75 * w * dt; // Wrong estimation of the pulsation: error of 25%
+  X0[3] = 0.95 * w * dt; // Wrong estimation of the pulsation: error of 5%
   //! [Initial_estimates]
 
   //! [Init_functions]

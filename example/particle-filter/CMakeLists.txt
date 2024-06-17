@@ -6,7 +6,7 @@ find_package(VISP REQUIRED visp_core visp_gui)
 
 set(example_cpp)
 
-list(APPEND example_cpp example-pf-nonlinear.cpp)
+list(APPEND example_cpp pf-nonlinear-example.cpp)
 
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
@@ -15,4 +15,4 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-visp_add_test(example-pf-nonlinear example-pf-nonlinear ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(pf-nonlinear-example pf-nonlinear-example ${OPTION_TO_DESACTIVE_DISPLAY})
