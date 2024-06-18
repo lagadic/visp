@@ -65,6 +65,11 @@ public:
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
 
   /**
+   * Destructor.
+   */
+  virtual ~vpLuminanceMapping() { }
+
+  /**
    * \brief Map an image \p I to a representation \p s.
    * This representation s has getProjectionSize() rows.
    *
@@ -146,6 +151,11 @@ class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
   vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
+
+  /**
+   * Destructor.
+   */
+  virtual ~vpLuminancePCA() { }
 
   /**
    * \brief Build a new PCA object
