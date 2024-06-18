@@ -1108,6 +1108,29 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   }
 }
 
+namespace
+{
+/**
+*
+* \brief Subroutine for YVU9 to RGBa conversion.
+*
+* \param rgb Pointer to the 32-bits RGBA bitmap that should be allocated with a size of width * height * 4.
+* \param R Value for the red channel.
+* \param G Value for the green channel.
+* \param B Value for the blue channel.
+* \param a Value for the alpha channel.
+*/
+void YVU9ToRGBasubroutine(unsigned char *rgba, int R, int G, int B, int a)
+{
+  vpSAT(R);
+  vpSAT(G);
+  vpSAT(B);
+  *rgba++ = static_cast<unsigned char>(R);
+  *rgba++ = static_cast<unsigned char>(G);
+  *rgba++ = static_cast<unsigned char>(B);
+  *rgba++ = a;
+}
+}
 /*!
   Convert YVU 9 [Y(NxM), V(N/4xM/4), U(N/4xM/4)] image into a RGBa image.
 
@@ -1182,248 +1205,126 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      vpSAT(R);
-
       G = Y0 + UV;
-      vpSAT(G);
-
       B = Y0 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y1 + V2;
-      vpSAT(R);
-
       G = Y1 + UV;
-      vpSAT(G);
-
       B = Y1 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y2 + V2;
-      vpSAT(R);
-
       G = Y2 + UV;
-      vpSAT(G);
-
       B = Y2 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y3 + V2;
-      vpSAT(R);
-
       G = Y3 + UV;
-      vpSAT(G);
-
       B = Y3 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
       rgba = rgba + ((val_4 * width) - val_15);
 
       R = Y4 + V2;
-      vpSAT(R);
-
       G = Y4 + UV;
-      vpSAT(G);
-
       B = Y4 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y5 + V2;
-      vpSAT(R);
-
       G = Y5 + UV;
-      vpSAT(G);
-
       B = Y5 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y6 + V2;
-      vpSAT(R);
-
       G = Y6 + UV;
-      vpSAT(G);
-
       B = Y6 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y7 + V2;
-      vpSAT(R);
-
       G = Y7 + UV;
-      vpSAT(G);
-
       B = Y7 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
       rgba = rgba + ((val_4 * width) - val_15);
 
       R = Y8 + V2;
-      vpSAT(R);
-
       G = Y8 + UV;
-      vpSAT(G);
-
       B = Y8 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y9 + V2;
-      vpSAT(R);
-
       G = Y9 + UV;
-      vpSAT(G);
-
       B = Y9 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y10 + V2;
-      vpSAT(R);
-
       G = Y10 + UV;
-      vpSAT(G);
-
       B = Y10 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y11 + V2;
-      vpSAT(R);
-
       G = Y11 + UV;
-      vpSAT(G);
-
       B = Y11 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
       rgba = rgba + ((val_4 * width) - val_15);
 
       R = Y12 + V2;
-      vpSAT(R);
-
       G = Y12 + UV;
-      vpSAT(G);
-
       B = Y12 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y13 + V2;
-      vpSAT(R);
-
       G = Y13 + UV;
-      vpSAT(G);
-
       B = Y13 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y14 + V2;
-      vpSAT(R);
-
       G = Y14 + UV;
-      vpSAT(G);
-
       B = Y14 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba++ = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
 
       //---
       R = Y15 + V2;
-      vpSAT(R);
-
       G = Y15 + UV;
-      vpSAT(G);
-
       B = Y15 + U5;
-      vpSAT(B);
-
-      *rgba++ = static_cast<unsigned char>(R);
-      *rgba++ = static_cast<unsigned char>(G);
-      *rgba++ = static_cast<unsigned char>(B);
-      *rgba = vpRGBa::alpha_default;
+      YVU9ToRGBasubroutine(rgba, R, G, B, vpRGBa::alpha_default);
       rgba = (rgba - (val_12 * width)) + 1;
     }
     yuv += val_3 * width;
     rgba += val_12 * width;
   }
+}
+
+namespace
+{
+/**
+*
+* \brief Subroutine for YVU9 to RGB conversion.
+*
+* \param rgb Pointer to the 24-bits RGB bitmap that should be allocated with a size of width * height * 3.
+* \param R Value for the red channel.
+* \param G Value for the green channel.
+* \param B Value for the blue channel.
+*/
+void YVU9ToRGBsubroutine(unsigned char *rgb, int R, int G, int B)
+{
+  vpSAT(R);
+  vpSAT(G);
+  vpSAT(B);
+  *rgb++ = static_cast<unsigned char>(R);
+  *rgb++ = static_cast<unsigned char>(G);
+  *rgb++ = static_cast<unsigned char>(B);
+}
 }
 
 /*!
@@ -1496,227 +1397,99 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      vpSAT(R);
-
       G = Y0 + UV;
-      vpSAT(G);
-
       B = Y0 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y1 + V2;
-      vpSAT(R);
-
       G = Y1 + UV;
-      vpSAT(G);
-
       B = Y1 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y2 + V2;
-      vpSAT(R);
-
       G = Y2 + UV;
-      vpSAT(G);
-
       B = Y2 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y3 + V2;
-      vpSAT(R);
-
       G = Y3 + UV;
-      vpSAT(G);
-
       B = Y3 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
       rgb = rgb + ((val_3 * width) - 11);
 
       R = Y4 + V2;
-      vpSAT(R);
-
       G = Y4 + UV;
-      vpSAT(G);
-
       B = Y4 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y5 + V2;
-      vpSAT(R);
-
       G = Y5 + UV;
-      vpSAT(G);
-
       B = Y5 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y6 + V2;
-      vpSAT(R);
-
       G = Y6 + UV;
-      vpSAT(G);
-
       B = Y6 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y7 + V2;
-      vpSAT(R);
-
       G = Y7 + UV;
-      vpSAT(G);
-
       B = Y7 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
       rgb = rgb + ((val_3 * width) - 11);
 
       R = Y8 + V2;
-      vpSAT(R);
-
       G = Y8 + UV;
-      vpSAT(G);
-
       B = Y8 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y9 + V2;
-      vpSAT(R);
-
       G = Y9 + UV;
-      vpSAT(G);
-
       B = Y9 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y10 + V2;
-      vpSAT(R);
-
       G = Y10 + UV;
-      vpSAT(G);
-
       B = Y10 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y11 + V2;
-      vpSAT(R);
-
       G = Y11 + UV;
-      vpSAT(G);
-
       B = Y11 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
       rgb = (rgb + (val_3 * width)) - 11;
 
       R = Y12 + V2;
-      vpSAT(R);
-
       G = Y12 + UV;
-      vpSAT(G);
-
       B = Y12 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y13 + V2;
-      vpSAT(R);
-
       G = Y13 + UV;
-      vpSAT(G);
-
       B = Y13 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y14 + V2;
-      vpSAT(R);
-
       G = Y14 + UV;
-      vpSAT(G);
-
       B = Y14 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
 
       //---
       R = Y15 + V2;
-      vpSAT(R);
-
       G = Y15 + UV;
-      vpSAT(G);
-
       B = Y15 + U5;
-      vpSAT(B);
-
-      *rgb++ = static_cast<unsigned char>(R);
-      *rgb++ = static_cast<unsigned char>(G);
-      *rgb++ = static_cast<unsigned char>(B);
+      YVU9ToRGBsubroutine(rgb, R, G, B);
       rgb = (rgb - (val_9 * width)) + 1;
     }
     yuv += val_3 * width;

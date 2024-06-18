@@ -667,6 +667,15 @@ public:
   typedef vpCircleHoughTransformParams vpCircleHoughTransformParameters;
 #endif
 
+  /**
+   * \brief Data storage for the computation of the center candidates.
+   */
+  typedef struct vpCenterVotes
+  {
+    std::pair<float, float> m_position;
+    float m_votes;
+  } vpCenterVotes;
+
 /**
  * \brief Construct a new vpCircleHoughTransform object with default parameters.
  */
@@ -1225,14 +1234,20 @@ protected:
   virtual void computeCenterCandidates();
 
   /**
+   * \brief Aggregate center candidates that are close to each other.
+   * \param[in] peak_positions_votes Vector containing raw center candidates.
+   */
+  virtual void filterCenterCandidates(const std::vector<vpCenterVotes> &peak_positions_votes);
+
+  /**
    * \brief Compute the probability of \b circle given the number of pixels voting for
    * it \b nbVotes.
    * The probability is defined as the ratio of \b nbVotes by the theoretical number of
    * pixel that should be visible in the image.
    *
-   * @param circle The circle for which we want to evaluate the probability.
-   * @param nbVotes The number of visible pixels of the given circle.
-   * @return float The probability of the circle.
+   * \param[in] circle The circle for which we want to evaluate the probability.
+   * \param[in] nbVotes The number of visible pixels of the given circle.
+   * \return float The probability of the circle.
    */
   virtual float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
 

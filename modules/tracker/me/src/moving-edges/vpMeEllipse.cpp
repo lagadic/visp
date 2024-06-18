@@ -645,13 +645,9 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
   getParameters();
 }
 
-unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
+void vpMeEllipse::leastSquareRobustCircle(const double &um, const double &vm, unsigned int &k, vpColVector &w)
 {
-  double um = I.getWidth() / 2.;
-  double vm = I.getHeight() / 2.;
-
   const unsigned int nos = numberOfSignal();
-  unsigned int k = 0; // count the number of tracked MEs
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
@@ -659,217 +655,239 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
   const unsigned int index_4 = 4;
   const unsigned int index_5 = 5;
 
+  // System A x = b to be solved by least squares
+  // with A = (u v 1), b = (u^2 + v^2) and x = (2xc, 2yc, r^2-xc^2-yc^2)
+
+  // Note that the (nos-k) last rows of A, b, xp and yp are not used.
+  // Hopefully, this is not an issue.
+  vpMatrix A(nos, 3);
+  vpColVector b(nos);
+
+  // Useful to compute the weights in the robust estimation
+  vpColVector xp(nos), yp(nos);
+  std::list<vpMeSite>::const_iterator end = m_meList.end();
+
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
+    vpMeSite p_me = *it;
+    if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
+      // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
+      double u = (p_me.get_jfloat() - um) / um;
+      double v = (p_me.get_ifloat() - vm) / um; // um to not deform the circle
+      A[k][index_0] = u;
+      A[k][index_1] = v;
+      A[k][index_2] = 1.0;
+      b[k] = (u * u) + (v * v);
+      // Useful to compute the weights in the robust estimation
+      xp[k] = p_me.get_jfloat();
+      yp[k] = p_me.get_ifloat();
+
+      ++k;
+    }
+  }
+
+  const unsigned int minRequiredNbMe = 3;
+  if (k < minRequiredNbMe) {
+    throw(vpException(vpException::dimensionError, "Not enough moving edges %d / %d to track the circle ",
+                      k, m_meList.size()));
+  }
+
+  vpRobust r;
+  r.setMinMedianAbsoluteDeviation(1.0); // Image noise in pixels for the algebraic distance
+
+  unsigned int iter = 0;
+  double var = 1.0;
+  vpColVector x(3);
+  vpMatrix DA(k, 3);
+  vpColVector Db(k);
+  vpColVector xg_prev(2);
+  xg_prev = -10.0;
+
+  // stop after 4 it or if cog variation between 2 it is more than 1 pixel
+  const unsigned int maxNbIter = 4;
+  const unsigned int widthDA = DA.getCols();
+  while ((iter < maxNbIter) && (var > 0.1)) {
+    for (unsigned int i = 0; i < k; ++i) {
+      for (unsigned int j = 0; j < widthDA; ++j) {
+        DA[i][j] = w[i] * A[i][j];
+      }
+      Db[i] = w[i] * b[i];
+    }
+    x = DA.solveBySVD(Db);
+
+    // A circle is a particular ellipse. Going from x for circle to K for ellipse
+    // using inverse normalization to go back to pixel values
+    double ratio = vm / um;
+    m_K[index_0] = (m_K[index_1] = (1.0 / (um * um)));
+    m_K[index_2] = 0.0;
+    m_K[index_3] = -(1.0 + (x[index_0] / 2.0)) / um;
+    m_K[index_4] = -(ratio + (x[index_1] / 2.0)) / um;
+    m_K[index_5] = -x[index_2] + 1.0 + (ratio * ratio) + x[index_0] + (ratio * x[index_1]);
+
+    getParameters();
+    vpColVector xg(2);
+    xg[0] = m_uc;
+    xg[1] = m_vc;
+    var = (xg - xg_prev).frobeniusNorm();
+    xg_prev = xg;
+
+    vpColVector residu(k); // near to geometric distance in pixel
+    for (unsigned int i = 0; i < k; ++i) {
+      double x = xp[i];
+      double y = yp[i];
+      double sign = (m_K[index_0] * x * x) + (m_K[index_1] * y * y) + (2. * m_K[index_2] * x * y)
+        + (2. * m_K[index_3] * x) + (2. * m_K[index_4] * y) + m_K[index_5];
+      vpImagePoint ip1, ip2;
+      ip1.set_uv(x, y);
+      double ang = computeAngleOnEllipse(ip1);
+      computePointOnEllipse(ang, ip2);
+      // residu = 0 if point is exactly on the ellipse, not otherwise
+      if (sign > 0) {
+        residu[i] = vpImagePoint::distance(ip1, ip2);
+      }
+      else {
+        residu[i] = -vpImagePoint::distance(ip1, ip2);
+      }
+    }
+    r.MEstimator(vpRobust::TUKEY, residu, w);
+
+    ++iter;
+  }
+}
+
+void vpMeEllipse::leastSquareRobustEllipse(const double &um, const double &vm, unsigned int &k, vpColVector &w)
+{
+  const unsigned int nos = numberOfSignal();
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  // Homogeneous system A x = 0  ; x is the nullspace of A
+  // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
+  // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
+
+  // It would be a bad idea to solve the same system using A x = b where
+  // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
+  // cannot consider the case where the origin belongs to the ellipse.
+  // Another possibility would be to consider K0+K1=1 which is always valid,
+  // leading to the system A x = b where
+  // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
+  const unsigned int nbColsA = 6;
+  vpMatrix A(nos, nbColsA);
+  // Useful to compute the weights in the robust estimation
+  vpColVector xp(nos), yp(nos);
+  std::list<vpMeSite>::const_iterator end = m_meList.end();
+
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
+    vpMeSite p_me = *it;
+    if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
+      // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
+      double u = (p_me.get_jfloat() - um) / um;
+      double v = (p_me.get_ifloat() - vm) / vm;
+      A[k][index_0] = u * u;
+      A[k][index_1] = v * v;
+      A[k][index_2] = 2.0 * u * v;
+      A[k][index_3] = 2.0 * u;
+      A[k][index_4] = 2.0 * v;
+      A[k][index_5] = 1.0;
+      // Useful to compute the weights in the robust estimation
+      xp[k] = p_me.get_jfloat();
+      yp[k] = p_me.get_ifloat();
+
+      ++k;
+    }
+  }
+
+  const unsigned int minRequiredMe = 5;
+  if (k < minRequiredMe) {
+    throw(vpException(vpException::dimensionError, "Not enough moving edges to track the ellipse"));
+  }
+
+  vpRobust r;
+
+  r.setMinMedianAbsoluteDeviation(1.0); // image noise in pixels for the geometrical distance
+  unsigned int iter = 0;
+  double var = 1.0;
+  vpMatrix DA(k, 6);
+  vpMatrix KerDA;
+  vpColVector xg_prev(2);
+  xg_prev = -10.0;
+
+  // Stop after 4 iterations or if cog variation between 2 iterations is more than 0.1 pixel
+  const unsigned int maxIter = 4;
+  const unsigned int widthDA = DA.getCols();
+  while ((iter < maxIter) && (var > 0.1)) {
+    for (unsigned int i = 0; i < k; ++i) {
+      for (unsigned int j = 0; j < widthDA; ++j) {
+        DA[i][j] = w[i] * A[i][j];
+      }
+    }
+    unsigned int dim = DA.nullSpace(KerDA, 1);
+    if (dim > 1) { // case with less than 5 independent points
+      throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
+    }
+
+    const unsigned int nparam = 6;
+    for (unsigned int i = 0; i < nparam; ++i) {
+      m_K[i] = KerDA[i][0]; // norm(K) = 1
+    }
+
+    // inverse normalization
+    m_K[index_0] *= vm / um;
+    m_K[index_1] *= um / vm;
+    m_K[index_3] = (m_K[index_3] * vm) - (m_K[0] * um) - (m_K[index_2] * vm);
+    m_K[index_4] = (m_K[index_4] * um) - (m_K[1] * vm) - (m_K[index_2] * um);
+    m_K[index_5] = (m_K[index_5] * um * vm) - (m_K[index_0] * um * um) - (m_K[index_1] * vm * vm)
+      - (2.0 * m_K[index_2] * um * vm) - (2.0 * m_K[index_3] * um) - (2.0 * m_K[index_4] * vm);
+
+    getParameters(); // since a, b, and e are used just after
+    vpColVector xg(2);
+    xg[0] = m_uc;
+    xg[1] = m_vc;
+    var = (xg - xg_prev).frobeniusNorm();
+    xg_prev = xg;
+
+    vpColVector residu(k);
+    for (unsigned int i = 0; i < k; ++i) {
+      double x = xp[i];
+      double y = yp[i];
+      double sign = (m_K[0] * x * x) + (m_K[1] * y * y) + (2. * m_K[2] * x * y) + (2. * m_K[3] * x) + (2. * m_K[4] * y) + m_K[5];
+      vpImagePoint ip1, ip2;
+      ip1.set_uv(x, y);
+      double ang = computeAngleOnEllipse(ip1);
+      computePointOnEllipse(ang, ip2);
+      // residu = 0 if point is exactly on the ellipse, not otherwise
+      if (sign > 0) {
+        residu[i] = vpImagePoint::distance(ip1, ip2);
+      }
+      else {
+        residu[i] = -vpImagePoint::distance(ip1, ip2);
+      }
+    }
+    r.MEstimator(vpRobust::TUKEY, residu, w);
+
+    ++iter;
+  }
+}
+
+unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
+{
+  double um = I.getWidth() / 2.;
+  double vm = I.getHeight() / 2.;
+
+  const unsigned int nos = numberOfSignal();
+  unsigned int k = 0; // count the number of tracked MEs
+
   vpColVector w(nos);
   w = 1.0;
   // Note that the (nos-k) last rows of w are not used. Hopefully, this is not an issue.
 
   if (m_trackCircle) { // we track a circle
-    // System A x = b to be solved by least squares
-    // with A = (u v 1), b = (u^2 + v^2) and x = (2xc, 2yc, r^2-xc^2-yc^2)
-
-    // Note that the (nos-k) last rows of A, b, xp and yp are not used.
-    // Hopefully, this is not an issue.
-    vpMatrix A(nos, 3);
-    vpColVector b(nos);
-
-    // Useful to compute the weights in the robust estimation
-    vpColVector xp(nos), yp(nos);
-    std::list<vpMeSite>::const_iterator end = m_meList.end();
-
-    for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
-      vpMeSite p_me = *it;
-      if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
-        // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
-        double u = (p_me.get_jfloat() - um) / um;
-        double v = (p_me.get_ifloat() - vm) / um; // um to not deform the circle
-        A[k][index_0] = u;
-        A[k][index_1] = v;
-        A[k][index_2] = 1.0;
-        b[k] = (u * u) + (v * v);
-        // Useful to compute the weights in the robust estimation
-        xp[k] = p_me.get_jfloat();
-        yp[k] = p_me.get_ifloat();
-
-        ++k;
-      }
-    }
-
-    const unsigned int minRequiredNbMe = 3;
-    if (k < minRequiredNbMe) {
-      throw(vpException(vpException::dimensionError, "Not enough moving edges %d / %d to track the circle ",
-                        k, m_meList.size()));
-    }
-
-    vpRobust r;
-    r.setMinMedianAbsoluteDeviation(1.0); // Image noise in pixels for the algebraic distance
-
-    unsigned int iter = 0;
-    double var = 1.0;
-    vpColVector x(3);
-    vpMatrix DA(k, 3);
-    vpColVector Db(k);
-    vpColVector xg_prev(2);
-    xg_prev = -10.0;
-
-    // stop after 4 it or if cog variation between 2 it is more than 1 pixel
-    const unsigned int maxNbIter = 4;
-    const unsigned int widthDA = DA.getCols();
-    while ((iter < maxNbIter) && (var > 0.1)) {
-      for (unsigned int i = 0; i < k; ++i) {
-        for (unsigned int j = 0; j < widthDA; ++j) {
-          DA[i][j] = w[i] * A[i][j];
-        }
-        Db[i] = w[i] * b[i];
-      }
-      x = DA.solveBySVD(Db);
-
-      // A circle is a particular ellipse. Going from x for circle to K for ellipse
-      // using inverse normalization to go back to pixel values
-      double ratio = vm / um;
-      m_K[index_0] = (m_K[index_1] = (1.0 / (um * um)));
-      m_K[index_2] = 0.0;
-      m_K[index_3] = -(1.0 + (x[index_0] / 2.0)) / um;
-      m_K[index_4] = -(ratio + (x[index_1] / 2.0)) / um;
-      m_K[index_5] = -x[index_2] + 1.0 + (ratio * ratio) + x[index_0] + (ratio * x[index_1]);
-
-      getParameters();
-      vpColVector xg(2);
-      xg[0] = m_uc;
-      xg[1] = m_vc;
-      var = (xg - xg_prev).frobeniusNorm();
-      xg_prev = xg;
-
-      vpColVector residu(k); // near to geometric distance in pixel
-      for (unsigned int i = 0; i < k; ++i) {
-        double x = xp[i];
-        double y = yp[i];
-        double sign = (m_K[index_0] * x * x) + (m_K[index_1] * y * y) + (2. * m_K[index_2] * x * y)
-          + (2. * m_K[index_3] * x) + (2. * m_K[index_4] * y) + m_K[index_5];
-        vpImagePoint ip1, ip2;
-        ip1.set_uv(x, y);
-        double ang = computeAngleOnEllipse(ip1);
-        computePointOnEllipse(ang, ip2);
-        // residu = 0 if point is exactly on the ellipse, not otherwise
-        if (sign > 0) {
-          residu[i] = vpImagePoint::distance(ip1, ip2);
-        }
-        else {
-          residu[i] = -vpImagePoint::distance(ip1, ip2);
-        }
-      }
-      r.MEstimator(vpRobust::TUKEY, residu, w);
-
-      ++iter;
-    }
+    leastSquareRobustCircle(um, vm, k, w);
   }
   else { // we track an ellipse
-
-    // Homogeneous system A x = 0  ; x is the nullspace of A
-    // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
-    // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
-
-    // It would be a bad idea to solve the same system using A x = b where
-    // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
-    // cannot consider the case where the origin belongs to the ellipse.
-    // Another possibility would be to consider K0+K1=1 which is always valid,
-    // leading to the system A x = b where
-    // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
-
-    vpMatrix A(nos, 6);
-    // Useful to compute the weights in the robust estimation
-    vpColVector xp(nos), yp(nos);
-    std::list<vpMeSite>::const_iterator end = m_meList.end();
-
-    for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
-      vpMeSite p_me = *it;
-      if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
-        // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
-        double u = (p_me.get_jfloat() - um) / um;
-        double v = (p_me.get_ifloat() - vm) / vm;
-        A[k][index_0] = u * u;
-        A[k][index_1] = v * v;
-        A[k][index_2] = 2.0 * u * v;
-        A[k][index_3] = 2.0 * u;
-        A[k][index_4] = 2.0 * v;
-        A[k][index_5] = 1.0;
-        // Useful to compute the weights in the robust estimation
-        xp[k] = p_me.get_jfloat();
-        yp[k] = p_me.get_ifloat();
-
-        ++k;
-      }
-    }
-
-    const unsigned int minRequiredMe = 5;
-    if (k < minRequiredMe) {
-      throw(vpException(vpException::dimensionError, "Not enough moving edges to track the ellipse"));
-    }
-
-    vpRobust r;
-
-    r.setMinMedianAbsoluteDeviation(1.0); // image noise in pixels for the geometrical distance
-    unsigned int iter = 0;
-    double var = 1.0;
-    vpMatrix DA(k, 6);
-    vpMatrix KerDA;
-    vpColVector xg_prev(2);
-    xg_prev = -10.0;
-
-    // Stop after 4 iterations or if cog variation between 2 iterations is more than 0.1 pixel
-    const unsigned int maxIter = 4;
-    const unsigned int widthDA = DA.getCols();
-    while ((iter < maxIter) && (var > 0.1)) {
-      for (unsigned int i = 0; i < k; ++i) {
-        for (unsigned int j = 0; j < widthDA; ++j) {
-          DA[i][j] = w[i] * A[i][j];
-        }
-      }
-      unsigned int dim = DA.nullSpace(KerDA, 1);
-      if (dim > 1) { // case with less than 5 independent points
-        throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
-      }
-
-      const unsigned int nparam = 6;
-      for (unsigned int i = 0; i < nparam; ++i) {
-        m_K[i] = KerDA[i][0]; // norm(K) = 1
-      }
-
-      // inverse normalization
-      m_K[index_0] *= vm / um;
-      m_K[index_1] *= um / vm;
-      m_K[index_3] = (m_K[index_3] * vm) - (m_K[0] * um) - (m_K[index_2] * vm);
-      m_K[index_4] = (m_K[index_4] * um) - (m_K[1] * vm) - (m_K[index_2] * um);
-      m_K[index_5] = (m_K[index_5] * um * vm) - (m_K[index_0] * um * um) - (m_K[index_1] * vm * vm)
-        - (2.0 * m_K[index_2] * um * vm) - (2.0 * m_K[index_3] * um) - (2.0 * m_K[index_4] * vm);
-
-      getParameters(); // since a, b, and e are used just after
-      vpColVector xg(2);
-      xg[0] = m_uc;
-      xg[1] = m_vc;
-      var = (xg - xg_prev).frobeniusNorm();
-      xg_prev = xg;
-
-      vpColVector residu(k);
-      for (unsigned int i = 0; i < k; ++i) {
-        double x = xp[i];
-        double y = yp[i];
-        double sign = (m_K[0] * x * x) + (m_K[1] * y * y) + (2. * m_K[2] * x * y) + (2. * m_K[3] * x) + (2. * m_K[4] * y) + m_K[5];
-        vpImagePoint ip1, ip2;
-        ip1.set_uv(x, y);
-        double ang = computeAngleOnEllipse(ip1);
-        computePointOnEllipse(ang, ip2);
-        // residu = 0 if point is exactly on the ellipse, not otherwise
-        if (sign > 0) {
-          residu[i] = vpImagePoint::distance(ip1, ip2);
-        }
-        else {
-          residu[i] = -vpImagePoint::distance(ip1, ip2);
-        }
-      }
-      r.MEstimator(vpRobust::TUKEY, residu, w);
-
-      ++iter;
-    }
+    leastSquareRobustEllipse(um, vm, k, w);
   } // end of case ellipse
 
   // Remove bad points and outliers from the lists

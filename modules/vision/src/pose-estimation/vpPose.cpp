@@ -343,69 +343,68 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
   return squared_error;
 }
 
+void vpPose::callLagrangePose(vpHomogeneousMatrix &cMo)
+{
+  const int minNbPtLagrangePlan = 4;
+  const int minNbPtLagrangeNoPlan = 6;
+  // test if the 3D points are coplanar
+  double a, b, c, d; // To get the plan coefficients if the points are coplanar
+  int coplanar_plane_type = 0;
+  bool plan = coplanar(coplanar_plane_type, &a, &b, &c, &d);
+
+  if (plan == true) {
+    const int typeCollinear = 4;
+    if (coplanar_plane_type == typeCollinear) {
+      throw(vpPoseException(vpPoseException::notEnoughPointError, "Lagrange method cannot be used in that case "
+                            "(points are collinear)"));
+    }
+    if (npt < minNbPtLagrangePlan) {
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Lagrange method cannot be used in that case "
+                            "(at least 4 points are required). "
+                            "Not enough point (%d) to compute the pose  ",
+                            npt));
+    }
+    poseLagrangePlan(cMo, &plan, &a, &b, &c, &d);
+  }
+  else {
+    if (npt < minNbPtLagrangeNoPlan) {
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Lagrange method cannot be used in that case "
+                            "(at least 6 points are required when 3D points are non coplanar). "
+                            "Not enough point (%d) to compute the pose  ",
+                            npt));
+    }
+    poseLagrangeNonPlan(cMo);
+  }
+}
+
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, funcCheckValidityPose func)
 {
   const int minNbPtDementhon = 4;
   const int minNbPtRansac = 4;
-  const int minNbPtLagrangePlan = 4;
-  const int minNbPtLagrangeNoPlan = 6;
+  std::stringstream errMsgDementhon;
+  errMsgDementhon << "Dementhon method cannot be used in that case "
+    << "(at least " << minNbPtDementhon << " points are required)"
+    << "Not enough point (" << npt << ") to compute the pose  ";
 
   switch (method) {
   case DEMENTHON:
   case DEMENTHON_VIRTUAL_VS:
   case DEMENTHON_LOWE: {
     if (npt < minNbPtDementhon) {
-      throw(vpPoseException(vpPoseException::notEnoughPointError,
-                            "Dementhon method cannot be used in that case "
-                            "(at least 4 points are required)"
-                            "Not enough point (%d) to compute the pose  ",
-                            npt));
+      throw(vpPoseException(vpPoseException::notEnoughPointError, errMsgDementhon.str()));
     }
-
     // test if the 3D points are coplanar
     int coplanar_plane_type = 0;
     bool plan = coplanar(coplanar_plane_type);
-    if (plan == true) {
-      poseDementhonPlan(cMo);
-    }
-    else {
-      poseDementhonNonPlan(cMo);
-    }
+    plan ? poseDementhonPlan(cMo) : poseDementhonNonPlan(cMo);
     break;
   }
   case LAGRANGE:
   case LAGRANGE_VIRTUAL_VS:
   case LAGRANGE_LOWE: {
-    // test if the 3D points are coplanar
-    double a, b, c, d; // To get the plan coefficients if the points are coplanar
-    int coplanar_plane_type = 0;
-    bool plan = coplanar(coplanar_plane_type, &a, &b, &c, &d);
-
-    if (plan == true) {
-      const int typeCollinear = 4;
-      if (coplanar_plane_type == typeCollinear) {
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Lagrange method cannot be used in that case "
-                              "(points are collinear)"));
-      }
-      if (npt < minNbPtLagrangePlan) {
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Lagrange method cannot be used in that case "
-                              "(at least 4 points are required). "
-                              "Not enough point (%d) to compute the pose  ",
-                              npt));
-      }
-      poseLagrangePlan(cMo, &plan, &a, &b, &c, &d);
-    }
-    else {
-      if (npt < minNbPtLagrangeNoPlan) {
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Lagrange method cannot be used in that case "
-                              "(at least 6 points are required when 3D points are non coplanar). "
-                              "Not enough point (%d) to compute the pose  ",
-                              npt));
-      }
-      poseLagrangeNonPlan(cMo);
-    }
+    callLagrangePose(cMo);
     break;
   }
   case RANSAC: {

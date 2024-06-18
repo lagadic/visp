@@ -564,6 +564,30 @@ protected:
   unsigned int leastSquareRobust(const vpImage<unsigned char> &I);
 
   /*!
+   * Robust least squares method to compute the ellipse to which the vpMeSite
+   * belong, when we track a circle. Manage also the lists of vpMeSite and corresponding angles,
+   * and update the expected density of points.
+   *
+   * \param um Half width of the image.
+   * \param vm Half height of the image.
+   * \param k Count the number of tracked MEs.
+   * \param w Weights computed by robust estimation.
+   */
+  void leastSquareRobustCircle(const double &um, const double &vm, unsigned int &k, vpColVector &w);
+
+  /*!
+   * Robust least squares method to compute the ellipse to which the vpMeSite
+   * belong, when we track an ellipse. Manage also the lists of vpMeSite and corresponding angles,
+   * and update the expected density of points.
+   *
+   * \param um Half width of the image.
+   * \param vm Half height of the image.
+   * \param k Count the number of tracked MEs.
+   * \param w Weights computed by robust estimation.
+   */
+  void leastSquareRobustEllipse(const double &um, const double &vm, unsigned int &k, vpColVector &w);
+
+  /*!
    * Seek along the ellipse or arc of ellipse its two extremities to try
    * recovering lost points. Try also to complete the parts with no tracked points.
    *

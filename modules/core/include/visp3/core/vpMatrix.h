@@ -1189,6 +1189,14 @@ private:
                          double *x_data, int incx_, double beta, double *y_data, int incy_);
   static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_, double *w_data,
                          double *work_data, int lwork_, int &info_);
+
+  unsigned int qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+
+#ifdef VISP_HAVE_GSL
+  unsigned int qrPivotLapackGSL(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+#endif
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,

@@ -65,10 +65,10 @@ void updateAccumulator(const float &x_orig, const float &y_orig,
   }
 }
 
-bool sortingCenters(const std::pair<std::pair<float, float>, float> &position_vote_a,
-                    const std::pair<std::pair<float, float>, float> &position_vote_b)
+bool sortingCenters(const vpCircleHoughTransform::vpCenterVotes &position_vote_a,
+                    const vpCircleHoughTransform::vpCenterVotes &position_vote_b)
 {
-  return position_vote_a.second > position_vote_b.second;
+  return position_vote_a.m_votes > position_vote_b.m_votes;
 }
 
 float computeEffectiveRadius(const float &votes, const float &weigthedSumRadius)
@@ -555,8 +555,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   // increment the accumulator
   // We can perform bilinear interpolation in order not to vote for a "line" of
   // points, but for an "area" of points
-  unsigned int nbRows = m_edgeMap.getRows();
-  unsigned int nbCols = m_edgeMap.getCols();
+  unsigned int nbRows = m_edgeMap.getRows(), nbCols = m_edgeMap.getCols();
 
   // Computing the minimum and maximum horizontal position of the center candidates
   // The miminum horizontal position of the center is at worst -maxRadius outside the image
@@ -585,8 +584,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int offsetY = minimumYposition;
   int accumulatorHeight = (maximumYposition - minimumYposition) + 1;
   if (accumulatorHeight <= 0) {
-    std::string errMsg("[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!");
-    throw(vpException(vpException::dimensionError, errMsg));
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
   }
 
   vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Votes for the center candidates.*/
@@ -643,8 +641,7 @@ vpCircleHoughTransform::computeCenterCandidates()
               rstop = std::min<float>(rmax, rstop);
             }
 
-            float deltar_x = 1.f / std::abs(sx);
-            float deltar_y = 1.f / std::abs(sy);
+            float deltar_x = 1.f / std::abs(sx), deltar_y = 1.f / std::abs(sy);
             float deltar = std::min<float>(deltar_x, deltar_y);
 
             float rad = rstart;
@@ -658,8 +655,7 @@ vpCircleHoughTransform::computeCenterCandidates()
                 continue; // It means that the center is outside the search region.
               }
 
-              int x_low, x_high;
-              int y_low, y_high;
+              int x_low, x_high, y_low, y_high;
 
               if (x1 > 0.) {
                 x_low = static_cast<int>(std::floor(x1));
@@ -693,15 +689,11 @@ vpCircleHoughTransform::computeCenterCandidates()
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
               auto updateAccumulator =
-                [](const float &x_orig, const float &y_orig,
-                   const int &x, const int &y,
-                   const int &offsetX, const int &offsetY,
-                   const int &nbCols, const int &nbRows,
+                [](const float &x_orig, const float &y_orig, const int &x, const int &y,
+                   const int &offsetX, const int &offsetY, const int &nbCols, const int &nbRows,
                    vpImage<float> &accum, bool &hasToStop) {
-                     if (((x - offsetX) < 0) ||
-                         ((x - offsetX) >= nbCols) ||
-                         ((y - offsetY) < 0) ||
-                         ((y - offsetY) >= nbRows)
+                     if (((x - offsetX) < 0) || ((x - offsetX) >= nbCols) ||
+                         ((y - offsetY) < 0) || ((y - offsetY) >= nbRows)
                          ) {
                        hasToStop = true;
                      }
@@ -746,7 +738,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int nbColsAccum = centersAccum.getCols();
   int nbRowsAccum = centersAccum.getRows();
   int nbVotes = -1;
-  std::vector<std::pair<std::pair<float, float>, float> > peak_positions_votes;
+  std::vector<vpCenterVotes> peak_positions_votes;
 
   for (int y = 0; y < nbRowsAccum; ++y) {
     int left = -1;
@@ -762,8 +754,7 @@ vpCircleHoughTransform::computeCenterCandidates()
       }
       else if (left >= 0) {
         int cx = static_cast<int>(((left + x) - 1) * 0.5f);
-        float sumVotes = 0.;
-        float x_avg = 0., y_avg = 0.;
+        float sumVotes = 0., x_avg = 0., y_avg = 0.;
         int averagingWindowHalfSize = m_algoParams.m_averagingWindowSize / 2;
         int startingRow = std::max<int>(0, y - averagingWindowHalfSize);
         int startingCol = std::max<int>(0, cx - averagingWindowHalfSize);
@@ -781,7 +772,9 @@ vpCircleHoughTransform::computeCenterCandidates()
           x_avg /= static_cast<float>(sumVotes);
           y_avg /= static_cast<float>(sumVotes);
           std::pair<float, float> position(y_avg + static_cast<float>(offsetY), x_avg + static_cast<float>(offsetX));
-          std::pair<std::pair<float, float>, float> position_vote(position, avgVotes);
+          vpCenterVotes position_vote;
+          position_vote.m_position = position;
+          position_vote.m_votes = avgVotes;
           peak_positions_votes.push_back(position_vote);
         }
         if (nbVotes < 0) {
@@ -794,14 +787,19 @@ vpCircleHoughTransform::computeCenterCandidates()
       }
     }
   }
+  filterCenterCandidates(peak_positions_votes);
+}
 
+void
+vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> &peak_positions_votes)
+{
   unsigned int nbPeaks = static_cast<unsigned int>(peak_positions_votes.size());
   if (nbPeaks > 0) {
     std::vector<bool> has_been_merged(nbPeaks, false);
-    std::vector<std::pair<std::pair<float, float>, float> > merged_peaks_position_votes;
+    std::vector<vpCenterVotes> merged_peaks_position_votes;
     float squared_distance_max = m_algoParams.m_centerMinDist * m_algoParams.m_centerMinDist;
     for (unsigned int idPeak = 0; idPeak < nbPeaks; ++idPeak) {
-      float votes = peak_positions_votes[idPeak].second;
+      float votes = peak_positions_votes[idPeak].m_votes;
       if (has_been_merged[idPeak]) {
         // Ignoring peak that has already been merged
         continue;
@@ -811,15 +809,15 @@ vpCircleHoughTransform::computeCenterCandidates()
         has_been_merged[idPeak] = true;
         continue;
       }
-      std::pair<float, float> position = peak_positions_votes[idPeak].first;
+      std::pair<float, float> position = peak_positions_votes[idPeak].m_position;
       std::pair<float, float> barycenter;
-      barycenter.first = position.first * peak_positions_votes[idPeak].second;
-      barycenter.second = position.second * peak_positions_votes[idPeak].second;
-      float total_votes = peak_positions_votes[idPeak].second;
+      barycenter.first = position.first * peak_positions_votes[idPeak].m_votes;
+      barycenter.second = position.second * peak_positions_votes[idPeak].m_votes;
+      float total_votes = peak_positions_votes[idPeak].m_votes;
       float nb_electors = 1.f;
       // Looking for potential similar peak in the following peaks
       for (unsigned int idCandidate = idPeak + 1; idCandidate < nbPeaks; ++idCandidate) {
-        float votes_candidate = peak_positions_votes[idCandidate].second;
+        float votes_candidate = peak_positions_votes[idCandidate].m_votes;
         if (has_been_merged[idCandidate]) {
           continue;
         }
@@ -829,7 +827,7 @@ vpCircleHoughTransform::computeCenterCandidates()
           continue;
         }
         // Computing the distance with the peak of insterest
-        std::pair<float, float> position_candidate = peak_positions_votes[idCandidate].first;
+        std::pair<float, float> position_candidate = peak_positions_votes[idCandidate].m_position;
         float squared_distance = ((position.first - position_candidate.first) * (position.first - position_candidate.first))
           + ((position.second - position_candidate.second) * (position.second - position_candidate.second));
 
@@ -848,15 +846,17 @@ vpCircleHoughTransform::computeCenterCandidates()
       if (avg_votes > m_algoParams.m_centerMinThresh) {
         barycenter.first /= total_votes;
         barycenter.second /= total_votes;
-        std::pair<std::pair<float, float>, float> barycenter_votes(barycenter, avg_votes);
+        vpCenterVotes barycenter_votes;
+        barycenter_votes.m_position = barycenter;
+        barycenter_votes.m_votes = avg_votes;
         merged_peaks_position_votes.push_back(barycenter_votes);
       }
     }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    auto sortingCenters = [](const std::pair<std::pair<float, float>, float> &position_vote_a,
-                             const std::pair<std::pair<float, float>, float> &position_vote_b) {
-                               return position_vote_a.second > position_vote_b.second;
+    auto sortingCenters = [](const vpCenterVotes &position_vote_a,
+                             const vpCenterVotes &position_vote_b) {
+                               return position_vote_a.m_votes > position_vote_b.m_votes;
       };
 #endif
 
@@ -866,8 +866,8 @@ vpCircleHoughTransform::computeCenterCandidates()
     int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : static_cast<int>(nbPeaks));
     nbPeaksToKeep = std::min<int>(nbPeaksToKeep, static_cast<int>(nbPeaks));
     for (int i = 0; i < nbPeaksToKeep; ++i) {
-      m_centerCandidatesList.push_back(merged_peaks_position_votes[i].first);
-      m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].second));
+      m_centerCandidatesList.push_back(merged_peaks_position_votes[i].m_position);
+      m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].m_votes));
     }
   }
 }

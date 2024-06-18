@@ -785,6 +785,8 @@ protected:
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo);
 
 private:
+  void callLagrangePose(vpHomogeneousMatrix &cMo);
+
   //! Define the maximum number of iteration in VVS
   int vvsIterMax;
   //! Variable used in the Dementhon approach
