@@ -1283,6 +1283,10 @@ if(VISP_DATASET_FOUND)
   set(VISP_HAVE_DATASET_VERSION "(${VISP_DATASET_VERSION_MAJOR}<<16 | ${VISP_DATASET_VERSION_MINOR}<<8 | ${VISP_DATASET_VERSION_PATCH})") # for vpConfig.h
 endif()
 
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/vision/include/visp3/vision/vpHomography.h")
+  set(VISP_HAVE_HOMOGRAPHY TRUE)
+endif()
+
 # libraries for Pioneer mobile robots
 if(USE_ARIA AND UNIX)
   if(ARIA_FOUND AND USE_THREADS AND RT_FOUND AND DL_FOUND)

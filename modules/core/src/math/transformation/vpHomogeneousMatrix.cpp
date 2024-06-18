@@ -229,11 +229,9 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
       const unsigned int index_0 = 0;
       const unsigned int index_1 = 1;
       const unsigned int index_2 = 2;
-      const unsigned int index_3 = 3;
       const unsigned int index_4 = 4;
       const unsigned int index_5 = 5;
       const unsigned int index_6 = 6;
-      const unsigned int index_7 = 7;
       const unsigned int index_8 = 8;
       const unsigned int index_9 = 9;
       const unsigned int index_10 = 10;

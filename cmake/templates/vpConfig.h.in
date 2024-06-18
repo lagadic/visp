@@ -600,6 +600,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if nullptr is available
 #cmakedefine VISP_HAVE_NULLPTR
 
+// Defined if vpHomography is available
+#cmakedefine VISP_HAVE_HOMOGRAPHY
+
 // Emulate nullptr when not available when cxx98 is enabled
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
 // and not __cplusplus == 199711L
