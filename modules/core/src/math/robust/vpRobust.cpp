@@ -45,7 +45,6 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRobust.h>
-#include <visp3/core/vpDebug.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -321,8 +320,6 @@ vpRobust::vpRobust(unsigned int n_data)
 #endif
   m_size(n_data), m_mad(0)
 {
-  vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
-
   m_normres.resize(n_data);
   m_sorted_normres.resize(n_data);
   m_sorted_residues.resize(n_data);
@@ -353,8 +350,6 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   switch (method) {
   case TUKEY: {
     psiTukey(m_mad, all_normres, weights);
-
-    vpCDEBUG(2) << "Tukey's function computed" << std::endl;
     break;
   }
   case CAUCHY: {
