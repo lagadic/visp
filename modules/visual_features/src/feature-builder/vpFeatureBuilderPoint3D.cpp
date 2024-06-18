@@ -38,6 +38,8 @@
   \brief  conversion between tracker
   and visual feature 3D Point
 */
+
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
@@ -72,8 +74,3 @@ void vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t)
   }
 }
 END_VISP_NAMESPACE
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

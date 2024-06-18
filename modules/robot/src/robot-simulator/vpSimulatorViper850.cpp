@@ -40,6 +40,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <string>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>

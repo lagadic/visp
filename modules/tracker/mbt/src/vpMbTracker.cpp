@@ -49,6 +49,7 @@
 #endif
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>

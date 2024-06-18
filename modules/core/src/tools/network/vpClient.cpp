@@ -40,6 +40,9 @@
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
+
+#include <visp3/core/vpDebug.h>
+
 BEGIN_VISP_NAMESPACE
 vpClient::vpClient() : vpNetwork(), m_numberOfAttempts(0) { }
 

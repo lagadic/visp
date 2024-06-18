@@ -42,6 +42,7 @@
 // This error is due to cmath header included from vpMath.h that makes
 // isfinite() ambiguous between ::isfinite() and std::isfinite()
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_PIONEER
 
@@ -49,7 +50,7 @@ BEGIN_VISP_NAMESPACE
 /*!
   Default constructor that initializes Aria.
   */
-vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
+  vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
 {
   isInitialized = false;
 

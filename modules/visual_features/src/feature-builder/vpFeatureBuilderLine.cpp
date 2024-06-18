@@ -39,6 +39,7 @@
   and visual feature Line
 */
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
