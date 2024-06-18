@@ -838,7 +838,7 @@ VP_CHECK_PACKAGE(Log1p)
 # We use CDash set through CTestConfig.cmake file
 # Dashboards are sent to https://cdash-ci.inria.fr/index.php?project=ViSP
 #----------------------------------------------------------------------
-if(BUILD_TESTS)
+if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_DEMOS)
   enable_testing()
   mark_as_advanced(DART_ROOT)
   mark_as_advanced(BUILD_TESTING)
