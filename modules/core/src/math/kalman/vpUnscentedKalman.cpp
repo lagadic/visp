@@ -58,8 +58,16 @@ vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, std::
 
 void vpUnscentedKalman::init(const vpColVector &mu0, const vpMatrix &P0)
 {
+  if ((mu0.getRows() != P0.getCols()) || (mu0.getRows() != P0.getRows())) {
+    throw(vpException(vpException::dimensionError, "Initial state X0 and process covariance matrix P0 sizes mismatch"));
+  }
+  if ((m_Q.getCols() != P0.getCols()) || (m_Q.getRows() != P0.getRows())) {
+    throw(vpException(vpException::dimensionError, "Initial process covariance matrix P0 and Q matrix sizes mismatch"));
+  }
   m_Xest = mu0;
   m_Pest = P0;
+  m_mu = mu0;
+  m_Ppred = P0;
 }
 
 void vpUnscentedKalman::filter(const vpColVector &z, const double &dt, const vpColVector &u)
