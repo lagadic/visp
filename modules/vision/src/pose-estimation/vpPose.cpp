@@ -44,7 +44,7 @@
 #include <visp3/core/vpUniRand.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
-#ifdef VISP_POSE_USES_HOMOGRAPHY
+#ifdef VISP_HAVE_HOMOGRAPHY
 #include <visp3/vision/vpHomography.h>
 #endif
 
