@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +39,6 @@
 
 #include <visp3/core/vpLine.h>
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 
 #include <visp3/core/vpFeatureDisplay.h>
@@ -54,9 +52,11 @@ BEGIN_VISP_NAMESPACE
 */
 void vpLine::init()
 {
-  oP.resize(8);
-  cP.resize(8);
-  p.resize(2);
+  const unsigned int val_2 = 2;
+  const unsigned int val_8 = 8;
+  oP.resize(val_8);
+  cP.resize(val_8);
+  p.resize(val_2);
 }
 
 /*!
@@ -83,15 +83,23 @@ vpLine::vpLine() { init(); }
 void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const double &oC1, const double &oD1,
                                  const double &oA2, const double &oB2, const double &oC2, const double &oD2)
 {
-  oP[0] = oA1;
-  oP[1] = oB1;
-  oP[2] = oC1;
-  oP[3] = oD1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
+  oP[index_0] = oA1;
+  oP[index_1] = oB1;
+  oP[index_2] = oC1;
+  oP[index_3] = oD1;
 
-  oP[4] = oA2;
-  oP[5] = oB2;
-  oP[6] = oC2;
-  oP[7] = oD2;
+  oP[index_4] = oA2;
+  oP[index_5] = oB2;
+  oP[index_6] = oC2;
+  oP[index_7] = oD2;
 }
 
 /*!
@@ -149,7 +157,8 @@ void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
   if (oP2.getRows() != 4) {
     throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
   }
-  for (unsigned int i = 0; i < 4; ++i) {
+  const unsigned int val_4 = 4;
+  for (unsigned int i = 0; i < val_4; ++i) {
     oP[i] = oP1[i];
     oP[i + 4] = oP2[i];
   }
@@ -217,16 +226,24 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
     throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
   }
   double A1, A2, B1, B2, C1, C2, D1, D2;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
 
-  A1 = cP_[0];
-  B1 = cP_[1];
-  C1 = cP_[2];
-  D1 = cP_[3];
+  A1 = cP_[index_0];
+  B1 = cP_[index_1];
+  C1 = cP_[index_2];
+  D1 = cP_[index_3];
 
-  A2 = cP_[4];
-  B2 = cP_[5];
-  C2 = cP_[6];
-  D2 = cP_[7];
+  A2 = cP_[index_4];
+  B2 = cP_[index_5];
+  C2 = cP_[index_6];
+  D2 = cP_[index_7];
 
   double a, b, c, s;
   a = (A2 * D1) - (A1 * D2);
@@ -331,29 +348,37 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
   double A1, A2, B1, B2, C1, C2, D1, D2;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
 
   // in case of verification
   // double x,y,z,ap1,ap2,bp1,bp2,cp1,cp2,dp1,dp2;
 
-  a1 = oP[0];
-  b1 = oP[1];
-  c1 = oP[2];
-  d1 = oP[3];
+  a1 = oP[index_0];
+  b1 = oP[index_1];
+  c1 = oP[index_2];
+  d1 = oP[index_3];
 
-  a2 = oP[4];
-  b2 = oP[5];
-  c2 = oP[6];
-  d2 = oP[7];
+  a2 = oP[index_4];
+  b2 = oP[index_5];
+  c2 = oP[index_6];
+  d2 = oP[index_7];
 
-  A1 = (cMo[0][0] * a1) + (cMo[0][1] * b1) + (cMo[0][2] * c1);
-  B1 = (cMo[1][0] * a1) + (cMo[1][1] * b1) + (cMo[1][2] * c1);
-  C1 = (cMo[2][0] * a1) + (cMo[2][1] * b1) + (cMo[2][2] * c1);
-  D1 = d1 - ((cMo[0][3] * A1) + (cMo[1][3] * B1) + (cMo[2][3] * C1));
+  A1 = (cMo[index_0][0] * a1) + (cMo[index_0][1] * b1) + (cMo[index_0][index_2] * c1);
+  B1 = (cMo[index_1][0] * a1) + (cMo[index_1][1] * b1) + (cMo[index_1][index_2] * c1);
+  C1 = (cMo[index_2][0] * a1) + (cMo[index_2][1] * b1) + (cMo[index_2][index_2] * c1);
+  D1 = d1 - ((cMo[index_0][index_3] * A1) + (cMo[index_1][index_3] * B1) + (cMo[index_2][index_3] * C1));
 
-  A2 = (cMo[0][0] * a2) + (cMo[0][1] * b2) + (cMo[0][2] * c2);
-  B2 = (cMo[1][0] * a2) + (cMo[1][1] * b2) + (cMo[1][2] * c2);
-  C2 = (cMo[2][0] * a2) + (cMo[2][1] * b2) + (cMo[2][2] * c2);
-  D2 = d2 - ((cMo[0][3] * A2) + (cMo[1][3] * B2) + (cMo[2][3] * C2));
+  A2 = (cMo[index_0][0] * a2) + (cMo[index_0][1] * b2) + (cMo[index_0][index_2] * c2);
+  B2 = (cMo[index_1][0] * a2) + (cMo[index_1][1] * b2) + (cMo[index_1][index_2] * c2);
+  C2 = (cMo[index_2][0] * a2) + (cMo[index_2][1] * b2) + (cMo[index_2][index_2] * c2);
+  D2 = d2 - ((cMo[index_0][index_3] * A2) + (cMo[index_1][index_3] * B2) + (cMo[index_2][index_3] * C2));
 
   // Adding constraints on the straight line to have a unique representation
 
@@ -380,11 +405,11 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   A1 = a1 * d1;
   B1 = b1 * d1;
   C1 = c1 * d1;
-  cP_[0] = A1;
-  cP_[1] = B1;
-  cP_[2] = C1;
+  cP_[index_0] = A1;
+  cP_[index_1] = B1;
+  cP_[index_2] = C1;
 
-  cP_[3] = 0;
+  cP_[index_3] = 0;
 
   // Constraint A1 A2 + B1 B2 + C1 C2 = 0 (P2 orthogonal to P1)
   // N2_new = (N1 x N2) x N1_new
@@ -411,8 +436,6 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
     C2 = -C2;
     D2 = -D2;
   }
-  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
   cP_[4] = A2;
   cP_[5] = B2;

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Exponential map.
- *
- * Authors:
- * Francois Chaumette
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpExponentialMap.h>
 
@@ -78,7 +73,15 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v) { return vpEx
 */
 vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
 {
-  if (v.size() != 6) {
+  const unsigned int v_size = 6;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+
+  if (v.size() != v_size) {
     throw(vpException(vpException::dimensionError,
                       "Cannot compute direct exponential map from a %d-dim velocity vector. Should be 6-dim.",
                       v.size()));
@@ -90,102 +93,33 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v, const double 
 
   vpColVector v_dt = v * delta_t;
 
-  u[0] = v_dt[3];
-  u[1] = v_dt[4];
-  u[2] = v_dt[5];
+  u[index_0] = v_dt[index_3];
+  u[index_1] = v_dt[index_4];
+  u[index_2] = v_dt[index_5];
   rd.build(u);
 
-  theta = sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2]));
+  theta = sqrt((u[index_0] * u[index_0]) + (u[index_1] * u[index_1]) + (u[index_2] * u[index_2]));
   si = sin(theta);
   co = cos(theta);
   sinc = vpMath::sinc(si, theta);
   mcosc = vpMath::mcosc(co, theta);
   msinc = vpMath::msinc(si, theta);
 
-  dt[0] = ((v_dt[0] * (sinc + (u[0] * u[0] * msinc))) +
-          (v_dt[1] * ((u[0] * u[1] * msinc) - (u[2] * mcosc)))) +
-    (v_dt[2] * ((u[0] * u[2] * msinc) + (u[1] * mcosc)));
+  dt[index_0] = ((v_dt[index_0] * (sinc + (u[index_0] * u[index_0] * msinc))) +
+          (v_dt[index_1] * ((u[index_0] * u[index_1] * msinc) - (u[index_2] * mcosc)))) +
+    (v_dt[index_2] * ((u[index_0] * u[index_2] * msinc) + (u[index_1] * mcosc)));
 
-  dt[1] = ((v_dt[0] * ((u[0] * u[1] * msinc) + (u[2] * mcosc))) +
-          (v_dt[1] * (sinc + (u[1] * u[1] * msinc)))) +
-    (v_dt[2] * ((u[1] * u[2] * msinc) - (u[0] * mcosc)));
+  dt[index_1] = ((v_dt[index_0] * ((u[index_0] * u[index_1] * msinc) + (u[index_2] * mcosc))) +
+          (v_dt[index_1] * (sinc + (u[index_1] * u[index_1] * msinc)))) +
+    (v_dt[index_2] * ((u[index_1] * u[index_2] * msinc) - (u[index_0] * mcosc)));
 
-  dt[2] = ((v_dt[0] * ((u[0] * u[2] * msinc) - (u[1] * mcosc))) +
-          (v_dt[1] * ((u[1] * u[2] * msinc) + (u[0] * mcosc)))) +
-    (v_dt[2] * (sinc + (u[2] * u[2] * msinc)));
+  dt[index_2] = ((v_dt[index_0] * ((u[index_0] * u[index_2] * msinc) - (u[index_1] * mcosc))) +
+          (v_dt[index_1] * ((u[index_1] * u[index_2] * msinc) + (u[index_0] * mcosc)))) +
+    (v_dt[index_2] * (sinc + (u[index_2] * u[index_2] * msinc)));
 
   vpHomogeneousMatrix Delta;
   Delta.insert(rd);
   Delta.insert(dt);
-
-  if (0) // test new version wrt old version
-  {
-    // old version
-    unsigned int i, j;
-
-    double s;
-
-    s = sqrt((v_dt[3] * v_dt[3]) + (v_dt[4] * v_dt[4]) + (v_dt[5] * v_dt[5]));
-    if (s > 1.e-15) {
-      for (i = 0; i < 3; ++i) {
-        u[i] = v_dt[3 + i] / s;
-      }
-      double sinu = sin(s);
-      double cosi = cos(s);
-      double mcosi = 1 - cosi;
-      rd[0][0] = cosi + (mcosi * u[0] * u[0]);
-      rd[0][1] = (-sinu * u[2]) + (mcosi * u[0] * u[1]);
-      rd[0][2] = (sinu * u[1]) + (mcosi * u[0] * u[2]);
-      rd[1][0] = (sinu * u[2]) + (mcosi * u[1] * u[0]);
-      rd[1][1] = cosi + (mcosi * u[1] * u[1]);
-      rd[1][2] = (-sinu * u[0]) + (mcosi * u[1] * u[2]);
-      rd[2][0] = (-sinu * u[1]) + (mcosi * u[2] * u[0]);
-      rd[2][1] = (sinu * u[0]) + (mcosi * u[2] * u[1]);
-      rd[2][2] = cosi + (mcosi * u[2] * u[2]);
-
-      dt[0] = (v_dt[0] * ((sinu / s) + (u[0] * u[0] * (1 - (sinu / s))))) +
-        (v_dt[1] * ((u[0] * u[1] * (1 - (sinu / s))) - ((u[2] * mcosi) / s))) +
-        (v_dt[2] * ((u[0] * u[2] * (1 - (sinu / s))) + ((u[1] * mcosi) / s)));
-
-      dt[1] = (v_dt[0] * ((u[0] * u[1] * (1 - (sinu / s))) + ((u[2] * mcosi) / s))) +
-        (v_dt[1] * ((sinu / s) + (u[1] * u[1] * (1 - (sinu / s))))) +
-        (v_dt[2] * ((u[1] * u[2] * (1 - (sinu / s))) - ((u[0] * mcosi) / s)));
-
-      dt[2] = (v_dt[0] * ((u[0] * u[2] * (1 - (sinu / s))) - ((u[1] * mcosi) / s))) +
-        (v_dt[1] * ((u[1] * u[2] * (1 - (sinu / s))) + ((u[0] * mcosi) / s))) +
-        (v_dt[2] * ((sinu / s) + (u[2] * u[2] * (1 - (sinu / s)))));
-    }
-    else {
-      for (i = 0; i < 3; ++i) {
-        for (j = 0; j < 3; ++j) {
-          rd[i][j] = 0.0;
-        }
-        rd[i][i] = 1.0;
-        dt[i] = v_dt[i];
-      }
-    }
-    // end old version
-
-    // Test of the new version
-    vpHomogeneousMatrix Delta_old;
-    Delta_old.insert(rd);
-    Delta_old.insert(dt);
-
-    int pb = 0;
-    for (i = 0; i < 4; ++i) {
-      for (j = 0; j < 4; ++j) {
-        if (fabs(Delta[i][j] - Delta_old[i][j]) > 1.e-5) {
-          pb = 1;
-        }
-      }
-    }
-    if (pb == 1) {
-      printf("pb vpHomogeneousMatrix::expMap\n");
-      std::cout << " Delta : " << std::endl << Delta << std::endl;
-      std::cout << " Delta_old : " << std::endl << Delta_old << std::endl;
-    }
-    // end of the test
-  }
 
   return Delta;
 }
@@ -231,6 +165,10 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
   vpThetaUVector u;
   vpRotationMatrix Rd, a;
   vpTranslationVector dt;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
   M.extract(Rd);
   u.build(Rd);
@@ -238,7 +176,7 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
     v[3 + i] = u[i];
   }
 
-  theta = sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2]));
+  theta = sqrt((u[index_0] * u[index_0]) + (u[index_1] * u[index_1]) + (u[index_2] * u[index_2]));
   si = sin(theta);
   co = cos(theta);
   sinc = vpMath::sinc(si, theta);
@@ -249,36 +187,36 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
   // the Rodrigues formula : sinc I + (1-sinc)/t^2 VV^T + (1-cos)/t^2 [V]_X
   // with V = t.U
 
-  a[0][0] = sinc + (u[0] * u[0] * msinc);
-  a[0][1] = (u[0] * u[1] * msinc) - (u[2] * mcosc);
-  a[0][2] = (u[0] * u[2] * msinc) + (u[1] * mcosc);
+  a[index_0][index_0] = sinc + (u[index_0] * u[index_0] * msinc);
+  a[index_0][index_1] = (u[index_0] * u[index_1] * msinc) - (u[index_2] * mcosc);
+  a[index_0][index_2] = (u[index_0] * u[index_2] * msinc) + (u[index_1] * mcosc);
 
-  a[1][0] = (u[0] * u[1] * msinc) + (u[2] * mcosc);
-  a[1][1] = sinc + (u[1] * u[1] * msinc);
-  a[1][2] = (u[1] * u[2] * msinc) - (u[0] * mcosc);
+  a[index_1][index_0] = (u[index_0] * u[index_1] * msinc) + (u[index_2] * mcosc);
+  a[index_1][index_1] = sinc + (u[index_1] * u[index_1] * msinc);
+  a[index_1][index_2] = (u[index_1] * u[index_2] * msinc) - (u[index_0] * mcosc);
 
-  a[2][0] = (u[0] * u[2] * msinc) - (u[1] * mcosc);
-  a[2][1] = (u[1] * u[2] * msinc) + (u[0] * mcosc);
-  a[2][2] = sinc + (u[2] * u[2] * msinc);
+  a[index_2][index_0] = (u[index_0] * u[index_2] * msinc) - (u[index_1] * mcosc);
+  a[index_2][index_1] = (u[index_1] * u[index_2] * msinc) + (u[index_0] * mcosc);
+  a[index_2][index_2] = sinc + (u[index_2] * u[index_2] * msinc);
 
-  det = (((((a[0][0] * a[1][1] * a[2][2]) + (a[1][0] * a[2][1] * a[0][2])) + (a[0][1] * a[1][2] * a[2][0])) -
-          (a[2][0] * a[1][1] * a[0][2])) - (a[1][0] * a[0][1] * a[2][2])) - (a[0][0] * a[2][1] * a[1][2]);
+  det = (((((a[index_0][index_0] * a[index_1][index_1] * a[index_2][index_2]) + (a[index_1][index_0] * a[index_2][index_1] * a[index_0][index_2])) + (a[index_0][index_1] * a[index_1][index_2] * a[index_2][index_0])) -
+          (a[index_2][index_0] * a[index_1][index_1] * a[index_0][index_2])) - (a[index_1][index_0] * a[index_0][index_1] * a[index_2][index_2])) - (a[index_0][index_0] * a[index_2][index_1] * a[index_1][index_2]);
 
   if (fabs(det) > 1.e-5) {
-    v[0] = ((((((M[0][3] * a[1][1] * a[2][2]) + (M[1][3] * a[2][1] * a[0][2])) + (M[2][3] * a[0][1] * a[1][2])) -
-              (M[2][3] * a[1][1] * a[0][2])) - (M[1][3] * a[0][1] * a[2][2])) - (M[0][3] * a[2][1] * a[1][2])) /
+    v[index_0] = ((((((M[index_0][index_3] * a[index_1][index_1] * a[index_2][index_2]) + (M[index_1][index_3] * a[index_2][index_1] * a[index_0][index_2])) + (M[index_2][index_3] * a[index_0][index_1] * a[index_1][index_2])) -
+                    (M[index_2][index_3] * a[index_1][index_1] * a[index_0][index_2])) - (M[index_1][index_3] * a[index_0][index_1] * a[index_2][index_2])) - (M[index_0][index_3] * a[index_2][index_1] * a[index_1][index_2])) /
       det;
-    v[1] = ((((((a[0][0] * M[1][3] * a[2][2]) + (a[1][0] * M[2][3] * a[0][2])) + (M[0][3] * a[1][2] * a[2][0])) -
-              (a[2][0] * M[1][3] * a[0][2])) - (a[1][0] * M[0][3] * a[2][2])) - (a[0][0] * M[2][3] * a[1][2])) /
+    v[index_1] = ((((((a[index_0][index_0] * M[index_1][index_3] * a[index_2][index_2]) + (a[index_1][index_0] * M[index_2][index_3] * a[index_0][index_2])) + (M[index_0][index_3] * a[index_1][index_2] * a[index_2][index_0])) -
+                    (a[index_2][index_0] * M[index_1][index_3] * a[index_0][index_2])) - (a[index_1][index_0] * M[index_0][index_3] * a[index_2][index_2])) - (a[index_0][index_0] * M[index_2][index_3] * a[index_1][index_2])) /
       det;
-    v[2] = ((((((a[0][0] * a[1][1] * M[2][3]) + (a[1][0] * a[2][1] * M[0][3])) + (a[0][1] * M[1][3] * a[2][0])) -
-              (a[2][0] * a[1][1] * M[0][3])) - (a[1][0] * a[0][1] * M[2][3])) - (a[0][0] * a[2][1] * M[1][3])) /
+    v[index_2] = ((((((a[index_0][index_0] * a[index_1][index_1] * M[index_2][index_3]) + (a[index_1][index_0] * a[index_2][index_1] * M[index_0][index_3])) + (a[index_0][index_1] * M[index_1][index_3] * a[index_2][index_0])) -
+                    (a[index_2][index_0] * a[index_1][index_1] * M[index_0][index_3])) - (a[index_1][index_0] * a[index_0][index_1] * M[index_2][index_3])) - (a[index_0][index_0] * a[index_2][index_1] * M[index_1][index_3])) /
       det;
   }
   else {
-    v[0] = M[0][3];
-    v[1] = M[1][3];
-    v[2] = M[2][3];
+    v[index_0] = M[index_0][index_3];
+    v[index_1] = M[index_1][index_3];
+    v[index_2] = M[index_2][index_3];
   }
 
   // Apply the sampling time to the computed velocity

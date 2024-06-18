@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +30,7 @@
  * Description:
  * Conversion between tracker and visual feature point with
  * polar coordinates.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderPointPolar.cpp
@@ -40,6 +38,7 @@
   \brief Conversion between tracker and visual feature point with
   polar coordinates.
 */
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>

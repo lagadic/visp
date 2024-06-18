@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,12 @@
   \file vpRansac.h
 */
 
-#ifndef _vpRANSAC_H_
-#define _vpRANSAC_H_
+#ifndef VP_RANSAC_H
+#define VP_RANSAC_H
 
 #include <ctime>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h> // debug and trace
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h> // random number generation
 
@@ -163,11 +162,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
       if (count > maxDataTrials) {
         delete[] ind;
-        vpERROR_TRACE("Unable to select a nondegenerate data set");
         throw(vpException(vpException::fatalError, "Unable to select a non degenerate data set"));
-        /*
-        // return false; //Useless after a throw() function
-        */
       }
     }
     // Fit model to this random selection of data points.
@@ -218,7 +213,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
     trialcount = trialcount + 1;
     // Safeguard against being stuck in this loop forever
     if (trialcount > maxTrials) {
-      vpTRACE("ransac reached the maximum number of %d trials", maxTrials);
+      std::cout << "Warning: ransac reached the maximum number of " << maxTrials << " trials" << std::endl;
       break;
     }
   }
@@ -229,7 +224,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
     inliers = bestinliers;
   }
   else {
-    vpTRACE("ransac was unable to find a useful solution");
+    std::cout << "Warning: ransac was unable to find a useful solution" << std::endl;
     M = 0;
   }
 

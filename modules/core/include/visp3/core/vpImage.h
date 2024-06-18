@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,10 @@
  * \brief Image handling.
  */
 
-#ifndef vpImage_H
-#define vpImage_H
+#ifndef VP_IMAGE_H
+#define VP_IMAGE_H
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpEndian.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
@@ -78,11 +77,7 @@ std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
 std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
 std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
 std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
-END_VISP_NAMESPACE
 
-template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second);
-
-BEGIN_VISP_NAMESPACE
 /*!
   \class vpImage
 
@@ -120,16 +115,16 @@ BEGIN_VISP_NAMESPACE
   remark, we provide hereafter an example where the considered pixel
   is outside the image:
 
-\code
-unsigned int width = 320;
-unsigned int height = 240;
-vpImage<unsigned char> I(height, width); // Create an 320x240 image
-// Set pixel coordinates that is outside the image
-unsigned int i = 100;
-unsigned int j = 400;
-unsigned char value;
-value = I[i][j]; // Here we will get the pixel value at position (101, 80)
-\endcode
+  \code
+  unsigned int width = 320;
+  unsigned int height = 240;
+  vpImage<unsigned char> I(height, width); // Create an 320x240 image
+  // Set pixel coordinates that is outside the image
+  unsigned int i = 100;
+  unsigned int j = 400;
+  unsigned char value;
+  value = I[i][j]; // Here we will get the pixel value at position (101, 80)
+  \endcode
 
 */
 template <class Type> class vpImage
@@ -329,7 +324,7 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
-    // Perform a look-up table transformation
+  // Perform a look-up table transformation
   void performLut(const Type(&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
@@ -344,7 +339,17 @@ public:
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C) const;
   void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
 
-  friend void ::swap<>(vpImage<Type> &first, vpImage<Type> &second);
+  // See https://stackoverflow.com/questions/11562/how-to-overload-stdswap to understand why swap is in visp namespace
+  friend void swap(vpImage<Type> &first, vpImage<Type> &second)
+  {
+    using std::swap;
+    swap(first.bitmap, second.bitmap);
+    swap(first.display, second.display);
+    swap(first.npixels, second.npixels);
+    swap(first.width, second.width);
+    swap(first.height, second.height);
+    swap(first.row, second.row);
+  }
 
   //@}
 
@@ -1505,7 +1510,7 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
-  ::swap(*this, other);
+  swap(*this, other);
   if (other.display != nullptr) {
     display = other.display;
   }
@@ -1997,7 +2002,6 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   unsigned int jround = static_cast<unsigned int>(floor(j));
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image");
     throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
   }
 
@@ -2551,14 +2555,4 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
   }
 }
 END_VISP_NAMESPACE
-template <class Type> void swap(VISP_NAMESPACE_ADDRESSING vpImage<Type> &first, VISP_NAMESPACE_ADDRESSING vpImage<Type> &second)
-{
-  using std::swap;
-  swap(first.bitmap, second.bitmap);
-  swap(first.display, second.display);
-  swap(first.npixels, second.npixels);
-  swap(first.width, second.width);
-  swap(first.height, second.height);
-  swap(first.row, second.row);
-}
 #endif

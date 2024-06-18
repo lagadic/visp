@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Windows 32 display base class
- *
- * Authors:
- * Bruno Renier
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
@@ -95,7 +90,6 @@ vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
 void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    vpERROR_TRACE("Image not initialized ");
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
@@ -119,7 +113,6 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::st
 void vpDisplayWin32::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    vpERROR_TRACE("Image not initialized ");
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
@@ -631,7 +624,10 @@ void vpDisplayWin32::setTitle(const std::string &windowtitle)
   \param fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const std::string & /* fontname */) { vpERROR_TRACE("Not yet implemented"); }
+void vpDisplayWin32::setFont(const std::string & /* fontname */)
+{
+  // Not yet implemented
+}
 
 /*!
   \brief flush the Win32 buffer

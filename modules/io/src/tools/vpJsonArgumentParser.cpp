@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,27 +121,30 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   // Parse command line arguments
   for (int i = 1; i < argc; ++i) {
     const std::string arg = argv[i];
+    bool stop_for_loop = false;
     if (std::find(ignoredArguments.begin(), ignoredArguments.end(), i) != ignoredArguments.end()) {
-      continue;
+      stop_for_loop = true;
     }
-    if (arg == "-h" || arg == "--help") {
-      std::cout << help() << std::endl;
-      exit(1);
-    }
+    if (!stop_for_loop) {
+      if (arg == "-h" || arg == "--help") {
+        std::cout << help() << std::endl;
+        exit(1);
+      }
 
-    if (parsers.find(arg) != parsers.end()) {
-      if (i < argc - 1) {
-        updaters[arg](j, std::string(argv[i + 1]));
-        ++i;
+      if (parsers.find(arg) != parsers.end()) {
+        if (i < argc - 1) {
+          updaters[arg](j, std::string(argv[i + 1]));
+          ++i;
+        }
+        else {
+          std::stringstream ss;
+          ss << "Argument " << arg << " was passed but no value was provided" << std::endl;
+          throw vpException(vpException::ioError, ss.str());
+        }
       }
       else {
-        std::stringstream ss;
-        ss << "Argument " << arg << " was passed but no value was provided" << std::endl;
-        throw vpException(vpException::ioError, ss.str());
+        std::cerr << "Unknown parameter when parsing: " << arg << std::endl;
       }
-    }
-    else {
-      std::cerr << "Unknown parameter when parsing: " << arg << std::endl;
     }
   }
 

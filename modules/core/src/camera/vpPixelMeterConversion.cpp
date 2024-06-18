@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +37,6 @@
   \brief Pixel to meter conversion.
 */
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPixelMeterConversion.h>
@@ -54,9 +52,9 @@ BEGIN_VISP_NAMESPACE
  * \param[out] xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane.
  * \param[out] n20_m, n11_m, n02_m : Normalized second order moments of the ellipse in meters in the image plane.
  */
-void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam, const vpImagePoint &center_p, double n20_p,
-                                            double n11_p, double n02_p, double &xc_m, double &yc_m, double &n20_m,
-                                            double &n11_m, double &n02_m)
+  void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam, const vpImagePoint &center_p, double n20_p,
+                                              double n11_p, double n02_p, double &xc_m, double &yc_m, double &n20_m,
+                                              double &n11_m, double &n02_m)
 {
   vpPixelMeterConversion::convertPoint(cam, center_p, xc_m, yc_m);
   double px = cam.get_px();
@@ -84,7 +82,6 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const do
   double d = vpMath::sqr(cam.m_px * co) + vpMath::sqr(cam.m_py * si);
 
   if (fabs(d) < 1e-6) {
-    vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
   theta_m = atan2(si * cam.m_py, co * cam.m_px);
@@ -221,7 +218,6 @@ void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix, const doub
   double d = vpMath::sqr(px * co) + vpMath::sqr(py * si);
 
   if (fabs(d) < 1e-6) {
-    vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
   theta_m = atan2(si * py, co * px);

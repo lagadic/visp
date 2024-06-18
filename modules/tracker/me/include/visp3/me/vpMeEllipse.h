@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  * \brief Moving edges on an ellipse
  */
 
-#ifndef _vpMeEllipse_h_
-#define _vpMeEllipse_h_
+#ifndef VP_ME_ELLIPSE_H
+#define VP_ME_ELLIPSE_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -134,9 +134,12 @@ public:
   inline vpColVector get_nij() const
   {
     vpColVector nij(3);
-    nij[0] = m_n20;
-    nij[1] = m_n11;
-    nij[2] = m_n02;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    nij[index_0] = m_n20;
+    nij[index_1] = m_n11;
+    nij[index_2] = m_n02;
 
     return nij;
   }
@@ -153,9 +156,12 @@ public:
   inline vpColVector get_ABE() const
   {
     vpColVector ABE(3);
-    ABE[0] = m_a;
-    ABE[1] = m_b;
-    ABE[2] = m_e;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    ABE[index_0] = m_a;
+    ABE[index_1] = m_b;
+    ABE[index_2] = m_e;
 
     return ABE;
   }

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Matrix QR decomposition.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <algorithm> // for (std::min) and (std::max)
 #include <cmath>     // For std::abs() on iOS
@@ -48,9 +43,6 @@
 // Exception
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
 
 BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
@@ -128,23 +120,23 @@ void display_gsl(gsl_matrix *M)
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByQRLapack();
-  std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByQRLapack();
+    std::cout << "Inverse by QR: \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByQR()
@@ -358,23 +350,23 @@ vpMatrix vpMatrix::inverseByQRLapack() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByQR();
-  std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByQR();
+    std::cout << "Inverse by QR: \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLU(), inverseByCholesky()
@@ -411,33 +403,33 @@ vpMatrix vpMatrix::inverseByQR() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-double residual(vpMatrix M1, vpMatrix M2)
-{
-    return (M1 - M2).frobeniusNorm();
-}
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+      return (M1 - M2).frobeniusNorm();
+  }
 
-int main()
-{
-  vpMatrix A(4,3);
+  int main()
+  {
+    vpMatrix A(4,3);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.;
 
-  // Economic QR (Q 4x3, R 3x3)
-  vpMatrix Q, R;
-  int r = A.qr(A, R);
-  std::cout << "QR Residual: "
-            << residual(A, Q*R) << std::endl;
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R;
+    int r = A.qr(A, R);
+    std::cout << "QR Residual: "
+              << residual(A, Q*R) << std::endl;
 
-  // Full QR (Q 4x4, R 3x3)
-  r = A.qr(Q, R, true);
-  std::cout << "Full QR Residual: "
-            << residual(A, Q.extract(0, 0, 4, 3)*R) << std::endl;
-}
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qr(Q, R, true);
+    std::cout << "Full QR Residual: "
+              << residual(A, Q.extract(0, 0, 4, 3)*R) << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -686,40 +678,40 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-double residual(vpMatrix M1, vpMatrix M2)
-{
-    return (M1 - M2).frobeniusNorm();
-}
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+      return (M1 - M2).frobeniusNorm();
+  }
 
-int main()
-{
-  vpMatrix A(4,3);
+  int main()
+  {
+    vpMatrix A(4,3);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
-  // A is (4x3) but rank 2
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
+    // A is (4x3) but rank 2
 
-  // Economic QR (Q 4x3, R 3x3)
-  vpMatrix Q, R, P;
-  int r = A.qrPivot(Q, R, P);
-  std::cout << "A rank: " << r << std::endl;
-  std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R, P;
+    int r = A.qrPivot(Q, R, P);
+    std::cout << "A rank: " << r << std::endl;
+    std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
 
-  // Full QR (Q 4x4, R 3x3)
-  r = A.qrPivot(Q, R, P, true);
-  std::cout << "QRPivot Residual: " <<
-  residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qrPivot(Q, R, P, true);
+    std::cout << "QRPivot Residual: " <<
+    residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
 
-  // Using permutation matrix: keep only non-null part of R
-  Q.resize(4, r, false);            // Q is 4 x 2
-  R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
-  std::cout << "Full QRPivot Residual: " <<
-  residual(A, Q*R) << std::endl;
-}
+    // Using permutation matrix: keep only non-null part of R
+    Q.resize(4, r, false);            // Q is 4 x 2
+    R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
+    std::cout << "Full QRPivot Residual: " <<
+    residual(A, Q*R) << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -1124,31 +1116,31 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   Here an example:
   \code
-    #include <visp3/core/vpColVector.h>
-    #include <visp3/core/vpMatrix.h>
-    int main()
-    {
-      vpMatrix A(3,3);
-      A[0][0] = 4.64;
-      A[0][1] = 0.288;
-      A[0][2] = -0.384;
-      A[1][0] = 0.288;
-      A[1][1] = 7.3296;
-      A[1][2] = 2.2272;
-      A[2][0] = -0.384;
-      A[2][1] = 2.2272;
-      A[2][2] = 6.0304;
-      vpColVector X(3), B(3);
-      B[0] = 1;
-      B[1] = 2;
-      B[2] = 3;
-      A.solveByQR(B, X);
-      // Obtained values of X
-      // X[0] = 0.2468;
-      // X[1] = 0.120782;
-      // X[2] = 0.468587;
-      std::cout << "X:\n" << X << std::endl;
-    }
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    A.solveByQR(B, X);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -1174,31 +1166,31 @@ void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
 
   Here an example:
   \code
-    #include <visp3/core/vpColVector.h>
-    #include <visp3/core/vpMatrix.h>
-    int main()
-    {
-      vpMatrix A(3,3);
-      A[0][0] = 4.64;
-      A[0][1] = 0.288;
-      A[0][2] = -0.384;
-      A[1][0] = 0.288;
-      A[1][1] = 7.3296;
-      A[1][2] = 2.2272;
-      A[2][0] = -0.384;
-      A[2][1] = 2.2272;
-      A[2][2] = 6.0304;
-      vpColVector X(3), B(3);
-      B[0] = 1;
-      B[1] = 2;
-      B[2] = 3;
-      X = A.solveByQR(B);
-      // Obtained values of X
-      // X[0] = 0.2468;
-      // X[1] = 0.120782;
-      // X[2] = 0.468587;
-      std::cout << "X:\n" << X << std::endl;
-    }
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    X = A.solveByQR(B);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+  }
   \endcode
 
   \sa qrPivot()

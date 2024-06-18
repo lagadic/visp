@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +29,10 @@
  *
  * Description:
  * Windows 32 renderer base class
- *
- * Authors:
- * Bruno Renier
- *
-*****************************************************************************/
+ */
 
-
-#ifndef vpWin32Renderer_HH
-#define vpWin32Renderer_HH
+#ifndef VP_WIN32_RENDERER_H
+#define VP_WIN32_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -51,7 +45,6 @@
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
-#include <visp3/core/vpDebug.h>
 #include <windows.h>
 
 BEGIN_VISP_NAMESPACE

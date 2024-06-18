@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +39,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Initialize internal sphere parameters.
  */
-void vpSphere::init()
+  void vpSphere::init()
 {
   oP.resize(4);
   cP.resize(4);
@@ -70,10 +69,14 @@ void vpSphere::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
  */
 void vpSphere::setWorldCoordinates(double oX, double oY, double oZ, double R)
 {
-  oP[0] = oX;
-  oP[1] = oY;
-  oP[2] = oZ;
-  oP[3] = R;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  oP[index_0] = oX;
+  oP[index_1] = oY;
+  oP[index_2] = oZ;
+  oP[index_3] = R;
 }
 
 /*!
@@ -138,19 +141,24 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
   p_.resize(5, false);
   double x0, y0, z0;
   double E, A, B;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
 
   // calcul des parametres M20, M11, M02 de l'ellipse
   double s, r;
-  r = cP_[3];
+  r = cP_[index_3];
 
-  x0 = cP_[0];
-  y0 = cP_[1];
-  z0 = cP_[2];
+  x0 = cP_[index_0];
+  y0 = cP_[index_1];
+  z0 = cP_[index_2];
 
   s = (r * r) - (y0 * y0) - (z0 * z0);
 
   if ((s = ((z0 * z0) - (r * r))) < 0.0) {
-    vpERROR_TRACE("Error: Sphere is behind image plane\n");
+    throw(vpException(vpException::fatalError, "Error: Sphere is behind image plane"));
   }
 
   p_[0] = (x0 * z0) / s; // x
@@ -161,7 +169,7 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
     double b = r / sqrt(s);
     double a = ((x0 * x0) + (y0 * y0) + (z0 * z0)) - (r * r);
     if (a < 0.0) {
-      vpERROR_TRACE("Error: Sphere is behind image plane\n");
+      throw(vpException(vpException::fatalError, "Error: Sphere is behind image plane"));
     }
     a = (r * sqrt(a)) / s;
     if (fabs(e) <= 1.0) {
@@ -187,9 +195,9 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
   double n11 = ((vpMath::sqr(A) - vpMath::sqr(B)) * E) / det;
   double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
 
-  p_[2] = n20;
-  p_[3] = n11;
-  p_[4] = n02;
+  p_[index_2] = n20;
+  p_[index_3] = n11;
+  p_[index_4] = n02;
 }
 
 /*!
@@ -211,17 +219,22 @@ void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) con
 {
   cP_.resize(4, false);
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+
   double x0, y0, z0; // variables intermediaires
 
-  x0 = (cMo[0][0] * oP[0]) + (cMo[0][1] * oP[1]) + (cMo[0][2] * oP[2]) + cMo[0][3];
-  y0 = (cMo[1][0] * oP[0]) + (cMo[1][1] * oP[1]) + (cMo[1][2] * oP[2]) + cMo[1][3];
-  z0 = (cMo[2][0] * oP[0]) + (cMo[2][1] * oP[1]) + (cMo[2][2] * oP[2]) + cMo[2][3];
+  x0 = (cMo[index_0][0] * oP[0]) + (cMo[index_0][1] * oP[1]) + (cMo[index_0][index_2] * oP[index_2]) + cMo[index_0][index_3];
+  y0 = (cMo[index_1][0] * oP[0]) + (cMo[index_1][1] * oP[1]) + (cMo[index_1][index_2] * oP[index_2]) + cMo[index_1][index_3];
+  z0 = (cMo[index_2][0] * oP[0]) + (cMo[index_2][1] * oP[1]) + (cMo[index_2][index_2] * oP[index_2]) + cMo[index_2][index_3];
 
-  cP_[3] = oP[3];
+  cP_[index_3] = oP[index_3];
 
-  cP_[0] = x0;
-  cP_[1] = y0;
-  cP_[2] = z0;
+  cP_[index_0] = x0;
+  cP_[index_1] = y0;
+  cP_[index_2] = z0;
 }
 
 //! For memory issue (used by the vpServo class only).
@@ -248,7 +261,12 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
   vpColVector v_cP, v_p;
   changeFrame(cMo, v_cP);
   projection(v_cP, v_p);
-  vpFeatureDisplay::displayEllipse(v_p[0], v_p[1], v_p[2], v_p[3], v_p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(v_p[index_0], v_p[index_1], v_p[index_2], v_p[index_3], v_p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -268,7 +286,12 @@ void vpSphere::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
   vpColVector v_cP, v_p;
   changeFrame(cMo, v_cP);
   projection(v_cP, v_p);
-  vpFeatureDisplay::displayEllipse(v_p[0], v_p[1], v_p[2], v_p[3], v_p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(v_p[index_0], v_p[index_1], v_p[index_2], v_p[index_3], v_p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -282,7 +305,12 @@ void vpSphere::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
 void vpSphere::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(p[index_0], p[index_1], p[index_2], p[index_3], p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -296,6 +324,11 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpCameraParameters
 void vpSphere::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(p[index_0], p[index_1], p[index_2], p[index_3], p[index_4], cam, I, color, thickness);
 }
 END_VISP_NAMESPACE

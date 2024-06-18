@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +43,6 @@
 #if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
 
-#include <visp3/core/vpDebug.h>
 /* --------------------------------------------------------------------------
  */
  /* --- LABEL XML ------------------------------------------------------------
@@ -85,8 +83,7 @@ BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserCamera::Impl
 {
-private:
-  /* --- XML Code------------------------------------------------------------
+public:  /* --- XML Code------------------------------------------------------------
    */
   enum vpXmlCodeType
   {
@@ -116,7 +113,6 @@ private:
     CODE_XML_ADDITIONAL_INFO
   };
 
-public:
   Impl()
     : camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0), subsampling_height(0),
     full_width(0), full_height(0)
@@ -169,28 +165,29 @@ public:
     unsigned int nbCamera = 0;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element)
-        continue;
-
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-        back = SEQUENCE_ERROR;
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+          back = SEQUENCE_ERROR;
+        }
+        if (prop == CODE_XML_CAMERA) {
+          if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose)) {
+            ++nbCamera;
+          }
+        }
+        else {
+          back = SEQUENCE_ERROR;
+        }
       }
-      if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose))
-          nbCamera++;
-      }
-      else
-        back = SEQUENCE_ERROR;
     }
 
     if (nbCamera == 0) {
       back = SEQUENCE_ERROR;
-      vpCERROR << "No camera parameters is available" << std::endl << "with your specifications" << std::endl;
+      std::cout << "Warning: No camera parameters is available" << std::endl << "with your specifications" << std::endl;
     }
     else if (nbCamera > 1) {
       back = SEQUENCE_ERROR;
-      vpCERROR << nbCamera << " sets of camera parameters are available" << std::endl
+      std::cout << "Warning: " << nbCamera << " sets of camera parameters are available" << std::endl
         << "with your specifications : " << std::endl
         << "precise your choice..." << std::endl;
     }
@@ -232,68 +229,67 @@ public:
     vpXmlCodeSequenceType back = SEQUENCE_OK;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element)
-        continue;
-
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-        back = SEQUENCE_ERROR;
-      }
-
-      switch (prop) {
-      case CODE_XML_CAMERA_NAME: {
-        camera_name_tmp = node.text().as_string();
-        if (verbose) {
-          std::cout << "Found camera with name: \"" << camera_name_tmp << "\"" << std::endl;
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+          back = SEQUENCE_ERROR;
         }
-        break;
-      }
-      case CODE_XML_WIDTH:
-        image_width_tmp = node.text().as_uint();
-        break;
 
-      case CODE_XML_HEIGHT:
-        image_height_tmp = node.text().as_uint();
-        break;
-      case CODE_XML_SUBSAMPLING_WIDTH:
-        subsampling_width_tmp = node.text().as_uint();
-        break;
-      case CODE_XML_SUBSAMPLING_HEIGHT:
-        subsampling_height_tmp = node.text().as_uint();
-        break;
-
-      case CODE_XML_MODEL:
-        back = read_camera_model(node, cam_tmp_model);
-        if (cam_tmp_model.get_projModel() == projModel) {
-          cam_tmp = cam_tmp_model;
-          same_proj_model = true; // Same projection model
+        switch (prop) {
+        case CODE_XML_CAMERA_NAME: {
+          camera_name_tmp = node.text().as_string();
+          if (verbose) {
+            std::cout << "Found camera with name: \"" << camera_name_tmp << "\"" << std::endl;
+          }
+          break;
         }
-        break;
+        case CODE_XML_WIDTH:
+          image_width_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_ADDITIONAL_INFO:
-        break;
+        case CODE_XML_HEIGHT:
+          image_height_tmp = node.text().as_uint();
+          break;
+        case CODE_XML_SUBSAMPLING_WIDTH:
+          subsampling_width_tmp = node.text().as_uint();
+          break;
+        case CODE_XML_SUBSAMPLING_HEIGHT:
+          subsampling_height_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_BAD:
-      case CODE_XML_OTHER:
-      case CODE_XML_CAMERA:
-      case CODE_XML_FULL_HEIGHT:
-      case CODE_XML_FULL_WIDTH:
-      case CODE_XML_MODEL_TYPE:
-      case CODE_XML_U0:
-      case CODE_XML_V0:
-      case CODE_XML_PX:
-      case CODE_XML_PY:
-      case CODE_XML_KUD:
-      case CODE_XML_KDU:
-      case CODE_XML_K1:
-      case CODE_XML_K2:
-      case CODE_XML_K3:
-      case CODE_XML_K4:
-      case CODE_XML_K5:
-      default:
-        back = SEQUENCE_ERROR;
+        case CODE_XML_MODEL:
+          back = read_camera_model(node, cam_tmp_model);
+          if (cam_tmp_model.get_projModel() == projModel) {
+            cam_tmp = cam_tmp_model;
+            same_proj_model = true; // Same projection model
+          }
+          break;
 
-        break;
+        case CODE_XML_ADDITIONAL_INFO:
+          break;
+
+        case CODE_XML_BAD:
+        case CODE_XML_OTHER:
+        case CODE_XML_CAMERA:
+        case CODE_XML_FULL_HEIGHT:
+        case CODE_XML_FULL_WIDTH:
+        case CODE_XML_MODEL_TYPE:
+        case CODE_XML_U0:
+        case CODE_XML_V0:
+        case CODE_XML_PX:
+        case CODE_XML_PY:
+        case CODE_XML_KUD:
+        case CODE_XML_KDU:
+        case CODE_XML_K1:
+        case CODE_XML_K2:
+        case CODE_XML_K3:
+        case CODE_XML_K4:
+        case CODE_XML_K5:
+        default:
+          back = SEQUENCE_ERROR;
+
+          break;
+        }
       }
     }
     // Create a specific test for subsampling_width and subsampling_height to
@@ -383,103 +379,101 @@ public:
     unsigned int validation = 0;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
-      if (node.type() != pugi::node_element)
-        continue;
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+          back = SEQUENCE_ERROR;
+        }
 
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-        back = SEQUENCE_ERROR;
-      }
-
-      switch (prop) {
-      case CODE_XML_MODEL_TYPE: {
-        model_type = node.text().as_string();
-        nb++;
-        validation = validation | 0x01;
-      } break;
-      case CODE_XML_U0:
-        u0 = node.text().as_double();
-        nb++;
-        validation = validation | 0x02;
-        break;
-      case CODE_XML_V0:
-        v0 = node.text().as_double();
-        nb++;
-        validation = validation | 0x04;
-        break;
-      case CODE_XML_PX:
-        px = node.text().as_double();
-        nb++;
-        validation = validation | 0x08;
-        break;
-      case CODE_XML_PY:
-        py = node.text().as_double();
-        nb++;
-        validation = validation | 0x10;
-        break;
-      case CODE_XML_KUD:
-        kud = node.text().as_double();
-        nb++;
-        validation = validation | 0x20;
-        break;
-      case CODE_XML_KDU:
-        kdu = node.text().as_double();
-        nb++;
-        validation = validation | 0x40;
-        break;
-      case CODE_XML_K1:
-        distortion_coeffs.push_back(node.text().as_double());
-        nb++;
-        validation = validation | 0x20;
-        break;
-      case CODE_XML_K2:
-        distortion_coeffs.push_back(node.text().as_double());
-        nb++;
-        validation = validation | 0x40;
-        break;
-      case CODE_XML_K3:
-        distortion_coeffs.push_back(node.text().as_double());
-        nb++;
-        validation = validation | 0x80;
-        break;
-      case CODE_XML_K4:
-        distortion_coeffs.push_back(node.text().as_double());
-        nb++;
-        validation = validation | 0x100;
-        break;
-      case CODE_XML_K5:
-        distortion_coeffs.push_back(node.text().as_double());
-        nb++;
-        validation = validation | 0x200;
-        break;
-      case CODE_XML_BAD:
-      case CODE_XML_OTHER:
-      case CODE_XML_CAMERA:
-      case CODE_XML_CAMERA_NAME:
-      case CODE_XML_HEIGHT:
-      case CODE_XML_WIDTH:
-      case CODE_XML_SUBSAMPLING_WIDTH:
-      case CODE_XML_SUBSAMPLING_HEIGHT:
-      case CODE_XML_FULL_HEIGHT:
-      case CODE_XML_FULL_WIDTH:
-      case CODE_XML_MODEL:
-      case CODE_XML_ADDITIONAL_INFO:
-      default:
-        back = SEQUENCE_ERROR;
-        break;
+        switch (prop) {
+        case CODE_XML_MODEL_TYPE: {
+          model_type = node.text().as_string();
+          ++nb;
+          validation = validation | 0x01;
+        } break;
+        case CODE_XML_U0:
+          u0 = node.text().as_double();
+          ++nb;
+          validation = validation | 0x02;
+          break;
+        case CODE_XML_V0:
+          v0 = node.text().as_double();
+          ++nb;
+          validation = validation | 0x04;
+          break;
+        case CODE_XML_PX:
+          px = node.text().as_double();
+          ++nb;
+          validation = validation | 0x08;
+          break;
+        case CODE_XML_PY:
+          py = node.text().as_double();
+          ++nb;
+          validation = validation | 0x10;
+          break;
+        case CODE_XML_KUD:
+          kud = node.text().as_double();
+          ++nb;
+          validation = validation | 0x20;
+          break;
+        case CODE_XML_KDU:
+          kdu = node.text().as_double();
+          ++nb;
+          validation = validation | 0x40;
+          break;
+        case CODE_XML_K1:
+          distortion_coeffs.push_back(node.text().as_double());
+          ++nb;
+          validation = validation | 0x20;
+          break;
+        case CODE_XML_K2:
+          distortion_coeffs.push_back(node.text().as_double());
+          ++nb;
+          validation = validation | 0x40;
+          break;
+        case CODE_XML_K3:
+          distortion_coeffs.push_back(node.text().as_double());
+          ++nb;
+          validation = validation | 0x80;
+          break;
+        case CODE_XML_K4:
+          distortion_coeffs.push_back(node.text().as_double());
+          ++nb;
+          validation = validation | 0x100;
+          break;
+        case CODE_XML_K5:
+          distortion_coeffs.push_back(node.text().as_double());
+          ++nb;
+          validation = validation | 0x200;
+          break;
+        case CODE_XML_BAD:
+        case CODE_XML_OTHER:
+        case CODE_XML_CAMERA:
+        case CODE_XML_CAMERA_NAME:
+        case CODE_XML_HEIGHT:
+        case CODE_XML_WIDTH:
+        case CODE_XML_SUBSAMPLING_WIDTH:
+        case CODE_XML_SUBSAMPLING_HEIGHT:
+        case CODE_XML_FULL_HEIGHT:
+        case CODE_XML_FULL_WIDTH:
+        case CODE_XML_MODEL:
+        case CODE_XML_ADDITIONAL_INFO:
+        default:
+          back = SEQUENCE_ERROR;
+          break;
+        }
       }
     }
 
     if (model_type.empty()) {
-      vpERROR_TRACE("projection model type doesn't match with any known model !");
+      std::cout << "Warning: projection model type doesn't match with any known model !" << std::endl;
       return SEQUENCE_ERROR;
     }
 
     if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITHOUT_DISTORTION)) {
       if (nb != 5 || validation != 0x001F) {
-        vpCERROR << "ERROR in 'model' field:\n";
-        vpCERROR << "it must contain 5 parameters\n";
+        std::cout << "ERROR in 'model' field:\n";
+        std::cout << "it must contain 5 parameters\n";
 
         return SEQUENCE_ERROR;
       }
@@ -487,8 +481,8 @@ public:
     }
     else if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITH_DISTORTION)) {
       if (nb != 7 || validation != 0x7F) {
-        vpCERROR << "ERROR in 'model' field:\n";
-        vpCERROR << "it must contain 7 parameters\n";
+        std::cout << "ERROR in 'model' field:\n";
+        std::cout << "it must contain 7 parameters\n";
 
         return SEQUENCE_ERROR;
       }
@@ -496,8 +490,8 @@ public:
     }
     else if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION)) {
       if (nb != 10 || validation != 0x3FF) { // at least one coefficient is missing. We should know which one
-        vpCERROR << "ERROR in 'model' field:\n";
-        vpCERROR << "it must contain 10 parameters\n";
+        std::cout << "ERROR in 'model' field:\n";
+        std::cout << "it must contain 10 parameters\n";
 
         std::vector<double> fixed_distortion_coeffs;
 
@@ -505,16 +499,22 @@ public:
         // Since 0x3FF is 0011|1111|1111 and we are interested in the most significant 1s shown below
         //                  -- ---
         // If we divide by 32 (>> 2^5 : 5 remaining least significant bits), we will have to check 5 bits only
-        int check = validation / 32;
+        const int dividerForBitCheck = 32;
+        int check = validation / dividerForBitCheck;
         int j = 0;
 
-        for (int i = 0; i < 5; ++i) {
-          int bit = check % 2; // if bit == 1 => the corresponding distortion coefficient is present.
-          if (!bit)
+        const int nbRemainingBits = 5;
+        const int moduloForOddity = 2;
+        const int dividerForRightShift = 2;
+        for (int i = 0; i < nbRemainingBits; ++i) {
+          int bit = check % moduloForOddity; // if bit == 1 => the corresponding distortion coefficient is present.
+          if (!bit) {
             fixed_distortion_coeffs.push_back(0.);
-          else
+          }
+          else {
             fixed_distortion_coeffs.push_back(distortion_coeffs[j++]);
-          check /= 2;
+          }
+          check /= dividerForRightShift;
         }
 
         cam_tmp.initProjWithKannalaBrandtDistortion(px, py, u0, v0, fixed_distortion_coeffs);
@@ -523,7 +523,7 @@ public:
       cam_tmp.initProjWithKannalaBrandtDistortion(px, py, u0, v0, distortion_coeffs);
     }
     else {
-      vpERROR_TRACE("projection model type doesn't match with any known model !");
+      std::cout << "Warning: projection model type doesn't match with any known model !" << std::endl;
 
       return SEQUENCE_ERROR;
     }
@@ -625,16 +625,16 @@ public:
     int nbCamera = 0;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element)
-        continue;
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+        }
 
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-      }
-
-      if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose))
-          nbCamera++;
+        if (prop == CODE_XML_CAMERA) {
+          if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose)) {
+            ++nbCamera;
+          }
+        }
       }
     }
 
@@ -710,55 +710,55 @@ public:
     vpXmlCodeSequenceType back = SEQUENCE_OK;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
-      if (node.type() != pugi::node_element)
-        continue;
-      if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
-        prop = CODE_XML_OTHER;
-        back = SEQUENCE_ERROR;
-      }
+      if (node.type() == pugi::node_element) {
+        if (SEQUENCE_OK != str2xmlcode(node.name(), prop)) {
+          prop = CODE_XML_OTHER;
+          back = SEQUENCE_ERROR;
+        }
 
-      switch (prop) {
-      case CODE_XML_CAMERA_NAME:
-        camera_name_tmp = node.text().as_string();
-        break;
+        switch (prop) {
+        case CODE_XML_CAMERA_NAME:
+          camera_name_tmp = node.text().as_string();
+          break;
 
-      case CODE_XML_WIDTH:
-        image_width_tmp = node.text().as_uint();
-        break;
+        case CODE_XML_WIDTH:
+          image_width_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_HEIGHT:
-        image_height_tmp = node.text().as_uint();
-        break;
+        case CODE_XML_HEIGHT:
+          image_height_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_SUBSAMPLING_WIDTH:
-        subsampling_width_tmp = node.text().as_uint();
-        break;
+        case CODE_XML_SUBSAMPLING_WIDTH:
+          subsampling_width_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_SUBSAMPLING_HEIGHT:
-        subsampling_height_tmp = node.text().as_uint();
-        break;
+        case CODE_XML_SUBSAMPLING_HEIGHT:
+          subsampling_height_tmp = node.text().as_uint();
+          break;
 
-      case CODE_XML_MODEL:
-        break;
+        case CODE_XML_MODEL:
+          break;
 
-      case CODE_XML_ADDITIONAL_INFO:
-        break;
+        case CODE_XML_ADDITIONAL_INFO:
+          break;
 
-      case CODE_XML_BAD:
-      case CODE_XML_OTHER:
-      case CODE_XML_CAMERA:
-      case CODE_XML_FULL_HEIGHT:
-      case CODE_XML_FULL_WIDTH:
-      case CODE_XML_MODEL_TYPE:
-      case CODE_XML_U0:
-      case CODE_XML_V0:
-      case CODE_XML_PX:
-      case CODE_XML_PY:
-      case CODE_XML_KUD:
-      case CODE_XML_KDU:
-      default:
-        back = SEQUENCE_ERROR;
-        break;
+        case CODE_XML_BAD:
+        case CODE_XML_OTHER:
+        case CODE_XML_CAMERA:
+        case CODE_XML_FULL_HEIGHT:
+        case CODE_XML_FULL_WIDTH:
+        case CODE_XML_MODEL_TYPE:
+        case CODE_XML_U0:
+        case CODE_XML_V0:
+        case CODE_XML_PX:
+        case CODE_XML_PY:
+        case CODE_XML_KUD:
+        case CODE_XML_KDU:
+        default:
+          back = SEQUENCE_ERROR;
+          break;
+        }
       }
     }
     if (!((cam_name == camera_name_tmp) && (im_width == image_width_tmp || im_width == 0) &&
@@ -863,131 +863,17 @@ public:
 
     switch (camera.get_projModel()) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
-      //<model>
-      node_model = node_camera.append_child(LABEL_XML_MODEL);
-      {
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Projection model type");
-
-        //<type>without_distortion</type>
-        node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
-        node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITHOUT_DISTORTION);
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Pixel ratio");
-        //<px>
-        node_tmp = node_model.append_child(LABEL_XML_PX);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-        //<py>
-        node_tmp = node_model.append_child(LABEL_XML_PY);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Principal point");
-
-        //<u0>
-        node_tmp = node_model.append_child(LABEL_XML_U0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-        //<v0>
-        node_tmp = node_model.append_child(LABEL_XML_V0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
-      }
+      writeCameraWithoutDistortion(node_camera);
       break;
 
     case vpCameraParameters::perspectiveProjWithDistortion:
-      //<model>
-      node_model = node_camera.append_child(LABEL_XML_MODEL);
-      {
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Projection model type");
-        //<type>with_distortion</type>
-        node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
-        node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_DISTORTION);
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Pixel ratio");
-        //<px>
-        node_tmp = node_model.append_child(LABEL_XML_PX);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-        //<py>
-        node_tmp = node_model.append_child(LABEL_XML_PY);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Principal point");
-        //<u0>
-        node_tmp = node_model.append_child(LABEL_XML_U0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-        //<v0>
-        node_tmp = node_model.append_child(LABEL_XML_V0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
-
-        //<kud>
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Undistorted to distorted distortion parameter");
-        node_tmp = node_model.append_child(LABEL_XML_KUD);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kud();
-
-        //<kud>
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Distorted to undistorted distortion parameter");
-        node_tmp = node_model.append_child(LABEL_XML_KDU);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
-      }
+      writeCameraWithDistortion(node_camera);
       break;
 
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-      //<model>
-      node_model = node_camera.append_child(LABEL_XML_MODEL);
-      {
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Projection model type");
-        //<type>with_KannalaBrandt_distortion</type>
-        node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
-        node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION);
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Pixel ratio");
-        //<px>
-        node_tmp = node_model.append_child(LABEL_XML_PX);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
-        //<py>
-        node_tmp = node_model.append_child(LABEL_XML_PY);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Principal point");
-        //<u0>
-        node_tmp = node_model.append_child(LABEL_XML_U0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
-        //<v0>
-        node_tmp = node_model.append_child(LABEL_XML_V0);
-        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
-
-        //<k1>, <k2>, <k3>, <k4>, <k5>
-        std::vector<double> distortion_coefs = camera.getKannalaBrandtDistortionCoefficients();
-
-        if (distortion_coefs.size() != 5)
-          std::cout << "Make sure to have 5 distortion coefficients for Kannala-Brandt distortions." << std::endl;
-
-        node_tmp = node_model.append_child(pugi::node_comment);
-        node_tmp.set_value("Distortion coefficients");
-        node_tmp = node_model.append_child(LABEL_XML_K1);
-        distortion_coefs.size() == 0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-          : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[0];
-        node_tmp = node_model.append_child(LABEL_XML_K2);
-        distortion_coefs.size() <= 1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-          : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[1];
-        node_tmp = node_model.append_child(LABEL_XML_K3);
-        distortion_coefs.size() <= 2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-          : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[2];
-        node_tmp = node_model.append_child(LABEL_XML_K4);
-        distortion_coefs.size() <= 3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-          : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[3];
-        node_tmp = node_model.append_child(LABEL_XML_K5);
-        distortion_coefs.size() <= 4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-          : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[4];
-      }
+      writeCameraWithKannalaBrandt(node_camera);
+      break;
+    default:
       break;
     }
     return back;
@@ -1124,6 +1010,156 @@ public:
   void setWidth(unsigned int width) { image_width = width; }
 
 private:
+   /*!
+    Write perspective projection camera parameters without distortion in an XML Tree.
+    \param node_camera : XML pointer node, pointing on a camera node.
+    */
+  void writeCameraWithoutDistortion(pugi::xml_node &node_camera)
+  {
+    pugi::xml_node node_model;
+    pugi::xml_node node_tmp;
+    //<model>
+    node_model = node_camera.append_child(LABEL_XML_MODEL);
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Projection model type");
+
+    //<type>without_distortion</type>
+    node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
+    node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITHOUT_DISTORTION);
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Pixel ratio");
+    //<px>
+    node_tmp = node_model.append_child(LABEL_XML_PX);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
+    //<py>
+    node_tmp = node_model.append_child(LABEL_XML_PY);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Principal point");
+
+    //<u0>
+    node_tmp = node_model.append_child(LABEL_XML_U0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
+    //<v0>
+    node_tmp = node_model.append_child(LABEL_XML_V0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
+  }
+
+  /*!
+    Write perspective projection camera parameters with distortion in an XML Tree.
+    \param node_camera : XML pointer node, pointing on a camera node.
+    */
+  void writeCameraWithDistortion(pugi::xml_node &node_camera)
+  {
+    pugi::xml_node node_model;
+    pugi::xml_node node_tmp;
+    //<model>
+    node_model = node_camera.append_child(LABEL_XML_MODEL);
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Projection model type");
+    //<type>with_distortion</type>
+    node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
+    node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_DISTORTION);
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Pixel ratio");
+    //<px>
+    node_tmp = node_model.append_child(LABEL_XML_PX);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
+    //<py>
+    node_tmp = node_model.append_child(LABEL_XML_PY);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Principal point");
+    //<u0>
+    node_tmp = node_model.append_child(LABEL_XML_U0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
+    //<v0>
+    node_tmp = node_model.append_child(LABEL_XML_V0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
+
+    //<kud>
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Undistorted to distorted distortion parameter");
+    node_tmp = node_model.append_child(LABEL_XML_KUD);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kud();
+
+    //<kud>
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Distorted to undistorted distortion parameter");
+    node_tmp = node_model.append_child(LABEL_XML_KDU);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
+  }
+
+  /*!
+    Write perspective projection camera parameters with Kannala-Brandt distortion in an XML Tree.
+    \param node_camera : XML pointer node, pointing on a camera node.
+    */
+  void writeCameraWithKannalaBrandt(pugi::xml_node &node_camera)
+  {
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
+    const unsigned int index_4 = 4;
+    const unsigned int requiredNbCoeff = 5;
+    pugi::xml_node node_model;
+    pugi::xml_node node_tmp;
+    //<model>
+    node_model = node_camera.append_child(LABEL_XML_MODEL);
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Projection model type");
+    //<type>with_KannalaBrandt_distortion</type>
+    node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
+    node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION);
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Pixel ratio");
+    //<px>
+    node_tmp = node_model.append_child(LABEL_XML_PX);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
+    //<py>
+    node_tmp = node_model.append_child(LABEL_XML_PY);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Principal point");
+    //<u0>
+    node_tmp = node_model.append_child(LABEL_XML_U0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
+    //<v0>
+    node_tmp = node_model.append_child(LABEL_XML_V0);
+    node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
+
+    //<k1>, <k2>, <k3>, <k4>, <k5>
+    std::vector<double> distortion_coefs = camera.getKannalaBrandtDistortionCoefficients();
+
+    if (distortion_coefs.size() != requiredNbCoeff) {
+      std::cout << "Make sure to have 5 distortion coefficients for Kannala-Brandt distortions." << std::endl;
+    }
+
+    node_tmp = node_model.append_child(pugi::node_comment);
+    node_tmp.set_value("Distortion coefficients");
+    node_tmp = node_model.append_child(LABEL_XML_K1);
+    distortion_coefs.size() == index_0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_0];
+    node_tmp = node_model.append_child(LABEL_XML_K2);
+    distortion_coefs.size() <= index_1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_1];
+    node_tmp = node_model.append_child(LABEL_XML_K3);
+    distortion_coefs.size() <= index_2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_2];
+    node_tmp = node_model.append_child(LABEL_XML_K4);
+    distortion_coefs.size() <= index_3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_3];
+    node_tmp = node_model.append_child(LABEL_XML_K5);
+    distortion_coefs.size() <= index_4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_4];
+  }
+
   vpCameraParameters camera;
   std::string camera_name;
   unsigned int image_width;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,19 +41,9 @@
 #include "private/vpLevenbergMarquartd.h"
 #include <visp3/vision/vpPose.h>
 
-BEGIN_VISP_NAMESPACE
-
 #define NBR_PAR 6
 #define X3_SIZE 3
 #define MINIMUM 0.000001
-
-#define DEBUG_LEVEL1 0
-
-// ------------------------------------------------------------------------
-//   FONCTION LOWE :
-// ------------------------------------------------------------------------
-// Calcul de la pose pour un objet 3D
-// ------------------------------------------------------------------------
 
 /*
  * MACRO  : MIJ
@@ -76,13 +66,20 @@ BEGIN_VISP_NAMESPACE
  */
 #define MIJ(m, i, j, s) ((m) + ((long)(i) * (long)(s)) + (long)(j))
 #define NBPTMAX 50
+#define MINI 0.001
+#define MINIMUM 0.000001
+
+BEGIN_VISP_NAMESPACE
+
+// ------------------------------------------------------------------------
+//   FONCTION LOWE :
+// ------------------------------------------------------------------------
+// Calcul de la pose pour un objet 3D
+// ------------------------------------------------------------------------
 
 // Je hurle d'horreur devant ces variable globale...
 static double XI[NBPTMAX], YI[NBPTMAX];
 static double XO[NBPTMAX], YO[NBPTMAX], ZO[NBPTMAX];
-
-#define MINI 0.001
-#define MINIMUM 0.000001
 
 void eval_function(int npt, double *xc, double *f);
 void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag);
@@ -90,18 +87,25 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
 void eval_function(int npt, double *xc, double *f)
 {
   int i;
-  double u[3];
+  const unsigned int sizeU = 3;
+  double u[sizeU];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
 
-  u[0] = xc[3]; /* Rx   */
-  u[1] = xc[4]; /* Ry   */
-  u[2] = xc[5]; /* Rz   */
+  u[index_0] = xc[index_3]; /* Rx   */
+  u[index_1] = xc[index_4]; /* Ry   */
+  u[index_2] = xc[index_5]; /* Rz   */
 
-  vpRotationMatrix rd(u[0], u[1], u[2]);
+  vpRotationMatrix rd(u[index_0], u[index_1], u[index_2]);
   // --comment:  rot_mat(u,rd) matrice de rotation correspondante
   for (i = 0; i < npt; ++i) {
-    double x = (rd[0][0] * XO[i]) + (rd[0][1] * YO[i]) + (rd[0][2] * ZO[i]) + xc[0];
-    double y = (rd[1][0] * XO[i]) + (rd[1][1] * YO[i]) + (rd[1][2] * ZO[i]) + xc[1];
-    double z = (rd[2][0] * XO[i]) + (rd[2][1] * YO[i]) + (rd[2][2] * ZO[i]) + xc[2];
+    double x = (rd[index_0][index_0] * XO[i]) + (rd[index_0][index_1] * YO[i]) + (rd[index_0][index_2] * ZO[i]) + xc[index_0];
+    double y = (rd[index_1][index_0] * XO[i]) + (rd[index_1][index_1] * YO[i]) + (rd[index_1][index_2] * ZO[i]) + xc[index_1];
+    double z = (rd[index_2][index_0] * XO[i]) + (rd[index_2][index_1] * YO[i]) + (rd[index_2][index_2] * ZO[i]) + xc[index_2];
     f[i] = (x / z) - XI[i];
     f[npt + i] = (y / z) - YI[i];
     // --comment: write fi and fi+1
@@ -143,26 +147,34 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
   if (m < n) {
     printf("pas assez de points\n");
   }
-  npt = m / 2;
+  const int half = 2;
+  npt = m / half;
 
-  if (iflag == 1) {
+  const int flagFunc = 1, flagJacobian = 2;
+  if (iflag == flagFunc) {
     eval_function(npt, xc, fvecc);
   }
-  else if (iflag == 2) {
+  else if (iflag == flagJacobian) {
     double u1, u2, u3;
-    u[0] = xc[3];
-    u[1] = xc[4];
-    u[2] = xc[5];
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
+    const unsigned int index_4 = 4;
+    const unsigned int index_5 = 5;
+    u[index_0] = xc[index_3];
+    u[index_1] = xc[index_4];
+    u[index_2] = xc[index_5];
 
-    rd.build(u[0], u[1], u[2]);
+    rd.build(u[index_0], u[index_1], u[index_2]);
     /* a partir de l'axe de rotation, calcul de la matrice de rotation. */
     // --comment: rot_mat of u rd
 
-    double tt = sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2])); /* angle de rot */
+    double tt = sqrt((u[index_0] * u[index_0]) + (u[index_1] * u[index_1]) + (u[index_2] * u[index_2])); /* angle de rot */
     if (tt >= MINIMUM) {
-      u1 = u[0] / tt;
-      u2 = u[1] / tt; /* axe de rotation unitaire  */
-      u3 = u[2] / tt;
+      u1 = u[index_0] / tt;
+      u2 = u[index_1] / tt; /* axe de rotation unitaire  */
+      u3 = u[index_2] / tt;
     }
     else {
       u1 = 0.0;
@@ -179,15 +191,15 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
       double z = ZO[i];
 
       /* coordonnees du point i dans le repere camera  */
-      double rx = (rd[0][0] * x) + (rd[0][1] * y) + (rd[0][2] * z) + xc[0];
-      double ry = (rd[1][0] * x) + (rd[1][1] * y) + (rd[1][2] * z) + xc[1];
-      double rz = (rd[2][0] * x) + (rd[2][1] * y) + (rd[2][2] * z) + xc[2];
+      double rx = (rd[index_0][index_0] * x) + (rd[index_0][index_1] * y) + (rd[index_0][index_2] * z) + xc[index_0];
+      double ry = (rd[index_1][index_0] * x) + (rd[index_1][index_1] * y) + (rd[index_1][index_2] * z) + xc[index_1];
+      double rz = (rd[index_2][index_0] * x) + (rd[index_2][index_1] * y) + (rd[index_2][index_2] * z) + xc[index_2];
 
       /* derive des fonctions rx, ry et rz par rapport
        * a tt, u1, u2, u3.
        */
       double drxt = (((si * u1 * u3) + (co * u2)) * z) + (((si * u1 * u2) - (co * u3)) * y) + (((si * u1 * u1) - si) * x);
-      double drxu1 = (mco * u3 * z) + (mco * u2 * y) + (2 * mco * u1 * x);
+      double drxu1 = (mco * u3 * z) + (mco * u2 * y) + (2. * mco * u1 * x);
       double drxu2 = (si * z) + (mco * u1 * y);
       double drxu3 = (mco * u1 * z) - (si * y);
 
@@ -221,35 +233,35 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
        * derivee de la fonction representant le modele de la
        * camera par rapport aux parametres.
        */
-      *MIJ(jac, 0, i, ldfjac) = 1 / rz;
-      *MIJ(jac, 1, i, ldfjac) = 0.0;
-      *MIJ(jac, 2, i, ldfjac) = -rx / (rz * rz);
+      *MIJ(jac, index_0, i, ldfjac) = 1. / rz;
+      *MIJ(jac, index_1, i, ldfjac) = 0.0;
+      *MIJ(jac, index_2, i, ldfjac) = -rx / (rz * rz);
       if (tt >= MINIMUM) {
-        *MIJ(jac, 3, i, ldfjac) = (((u1 * dxit) + (((1 - (u1 * u1)) * dxiu1) / tt)) - ((u1 * u2 * dxiu2) / tt)) - ((u1 * u3 * dxiu3) / tt);
-        *MIJ(jac, 4, i, ldfjac) = (((u2 * dxit) - ((u1 * u2 * dxiu1) / tt)) + (((1 - (u2 * u2)) * dxiu2) / tt)) - ((u2 * u3 * dxiu3) / tt);
+        *MIJ(jac, index_3, i, ldfjac) = (((u1 * dxit) + (((1. - (u1 * u1)) * dxiu1) / tt)) - ((u1 * u2 * dxiu2) / tt)) - ((u1 * u3 * dxiu3) / tt);
+        *MIJ(jac, index_4, i, ldfjac) = (((u2 * dxit) - ((u1 * u2 * dxiu1) / tt)) + (((1. - (u2 * u2)) * dxiu2) / tt)) - ((u2 * u3 * dxiu3) / tt);
 
-        *MIJ(jac, 5, i, ldfjac) = (((u3 * dxit) - ((u1 * u3 * dxiu1) / tt)) - ((u2 * u3 * dxiu2) / tt)) + (((1 - (u3 * u3)) * dxiu3) / tt);
+        *MIJ(jac, index_5, i, ldfjac) = (((u3 * dxit) - ((u1 * u3 * dxiu1) / tt)) - ((u2 * u3 * dxiu2) / tt)) + (((1. - (u3 * u3)) * dxiu3) / tt);
       }
       else {
-        *MIJ(jac, 3, i, ldfjac) = 0.0;
-        *MIJ(jac, 4, i, ldfjac) = 0.0;
-        *MIJ(jac, 5, i, ldfjac) = 0.0;
+        *MIJ(jac, index_3, i, ldfjac) = 0.0;
+        *MIJ(jac, index_4, i, ldfjac) = 0.0;
+        *MIJ(jac, index_5, i, ldfjac) = 0.0;
       }
-      *MIJ(jac, 0, npt + i, ldfjac) = 0.0;
-      *MIJ(jac, 1, npt + i, ldfjac) = 1 / rz;
-      *MIJ(jac, 2, npt + i, ldfjac) = -ry / (rz * rz);
+      *MIJ(jac, index_0, npt + i, ldfjac) = 0.0;
+      *MIJ(jac, index_1, npt + i, ldfjac) = 1 / rz;
+      *MIJ(jac, index_2, npt + i, ldfjac) = -ry / (rz * rz);
       if (tt >= MINIMUM) {
-        *MIJ(jac, 3, npt + i, ldfjac) =
+        *MIJ(jac, index_3, npt + i, ldfjac) =
           (((u1 * dyit) + (((1 - (u1 * u1)) * dyiu1) / tt)) - ((u1 * u2 * dyiu2) / tt)) - ((u1 * u3 * dyiu3) / tt);
-        *MIJ(jac, 4, npt + i, ldfjac) =
-          (((u2 * dyit) - ((u1 * u2 * dyiu1) / tt)) + (((1 - (u2 * u2)) * dyiu2) / tt)) - ((u2 * u3 * dyiu3) / tt);
-        *MIJ(jac, 5, npt + i, ldfjac) =
-          (((u3 * dyit) - ((u1 * u3 * dyiu1) / tt)) - ((u2 * u3 * dyiu2) / tt)) + (((1 - (u3 * u3)) * dyiu3) / tt);
+        *MIJ(jac, index_4, npt + i, ldfjac) =
+          (((u2 * dyit) - ((u1 * u2 * dyiu1) / tt)) + (((1. - (u2 * u2)) * dyiu2) / tt)) - ((u2 * u3 * dyiu3) / tt);
+        *MIJ(jac, index_5, npt + i, ldfjac) =
+          (((u3 * dyit) - ((u1 * u3 * dyiu1) / tt)) - ((u2 * u3 * dyiu2) / tt)) + (((1. - (u3 * u3)) * dyiu3) / tt);
       }
       else {
-        *MIJ(jac, 3, npt + i, ldfjac) = 0.0;
-        *MIJ(jac, 4, npt + i, ldfjac) = 0.0;
-        *MIJ(jac, 5, npt + i, ldfjac) = 0.0;
+        *MIJ(jac, index_3, npt + i, ldfjac) = 0.0;
+        *MIJ(jac, index_4, npt + i, ldfjac) = 0.0;
+        *MIJ(jac, index_5, npt + i, ldfjac) = 0.0;
       }
     }
   } /* fin else if iflag ==2  */
@@ -257,23 +269,19 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
 
 void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin CCalcuvpPose::PoseLowe(...) " << std::endl;
-#endif
-  int n, m;   /* nombre d'elements dans la matrice jac */
-  int lwa;    /* taille du vecteur wa */
-  int ldfjac; /* taille maximum d'une ligne de jac */
+  /* nombre d'elements dans la matrice jac */
+  const int n = NBR_PAR; /* nombres d'inconnues  */
+  const int m = static_cast<int>(2 * npt); /* nombres d'equations  */
+
+  const int lwa = (2 * NBPTMAX) + 50;    /* taille du vecteur wa */
+  const int ldfjac = 2 * NBPTMAX; /* taille maximum d'une ligne de jac */
   int info, ipvt[NBR_PAR];
   int tst_lmder;
-  double f[2 * NBPTMAX], sol[NBR_PAR];
-  double tol, jac[NBR_PAR][2 * NBPTMAX], wa[(2 * NBPTMAX) + 50];
+  double f[ldfjac], sol[NBR_PAR];
+  double tol, jac[NBR_PAR][ldfjac], wa[lwa];
   // --comment:  double  u of 3  (vecteur de rotation)
   // --comment:  double  rd of 3 by 3 (matrice de rotation)
 
-  n = NBR_PAR;                                  /* nombres d'inconnues  */
-  m = static_cast<int>(2 * npt);                           /* nombres d'equations  */
-  lwa = (2 * NBPTMAX) + 50;                       /* taille du vecteur de travail  */
-  ldfjac = 2 * NBPTMAX;                         /* nombre d'elements max sur une ligne  */
   tol = std::numeric_limits<double>::epsilon(); /* critere d'arret  */
 
   // --comment: c eq cam
@@ -283,9 +291,10 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
   vpRotationMatrix cRo;
   cMo.extract(cRo);
   vpThetaUVector u(cRo);
-  for (unsigned int i = 0; i < 3; ++i) {
-    sol[i] = cMo[i][3];
-    sol[i + 3] = u[i];
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    sol[i] = cMo[i][val_3];
+    sol[i + val_3] = u[i];
   }
 
   vpPoint P;
@@ -307,29 +316,20 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
     // --comment: return FATAL ERROR
   }
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    u[i] = sol[i + 3];
+  for (unsigned int i = 0; i < val_3; ++i) {
+    u[i] = sol[i + val_3];
   }
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    cMo[i][3] = sol[i];
-    u[i] = sol[i + 3];
+  for (unsigned int i = 0; i < val_3; ++i) {
+    cMo[i][val_3] = sol[i];
+    u[i] = sol[i + val_3];
   }
 
   vpRotationMatrix rd(u);
   cMo.insert(rd);
-  // --comment: rot_mat of u comma rd
-  // --comment: for i eq 0 to 3, for j eq 0 to 3 cMo[i][j] = rd[i][j]
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end CCalculPose::PoseLowe(...) " << std::endl;
-#endif
-  // --comment: return OK
 }
+
+END_VISP_NAMESPACE
 
 #undef MINI
 #undef MINIMUM
-
-#undef DEBUG_LEVEL1
-
-END_VISP_NAMESPACE

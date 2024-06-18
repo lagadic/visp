@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +70,15 @@ float swapFloat(float f)
     unsigned char b[4];
   } dat1, dat2;
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
+  dat2.b[index_0] = dat1.b[index_3];
+  dat2.b[index_1] = dat1.b[index_2];
+  dat2.b[index_2] = dat1.b[index_1];
+  dat2.b[index_3] = dat1.b[index_0];
   return dat2.f;
 }
 
@@ -91,15 +94,23 @@ double swapDouble(double d)
     unsigned char b[8];
   } dat1, dat2;
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
   dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
+  dat2.b[index_0] = dat1.b[index_7];
+  dat2.b[index_1] = dat1.b[index_6];
+  dat2.b[index_2] = dat1.b[index_5];
+  dat2.b[index_3] = dat1.b[index_4];
+  dat2.b[index_4] = dat1.b[index_3];
+  dat2.b[index_5] = dat1.b[index_2];
+  dat2.b[index_6] = dat1.b[index_1];
+  dat2.b[index_7] = dat1.b[index_0];
   return dat2.d;
 }
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@
 #include <visp3/core/vpMath.h>
 #include "vpLevenbergMarquartd.h"
 
-BEGIN_VISP_NAMESPACE
-
 #define SIGN(x) ((x) < 0 ? -1 : 1)
 #define SWAP(a, b, c)                                                                                                  \
   {                                                                                                                    \
@@ -51,6 +49,8 @@ BEGIN_VISP_NAMESPACE
 #define MIJ(m, i, j, s) ((m) + ((long)(i) * (long)(s)) + (long)(j))
 #define TRUE 1
 #define FALSE 0
+
+BEGIN_VISP_NAMESPACE
 
 double enorm(const double *x, int n)
 {
@@ -1205,7 +1205,7 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
   return 0;
 }
 
+END_VISP_NAMESPACE
+
 #undef TRUE
 #undef FALSE
-
-END_VISP_NAMESPACE

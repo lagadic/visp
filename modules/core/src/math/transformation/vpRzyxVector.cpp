@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,8 +155,11 @@ vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
 */
 vpRzyxVector &vpRzyxVector::build(const vpRotationMatrix &R)
 {
-  double nx = R[0][0];
-  double ny = R[1][0];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  double nx = R[index_0][index_0];
+  double ny = R[index_1][index_0];
 
   double COEF_MIN_ROT = 1e-6;
   double phi;
@@ -171,13 +173,13 @@ vpRzyxVector &vpRzyxVector::build(const vpRotationMatrix &R)
   double si = sin(phi);
   double co = cos(phi);
 
-  double nz = R[2][0];
+  double nz = R[index_2][index_0];
   double theta = atan2(-nz, (co * nx) + (si * ny));
 
-  double ax = R[0][2];
-  double ay = R[1][2];
-  double ox = R[0][1];
-  double oy = R[1][1];
+  double ax = R[index_0][index_2];
+  double ay = R[index_1][index_2];
+  double ox = R[index_0][index_1];
+  double oy = R[index_1][index_1];
 
   double psi = atan2((si * ax) - (co * ay), (-si * ox) + (co * oy));
 
@@ -209,9 +211,12 @@ vpRzyxVector &vpRzyxVector::build(const vpThetaUVector &tu)
 */
 vpRzyxVector &vpRzyxVector::build(const double &phi, const double &theta, const double &psi)
 {
-  data[0] = phi;
-  data[1] = theta;
-  data[2] = psi;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  data[index_0] = phi;
+  data[index_1] = theta;
+  data[index_2] = psi;
   return *this;
 }
 
@@ -224,7 +229,8 @@ vpRzyxVector &vpRzyxVector::build(const vpColVector &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }
 
@@ -240,7 +246,8 @@ vpRzyxVector &vpRzyxVector::build(const std::vector<double> &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension std::vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }
 
@@ -303,7 +310,8 @@ vpRzyxVector &vpRzyxVector::operator=(const vpColVector &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot set a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }
 

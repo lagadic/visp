@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,15 @@
  *
  * Description:
  * Image conversion tools.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_impl.h
   \brief Image conversion tools
 */
 
-#ifndef _vpIMAGECONVERT_impl_H_
-#define _vpIMAGECONVERT_impl_H_
+#ifndef VP_IMAGE_CONVERT_IMPL_H
+#define VP_IMAGE_CONVERT_IMPL_H
 
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <omp.h>
@@ -57,7 +55,7 @@ BEGIN_VISP_NAMESPACE
   \param[in] src_depth : Input float depth image.
   \param[out] dest_depth : Output grayscale depth image.
  */
-void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned char> &dest_depth)
+  void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned char> &dest_depth)
 {
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));

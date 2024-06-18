@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   (cannot be used as is !)
 */
 
-#ifndef _vpRotationVector_h_
-#define _vpRotationVector_h_
+#ifndef VP_ROTATION_VECTOR_H
+#define VP_ROTATION_VECTOR_H
 
 #include <iostream>
 #include <math.h>

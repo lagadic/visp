@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +45,6 @@
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
@@ -1153,27 +1151,27 @@ double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
   is used to initialize the constructed row vector.
 
   The following code shows how to use this function:
-\code
-#include <visp3/core/vpRowVector.h>
-
-int main()
-{
-  vpRowVector v(4);
-  int val = 0;
-  for(size_t i=0; i<v.getCols(); i++) {
-    v[i] = val++;
-  }
-  std::cout << "v: " << v << std::endl;
-
-  vpRowVector w;
-  w.init(v, 1, 2);
-  std::cout << "w: " << w << std::endl;
-}
-\endcode
-  It produces the following output:
   \code
-v: 0 1 2 3
-w: 1 2
+  #include <visp3/core/vpRowVector.h>
+
+  int main()
+  {
+    vpRowVector v(4);
+    int val = 0;
+    for(size_t i=0; i<v.getCols(); i++) {
+      v[i] = val++;
+    }
+    std::cout << "v: " << v << std::endl;
+
+    vpRowVector w;
+    w.init(v, 1, 2);
+    std::cout << "w: " << w << std::endl;
+  }
+  \endcode
+    It produces the following output:
+    \code
+  v: 0 1 2 3
+  w: 1 2
   \endcode
  */
 void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
@@ -1202,25 +1200,24 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
   each bytes of the double array.
 
   The following code shows how to use this function:
-\code
-#include <visp3/core/vpRowVector.h>
+  \code
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
 
-  r.cppPrint(std::cout, "r");
-}
-\endcode
+    r.cppPrint(std::cout, "r");
+  }
+  \endcode
   It produces the following output that could be copy/paste in a C++ code:
   \code
-vpRowVector r (3);
-r[0] = 0;
-r[1] = 1;
-r[2] = 2;
-
+  vpRowVector r (3);
+  r[0] = 0;
+  r[1] = 1;
+  r[2] = 2;
   \endcode
 */
 std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixName, bool octet) const

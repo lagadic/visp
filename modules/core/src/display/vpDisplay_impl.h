@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Display implementation.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -81,23 +79,30 @@ void vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix
                                double size, const vpColor &color, unsigned int thickness)
 {
   // used by display
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int val_5 = 5;
   double halfSize = size / 2.0;
   vpPoint pt[5];
-  pt[0].setWorldCoordinates(-halfSize, -halfSize, 0.0);
-  pt[1].setWorldCoordinates(halfSize, -halfSize, 0.0);
-  pt[2].setWorldCoordinates(halfSize, halfSize, 0.0);
-  pt[3].setWorldCoordinates(-halfSize, halfSize, 0.0);
-  pt[4].setWorldCoordinates(0.0, 0.0, -size);
+  pt[index_0].setWorldCoordinates(-halfSize, -halfSize, 0.0);
+  pt[index_1].setWorldCoordinates(halfSize, -halfSize, 0.0);
+  pt[index_2].setWorldCoordinates(halfSize, halfSize, 0.0);
+  pt[index_3].setWorldCoordinates(-halfSize, halfSize, 0.0);
+  pt[index_4].setWorldCoordinates(0.0, 0.0, -size);
 
-  for (int i = 0; i < 5; ++i)
+  for (unsigned int i = 0; i < val_5; ++i) {
     pt[i].track(cMo);
+  }
 
   vpImagePoint ip, ip_1, ip0;
-  vpMeterPixelConversion::convertPoint(cam, pt[4].p[0], pt[4].p[1], ip0);
+  vpMeterPixelConversion::convertPoint(cam, pt[index_4].p[index_0], pt[index_4].p[index_1], ip0);
 
   for (int i = 0; i < 4; ++i) {
-    vpMeterPixelConversion::convertPoint(cam, pt[i].p[0], pt[i].p[1], ip_1);
-    vpMeterPixelConversion::convertPoint(cam, pt[(i + 1) % 4].p[0], pt[(i + 1) % 4].p[1], ip);
+    vpMeterPixelConversion::convertPoint(cam, pt[i].p[index_0], pt[i].p[index_1], ip_1);
+    vpMeterPixelConversion::convertPoint(cam, pt[(i + index_1) % index_4].p[0], pt[(i + 1) % index_4].p[1], ip);
     vpDisplay::displayLine(I, ip_1, ip, color, thickness);
     vpDisplay::displayLine(I, ip0, ip_1, color, thickness);
   }

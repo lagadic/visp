@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,15 +325,15 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<
   The following example shows how to use for example this function to display
   the result of a tracking.
   \code
-    vpMeEllipse ellipse;
-    ...
-    vpDisplay::display(I);
-    ellipse.track(I);
+  vpMeEllipse ellipse;
+  ...
+  vpDisplay::display(I);
+  ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(),
-                              ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
-                              true, vpColor::orange, 1);
-    vpDisplay::flush(I);
+  vpDisplay::displayEllipse(I, ellipse.getCenter(),
+                            ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                            true, vpColor::orange, 1);
+  vpDisplay::flush(I);
   \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
@@ -372,16 +371,16 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
   The following example shows how to use for example this function to display
   the result of a tracking.
   \code
-    vpMeEllipse ellipse;
-    ...
-    vpDisplay::display(I);
-    ellipse.track(I);
+  vpMeEllipse ellipse;
+  ...
+  vpDisplay::display(I);
+  ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(),
-                              ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
-                              ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
-                              true, vpColor::orange, 1);
-    vpDisplay::flush(I);
+  vpDisplay::displayEllipse(I, ellipse.getCenter(),
+                            ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                            ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
+                            true, vpColor::orange, 1);
+  vpDisplay::flush(I);
   \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
@@ -986,70 +985,70 @@ bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMou
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-  vpDisplay *d;
+    vpDisplay *d;
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, false);
-    if (event) {
-      std::cout << "A keyboard event was detected" << std::endl;
-      cpt_event ++;
-    }
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, false);
+      if (event) {
+        std::cout << "A keyboard event was detected" << std::endl;
+        cpt_event ++;
+      }
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
 {
@@ -1077,70 +1076,70 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-  vpDisplay *d;
+    vpDisplay *d;
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  std::string key;
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, key, false);
-    if (event) {
-      std::cout << "Key detected: " << key << std::endl;
-      cpt_event ++;
-    }
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    std::string key;
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, key, false);
+      if (event) {
+        std::cout << "Key detected: " << key << std::endl;
+        cpt_event ++;
+      }
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking)
 {
@@ -1168,70 +1167,70 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &k
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-  vpDisplay *d;
+    vpDisplay *d;
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  char key[10];
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
-    if (event) {
-      std::cout << "Key detected: " << key << std::endl;
-      cpt_event ++;
-    }
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    char key[10];
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
+      if (event) {
+        std::cout << "Key detected: " << key << std::endl;
+        cpt_event ++;
+      }
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking)
 {

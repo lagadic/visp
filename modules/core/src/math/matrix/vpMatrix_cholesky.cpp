@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +40,6 @@
 // Exception
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
  * \brief Read videos and image sequences
  */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpVideoReader.h>
 
@@ -155,8 +154,6 @@ void vpVideoReader::getProperties()
 #endif
   }
   else if (m_formatType == FORMAT_UNKNOWN) {
- // vpERROR_TRACE("The format of the file does not correspond to a readable
- // format.");
     throw(vpException(vpException::fatalError, "The format of the file does "
                       "not correspond to a readable "
                       "format supported by ViSP."));
@@ -273,7 +270,7 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
   else {
     m_capture >> m_frame;
     if (m_frameStep == 1) {
-      m_frameCount++;
+      ++m_frameCount;
     }
     else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
@@ -368,7 +365,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
   else {
     m_capture >> m_frame;
     if (m_frameStep == 1) {
-      m_frameCount++;
+      ++m_frameCount;
     }
     else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
@@ -450,7 +447,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       }
     }
     catch (...) {
-      vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
+      // Couldn't find the %u th frame", frame_index
       return false;
     }
   }
@@ -458,7 +455,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
-      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
+      // Couldn't find the %ld th frame", frame_index
       return false;
     }
 
@@ -480,7 +477,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       vpImageConvert::convert(m_frame, I);
 #else
     if (!m_capture.set(CV_CAP_PROP_POS_FRAMES, frame_index)) {
-      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
+      // Couldn't find the %ld th frame", frame_index
       return false;
     }
 
@@ -527,7 +524,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       }
     }
     catch (...) {
-      vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
+      // Couldn't find the %u th frame", frame_index
       return false;
     }
   }
@@ -535,7 +532,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
-      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
+      // Couldn't find the %ld th frame", frame_index
       return false;
     }
     m_capture >> m_frame;
@@ -555,8 +552,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     }
 #else
     if (!m_capture.set(CV_CAP_PROP_POS_FRAMES, frame_index)) {
-      vpERROR_TRACE("Couldn't find the %ld th frame",
-                    frame_index); // next index
+      // Couldn't find the %ld th frame", frame_index
       return false;
     }
     m_capture >> m_frame;
@@ -699,8 +695,7 @@ std::string vpVideoReader::getExtension(const std::string &filename)
 void vpVideoReader::findLastFrameIndex()
 {
   if (!m_isOpen) {
-    vpERROR_TRACE("Use the open method before");
-    throw(vpException(vpException::notInitialized, "file not yet opened"));
+    throw(vpException(vpException::notInitialized, "File not yet opened. Use the open() method before"));
   }
 
   if (m_imSequence != nullptr) {

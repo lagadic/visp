@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,16 +174,17 @@ void vpHomography::hartleyDenormalization(vpHomography &aHbn, vpHomography &aHb,
   T2T = T2.pseudoInverse(1e-16);
 
   vpMatrix aHbn_(3, 3);
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aHbn_[i][j] = aHbn[i][j];
     }
   }
 
   vpMatrix maHb = T2T * aHbn_ * T1;
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aHb[i][j] = maHb[i][j];
     }
   }
@@ -296,8 +297,9 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
   h = V.getCol(indexSmallestSv);
 
   // build the homography
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aHbn[i][j] = h[(3 * i) + j];
     }
   }

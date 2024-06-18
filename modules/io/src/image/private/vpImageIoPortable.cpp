@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,8 @@ BEGIN_VISP_NAMESPACE
  * \param h[out] : Image height.
  * \param maxval[out] : Maximum pixel value.
  */
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval)
+  void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
+                          unsigned int &h, unsigned int &maxval)
 {
   std::string line;
   unsigned int nb_elt = 4, cpt_elt = 0;
@@ -81,7 +81,7 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
         throw(vpImageException(vpImageException::ioError, "\"%s\" is not a PNM file with magic number %s",
                                filename.c_str(), magic.c_str()));
       }
-      cpt_elt++;
+      ++cpt_elt;
       header.erase(header.begin(),
                    header.begin() + 1); // erase first element that is processed
     }
@@ -89,21 +89,21 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
       if (cpt_elt == 1) { // decode width
         std::istringstream ss(header[0]);
         ss >> w;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
       else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
       else if (cpt_elt == 3) {          // decode maxval
         std::istringstream ss(header[0]);
         ss >> maxval;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
@@ -141,7 +141,7 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
         throw(vpImageException(vpImageException::ioError,
                                "\"%s\" is not a PFM file with PF (RGB) or Pf (gray) magic number", filename.c_str()));
       }
-      cpt_elt++;
+      ++cpt_elt;
       header.erase(header.begin(),
                    header.begin() + 1); // erase first element that is processed
     }
@@ -149,14 +149,14 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
       if (cpt_elt == 1) { // decode width
         std::istringstream ss(header[0]);
         ss >> w;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
       else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
@@ -164,7 +164,7 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
         std::istringstream ss(header[0]);
         ss >> scale;
         littleEndian = scale < 0;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }

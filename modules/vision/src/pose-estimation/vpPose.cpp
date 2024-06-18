@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@
 */
 
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
@@ -45,28 +44,36 @@
 #include <visp3/core/vpUniRand.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
+#ifdef VISP_POSE_USES_HOMOGRAPHY
+#include <visp3/vision/vpHomography.h>
+#endif
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
 BEGIN_VISP_NAMESPACE
 
-#define DEBUG_LEVEL1 0
+namespace
+{
+const int def_vvsIterMax = 200;
+const unsigned int def_ransacNbInlier = 4;
+const int def_ransacMaxTrials = 1000;
+}
 
 vpPose::vpPose()
-  : npt(0), listP(), residual(0), m_lambda(0.9), m_dementhonSvThresh(1e-6), vvsIterMax(200), c3d(),
+  : npt(0), listP(), residual(0), m_lambda(0.9), m_dementhonSvThresh(1e-6), vvsIterMax(def_vvsIterMax), c3d(),
   computeCovariance(false), covarianceMatrix(),
-  ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-  distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(), useParallelRansac(false),
+  ransacNbInlierConsensus(def_ransacNbInlier), ransacMaxTrials(def_ransacMaxTrials), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
+  distToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(), useParallelRansac(false),
   nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
   vvsEpsilon(1e-8)
 { }
 
 vpPose::vpPose(const std::vector<vpPoint> &lP)
   : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), m_lambda(0.9),
-  m_dementhonSvThresh(1e-6), vvsIterMax(200),
-  c3d(), computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000),
-  ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001),
+  m_dementhonSvThresh(1e-6), vvsIterMax(def_vvsIterMax),
+  c3d(), computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(def_ransacNbInlier), ransacMaxTrials(def_ransacMaxTrials),
+  ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001), distToPlaneForCoplanarityTest(0.001),
   ransacFlag(vpPose::NO_FILTER), listOfPoints(lP), useParallelRansac(false),
   nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
   vvsEpsilon(1e-8)
@@ -74,15 +81,7 @@ vpPose::vpPose(const std::vector<vpPoint> &lP)
 
 vpPose::~vpPose()
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::~vpPose() " << std::endl;
-#endif
-
   listP.clear();
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpPose::~vpPose() " << std::endl;
-#endif
 }
 
 void vpPose::clearPoint()
@@ -106,7 +105,7 @@ void vpPose::addPoints(const std::vector<vpPoint> &lP)
   npt = static_cast<unsigned int>(listP.size());
 }
 
-void vpPose::setDistToPlaneForCoplanTest(double d) { distanceToPlaneForCoplanarityTest = d; }
+void vpPose::setDistToPlaneForCoplanTest(double d) { distToPlaneForCoplanarityTest = d; }
 
 void vpPose::setDementhonSvThreshold(const double &svThresh)
 {
@@ -119,12 +118,13 @@ void vpPose::setDementhonSvThreshold(const double &svThresh)
 bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double *p_c, double *p_d)
 {
   coplanar_plane_type = 0;
-  if (npt < 2) {
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-    throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+  const unsigned int nbMinPt = 2;
+  if (npt < nbMinPt) {
+    throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough point (%d) to compute the pose  ", npt));
   }
 
-  if (npt == 3) {
+  const unsigned int nbPtPlan = 3;
+  if (npt == nbPtPlan) {
     return true;
   }
 
@@ -230,7 +230,8 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
   }
 
   if (degenerate) {
-    coplanar_plane_type = 4; // points are collinear
+    const int typeCollinear = 4;
+    coplanar_plane_type = typeCollinear; // points are collinear
     return true;
   }
 
@@ -241,15 +242,18 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
   if ((std::fabs(b) <= std::numeric_limits<double>::epsilon()) &&
       (std::fabs(c) <= std::numeric_limits<double>::epsilon())) {
-    coplanar_plane_type = 1; // ax=d
+    const int typeAxD = 1;
+    coplanar_plane_type = typeAxD; // ax=d
   }
   else if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
             (std::fabs(c) <= std::numeric_limits<double>::epsilon())) {
-    coplanar_plane_type = 2; // by=d
+    const int typeByD = 2;
+    coplanar_plane_type = typeByD; // by=d
   }
   else if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
             (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
-    coplanar_plane_type = 3; // cz=d
+    const int typeCzD = 3;
+    coplanar_plane_type = typeCzD; // cz=d
   }
 
   double D = sqrt(vpMath::sqr(a) + vpMath::sqr(b) + vpMath::sqr(c));
@@ -259,14 +263,13 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
     P1 = *it;
     double dist = ((a * P1.get_oX()) + (b * P1.get_oY()) + (c * P1.get_oZ()) + d) / D;
 
-    if (fabs(dist) > distanceToPlaneForCoplanarityTest) {
-      vpDEBUG_TRACE(10, " points are not coplanar ");
+    if (fabs(dist) > distToPlaneForCoplanarityTest) {
+      // points are not coplanar
       return false;
     }
   }
 
-  vpDEBUG_TRACE(10, " points are  coplanar ");
-  //  vpTRACE(" points are  coplanar ") ;
+  // points are  coplanar
 
   // If the points are coplanar and the input/output parameters are different from nullptr,
   // getting the values of the plan coefficient and storing in the input/output parameters
@@ -334,23 +337,24 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
 
     double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
     residuals[i] = squaredResidual;
-    i++;
+    ++i;
     squared_error += squaredResidual;
   }
   return squared_error;
 }
 
-bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
+bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, funcCheckValidityPose func)
 {
-  if (npt < 4) {
-    throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough point (%d) to compute the pose  ", npt));
-  }
+  const int minNbPtDementhon = 4;
+  const int minNbPtRansac = 4;
+  const int minNbPtLagrangePlan = 4;
+  const int minNbPtLagrangeNoPlan = 6;
 
   switch (method) {
   case DEMENTHON:
   case DEMENTHON_VIRTUAL_VS:
   case DEMENTHON_LOWE: {
-    if (npt < 4) {
+    if (npt < minNbPtDementhon) {
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Dementhon method cannot be used in that case "
                             "(at least 4 points are required)"
@@ -378,12 +382,12 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     bool plan = coplanar(coplanar_plane_type, &a, &b, &c, &d);
 
     if (plan == true) {
-
-      if (coplanar_plane_type == 4) {
+      const int typeCollinear = 4;
+      if (coplanar_plane_type == typeCollinear) {
         throw(vpPoseException(vpPoseException::notEnoughPointError, "Lagrange method cannot be used in that case "
                               "(points are collinear)"));
       }
-      if (npt < 4) {
+      if (npt < minNbPtLagrangePlan) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
                               "(at least 4 points are required). "
@@ -393,7 +397,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
       poseLagrangePlan(cMo, &plan, &a, &b, &c, &d);
     }
     else {
-      if (npt < 6) {
+      if (npt < minNbPtLagrangeNoPlan) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
                               "(at least 6 points are required when 3D points are non coplanar). "
@@ -405,7 +409,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     break;
   }
   case RANSAC: {
-    if (npt < 4) {
+    if (npt < minNbPtRansac) {
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Ransac method cannot be used in that case "
                             "(at least 4 points are required). "
@@ -574,10 +578,11 @@ void vpPose::displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vp
   vpPoint P;
   vpImagePoint ip;
   std::list<vpPoint>::const_iterator listp_end = listP.end();
+  const unsigned int sizeCross = 5;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
-    vpDisplay::displayCross(I, ip, 5, col);
+    vpDisplay::displayCross(I, ip, sizeCross, col);
   }
 }
 
@@ -586,46 +591,49 @@ void vpPose::displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor c
   vpPoint P;
   vpImagePoint ip;
   std::list<vpPoint>::const_iterator listp_end = listP.end();
+  const unsigned int sizeCross = 5;
+
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
-    vpDisplay::displayCross(I, ip, 5, col);
+    vpDisplay::displayCross(I, ip, sizeCross, col);
   }
 }
 
+#ifdef VISP_HAVE_HOMOGRAPHY
 double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx, vpCameraParameters &cam,
-  vpHomogeneousMatrix &cMo)
+                                 vpHomogeneousMatrix &cMo)
 {
-
+  const unsigned int id0 = 0, id1 = 1, id2 = 2, id3 = 3;
   std::vector<double> rectx(4);
   std::vector<double> recty(4);
-  rectx[0] = 0;
-  recty[0] = 0;
-  rectx[1] = 1;
-  recty[1] = 0;
-  rectx[2] = 1;
-  recty[2] = 1;
-  rectx[3] = 0;
-  recty[3] = 1;
+  rectx[id0] = 0;
+  recty[id0] = 0;
+  rectx[id1] = 1;
+  recty[id1] = 0;
+  rectx[id2] = 1;
+  recty[id2] = 1;
+  rectx[id3] = 0;
+  recty[id3] = 1;
   std::vector<double> irectx(4);
   std::vector<double> irecty(4);
-  irectx[0] = (p1.get_x());
-  irecty[0] = (p1.get_y());
-  irectx[1] = (p2.get_x());
-  irecty[1] = (p2.get_y());
-  irectx[2] = (p3.get_x());
-  irecty[2] = (p3.get_y());
-  irectx[3] = (p4.get_x());
-  irecty[3] = (p4.get_y());
+  irectx[id0] = (p1.get_x());
+  irecty[id0] = (p1.get_y());
+  irectx[id1] = (p2.get_x());
+  irecty[id1] = (p2.get_y());
+  irectx[id2] = (p3.get_x());
+  irecty[id2] = (p3.get_y());
+  irectx[id3] = (p4.get_x());
+  irecty[id3] = (p4.get_y());
 
   // calcul de l'homographie
   vpMatrix H(3, 3);
   vpHomography hom;
 
-  // --comment: vpHomography HartleyDLT of rectx recty irectx irecty hom
   vpHomography::HLM(rectx, recty, irectx, irecty, 1, hom);
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       H[i][j] = hom[i][j];
     }
   }
@@ -665,5 +673,6 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
   P.computePose(vpPose::DEMENTHON_LOWE, cMo);
   return lx / s;
 }
+#endif
 
 END_VISP_NAMESPACE

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +29,10 @@
  *
  * Description:
  * Windows 32 display's window class
- *
- * Authors:
- * Bruno Renier
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
-#ifndef vpWin32Window_HH
-#define vpWin32Window_HH
+#ifndef VP_WIN32_WINDOW_H
+#define VP_WIN32_WINDOW_H
 
 #include <visp3/core/vpConfig.h>
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +39,6 @@
 */
 
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -97,13 +95,16 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
 vpRGBa &vpRGBa::operator=(const vpColVector &v)
 {
   if (v.getRows() != 4) {
-    vpERROR_TRACE("Bad vector dimension ");
     throw(vpException(vpException::dimensionError, "Bad vector dimension "));
   }
-  R = static_cast<unsigned char>(v[0]);
-  G = static_cast<unsigned char>(v[1]);
-  B = static_cast<unsigned char>(v[2]);
-  A = static_cast<unsigned char>(v[3]);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  R = static_cast<unsigned char>(v[index_0]);
+  G = static_cast<unsigned char>(v[index_1]);
+  B = static_cast<unsigned char>(v[index_2]);
+  A = static_cast<unsigned char>(v[index_3]);
   return *this;
 }
 
@@ -131,10 +132,14 @@ bool vpRGBa::operator!=(const vpRGBa &v) const { return ((R != v.R) || (G != v.G
 vpColVector vpRGBa::operator-(const vpRGBa &v) const
 {
   vpColVector n(4); // new color
-  n[0] = static_cast<double>(R) - static_cast<double>(v.R);
-  n[1] = static_cast<double>(G) - static_cast<double>(v.G);
-  n[2] = static_cast<double>(B) - static_cast<double>(v.B);
-  n[3] = static_cast<double>(A) - static_cast<double>(v.A);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[index_1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[index_2] = static_cast<double>(B) - static_cast<double>(v.B);
+  n[index_3] = static_cast<double>(A) - static_cast<double>(v.A);
   return n;
 }
 
@@ -162,10 +167,14 @@ vpRGBa vpRGBa::operator+(const vpRGBa &v) const
 vpColVector vpRGBa::operator-(const vpColVector &v) const
 {
   vpColVector n(4); // new color
-  n[0] = R - v[0];
-  n[1] = G - v[1];
-  n[2] = B - v[2];
-  n[3] = A - v[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R - v[index_0];
+  n[index_1] = G - v[index_1];
+  n[index_2] = B - v[index_2];
+  n[index_3] = A - v[index_3];
   return n;
 }
 
@@ -177,10 +186,14 @@ vpColVector vpRGBa::operator-(const vpColVector &v) const
 vpColVector vpRGBa::operator+(const vpColVector &v) const
 {
   vpColVector n(4); // new color
-  n[0] = R + v[0];
-  n[1] = G + v[1];
-  n[2] = B + v[2];
-  n[3] = A + v[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R + v[index_0];
+  n[index_1] = G + v[index_1];
+  n[index_2] = B + v[index_2];
+  n[index_3] = A + v[index_3];
   return n;
 }
 
@@ -192,10 +205,14 @@ vpColVector vpRGBa::operator+(const vpColVector &v) const
 vpColVector vpRGBa::operator*(const float &v) const
 {
   vpColVector n(4);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
-  n[3] = A * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
+  n[index_3] = A * v;
   return n;
 }
 
@@ -207,10 +224,14 @@ vpColVector vpRGBa::operator*(const float &v) const
 vpColVector vpRGBa::operator*(const double &v) const
 {
   vpColVector n(4);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
-  n[3] = A * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
+  n[index_3] = A * v;
   return n;
 }
 

@@ -23,8 +23,8 @@
   \brief Command line argument parsing.
 */
 
-#ifndef vpParseArgv_h
-#define vpParseArgv_h
+#ifndef VP_PARSE_ARGV_H
+#define VP_PARSE_ARGV_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,7 +174,8 @@ void vpPlotGraph::findPose()
 
   // Instead of pose computation we use an approximation
   double Z = 0;
-  for (unsigned int i = 0; i < 4; ++i) {
+  const unsigned int val_4 = 4;
+  for (unsigned int i = 0; i < val_4; ++i) {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
     Z = vpMath::maximum(Z, point_[i].get_oX() / x);
     Z = vpMath::maximum(Z, point_[i].get_oY() / y);
@@ -235,18 +235,18 @@ int laFonctionSansNom(double delta)
   if (d < 1) {
     while (d < 1) {
       d = d * 10;
-      power++;
+      ++power;
     }
-    power--;
+    --power;
     return power;
   }
 
   if (d >= 10) {
     while (d > 10) {
       d = d / 10;
-      power--;
+      --power;
     }
-    power--;
+    --power;
     return power;
   }
 
@@ -857,13 +857,14 @@ void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpIma
 
 void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
 {
+  const unsigned int nparam = 6;
   computeGraphParameters3D();
 
   xdelt = (xmax - xmin) / nbDivisionx;
   ydelt = (ymax - ymin) / nbDivisiony;
   zdelt = (zmax - zmin) / nbDivisionz;
 
-  vpPoint pt[6];
+  vpPoint pt[nparam];
   pt[0].setWorldCoordinates(-w_xval, ptYorg, ptZorg);
   pt[1].setWorldCoordinates(w_xval, ptYorg, ptZorg);
   pt[2].setWorldCoordinates(ptXorg, -w_yval, ptZorg);
@@ -871,8 +872,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   pt[4].setWorldCoordinates(ptXorg, ptYorg, -w_zval);
   pt[5].setWorldCoordinates(ptXorg, ptYorg, w_zval);
 
-  vpImagePoint iP[6];
-  for (unsigned int i = 0; i < 6; ++i) {
+  vpImagePoint iP[nparam];
+  for (unsigned int i = 0; i < nparam; ++i) {
     pt[i].track(cMo);
     double u = 0.0, v = 0.0;
     vpMeterPixelConversion::convertPoint(cam, pt[i].get_x(), pt[i].get_y(), u, v);

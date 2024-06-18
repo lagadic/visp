@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +53,9 @@
 #include <thread>
 #endif
 
-BEGIN_VISP_NAMESPACE
 #define EPS 1e-6
 
+BEGIN_VISP_NAMESPACE
 namespace
 {
 // For std::map<vpPoint>
@@ -63,6 +63,9 @@ struct CompareObjectPointDegenerate
 {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
     bool rc = false;
     const double dist1 =
       (point1.get_oX() * point1.get_oX()) + (point1.get_oY() * point1.get_oY()) + (point1.get_oZ() * point1.get_oZ());
@@ -76,24 +79,24 @@ struct CompareObjectPointDegenerate
       return false;
     }
 
-    if ((point1.oP[0] - point2.oP[0]) < -EPS) {
+    if ((point1.oP[index_0] - point2.oP[index_0]) < -EPS) {
       return true;
     }
-    if ((point1.oP[0] - point2.oP[0]) > EPS) {
+    if ((point1.oP[index_0] - point2.oP[index_0]) > EPS) {
       return false;
     }
 
-    if ((point1.oP[1] - point2.oP[1]) < -EPS) {
+    if ((point1.oP[index_1] - point2.oP[index_1]) < -EPS) {
       return true;
     }
-    if ((point1.oP[1] - point2.oP[1]) > EPS) {
+    if ((point1.oP[index_1] - point2.oP[index_1]) > EPS) {
       return false;
     }
 
-    if ((point1.oP[2] - point2.oP[2]) < -EPS) {
+    if ((point1.oP[index_2] - point2.oP[index_2]) < -EPS) {
       return true;
     }
-    if ((point1.oP[2] - point2.oP[2]) > EPS) {
+    if ((point1.oP[index_2] - point2.oP[index_2]) > EPS) {
       return false;
     }
 
@@ -141,9 +144,12 @@ struct FindDegeneratePoint
 
   bool operator()(const vpPoint &pt)
   {
-    bool result_cond1 = ((std::fabs(m_pt.oP[0] - pt.oP[0]) < EPS) && (std::fabs(m_pt.oP[1] - pt.oP[1]) < EPS)
-                      && (std::fabs(m_pt.oP[2] - pt.oP[2]) < EPS));
-    bool result_cond2 = (std::fabs(m_pt.p[0] - pt.p[0]) < EPS) && (std::fabs(m_pt.p[1] - pt.p[1]) < EPS);
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    bool result_cond1 = ((std::fabs(m_pt.oP[index_0] - pt.oP[index_0]) < EPS) && (std::fabs(m_pt.oP[index_1] - pt.oP[index_1]) < EPS)
+                      && (std::fabs(m_pt.oP[index_2] - pt.oP[index_2]) < EPS));
+    bool result_cond2 = (std::fabs(m_pt.p[index_0] - pt.p[index_0]) < EPS) && (std::fabs(m_pt.p[index_1] - pt.p[index_1]) < EPS);
     return result_cond1 || result_cond2;
   }
 
@@ -154,7 +160,7 @@ struct FindDegeneratePoint
 bool vpPose::vpRansacFunctor::poseRansacImpl()
 {
   const unsigned int size = static_cast<unsigned int>(m_listOfUniquePoints.size());
-  unsigned int nbMinRandom = 4;
+  const unsigned int nbMinRandom = 4;
   int nbTrials = 0;
 
   vpPoint p; // Point used to project using the estimated pose
@@ -215,96 +221,99 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
       }
     }
 
+    bool stop_for_loop = false;
     if (poseMin.npt < nbMinRandom) {
       ++nbTrials;
-      continue;
+      stop_for_loop = true;;
     }
 
-    bool is_pose_valid = false;
-    double r_min = DBL_MAX;
+    if (!stop_for_loop) {
+      bool is_pose_valid = false;
+      double r_min = DBL_MAX;
 
-    try {
-      is_pose_valid = poseMin.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_tmp);
-      r_min = poseMin.computeResidual(cMo_tmp);
-    }
-    catch (...) {
-      // no need to take action
-    }
+      try {
+        is_pose_valid = poseMin.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_tmp);
+        r_min = poseMin.computeResidual(cMo_tmp);
+      }
+      catch (...) {
+        // no need to take action
+      }
 
-    // If residual returned is not a number (NAN), set valid to false
-    if (vpMath::isNaN(r_min)) {
-      is_pose_valid = false;
-    }
+      // If residual returned is not a number (NAN), set valid to false
+      if (vpMath::isNaN(r_min)) {
+        is_pose_valid = false;
+      }
 
-    // If at pose computation is OK we can continue, otherwise pick another random set
-    if (is_pose_valid) {
-      double r = sqrt(r_min) / static_cast<double>(nbMinRandom); // FS should be r = sqrt(r_min / (double)nbMinRandom);
-      // Filter the pose using some criterion (orientation angles,
-      // translations, etc.)
-      bool isPoseValid = true;
-      if (m_func != nullptr) {
-        isPoseValid = m_func(cMo_tmp);
-        if (isPoseValid) {
+      // If at pose computation is OK we can continue, otherwise pick another random set
+      if (is_pose_valid) {
+        double r = sqrt(r_min) / static_cast<double>(nbMinRandom); // FS should be r = sqrt(r_min / (double)nbMinRandom);
+        // Filter the pose using some criterion (orientation angles,
+        // translations, etc.)
+        bool isPoseValid = true;
+        if (m_func != nullptr) {
+          isPoseValid = m_func(cMo_tmp);
+          if (isPoseValid) {
+            m_cMo = cMo_tmp;
+          }
+        }
+        else {
+          // No post filtering on pose, so copy cMo_temp to cMo
           m_cMo = cMo_tmp;
         }
-      }
-      else {
-        // No post filtering on pose, so copy cMo_temp to cMo
-        m_cMo = cMo_tmp;
-      }
 
-      if (isPoseValid && (r < m_ransacThreshold)) {
-        unsigned int nbInliersCur = 0;
-        unsigned int iter = 0;
-        std::vector<vpPoint>::const_iterator m_listofuniquepoints_end = m_listOfUniquePoints.end();
-        for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listofuniquepoints_end;
-             ++it, ++iter) {
-          p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
-          p.track(m_cMo);
+        if (isPoseValid && (r < m_ransacThreshold)) {
+          unsigned int nbInliersCur = 0;
+          unsigned int iter = 0;
+          std::vector<vpPoint>::const_iterator m_listofuniquepoints_end = m_listOfUniquePoints.end();
+          for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listofuniquepoints_end;
+               ++it, ++iter) {
+            p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
+            p.track(m_cMo);
 
-          double error = sqrt(vpMath::sqr(p.get_x() - it->get_x()) + vpMath::sqr(p.get_y() - it->get_y()));
-          if (error < m_ransacThreshold) {
-            bool degenerate = false;
-            if (m_checkDegeneratePoints) {
-              if (std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(*it)) != cur_inliers.end()) {
-                degenerate = true;
+            double error = sqrt(vpMath::sqr(p.get_x() - it->get_x()) + vpMath::sqr(p.get_y() - it->get_y()));
+            if (error < m_ransacThreshold) {
+              bool degenerate = false;
+              if (m_checkDegeneratePoints) {
+                if (std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(*it)) != cur_inliers.end()) {
+                  degenerate = true;
+                }
               }
-            }
 
-            if (!degenerate) {
-              // the point is considered as inlier if the error is below the
-              // threshold
-              ++nbInliersCur;
-              cur_consensus.push_back(iter);
-              cur_inliers.push_back(*it);
+              if (!degenerate) {
+                // the point is considered as inlier if the error is below the
+                // threshold
+                ++nbInliersCur;
+                cur_consensus.push_back(iter);
+                cur_inliers.push_back(*it);
+              }
+              else {
+                cur_outliers.push_back(iter);
+              }
             }
             else {
               cur_outliers.push_back(iter);
             }
           }
-          else {
-            cur_outliers.push_back(iter);
+
+          if (nbInliersCur > m_nbInliers) {
+            foundSolution = true;
+            m_best_consensus = cur_consensus;
+            m_nbInliers = nbInliersCur;
+          }
+
+          ++nbTrials;
+
+          if (nbTrials >= m_ransacMaxTrials) {
+            foundSolution = true;
           }
         }
-
-        if (nbInliersCur > m_nbInliers) {
-          foundSolution = true;
-          m_best_consensus = cur_consensus;
-          m_nbInliers = nbInliersCur;
-        }
-
-        ++nbTrials;
-
-        if (nbTrials >= m_ransacMaxTrials) {
-          foundSolution = true;
+        else {
+          ++nbTrials;
         }
       }
       else {
         ++nbTrials;
       }
-    }
-    else {
-      ++nbTrials;
     }
   }
 
@@ -328,7 +337,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
   vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
 
-  if (listOfPoints.size() < 4) {
+  const size_t minNbPoints = 4;
+  if (listOfPoints.size() < minNbPoints) {
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
@@ -375,7 +385,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
   }
 
-  if (listOfUniquePoints.size() < 4) {
+  const unsigned int minNbUniquePts = 4;
+  if (listOfUniquePoints.size() < minNbUniquePts) {
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
@@ -463,7 +474,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   }
 
   if (foundSolution) {
-    unsigned int nbMinRandom = 4;
+    const unsigned int nbMinRandom = 4;
 
     // --comment: print the nbInliers
     // Display the random picked points (cur_randoms)
@@ -573,10 +584,8 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
     }
   }
 
-  if (pose.listP.size() < 4) {
-    vpERROR_TRACE("Ransac method cannot be used in that case ");
-    vpERROR_TRACE("(at least 4 points are required)");
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ", pose.listP.size());
+  const size_t minNbPts = 4;
+  if (pose.listP.size() < minNbPts) {
     throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough point (%d) to compute the pose by ransac",
                           pose.listP.size()));
   }

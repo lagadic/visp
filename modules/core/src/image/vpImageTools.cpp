@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +102,6 @@ void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigne
 {
   // Test if input values are valid
   if (B <= A) {
-    vpERROR_TRACE("Bad gray levels");
     throw(vpImageException(vpImageException::incorrectInitializationError, "Bad gray levels"));
   }
   unsigned char v;
@@ -443,6 +441,10 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   double r, scale;
   double theta, theta_d;
   double theta2, theta4, theta6, theta8;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
   invpx = 1.0f / px;
   invpy = 1.0f / py;
@@ -482,8 +484,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
         theta6 = theta2 * theta4;
         theta8 = vpMath::sqr(theta4);
 
-        theta_d = theta * (1 + (dist_coefs[0] * theta2) + (dist_coefs[1] * theta4) + (dist_coefs[2] * theta6) +
-                           (dist_coefs[3] * theta8));
+        theta_d = theta * (1 + (dist_coefs[index_0] * theta2) + (dist_coefs[index_1] * theta4) + (dist_coefs[index_2] * theta6) +
+                           (dist_coefs[index_3] * theta8));
 
         // --comment: scale eq (r == 0) 1.0 otherwise theta_d / r
         scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : (theta_d / r);
@@ -609,6 +611,35 @@ void vpImageTools::normalize(vpImage<double> &I)
   }
 }
 
+namespace
+{
+/*!
+* Get the interpolated value at a given location using the nearest points.
+* \param I : The image to perform intepolation in.
+* \param point : The image point.
+*/
+double interpolationNearest(const vpImage<unsigned char> &I, const vpImagePoint &point)
+{
+  int x1 = static_cast<int>(floor(point.get_i()));
+  int x2 = static_cast<int>(ceil(point.get_i()));
+  int y1 = static_cast<int>(floor(point.get_j()));
+  int y2 = static_cast<int>(ceil(point.get_j()));
+  double v1, v2;
+  if (x1 == x2) {
+    v1 = I(x1, y1);
+    v2 = I(x1, y2);
+  }
+  else {
+    v1 = ((x2 - point.get_i()) * I(x1, y1)) + ((point.get_i() - x1) * I(x2, y1));
+    v2 = ((x2 - point.get_i()) * I(x1, y2)) + ((point.get_i() - x1) * I(x2, y2));
+  }
+  if (y1 == y2) {
+    return v1;
+  }
+  return ((y2 - point.get_j()) * v1) + ((point.get_j() - y1) * v2);
+}
+}
+
 /*!
   Get the interpolated value at a given location.
   \param I : The image to perform intepolation in.
@@ -623,23 +654,7 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
   case INTERPOLATION_NEAREST:
     return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
   case INTERPOLATION_LINEAR: {
-    int x1 = static_cast<int>(floor(point.get_i()));
-    int x2 = static_cast<int>(ceil(point.get_i()));
-    int y1 = static_cast<int>(floor(point.get_j()));
-    int y2 = static_cast<int>(ceil(point.get_j()));
-    double v1, v2;
-    if (x1 == x2) {
-      v1 = I(x1, y1);
-      v2 = I(x1, y2);
-    }
-    else {
-      v1 = ((x2 - point.get_i()) * I(x1, y1)) + ((point.get_i() - x1) * I(x2, y1));
-      v2 = ((x2 - point.get_i()) * I(x1, y2)) + ((point.get_i() - x1) * I(x2, y2));
-    }
-    if (y1 == y2) {
-      return v1;
-    }
-    return ((y2 - point.get_j()) * v1) + ((point.get_j() - y1) * v2);
+    return interpolationNearest(I, point);
   }
   case INTERPOLATION_CUBIC: {
     throw vpException(vpException::notImplementedError,
@@ -1003,15 +1018,18 @@ void vpImageTools::resizeSimdlib(const vpImage<unsigned char> &Isrc, unsigned in
 
 bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine)
 {
-  double a0 = T[0][0];
-  double a1 = T[0][1];
-  double a2 = T[0][2];
-  double a3 = T[1][0];
-  double a4 = T[1][1];
-  double a5 = T[1][2];
-  double a6 = affine ? 0.0 : T[2][0];
-  double a7 = affine ? 0.0 : T[2][1];
-  double a8 = affine ? 1.0 : T[2][2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  double a0 = T[index_0][index_0];
+  double a1 = T[index_0][index_1];
+  double a2 = T[index_0][index_2];
+  double a3 = T[index_1][index_0];
+  double a4 = T[index_1][index_1];
+  double a5 = T[index_1][index_2];
+  double a6 = affine ? 0.0 : T[index_2][index_0];
+  double a7 = affine ? 0.0 : T[index_2][index_1];
+  double a8 = affine ? 1.0 : T[index_2][index_2];
 
   double w = (a6 * x) + (a7 * y) + a8;
   double x2 = ((a0 * x) + (a1 * y) + a2) / w;
@@ -1113,12 +1131,18 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
   }
-  unsigned char h_low = static_cast<unsigned char>(hsv_range[0]);
-  unsigned char h_high = static_cast<unsigned char>(hsv_range[1]);
-  unsigned char s_low = static_cast<unsigned char>(hsv_range[2]);
-  unsigned char s_high = static_cast<unsigned char>(hsv_range[3]);
-  unsigned char v_low = static_cast<unsigned char>(hsv_range[4]);
-  unsigned char v_high = static_cast<unsigned char>(hsv_range[5]);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  unsigned char h_low = static_cast<unsigned char>(hsv_range[index_0]);
+  unsigned char h_high = static_cast<unsigned char>(hsv_range[index_1]);
+  unsigned char s_low = static_cast<unsigned char>(hsv_range[index_2]);
+  unsigned char s_high = static_cast<unsigned char>(hsv_range[index_3]);
+  unsigned char v_low = static_cast<unsigned char>(hsv_range[index_4]);
+  unsigned char v_high = static_cast<unsigned char>(hsv_range[index_5]);
   int size_ = static_cast<int>(size);
   int cpt_in_range = 0;
 #if defined(_OPENMP)
@@ -1167,12 +1191,18 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
   }
-  unsigned char h_low = static_cast<unsigned char>(hsv_range[0]);
-  unsigned char h_high = static_cast<unsigned char>(hsv_range[1]);
-  unsigned char s_low = static_cast<unsigned char>(hsv_range[2]);
-  unsigned char s_high = static_cast<unsigned char>(hsv_range[3]);
-  unsigned char v_low = static_cast<unsigned char>(hsv_range[4]);
-  unsigned char v_high = static_cast<unsigned char>(hsv_range[5]);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  unsigned char h_low = static_cast<unsigned char>(hsv_range[index_0]);
+  unsigned char h_high = static_cast<unsigned char>(hsv_range[index_1]);
+  unsigned char s_low = static_cast<unsigned char>(hsv_range[index_2]);
+  unsigned char s_high = static_cast<unsigned char>(hsv_range[index_3]);
+  unsigned char v_low = static_cast<unsigned char>(hsv_range[index_4]);
+  unsigned char v_high = static_cast<unsigned char>(hsv_range[index_5]);
   int size_ = static_cast<int>(size);
   int cpt_in_range = 0;
 #if defined(_OPENMP)

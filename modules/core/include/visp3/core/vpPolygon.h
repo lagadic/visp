@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Defines a generic 2D polygon.
  */
 
-#ifndef _vpPolygon_h_
-#define _vpPolygon_h_
+#ifndef VP_POLYGON_H
+#define VP_POLYGON_H
 
 #include <list>
 #include <vector>
@@ -58,46 +58,45 @@ BEGIN_VISP_NAMESPACE
   \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 
   The code bellow shows how to manipulate a polygon.
-\code
-#include <iostream>
+  \code
+  #include <iostream>
 
-#include <visp3/core/vpPolygon.h>
+  #include <visp3/core/vpPolygon.h>
 
-int main()
-{
-  std::vector<vpImagePoint> corners;
+  int main()
+  {
+    std::vector<vpImagePoint> corners;
 
-  // Initialize the corners vector with 4 points
-  corners.push_back( vpImagePoint( 50, 100) );
-  corners.push_back( vpImagePoint( 50, 300) );
-  corners.push_back( vpImagePoint(200, 300) );
-  corners.push_back( vpImagePoint(200, 100) );
+    // Initialize the corners vector with 4 points
+    corners.push_back( vpImagePoint( 50, 100) );
+    corners.push_back( vpImagePoint( 50, 300) );
+    corners.push_back( vpImagePoint(200, 300) );
+    corners.push_back( vpImagePoint(200, 100) );
 
-  // Initialize a polygon with the corners
-  vpPolygon polygon(corners);
+    // Initialize a polygon with the corners
+    vpPolygon polygon(corners);
 
-  // Get the polygon bounding box
-  vpRect bbox = polygon.getBoundingBox();
-  std::cout << "Bounding box: " << bbox.getTopLeft() << " to "
-            << bbox.getBottomRight() << std::endl;
+    // Get the polygon bounding box
+    vpRect bbox = polygon.getBoundingBox();
+    std::cout << "Bounding box: " << bbox.getTopLeft() << " to "
+              << bbox.getBottomRight() << std::endl;
 
-  // Get the polygon surface and center
-  std::cout << "Area: " << polygon.getArea() << std::endl;
-  std::cout << "Center: " << polygon.getCenter() << std::endl;
+    // Get the polygon surface and center
+    std::cout << "Area: " << polygon.getArea() << std::endl;
+    std::cout << "Center: " << polygon.getCenter() << std::endl;
 
-  // Check if a point is inside the polygon
-  vpImagePoint ip(550, 200);
-  std::cout << "The point " << ip << " is "
-            << (polygon.isInside(ip) ? "inside":"outside")
-            << " the polygon" << std::endl;
+    // Check if a point is inside the polygon
+    vpImagePoint ip(550, 200);
+    std::cout << "The point " << ip << " is "
+              << (polygon.isInside(ip) ? "inside":"outside")
+              << " the polygon" << std::endl;
 
-  return 0;
-}
-\endcode
+    return 0;
+  }
+  \endcode
 */
 class VISP_EXPORT vpPolygon
 {
-
 public:
   enum PointInPolygonMethod
   {
@@ -166,6 +165,12 @@ public:
   */
   inline vpRect getBoundingBox() const { return _bbox; }
 
+  //###################
+  // Static Functions
+  //###################
+  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
+                       const PointInPolygonMethod &method = PnPolyRayCasting);
+
 protected:
   void init(const std::vector<vpImagePoint> &corners);
   void init(const std::list<vpImagePoint> &corners);
@@ -194,14 +199,6 @@ private:
 
   std::vector<double> m_PnPolyConstants;
   std::vector<double> m_PnPolyMultiples;
-
-  //###################
-  // Static Functions
-  //###################
-
-public:
-  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
-                       const PointInPolygonMethod &method = PnPolyRayCasting);
 };
 END_VISP_NAMESPACE
 #endif

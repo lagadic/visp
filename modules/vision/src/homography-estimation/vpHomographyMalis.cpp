@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,9 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
   vpMatrix Md(3, 3);
   vpMatrix Mp(3, 3);
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       M[j][i] = p[pts_ref[i]][j];
       Md[j][i] = pd[pts_ref[i]][j];
     }
@@ -113,15 +114,15 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
     double lamb_des[3];
     double lamb_cour[3];
 
-    for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         lamb_cour[i] = Mp[i][j] * p[pts_ref[3]][j];
         lamb_des[i] = Mdp[i][j] * pd[pts_ref[3]][j];
       }
     }
 
-    for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         M[i][j] = M[i][j] * lamb_cour[j];
         Md[i][j] = Md[i][j] * lamb_des[j];
       }
@@ -136,10 +137,10 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
   unsigned int cont_pts = 0;
   for (unsigned int k = 0; k < nb_pts; ++k) {
     if ((pts_ref[0] != k) && (pts_ref[1] != k) && (pts_ref[2] != k)) {
-      for (unsigned int i = 0; i < 3; ++i) {
+      for (unsigned int i = 0; i < val_3; ++i) {
         pn[cont_pts][i] = 0.0;
         pnd[cont_pts][i] = 0.0;
-        for (unsigned int j = 0; j < 3; ++j) {
+        for (unsigned int j = 0; j < val_3; ++j) {
           pn[cont_pts][i] = pn[cont_pts][i] + (Mp[i][j] * p[k][j]);
           pnd[cont_pts][i] = pnd[cont_pts][i] + (Mdp[i][j] * pd[k][j]);
         }
@@ -254,8 +255,9 @@ void hlm2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
 
   H.resize(3, 3);
   /** construction de la matrice H **/
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       H[i][j] = V[(3 * i) + j][vect];
     }
   }
@@ -544,7 +546,8 @@ void hlm3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
     T[8][2] = V[2][vect];
 
     vpMatrix Hd(3, 3); //  diag(gu,gv,gw)
-    for (unsigned int i = 0; i < 3; ++i) {
+    const unsigned int val_3 = 3;
+    for (unsigned int i = 0; i < val_3; ++i) {
       Hd[i][i] = H_nr[i];
     }
 

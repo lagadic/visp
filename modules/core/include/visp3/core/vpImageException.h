@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief error that can be emitted by the vpImage class and its derivatives
  */
 
-#ifndef _vpImageException_h_
-#define _vpImageException_h_
+#ifndef VP_IMAGE_EXCEPTION_H
+#define VP_IMAGE_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>

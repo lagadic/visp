@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Image display.
- *
- * Authors:
- * Christophe Collewet
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplayGTK.cpp
@@ -56,7 +51,6 @@
 #include <visp3/gui/vpDisplayGTK.h>
 
 // debug / exception
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
@@ -985,7 +979,10 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint 
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImage(const unsigned char * /* I */) { vpTRACE(" not implemented "); }
+void vpDisplayGTK::displayImage(const unsigned char * /* I */)
+{
+  // not implemented
+}
 
 /*!
   Close the window.
@@ -1033,7 +1030,10 @@ void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigned i
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(const vpColor & /* color */) { vpTRACE("Not implemented"); }
+void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
+{
+  // Not implemented
+}
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.

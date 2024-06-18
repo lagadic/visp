@@ -40,6 +40,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 /*
  * Interface with libdc1394 2.x
@@ -1279,22 +1280,22 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top, unsign
 
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
-    }
   }
-  /*!
+}
+/*!
 
-    Open ohci and asign handle to it and get the camera nodes and
-    describe them as we find them.
+  Open ohci and asign handle to it and get the camera nodes and
+  describe them as we find them.
 
-    \param reset : If "true", reset the bus attached to the first
-    camera found. Bus reset may help to make firewire working if the
-    program was not properly stopped by a CTRL-C.
+  \param reset : If "true", reset the bus attached to the first
+  camera found. Bus reset may help to make firewire working if the
+  program was not properly stopped by a CTRL-C.
 
-    \exception initializationError : If a raw1394 handle can't be aquired,
-    or if no camera is found.
+  \exception initializationError : If a raw1394 handle can't be aquired,
+  or if no camera is found.
 
-    \sa close()
-   */
+  \sa close()
+ */
 void vp1394TwoGrabber::initialize(bool reset)
 {
   if (init == false) {
@@ -1360,7 +1361,7 @@ void vp1394TwoGrabber::initialize(bool reset)
                     "`ohci1394' are loaded \n"
                     "  - if you have read/write access to /dev/raw1394\n\n");
       throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Unable to look for cameras"));
-  }
+    }
 #endif
 
     if (num_cameras == 0) {
@@ -1398,7 +1399,7 @@ void vp1394TwoGrabber::initialize(bool reset)
     }
 
     init = true;
-}
+  }
 }
 /*!
 
@@ -1430,23 +1431,23 @@ void vp1394TwoGrabber::open()
         else {
           if (status == DC1394_ON) {
             vpTRACE("ISO transmission refuses to stop");
-        }
+          }
 #ifdef VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
           // No yet in the new API
           cameras[camera_id]->is_iso_on = status;
 #endif
+        }
+        //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
+        // libdc1394-2.0.0-rc7
       }
-      //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-      // libdc1394-2.0.0-rc7
+      //#endif
     }
-    //#endif
-  }
     setCamera(camera_id);
     // setIsoSpeed(DC1394_ISO_SPEED_400);
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
     camIsOpen[camera_id] = true;
-}
+  }
 }
 /*!
 
@@ -1496,8 +1497,8 @@ void vp1394TwoGrabber::close()
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
         dc1394_free_camera(cameras[i]);
 #endif
-        }
       }
+    }
     if (camIsOpen != nullptr) {
       delete[] camIsOpen;
       camIsOpen = nullptr;
@@ -1538,21 +1539,21 @@ void vp1394TwoGrabber::close()
     }
 
     init = false;
-    }
-    }
+  }
+}
 
-    /*!
+/*!
 
-      Set the ring buffer size used for the capture.
-      To know the current ring buffer size see getRingBufferSize().
+  Set the ring buffer size used for the capture.
+  To know the current ring buffer size see getRingBufferSize().
 
-      \param size : Ring buffer size.
+  \param size : Ring buffer size.
 
-      \exception vpFrameGrabberException::settingError : If ring buffer size is
-      not valid.
+  \exception vpFrameGrabberException::settingError : If ring buffer size is
+  not valid.
 
-      \sa getRingBufferSize()
-    */
+  \sa getRingBufferSize()
+*/
 void vp1394TwoGrabber::setRingBufferSize(unsigned int size)
 {
   if (size < 1) {
@@ -2768,22 +2769,22 @@ void vp1394TwoGrabber::printCameraInfo()
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     dc1394_print_feature_set(&features);
 #endif
-}
-  std::cout << "----------------------------------------------------------" << std::endl;
   }
+  std::cout << "----------------------------------------------------------" << std::endl;
+}
 
-  /*!
+/*!
 
-    Converts the video mode identifier into a string containing the description
-    of the mode.
+  Converts the video mode identifier into a string containing the description
+  of the mode.
 
-    \param videomode : The camera capture video mode.
+  \param videomode : The camera capture video mode.
 
-    \return A string describing the mode, an empty string if the mode is not
-    supported.
+  \return A string describing the mode, an empty string if the mode is not
+  supported.
 
-    \sa string2videoMode()
-  */
+  \sa string2videoMode()
+*/
 std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
 {
   std::string _str = "";

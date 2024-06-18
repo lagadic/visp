@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +33,12 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-namespace visp
-{
-#endif
-
-// Static variables
-const unsigned char vpCircleHoughTransform::edgeMapOn = 255;
-const unsigned char vpCircleHoughTransform::edgeMapOff = 0;
+BEGIN_VISP_NAMESPACE
 
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
+namespace
+{
+
 // Sorting by decreasing probabilities
 bool hasBetterProba(std::pair<size_t, float> a, std::pair<size_t, float> b)
 {
@@ -95,7 +91,12 @@ scaleFilter(vpArray2D<float> &filter, const float &scale)
     }
   }
 }
+}
 #endif
+
+// Static variables
+const unsigned char vpCircleHoughTransform::edgeMapOn = 255;
+const unsigned char vpCircleHoughTransform::edgeMapOff = 0;
 
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
@@ -105,7 +106,7 @@ vpCircleHoughTransform::vpCircleHoughTransform()
   initGradientFilters();
 }
 
-vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams)
+vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParams &algoParams)
   : m_algoParams(algoParams)
   , mp_mask(nullptr)
 {
@@ -114,7 +115,7 @@ vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParam
 }
 
 void
-vpCircleHoughTransform::init(const vpCircleHoughTransformParameters &algoParams)
+vpCircleHoughTransform::init(const vpCircleHoughTransformParams &algoParams)
 {
   m_algoParams = algoParams;
   initGaussianFilters();
@@ -191,7 +192,8 @@ vpCircleHoughTransform::initGradientFilters()
     };
 #endif
 
-  if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+  const int moduloCheckForOddity = 2;
+  if ((m_algoParams.m_gradientFilterKernelSize % moduloCheckForOddity) != 1) {
     throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
   }
   m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
@@ -601,135 +603,132 @@ vpCircleHoughTransform::computeCenterCandidates()
         if (std::abs(mag) >= std::numeric_limits<float>::epsilon()) {
           sx = m_dIx[r][c] / mag;
           sy = m_dIy[r][c] / mag;
-        }
-        else {
-          continue;
-        }
 
-        // Saving the edge point for further use
-        m_edgePointsList.push_back(std::pair<unsigned int, unsigned int>(r, c));
+                  // Saving the edge point for further use
+          m_edgePointsList.push_back(std::pair<unsigned int, unsigned int>(r, c));
 
-        for (int k1 = 0; k1 < nbDirections; ++k1) {
-          bool hasToStopLoop = false;
-          int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
-          int x_high_prev = (y_low_prev = (y_high_prev = x_low_prev));
+          for (int k1 = 0; k1 < nbDirections; ++k1) {
+            bool hasToStopLoop = false;
+            int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
+            int x_high_prev = (y_low_prev = (y_high_prev = x_low_prev));
 
-          float rstart = m_algoParams.m_minRadius, rstop = m_algoParams.m_maxRadius;
-          float min_minus_c = minimumXpositionFloat - static_cast<float>(c);
-          float min_minus_r = minimumYpositionFloat - static_cast<float>(r);
-          float max_minus_c = maximumXpositionFloat - static_cast<float>(c);
-          float max_minus_r = maximumYpositionFloat - static_cast<float>(r);
-          if (sx > 0) {
-            float rmin = min_minus_c / sx;
-            rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
-            float rmax = max_minus_c / sx;
-            rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
-          }
-          else if (sx < 0) {
-            float rmin = max_minus_c / sx;
-            rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
-            float rmax = min_minus_c / sx;
-            rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
-          }
-
-          if (sy > 0) {
-            float rmin = min_minus_r / sy;
-            rstart = std::max<float>(rmin, rstart);
-            float rmax = max_minus_r / sy;
-            rstop = std::min<float>(rmax, rstop);
-          }
-          else if (sy < 0) {
-            float rmin = max_minus_r / sy;
-            rstart = std::max<float>(rmin, rstart);
-            float rmax = min_minus_r / sy;
-            rstop = std::min<float>(rmax, rstop);
-          }
-
-          float deltar_x = 1.f / std::abs(sx);
-          float deltar_y = 1.f / std::abs(sy);
-          float deltar = std::min<float>(deltar_x, deltar_y);
-
-          float rad = rstart;
-          while ((rad <= rstop) && (!hasToStopLoop)) {
-            float x1 = static_cast<float>(c) + (rad * sx);
-            float y1 = static_cast<float>(r) + (rad * sy);
-            rad += deltar; // Update rad that is not used below not to forget it
-
-            if ((x1 < minimumXpositionFloat) || (y1 < minimumYpositionFloat)
-                || (x1 > maximumXpositionFloat) || (y1 > maximumYpositionFloat)) {
-              continue; // It means that the center is outside the search region.
+            float rstart = m_algoParams.m_minRadius, rstop = m_algoParams.m_maxRadius;
+            float min_minus_c = minimumXpositionFloat - static_cast<float>(c);
+            float min_minus_r = minimumYpositionFloat - static_cast<float>(r);
+            float max_minus_c = maximumXpositionFloat - static_cast<float>(c);
+            float max_minus_r = maximumYpositionFloat - static_cast<float>(r);
+            if (sx > 0) {
+              float rmin = min_minus_c / sx;
+              rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
+              float rmax = max_minus_c / sx;
+              rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
+            }
+            else if (sx < 0) {
+              float rmin = max_minus_c / sx;
+              rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
+              float rmax = min_minus_c / sx;
+              rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
             }
 
-            int x_low, x_high;
-            int y_low, y_high;
-
-            if (x1 > 0.) {
-              x_low = static_cast<int>(std::floor(x1));
-              x_high = static_cast<int>(std::ceil(x1));
+            if (sy > 0) {
+              float rmin = min_minus_r / sy;
+              rstart = std::max<float>(rmin, rstart);
+              float rmax = max_minus_r / sy;
+              rstop = std::min<float>(rmax, rstop);
             }
-            else {
-              x_low = -(static_cast<int>(std::ceil(-x1)));
-              x_high = -(static_cast<int>(std::floor(-x1)));
-            }
-
-            if (y1 > 0.) {
-              y_low = static_cast<int>(std::floor(y1));
-              y_high = static_cast<int>(std::ceil(y1));
-            }
-            else {
-              y_low = -(static_cast<int>(std::ceil(-1. * y1)));
-              y_high = -(static_cast<int>(std::floor(-1. * y1)));
+            else if (sy < 0) {
+              float rmin = max_minus_r / sy;
+              rstart = std::max<float>(rmin, rstart);
+              float rmax = min_minus_r / sy;
+              rstop = std::min<float>(rmax, rstop);
             }
 
-            if ((x_low_prev == x_low) && (x_high_prev == x_high)
-                && (y_low_prev == y_low) && (y_high_prev == y_high)) {
-              // Avoid duplicated votes to the same center candidate
-              continue;
-            }
-            else {
-              x_low_prev = x_low;
-              x_high_prev = x_high;
-              y_low_prev = y_low;
-              y_high_prev = y_high;
-            }
+            float deltar_x = 1.f / std::abs(sx);
+            float deltar_y = 1.f / std::abs(sy);
+            float deltar = std::min<float>(deltar_x, deltar_y);
+
+            float rad = rstart;
+            while ((rad <= rstop) && (!hasToStopLoop)) {
+              float x1 = static_cast<float>(c) + (rad * sx);
+              float y1 = static_cast<float>(r) + (rad * sy);
+              rad += deltar; // Update rad that is not used below not to forget it
+
+              if ((x1 < minimumXpositionFloat) || (y1 < minimumYpositionFloat)
+                  || (x1 > maximumXpositionFloat) || (y1 > maximumYpositionFloat)) {
+                continue; // It means that the center is outside the search region.
+              }
+
+              int x_low, x_high;
+              int y_low, y_high;
+
+              if (x1 > 0.) {
+                x_low = static_cast<int>(std::floor(x1));
+                x_high = static_cast<int>(std::ceil(x1));
+              }
+              else {
+                x_low = -(static_cast<int>(std::ceil(-x1)));
+                x_high = -(static_cast<int>(std::floor(-x1)));
+              }
+
+              if (y1 > 0.) {
+                y_low = static_cast<int>(std::floor(y1));
+                y_high = static_cast<int>(std::ceil(y1));
+              }
+              else {
+                y_low = -(static_cast<int>(std::ceil(-1. * y1)));
+                y_high = -(static_cast<int>(std::floor(-1. * y1)));
+              }
+
+              if ((x_low_prev == x_low) && (x_high_prev == x_high)
+                  && (y_low_prev == y_low) && (y_high_prev == y_high)) {
+                // Avoid duplicated votes to the same center candidate
+                continue;
+              }
+              else {
+                x_low_prev = x_low;
+                x_high_prev = x_high;
+                y_low_prev = y_low;
+                y_high_prev = y_high;
+              }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-            auto updateAccumulator =
-              [](const float &x_orig, const float &y_orig,
-                 const int &x, const int &y,
-                 const int &offsetX, const int &offsetY,
-                 const int &nbCols, const int &nbRows,
-                 vpImage<float> &accum, bool &hasToStop) {
-                   if (((x - offsetX) < 0) ||
-                       ((x - offsetX) >= nbCols) ||
-                       ((y - offsetY) < 0) ||
-                       ((y - offsetY) >= nbRows)
-                       ) {
-                     hasToStop = true;
-                   }
-                   else {
-                     float dx = (x_orig - static_cast<float>(x));
-                     float dy = (y_orig - static_cast<float>(y));
-                     accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
-                   }
-              };
+              auto updateAccumulator =
+                [](const float &x_orig, const float &y_orig,
+                   const int &x, const int &y,
+                   const int &offsetX, const int &offsetY,
+                   const int &nbCols, const int &nbRows,
+                   vpImage<float> &accum, bool &hasToStop) {
+                     if (((x - offsetX) < 0) ||
+                         ((x - offsetX) >= nbCols) ||
+                         ((y - offsetY) < 0) ||
+                         ((y - offsetY) >= nbRows)
+                         ) {
+                       hasToStop = true;
+                     }
+                     else {
+                       float dx = (x_orig - static_cast<float>(x));
+                       float dy = (y_orig - static_cast<float>(y));
+                       accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+                     }
+                };
 #endif
 
-            updateAccumulator(x1, y1, x_low, y_low,
-                              offsetX, offsetY,
-                              accumulatorWidth, accumulatorHeight,
-                              centersAccum, hasToStopLoop
-            );
+              updateAccumulator(x1, y1, x_low, y_low,
+                                offsetX, offsetY,
+                                accumulatorWidth, accumulatorHeight,
+                                centersAccum, hasToStopLoop
+              );
 
-            updateAccumulator(x1, y1, x_high, y_high,
-                              offsetX, offsetY,
-                              accumulatorWidth, accumulatorHeight,
-                              centersAccum, hasToStopLoop
-            );
+              updateAccumulator(x1, y1, x_high, y_high,
+                                offsetX, offsetY,
+                                accumulatorWidth, accumulatorHeight,
+                                centersAccum, hasToStopLoop
+              );
+            }
+
+            sx = -sx;
+            sy = -sy;
           }
-
-          sx = -sx;
-          sy = -sy;
         }
       }
     }
@@ -898,7 +897,8 @@ vpCircleHoughTransform::computeCircleCandidates()
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     for (auto edgePoint : m_edgePointsList)
 #else
-    for (size_t e = 0; e < m_edgePointsList.size(); ++e)
+    const size_t nbEdgePoints = m_edgePointsList.size();
+    for (size_t e = 0; e < nbEdgePoints; ++e)
 #endif
     {
       // For each center candidate CeC_i, compute the distance with each edge point EP_j d_ij = dist(CeC_i; EP_j)
@@ -1044,7 +1044,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         ++idCandidate;
       }
 
-      if ((votes_effective > m_algoParams.m_centerMinThresh) && (votes_effective >= (m_algoParams.m_circleVisibilityRatioThresh * 2.f * M_PIf * r_effective))) {
+      if ((votes_effective > m_algoParams.m_centerMinThresh) && (votes_effective >= (m_algoParams.m_circleVisibilityRatioThresh * 2.f * M_PI_FLOAT * r_effective))) {
         // Only the circles having enough votes and being visible enough are considered
         v_r_effective.push_back(r_effective);
         v_votes_effective.push_back(votes_effective);
@@ -1151,7 +1151,8 @@ vpCircleHoughTransform::mergeCandidates(std::vector<vpImageCircle> &circleCandid
         vpImagePoint newCenter = ((cic_i.getCenter() * circleCandidatesProba[i]) + (cic_j.getCenter() * circleCandidatesProba[j])) / totalProba;
         cic_i = vpImageCircle(newCenter, newRadius);
         circleCandidates[j] = circleCandidates[nbCandidates - 1];
-        circleCandidatesVotes[i] = totalVotes / 2; // Compute the mean vote
+        const unsigned int var2 = 2;
+        circleCandidatesVotes[i] = totalVotes / var2; // Compute the mean vote
         circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
         circleCandidatesProba[i] = newProba;
         circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];

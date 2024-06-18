@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@
  * your project.
  */
 
-#ifndef _vpUniRand_h_
-#define _vpUniRand_h_
+#ifndef VP_UNIRAND_H
+#define VP_UNIRAND_H
 
 #include <visp3/core/vpConfig.h>
 // Visual Studio 2010 or previous is missing inttypes.h
@@ -155,17 +155,17 @@ public:
   }
 
 private:
-  struct vpPcgStateSetseq_64_t
+  struct vpPcgStateSetSeq64t
   { // Internals are *Private*.
     uint64_t state;            // RNG state.  All values are possible.
     uint64_t inc;              // Controls which RNG sequence (stream) is
     // selected. Must *always* be odd.
 
-    vpPcgStateSetseq_64_t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
+    vpPcgStateSetSeq64t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
       : state(state_), inc(inc_)
     { }
   };
-  typedef struct vpPcgStateSetseq_64_t pcg32_random_t;
+  typedef struct vpPcgStateSetSeq64t pcg32_random_t;
 
 private:
   uint32_t boundedRand(uint32_t bound);

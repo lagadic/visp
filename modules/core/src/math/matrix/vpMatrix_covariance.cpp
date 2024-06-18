@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Covariance matrix computation.
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <cmath>  // std::fabs()
 #include <limits> // numeric_limits
@@ -166,9 +161,12 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   // building Lp
   vpMatrix LpInv(6, 6);
   LpInv = 0;
-  LpInv[0][0] = -1.0;
-  LpInv[1][1] = -1.0;
-  LpInv[2][2] = -1.0;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  LpInv[index_0][index_0] = -1.0;
+  LpInv[index_1][index_1] = -1.0;
+  LpInv[index_2][index_2] = -1.0;
 
   vpTranslationVector ctoInit;
 
@@ -179,7 +177,8 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   cMo.extract(thetau);
 
   vpColVector tu(3);
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     tu[i] = thetau[i];
   }
 
@@ -195,13 +194,13 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   if ((theta / (2.0 * M_PI)) > std::numeric_limits<double>::epsilon()) {
     // Computing [theta/2 u]_x
     vpColVector theta2u(3);
-    for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       theta2u[i] = tu[i] / 2.0;
     }
     vpMatrix theta2u_skew = vpColVector::skew(theta2u);
 
     vpColVector u(3);
-    for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       u[i] = tu[i] / theta;
     }
     vpMatrix u_skew = vpColVector::skew(u);
@@ -214,14 +213,14 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
 
   ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
 
-  for (unsigned int a = 0; a < 3; ++a) {
-    for (unsigned int b = 0; b < 3; ++b) {
+  for (unsigned int a = 0; a < val_3; ++a) {
+    for (unsigned int b = 0; b < val_3; ++b) {
       LpInv[a][b + 3] = ctoInitSkew[a][b];
     }
   }
 
-  for (unsigned int a = 0; a < 3; ++a) {
-    for (unsigned int b = 0; b < 3; ++b) {
+  for (unsigned int a = 0; a < val_3; ++a) {
+    for (unsigned int b = 0; b < val_3; ++b) {
       LpInv[a + 3][b + 3] = LthetauInvAnalytic[a][b];
     }
   }

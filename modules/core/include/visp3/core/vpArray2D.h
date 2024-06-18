@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
  * Description:
  * This class implements an 2D array as a template class.
  */
-#ifndef _vpArray2D_h_
-#define _vpArray2D_h_
+#ifndef VP_ARRAY2D_H
+#define VP_ARRAY2D_H
 
 #include <fstream>
 #include <iostream>
@@ -125,26 +125,15 @@ BEGIN_VISP_NAMESPACE
 */
 template <class Type> class vpArray2D
 {
-protected:
-  //! Number of rows in the array
-  unsigned int rowNum;
-  //! Number of columns in the array
-  unsigned int colNum;
-  //! Address of the first element of each rows
-  Type **rowPtrs;
-  //! Current array size (rowNum * colNum)
-  unsigned int dsize;
-
 public:
   //! Address of the first element of the data array
   Type *data;
 
-public:
   /*!
    * Basic constructor of a 2D array.
    * Number of columns and rows are set to zero.
    */
-  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr) { }
+  vpArray2D<Type>() : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0) { }
 
   /*!
     Copy constructor of a 2D array.
@@ -154,7 +143,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D<Type>()
 #else
-    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
   {
     resize(A.rowNum, A.colNum, false, false);
@@ -172,7 +161,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D<Type>()
 #else
-    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
   {
     resize(r, c);
@@ -190,7 +179,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D<Type>()
 #else
-    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
   {
     resize(r, c, false, false);
@@ -213,7 +202,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     vpArray2D<Type>()
 #else
-    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+    data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
   {
     if ((r > 0) && (c > 0)) {
@@ -272,7 +261,7 @@ public:
   }
 
   explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
-    : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+    : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
   {
     if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
       std::ostringstream oss;
@@ -607,8 +596,8 @@ public:
       return s;
     }
     std::ios_base::fmtflags original_flags = s.flags();
-
-    s.precision(10);
+    const unsigned int precision = 10;
+    s.precision(precision);
     unsigned int a_rows = A.getRows();
     unsigned int a_cols = A.getCols();
     for (unsigned int i = 0; i < a_rows; ++i) {
@@ -677,18 +666,18 @@ public:
       bool headerIsDecoded = false;
       do {
         std::streampos pos = file.tellg();
-        char line[256];
-        file.getline(line, 256);
+        char line[FILENAME_MAX];
+        file.getline(line, FILENAME_MAX);
         std::string prefix("# ");
         std::string line_(line);
-        if (line_.compare(0, 2, prefix.c_str()) == 0) {
+        if (line_.compare(0, prefix.size(), prefix.c_str()) == 0) {
           // Line is a comment
           // If we are not on the first line, we should add "\n" to the end of
           // the previous line
           if (pos) {
             h += "\n";
           }
-          h += line_.substr(2); // Remove "# "
+          h += line_.substr(prefix.size()); // Remove "# "
         }
         else {
           // rewind before the line
@@ -758,6 +747,7 @@ public:
     file.close();
     return true;
   }
+
   /*!
     Load an array from a YAML-formatted file.
 
@@ -768,7 +758,6 @@ public:
     \return Returns true on success.
 
     \sa saveYAML()
-
   */
   static bool loadYAML(const std::string &filename, vpArray2D<Type> &A, char *header = nullptr)
   {
@@ -790,17 +779,20 @@ public:
 
     while (getline(file, line)) {
       if (inheader) {
-        if ((rows == 0) && (line.compare(0, 5, "rows:") == 0)) {
+        const std::string str_rows("rows:");
+        const std::string str_cols("cols:");
+        const std::string str_data("data:");
+        if ((rows == 0) && (line.compare(0, str_rows.size(), str_rows.c_str()) == 0)) {
           std::stringstream ss(line);
           ss >> subs;
           ss >> rows;
         }
-        else if ((cols == 0) && (line.compare(0, 5, "cols:") == 0)) {
+        else if ((cols == 0) && (line.compare(0, str_cols.size(), str_cols.c_str()) == 0)) {
           std::stringstream ss(line);
           ss >> subs;
           ss >> cols;
         }
-        else if (line.compare(0, 5, "data:") == 0) {
+        else if (line.compare(0, str_data.size(), str_data.c_str()) == 0) {
           inheader = false;
         }
         else {
@@ -1082,6 +1074,16 @@ public:
   */
   static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
+
+protected:
+  //! Number of rows in the array
+  unsigned int rowNum;
+  //! Number of columns in the array
+  unsigned int colNum;
+  //! Address of the first element of each rows
+  Type **rowPtrs;
+  //! Current array size (rowNum * colNum)
+  unsigned int dsize;
 };
 
 /*!
@@ -1175,7 +1177,8 @@ template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, cons
   if ((mode == "full") || (mode == "same")) {
     const unsigned int pad_x = kernel.getCols() - 1;
     const unsigned int pad_y = kernel.getRows() - 1;
-    M_padded.resize(M.getRows() + (2 * pad_y), M.getCols() + (2 * pad_x), true, false);
+    const unsigned int pad = 2;
+    M_padded.resize(M.getRows() + (pad * pad_y), M.getCols() + (pad * pad_x), true, false);
     M_padded.insert(M, pad_y, pad_x);
 
     if (mode == "same") {

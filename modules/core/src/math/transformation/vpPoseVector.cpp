@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +42,6 @@
 #include <assert.h>
 #include <sstream>
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrixException.h>
@@ -81,13 +79,19 @@ vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) { }
 vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(6, 1)
 {
-  (*this)[0] = tx;
-  (*this)[1] = ty;
-  (*this)[2] = tz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  (*this)[index_0] = tx;
+  (*this)[index_1] = ty;
+  (*this)[index_2] = tz;
 
-  (*this)[3] = tux;
-  (*this)[4] = tuy;
-  (*this)[5] = tuz;
+  (*this)[index_3] = tux;
+  (*this)[index_4] = tuy;
+  (*this)[index_5] = tuz;
 }
 
 /*!
@@ -151,13 +155,19 @@ vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 
 */
 void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, double tuz)
 {
-  (*this)[0] = tx;
-  (*this)[1] = ty;
-  (*this)[2] = tz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  (*this)[index_0] = tx;
+  (*this)[index_1] = ty;
+  (*this)[index_2] = tz;
 
-  (*this)[3] = tux;
-  (*this)[4] = tuy;
-  (*this)[5] = tuz;
+  (*this)[index_3] = tux;
+  (*this)[index_4] = tuy;
+  (*this)[index_5] = tuz;
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -257,13 +267,19 @@ vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpRota
 */
 vpPoseVector &vpPoseVector::build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz)
 {
-  (*this)[0] = tx;
-  (*this)[1] = ty;
-  (*this)[2] = tz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  (*this)[index_0] = tx;
+  (*this)[index_1] = ty;
+  (*this)[index_2] = tz;
 
-  (*this)[3] = tux;
-  (*this)[4] = tuy;
-  (*this)[5] = tuz;
+  (*this)[index_3] = tux;
+  (*this)[index_4] = tuy;
+  (*this)[index_5] = tuz;
   return *this;
 }
 
@@ -301,7 +317,8 @@ vpPoseVector &vpPoseVector::build(const vpHomogeneousMatrix &M)
 */
 vpPoseVector &vpPoseVector::build(const vpTranslationVector &tv, const vpThetaUVector &tu)
 {
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     (*this)[i] = tv[i];
     (*this)[i + 3] = tu[i];
   }
@@ -335,9 +352,12 @@ vpPoseVector &vpPoseVector::build(const vpTranslationVector &tv, const vpRotatio
 */
 void vpPoseVector::extract(vpTranslationVector &tv) const
 {
-  tv[0] = (*this)[0];
-  tv[1] = (*this)[1];
-  tv[2] = (*this)[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  tv[index_0] = (*this)[index_0];
+  tv[index_1] = (*this)[index_1];
+  tv[index_2] = (*this)[index_2];
 }
 
 /*!
@@ -345,9 +365,15 @@ void vpPoseVector::extract(vpTranslationVector &tv) const
 */
 void vpPoseVector::extract(vpThetaUVector &tu) const
 {
-  tu[0] = (*this)[3];
-  tu[1] = (*this)[4];
-  tu[2] = (*this)[5];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  tu[index_0] = (*this)[index_3];
+  tu[index_1] = (*this)[index_4];
+  tu[index_2] = (*this)[index_5];
 }
 /*!
   Extract the rotation as a quaternion vector.
@@ -367,7 +393,10 @@ void vpPoseVector::extract(vpRotationMatrix &R) const { R.build((*this)[3], (*th
  */
 vpTranslationVector vpPoseVector::getTranslationVector() const
 {
-  vpTranslationVector tr((*this)[0], (*this)[1], (*this)[2]);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  vpTranslationVector tr((*this)[index_0], (*this)[index_1], (*this)[index_2]);
   return tr;
 }
 
@@ -414,8 +443,10 @@ vpThetaUVector vpPoseVector::getThetaUVector() const
 */
 void vpPoseVector::print() const
 {
-  for (unsigned int i = 0; i < 6; ++i) {
-    if (i < 3) {
+  const unsigned int nparam = 6;
+  const unsigned int nparam_t = 3;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    if (i < nparam_t) {
       std::cout << (*this)[i] << " ";
     }
     else {
@@ -459,7 +490,8 @@ void vpPoseVector::save(std::ofstream &f) const
 void vpPoseVector::load(std::ifstream &f)
 {
   if (!f.fail()) {
-    for (unsigned int i = 0; i < 6; ++i) {
+    const unsigned int nparam = 6;
+    for (unsigned int i = 0; i < nparam; ++i) {
       f >> (*this)[i];
     }
   }
