@@ -165,6 +165,19 @@ def get_name(name: types.PQName) -> str:
   '''
   return '::'.join([segment.name for segment in name.segments])
 
+def typedef_is_anonymous(type: types.DecoratedType) -> bool:
+  if isinstance(type, types.Array):
+    return typedef_is_anonymous(type.array_of)
+  elif isinstance(type, types.Pointer):
+    return typedef_is_anonymous(type.ptr_to)
+  elif isinstance(type, types.MoveReference):
+    return typedef_is_anonymous(type.moveref_to)
+  elif isinstance(type, types.Reference):
+    return typedef_is_anonymous(type.ref_to)
+  elif isinstance(type, types.Type):
+    return name_is_anonymous(type.typename)
+  return False
+
 def name_is_anonymous(name: types.PQName) -> bool:
   return any(isinstance(s, types.AnonymousName) for s in name.segments)
 
@@ -245,11 +258,18 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
     else:
       return None
   elif isinstance(param, types.Pointer):
-    repr_str = get_type(param.ptr_to, owner_specs, header_env_mapping)
-    if repr_str is not None:
-      return repr_str + '*'
+    if not isinstance(param.ptr_to, types.FunctionType):
+      repr_str = get_type(param.ptr_to, owner_specs, header_env_mapping)
+      if repr_str is not None:
+        return repr_str + '*'
+      else:
+        return None
     else:
-      return None
+      fn: types.FunctionType = param.ptr_to
+      return_type = get_type(fn.return_type, owner_specs, header_env_mapping)
+      param_types = [get_type(p.type, owner_specs, header_env_mapping) for p in fn.parameters]
+      return f'{return_type}(*)({",".join(param_types)})'
+
   elif isinstance(param, types.Array):
     repr_str = get_type(param.array_of, owner_specs, header_env_mapping)
     if repr_str is not None:

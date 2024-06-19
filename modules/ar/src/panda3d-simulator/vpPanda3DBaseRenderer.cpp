@@ -57,11 +57,11 @@ void vpPanda3DBaseRenderer::initFramework()
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = m_framework->open_window(winProps, flags);
+  m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, flags));
   // try and reopen with visible window
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = m_framework->open_window(winProps, 0);
+    m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, 0));
   }
   if (m_window == nullptr) {
     throw vpException(vpException::notInitialized,
@@ -74,7 +74,7 @@ void vpPanda3DBaseRenderer::initFramework()
   //m_window->get_display_region_3d()->set_camera(m_cameraPath);
 }
 
-void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
+void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window)
 {
   m_framework = framework;
   m_window = window;

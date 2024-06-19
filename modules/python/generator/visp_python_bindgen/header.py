@@ -438,7 +438,7 @@ class HeaderFile():
             method_spec_dict = OrderedDict(k for k in zip(method_template_names, method_spec))
             new_specs.update(method_spec_dict)
             method_str, method_data = define_method(method, method_config, True,
-                                                                new_specs, self, header_env, class_def_names)
+                                                    new_specs, self, header_env, class_def_names)
             add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
                                                                   is_lambda=f'{name_cpp}::*' not in method_str,
                                                                   is_operator=False, is_constructor=False,
@@ -446,7 +446,7 @@ class HeaderFile():
             generated_methods.append(method_data)
         else:
           method_str, method_data = define_method(method, method_config, True,
-                                                              owner_specs, self, header_env, class_def_names)
+                                                  owner_specs, self, header_env, class_def_names)
           add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
                                                                 is_lambda=f'{name_cpp}::*' not in method_str,
                                                                 is_operator=False, is_constructor=False,
