@@ -183,7 +183,7 @@ public:
    * \brief Compute the likelihood of a particle compared to the measurements.
    * The likelihood equals zero if the particle is completely different of
    * the measurements and equals one if it matches completely.
-   * The chosen likelihood is a Gaussian function that penalizes the distance
+   * The chosen likelihood is a Gaussian function that penalizes the mean distance
    * between the projection of the markers corresponding to the particle position
    * and the measurements of the markers in the image.
    *
@@ -207,10 +207,9 @@ public:
       vpMeterPixelConversion::convertPoint(m_cam, cX[idX] / cX[idZ], cX[idY] / cX[idZ], projParticle);
       vpImagePoint measPt(meas[sizePt2D * i + 1], meas[sizePt2D * i]);
       double error = vpImagePoint::sqrDistance(projParticle, measPt);
-      likelihood += std::exp(m_constantExpDenominator * error) * m_constantDenominator;
       sumError += error;
     }
-    likelihood /= static_cast<double>(nbMarkers);
+    likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbMarkers)) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
     return likelihood;
@@ -324,25 +323,196 @@ vpHomogeneousMatrix computePose(std::vector<vpPoint> &point, const std::vector<v
 }
 //! [Pose_for_display]
 
+struct SoftwareArguments
+{
+  // --- Main loop parameters---
+  static const int SOFTWARE_CONTINUE = 42;
+  bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
+  unsigned int m_nbStepsWarmUp; //!< Number of steps for the warmup phase.
+  unsigned int m_nbSteps; //!< ?umber of steps for the main loop.
+  // --- PF parameters---
+  unsigned int m_N; //!< The number of particles.
+  double m_maxDistanceForLikelihood; //!< The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
+  double m_ampliMaxX; //!< Amplitude max of the noise for the state component corresponding to the X coordinate.
+  double m_ampliMaxY; //!< Amplitude max of the noise for the state component corresponding to the Y coordinate.
+  double m_ampliMaxZ; //!< Amplitude max of the noise for the state component corresponding to the Z coordinate.
+  double m_ampliMaxOmega; //!< Amplitude max of the noise for the state component corresponding to the pulsation.
+  long m_seedPF; //!< Seed for the random generators of the PF.
+  unsigned int m_nbThreads; //!< Number of thread to use in the Particle Filter.
+
+  SoftwareArguments()
+    : m_useDisplay(true)
+    , m_nbStepsWarmUp(200)
+    , m_nbSteps(2000)
+    , m_N(300)
+    , m_maxDistanceForLikelihood(40.)
+    , m_ampliMaxX(0.03)
+    , m_ampliMaxY(0.03)
+    , m_ampliMaxZ(0.03)
+    , m_ampliMaxOmega(0.02)
+    , m_seedPF(4224)
+    , m_nbThreads(1)
+  { }
+
+  int parseArgs(const int argc, const char *argv[])
+  {
+    int i = 1;
+    while (i < argc) {
+      std::string arg(argv[i]);
+      if ((arg == "--nb-steps-main") && ((i+1) < argc)) {
+        m_nbSteps = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--nb-steps-warmup") && ((i+1) < argc)) {
+        m_nbStepsWarmUp = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--max-distance-likelihood") && ((i+1) < argc)) {
+        m_maxDistanceForLikelihood = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if (((arg == "-N") || (arg == "--nb-particles")) && ((i+1) < argc)) {
+        m_N = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--seed") && ((i+1) < argc)) {
+        m_seedPF = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--nb-threads") && ((i+1) < argc)) {
+        m_nbThreads = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--ampli-max-X") && ((i+1) < argc)) {
+        m_ampliMaxX = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--ampli-max-Y") && ((i+1) < argc)) {
+        m_ampliMaxY = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--ampli-max-Z") && ((i+1) < argc)) {
+        m_ampliMaxZ = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--ampli-max-omega") && ((i+1) < argc)) {
+        m_ampliMaxOmega = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if (arg == "-d") {
+        m_useDisplay = false;
+      }
+      else if ((arg == "-h") || (arg == "--help")) {
+        printUsage(std::string(argv[0]));
+        SoftwareArguments defaultArgs;
+        defaultArgs.printDetails();
+        return 0;
+      }
+      else {
+        std::cout << "WARNING: unrecognised argument \"" << arg << "\"";
+        if (i + 1 < argc) {
+          std::cout << " with associated value(s) { ";
+          int nbValues = 0;
+          int j = i + 1;
+          bool hasToRun = true;
+          while ((j < argc) && hasToRun) {
+            std::string nextValue(argv[j]);
+            if (nextValue.find("--") == std::string::npos) {
+              std::cout << nextValue << " ";
+              ++nbValues;
+            }
+            else {
+              hasToRun = false;
+            }
+            ++j;
+          }
+          std::cout << "}" << std::endl;
+          i += nbValues;
+        }
+      }
+      ++i;
+    }
+    return SOFTWARE_CONTINUE;
+  }
+
+private:
+  void printUsage(const std::string &softName)
+  {
+    std::cout << "SYNOPSIS" << std::endl;
+    std::cout << "  " << softName << " [--nb-steps-main <uint>] [--nb-steps-warmup <uint>]" << std::endl;
+    std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
+    std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-Z <double>] [--ampli-max-omega <double>]" << std::endl;
+    std::cout << "  [-d, --no-display][-h]" << std::endl;
+  }
+
+  void printDetails()
+  {
+    std::cout << std::endl << std::endl;
+    std::cout << "DETAILS" << std::endl;
+    std::cout << "  --nb-steps-main" << std::endl;
+    std::cout << "    Number of steps in the main loop." << std::endl;
+    std::cout << "    Default: " << m_nbSteps << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --nb-steps-warmup" << std::endl;
+    std::cout << "    Number of steps in the warmup loop." << std::endl;
+    std::cout << "    Default: " << m_nbStepsWarmUp << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --max-distance-likelihood" << std::endl;
+    std::cout << "    Maximum mean distance of the projection of the markers corresponding" << std::endl;
+    std::cout << "    to a particle with the measurements. Above this value, the likelihood of the particle is 0." << std::endl;
+    std::cout << "    Default: " << m_maxDistanceForLikelihood << std::endl;
+    std::cout << std::endl;
+    std::cout << "  -N, --nb-particles" << std::endl;
+    std::cout << "    Number of particles of the Particle Filter." << std::endl;
+    std::cout << "    Default: " << m_N << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --seed" << std::endl;
+    std::cout << "    Seed to initialize the Particle Filter." << std::endl;
+    std::cout << "    Use a negative value makes to use the current timestamp instead." << std::endl;
+    std::cout << "    Default: " << m_seedPF << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --nb-threads" << std::endl;
+    std::cout << "    Set the number of threads to use in the Particle Filter (only if OpenMP is available)." << std::endl;
+    std::cout << "    Use a negative value to use the maximum number of threads instead." << std::endl;
+    std::cout << "    Default: " << m_nbThreads << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --ampli-max-X" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle along the X-axis." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxX << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --ampli-max-Y" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle along the Y-axis." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxY << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --ampli-max-Z" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle along the Z-axis." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxZ << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --ampli-max-omega" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle affecting the pulsation of the motion." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxOmega << std::endl;
+    std::cout << std::endl;
+    std::cout << "  -d, --no-display" << std::endl;
+    std::cout << "    Deactivate display." << std::endl;
+    std::cout << "    Default: display is ";
+#ifdef VISP_HAVE_DISPLAY
+    std::cout << "ON";
+#else
+    std::cout << "OFF";
+#endif
+    std::cout << std::endl;
+    std::cout << "  -h, --help" << std::endl;
+    std::cout << "    Display this help." << std::endl;
+    std::cout << std::endl;
+  }
+};
+
 int main(const int argc, const char *argv[])
 {
-  bool opt_useDisplay = true;
-  for (int i = 1; i < argc; ++i) {
-    std::string arg(argv[i]);
-    if (arg == "-d") {
-      opt_useDisplay = false;
-    }
-    else if ((arg == "-h") || (arg == "--help")) {
-      std::cout << "SYNOPSIS" << std::endl;
-      std::cout << "  " << argv[0] << " [-d][-h]" << std::endl;
-      std::cout << std::endl << std::endl;
-      std::cout << "DETAILS" << std::endl;
-      std::cout << "  -d" << std::endl;
-      std::cout << "    Deactivate display." << std::endl;
-      std::cout << std::endl;
-      std::cout << "  -h, --help" << std::endl;
-      return 0;
-    }
+  SoftwareArguments args;
+  int returnCode = args.parseArgs(argc, argv);
+  if (returnCode != SoftwareArguments::SOFTWARE_CONTINUE) {
+    return returnCode;
   }
 
   //! [Constants_for_simulation]
@@ -351,6 +521,7 @@ int main(const int argc, const char *argv[])
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
+  const long seed = 42; // Seed for the random generator
   const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, -0.05, 0., 1.})
@@ -362,7 +533,6 @@ int main(const int argc, const char *argv[])
     markersAsVpPoint.push_back(vpPoint(marker[0], marker[1], marker[2]));
   }
 
-  const long seed = 42; // Seed for the random generator
   vpHomogeneousMatrix cMw; // Pose of the world frame with regard to the camera frame
   cMw[0][0] = 1.; cMw[0][1] = 0.; cMw[0][2] = 0.; cMw[0][3] = 0.2;
   cMw[1][0] = 0.; cMw[1][1] = -1.; cMw[1][2] = 0.; cMw[1][3] = 0.3;
@@ -380,20 +550,21 @@ int main(const int argc, const char *argv[])
   //! [Camera_for_measurements]
   // Create a camera parameter container
   // Camera initialization with a perspective projection without distortion model
-  double px = 600; double py = 600; double u0 = 320; double v0 = 240;
+  const double px = 600., py = 600., u0 = 320., v0 = 240.;
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
   //! [Camera_for_measurements]
 
   // Initialize the attributes of the PF
   //! [Constants_for_the_PF]
-  const double sigmaLikelihood = 40.; // The standard deviation of likelihood function. An error greater than 3 times
-                                     // this standard deviation will lead to a likelihood equal to 0.
-  const unsigned int nbParticles = 300; // Number of particles to use
-  const double ampliMaxX = 0.03, ampliMaxY = 0.03, ampliMaxZ = 0.03, ampliMaxOmega = 0.02;
+  const double maxDistanceForLikelihood = args.m_maxDistanceForLikelihood; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
+  const double sigmaLikelihood = maxDistanceForLikelihood / 3.; // The standard deviation of likelihood function.
+  const unsigned int nbParticles = args.m_N; // Number of particles to use
+  const double ampliMaxX = args.m_ampliMaxX, ampliMaxY = args.m_ampliMaxY, ampliMaxZ = args.m_ampliMaxZ;
+  const double ampliMaxOmega = args.m_ampliMaxOmega;
   const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxOmega/3. }; // Standard deviation for each state component
-  const long seedPF = 4224; // Seed for the random generators of the PF
-  const unsigned int nbThread = 1;
+  const long seedPF = args.m_seedPF; // Seed for the random generators of the PF
+  const unsigned int nbThread = args.m_nbThreads;
   //! [Constants_for_the_PF]
 
   //! [Initial_estimates]
@@ -424,7 +595,7 @@ int main(const int argc, const char *argv[])
 #ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
   vpPlot *plot = nullptr;
-  if (opt_useDisplay) {
+  if (args.m_useDisplay) {
     plot = new vpPlot(1);
     plot->initGraph(0, 3);
     plot->setTitle(0, "Position of the robot wX");
@@ -448,7 +619,7 @@ int main(const int argc, const char *argv[])
 #ifdef VISP_HAVE_DISPLAY
   std::shared_ptr<vpDisplay> d;
   vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
-  if (opt_useDisplay) {
+  if (args.m_useDisplay) {
     d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
   }
 #endif
@@ -462,7 +633,7 @@ int main(const int argc, const char *argv[])
   //! [Init_simu]
 
   //! [Warmup_loop]
-  const unsigned int nbStepsWarmUp = 200;
+  const unsigned int nbStepsWarmUp = args.m_nbStepsWarmUp;
   for (unsigned int i = 0; i < nbStepsWarmUp; ++i) {
     // Update object pose
     object_pos = object.move(dt * static_cast<double>(i));
@@ -476,10 +647,11 @@ int main(const int argc, const char *argv[])
   //! [Warmup_loop]
 
   //! [Simu_loop]
-  const unsigned int nbSteps = 2000;
+  const unsigned int nbSteps = args.m_nbSteps;
   const double invNbSteps = 1. / static_cast<double>(nbSteps);
   double meanErrorFilter = 0.;
   double meanErrorNoise = 0.;
+
   for (unsigned int i = 0; i < nbSteps; ++i) {
     //! [Update obj pose]
     // Update object pose
@@ -518,7 +690,7 @@ int main(const int argc, const char *argv[])
 
   //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
-    if (opt_useDisplay) {
+    if (args.m_useDisplay) {
       //! [Update_plot]
       // Plot the ground truth
       plot->plot(0, 0, object_pos[0], object_pos[1]);
@@ -571,7 +743,7 @@ int main(const int argc, const char *argv[])
   std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
   std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
 
-  if (opt_useDisplay) {
+  if (args.m_useDisplay) {
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
   }
