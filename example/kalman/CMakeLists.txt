@@ -16,3 +16,7 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+visp_add_test(ukf-linear-example ukf-linear-example ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(ukf-nonlinear-example ukf-nonlinear-example ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(ukf-nonlinear-complex-example ukf-nonlinear-complex-example ${OPTION_TO_DESACTIVE_DISPLAY})

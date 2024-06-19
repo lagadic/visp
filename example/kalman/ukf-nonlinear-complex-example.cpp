@@ -387,8 +387,8 @@ public:
   vpLandmarkMeasurements(const double &x, const double &y, const double &range_std, const double &rel_angle_std)
     : m_x(x)
     , m_y(y)
-    , m_rngRange(range_std, 0., vpTime::measureTimeMicros())
-    , m_rngRelativeAngle(rel_angle_std, 0., vpTime::measureTimeMicros() + 4221)
+    , m_rngRange(range_std, 0., 4224)
+    , m_rngRelativeAngle(rel_angle_std, 0., 2112)
   { }
 
   /**
@@ -528,8 +528,27 @@ private:
   std::vector<vpLandmarkMeasurements> m_landmarks; /*!< The list of landmarks forming the grid.*/
 };
 
-int main(/*const int argc, const char *argv[]*/)
+int main(const int argc, const char *argv[])
 {
+  bool opt_useDisplay = true;
+  for (int i = 1; i < argc; ++i) {
+    std::string arg(argv[i]);
+    if (arg == "-d") {
+      opt_useDisplay = false;
+    }
+    else if ((arg == "-h") || (arg == "--help")) {
+      std::cout << "SYNOPSIS" << std::endl;
+      std::cout << "  " << argv[0] << " [-d][-h]" << std::endl;
+      std::cout << std::endl << std::endl;
+      std::cout << "DETAILS" << std::endl;
+      std::cout << "  -d" << std::endl;
+      std::cout << "    Deactivate display." << std::endl;
+      std::cout << std::endl;
+      std::cout << "  -h, --help" << std::endl;
+      return 0;
+    }
+  }
+
   const double dt = 0.1; // Period of 0.1s
   const double step = 1.; // Number of update of the robot position between two UKF filtering
   const double sigmaRange = 0.3; // Standard deviation of the range measurement: 0.3m
@@ -593,14 +612,17 @@ int main(/*const int argc, const char *argv[]*/)
   ukf.setStateResidualFunction(stateResidual);
 
 #ifdef VISP_HAVE_DISPLAY
+  vpPlot *plot = nullptr;
+  if (opt_useDisplay) {
   // Initialize the plot
-  vpPlot plot(1);
-  plot.initGraph(0, 2);
-  plot.setTitle(0, "Position of the robot");
-  plot.setUnitX(0, "Position along x(m)");
-  plot.setUnitY(0, "Position along y (m)");
-  plot.setLegend(0, 0, "GT");
-  plot.setLegend(0, 1, "Filtered");
+    plot = new vpPlot(1);
+    plot->initGraph(0, 2);
+    plot->setTitle(0, "Position of the robot");
+    plot->setUnitX(0, "Position along x(m)");
+    plot->setUnitY(0, "Position along y (m)");
+    plot->setLegend(0, 0, "GT");
+    plot->setLegend(0, 1, "Filtered");
+  }
 #endif
 
   // Initialize the simulation
@@ -616,19 +638,39 @@ int main(/*const int argc, const char *argv[]*/)
       ukf.filter(z, dt, cmds[i]);
 
 #ifdef VISP_HAVE_DISPLAY
-      // Plot the filtered state
-      vpColVector Xest = ukf.getXest();
-      plot.plot(0, 1, Xest[0], Xest[1]);
+      if (opt_useDisplay) {
+        // Plot the filtered state
+        vpColVector Xest = ukf.getXest();
+        plot->plot(0, 1, Xest[0], Xest[1]);
+      }
 #endif
     }
 
 #ifdef VISP_HAVE_DISPLAY
+    if (opt_useDisplay) {
     // Plot the ground truth
-    plot.plot(0, 0, robot_pos[0], robot_pos[1]);
+      plot->plot(0, 0, robot_pos[0], robot_pos[1]);
+    }
 #endif
   }
-  std::cout << "Press Enter to quit..." << std::endl;
-  std::cin.get();
+
+  if (opt_useDisplay) {
+    std::cout << "Press Enter to quit..." << std::endl;
+    std::cin.get();
+  }
+
+#ifdef VISP_HAVE_DISPLAY
+  if (opt_useDisplay) {
+    delete plot;
+  }
+#endif
+
+  vpColVector finalError = grid.state_to_measurement(ukf.getXest()) - grid.measureGT(robot_pos);
+  const double maxError = 0.3;
+  if (finalError.frobeniusNorm() > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+    return -1;
+  }
   return 0;
 }
 #else
