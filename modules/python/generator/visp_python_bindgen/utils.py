@@ -225,6 +225,8 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
 
   return '::'.join(final_segment_reprs)
 
+
+
 def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
   '''
   Get the type of a parameter. Compared to get_typename, this function resolves the parameter's constness, whether it is a ref, moveref or pointer.
@@ -349,6 +351,14 @@ def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
       return True
 
   return False
+
+def is_function_pointer(param: types.DecoratedType) -> bool:
+  '''
+  Whether the typed is a function pointer
+  '''
+  if not isinstance(param, types.Pointer):
+    return False
+  return isinstance(param.ptr_to, types.FunctionType)
 
 def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
   '''
