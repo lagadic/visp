@@ -67,11 +67,7 @@
 //! [Display_includes]
 #ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 //! [Display_includes]
 #include <visp3/vision/vpPose.h>
@@ -393,7 +389,7 @@ int main(const int argc, const char *argv[])
   //! [Constants_for_the_PF]
   const double sigmaLikelihood = 40.; // The standard deviation of likelihood function. An error greater than 3 times
                                      // this standard deviation will lead to a likelihood equal to 0.
-  const unsigned int nbParticles = 10000; // Number of particles to use
+  const unsigned int nbParticles = 300; // Number of particles to use
   const double ampliMaxX = 0.03, ampliMaxY = 0.03, ampliMaxZ = 0.03, ampliMaxOmega = 0.02;
   const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxOmega/3. }; // Standard deviation for each state component
   const long seedPF = 4224; // Seed for the random generators of the PF
@@ -450,23 +446,10 @@ int main(const int argc, const char *argv[])
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
 #ifdef VISP_HAVE_DISPLAY
-  vpDisplay *d = nullptr;
-  if (opt_useDisplay) {
-#if defined(VISP_HAVE_X11)
-    d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-    d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-    d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-    d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    d = new vpDisplayOpenCV;
-#endif
-  }
+  std::shared_ptr<vpDisplay> d;
   vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
-  if (d != nullptr) {
-    d->init(Idisp, 800, 50, "Projection of the markers");
+  if (opt_useDisplay) {
+    d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
   }
 #endif
   //! [Init_renderer]
@@ -478,8 +461,26 @@ int main(const int argc, const char *argv[])
   object_pos[3] = 1.;
   //! [Init_simu]
 
-//! [Simu_loop]
-  for (unsigned int i = 0; i < 200; ++i) {
+  //! [Warmup_loop]
+  const unsigned int nbStepsWarmUp = 200;
+  for (unsigned int i = 0; i < nbStepsWarmUp; ++i) {
+    // Update object pose
+    object_pos = object.move(dt * static_cast<double>(i));
+
+    // Perform the measurement
+    vpColVector z = markerMeas.measureWithNoise(object_pos);
+
+    // Use the UKF to filter the measurement
+    filter.filter(z, dt);
+  }
+  //! [Warmup_loop]
+
+  //! [Simu_loop]
+  const unsigned int nbSteps = 2000;
+  const double invNbSteps = 1. / static_cast<double>(nbSteps);
+  double meanErrorFilter = 0.;
+  double meanErrorNoise = 0.;
+  for (unsigned int i = 0; i < nbSteps; ++i) {
     //! [Update obj pose]
     // Update object pose
     object_pos = object.move(dt * static_cast<double>(i));
@@ -495,31 +496,34 @@ int main(const int argc, const char *argv[])
     filter.filter(z, dt);
     //! [Perform_filtering]
 
-    //! [Update_displays]
-#ifdef VISP_HAVE_DISPLAY
-    if (opt_useDisplay) {
+    //! [Get_filtered_state]
+    vpColVector Xest = filter.computeFilteredState();
+    //! [Get_filtered_state]
+
     //! [Noisy_pose]
     // Prepare the pose computation:
     // the image points corresponding to the noisy markers are needed
-      std::vector<vpImagePoint> ip;
-      for (unsigned int id = 0; id < nbMarkers; ++id) {
-        vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
-        ip.push_back(markerProjNoisy);
-      }
+    std::vector<vpImagePoint> ip;
+    for (unsigned int id = 0; id < nbMarkers; ++id) {
+      vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
+      ip.push_back(markerProjNoisy);
+    }
 
-      // Compute the pose using the noisy markers
-      vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
-      vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
-      double wXnoisy = wMo_noisy[0][3];
-      double wYnoisy = wMo_noisy[1][3];
-      //! [Noisy_pose]
+    // Compute the pose using the noisy markers
+    vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
+    vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
+    double wXnoisy = wMo_noisy[0][3];
+    double wYnoisy = wMo_noisy[1][3];
+    //! [Noisy_pose]
 
+  //! [Update_displays]
+#ifdef VISP_HAVE_DISPLAY
+    if (opt_useDisplay) {
       //! [Update_plot]
       // Plot the ground truth
       plot->plot(0, 0, object_pos[0], object_pos[1]);
 
       // Plot the filtered state
-      vpColVector Xest = filter.computeFilteredState();
       plot->plot(0, 1, Xest[0], Xest[1]);
 
       // Plot the noisy pose
@@ -554,8 +558,18 @@ int main(const int argc, const char *argv[])
     }
 #endif
     //! [Update_displays]
+
+    //! [Compute_error]
+    double error = std::sqrt(std::pow(Xest[0] - object_pos[0], 2) + std::pow(Xest[1] - object_pos[1], 2) + std::pow(Xest[2] - object_pos[2], 2));
+    meanErrorFilter += invNbSteps * error;
+    error = std::sqrt(std::pow(wMo_noisy[0][3] - object_pos[0], 2) + std::pow(wMo_noisy[1][3] - object_pos[1], 2) + std::pow(wMo_noisy[2][3] - object_pos[2], 2));
+    meanErrorNoise += invNbSteps * error;
+    //! [Compute_error]
   }
   //! [Simu_loop]
+
+  std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
+  std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
 
   if (opt_useDisplay) {
     std::cout << "Press Enter to quit..." << std::endl;
@@ -564,11 +578,6 @@ int main(const int argc, const char *argv[])
 
 //! [Delete_displays]
 #ifdef VISP_HAVE_DISPLAY
-  // Delete the renderer if it was allocated
-  if (d != nullptr) {
-    delete d;
-  }
-
   // Delete the plot if it was allocated
   if (plot != nullptr) {
     delete plot;
