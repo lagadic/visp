@@ -230,7 +230,7 @@ void vpParticleFilter::initParticles(const vpColVector &x0)
   unsigned int chunkSize = m_N / m_nbMaxThreads;
   for (unsigned int i = 0; i < m_nbMaxThreads; ++i) {
     unsigned int idStart = chunkSize * i;
-    unsigned int idStop = chunkSize * (i + 1) - 1;
+    unsigned int idStop = chunkSize * (i + 1);
     // Last chunk must go until the end
     if (i == m_nbMaxThreads - 1) {
       idStop = m_N;
@@ -250,15 +250,90 @@ void vpParticleFilter::initParticles(const vpColVector &x0)
 #ifdef VISP_HAVE_OPENMP
 void vpParticleFilter::predictMultithread(const double &dt, const vpColVector &u)
 {
-  (void)dt;
-  (void)u;
-  throw(vpException(vpException::notImplementedError, "Multithreading has not been implemented yet."));
+  int iam, nt, ipoints, istart, npoints(m_N);
+  unsigned int sizeState = m_particles[0].size();
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
+    }
+
+    for (int i = istart; i< istart + ipoints; ++i) {
+      // Updating the particles following the process (or command) function
+      if (m_useCommandStateFunction) {
+        m_particles[i] = m_bx(u, m_particles[i], dt);
+      }
+      else if (m_useProcessFunction) {
+        m_particles[i] = m_f(m_particles[i], dt);
+      }
+
+      // Generating noise to add to the particle
+      vpColVector noise(sizeState);
+      for (unsigned int j = 0; j < sizeState; ++j) {
+        noise[j] = m_noiseGenerators[iam][j]();
+      }
+
+      // Adding the noise to the particle
+      m_particles[i] = m_stateAdd(m_particles[i], noise);
+    }
+  }
+}
+
+double threadLikelihood(const vpParticleFilter::vpLikelihoodFunction &likelihood, const std::vector<vpColVector> &v_particles,
+                        const vpColVector &z, std::vector<double> &w, const int &istart, const int &ipoints)
+{
+  double sum(0.0);
+  for (int i = istart; i< istart + ipoints; ++i) {
+    w[i] = likelihood(v_particles[i], z);
+    sum += w[i];
+  }
+  return sum;
 }
 
 void vpParticleFilter::updateMultithread(const vpColVector &z)
 {
-  (void)z;
-  throw(vpException(vpException::notImplementedError, "Multithreading has not been implemented yet."));
+  double sumWeights = 0.0;
+  int iam, nt, ipoints, istart, npoints(m_N);
+  vpColVector tempSums(m_nbMaxThreads, 0.0);
+  // Compute the weights depending on the likelihood of a particle with regard to the measurements
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
+    }
+    tempSums[iam] = threadLikelihood(m_likelihood, m_particles, z, m_w, istart, ipoints);
+  }
+  sumWeights = tempSums.sum();
+
+#pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
+  {
+    iam = omp_get_thread_num();
+    nt = omp_get_num_threads();
+    ipoints = npoints / nt;
+    // size of partition
+    istart = iam * ipoints; // starting array index
+    if (iam == nt-1) {
+      // last thread may do more
+      ipoints = npoints - istart;
+    }
+
+    // Normalize the weights
+    for (int i = istart; i < istart + ipoints; ++i) {
+      m_w[i] = m_w[i] / sumWeights;
+    }
+  }
 }
 #endif
 
