@@ -49,7 +49,7 @@ BEGIN_VISP_NAMESPACE
 vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed, const int &nbThreads)
   : m_N(N)
   , m_particles(N)
-  , m_w(N)
+  , m_w(N, 1./static_cast<double>(N))
   , m_useProcessFunction(false)
   , m_useCommandStateFunction(false)
 {
@@ -188,12 +188,13 @@ bool vpParticleFilter::simpleResamplingCheck(const unsigned int &N, const std::v
     sumSquare += weights[i] * weights[i];
   }
   double N_eff = 1.0 / sumSquare;
-  return N_eff < (N / 2.0);
+  return (N_eff < (N / 2.0)) || (sumSquare < std::numeric_limits<double>::epsilon());
 }
 
 vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
 {
   static vpUniRand sampler(vpTime::measureTimeMicros());
+  static vpUniRand samplerRandomIdx(vpTime::measureTimeMicros() + 4224);
   unsigned int nbParticles = particles.size();
   double x = 0.;
   double sumWeights = 0.;
@@ -203,13 +204,15 @@ vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResam
   for (unsigned int i = 0; i < nbParticles; ++i) {
     x = sampler();
     sumWeights = 0.0;
+    int index = samplerRandomIdx.uniform(0, nbParticles);
     for (unsigned int j = 0; j < nbParticles; ++j) {
       if (x < sumWeights + weights[j]) {
-        idx[i] = j;
+        index = j;
         break;
       }
       sumWeights += weights[j];
     }
+    idx[i] = index;
   }
 
   // Draw the randomly chosen particles corresponding to the indices
@@ -290,7 +293,7 @@ double threadLikelihood(const vpParticleFilter::vpLikelihoodFunction &likelihood
 {
   double sum(0.0);
   for (int i = istart; i< istart + ipoints; ++i) {
-    w[i] = likelihood(v_particles[i], z);
+    w[i] = w[i] * likelihood(v_particles[i], z);
     sum += w[i];
   }
   return sum;
@@ -317,21 +320,23 @@ void vpParticleFilter::updateMultithread(const vpColVector &z)
   }
   sumWeights = tempSums.sum();
 
+  if (sumWeights > std::numeric_limits<double>::epsilon()) {
 #pragma omp parallel default(shared) private(iam, nt, ipoints, istart)
-  {
-    iam = omp_get_thread_num();
-    nt = omp_get_num_threads();
-    ipoints = npoints / nt;
-    // size of partition
-    istart = iam * ipoints; // starting array index
-    if (iam == nt-1) {
-      // last thread may do more
-      ipoints = npoints - istart;
-    }
+    {
+      iam = omp_get_thread_num();
+      nt = omp_get_num_threads();
+      ipoints = npoints / nt;
+      // size of partition
+      istart = iam * ipoints; // starting array index
+      if (iam == nt-1) {
+        // last thread may do more
+        ipoints = npoints - istart;
+      }
 
-    // Normalize the weights
-    for (int i = istart; i < istart + ipoints; ++i) {
-      m_w[i] = m_w[i] / sumWeights;
+      // Normalize the weights
+      for (int i = istart; i < istart + ipoints; ++i) {
+        m_w[i] = m_w[i] / sumWeights;
+      }
     }
   }
 }
@@ -368,12 +373,15 @@ void vpParticleFilter::updateMonothread(const vpColVector &z)
   double sumWeights = 0.;
   // Compute the weights depending on the likelihood of a particle with regard to the measurements
   for (unsigned int i = 0; i < m_N; ++i) {
-    m_w[i] = m_likelihood(m_particles[i], z);
+    m_w[i] = m_w[i] * m_likelihood(m_particles[i], z);
     sumWeights += m_w[i];
   }
+
   // Normalize the weights
-  for (unsigned int i = 0; i < m_N; ++i) {
-    m_w[i] = m_w[i] / sumWeights;
+  if (sumWeights > std::numeric_limits<double>::epsilon()) {
+    for (unsigned int i = 0; i < m_N; ++i) {
+      m_w[i] = m_w[i] / sumWeights;
+    }
   }
 }
 END_VISP_NAMESPACE
