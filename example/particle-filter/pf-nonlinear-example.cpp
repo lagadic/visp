@@ -632,6 +632,8 @@ int main(const int argc, const char *argv[])
   object_pos[3] = 1.;
   //! [Init_simu]
 
+  double averageFilteringTime = 0.;
+
   //! [Warmup_loop]
   const unsigned int nbStepsWarmUp = args.m_nbStepsWarmUp;
   for (unsigned int i = 0; i < nbStepsWarmUp; ++i) {
@@ -642,7 +644,9 @@ int main(const int argc, const char *argv[])
     vpColVector z = markerMeas.measureWithNoise(object_pos);
 
     // Use the UKF to filter the measurement
+    double t0 = vpTime::measureTimeMicros();
     filter.filter(z, dt);
+    averageFilteringTime += vpTime::measureTimeMicros() - t0;
   }
   //! [Warmup_loop]
 
@@ -663,10 +667,12 @@ int main(const int argc, const char *argv[])
     vpColVector z = markerMeas.measureWithNoise(object_pos);
     //! [Update_measurement]
 
+    double t0 = vpTime::measureTimeMicros();
     //! [Perform_filtering]
     // Use the UKF to filter the measurement
     filter.filter(z, dt);
     //! [Perform_filtering]
+    averageFilteringTime += vpTime::measureTimeMicros() - t0;
 
     //! [Get_filtered_state]
     vpColVector Xest = filter.computeFilteredState();
@@ -740,8 +746,10 @@ int main(const int argc, const char *argv[])
   }
   //! [Simu_loop]
 
+  averageFilteringTime = averageFilteringTime / (static_cast<double>(nbSteps) + static_cast<double>(nbStepsWarmUp));
   std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
   std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
+  std::cout << "Mean filtering time = " << averageFilteringTime << "us" << std::endl;
 
   if (args.m_useDisplay) {
     std::cout << "Press Enter to quit..." << std::endl;
@@ -756,6 +764,10 @@ int main(const int argc, const char *argv[])
   }
 #endif
 //! [Delete_displays]
+
+  if (meanErrorFilter > meanErrorNoise) {
+    return -1;
+  }
 
   return 0;
 }
