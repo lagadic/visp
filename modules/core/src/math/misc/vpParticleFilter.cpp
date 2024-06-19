@@ -241,6 +241,7 @@ void vpParticleFilter::initParticles(const vpColVector &x0)
 {
   unsigned int sizeState = x0.size();
   unsigned int chunkSize = m_N / m_nbMaxThreads;
+  double uniformWeight = 1. / static_cast<double>(m_N);
   for (unsigned int i = 0; i < m_nbMaxThreads; ++i) {
     unsigned int idStart = chunkSize * i;
     unsigned int idStop = chunkSize * (i + 1);
@@ -256,6 +257,9 @@ void vpParticleFilter::initParticles(const vpColVector &x0)
       }
       // Adding noise to the initial state
       m_particles[id] = m_stateAdd(x0, noise);
+
+      // (Re)initializing its weight
+      m_w[id] = uniformWeight;
     }
   }
 }
