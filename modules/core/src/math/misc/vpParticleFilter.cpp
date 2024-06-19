@@ -46,6 +46,9 @@
 
 BEGIN_VISP_NAMESPACE
 
+vpUniRand vpParticleFilter::sampler;
+vpUniRand vpParticleFilter::samplerRandomIdx;
+
 vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed, const int &nbThreads)
   : m_N(N)
   , m_particles(N)
@@ -83,6 +86,11 @@ vpParticleFilter::vpParticleFilter(const unsigned int &N, const std::vector<doub
   else {
     seedForGenerator = vpTime::measureTimeMicros();
   }
+
+  // Sampler for the simpleImportanceResampling method
+  sampler.setSeed(seed, 0x123465789ULL);
+  samplerRandomIdx.setSeed(seed + 4224, 0x123465789ULL);
+
   vpUniRand seedGenerator(seedForGenerator);
   for (unsigned int threadId = 0; threadId < m_nbMaxThreads; ++threadId) {
     for (unsigned int stateId = 0; stateId < sizeState; ++stateId) {
@@ -187,14 +195,16 @@ bool vpParticleFilter::simpleResamplingCheck(const unsigned int &N, const std::v
   for (unsigned int i = 0; i < N; ++i) {
     sumSquare += weights[i] * weights[i];
   }
+  if (sumSquare < std::numeric_limits<double>::epsilon()) {
+    // All the particles diverged
+    return true;
+  }
   double N_eff = 1.0 / sumSquare;
-  return (N_eff < (N / 2.0)) || (sumSquare < std::numeric_limits<double>::epsilon());
+  return (N_eff < (N / 2.0));
 }
 
 vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
 {
-  static vpUniRand sampler(vpTime::measureTimeMicros());
-  static vpUniRand samplerRandomIdx(vpTime::measureTimeMicros() + 4224);
   unsigned int nbParticles = particles.size();
   double x = 0.;
   double sumWeights = 0.;
@@ -204,7 +214,7 @@ vpParticleFilter::vpParticlesWithWeights vpParticleFilter::simpleImportanceResam
   for (unsigned int i = 0; i < nbParticles; ++i) {
     x = sampler();
     sumWeights = 0.0;
-    int index = samplerRandomIdx.uniform(0, nbParticles);
+    int index = samplerRandomIdx.uniform(0, nbParticles); // In case all the weights are null
     for (unsigned int j = 0; j < nbParticles; ++j) {
       if (x < sumWeights + weights[j]) {
         index = j;

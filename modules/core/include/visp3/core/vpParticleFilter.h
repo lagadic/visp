@@ -305,7 +305,7 @@ public:
   static vpColVector weightedMean(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpStateAddFunction &addFunc);
 
   /**
-   * \brief Returns true if the following condition is fulfilled, false otherwise:
+   * \brief Returns true if the following condition is fulfilled, or if all the particles diverged:
    * \f$ \frac{2}{\sum_i (\frac{w_i}{\sum_j w_j})^2} < N \f$
    *
    * \param[in] N The number of particles.
@@ -334,6 +334,9 @@ private:
 
   void predictMonothread(const double &dt, const vpColVector &u);
   void updateMonothread(const vpColVector &z);
+
+  static vpUniRand sampler;
+  static vpUniRand samplerRandomIdx;
 
   unsigned int m_N; /*!< Number of particles.*/
   unsigned int m_nbMaxThreads; /*!< Maximum number of threads to use.*/
