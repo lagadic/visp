@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -30,9 +29,11 @@
  *
  * Description:
  * Test visp::cnpy::npz_load() / visp::cnpy::npy_save() functions.
- *
-*****************************************************************************/
+ */
 
+/*!
+  \example testNPZ.cpp
+ */
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpEndian.h>

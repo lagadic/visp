@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test force/torque ATI sensor.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testForceTorqueAti.cpp
@@ -146,7 +144,7 @@ void scopeFunction(std::mutex &mutex_data, std::mutex &mutex_state, t_shared_dat
   }
 
   std::cout << "End of scope thread" << std::endl;
-  }
+}
 
 int main(int argc, char **argv)
 {

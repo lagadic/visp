@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,13 @@
  *
  * Description:
  * Test for image display.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testDisplays.cpp
+
+  \brief Test all the displays. Draws several shapes.
+*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -56,12 +57,6 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-
-/*!
-  \example testDisplays.cpp
-
-  \brief Test all the displays. Draws several shapes.
-*/
 
 // List of allowed command line options
 #define GETOPTARGS "hldc"
@@ -419,16 +414,16 @@ int main(int argc, const char **argv)
         std::cout << "  No display is available\n";
       }
       return EXIT_FAILURE;
-  }
+    }
 
-  // Create a color image for each display.
+    // Create a color image for each display.
     runTest<vpRGBa>(opt_display, opt_click_allowed);
 
     // Create a grayscale image for each display.
     runTest<unsigned char>(opt_display, opt_click_allowed);
 
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

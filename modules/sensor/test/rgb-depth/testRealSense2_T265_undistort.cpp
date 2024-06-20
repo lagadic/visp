@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +29,8 @@
  *
  * Description:
  * Image acquisition with RealSense T265 sensor and librealsense2 and
- * undistorting it using vpImageTools
- *
-*****************************************************************************/
+ * undistorting it using vpImageTools.
+ */
 
 /*!
   \example testRealSense2_T265_undistort.cpp

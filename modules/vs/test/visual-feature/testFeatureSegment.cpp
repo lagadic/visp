@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,13 @@
  *
  * Description:
  * Visual feature manipulation (segment).
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testFeatureSegment.cpp
+
+  Shows how to build a task with a segment visual feature.
+*/
 
 #include <fstream>
 #include <iostream>
@@ -58,13 +62,6 @@
 #include <visp3/visual_features/vpFeatureSegment.h>
 #include <visp3/vs/vpServo.h> //visual servoing task
 
-/*!
-
-  \example testFeatureSegment.cpp
-
-  Shows how to build a task with a segment visual feature.
-
-*/
 int main(int argc, const char **argv)
 {
 #ifdef ENABLE_VISP_NAMESPACE
