@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _vpCircleHoughTransform_h_
-#define _vpCircleHoughTransform_h_
+#ifndef VP_CIRCLE_HOUGH_TRANSFORM_H
+#define VP_CIRCLE_HOUGH_TRANSFORM_H
 
 // System includes
 #include <utility>
@@ -67,17 +67,15 @@ public:
   /**
    * \brief Class that gather the algorithm parameters.
    */
-  class vpCircleHoughTransformParameters
+  class vpCircleHoughTransformParams
   {
   public:
     /**
-     * \brief Construct a new vpCircleHoughTransformParameters object with default parameters.
+     * \brief Construct a new vpCircleHoughTransformParams object with default parameters.
      */
-    vpCircleHoughTransformParameters()
+    vpCircleHoughTransformParams()
       : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
-      , m_gaussianKernelSize(5)
       , m_gaussianStdev(1.f)
-      , m_gradientFilterKernelSize(3)
       , m_lowerCannyThresh(-1.f)
       , m_upperCannyThresh(-1.f)
       , m_edgeMapFilteringNbIter(1)
@@ -88,8 +86,6 @@ public:
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_minRadius(0.f)
       , m_maxRadius(1000.f)
-      , m_dilatationKernelSize(3)
-      , m_averagingWindowSize(5)
       , m_centerMinThresh(50.f)
       , m_expectedNbCenters(-1)
       , m_circleProbaThresh(0.9f)
@@ -99,11 +95,19 @@ public:
       , m_centerMinDist(15.f)
       , m_mergingRadiusDiffThresh(1.5f * m_centerMinDist)
     {
+      const unsigned int gaussianKernelSize_default = 5;
+      const unsigned int gradientFilterKernelSize_default = 3;
+      const unsigned int dilatationKernelSize_default = 3;
+      const unsigned int averagingWindowSize_default = 5;
 
+      m_gaussianKernelSize = gaussianKernelSize_default;
+      m_gradientFilterKernelSize = gradientFilterKernelSize_default;
+      m_dilatationKernelSize = dilatationKernelSize_default;
+      m_averagingWindowSize = averagingWindowSize_default;
     }
 
     /**
-     * \brief Construct a new vpCircleHoughTransformParameters object.
+     * \brief Construct a new vpCircleHoughTransformParams object.
      *
      * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
      * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
@@ -140,7 +144,7 @@ public:
      * \param[in] recordVotingPoints If true, the edge-map points having voted for each circle will be stored.
      * \param[in] visibilityRatioThresh Visibility threshold: which minimum ratio of the circle must be visible in order to keep a circle candidate.
      */
-    vpCircleHoughTransformParameters(
+    vpCircleHoughTransformParams(
       const int &gaussianKernelSize
       , const float &gaussianStdev
       , const int &gradientFilterKernelSize
@@ -441,12 +445,12 @@ public:
     // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
-   * \brief Create a new vpCircleHoughTransformParameters from a JSON file.
+   * \brief Create a new vpCircleHoughTransformParams from a JSON file.
    *
    * \param[in] jsonFile The path towards the JSON file.
-   * \return vpCircleHoughTransformParameters The corresponding vpCircleHoughTransformParameters object.
+   * \return vpCircleHoughTransformParams The corresponding vpCircleHoughTransformParams object.
    */
-    inline static vpCircleHoughTransformParameters createFromJSON(const std::string &jsonFile)
+    inline static vpCircleHoughTransformParams createFromJSON(const std::string &jsonFile)
     {
       using json = nlohmann::json;
 
@@ -468,7 +472,7 @@ public:
         msg << "Byte position of error: " << e.byte;
         throw vpException(vpException::ioError, msg.str());
       }
-      vpCircleHoughTransformParameters params = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+      vpCircleHoughTransformParams params = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
       file.close();
       return params;
     }
@@ -485,7 +489,8 @@ public:
       using json = nlohmann::json;
       std::ofstream file(jsonPath);
       const json j = *this;
-      file << j.dump(4);
+      const int indent = 4;
+      file << j.dump(indent);
       file.close();
     }
 
@@ -496,14 +501,15 @@ public:
      * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
      * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
-    friend inline void from_json(const nlohmann::json &j, vpCircleHoughTransformParameters &params)
+    friend inline void from_json(const nlohmann::json &j, vpCircleHoughTransformParams &params)
     {
       std::string filteringAndGradientName = vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType);
       filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
       params.m_filteringAndGradientType = vpImageFilter::vpCannyFiltAndGradTypeFromStr(filteringAndGradientName);
 
       params.m_gaussianKernelSize = j.value("gaussianKernelSize", params.m_gaussianKernelSize);
-      if ((params.m_gaussianKernelSize % 2) != 1) {
+      const int checkEvenModulo = 2;
+      if ((params.m_gaussianKernelSize % checkEvenModulo) != 1) {
         throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
       }
 
@@ -513,7 +519,7 @@ public:
       }
 
       params.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", params.m_gradientFilterKernelSize);
-      if ((params.m_gradientFilterKernelSize % 2) != 1) {
+      if ((params.m_gradientFilterKernelSize % checkEvenModulo) != 1) {
         throw vpException(vpException::badValue, "Gradient filter kernel (Sobel or Scharr) size should be odd.");
       }
 
@@ -534,7 +540,7 @@ public:
 
       params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
       params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
-      if (params.m_averagingWindowSize <= 0 || (params.m_averagingWindowSize % 2) == 0) {
+      if ((params.m_averagingWindowSize <= 0) || ((params.m_averagingWindowSize % checkEvenModulo) == 0)) {
         throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
       }
 
@@ -551,7 +557,7 @@ public:
 
       params.m_circlePerfectness = j.value("circlePerfectnessThreshold", params.m_circlePerfectness);
 
-      if (params.m_circlePerfectness <= 0 || params.m_circlePerfectness > 1) {
+      if ((params.m_circlePerfectness <= 0) || (params.m_circlePerfectness > 1)) {
         throw vpException(vpException::badValue, "Circle perfectness must be in the interval ] 0; 1].");
       }
 
@@ -574,7 +580,7 @@ public:
      * \param[out] j : A JSON parser object.
      * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
-    friend inline void to_json(nlohmann::json &j, const vpCircleHoughTransformParameters &params)
+    friend inline void to_json(nlohmann::json &j, const vpCircleHoughTransformParams &params)
     {
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
@@ -657,17 +663,30 @@ public:
     friend class vpCircleHoughTransform;
   };
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  typedef vpCircleHoughTransformParams vpCircleHoughTransformParameters;
+#endif
+
   /**
-   * \brief Construct a new vpCircleHoughTransform object with default parameters.
+   * \brief Data storage for the computation of the center candidates.
    */
+  typedef struct vpCenterVotes
+  {
+    std::pair<float, float> m_position;
+    float m_votes;
+  } vpCenterVotes;
+
+/**
+ * \brief Construct a new vpCircleHoughTransform object with default parameters.
+ */
   vpCircleHoughTransform();
 
   /**
    * \brief Construct a new vpCircleHoughTransform object
-   * from a \b vpCircleHoughTransformParameters object.
+   * from a \b vpCircleHoughTransformParams object.
    * \param[in] algoParams The parameters of the Circle Hough Transform.
    */
-  explicit vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams);
+  explicit vpCircleHoughTransform(const vpCircleHoughTransformParams &algoParams);
 
   /**
    * \brief Destroy the vp Circle Hough Transform object
@@ -739,7 +758,7 @@ public:
    * does not exist.
    * \param[in] jsonPath The path towards the JSON configuration file.
    */
-  vpCircleHoughTransform(const std::string &jsonPath);
+  explicit vpCircleHoughTransform(const std::string &jsonPath);
 
   /**
    * \brief Initialize all the algorithm parameters using the JSON file
@@ -791,7 +810,7 @@ public:
    *
    * \param[in] algoParams The algorithm parameters.
    */
-  void init(const vpCircleHoughTransformParameters &algoParams);
+  void init(const vpCircleHoughTransformParams &algoParams);
 
   /**
    * \brief Permits to choose the filtering + gradient operators to use.
@@ -817,7 +836,8 @@ public:
     m_algoParams.m_gaussianKernelSize = kernelSize;
     m_algoParams.m_gaussianStdev = stdev;
 
-    if ((m_algoParams.m_gaussianKernelSize % 2) != 1) {
+    const unsigned int checkEvenModulo = 2;
+    if ((m_algoParams.m_gaussianKernelSize % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
     }
 
@@ -837,7 +857,8 @@ public:
   {
     m_algoParams.m_gradientFilterKernelSize = apertureSize;
 
-    if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+    const unsigned int checkEvenModulo = 2;
+    if ((m_algoParams.m_gradientFilterKernelSize % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gradient filter (Sobel or Scharr) Kernel size should be odd.");
     }
 
@@ -972,10 +993,12 @@ public:
     m_algoParams.m_averagingWindowSize = averagingWindowSize;
     m_algoParams.m_expectedNbCenters = expectedNbCenters;
 
-    if (m_algoParams.m_dilatationKernelSize < 3) {
+    const int minDilatationKernel = 3;
+    const unsigned int checkEvenModulo = 2;
+    if (m_algoParams.m_dilatationKernelSize < minDilatationKernel) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be greater or equal to 3.");
     }
-    else if ((m_algoParams.m_dilatationKernelSize % 2) == 0) {
+    else if ((m_algoParams.m_dilatationKernelSize % checkEvenModulo) == 0) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be odd.");
     }
 
@@ -983,7 +1006,7 @@ public:
       throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
     }
 
-    if ((m_algoParams.m_averagingWindowSize <= 0) || ((m_algoParams.m_averagingWindowSize % 2) == 0)) {
+    if ((m_algoParams.m_averagingWindowSize <= 0) || ((m_algoParams.m_averagingWindowSize % checkEvenModulo) == 0)) {
       throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
     }
   }
@@ -1211,14 +1234,20 @@ protected:
   virtual void computeCenterCandidates();
 
   /**
+   * \brief Aggregate center candidates that are close to each other.
+   * \param[in] peak_positions_votes Vector containing raw center candidates.
+   */
+  virtual void filterCenterCandidates(const std::vector<vpCenterVotes> &peak_positions_votes);
+
+  /**
    * \brief Compute the probability of \b circle given the number of pixels voting for
    * it \b nbVotes.
    * The probability is defined as the ratio of \b nbVotes by the theoretical number of
    * pixel that should be visible in the image.
    *
-   * @param circle The circle for which we want to evaluate the probability.
-   * @param nbVotes The number of visible pixels of the given circle.
-   * @return float The probability of the circle.
+   * \param[in] circle The circle for which we want to evaluate the probability.
+   * \param[in] nbVotes The number of visible pixels of the given circle.
+   * \return float The probability of the circle.
    */
   virtual float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
 
@@ -1251,7 +1280,7 @@ protected:
   virtual void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
                                std::vector<float> &circleCandidatesProba, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > &votingPoints);
 
-  vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
+  vpCircleHoughTransformParams m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
   vpArray2D<float> m_fg;
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +222,8 @@ vpThetaUVector &vpThetaUVector::build(const vpHomogeneousMatrix &M)
 */
 vpThetaUVector &vpThetaUVector::build(const vpPoseVector &p)
 {
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = p[i + 3];
   }
 
@@ -236,11 +236,14 @@ vpThetaUVector &vpThetaUVector::build(const vpPoseVector &p)
 vpThetaUVector &vpThetaUVector::build(const vpRotationMatrix &R)
 {
   double s, c, theta;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
 
-  s = ((R[1][0] - R[0][1]) * (R[1][0] - R[0][1])) + ((R[2][0] - R[0][2]) * (R[2][0] - R[0][2])) +
-    ((R[2][1] - R[1][2]) * (R[2][1] - R[1][2]));
+  s = ((R[1][0] - R[0][1]) * (R[1][0] - R[0][1])) + ((R[index_2][0] - R[0][index_2]) * (R[index_2][0] - R[0][index_2])) +
+    ((R[index_2][index_1] - R[index_1][index_2]) * (R[index_2][index_1] - R[index_1][index_2]));
   s = sqrt(s) / 2.0;
-  c = ((R[0][0] + R[1][1] + R[2][2]) - 1.0) / 2.0;
+  c = ((R[index_0][index_0] + R[index_1][index_1] + R[index_2][index_2]) - 1.0) / 2.0;
   theta = atan2(s, c); /* theta in [0, PI] since s > 0 */
 
   // General case when theta != pi. If theta=pi, c=-1
@@ -248,9 +251,9 @@ vpThetaUVector &vpThetaUVector::build(const vpRotationMatrix &R)
   {
     double sinc = vpMath::sinc(s, theta);
 
-    data[0] = (R[2][1] - R[1][2]) / (2 * sinc);
-    data[1] = (R[0][2] - R[2][0]) / (2 * sinc);
-    data[2] = (R[1][0] - R[0][1]) / (2 * sinc);
+    data[index_0] = (R[index_2][index_1] - R[index_1][index_2]) / (2 * sinc);
+    data[index_1] = (R[index_0][index_2] - R[index_2][index_0]) / (2 * sinc);
+    data[index_2] = (R[index_1][index_0] - R[index_0][index_1]) / (2 * sinc);
   }
   else /* theta near PI */
   {
@@ -265,29 +268,29 @@ vpThetaUVector &vpThetaUVector::build(const vpRotationMatrix &R)
     }
 
     double z = 0;
-    if ((R[2][2] - c) > std::numeric_limits<double>::epsilon()) {
-      z = sqrt((R[2][2] - c) / (1 - c));
+    if ((R[index_2][index_2] - c) > std::numeric_limits<double>::epsilon()) {
+      z = sqrt((R[index_2][index_2] - c) / (1 - c));
     }
 
     if ((x > y) && (x > z)) {
-      if ((R[2][1] - R[1][2]) < 0) {
+      if ((R[index_2][index_1] - R[index_1][index_2]) < 0) {
         x = -x;
       }
       if ((vpMath::sign(x) * vpMath::sign(y)) != (vpMath::sign(R[0][1] + R[1][0]))) {
         y = -y;
       }
-      if ((vpMath::sign(x) * vpMath::sign(z)) != (vpMath::sign(R[0][2] + R[2][0]))) {
+      if ((vpMath::sign(x) * vpMath::sign(z)) != (vpMath::sign(R[index_0][index_2] + R[index_2][index_0]))) {
         z = -z;
       }
     }
     else if (y > z) {
-      if ((R[0][2] - R[2][0]) < 0) {
+      if ((R[index_0][index_2] - R[index_2][index_0]) < 0) {
         y = -y;
       }
-      if ((vpMath::sign(y) * vpMath::sign(x)) != (vpMath::sign(R[1][0] + R[0][1]))) {
+      if ((vpMath::sign(y) * vpMath::sign(x)) != (vpMath::sign(R[index_1][index_0] + R[index_0][index_1]))) {
         x = -x;
       }
-      if ((vpMath::sign(y) * vpMath::sign(z)) != (vpMath::sign(R[1][2] + R[2][1]))) {
+      if ((vpMath::sign(y) * vpMath::sign(z)) != (vpMath::sign(R[index_1][index_2] + R[index_2][index_1]))) {
         z = -z;
       }
     }
@@ -295,16 +298,16 @@ vpThetaUVector &vpThetaUVector::build(const vpRotationMatrix &R)
       if ((R[1][0] - R[0][1]) < 0) {
         z = -z;
       }
-      if ((vpMath::sign(z) * vpMath::sign(x)) != (vpMath::sign(R[2][0] + R[0][2]))) {
+      if ((vpMath::sign(z) * vpMath::sign(x)) != (vpMath::sign(R[index_2][index_0] + R[index_0][index_2]))) {
         x = -x;
       }
-      if ((vpMath::sign(z) * vpMath::sign(y)) != (vpMath::sign(R[2][1] + R[1][2]))) {
+      if ((vpMath::sign(z) * vpMath::sign(y)) != (vpMath::sign(R[index_2][index_1] + R[index_1][index_2]))) {
         y = -y;
       }
     }
-    data[0] = theta * x;
-    data[1] = theta * y;
-    data[2] = theta * z;
+    data[index_0] = theta * x;
+    data[index_1] = theta * y;
+    data[index_2] = theta * z;
   }
 
   return *this;
@@ -360,7 +363,8 @@ vpThetaUVector &vpThetaUVector::build(const std::vector<double> &tu)
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = tu[i];
   }
 
@@ -376,7 +380,8 @@ vpThetaUVector &vpThetaUVector::build(const vpColVector &tu)
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = tu[i];
   }
 
@@ -388,9 +393,12 @@ vpThetaUVector &vpThetaUVector::build(const vpColVector &tu)
 */
 vpThetaUVector &vpThetaUVector::build(const double &tux, const double &tuy, const double &tuz)
 {
-  data[0] = tux;
-  data[1] = tuy;
-  data[2] = tuz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  data[index_0] = tux;
+  data[index_1] = tuy;
+  data[index_2] = tuz;
   return *this;
 }
 
@@ -498,7 +506,8 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
     u = 0;
     return;
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     u[i] = data[i] / theta;
   }
 }
@@ -525,7 +534,13 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
 
   \sa getTheta(), extract()
 */
-double vpThetaUVector::getTheta() const { return sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2])); }
+double vpThetaUVector::getTheta() const
+{
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  return sqrt((data[index_0] * data[index_0]) + (data[index_1] * data[index_1]) + (data[index_2] * data[index_2]));
+}
 
 /*!
 
@@ -560,7 +575,8 @@ vpColVector vpThetaUVector::getU() const
     u = 0;
     return u;
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     u[i] = data[i] / theta;
   }
   return u;

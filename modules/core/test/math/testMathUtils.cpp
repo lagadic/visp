@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test additional math functions such as lon-lat generator or look-at function.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testMathUtils.cpp
@@ -136,10 +134,10 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
         if (file.is_open()) {
           (ecef_M_enu * enu_M_cv).save(file);
         }
-    }
+      }
 #endif
+    }
   }
-}
 }
 
 TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")

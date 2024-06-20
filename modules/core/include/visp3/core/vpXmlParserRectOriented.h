@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   Class vpXmlParserRectOriented allows to load and save oriented rectangles in a file XML
 */
 
-#ifndef _vpXmlParserRectOriented_h_
-#define _vpXmlParserRectOriented_h_
+#ifndef VP_XML_PARSER_RECT_ORIENTED_H
+#define VP_XML_PARSER_RECT_ORIENTED_H
 
 #include <visp3/core/vpConfig.h>
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -528,7 +527,6 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
 void vpHistogram::smooth(unsigned int fsize)
 {
   if (m_histogram == nullptr) {
-    vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 
@@ -568,7 +566,6 @@ void vpHistogram::smooth(unsigned int fsize)
 unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 {
   if (m_histogram == nullptr) {
-    vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 
@@ -590,7 +587,6 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
     if ((prev_slope > 0) && (next_slope == 0)) {
       sum_level += i + 1;
       ++cpt;
-      // continue;
     }
     else {
       // Peak detection
@@ -844,7 +840,6 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
 unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 {
   if (m_histogram == nullptr) {
-    vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 

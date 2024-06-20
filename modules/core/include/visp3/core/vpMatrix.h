@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,12 @@
   these matrices.
 */
 
-#ifndef _vpMatrix_H_
-#define _vpMatrix_H_
+#ifndef VP_MATRIX_H
+#define VP_MATRIX_H
 
 #include <visp3/core/vpConfig.h>
-BEGIN_VISP_NAMESPACE
 
+BEGIN_VISP_NAMESPACE
 class vpRowVector;
 class vpColVector;
 class vpTranslationVector;
@@ -92,56 +92,56 @@ BEGIN_VISP_NAMESPACE
 
   The code below shows how to create a 2-by-3 matrix of doubles, set the element values and access them:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-  vpMatrix M(2, 3);
-  M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-  M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+  int main()
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
-  std::cout << "M:" << std::endl;
-  for (unsigned int i = 0; i < M.getRows(); ++i) {
-    for (unsigned int j = 0; j < M.getCols(); ++j) {
-      std::cout << M[i][j] << " ";
+    std::cout << "M:" << std::endl;
+    for (unsigned int i = 0; i < M.getRows(); ++i) {
+      for (unsigned int j = 0; j < M.getCols(); ++j) {
+        std::cout << M[i][j] << " ";
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
-}
   \endcode
   Once build, this previous code produces the following output:
   \code
-M:
--1 -2 -3
-4 5.5 6
+  M:
+  -1 -2 -3
+  4 5.5 6
   \endcode
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-  vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
-  std::cout << "M:\n" << M << std::endl;
-}
+  int main()
+  {
+    vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
   You can also create and initialize a matrix this way:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
-}
+  int main()
+  {
+    vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
+  }
   \endcode
 
   The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
   \code
-int main()
-{
-  vpMatrix M;
-  M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-}
+  int main()
+  {
+    vpMatrix M;
+    M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+  }
   \endcode
 
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
@@ -1189,6 +1189,14 @@ private:
                          double *x_data, int incx_, double beta, double *y_data, int incy_);
   static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_, double *w_data,
                          double *work_data, int lwork_, int &info_);
+
+  unsigned int qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+
+#ifdef VISP_HAVE_GSL
+  unsigned int qrPivotLapackGSL(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+#endif
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,

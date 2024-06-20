@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +32,9 @@
  */
 
 /*!
-  \file test1394TwoGrabber.cpp
+  \example test1394TwoGrabber.cpp
 
-  \brief  Aquire images using libdc1394-2.x library.
+  \brief  Acquire images using libdc1394-2.x library.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -54,9 +53,6 @@ using namespace VISP_NAMESPACE_NAME;
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-/*!
-  \example test1394TwoGrabber.cpp
-*/
 int main()
 {
   try {

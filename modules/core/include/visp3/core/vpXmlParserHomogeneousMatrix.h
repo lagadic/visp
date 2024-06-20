@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 
 */
 
-#ifndef _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
-#define _VP_XMLPARSERHOMOGENEOUSMATRIX_H_
+#ifndef VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
+#define VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
 
 #include <visp3/core/vpConfig.h>
 

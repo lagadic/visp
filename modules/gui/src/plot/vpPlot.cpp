@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,8 +289,9 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
 }
 /*!
   This function enables you to add new points in all curves of a plot. These
@@ -311,8 +311,9 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
 }
 
 /*!
@@ -334,8 +335,9 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpPoseVector &v_y)
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
 }
 /*!
   This function enables you to add new points in all curves of a plot. These
@@ -356,8 +358,9 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpTranslationVector &v_
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
 }
 
 /*!
@@ -379,8 +382,9 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
     for (unsigned int i = 0; i < v_y.size(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
 }
 
 /*!
@@ -429,8 +433,9 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, c
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       button = this->plot(graphNum, i, x, v_y[i], v_z[i]);
   }
-  else
-    vpTRACE("error in plot vector : not the right dimension");
+  else {
+    throw(vpException(vpException::dimensionError, "Error in plot vector: not the right dimension"));
+  }
   return button;
 }
 

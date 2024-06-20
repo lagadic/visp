@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,14 @@ struct vpDroite2Dt
   double c;
 };
 
+struct vpBBoxt
+{
+  double Xmin;
+  double Ymin;
+  double Xmax;
+  double Ymax;
+};
+
 template <class Type> inline void permute(Type &a, Type &b)
 {
   Type t = a;
@@ -89,22 +97,22 @@ static vpPoint2Dt pointIntersection(vpDroite2Dt D1, vpDroite2Dt D2)
   return I;
 }
 
-static void recale(vpPoint2Dt &P, double Xmin, double Ymin, double Xmax, double Ymax)
+static void recale(vpPoint2Dt &P, const vpBBoxt &bbox)
 {
-  if (vpMath::equal(P.x, Xmin)) {
-    P.x = Xmin; // a peu pres => exactement !
+  if (vpMath::equal(P.x, bbox.Xmin)) {
+    P.x = bbox.Xmin; // a peu pres => exactement !
   }
 
-  if (vpMath::equal(P.x, Xmax)) {
-    P.x = Xmax;
+  if (vpMath::equal(P.x, bbox.Xmax)) {
+    P.x = bbox.Xmax;
   }
 
-  if (vpMath::equal(P.y, Ymin)) {
-    P.y = Ymin;
+  if (vpMath::equal(P.y, bbox.Ymin)) {
+    P.y = bbox.Ymin;
   }
 
-  if (vpMath::equal(P.y, Ymax)) {
-    P.y = Ymax;
+  if (vpMath::equal(P.y, bbox.Ymax)) {
+    P.y = bbox.Ymax;
   }
 }
 
@@ -121,27 +129,36 @@ static void permute(vpPoint2Dt &A, vpPoint2Dt &B)
 }
 
 // vrai si partie visible
-static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, double Xmax, double Ymax, vpPoint2Dt &Ac,
+static bool clipping(vpPoint2Dt A, vpPoint2Dt B, const vpBBoxt &bbox, vpPoint2Dt &Ac,
                      vpPoint2Dt &Bc) // resultat: A,B clippes
 {
   vpDroite2Dt AB, D[4];
-  D[0].a = 1;
-  D[0].b = 0;
-  D[0].c = -Xmin;
-  D[1].a = 1;
-  D[1].b = 0;
-  D[1].c = -Xmax;
-  D[2].a = 0;
-  D[2].b = 1;
-  D[2].c = -Ymin;
-  D[3].a = 0;
-  D[3].b = 1;
-  D[3].c = -Ymax;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_1 = 1;
+  const unsigned int val_2 = 2;
+  const unsigned int val_4 = 4;
+  const unsigned int val_8 = 8;
 
-  const int nbP = 2;
+  D[index_0].a = 1;
+  D[index_0].b = 0;
+  D[index_0].c = -bbox.Xmin;
+  D[index_1].a = 1;
+  D[index_1].b = 0;
+  D[index_1].c = -bbox.Xmax;
+  D[index_2].a = 0;
+  D[index_2].b = 1;
+  D[index_2].c = -bbox.Ymin;
+  D[index_3].a = 0;
+  D[index_3].b = 1;
+  D[index_3].c = -bbox.Ymax;
+
+  const int nbP = val_2;
   vpPoint2Dt P[nbP];
-  P[0] = A;
-  P[1] = B;
+  P[index_0] = A;
+  P[index_1] = B;
   unsigned int code_P[nbP], // codes de P[n]
     i, bit_i,  // i -> (0000100...)
     n;
@@ -155,20 +172,20 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, doubl
     for (n = 0; n < nbP; ++n) {
       code_P[n] = 0;
 
-      if (P[n].x < Xmin) {
-        code_P[n] |= 1; // positionne bit0
+      if (P[n].x < bbox.Xmin) {
+        code_P[n] |= val_1; // positionne bit0
       }
 
-      if (P[n].x > Xmax) {
-        code_P[n] |= 2; //    ..      bit1
+      if (P[n].x > bbox.Xmax) {
+        code_P[n] |= val_2; //    ..      bit1
       }
 
-      if (P[n].y < Ymin) {
-        code_P[n] |= 4; //    ..      bit2
+      if (P[n].y < bbox.Ymin) {
+        code_P[n] |= val_4; //    ..      bit2
       }
 
-      if (P[n].y > Ymax) {
-        code_P[n] |= 8; //    ..      bit3
+      if (P[n].y > bbox.Ymax) {
+        code_P[n] |= val_8; //    ..      bit3
       }
     }
 
@@ -218,76 +235,77 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, doubl
     // RECALE EXACTEMENT LE POINT (calcul flottant => arrondi)
     // AFIN QUE LE CALCUL DES CODES NE BOUCLE PAS INDEFINIMENT
     // =======================================================
-    recale(P[n], Xmin, Ymin, Xmax, Ymax);
+    recale(P[n], bbox);
   }
 }
 
 // calcule la surface relative des 2 portions definies
 // par le segment PQ sur le carre Xmin,Ymin,Xmax,Ymax
 // Rem : P,Q tries sur x, et donc seulement 6 cas
-static double surfaceRelative(vpPoint2Dt P, vpPoint2Dt Q, double Xmin, double Ymin, double Xmax, double Ymax)
+static double surfaceRelative(vpPoint2Dt P, vpPoint2Dt Q, const vpBBoxt &bbox)
 {
 
   if (Q.x < P.x) {   // tri le couple de points
     permute(P, Q); //  selon leur abscisse x
   }
 
-  recale(P, Xmin, Ymin, Xmax, Ymax); // permet des calculs de S_relative
-  recale(Q, Xmin, Ymin, Xmax, Ymax); //  moins approximatifs.
+  recale(P, bbox); // permet des calculs de S_relative
+  recale(Q, bbox); //  moins approximatifs.
 
   // Case P.x=Xmin and Q.x=Xmax
-  if ((std::fabs(P.x - Xmin) <=
-       (vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon())) &&
-      (std::fabs(Q.x - Xmax) <=
-       (vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))) {
-    return fabs((Ymax + Ymin) - (P.y - Q.y));
+  if ((std::fabs(P.x - bbox.Xmin) <=
+       (vpMath::maximum(std::fabs(P.x), std::fabs(bbox.Xmin)) * std::numeric_limits<double>::epsilon())) &&
+      (std::fabs(Q.x - bbox.Xmax) <=
+       (vpMath::maximum(std::fabs(Q.x), std::fabs(bbox.Xmax)) * std::numeric_limits<double>::epsilon()))) {
+    return fabs((bbox.Ymax + bbox.Ymin) - (P.y - Q.y));
   }
 
   // Case (P.y=Ymin and Q.y==Ymax) or (Q.y=Ymin and P.y==Ymax)
-  if (((std::fabs(P.y - Ymin) <=
-        (vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon())) &&
-       (std::fabs(Q.y - Ymax) <=
-        (vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon()))) ||
-      ((std::fabs(Q.y - Ymin) <=
-        (vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon())) &&
-       (std::fabs(P.y - Ymax) <=
-        (vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())))) {
-    return fabs((Xmax + Xmin) - (P.x - Q.x));
+  if (((std::fabs(P.y - bbox.Ymin) <=
+        (vpMath::maximum(std::fabs(P.y), std::fabs(bbox.Ymin)) * std::numeric_limits<double>::epsilon())) &&
+       (std::fabs(Q.y - bbox.Ymax) <=
+        (vpMath::maximum(std::fabs(Q.y), std::fabs(bbox.Ymax)) * std::numeric_limits<double>::epsilon()))) ||
+      ((std::fabs(Q.y - bbox.Ymin) <=
+        (vpMath::maximum(std::fabs(Q.y), std::fabs(bbox.Ymin)) * std::numeric_limits<double>::epsilon())) &&
+       (std::fabs(P.y - bbox.Ymax) <=
+        (vpMath::maximum(std::fabs(P.y), std::fabs(bbox.Ymax)) * std::numeric_limits<double>::epsilon())))) {
+    return fabs((bbox.Xmax + bbox.Xmin) - (P.x - Q.x));
   }
 
   // Case P.x=Xmin and Q.y=Ymax
-  if ((std::fabs(P.x - Xmin) <=
-       (vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon())) &&
-      (std::fabs(Q.y - Ymax) <=
-       (vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon()))) {
-    return (1 - ((Ymax - P.y) * (Q.x - Xmin)));
+  if ((std::fabs(P.x - bbox.Xmin) <=
+       (vpMath::maximum(std::fabs(P.x), std::fabs(bbox.Xmin)) * std::numeric_limits<double>::epsilon())) &&
+      (std::fabs(Q.y - bbox.Ymax) <=
+       (vpMath::maximum(std::fabs(Q.y), std::fabs(bbox.Ymax)) * std::numeric_limits<double>::epsilon()))) {
+    return (1 - ((bbox.Ymax - P.y) * (Q.x - bbox.Xmin)));
   }
 
   // Case P.x=Xmin and Q.y=Ymin
-  if ((std::fabs(P.x - Xmin) <=
-       (vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon())) &&
-      (std::fabs(Q.y - Ymin) <=
-       (vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()))) {
-    return (1 - ((P.y - Ymin) * (Q.x - Xmin)));
+  if ((std::fabs(P.x - bbox.Xmin) <=
+       (vpMath::maximum(std::fabs(P.x), std::fabs(bbox.Xmin)) * std::numeric_limits<double>::epsilon())) &&
+      (std::fabs(Q.y - bbox.Ymin) <=
+       (vpMath::maximum(std::fabs(Q.y), std::fabs(bbox.Ymin)) * std::numeric_limits<double>::epsilon()))) {
+    return (1 - ((P.y - bbox.Ymin) * (Q.x - bbox.Xmin)));
   }
 
   // Case P.y=Ymin and Q.x=Xmax
-  if ((std::fabs(P.y - Ymin) <=
-       (vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon())) &&
-      (std::fabs(Q.x - Xmax) <=
-       (vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))) {
-    return (1 - ((Xmax - P.x) * (Q.y - Ymin)));
+  if ((std::fabs(P.y - bbox.Ymin) <=
+       (vpMath::maximum(std::fabs(P.y), std::fabs(bbox.Ymin)) * std::numeric_limits<double>::epsilon())) &&
+      (std::fabs(Q.x - bbox.Xmax) <=
+       (vpMath::maximum(std::fabs(Q.x), std::fabs(bbox.Xmax)) * std::numeric_limits<double>::epsilon()))) {
+    return (1 - ((bbox.Xmax - P.x) * (Q.y - bbox.Ymin)));
   }
 
   // Case P.y=Ymax and Q.x=Xmax
-  if ((std::fabs(P.y - Ymax) <=
-       (vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())) &&
-      (std::fabs(Q.x - Xmax) <=
-       (vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))) {
-    return (1 - ((Xmax - P.x) * (Ymax - Q.y)));
+  if ((std::fabs(P.y - bbox.Ymax) <=
+       (vpMath::maximum(std::fabs(P.y), std::fabs(bbox.Ymax)) * std::numeric_limits<double>::epsilon())) &&
+      (std::fabs(Q.x - bbox.Xmax) <=
+       (vpMath::maximum(std::fabs(Q.x), std::fabs(bbox.Xmax)) * std::numeric_limits<double>::epsilon()))) {
+    return (1 - ((bbox.Xmax - P.x) * (bbox.Ymax - Q.y)));
   }
 
-  throw(vpException(vpException::fatalError, "utils_ecm: error in surfaceRelative (%f,%f) (%f,%f) %f %f %f %f", P.x, P.y, Q.x, Q.y, Xmin, Ymin, Xmax, Ymax));
+  throw(vpException(vpException::fatalError, "utils_ecm: error in surfaceRelative (%f,%f) (%f,%f) %f %f %f %f",
+                    P.x, P.y, Q.x, Q.y, bbox.Xmin, bbox.Ymin, bbox.Xmax, bbox.Ymax));
 }
 
 static void calculMasques(vpColVector &angle, // definitions des angles theta
@@ -341,9 +359,14 @@ static void calculMasques(vpColVector &angle, // definitions des angles theta
         int sgn = vpMath::sign((cos_theta * Y) - (sin_theta * X));
 
         // Resultat = P,Q
-        if (clipping(P1, Q1, X - 0.5, Y - 0.5, X + 0.5, Y + 0.5, P, Q)) {
+        vpBBoxt bbox;
+        bbox.Xmin = X - 0.5;
+        bbox.Ymin = Y - 0.5;
+        bbox.Xmax = X + 0.5;
+        bbox.Ymax = Y + 0.5;
+        if (clipping(P1, Q1, bbox, P, Q)) {
           // v dans [0,1]
-          v = surfaceRelative(P, Q, X - 0.5, Y - 0.5, X + 0.5, Y + 0.5);
+          v = surfaceRelative(P, Q, bbox);
         }
         else {
           v = 1; // PQ ne coupe pas le pixel(i,j)
@@ -399,28 +422,63 @@ void vpMe::print()
     std::cout << " Minimum likelihood threshold....." << "unused" << std::endl;
   }
 
-  std::cout << " Contrast tolerance +/-..........." << m_mu1 * 100 << "% and " << m_mu2 * 100 << "%     " << std::endl;
+  const unsigned int val_100 = 100;
+  std::cout << " Contrast tolerance +/-..........." << (m_mu1 * val_100) << "% and " << (m_mu2 * val_100) << "%     " << std::endl;
   std::cout << " Sample step......................" << m_sample_step << " pixels" << std::endl;
   std::cout << " Strip............................" << m_strip << " pixels  " << std::endl;
   std::cout << " Min sample step.................." << m_min_samplestep << " pixels  " << std::endl;
 }
 
 vpMe::vpMe()
-  : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
-  m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
-  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
+  : m_likelihood_threshold_type(OLD_THRESHOLD), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
+  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_ntotal_sample(0), m_mask(nullptr)
 {
+  const double threshold_default = 1000;
+  const int points_to_track_default = 500;
+  const unsigned int mask_number_default = 180;
+  const unsigned int mask_size_default = 5;
+  const int strip_default = 2;
+  const double min_samplestep_default = 4;
   const unsigned int flatAngle = 180;
+  const unsigned int range_default = 4;
+  const double sample_step_default = 10;
+
+  m_threshold = threshold_default;
+  m_points_to_track = points_to_track_default;
+  m_mask_number = mask_number_default;
+  m_mask_size = mask_size_default;
+  m_strip = strip_default;
+  m_min_samplestep = min_samplestep_default;
+  m_range = range_default;
+  m_sample_step = sample_step_default;
+
   m_anglestep = (flatAngle / m_mask_number);
 
   initMask();
 }
 
 vpMe::vpMe(const vpMe &me)
-  : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
-  m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
-  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
+  : m_likelihood_threshold_type(OLD_THRESHOLD), m_thresholdMarginRatio(-1), m_minThreshold(-1), m_useAutomaticThreshold(false),
+  m_mu1(0.5), m_mu2(0.5), m_anglestep(1), m_mask_sign(0), m_ntotal_sample(0), m_mask(nullptr)
 {
+  const double threshold_default = 1000;
+  const int points_to_track_default = 500;
+  const unsigned int mask_number_default = 180;
+  const unsigned int mask_size_default = 5;
+  const int strip_default = 2;
+  const double min_samplestep_default = 4;
+  const unsigned int range_default = 4;
+  const double sample_step_default = 10;
+
+  m_threshold = threshold_default;
+  m_points_to_track = points_to_track_default;
+  m_mask_number = mask_number_default;
+  m_mask_size = mask_size_default;
+  m_strip = strip_default;
+  m_min_samplestep = min_samplestep_default;
+  m_range = range_default;
+  m_sample_step = sample_step_default;
+
   *this = me;
 }
 

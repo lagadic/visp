@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +40,6 @@
 
 #include <limits>
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBf.h>
 
@@ -93,13 +91,17 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
 */
 vpRGBf &vpRGBf::operator=(const vpColVector &v)
 {
-  if (v.getRows() != 3) {
-    vpERROR_TRACE("Bad vector dimension");
+  const unsigned int rows_size = 3;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+
+  if (v.getRows() != rows_size) {
     throw(vpException(vpException::dimensionError, "Bad vector dimension"));
   }
-  R = static_cast<float>(v[0]);
-  G = static_cast<float>(v[1]);
-  B = static_cast<float>(v[2]);
+  R = static_cast<float>(v[index_0]);
+  G = static_cast<float>(v[index_1]);
+  B = static_cast<float>(v[index_2]);
   return *this;
 }
 
@@ -142,9 +144,12 @@ bool vpRGBf::operator!=(const vpRGBf &v) const
 vpColVector vpRGBf::operator-(const vpRGBf &v) const
 {
   vpColVector n(3); // new color
-  n[0] = static_cast<double>(R) - static_cast<double>(v.R);
-  n[1] = static_cast<double>(G) - static_cast<double>(v.G);
-  n[2] = static_cast<double>(B) - static_cast<double>(v.B);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[index_1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[index_2] = static_cast<double>(B) - static_cast<double>(v.B);
   return n;
 }
 
@@ -171,9 +176,12 @@ vpRGBf vpRGBf::operator+(const vpRGBf &v) const
 vpColVector vpRGBf::operator-(const vpColVector &v) const
 {
   vpColVector n(3); // new color
-  n[0] = R - v[0];
-  n[1] = G - v[1];
-  n[2] = B - v[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R - v[index_0];
+  n[index_1] = G - v[index_1];
+  n[index_2] = B - v[index_2];
   return n;
 }
 
@@ -185,9 +193,12 @@ vpColVector vpRGBf::operator-(const vpColVector &v) const
 vpColVector vpRGBf::operator+(const vpColVector &v) const
 {
   vpColVector n(3); // new color
-  n[0] = R + v[0];
-  n[1] = G + v[1];
-  n[2] = B + v[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R + v[index_0];
+  n[index_1] = G + v[index_1];
+  n[index_2] = B + v[index_2];
   return n;
 }
 
@@ -199,9 +210,12 @@ vpColVector vpRGBf::operator+(const vpColVector &v) const
 vpColVector vpRGBf::operator*(float v) const
 {
   vpColVector n(3);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
   return n;
 }
 
@@ -213,9 +227,12 @@ vpColVector vpRGBf::operator*(float v) const
 vpColVector vpRGBf::operator*(double v) const
 {
   vpColVector n(3);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
   return n;
 }
 

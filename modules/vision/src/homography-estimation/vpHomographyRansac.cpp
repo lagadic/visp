@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * Homography estimation.
  */
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpRansac.h>
 #include <visp3/vision/vpHomography.h>
@@ -39,14 +40,14 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
-BEGIN_VISP_NAMESPACE
-
 #define VPEPS 1e-6
 
- /*!
-   \file vpHomographyRansac.cpp
-   \brief function used to estimate an homography using the Ransac algorithm
- */
+BEGIN_VISP_NAMESPACE
+
+/*!
+  \file vpHomographyRansac.cpp
+  \brief function used to estimate an homography using the Ransac algorithm
+*/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -171,11 +172,12 @@ bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *i
     }
   }
 
-  unsigned int n = x.getRows() / 4;
+  const unsigned int val_4 = 4;
+  unsigned int n = x.getRows() / val_4;
   double pa[4][3];
   double pb[4][3];
   unsigned int n2 = 2 * n;
-  for (unsigned int i = 0; i < 4; ++i) {
+  for (unsigned int i = 0; i < val_4; ++i) {
     unsigned int ind2 = 2 * ind[i];
     pb[i][0] = x[ind2];
     pb[i][1] = x[ind2 + 1];
@@ -252,11 +254,12 @@ bool vpHomography::degenerateConfiguration(const std::vector<double> &xb, const 
 // Fit model to this random selection of data points.
 void vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
-  unsigned int n = x.getRows() / 4;
+  const unsigned int val_4 = 4;
+  unsigned int n = x.getRows() / val_4;
   std::vector<double> xa(4), xb(4);
   std::vector<double> ya(4), yb(4);
   unsigned int n2 = n * 2;
-  for (unsigned int i = 0; i < 4; ++i) {
+  for (unsigned int i = 0; i < val_4; ++i) {
     unsigned int ind2 = 2 * ind[i];
     xb[i] = x[ind2];
     yb[i] = x[ind2 + 1];

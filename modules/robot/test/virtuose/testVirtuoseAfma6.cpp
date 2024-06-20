@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test for Virtuose SDK wrapper.
- *
- * Authors:
- * Nicolò Pedemonte
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testVirtuoseAfma6.cpp
@@ -146,7 +141,7 @@ int main()
   catch (const vpException &e) {
     robot.stopMotion();
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-}
+  }
 #else
   std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif

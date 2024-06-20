@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * ViSP <--> Eigen conversion.
  */
 
-#ifndef _vpEigenConversion_h_
-#define _vpEigenConversion_h_
+#ifndef VP_EIGEN_CONVERSION_H
+#define VP_EIGEN_CONVERSION_H
 
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_EIGEN3
@@ -85,10 +85,13 @@ template <typename Type> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpQuate
 
 template <typename Type> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpThetaUVector &src, Eigen::AngleAxis<Type> &dst)
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
   dst.angle() = static_cast<Type>(src.getTheta());
-  dst.axis()(0) = static_cast<Type>(src.getU()[0]);
-  dst.axis()(1) = static_cast<Type>(src.getU()[1]);
-  dst.axis()(2) = static_cast<Type>(src.getU()[2]);
+  dst.axis()(index_0) = static_cast<Type>(src.getU()[index_0]);
+  dst.axis()(index_1) = static_cast<Type>(src.getU()[index_1]);
+  dst.axis()(index_2) = static_cast<Type>(src.getU()[index_2]);
 }
 
 VISP_EXPORT void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpColVector &src, Eigen::VectorXd &dst);

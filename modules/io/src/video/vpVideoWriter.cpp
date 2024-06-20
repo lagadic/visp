@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
   \brief Write image sequences.
 */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpVideoWriter.h>
 

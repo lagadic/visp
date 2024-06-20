@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,32 +93,32 @@ BEGIN_VISP_NAMESPACE
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByLU();
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByLU();
 
-  std::cout << "Inverse by LU ";
-#if defined(VISP_HAVE_LAPACK)
-  std::cout << "(using Lapack)";
-#elif defined(VISP_HAVE_EIGEN3)
-  std::cout << "(using Eigen3)";
-#elif defined(VISP_HAVE_OPENCV)
-  std::cout << "(using OpenCV)";
-#endif
-  std::cout << ": \n" << A_1 << std::endl;
+    std::cout << "Inverse by LU ";
+  #if defined(VISP_HAVE_LAPACK)
+    std::cout << "(using Lapack)";
+  #elif defined(VISP_HAVE_EIGEN3)
+    std::cout << "(using Eigen3)";
+  #elif defined(VISP_HAVE_OPENCV)
+    std::cout << "(using OpenCV)";
+  #endif
+    std::cout << ": \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLULapack(), inverseByLUEigen3(), inverseByLUOpenCV(),
@@ -162,17 +161,20 @@ vpMatrix vpMatrix::inverseByLU() const
                         rowNum, colNum));
     }
     d = 1. / d;
-    inv[0][0] = (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1])) * d;
-    inv[0][1] = (((*this)[0][2] * (*this)[2][1]) - ((*this)[0][1] * (*this)[2][2])) * d;
-    inv[0][2] = (((*this)[0][1] * (*this)[1][2]) - ((*this)[0][2] * (*this)[1][1])) * d;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    inv[index_0][index_0] = (((*this)[index_1][index_1] * (*this)[index_2][index_2]) - ((*this)[index_1][index_2] * (*this)[index_2][index_1])) * d;
+    inv[index_0][index_1] = (((*this)[index_0][index_2] * (*this)[index_2][index_1]) - ((*this)[index_0][index_1] * (*this)[index_2][index_2])) * d;
+    inv[index_0][index_2] = (((*this)[index_0][index_1] * (*this)[index_1][index_2]) - ((*this)[index_0][index_2] * (*this)[index_1][index_1])) * d;
 
-    inv[1][0] = (((*this)[1][2] * (*this)[2][0]) - ((*this)[1][0] * (*this)[2][2])) * d;
-    inv[1][1] = (((*this)[0][0] * (*this)[2][2]) - ((*this)[0][2] * (*this)[2][0])) * d;
-    inv[1][2] = (((*this)[0][2] * (*this)[1][0]) - ((*this)[0][0] * (*this)[1][2])) * d;
+    inv[index_1][index_0] = (((*this)[index_1][index_2] * (*this)[index_2][index_0]) - ((*this)[index_1][index_0] * (*this)[index_2][index_2])) * d;
+    inv[index_1][index_1] = (((*this)[index_0][index_0] * (*this)[index_2][index_2]) - ((*this)[index_0][index_2] * (*this)[index_2][index_0])) * d;
+    inv[index_1][index_2] = (((*this)[index_0][index_2] * (*this)[index_1][index_0]) - ((*this)[index_0][index_0] * (*this)[index_1][index_2])) * d;
 
-    inv[2][0] = (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0])) * d;
-    inv[2][1] = (((*this)[0][1] * (*this)[2][0]) - ((*this)[0][0] * (*this)[2][1])) * d;
-    inv[2][2] = (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0])) * d;
+    inv[index_2][index_0] = (((*this)[index_1][index_0] * (*this)[index_2][index_1]) - ((*this)[index_1][index_1] * (*this)[index_2][index_0])) * d;
+    inv[index_2][index_1] = (((*this)[index_0][index_1] * (*this)[index_2][index_0]) - ((*this)[index_0][index_0] * (*this)[index_2][index_1])) * d;
+    inv[index_2][index_2] = (((*this)[index_0][index_0] * (*this)[index_1][index_1]) - ((*this)[index_0][index_1] * (*this)[index_1][index_0])) * d;
     return inv;
   }
   else {
@@ -203,22 +205,22 @@ vpMatrix vpMatrix::inverseByLU() const
   \return The determinant of the matrix if the matrix is square.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(3,3);
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-  std::cout << "Initial matrix: \n" << A << std::endl;
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+    std::cout << "Initial matrix: \n" << A << std::endl;
 
-  // Compute the determinant
-  std:: cout << "Determinant by default method           : " << A.det() << std::endl;
-  std:: cout << "Determinant by LU decomposition         : " << A.detByLU() << std::endl;
-}
+    // Compute the determinant
+    std:: cout << "Determinant by default method           : " << A.det() << std::endl;
+    std:: cout << "Determinant by LU decomposition         : " << A.detByLU() << std::endl;
+  }
   \endcode
   \sa detByLULapack(), detByLUEigen3(), detByLUOpenCV()
 */
@@ -231,9 +233,12 @@ double vpMatrix::detByLU() const
     return (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0]));
   }
   else if ((rowNum == 3) && (colNum == 3)) {
-    return ((((*this)[0][0] * (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1]))) -
-             ((*this)[0][1] * (((*this)[1][0] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][0])))) +
-            ((*this)[0][2] * (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0]))));
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    return ((((*this)[index_0][index_0] * (((*this)[index_1][index_1] * (*this)[index_2][index_2]) - ((*this)[index_1][index_2] * (*this)[index_2][index_1]))) -
+             ((*this)[index_0][index_1] * (((*this)[index_1][index_0] * (*this)[index_2][index_2]) - ((*this)[index_1][index_2] * (*this)[index_2][index_0])))) +
+            ((*this)[index_0][index_2] * (((*this)[index_1][index_0] * (*this)[index_2][index_1]) - ((*this)[index_1][index_1] * (*this)[index_2][index_0]))));
   }
   else {
 #if defined(VISP_HAVE_LAPACK)
@@ -258,24 +263,24 @@ double vpMatrix::detByLU() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByLULapack();
-  std::cout << "Inverse by LU (Lapack): \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1; // A^-1
+    A_1 = A.inverseByLULapack();
+    std::cout << "Inverse by LU (Lapack): \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLU(), inverseByLUEigen3(), inverseByLUOpenCV()
@@ -359,21 +364,21 @@ vpMatrix vpMatrix::inverseByLULapack() const
   \return The determinant of the matrix if the matrix is square.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(3,3);
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-  std::cout << "Initial matrix: \n" << A << std::endl;
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+    std::cout << "Initial matrix: \n" << A << std::endl;
 
-  // Compute the determinant
-  std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
-}
+    // Compute the determinant
+    std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
+  }
   \endcode
   \sa detByLU(), detByLUEigen3(), detByLUOpenCV()
 */
@@ -454,30 +459,30 @@ double vpMatrix::detByLULapack() const
 #if defined(VISP_HAVE_OPENCV)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
-OpenCV 3rd party.
+  OpenCV 3rd party.
 
   \return The inverse matrix.
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByLUOpenCV();
-  std::cout << "Inverse by LU (OpenCV): \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1; // A^-1
+    A_1 = A.inverseByLUOpenCV();
+    std::cout << "Inverse by LU (OpenCV): \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLU(), inverseByLUEigen3(), inverseByLULapack()
@@ -500,26 +505,26 @@ vpMatrix vpMatrix::inverseByLUOpenCV() const
 
 /*!
   Compute the determinant of a n-by-n matrix using the LU decomposition with
-OpenCV 3rd party.
+  OpenCV 3rd party.
 
   \return Determinant of the matrix.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(3,3);
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-  std::cout << "Initial matrix: \n" << A << std::endl;
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+    std::cout << "Initial matrix: \n" << A << std::endl;
 
-  // Compute the determinant
-  std:: cout << "Determinant by LU decomposition (OpenCV): " << A.detByLUOpenCV() << std::endl;
-}
+    // Compute the determinant
+    std:: cout << "Determinant by LU decomposition (OpenCV): " << A.detByLUOpenCV() << std::endl;
+  }
   \endcode
   \sa detByLU(), detByLUEigen3(), detByLULapack()
 */
@@ -543,30 +548,30 @@ double vpMatrix::detByLUOpenCV() const
 
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
-Eigen3 3rd party.
+  Eigen3 3rd party.
 
   \return The inverse matrix.
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByLUEigen3();
-  std::cout << "Inverse by LU (Eigen3): \n" << A_1 << std::endl;
+    // Compute the inverse
+    vpMatrix A_1; // A^-1
+    A_1 = A.inverseByLUEigen3();
+    std::cout << "Inverse by LU (Eigen3): \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLU(), inverseByLULapack(), inverseByLUOpenCV()
@@ -590,26 +595,26 @@ vpMatrix vpMatrix::inverseByLUEigen3() const
 
 /*!
   Compute the determinant of a square matrix using the LU decomposition with
-Eigen3 3rd party.
+  Eigen3 3rd party.
 
   \return The determinant of the matrix if the matrix is square.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(3,3);
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-  std::cout << "Initial matrix: \n" << A << std::endl;
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+    std::cout << "Initial matrix: \n" << A << std::endl;
 
-  // Compute the determinant
-  std:: cout << "Determinant by LU decomposition (Eigen3): " << A.detByLUEigen3() << std::endl;
-}
+    // Compute the determinant
+    std:: cout << "Determinant by LU decomposition (Eigen3): " << A.detByLUEigen3() << std::endl;
+  }
   \endcode
   \sa detByLU(), detByLUOpenCV(), detByLULapack()
 */

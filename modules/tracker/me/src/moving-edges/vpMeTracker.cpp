@@ -41,18 +41,15 @@
 #include <visp3/me/vpMeTracker.h>
 
 #include <algorithm>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTrackingException.h>
 
 BEGIN_VISP_NAMESPACE
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-
 void vpMeTracker::init()
 {
   vpTracker::init();
-  p.resize(2);
+  const unsigned int val_2 = 2;
+  p.resize(val_2);
   m_selectDisplay = vpMeSite::NONE;
 }
 
@@ -185,7 +182,6 @@ bool vpMeTracker::outOfImage(const vpImagePoint &iP, int border, int nrows, int 
 void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 {
   if (!m_me) {
-    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
     throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
@@ -219,12 +215,10 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 void vpMeTracker::track(const vpImage<unsigned char> &I)
 {
   if (!m_me) {
-    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
     throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   if (m_meList.empty()) {
-    vpDERROR_TRACE(2, "Tracking error: too few pixel to track");
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Too few pixel to track"));
   }
 
@@ -290,8 +284,5 @@ void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w, unsig
   }
   display(I);
 }
-
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2
 
 END_VISP_NAMESPACE

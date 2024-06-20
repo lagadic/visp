@@ -36,8 +36,8 @@
  * \brief Contains abstract elements for a Distance to Feature type feature.
  */
 
-#ifndef _vpMeTracker_h_
-#define _vpMeTracker_h_
+#ifndef VP_ME_TRACKER_H
+#define VP_ME_TRACKER_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpTracker.h>

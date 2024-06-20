@@ -31,10 +31,11 @@
  * TCP Network
  */
 
-#ifndef vpNetwork_H
-#define vpNetwork_H
+#ifndef VP_NETWORK_H
+#define VP_NETWORK_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRequest.h>
 
 #include <iostream>

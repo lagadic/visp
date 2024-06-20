@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,9 +29,9 @@
  *
  * Description:
  * Read an image sequence from the disk and display it.
- *
-*****************************************************************************/
+ */
 /*!
+
   \file testMouseEvent.cpp
 
   \brief Read an image sequence from the disk and display it.
@@ -372,7 +371,7 @@ int main(int argc, const char **argv)
       std::cout << "  No display is available\n";
     }
     return EXIT_FAILURE;
-}
+  }
 
   if (!opt_display)
     opt_click_blocking = false; // turn off the waiting

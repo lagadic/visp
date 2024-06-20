@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test conversion between ViSP and Eigen type.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testEigenConversion.cpp
@@ -125,7 +123,7 @@ TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]")
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -154,7 +152,7 @@ TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -183,7 +181,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conve
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -212,7 +210,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conve
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-}
+    }
 
 TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_conversion]")
 {

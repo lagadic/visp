@@ -276,6 +276,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   method_name = get_name(method.name)
   py_method_name = method_config.get('custom_name') or method_name
   return_type = get_type(method.return_type, specs, header_env.mapping)
+  param_is_function_ptr = [is_function_pointer(param.type) for param in method.parameters]
 
   method_signature = get_method_signature(method_name,
                                           get_type(method.return_type, {}, header_env.mapping),
@@ -353,7 +354,15 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
 
   # Arguments that are inputs to the lambda function that wraps the ViSP function
   input_param_types = [params_strs[i] for i in range(len(param_is_input)) if param_is_input[i]]
-  params_with_names = [t + ' ' + name for t, name in zip(input_param_types, input_param_names)]
+
+  def to_argument_name(type: str, name: str) -> str:
+    if '(*)' in type:
+      return type.replace('(*)', f'(*{name})', 1)
+    else:
+      return type + ' ' + name
+
+
+  params_with_names = [to_argument_name(t, name) for t, name in zip(input_param_types, input_param_names)]
 
   # Params that are only outputs: they should be declared in function. Assume that they are default constructible
   param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]

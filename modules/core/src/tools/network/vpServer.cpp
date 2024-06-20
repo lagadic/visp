@@ -40,6 +40,8 @@
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#include <visp3/core/vpDebug.h>
+
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif

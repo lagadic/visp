@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Regression test for MBT.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testGenericTracker.cpp
@@ -713,7 +711,7 @@ int main(int argc, const char *argv[])
         "KLT module or OpenCV is not available.\nTest is not run."
         << std::endl;
       return EXIT_SUCCESS;
-  }
+    }
 #endif
 
     // Test if an input path is set
@@ -746,7 +744,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "Test succeed" << std::endl;
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

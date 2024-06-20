@@ -34,6 +34,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/me/vpNurbs.h>
 
 BEGIN_VISP_NAMESPACE

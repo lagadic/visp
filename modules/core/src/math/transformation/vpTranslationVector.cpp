@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +51,12 @@ BEGIN_VISP_NAMESPACE
 */
 vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpArray2D<double>(3, 1), m_index(0)
 {
-  (*this)[0] = tx;
-  (*this)[1] = ty;
-  (*this)[2] = tz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  (*this)[index_0] = tx;
+  (*this)[index_1] = ty;
+  (*this)[index_2] = tz;
 }
 
 /*!
@@ -78,9 +80,12 @@ vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray
 */
 vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(3, 1), m_index(0)
 {
-  (*this)[0] = p[0];
-  (*this)[1] = p[1];
-  (*this)[2] = p[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  (*this)[index_0] = p[index_0];
+  (*this)[index_1] = p[index_1];
+  (*this)[index_2] = p[index_2];
 }
 
 /*!
@@ -213,9 +218,12 @@ vpTranslationVector &vpTranslationVector::build(const vpHomogeneousMatrix &M)
 */
 vpTranslationVector &vpTranslationVector::build(const vpPoseVector &p)
 {
-  (*this)[0] = p[0];
-  (*this)[1] = p[1];
-  (*this)[2] = p[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  (*this)[index_0] = p[index_0];
+  (*this)[index_1] = p[index_1];
+  (*this)[index_2] = p[index_2];
   return *this;
 }
 
@@ -230,14 +238,18 @@ vpTranslationVector &vpTranslationVector::build(const vpPoseVector &p)
 */
 vpTranslationVector &vpTranslationVector::build(const vpColVector &v)
 {
-  if (v.size() != 3) {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int v_size = 3;
+  if (v.size() != v_size) {
     throw(vpException(vpException::dimensionError,
                       "Cannot build a translation vector from a %d-dimension column vector", v.size()));
   }
 
-  (*this)[0] = v[0];
-  (*this)[1] = v[1];
-  (*this)[2] = v[2];
+  (*this)[index_0] = v[index_0];
+  (*this)[index_1] = v[index_1];
+  (*this)[index_2] = v[index_2];
   return *this;
 }
 
@@ -263,9 +275,12 @@ vpTranslationVector &vpTranslationVector::build(const double &tx, const double &
 */
 void vpTranslationVector::set(double tx, double ty, double tz)
 {
-  (*this)[0] = tx;
-  (*this)[1] = ty;
-  (*this)[2] = tz;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  (*this)[index_0] = tx;
+  (*this)[index_1] = ty;
+  (*this)[index_2] = tz;
 }
 
 /*!
@@ -290,7 +305,8 @@ vpTranslationVector vpTranslationVector::operator+(const vpTranslationVector &tv
 {
   vpTranslationVector s;
 
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     s[i] = (*this)[i] + tv[i];
   }
 
@@ -325,7 +341,8 @@ vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
   }
   vpTranslationVector s;
 
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     s[i] = (*this)[i] + v[i];
   }
 
@@ -354,7 +371,8 @@ vpTranslationVector vpTranslationVector::operator-(const vpTranslationVector &tv
 {
   vpTranslationVector sub;
 
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     sub[i] = (*this)[i] - tv[i];
   }
 
@@ -695,16 +713,19 @@ vpTranslationVector &vpTranslationVector::operator,(double val)
 */
 void vpTranslationVector::skew(const vpTranslationVector &tv, vpMatrix &M)
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
   M.resize(3, 3);
-  M[0][0] = 0;
-  M[0][1] = -tv[2];
-  M[0][2] = tv[1];
-  M[1][0] = tv[2];
-  M[1][1] = 0;
-  M[1][2] = -tv[0];
-  M[2][0] = -tv[1];
-  M[2][1] = tv[0];
-  M[2][2] = 0;
+  M[index_0][index_0] = 0;
+  M[index_0][index_1] = -tv[index_2];
+  M[index_0][index_2] = tv[index_1];
+  M[index_1][index_0] = tv[index_2];
+  M[index_1][index_1] = 0;
+  M[index_1][index_2] = -tv[index_0];
+  M[index_2][index_0] = -tv[index_1];
+  M[index_2][index_1] = tv[index_0];
+  M[index_2][index_2] = 0;
 }
 
 /*!

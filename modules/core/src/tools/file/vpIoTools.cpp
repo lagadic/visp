@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +61,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
@@ -349,20 +347,28 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
 
   visp::cnpy::npz_t arrays;
   bool quit = false;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_26 = 26;
+  const unsigned int index_28 = 28;
+  const unsigned int val_8 = 8;
+  const unsigned int val_18 = 18;
+  const unsigned int val_22 = 22;
+  const unsigned int val_30 = 30;
   while (!quit) {
     std::vector<char> local_header(30);
-    size_t headerres = fread(&local_header[0], sizeof(char), 30, fp);
+    size_t headerres = fread(&local_header[0], sizeof(char), val_30, fp);
     if (headerres != 30) {
       throw std::runtime_error("npz_load: failed fread");
     }
 
     //if we've reached the global header, stop reading
-    if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
+    if ((local_header[index_2] != 0x03) || (local_header[index_3] != 0x04)) {
       quit = true;
     }
     else {
       //read in the variable name
-      uint16_t name_len = *(uint16_t *)&local_header[26];
+      uint16_t name_len = *(uint16_t *)&local_header[index_26];
       std::string varname(name_len, ' ');
       size_t vname_res = fread(&varname[0], sizeof(char), name_len, fp);
       if (vname_res != name_len) {
@@ -373,7 +379,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
       varname.erase(varname.end()-4, varname.end());
 
       //read in the extra field
-      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
+      uint16_t extra_field_len = *(uint16_t *)&local_header[index_28];
       if (extra_field_len > 0) {
         std::vector<char> buff(extra_field_len);
         size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, fp);
@@ -382,9 +388,9 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
         }
       }
 
-      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
+      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0] + val_8);
+      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_18);
+      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_22);
 
       if (compr_method == 0) { arrays[varname] = load_the_npy_file(fp); }
       else { arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes); }
@@ -413,20 +419,28 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
   }
 
   bool quit = false;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_26 = 26;
+  const unsigned int index_28 = 28;
+  const unsigned int val_8 = 8;
+  const unsigned int val_18 = 18;
+  const unsigned int val_22 = 22;
+  const unsigned int val_30 = 30;
   while (!quit) {
     std::vector<char> local_header(30);
-    size_t header_res = fread(&local_header[0], sizeof(char), 30, fp);
+    size_t header_res = fread(&local_header[0], sizeof(char), val_30, fp);
     if (header_res != 30) {
       throw std::runtime_error("npz_load: failed fread");
     }
 
     //if we've reached the global header, stop reading
-    if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
+    if ((local_header[index_2] != 0x03) || (local_header[index_3] != 0x04)) {
       quit = true;
     }
     else {
       //read in the variable name
-      uint16_t name_len = *(uint16_t *)&local_header[26];
+      uint16_t name_len = *(uint16_t *)&local_header[index_26];
       std::string vname(name_len, ' ');
       size_t vname_res = fread(&vname[0], sizeof(char), name_len, fp);
       if (vname_res != name_len) {
@@ -435,12 +449,12 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
       vname.erase(vname.end()-4, vname.end()); //erase the lagging .npy
 
       //read in the extra field
-      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
+      uint16_t extra_field_len = *(uint16_t *)&local_header[index_28];
       fseek(fp, extra_field_len, SEEK_CUR); //skip past the extra field
 
-      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
+      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0] + val_8);
+      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_18);
+      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_22);
 
       if (vname == varname) {
         NpyArray array = (compr_method == 0) ? load_the_npy_file(fp) : load_the_npz_array(fp, compr_bytes, uncompr_bytes);
@@ -933,22 +947,25 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
   for (size_t pos = 0; (pos = cpy_path.find(vpIoTools::separator)) != std::string::npos;) {
     sub_path += cpy_path.substr(0, pos + 1);
     // Continue if sub_path = separator
+    bool stop_for_loop = false;
     if (pos == 0) {
       cpy_path.erase(0, pos + 1);
-      continue;
+      stop_for_loop = true;
     }
+    if (!stop_for_loop) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
+      if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
-    (void)mode; // var not used
-    if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
+      (void)mode; // var not used
+      if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
 #endif
-    {
-      if (errno != EEXIST) {
-        return -1;
+      {
+        if (errno != EEXIST) {
+          return -1;
+        }
       }
+      cpy_path.erase(0, pos + 1);
     }
-    cpy_path.erase(0, pos + 1);
   }
 
   if (!cpy_path.empty()) {
@@ -2134,16 +2151,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2155,16 +2172,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

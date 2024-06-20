@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Meter to pixel conversion.
 */
 
-#ifndef _vpMeterPixelConversion_h_
-#define _vpMeterPixelConversion_h_
+#ifndef VP_METER_PIXEL_CONVERSION_H
+#define VP_METER_PIXEL_CONVERSION_H
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpCircle.h>
@@ -272,13 +272,17 @@ public:
   {
     double r = sqrt(vpMath::sqr(x) + vpMath::sqr(y));
     double theta = atan(r);
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
     double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
       theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
-    double r_d = theta + (k[0] * theta3) + (k[1] * theta5) + (k[2] * theta7) + (k[3] * theta9);
+    double r_d = theta + (k[index_0] * theta3) + (k[index_1] * theta5) + (k[index_2] * theta7) + (k[index_3] * theta9);
 
     double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : (r_d / r);
 
@@ -315,13 +319,17 @@ public:
   {
     double r = sqrt(vpMath::sqr(x) + vpMath::sqr(y));
     double theta = atan(r);
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
     double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
       theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
-    double r_d = theta + (k[0] * theta3) + (k[1] * theta5) + (k[2] * theta7) + (k[3] * theta9);
+    double r_d = theta + (k[index_0] * theta3) + (k[index_1] * theta5) + (k[index_2] * theta7) + (k[index_3] * theta9);
 
     double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : (r_d / r);
 

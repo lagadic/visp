@@ -41,6 +41,7 @@
 #ifdef VISP_HAVE_COIN3D_AND_GUI
 
 #include <visp3/ar/vpSimulator.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
 #include <visp3/core/vpImage.h>

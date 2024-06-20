@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +51,6 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
@@ -957,13 +955,14 @@ vpTranslationVector vpMatrix::operator*(const vpTranslationVector &tv) const
                       rowNum, colNum, tv.getRows(), tv.getCols()));
   }
 
-  for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int j = 0; j < val_3; ++j) {
     t_out[j] = 0;
   }
 
-  for (unsigned int j = 0; j < 3; ++j) {
+  for (unsigned int j = 0; j < val_3; ++j) {
     double tj = tv[j]; // optimization em 5/12/2006
-    for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       t_out[i] += rowPtrs[i][j] * tj;
     }
   }

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test functions in vpIoTools.
- *
-*****************************************************************************/
+ */
 /*!
   \example testIoTools.cpp
 
@@ -287,7 +285,7 @@ int main(int argc, const char **argv)
   if (nbFail) {
     std::cerr << "Failed test: vpIoTools::splitDrive (Win32)" << std::endl;
     return EXIT_FAILURE;
-}
+  }
 #endif
 
 // Test vpIoTools::getFileExtension
@@ -855,7 +853,7 @@ int main(int argc, const char **argv)
     if (nbFail) {
       std::cerr << "Failed test: vpIoTools::toLowerCase (WIN32 platform)" << std::endl;
       return EXIT_FAILURE;
-  }
+    }
 #else
     if (strcmp(vpIoTools::toLowerCase(testString).c_str(), expectedLower.c_str()) == 0) {
       nbOk++;

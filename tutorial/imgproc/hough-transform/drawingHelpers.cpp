@@ -2,25 +2,21 @@
 
 #include <visp3/core/vpImageConvert.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-using namespace VISP_NAMESPACE_NAME;
-#endif
-
 #if defined(VISP_HAVE_X11)
-vpDisplayX drawingHelpers::d;
+VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d;
 #elif defined(VISP_HAVE_OPENCV)
-vpDisplayOpenCV drawingHelpers::d;
+VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d;
 #elif defined(VISP_HAVE_GTK)
-vpDisplayGTK drawingHelpers::d;
+VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d;
 #elif defined(VISP_HAVE_GDI)
-vpDisplayGDI drawingHelpers::d;
+VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d;
 #elif defined(VISP_HAVE_D3D9)
-vpDisplayD3D drawingHelpers::d;
+VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d;
 #endif
 
-vpImage<vpRGBa> drawingHelpers::I_disp;
+VISP_NAMESPACE_ADDRESSING vpImage<vpRGBa> drawingHelpers::I_disp;
 
-bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const bool &blockingMode)
+bool drawingHelpers::display(VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> &I, const std::string &title, const bool &blockingMode)
 {
   I_disp = I;
 #if defined(VISP_HAVE_DISPLAY)
@@ -47,14 +43,14 @@ bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const
   return hasToContinue;
 }
 
-bool drawingHelpers::display(vpImage<unsigned char> &D, const std::string &title, const bool &blockingMode)
+bool drawingHelpers::display(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &D, const std::string &title, const bool &blockingMode)
 {
   vpImage<vpRGBa> I; // Image to display
   vpImageConvert::convert(D, I);
   return display(I, title, blockingMode);
 }
 
-bool drawingHelpers::display(vpImage<double> &D, const std::string &title, const bool &blockingMode)
+bool drawingHelpers::display(VISP_NAMESPACE_ADDRESSING vpImage<double> &D, const std::string &title, const bool &blockingMode)
 {
   vpImage<unsigned char> I; // Image to display
   vpImageConvert::convert(D, I);

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test Munkres assignment algorithm.
- *
-*****************************************************************************/
+ */
 /*!
   \example testMunkres.cpp
 
@@ -235,7 +233,7 @@ int main()
 
   if (not testHorMat()) {
     return EXIT_FAILURE;
-}
+  }
 
   return EXIT_SUCCESS;
 }

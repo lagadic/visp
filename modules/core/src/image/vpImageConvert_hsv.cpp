@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +56,8 @@ BEGIN_VISP_NAMESPACE
  * \param[in] size : The image size or the number of pixels corresponding to the image width * height.
  * \param[in] step : Number of channels of the output color image; 3 for an RGB image, 4 for an RGBA image.
  */
-void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
-                             unsigned int size, unsigned int step)
+  void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
+                               unsigned int size, unsigned int step)
 {
   int size_ = static_cast<int>(size);
 #if defined(_OPENMP)
@@ -329,17 +328,21 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
 {
   int size_ = static_cast<int>(size);
   std::vector<float> h_scale(4);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   if (h_full) {
-    h_scale[0] = 42.5f;
-    h_scale[1] = 85.f;
-    h_scale[2] = 170.f;
-    h_scale[3] = 255.f;
+    h_scale[index_0] = 42.5f;
+    h_scale[index_1] = 85.f;
+    h_scale[index_2] = 170.f;
+    h_scale[index_3] = 255.f;
   }
   else {
-    h_scale[0] = 30.f;
-    h_scale[1] = 60.f;
-    h_scale[2] = 120.f;
-    h_scale[3] = 180.f;
+    h_scale[index_0] = 30.f;
+    h_scale[index_1] = 60.f;
+    h_scale[index_2] = 120.f;
+    h_scale[index_3] = 180.f;
   }
 #if defined(_OPENMP)
 #pragma omp parallel for
@@ -379,17 +382,17 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
       float delta = max - min;
 
       if (vpMath::equal(red, max, std::numeric_limits<float>::epsilon())) {
-        h = (h_scale[0] * (green - blue)) / delta;
+        h = (h_scale[index_0] * (green - blue)) / delta;
       }
       else if (vpMath::equal(green, max, std::numeric_limits<float>::epsilon())) {
-        h = h_scale[1] + ((h_scale[0] * (blue - red)) / delta);
+        h = h_scale[index_1] + ((h_scale[index_0] * (blue - red)) / delta);
       }
       else {
-        h = h_scale[2] + ((h_scale[0] * (red - green)) / delta);
+        h = h_scale[index_2] + ((h_scale[index_0] * (red - green)) / delta);
       }
 
       if (h < 0.f) {
-        h += h_scale[3];
+        h += h_scale[index_3];
       }
     }
 

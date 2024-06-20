@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,12 @@
  *
  * Description:
  * Test for image display.
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayD3D.h>
@@ -261,9 +260,9 @@ int main(int argc, const char **argv)
         std::cout << "  No display is available\n";
       }
       return EXIT_FAILURE;
-  }
+    }
 
-  // Create 2 images
+    // Create 2 images
     vpImage<unsigned char> I1(240, 320), I2(240, 320);
     I1 = 128;
     I2 = 255;
@@ -352,12 +351,12 @@ int main(int argc, const char **argv)
     delete d1;
     delete d2;
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-  }
+}
 
 #else
 int main() { vpERROR_TRACE("You do not have display functionalities..."); }

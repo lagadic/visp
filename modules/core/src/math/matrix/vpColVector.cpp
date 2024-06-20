@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@
 
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationVector.h>
@@ -80,7 +79,8 @@ vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
   }
   vpTranslationVector s;
 
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     s[i] = (*this)[i] + t[i];
   }
 
@@ -712,21 +712,25 @@ double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
 vpMatrix vpColVector::skew(const vpColVector &v)
 {
   vpMatrix M;
-  if (v.getRows() != 3) {
+  const unsigned int rows_size = 3;
+  if (v.getRows() != rows_size) {
     throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimension vector (%d)",
                       v.getRows()));
   }
 
   M.resize(3, 3, false, false);
-  M[0][0] = 0;
-  M[0][1] = -v[2];
-  M[0][2] = v[1];
-  M[1][0] = v[2];
-  M[1][1] = 0;
-  M[1][2] = -v[0];
-  M[2][0] = -v[1];
-  M[2][1] = v[0];
-  M[2][2] = 0;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  M[index_0][index_0] = 0;
+  M[index_0][index_1] = -v[index_2];
+  M[index_0][index_2] = v[index_1];
+  M[index_1][index_0] = v[index_2];
+  M[index_1][index_1] = 0;
+  M[index_1][index_2] = -v[index_0];
+  M[index_2][index_0] = -v[index_1];
+  M[index_2][index_1] = v[index_0];
+  M[index_2][index_2] = 0;
 
   return M;
 }

@@ -39,6 +39,7 @@
 
 #include <iostream>
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 
@@ -46,7 +47,7 @@ BEGIN_VISP_NAMESPACE
 /*!
    Basic constructor.
  */
-vp1394CMUGrabber::vp1394CMUGrabber()
+  vp1394CMUGrabber::vp1394CMUGrabber()
   : index(0), // If a camera was not selected the first one (index = 0) will
               // be used
   _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)

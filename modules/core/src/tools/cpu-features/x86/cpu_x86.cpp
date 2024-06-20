@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,9 +103,12 @@ bool cpu_x86::detect_OS_AVX()
 
   uint32_t cpuInfo[4];
   cpuid(cpuInfo, 1);
+  const unsigned int index_2 = 2;
+  const unsigned int val_27 = 27;
+  const unsigned int val_28 = 28;
 
-  bool osUsesXSAVE_XRSTORE = (cpuInfo[2] & (1U << 27)) != 0;
-  bool cpuAVXSuport = (cpuInfo[2] & (1U << 28)) != 0;
+  bool osUsesXSAVE_XRSTORE = (cpuInfo[index_2] & (1U << val_27)) != 0;
+  bool cpuAVXSuport = (cpuInfo[index_2] & (1U << val_28)) != 0;
 
   if (osUsesXSAVE_XRSTORE && cpuAVXSuport) {
     uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
@@ -137,9 +140,13 @@ std::string cpu_x86::get_vendor_string()
   char name[13];
 
   cpuid(CPUInfo, 0);
-  memcpy(name + 0, &CPUInfo[1], 4);
-  memcpy(name + 4, &CPUInfo[3], 4);
-  memcpy(name + 8, &CPUInfo[2], 4);
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_4 = 4;
+  memcpy(name + 0, &CPUInfo[index_1], val_4);
+  memcpy(name + 4, &CPUInfo[index_3], val_4);
+  memcpy(name + 8, &CPUInfo[index_2], val_4);
   name[12] = '\0';
 
   return name;
@@ -174,53 +181,78 @@ void cpu_x86::detect_host()
 
   cpuid(info, 0x80000000);
   uint32_t nExIds = info[0];
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_1 = 1;
+  const unsigned int val_3 = 3;
+  const unsigned int val_5 = 5;
+  const unsigned int val_6 = 6;
+  const unsigned int val_8 = 8;
+  const unsigned int val_9 = 9;
+  const unsigned int val_11 = 11;
+  const unsigned int val_12 = 12;
+  const unsigned int val_14 = 14;
+  const unsigned int val_16 = 16;
+  const unsigned int val_17 = 17;
+  const unsigned int val_19 = 19;
+  const unsigned int val_20 = 20;
+  const unsigned int val_21 = 21;
+  const unsigned int val_23 = 23;
+  const unsigned int val_25 = 25;
+  const unsigned int val_26 = 26;
+  const unsigned int val_27 = 27;
+  const unsigned int val_28 = 28;
+  const unsigned int val_29 = 29;
+  const unsigned int val_30 = 30;
+  const unsigned int val_31 = 31;
 
   //  Detect Features
   if (nIds >= 0x00000001) {
     cpuid(info, 0x00000001);
-    HW_MMX = (info[3] & (1U << 23)) != 0U;
-    HW_SSE = (info[3] & (1U << 25)) != 0U;
-    HW_SSE2 = (info[3] & (1U << 26)) != 0U;
-    HW_SSE3 = (info[2] & (1U << 0)) != 0U;
+    HW_MMX = (info[index_3] & (1U << val_23)) != 0U;
+    HW_SSE = (info[index_3] & (1U << val_25)) != 0U;
+    HW_SSE2 = (info[index_3] & (1U << val_26)) != 0U;
+    HW_SSE3 = (info[index_2] & (1U << 0)) != 0U;
 
-    HW_SSSE3 = (info[2] & (1U << 9)) != 0U;
-    HW_SSE41 = (info[2] & (1U << 19)) != 0U;
-    HW_SSE42 = (info[2] & (1U << 20)) != 0U;
-    HW_AES = (info[2] & (1U << 25)) != 0U;
+    HW_SSSE3 = (info[index_2] & (1U << val_9)) != 0U;
+    HW_SSE41 = (info[index_2] & (1U << val_19)) != 0U;
+    HW_SSE42 = (info[index_2] & (1U << val_20)) != 0U;
+    HW_AES = (info[index_2] & (1U << val_25)) != 0U;
 
-    HW_AVX = (info[2] & (1U << 28)) != 0U;
-    HW_FMA3 = (info[2] & (1U << 12)) != 0U;
+    HW_AVX = (info[index_2] & (1U << val_28)) != 0U;
+    HW_FMA3 = (info[index_2] & (1U << val_12)) != 0U;
 
-    HW_RDRAND = (info[2] & (1U << 30)) != 0U;
+    HW_RDRAND = (info[index_2] & (1U << val_30)) != 0U;
   }
   if (nIds >= 0x00000007) {
     cpuid(info, 0x00000007);
-    HW_AVX2 = (info[1] & (1U << 5)) != 0U;
+    HW_AVX2 = (info[index_1] & (1U << val_5)) != 0U;
 
-    HW_BMI1 = (info[1] & (1U << 3)) != 0U;
-    HW_BMI2 = (info[1] & (1U << 8)) != 0U;
-    HW_ADX = (info[1] & (1U << 19)) != 0U;
-    HW_MPX = (info[1] & (1U << 14)) != 0U;
-    HW_SHA = (info[1] & (1U << 29)) != 0U;
-    HW_PREFETCHWT1 = (info[2] & (1U << 0)) != 0U;
+    HW_BMI1 = (info[index_1] & (1U << val_3)) != 0U;
+    HW_BMI2 = (info[index_1] & (1U << val_8)) != 0U;
+    HW_ADX = (info[index_1] & (1U << val_19)) != 0U;
+    HW_MPX = (info[index_1] & (1U << val_14)) != 0U;
+    HW_SHA = (info[index_1] & (1U << val_29)) != 0U;
+    HW_PREFETCHWT1 = (info[index_2] & (1U << 0)) != 0U;
 
-    HW_AVX512_F = (info[1] & (1U << 16)) != 0U;
-    HW_AVX512_CD = (info[1] & (1U << 28)) != 0U;
-    HW_AVX512_PF = (info[1] & (1U << 26)) != 0U;
-    HW_AVX512_ER = (info[1] & (1U << 27)) != 0U;
-    HW_AVX512_VL = (info[1] & (1U << 31)) != 0U;
-    HW_AVX512_BW = (info[1] & (1U << 30)) != 0U;
-    HW_AVX512_DQ = (info[1] & (1U << 17)) != 0U;
-    HW_AVX512_IFMA = (info[1] & (1U << 21)) != 0U;
-    HW_AVX512_VBMI = (info[2] & (1U << 1)) != 0U;
+    HW_AVX512_F = (info[index_1] & (1U << val_16)) != 0U;
+    HW_AVX512_CD = (info[index_1] & (1U << val_28)) != 0U;
+    HW_AVX512_PF = (info[index_1] & (1U << val_26)) != 0U;
+    HW_AVX512_ER = (info[index_1] & (1U << val_27)) != 0U;
+    HW_AVX512_VL = (info[index_1] & (1U << val_31)) != 0U;
+    HW_AVX512_BW = (info[index_1] & (1U << val_30)) != 0U;
+    HW_AVX512_DQ = (info[index_1] & (1U << val_17)) != 0U;
+    HW_AVX512_IFMA = (info[index_1] & (1U << val_21)) != 0U;
+    HW_AVX512_VBMI = (info[index_2] & (1U << val_1)) != 0U;
   }
   if (nExIds >= 0x80000001) {
     cpuid(info, 0x80000001);
-    HW_x64 = (info[3] & (1U << 29)) != 0U;
-    HW_ABM = (info[2] & (1U << 5)) != 0U;
-    HW_SSE4a = (info[2] & (1U << 6)) != 0U;
-    HW_FMA4 = (info[2] & (1U << 16)) != 0U;
-    HW_XOP = (info[2] & (1U << 11)) != 0U;
+    HW_x64 = (info[index_3] & (1U << val_29)) != 0U;
+    HW_ABM = (info[index_2] & (1U << val_5)) != 0U;
+    HW_SSE4a = (info[index_2] & (1U << val_6)) != 0U;
+    HW_FMA4 = (info[index_2] & (1U << val_16)) != 0U;
+    HW_XOP = (info[index_2] & (1U << val_11)) != 0U;
   }
 #endif
 }

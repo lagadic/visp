@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +32,15 @@
  */
 
 /*!
-  \file test1394TwoResetBus.cpp
+  \example test1394TwoResetBus.cpp
 
-  \brief Resets the IEEE1394 bus using libdc1394-2.x library.
+  Resets the IEEE1394 bus which first camera is attached to. Resetting
+  the bus is "rude" to other devices because it causes them to
+  re-enumerate on the bus and may cause a temporary disruption in
+  their current activities.  Thus, use it sparingly.  Its primary use
+  is if a program shuts down uncleanly and needs to free leftover ISO
+  channels or bandwidth.  A bus reset will free those things as a side
+  effect.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -53,17 +58,6 @@ using namespace VISP_NAMESPACE_NAME;
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-/*!
-  \example test1394TwoResetBus.cpp
-
-  Resets the IEEE1394 bus which first camera is attached to. Resetting
-  the bus is "rude" to other devices because it causes them to
-  re-enumerate on the bus and may cause a temporary disruption in
-  their current activities.  Thus, use it sparingly.  Its primary use
-  is if a program shuts down uncleanly and needs to free leftover ISO
-  channels or bandwidth.  A bus reset will free those things as a side
-  effect.
-*/
 int main()
 {
   try {

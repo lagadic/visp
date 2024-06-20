@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
  *
@@ -39,9 +38,9 @@ BEGIN_VISP_NAMESPACE
  * in every application.
  */
 
-vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
-    {"-help", ARGV_HELP, (char *)nullptr, (char *)nullptr, "Print summary of command-line options and abort.\n"},
-    {nullptr, ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr} };
+  vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
+      {"-help", ARGV_HELP, (char *)nullptr, (char *)nullptr, "Print summary of command-line options and abort.\n"},
+      {nullptr, ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr} };
 
 int (*handlerProc1)(const char *dst, const char *key, const char *argument);
 int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **argument);
@@ -124,24 +123,28 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
         infoPtr = defaultTable;
       }
       for (; infoPtr->type != ARGV_END; ++infoPtr) {
-        if (infoPtr->key == nullptr) {
-          continue;
+        if (infoPtr->key != nullptr) {
+          bool stop_for_loop = false;
+          if ((infoPtr->key[1] != c) || (strncmp(infoPtr->key, curArg, length) != 0)) {
+            stop_for_loop = true;;
+          }
+          if (!stop_for_loop) {
+            if (infoPtr->key[length] == 0) {
+              matchPtr = infoPtr;
+              goto gotMatch;
+            }
+            if (flags & ARGV_NO_ABBREV) {
+              stop_for_loop = true;
+            }
+            if (!stop_for_loop) {
+              if (matchPtr != nullptr) {
+                FPRINTF(stderr, "ambiguous option \"%s\"\n", curArg);
+                return true;
+              }
+              matchPtr = infoPtr;
+            }
+          }
         }
-        if ((infoPtr->key[1] != c) || (strncmp(infoPtr->key, curArg, length) != 0)) {
-          continue;
-        }
-        if (infoPtr->key[length] == 0) {
-          matchPtr = infoPtr;
-          goto gotMatch;
-        }
-        if (flags & ARGV_NO_ABBREV) {
-          continue;
-        }
-        if (matchPtr != nullptr) {
-          FPRINTF(stderr, "ambiguous option \"%s\"\n", curArg);
-          return true;
-        }
-        matchPtr = infoPtr;
       }
     }
     if (matchPtr == nullptr) {

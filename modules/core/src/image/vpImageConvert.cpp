@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,15 +336,19 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
   unsigned int destRows = dest.getRows();
   unsigned int destCols = dest.getCols();
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   if (src.type() == CV_8UC4) {
     vpRGBa rgbaVal;
     for (unsigned int i = 0; i < destRows; ++i)
       for (unsigned int j = 0; j < destCols; ++j) {
         cv::Vec4b tmp = src.at<cv::Vec4b>(static_cast<int>(i), static_cast<int>(j));
-        rgbaVal.R = tmp[2];
-        rgbaVal.G = tmp[1];
-        rgbaVal.B = tmp[0];
-        rgbaVal.A = tmp[3];
+        rgbaVal.R = tmp[index_2];
+        rgbaVal.G = tmp[index_1];
+        rgbaVal.B = tmp[index_0];
+        rgbaVal.A = tmp[index_3];
         if (flip) {
           dest[destRows - i - 1][j] = rgbaVal;
         }
@@ -367,9 +370,9 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
       for (unsigned int i = 0; i < destRows; ++i) {
         for (unsigned int j = 0; j < destCols; ++j) {
           cv::Vec3b tmp = src.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j));
-          rgbaVal.R = tmp[2];
-          rgbaVal.G = tmp[1];
-          rgbaVal.B = tmp[0];
+          rgbaVal.R = tmp[index_2];
+          rgbaVal.G = tmp[index_1];
+          rgbaVal.B = tmp[index_0];
           if (flip) {
             dest[destRows - i - 1][j] = rgbaVal;
           }
@@ -613,15 +616,18 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool fli
   dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
   unsigned int destRows = dest.getRows();
   unsigned int destCols = dest.getCols();
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
 
   if (src.type() == CV_32FC3) {
     vpRGBf rgbVal;
     for (unsigned int i = 0; i < destRows; ++i)
       for (unsigned int j = 0; j < destCols; ++j) {
         cv::Vec3f tmp = src.at<cv::Vec3f>(static_cast<int>(i), static_cast<int>(j));
-        rgbVal.R = tmp[2];
-        rgbVal.G = tmp[1];
-        rgbVal.B = tmp[0];
+        rgbVal.R = tmp[index_2];
+        rgbVal.G = tmp[index_1];
+        rgbVal.B = tmp[index_0];
         if (flip) {
           dest[destRows - i - 1][j] = rgbVal;
         }
@@ -1652,8 +1658,6 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsign
     val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
-    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
-
     *pt_rgb++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : static_cast<unsigned char>(val_r)); // Red component.
     *pt_rgb++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : static_cast<unsigned char>(val_g)); // Green component.
     *pt_rgb++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : static_cast<unsigned char>(val_b)); // Blue component.
@@ -1711,8 +1715,6 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsi
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
     val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
-
-    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
     *pt_rgba++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : static_cast<unsigned char>(val_r)); // Red component.
     *pt_rgba++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : static_cast<unsigned char>(val_g)); // Green component.
@@ -1799,8 +1801,6 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsign
     val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
-    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
-
     *pt_rgb++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : static_cast<unsigned char>(val_r)); // Red component.
     *pt_rgb++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : static_cast<unsigned char>(val_g)); // Green component.
     *pt_rgb++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : static_cast<unsigned char>(val_b)); // Blue component.
@@ -1857,8 +1857,6 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
     val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
-
-    vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
     *pt_rgba++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : static_cast<unsigned char>(val_r)); // Red component.
     *pt_rgba++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : static_cast<unsigned char>(val_g)); // Green component.
@@ -1954,22 +1952,21 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
   unsigned int width = src.getWidth();
   unsigned char *input;
   unsigned char *dst;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
   vpImage<unsigned char> *tabChannel[4];
 
-  /*  incrsrc[0] = 0; //init
-  incrsrc[1] = 0; //step after the first used channel
-  incrsrc[2] = 0; //step after the second used channel
-  incrsrc[3] = 0;
-  incrsrc[4] = 0;
- */
-  tabChannel[0] = pR;
-  tabChannel[1] = pG;
-  tabChannel[2] = pB;
-  tabChannel[3] = pa;
+  tabChannel[index_0] = pR;
+  tabChannel[index_1] = pG;
+  tabChannel[index_2] = pB;
+  tabChannel[index_3] = pa;
 
   size_t i; /* ordre    */
-  for (unsigned int j = 0; j < 4; ++j) {
+  const unsigned int val_4 = 4;
+  for (unsigned int j = 0; j < val_4; ++j) {
     if (tabChannel[j] != nullptr) {
       if ((tabChannel[j]->getHeight() != height) || (tabChannel[j]->getWidth() != width)) {
         tabChannel[j]->resize(height, width);
@@ -1990,7 +1987,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
           ++dst;
           *dst = *input;
           input += 4;
-          dst++;
+          ++dst;
           *dst = *input;
           input += 4;
           ++dst;

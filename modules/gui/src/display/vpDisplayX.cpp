@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Image display.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplayX.cpp
@@ -55,7 +50,6 @@
 #include <visp3/gui/vpDisplayX.h>
 
 // debug / exception
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
 
 // math
@@ -203,11 +197,13 @@ public:
 
         while (i < size) {
           unsigned char nivGris = src_8[i];
-          if (nivGris > nivGrisMax)
+          if (nivGris > nivGrisMax) {
             dst_8[i] = 255;
-          else
+          }
+          else {
             dst_8[i] = nivGris;
-          i++;
+          }
+          ++i;
         }
       }
       else {
@@ -476,11 +472,11 @@ public:
               *(dst_8 + j) = 255;
             else
               *(dst_8 + j) = nivGris;
-            j++;
+            ++j;
           }
           src_8 = src_8 + iwidth;
           dst_8 = dst_8 + width;
-          i++;
+          ++i;
         }
 
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
@@ -574,11 +570,11 @@ public:
               *(dst_32 + 4 * j + 1) = val;
               *(dst_32 + 4 * j + 2) = val;
               *(dst_32 + 4 * j + 3) = val;
-              j++;
+              ++j;
             }
             src_8 = src_8 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
         }
         else {
@@ -592,11 +588,11 @@ public:
               *(dst_32 + 4 * j + 1) = val;
               *(dst_32 + 4 * j + 2) = val;
               *(dst_32 + 4 * j + 3) = vpRGBa::alpha_default;
-              j++;
+              ++j;
             }
             src_8 = src_8 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
         }
 
@@ -730,11 +726,11 @@ public:
               *(dst_32 + 4 * j + 2) = (src_32 + j)->G;
               *(dst_32 + 4 * j + 3) = (src_32 + j)->B;
 
-              j++;
+              ++j;
             }
             src_32 = src_32 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
 
         }
@@ -748,11 +744,11 @@ public:
               *(dst_32 + 4 * j + 2) = (src_32 + j)->R;
               *(dst_32 + 4 * j + 3) = (src_32 + j)->A;
 
-              j++;
+              ++j;
             }
             src_32 = src_32 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
         }
 
@@ -1177,19 +1173,15 @@ public:
     }
 
     if ((display = XOpenDisplay(nullptr)) == nullptr) {
-      vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(nullptr));
-      throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
+      throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.", XDisplayName(nullptr)));
     }
 
     screen = DefaultScreen(display);
     lut = DefaultColormap(display, screen);
     screen_depth = (unsigned int)DefaultDepth(display, screen);
 
-    vpTRACE("Screen depth: %d\n", screen_depth);
-
     if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), win_x, win_y, win_width, win_height, 1,
                                       BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
-      vpERROR_TRACE("Can't create window.");
       throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
     }
 
@@ -1217,8 +1209,7 @@ public:
         xcolor.pad = 0;
         xcolor.red = xcolor.green = xcolor.blue = 256 * i;
         if (XAllocColor(display, lut, &xcolor) == 0) {
-          vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
-          throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors."));
+          throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors. Only %d allocated.", i));
         }
         colortable[i] = xcolor.pixel;
       }
@@ -1563,7 +1554,6 @@ public:
     context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
     if (context == nullptr) {
-      vpERROR_TRACE("Can't create graphics context.");
       throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
     }
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Track a white dot.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDot2.cpp
@@ -68,21 +63,23 @@ BEGIN_VISP_NAMESPACE
 */
 void vpDot2::init()
 {
-  cog.set_u(0);
-  cog.set_v(0);
+  const unsigned int val_max = 255;
+  const unsigned int val_median = 128;
+  m_cog.set_u(0);
+  m_cog.set_v(0);
 
-  width = 0;
-  height = 0;
-  surface = 0;
-  mean_gray_level = 0;
-  gray_level_min = 128;
-  gray_level_max = 255;
-  grayLevelPrecision = 0.80;
-  gamma = 1.5;
+  m_width = 0;
+  m_height = 0;
+  m_surface = 0;
+  m_mean_gray_level = 0;
+  m_gray_level_min = val_median;
+  m_gray_level_max = val_max;
+  m_grayLevelPrecision = 0.80;
+  m_gamma = 1.5;
 
-  sizePrecision = 0.65;
-  ellipsoidShapePrecision = 0.65;
-  maxSizeSearchDistancePrecision = 0.65;
+  m_sizePrecision = 0.65;
+  m_ellipsoidShapePrecision = 0.65;
+  m_maxSizeSearchDistPrecision = 0.65;
   setEllipsoidBadPointsPercentage();
   m00 = 0.;
   m11 = 0.;
@@ -94,29 +91,34 @@ void vpDot2::init()
   mu02 = 0.;
   mu20 = 0.;
 
-  bbox_u_min = 0;
-  bbox_u_max = 0;
-  bbox_v_min = 0;
-  bbox_v_max = 0;
+  m_bbox_u_min = 0;
+  m_bbox_u_max = 0;
+  m_bbox_v_min = 0;
+  m_bbox_v_max = 0;
 
-  firstBorder_u = 0;
-  firstBorder_v = 0;
+  m_firstBorder_u = 0;
+  m_firstBorder_v = 0;
 
-  compute_moment = false;
-  graphics = false;
-  thickness = 1;
+  m_compute_moment = false;
+  m_graphics = false;
+  m_thickness = 1;
 }
 
 /*!
   Default constructor. Just do basic default initialization.
 */
 vpDot2::vpDot2()
-  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), cog(), width(0), height(0),
-  surface(0), gray_level_min(128), gray_level_max(255), mean_gray_level(0), grayLevelPrecision(0.8), gamma(1.5),
-  sizePrecision(0.65), ellipsoidShapePrecision(0.65), maxSizeSearchDistancePrecision(0.65),
-  allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(), compute_moment(false), graphics(false),
-  thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0), firstBorder_u(0), firstBorder_v()
-{ }
+  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), m_cog(), m_width(0), m_height(0),
+  m_surface(0), m_mean_gray_level(0), m_grayLevelPrecision(0.8), m_gamma(1.5),
+  m_sizePrecision(0.65), m_ellipsoidShapePrecision(0.65), m_maxSizeSearchDistPrecision(0.65),
+  m_allowedBadPointsPercentage(0.), m_area(), m_direction_list(), m_ip_edges_list(), m_compute_moment(false), m_graphics(false),
+  m_thickness(1), m_bbox_u_min(0), m_bbox_u_max(0), m_bbox_v_min(0), m_bbox_v_max(0), m_firstBorder_u(0), m_firstBorder_v()
+{
+  const unsigned int val_max = 255;
+  const unsigned int val_median = 128;
+  m_gray_level_min = val_median;
+  m_gray_level_max = val_max;
+}
 
 /*!
 
@@ -127,24 +129,33 @@ vpDot2::vpDot2()
 
 */
 vpDot2::vpDot2(const vpImagePoint &ip)
-  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), cog(ip), width(0), height(0),
-  surface(0), gray_level_min(128), gray_level_max(255), mean_gray_level(0), grayLevelPrecision(0.8), gamma(1.5),
-  sizePrecision(0.65), ellipsoidShapePrecision(0.65), maxSizeSearchDistancePrecision(0.65),
-  allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(), compute_moment(false), graphics(false),
-  thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0), firstBorder_u(0), firstBorder_v()
-{ }
+  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), m_cog(ip), m_width(0), m_height(0),
+  m_surface(0), m_mean_gray_level(0), m_grayLevelPrecision(0.8), m_gamma(1.5),
+  m_sizePrecision(0.65), m_ellipsoidShapePrecision(0.65), m_maxSizeSearchDistPrecision(0.65),
+  m_allowedBadPointsPercentage(0.), m_area(), m_direction_list(), m_ip_edges_list(), m_compute_moment(false), m_graphics(false),
+  m_thickness(1), m_bbox_u_min(0), m_bbox_u_max(0), m_bbox_v_min(0), m_bbox_v_max(0), m_firstBorder_u(0), m_firstBorder_v()
+{
+  const unsigned int val_max = 255;
+  const unsigned int val_median = 128;
+  m_gray_level_min = val_median;
+  m_gray_level_max = val_max;
+}
 
 /*!
   Copy constructor.
 */
 vpDot2::vpDot2(const vpDot2 &twinDot)
-  : vpTracker(twinDot), m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), cog(),
-  width(0), height(0), surface(0), gray_level_min(128), gray_level_max(255), mean_gray_level(0),
-  grayLevelPrecision(0.8), gamma(1.5), sizePrecision(0.65), ellipsoidShapePrecision(0.65),
-  maxSizeSearchDistancePrecision(0.65), allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(),
-  compute_moment(false), graphics(false), thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0),
-  firstBorder_u(0), firstBorder_v()
+  : vpTracker(twinDot), m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), m_cog(),
+  m_width(0), m_height(0), m_surface(0), m_mean_gray_level(0),
+  m_grayLevelPrecision(0.8), m_gamma(1.5), m_sizePrecision(0.65), m_ellipsoidShapePrecision(0.65),
+  m_maxSizeSearchDistPrecision(0.65), m_allowedBadPointsPercentage(0.), m_area(), m_direction_list(), m_ip_edges_list(),
+  m_compute_moment(false), m_graphics(false), m_thickness(1), m_bbox_u_min(0), m_bbox_u_max(0), m_bbox_v_min(0), m_bbox_v_max(0),
+  m_firstBorder_u(0), m_firstBorder_v()
 {
+  const unsigned int val_max = 255;
+  const unsigned int val_median = 128;
+  m_gray_level_min = val_median;
+  m_gray_level_max = val_max;
   *this = twinDot;
 }
 
@@ -153,37 +164,37 @@ vpDot2::vpDot2(const vpDot2 &twinDot)
 */
 vpDot2 &vpDot2::operator=(const vpDot2 &twinDot)
 {
-  cog = twinDot.cog;
+  m_cog = twinDot.m_cog;
 
-  width = twinDot.width;
-  height = twinDot.height;
-  surface = twinDot.surface;
-  gray_level_min = twinDot.gray_level_min;
-  gray_level_max = twinDot.gray_level_max;
-  mean_gray_level = twinDot.mean_gray_level;
-  grayLevelPrecision = twinDot.grayLevelPrecision;
-  gamma = twinDot.gamma;
+  m_width = twinDot.m_width;
+  m_height = twinDot.m_height;
+  m_surface = twinDot.m_surface;
+  m_gray_level_min = twinDot.m_gray_level_min;
+  m_gray_level_max = twinDot.m_gray_level_max;
+  m_mean_gray_level = twinDot.m_mean_gray_level;
+  m_grayLevelPrecision = twinDot.m_grayLevelPrecision;
+  m_gamma = twinDot.m_gamma;
 
-  sizePrecision = twinDot.sizePrecision;
-  ellipsoidShapePrecision = twinDot.ellipsoidShapePrecision;
-  maxSizeSearchDistancePrecision = twinDot.maxSizeSearchDistancePrecision;
-  allowedBadPointsPercentage_ = twinDot.allowedBadPointsPercentage_;
-  area = twinDot.area;
+  m_sizePrecision = twinDot.m_sizePrecision;
+  m_ellipsoidShapePrecision = twinDot.m_ellipsoidShapePrecision;
+  m_maxSizeSearchDistPrecision = twinDot.m_maxSizeSearchDistPrecision;
+  m_allowedBadPointsPercentage = twinDot.m_allowedBadPointsPercentage;
+  m_area = twinDot.m_area;
 
-  direction_list = twinDot.direction_list;
-  ip_edges_list = twinDot.ip_edges_list;
+  m_direction_list = twinDot.m_direction_list;
+  m_ip_edges_list = twinDot.m_ip_edges_list;
 
-  compute_moment = twinDot.compute_moment;
-  graphics = twinDot.graphics;
-  thickness = twinDot.thickness;
+  m_compute_moment = twinDot.m_compute_moment;
+  m_graphics = twinDot.m_graphics;
+  m_thickness = twinDot.m_thickness;
 
-  bbox_u_min = twinDot.bbox_u_min;
-  bbox_u_max = twinDot.bbox_u_max;
-  bbox_v_min = twinDot.bbox_v_min;
-  bbox_v_max = twinDot.bbox_v_max;
+  m_bbox_u_min = twinDot.m_bbox_u_min;
+  m_bbox_u_max = twinDot.m_bbox_u_max;
+  m_bbox_v_min = twinDot.m_bbox_v_min;
+  m_bbox_v_max = twinDot.m_bbox_v_max;
 
-  firstBorder_u = twinDot.firstBorder_u;
-  firstBorder_v = twinDot.firstBorder_v;
+  m_firstBorder_u = twinDot.m_firstBorder_u;
+  m_firstBorder_v = twinDot.m_firstBorder_v;
 
   m00 = twinDot.m00;
   m01 = twinDot.m01;
@@ -213,11 +224,13 @@ vpDot2 &vpDot2::operator=(const vpDot2 &twinDot)
 */
 void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned int t) const
 {
-  vpDisplay::displayCross(I, cog, (3 * t) + 8, color, t);
+  const unsigned int val_3 = 3;
+  const unsigned int val_8 = 8;
+  vpDisplay::displayCross(I, m_cog, (val_3 * t) + val_8, color, t);
   std::list<vpImagePoint>::const_iterator it;
 
-  std::list<vpImagePoint>::const_iterator ip_edges_list_end = ip_edges_list.end();
-  for (it = ip_edges_list.begin(); it != ip_edges_list_end; ++it) {
+  std::list<vpImagePoint>::const_iterator ip_edges_list_end = m_ip_edges_list.end();
+  for (it = m_ip_edges_list.begin(); it != ip_edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
@@ -255,27 +268,28 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
-  while (vpDisplay::getClick(I, cog) != true) {
+  while (vpDisplay::getClick(I, m_cog) != true) {
     // block empty waiting user interaction
   }
 
-  unsigned int i = static_cast<unsigned int>(cog.get_i());
-  unsigned int j = static_cast<unsigned int>(cog.get_j());
+  unsigned int i = static_cast<unsigned int>(m_cog.get_i());
+  unsigned int j = static_cast<unsigned int>(m_cog.get_j());
+  const unsigned int val_max = 255;
 
-  double Ip = pow(static_cast<double>(I[i][j]) / 255, 1 / gamma);
+  double Ip = pow(static_cast<double>(I[i][j]) / val_max, 1 / m_gamma);
 
-  if ((Ip - (1 - grayLevelPrecision)) < 0) {
-    gray_level_min = 0;
+  if ((Ip - (1 - m_grayLevelPrecision)) < 0) {
+    m_gray_level_min = 0;
   }
   else {
-    gray_level_min = static_cast<unsigned int>(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
-    if (gray_level_min > 255) {
-      gray_level_min = 255;
+    m_gray_level_min = static_cast<unsigned int>(val_max * pow(Ip - (1 - m_grayLevelPrecision), m_gamma));
+    if (m_gray_level_min > val_max) {
+      m_gray_level_min = val_max;
     }
   }
-  gray_level_max = static_cast<unsigned int>(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
-  if (gray_level_max > 255) {
-    gray_level_max = 255;
+  m_gray_level_max = static_cast<unsigned int>(val_max * pow(Ip + (1 - m_grayLevelPrecision), m_gamma));
+  if (m_gray_level_max > val_max) {
+    m_gray_level_max = val_max;
   }
 
   setWidth(size);
@@ -313,25 +327,26 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size)
 {
-  cog = ip;
+  m_cog = ip;
 
-  unsigned int i = static_cast<unsigned int>(cog.get_i());
-  unsigned int j = static_cast<unsigned int>(cog.get_j());
+  unsigned int i = static_cast<unsigned int>(m_cog.get_i());
+  unsigned int j = static_cast<unsigned int>(m_cog.get_j());
+  const unsigned int val_max = 255;
 
-  double Ip = pow(static_cast<double>(I[i][j]) / 255, 1 / gamma);
+  double Ip = pow(static_cast<double>(I[i][j]) / val_max, 1 / m_gamma);
 
-  if ((Ip - (1 - grayLevelPrecision)) < 0) {
-    gray_level_min = 0;
+  if ((Ip - (1 - m_grayLevelPrecision)) < 0) {
+    m_gray_level_min = 0;
   }
   else {
-    gray_level_min = static_cast<unsigned int>(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
-    if (gray_level_min > 255) {
-      gray_level_min = 255;
+    m_gray_level_min = static_cast<unsigned int>(val_max * pow(Ip - (1 - m_grayLevelPrecision), m_gamma));
+    if (m_gray_level_min > val_max) {
+      m_gray_level_min = val_max;
     }
   }
-  gray_level_max = static_cast<unsigned int>(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
-  if (gray_level_max > 255) {
-    gray_level_max = 255;
+  m_gray_level_max = static_cast<unsigned int>(val_max * pow(Ip + (1 - m_grayLevelPrecision), m_gamma));
+  if (m_gray_level_max > val_max) {
+    m_gray_level_max = val_max;
   }
 
   setWidth(size);
@@ -382,10 +397,10 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int gray_lvl_min,
                           unsigned int gray_lvl_max, unsigned int size)
 {
-  cog = ip;
+  m_cog = ip;
 
-  this->gray_level_min = gray_lvl_min;
-  this->gray_level_max = gray_lvl_max;
+  m_gray_level_min = gray_lvl_min;
+  m_gray_level_max = gray_lvl_max;
 
   setWidth(size);
   setHeight(size);
@@ -455,7 +470,7 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
   // this copy to set the current found dot to the previous one (see below).
   vpDot2 wantedDot(*this);
 
-  bool found = computeParameters(I, cog.get_u(), cog.get_v());
+  bool found = computeParameters(I, m_cog.get_u(), m_cog.get_v());
 
   if (found) {
     // test if the found dot is valid (ie similar to the previous one)
@@ -467,11 +482,6 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
   }
 
   if (!found) {
-    //     vpDEBUG_TRACE(0, "Search the dot in a biggest window around the
-    //     last position"); vpDEBUG_TRACE(0, "Bad computed dot: ");
-    //     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
-    //     vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
-
     // if estimation was wrong (get an error tracking), look for the dot
     // closest from the estimation,
     // i.e. search for dots in an a region of interest around the this dot and
@@ -487,8 +497,9 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
       searchWindowHeight = 80.;
     }
     else if (canMakeTheWindowGrow) {
-      searchWindowWidth = getWidth() * 5;
-      searchWindowHeight = getHeight() * 5;
+      const unsigned int val_5 = 5;
+      searchWindowWidth = getWidth() * val_5;
+      searchWindowHeight = getHeight() * val_5;
     }
     else {
       searchWindowWidth = getWidth();
@@ -496,15 +507,14 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
     }
 
     std::list<vpDot2> candidates;
-    searchDotsInArea(I, static_cast<int>(this->cog.get_u() - (searchWindowWidth / 2.0)),
-                     static_cast<int>(this->cog.get_v() - (searchWindowHeight / 2.0)),
+    searchDotsInArea(I, static_cast<int>(m_cog.get_u() - (searchWindowWidth / 2.0)),
+                     static_cast<int>(m_cog.get_v() - (searchWindowHeight / 2.0)),
                      static_cast<unsigned int>(searchWindowWidth),
                      static_cast<unsigned int>(searchWindowHeight), candidates);
 
     // if the vector is empty, that mean we didn't find any candidate
     // in the area, return an error tracking.
     if (candidates.empty()) {
-      // vpERROR_TRACE("No dot was found") ;
       throw(vpTrackingException(vpTrackingException::featureLostError, "No dot was found"));
     }
 
@@ -525,45 +535,42 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
     m02 = movingDot.m02;
 
     // Update the bounding box
-    bbox_u_min = movingDot.bbox_u_min;
-    bbox_u_max = movingDot.bbox_u_max;
-    bbox_v_min = movingDot.bbox_v_min;
-    bbox_v_max = movingDot.bbox_v_max;
+    m_bbox_u_min = movingDot.m_bbox_u_min;
+    m_bbox_u_max = movingDot.m_bbox_u_max;
+    m_bbox_v_min = movingDot.m_bbox_v_min;
+    m_bbox_v_max = movingDot.m_bbox_v_max;
   }
 
   // if this dot is partially out of the image, return an error tracking.
   if (!isInImage(I)) {
-    // vpERROR_TRACE("The center of gravity of the dot is not in the image") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
                               "The center of gravity of the dot is not in the image"));
   }
 
-  // Get dots center of gravity
-  // unsigned int u = (unsigned int) this->cog.get_u();
-  // unsigned int v = (unsigned int) this->cog.get_v();
-  // Updates the min and max gray levels for the next iteration
-  // double Ip = pow((double)I[v][u]/255,1/gamma);
-  double Ip = pow(getMeanGrayLevel() / 255, 1 / gamma);
+  const unsigned int val_max = 255;
+  double Ip = pow(getMeanGrayLevel() / val_max, 1 / m_gamma);
   // printf("current value of gray level center : %i\n", I[v][u]);
 
   // get Mean Gray Level of I
-  if ((Ip - (1 - grayLevelPrecision)) < 0) {
-    gray_level_min = 0;
+  if ((Ip - (1 - m_grayLevelPrecision)) < 0) {
+    m_gray_level_min = 0;
   }
   else {
-    gray_level_min = static_cast<unsigned int>(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
-    if (gray_level_min > 255) {
-      gray_level_min = 255;
+    m_gray_level_min = static_cast<unsigned int>(val_max * pow(Ip - (1 - m_grayLevelPrecision), m_gamma));
+    if (m_gray_level_min > val_max) {
+      m_gray_level_min = val_max;
     }
   }
-  gray_level_max = static_cast<unsigned int>(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
-  if (gray_level_max > 255) {
-    gray_level_max = 255;
+  m_gray_level_max = static_cast<unsigned int>(val_max * pow(Ip + (1 - m_grayLevelPrecision), m_gamma));
+  if (m_gray_level_max > val_max) {
+    m_gray_level_max = val_max;
   }
 
-  if (graphics) {
+  if (m_graphics) {
     // display a red cross at the center of gravity's location in the image.
-    vpDisplay::displayCross(I, this->cog, (3 * thickness) + 8, vpColor::red, thickness);
+    const unsigned int val_3 = 3;
+    const unsigned int val_8 = 8;
+    vpDisplay::displayCross(I, m_cog, (val_3 * m_thickness) + val_8, vpColor::red, m_thickness);
   }
 }
 
@@ -593,7 +600,7 @@ void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip, bool canMa
 {
   track(I, canMakeTheWindowGrow);
 
-  ip = this->cog;
+  ip = m_cog;
 }
 
 ///// GET METHODS
@@ -604,35 +611,35 @@ void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip, bool canMa
 
   \sa getHeight()
 */
-double vpDot2::getWidth() const { return width; }
+double vpDot2::getWidth() const { return m_width; }
 
 /*!
   Return the height of the dot.
 
   \sa getWidth()
 */
-double vpDot2::getHeight() const { return height; }
+double vpDot2::getHeight() const { return m_height; }
 
 /*!
   Return the area of the dot.
 
   The area of the dot is also given by \f$|m00|\f$.
 */
-double vpDot2::getArea() const { return fabs(surface); }
+double vpDot2::getArea() const { return fabs(m_surface); }
 
 /*!
   Return the precision of the gray level of the dot. It is a double
   precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
-double vpDot2::getGrayLevelPrecision() const { return grayLevelPrecision; }
+double vpDot2::getGrayLevelPrecision() const { return m_grayLevelPrecision; }
 
 /*!
   Return the precision of the size of the dot. It is a double
   precision float which value is in [0.05,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
-double vpDot2::getSizePrecision() const { return sizePrecision; }
+double vpDot2::getSizePrecision() const { return m_sizePrecision; }
 
 /*!
   Return the precision of the ellipsoid shape of the dot. It is a double
@@ -641,7 +648,7 @@ double vpDot2::getSizePrecision() const { return sizePrecision; }
 
   \sa setEllipsoidShapePrecision()
 */
-double vpDot2::getEllipsoidShapePrecision() const { return ellipsoidShapePrecision; }
+double vpDot2::getEllipsoidShapePrecision() const { return m_ellipsoidShapePrecision; }
 
 /*!
   Return the precision of the search maximum distance to get the starting
@@ -649,7 +656,7 @@ double vpDot2::getEllipsoidShapePrecision() const { return ellipsoidShapePrecisi
   [0.05,1]. 1 means full precision, whereas values close to 0 show a very bad
   precision.
 */
-double vpDot2::getMaxSizeSearchDistPrecision() const { return maxSizeSearchDistancePrecision; }
+double vpDot2::getMaxSizeSearchDistPrecision() const { return m_maxSizeSearchDistPrecision; }
 
 /*!
   Return the distance between the two center of dots.
@@ -657,8 +664,8 @@ double vpDot2::getMaxSizeSearchDistPrecision() const { return maxSizeSearchDista
 double vpDot2::getDistance(const vpDot2 &distantDot) const
 {
   vpImagePoint cogDistantDot = distantDot.getCog();
-  double diff_u = this->cog.get_u() - cogDistantDot.get_u();
-  double diff_v = this->cog.get_v() - cogDistantDot.get_v();
+  double diff_u = m_cog.get_u() - cogDistantDot.get_u();
+  double diff_v = m_cog.get_v() - cogDistantDot.get_v();
   return sqrt((diff_u * diff_u) + (diff_v * diff_v));
 }
 
@@ -673,7 +680,7 @@ double vpDot2::getDistance(const vpDot2 &distantDot) const
 
   \sa setHeight(), setArea(), setSizePrecision()
 */
-void vpDot2::setWidth(const double &w) { this->width = w; }
+void vpDot2::setWidth(const double &w) { m_width = w; }
 
 /*!
 
@@ -685,7 +692,7 @@ void vpDot2::setWidth(const double &w) { this->width = w; }
   \sa setWidth(), setArea(), setSizePrecision()
 
 */
-void vpDot2::setHeight(const double &h) { this->height = h; }
+void vpDot2::setHeight(const double &h) { m_height = h; }
 
 /*!
 
@@ -697,7 +704,7 @@ void vpDot2::setHeight(const double &h) { this->height = h; }
   \sa setWidth(), setHeight(), setSizePrecision()
 
 */
-void vpDot2::setArea(const double &a) { this->surface = a; }
+void vpDot2::setArea(const double &a) { m_surface = a; }
 
 /*!
 
@@ -719,14 +726,14 @@ void vpDot2::setArea(const double &a) { this->surface = a; }
 void vpDot2::setGrayLevelPrecision(const double &precision)
 {
   double epsilon = 0.05;
-  if (grayLevelPrecision < epsilon) {
-    this->grayLevelPrecision = epsilon;
+  if (m_grayLevelPrecision < epsilon) {
+    m_grayLevelPrecision = epsilon;
   }
-  else if (grayLevelPrecision > 1) {
-    this->grayLevelPrecision = 1.0;
+  else if (m_grayLevelPrecision > 1) {
+    m_grayLevelPrecision = 1.0;
   }
   else {
-    this->grayLevelPrecision = precision;
+    m_grayLevelPrecision = precision;
   }
 }
 /*!
@@ -748,14 +755,14 @@ void vpDot2::setGrayLevelPrecision(const double &precision)
 */
 void vpDot2::setSizePrecision(const double &precision)
 {
-  if (sizePrecision < 0) {
-    this->sizePrecision = 0;
+  if (m_sizePrecision < 0) {
+    m_sizePrecision = 0;
   }
-  else if (sizePrecision > 1) {
-    this->sizePrecision = 1.0;
+  else if (m_sizePrecision > 1) {
+    m_sizePrecision = 1.0;
   }
   else {
-    this->sizePrecision = precision;
+    m_sizePrecision = precision;
   }
 }
 
@@ -794,14 +801,14 @@ void vpDot2::setSizePrecision(const double &precision)
 void vpDot2::setEllipsoidShapePrecision(const double &precision)
 {
 
-  if (ellipsoidShapePrecision < 0) {
-    this->ellipsoidShapePrecision = 0;
+  if (m_ellipsoidShapePrecision < 0) {
+    m_ellipsoidShapePrecision = 0;
   }
-  else if (ellipsoidShapePrecision > 1) {
-    this->ellipsoidShapePrecision = 1.0;
+  else if (m_ellipsoidShapePrecision > 1) {
+    m_ellipsoidShapePrecision = 1.0;
   }
   else {
-    this->ellipsoidShapePrecision = precision;
+    m_ellipsoidShapePrecision = precision;
   }
 }
 
@@ -823,14 +830,14 @@ void vpDot2::setEllipsoidShapePrecision(const double &precision)
 void vpDot2::setMaxSizeSearchDistPrecision(const double &precision)
 {
   double epsilon = 0.05;
-  if (maxSizeSearchDistancePrecision < epsilon) {
-    this->maxSizeSearchDistancePrecision = epsilon;
+  if (m_maxSizeSearchDistPrecision < epsilon) {
+    m_maxSizeSearchDistPrecision = epsilon;
   }
-  else if (maxSizeSearchDistancePrecision > 1) {
-    this->maxSizeSearchDistancePrecision = 1.0;
+  else if (m_maxSizeSearchDistPrecision > 1) {
+    m_maxSizeSearchDistPrecision = 1.0;
   }
   else {
-    this->maxSizeSearchDistancePrecision = precision;
+    m_maxSizeSearchDistPrecision = precision;
   }
 }
 
@@ -882,7 +889,7 @@ void vpDot2::setArea(const vpImage<unsigned char> &I, int u, int v, unsigned int
     h = image_h - static_cast<unsigned int>(v) - 1;
   }
 
-  area.setRect(u, v, w, h);
+  m_area.setRect(u, v, w, h);
 }
 
 /*!
@@ -892,7 +899,7 @@ void vpDot2::setArea(const vpImage<unsigned char> &I, int u, int v, unsigned int
   \param a : Area.
 
 */
-void vpDot2::setArea(const vpRect &a) { area = a; }
+void vpDot2::setArea(const vpRect &area) { m_area = area; }
 
 ///// CLASS FUNCTIONALITY ////////////////////////////////////////////////////
 
@@ -952,6 +959,168 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, std::list<vpDot2>
   searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), niceDots);
 }
 
+/**
+ * \brief Performs the research of dots in the area when the point u, v is a good germ.
+ *
+ * \param data The data required for the algorithm.
+ */
+void vpDot2::searchDotsAreaGoodGerm(vpSearchDotsInAreaGoodGermData &data)
+{
+// Compute the right border position for this possible germ
+  unsigned int border_u;
+  unsigned int border_v;
+  bool good_germ = true;
+  std::list<vpDot2>::iterator itbad;
+  std::list<vpDot2>::iterator itnice;
+  vpDot2 *dotToTest = nullptr;
+  vpDot2 tmpDot;
+  vpImagePoint cogTmpDot;
+  if (findFirstBorder(data.m_I, data.m_u, data.m_v, border_u, border_v) == false) {
+    // germ is not good.
+    // Jump all the pixels between v,u and v,
+    // dotToTest->getFirstBorder_u()
+    data.m_u = border_u;
+    data.m_v = border_v;
+  }
+  else {
+    itbad = data.m_badDotsVector.begin();
+    vpImagePoint cogBadDot;
+
+    while ((itbad != data.m_badDotsVector.end()) && (good_germ == true)) {
+      if ((static_cast<double>(data.m_u) >= (*itbad).m_bbox_u_min) && (static_cast<double>(data.m_u) <= (*itbad).m_bbox_u_max) &&
+          (static_cast<double>(data.m_v) >= (*itbad).m_bbox_v_min) && (static_cast<double>(data.m_v) <= (*itbad).m_bbox_v_max)) {
+        std::list<vpImagePoint>::const_iterator it_edges = m_ip_edges_list.begin();
+        while ((it_edges != m_ip_edges_list.end()) && (good_germ == true)) {
+          // Test if the germ belong to a previously detected dot:
+          // - from the germ go right to the border and compare this
+          //   position to the list of pixels of previously detected dots
+          cogBadDot = *it_edges;
+          if ((std::fabs(border_u - cogBadDot.get_u()) <=
+               (vpMath::maximum(std::fabs(static_cast<double>(border_u)), std::fabs(cogBadDot.get_u())) *
+                std::numeric_limits<double>::epsilon())) &&
+              (std::fabs(data.m_v - cogBadDot.get_v()) <=
+               (vpMath::maximum(std::fabs(static_cast<double>(data.m_v)), std::fabs(cogBadDot.get_v())) *
+                std::numeric_limits<double>::epsilon()))) {
+            good_germ = false;
+          }
+          ++it_edges;
+        }
+      }
+      ++itbad;
+    }
+
+    if (!good_germ) {
+      // Jump all the pixels between v,u and v,
+      // dotToTest->getFirstBorder_u()
+      data.m_u = border_u;
+      data.m_v = border_v;
+    }
+    else {
+      vpImagePoint germ;
+      germ.set_u(data.m_u);
+      germ.set_v(data.m_v);
+
+      // otherwise estimate the width, height and surface of the dot we
+      // created, and test it.
+      if (dotToTest != nullptr) {
+        delete dotToTest;
+      }
+      dotToTest = getInstance();
+      dotToTest->setCog(germ);
+      dotToTest->setGrayLevelMin(getGrayLevelMin());
+      dotToTest->setGrayLevelMax(getGrayLevelMax());
+      dotToTest->setGrayLevelPrecision(getGrayLevelPrecision());
+      dotToTest->setSizePrecision(getSizePrecision());
+      dotToTest->setGraphics(m_graphics);
+      dotToTest->setGraphicsThickness(m_thickness);
+      dotToTest->setComputeMoments(true);
+      dotToTest->setArea(m_area);
+      dotToTest->setEllipsoidShapePrecision(m_ellipsoidShapePrecision);
+      dotToTest->setEllipsoidBadPointsPercentage(m_allowedBadPointsPercentage);
+
+      // first compute the parameters of the dot.
+      // if for some reasons this caused an error tracking
+      // (dot partially out of the image...), check the next intersection
+      if (dotToTest->computeParameters(data.m_I) == false) {
+        // Jump all the pixels between v,u and v,
+        // dotToTest->getFirstBorder_u()
+        data.m_u = border_u;
+        data.m_v = border_v;
+      }
+      else {
+      // if the dot to test is valid,
+        if (dotToTest->isValid(data.m_I, *this)) {
+          vpImagePoint cogDotToTest = dotToTest->getCog();
+          // Compute the distance to the center. The center used here is not the
+          // area center available by area.getCenter(area_center_u,
+          // area_center_v) but the center of the input area which may be
+          // partially outside the image.
+
+          double area_center_u = (data.m_area.getLeft() + (data.m_area.getWidth() / 2.0)) - 0.5;
+          double area_center_v = (data.m_area.getTop() + (data.m_area.getHeight() / 2.0)) - 0.5;
+
+          double thisDiff_u = cogDotToTest.get_u() - area_center_u;
+          double thisDiff_v = cogDotToTest.get_v() - area_center_v;
+          double thisDist = sqrt((thisDiff_u * thisDiff_u) + (thisDiff_v * thisDiff_v));
+
+          bool stopLoop = false;
+          itnice = data.m_niceDots.begin();
+
+          while ((itnice != data.m_niceDots.end()) && (stopLoop == false)) {
+            tmpDot = *itnice;
+
+            // --comment: epsilon equals 0.001 -- detecte +sieurs points
+            double epsilon = 3.0;
+            // if the center of the dot is the same than the current
+            // don't add it, test the next point of the grid
+            cogTmpDot = tmpDot.getCog();
+
+            if ((fabs(cogTmpDot.get_u() - cogDotToTest.get_u()) < epsilon) &&
+                (fabs(cogTmpDot.get_v() - cogDotToTest.get_v()) < epsilon)) {
+              stopLoop = true;
+              // Jump all the pixels between v,u and v,
+              // tmpDot->getFirstBorder_u()
+              data.m_u = border_u;
+              data.m_v = border_v;
+            }
+            else {
+              double otherDiff_u = cogTmpDot.get_u() - area_center_u;
+              double otherDiff_v = cogTmpDot.get_v() - area_center_v;
+              double otherDist = sqrt((otherDiff_u * otherDiff_u) + (otherDiff_v * otherDiff_v));
+
+              // if the distance of the curent vector element to the center
+              // is greater than the distance of this dot to the center,
+              // then add this dot before the current vector element.
+              if (otherDist > thisDist) {
+                data.m_niceDots.insert(itnice, *dotToTest);
+                stopLoop = true;
+                // Jump all the pixels between v,u and v,
+                // tmpDot->getFirstBorder_u()
+                data.m_u = border_u;
+                data.m_v = border_v;
+              }
+              ++itnice;
+            }
+          }
+
+          // if we reached the end of the vector without finding the dot
+          // or inserting it, insert it now.
+          if ((itnice == data.m_niceDots.end()) && (stopLoop == false)) {
+            data.m_niceDots.push_back(*dotToTest);
+          }
+        }
+        else {
+          // Store bad dots
+          data.m_badDotsVector.push_front(*dotToTest);
+        }
+      }
+    }
+  }
+  if (dotToTest != nullptr) {
+    delete dotToTest;
+  }
+}
+
 /*!
 
   Look for a list of dot matching this dot parameters within a region of
@@ -990,13 +1159,13 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
   unsigned int gridHeight;
   getGridSize(gridWidth, gridHeight);
 
-  if (graphics) {
+  if (m_graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle(I, area, vpColor::blue, false, thickness);
+    vpDisplay::displayRectangle(I, m_area, vpColor::blue, false, m_thickness);
   }
 
 #ifdef DEBUG
-  vpDisplay::displayRectangle(I, area, vpColor::blue);
+  vpDisplay::displayRectangle(I, m_area, vpColor::blue);
   vpDisplay::flush(I);
 #endif
   // start the search loop; for all points of the search grid,
@@ -1004,207 +1173,56 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
   // if it is so eventually add it to the vector of valid dots.
   std::list<vpDot2> badDotsVector;
   std::list<vpDot2>::iterator itnice;
-  std::list<vpDot2>::iterator itbad;
 
-  vpDot2 *dotToTest = nullptr;
   vpDot2 tmpDot;
 
-  unsigned int area_u_min = static_cast<unsigned int>(area.getLeft());
-  unsigned int area_u_max = static_cast<unsigned int>(area.getRight());
-  unsigned int area_v_min = static_cast<unsigned int>(area.getTop());
-  unsigned int area_v_max = static_cast<unsigned int>(area.getBottom());
+  unsigned int area_u_min = static_cast<unsigned int>(m_area.getLeft());
+  unsigned int area_u_max = static_cast<unsigned int>(m_area.getRight());
+  unsigned int area_v_min = static_cast<unsigned int>(m_area.getTop());
+  unsigned int area_v_max = static_cast<unsigned int>(m_area.getBottom());
 
   unsigned int u, v;
   vpImagePoint cogTmpDot;
 
-  for (v = area_v_min; v < area_v_max; v = v + gridHeight) {
-    for (u = area_u_min; u < area_u_max; u = u + gridWidth) {
+  v = area_v_min;
+  while (v < area_v_max) {
+    u = area_u_min;
+    while (u < area_u_max) {
       // if the pixel we're in doesn't have the right color (outside the
       // graylevel interval), no need to check further, just get to the
       // next grid intersection.
-      if (!hasGoodLevel(I, u, v)) {
-        continue;
-      }
+      if (hasGoodLevel(I, u, v)) {
 
-      // Test if an other germ is inside the bounding box of a dot previously
-      // detected
-      bool good_germ = true;
+        // Test if an other germ is inside the bounding box of a dot previously
+        // detected
+        bool good_germ = true;
 
-      itnice = niceDots.begin();
-      while ((itnice != niceDots.end()) && (good_germ == true)) {
-        tmpDot = *itnice;
-
-        cogTmpDot = tmpDot.getCog();
-        double u0 = cogTmpDot.get_u();
-        double v0 = cogTmpDot.get_v();
-        double half_w = tmpDot.getWidth() / 2.;
-        double half_h = tmpDot.getHeight() / 2.;
-
-        if ((u >= (u0 - half_w)) && (u <= (u0 + half_w)) && (v >= (v0 - half_h)) && (v <= (v0 + half_h))) {
-          // Germ is in a previously detected dot
-          good_germ = false;
-        }
-        ++itnice;
-      }
-
-      if (!good_germ) {
-        continue;
-      }
-
-      // Compute the right border position for this possible germ
-      unsigned int border_u;
-      unsigned int border_v;
-      if (findFirstBorder(I, u, v, border_u, border_v) == false) {
-        // germ is not good.
-        // Jump all the pixels between v,u and v,
-        // dotToTest->getFirstBorder_u()
-        u = border_u;
-        v = border_v;
-        continue;
-      }
-
-      itbad = badDotsVector.begin();
-#define vpBAD_DOT_VALUE (*itbad)
-      vpImagePoint cogBadDot;
-
-      while ((itbad != badDotsVector.end()) && (good_germ == true)) {
-        if ((static_cast<double>(u) >= vpBAD_DOT_VALUE.bbox_u_min) && (static_cast<double>(u) <= vpBAD_DOT_VALUE.bbox_u_max) &&
-            (static_cast<double>(v) >= vpBAD_DOT_VALUE.bbox_v_min) && (static_cast<double>(v) <= vpBAD_DOT_VALUE.bbox_v_max)) {
-          std::list<vpImagePoint>::const_iterator it_edges = ip_edges_list.begin();
-          while ((it_edges != ip_edges_list.end()) && (good_germ == true)) {
-            // Test if the germ belong to a previously detected dot:
-            // - from the germ go right to the border and compare this
-            //   position to the list of pixels of previously detected dots
-            cogBadDot = *it_edges;
-            if ((std::fabs(border_u - cogBadDot.get_u()) <=
-                 (vpMath::maximum(std::fabs(static_cast<double>(border_u)), std::fabs(cogBadDot.get_u())) *
-                  std::numeric_limits<double>::epsilon())) &&
-                (std::fabs(v - cogBadDot.get_v()) <=
-                 (vpMath::maximum(std::fabs(static_cast<double>(v)), std::fabs(cogBadDot.get_v())) *
-                  std::numeric_limits<double>::epsilon()))) {
-              good_germ = false;
-            }
-            ++it_edges;
-          }
-        }
-        ++itbad;
-      }
-#undef vpBAD_DOT_VALUE
-
-      if (!good_germ) {
-        // Jump all the pixels between v,u and v,
-        // dotToTest->getFirstBorder_u()
-        u = border_u;
-        v = border_v;
-        continue;
-      }
-
-      vpTRACE(4, "Try germ (%d, %d)", u, v);
-
-      vpImagePoint germ;
-      germ.set_u(u);
-      germ.set_v(v);
-
-      // otherwise estimate the width, height and surface of the dot we
-      // created, and test it.
-      if (dotToTest != nullptr) {
-        delete dotToTest;
-      }
-      dotToTest = getInstance();
-      dotToTest->setCog(germ);
-      dotToTest->setGrayLevelMin(getGrayLevelMin());
-      dotToTest->setGrayLevelMax(getGrayLevelMax());
-      dotToTest->setGrayLevelPrecision(getGrayLevelPrecision());
-      dotToTest->setSizePrecision(getSizePrecision());
-      dotToTest->setGraphics(graphics);
-      dotToTest->setGraphicsThickness(thickness);
-      dotToTest->setComputeMoments(true);
-      dotToTest->setArea(area);
-      dotToTest->setEllipsoidShapePrecision(ellipsoidShapePrecision);
-      dotToTest->setEllipsoidBadPointsPercentage(allowedBadPointsPercentage_);
-
-      // first compute the parameters of the dot.
-      // if for some reasons this caused an error tracking
-      // (dot partially out of the image...), check the next intersection
-      if (dotToTest->computeParameters(I) == false) {
-        // Jump all the pixels between v,u and v,
-        // dotToTest->getFirstBorder_u()
-        u = border_u;
-        v = border_v;
-        continue;
-      }
-      // if the dot to test is valid,
-      if (dotToTest->isValid(I, *this)) {
-        vpImagePoint cogDotToTest = dotToTest->getCog();
-        // Compute the distance to the center. The center used here is not the
-        // area center available by area.getCenter(area_center_u,
-        // area_center_v) but the center of the input area which may be
-        // partially outside the image.
-
-        double area_center_u = (area_u + (area_w / 2.0)) - 0.5;
-        double area_center_v = (area_v + (area_h / 2.0)) - 0.5;
-
-        double thisDiff_u = cogDotToTest.get_u() - area_center_u;
-        double thisDiff_v = cogDotToTest.get_v() - area_center_v;
-        double thisDist = sqrt((thisDiff_u * thisDiff_u) + (thisDiff_v * thisDiff_v));
-
-        bool stopLoop = false;
         itnice = niceDots.begin();
-
-        while ((itnice != niceDots.end()) && (stopLoop == false)) {
+        while ((itnice != niceDots.end()) && (good_germ == true)) {
           tmpDot = *itnice;
 
-          // --comment: epsilon equals 0.001 -- detecte +sieurs points
-          double epsilon = 3.0;
-          // if the center of the dot is the same than the current
-          // don't add it, test the next point of the grid
           cogTmpDot = tmpDot.getCog();
+          double u0 = cogTmpDot.get_u();
+          double v0 = cogTmpDot.get_v();
+          double half_w = tmpDot.getWidth() / 2.;
+          double half_h = tmpDot.getHeight() / 2.;
 
-          if ((fabs(cogTmpDot.get_u() - cogDotToTest.get_u()) < epsilon) &&
-              (fabs(cogTmpDot.get_v() - cogDotToTest.get_v()) < epsilon)) {
-            stopLoop = true;
-            // Jump all the pixels between v,u and v,
-            // tmpDot->getFirstBorder_u()
-            u = border_u;
-            v = border_v;
-            continue;
-          }
-
-          double otherDiff_u = cogTmpDot.get_u() - area_center_u;
-          double otherDiff_v = cogTmpDot.get_v() - area_center_v;
-          double otherDist = sqrt((otherDiff_u * otherDiff_u) + (otherDiff_v * otherDiff_v));
-
-          // if the distance of the curent vector element to the center
-          // is greater than the distance of this dot to the center,
-          // then add this dot before the current vector element.
-          if (otherDist > thisDist) {
-            niceDots.insert(itnice, *dotToTest);
-            ++itnice;
-            stopLoop = true;
-            // Jump all the pixels between v,u and v,
-            // tmpDot->getFirstBorder_u()
-            u = border_u;
-            v = border_v;
-            continue;
+          if ((u >= (u0 - half_w)) && (u <= (u0 + half_w)) && (v >= (v0 - half_h)) && (v <= (v0 + half_h))) {
+            // Germ is in a previously detected dot
+            good_germ = false;
           }
           ++itnice;
         }
-        vpTRACE(4, "End while (%d, %d)", u, v);
 
-        // if we reached the end of the vector without finding the dot
-        // or inserting it, insert it now.
-        if ((itnice == niceDots.end()) && (stopLoop == false)) {
-          niceDots.push_back(*dotToTest);
+        if (good_germ) {
+          vpRect area(area_u, area_v, area_w, area_h);
+          vpSearchDotsInAreaGoodGermData data(I, area, u, v, niceDots, badDotsVector);
+          searchDotsAreaGoodGerm(data);
         }
       }
-      else {
-        // Store bad dots
-        badDotsVector.push_front(*dotToTest);
-      }
+      u = u + gridWidth;
     }
-  }
-  if (dotToTest != nullptr) {
-    delete dotToTest;
+    v = v + gridHeight;
   }
 }
 
@@ -1255,54 +1273,48 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
 #endif
 
       if ((((wantedDot.getWidth() * size_precision) - epsilon) < getWidth()) == false) {
-        vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
-        printf("Bad width > for dot (%g, %g)\n", cog.get_u(), cog.get_v());
+        printf("Bad width > for dot (%g, %g)\n", m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
 
       if ((getWidth() < (wantedDot.getWidth() / (size_precision + epsilon))) == false) {
-        vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
         printf("Bad width %g > %g for dot (%g, %g)\n", getWidth(), wantedDot.getWidth() / (size_precision + epsilon),
-               cog.get_u(), cog.get_v());
+               m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
 
       if ((((wantedDot.getHeight() * size_precision) - epsilon) < getHeight()) == false) {
-        vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
         printf("Bad height %g > %g for dot (%g, %g)\n", wantedDot.getHeight() * size_precision - epsilon, getHeight(),
-               cog.get_u(), cog.get_v());
+               m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
 
       if ((getHeight() < (wantedDot.getHeight() / (size_precision + epsilon))) == false) {
-        vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
         printf("Bad height %g > %g for dot (%g, %g)\n", getHeight(), wantedDot.getHeight() / (size_precision + epsilon),
-               cog.get_u(), cog.get_v());
+               m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
 
       if ((((wantedDot.getArea() * (size_precision * size_precision)) - epsilon) < getArea()) == false) {
-        vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
         printf("Bad surface %g > %g for dot (%g, %g)\n",
-               wantedDot.getArea() * (size_precision * size_precision) - epsilon, getArea(), cog.get_u(), cog.get_v());
+               wantedDot.getArea() * (size_precision * size_precision) - epsilon, getArea(), m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
 
       if ((getArea() < (wantedDot.getArea() / ((size_precision * size_precision) + epsilon))) == false) {
-        vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", cog.get_u(), cog.get_v());
 #ifdef DEBUG
         printf("Bad surface %g < %g for dot (%g, %g)\n", getArea(),
-               wantedDot.getArea() / (size_precision * size_precision + epsilon), cog.get_u(), cog.get_v());
+               wantedDot.getArea() / (size_precision * size_precision + epsilon), m_cog.get_u(), m_cog.get_v());
 #endif
         return false;
       }
@@ -1315,11 +1327,11 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
   //
   int nb_point_to_test = 20; // Nb points to test on inner and outside ellipsoid
   int nb_bad_points = 0;
-  int nb_max_bad_points = static_cast<int>(nb_point_to_test * allowedBadPointsPercentage_);
+  int nb_max_bad_points = static_cast<int>(nb_point_to_test * m_allowedBadPointsPercentage);
   double step_angle = (2 * M_PI) / nb_point_to_test;
 
   // --comment: if ellipsoidShape_precision diff 0 and compute_moment is true
-  if ((std::fabs(ellipsoidShape_precision) > std::numeric_limits<double>::epsilon()) && compute_moment) {
+  if ((std::fabs(ellipsoidShape_precision) > std::numeric_limits<double>::epsilon()) && m_compute_moment) {
     // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 15
 
     /*
@@ -1349,24 +1361,25 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
 
     double innerCoef = ellipsoidShape_precision;
     unsigned int u, v;
-    double cog_u = this->cog.get_u();
-    double cog_v = this->cog.get_v();
+    double cog_u = m_cog.get_u();
+    double cog_v = m_cog.get_v();
+    double val_2 = 2;
 
     vpImagePoint ip;
     nb_bad_points = 0;
-    for (double theta = 0.; theta < (2 * M_PI); theta += step_angle) {
+    for (double theta = 0.; theta < (val_2 * M_PI); theta += step_angle) {
       u = static_cast<unsigned int>(cog_u + (innerCoef * ((a1 * cos(alpha) * cos(theta)) - (a2 * sin(alpha) * sin(theta)))));
       v = static_cast<unsigned int>(cog_v + (innerCoef * ((a1 * sin(alpha) * cos(theta)) + (a2 * cos(alpha) * sin(theta)))));
       if (!this->hasGoodLevel(I, u, v)) {
 #ifdef DEBUG
         printf("Inner circle pixel (%u, %u) has bad level for dot (%g, %g): "
                "%d not in [%u, %u]\n",
-               u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
+               u, v, cog_u, cog_v, I[v][u], m_gray_level_min, m_gray_level_max);
 #endif
         ++nb_bad_points;
       }
-      if (graphics) {
-        for (unsigned int t = 0; t < thickness; ++t) {
+      if (m_graphics) {
+        for (unsigned int t = 0; t < m_thickness; ++t) {
           ip.set_u(u + t);
           ip.set_v(v);
           vpDisplay::displayPoint(I, ip, vpColor::green);
@@ -1390,7 +1403,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
 
     double outCoef = 2 - ellipsoidShape_precision; // --comment: 1.6
     nb_bad_points = 0;
-    for (double theta = 0.; theta < (2 * M_PI); theta += step_angle) {
+    for (double theta = 0.; theta < (val_2 * M_PI); theta += step_angle) {
       u = static_cast<unsigned int>(cog_u + (outCoef * ((a1 * cos(alpha) * cos(theta)) - (a2 * sin(alpha) * sin(theta)))));
       v = static_cast<unsigned int>(cog_v + (outCoef * ((a1 * sin(alpha) * cos(theta)) + (a2 * cos(alpha) * sin(theta)))));
 #ifdef DEBUG
@@ -1399,10 +1412,10 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
       vpDisplay::flush(I);
 #endif
       // If outside the area, continue
-      if ((static_cast<double>(u) < area.getLeft()) ||
-          (static_cast<double>(u) > area.getRight()) ||
-          (static_cast<double>(v) < area.getTop()) ||
-          (static_cast<double>(v) > area.getBottom())) {
+      if ((static_cast<double>(u) < m_area.getLeft()) ||
+          (static_cast<double>(u) > m_area.getRight()) ||
+          (static_cast<double>(v) < m_area.getTop()) ||
+          (static_cast<double>(v) > m_area.getBottom())) {
         // continue
       }
       else {
@@ -1410,12 +1423,12 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
 #ifdef DEBUG
           printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
                  "%g): %d not in [%u, %u]\n",
-                 u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
+                 u, v, cog_u, cog_v, I[v][u], m_gray_level_min, m_gray_level_max);
 #endif
           ++nb_bad_points;
         }
-        if (graphics) {
-          for (unsigned int t = 0; t < thickness; ++t) {
+        if (m_graphics) {
+          for (unsigned int t = 0; t < m_thickness; ++t) {
             ip.set_u(u + t);
             ip.set_v(v);
 
@@ -1459,7 +1472,7 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char> &I, const unsigned int &u
     return false;
   }
 
-  if ((I[v][u] >= gray_level_min) && (I[v][u] <= gray_level_max)) {
+  if ((I[v][u] >= m_gray_level_min) && (I[v][u] <= m_gray_level_max)) {
     return true;
   }
   else {
@@ -1486,7 +1499,7 @@ bool vpDot2::hasReverseLevel(const vpImage<unsigned char> &I, const unsigned int
     return false;
   }
 
-  if ((I[v][u] < gray_level_min) || (I[v][u] > gray_level_max)) {
+  if ((I[v][u] < m_gray_level_min) || (I[v][u] > m_gray_level_max)) {
     return true;
   }
   else {
@@ -1519,7 +1532,7 @@ vpDot2 *vpDot2::getInstance() { return new vpDot2(); }
   - 6 : down
   - 7 : down right
 */
-void vpDot2::getFreemanChain(std::list<unsigned int> &freeman_chain) const { freeman_chain = direction_list; }
+void vpDot2::getFreemanChain(std::list<unsigned int> &freeman_chain) const { freeman_chain = m_direction_list; }
 
 /******************************************************************************
  *
@@ -1560,8 +1573,8 @@ void vpDot2::getFreemanChain(std::list<unsigned int> &freeman_chain) const { fre
 */
 bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_u, const double &v_v)
 {
-  direction_list.clear();
-  ip_edges_list.clear();
+  m_direction_list.clear();
+  m_ip_edges_list.clear();
 
   double est_u = v_u; // estimated
   double est_v = v_v;
@@ -1569,68 +1582,59 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_
   // if u has default value, set it to the actual center value
   // if( est_u == -1.0 )
   if (std::fabs(est_u + 1.0) <= (vpMath::maximum(std::fabs(est_u), 1.) * std::numeric_limits<double>::epsilon())) {
-    est_u = this->cog.get_u();
+    est_u = m_cog.get_u();
   }
 
   // if v has default value, set it to the actual center value
   // if( est_v == -1.0 )
   if (std::fabs(est_v + 1.0) <= (vpMath::maximum(std::fabs(est_v), 1.) * std::numeric_limits<double>::epsilon())) {
-    est_v = this->cog.get_v();
+    est_v = m_cog.get_v();
   }
 
   // if the estimated position of the dot is out of the image, not need to
   // continue, return an error tracking
   if (!isInArea(static_cast<unsigned int>(est_u), static_cast<unsigned int>(est_v))) {
-    vpDEBUG_TRACE(3,
-                  "Initial pixel coordinates (%d, %d) for dot tracking are "
-                  "not in the area",
-                  static_cast<int>(est_u), static_cast<int>(est_v));
     return false;
   }
 
-  bbox_u_min = static_cast<int>(I.getWidth());
-  bbox_u_max = 0;
-  bbox_v_min = static_cast<int>(I.getHeight());
-  bbox_v_max = 0;
+  m_bbox_u_min = static_cast<int>(I.getWidth());
+  m_bbox_u_max = 0;
+  m_bbox_v_min = static_cast<int>(I.getHeight());
+  m_bbox_v_max = 0;
 
   // if the first point doesn't have the right level then there's no point to
   // continue.
   if (!hasGoodLevel(I, static_cast<unsigned int>(est_u), static_cast<unsigned int>(est_v))) {
-    vpDEBUG_TRACE(3, "Can't find a dot from pixel (%d, %d) coordinates", static_cast<unsigned int>(est_u), static_cast<unsigned int>(est_v));
     return false;
   }
 
   // find the border
 
-  if (!findFirstBorder(I, static_cast<unsigned int>(est_u), static_cast<unsigned int>(est_v), this->firstBorder_u, this->firstBorder_v)) {
-
-    vpDEBUG_TRACE(3, "Can't find first border (%d, %d) coordinates", static_cast<int>(est_u), static_cast<int>(est_v));
+  if (!findFirstBorder(I, static_cast<unsigned int>(est_u), static_cast<unsigned int>(est_v), m_firstBorder_u, m_firstBorder_v)) {
     return false;
   }
 
   unsigned int dir = 6;
 
   // Determine the first element of the Freeman chain
-  computeFreemanChainElement(I, this->firstBorder_u, this->firstBorder_v, dir);
+  computeFreemanChainElement(I, m_firstBorder_u, m_firstBorder_v, dir);
   unsigned int firstDir = dir;
 
   // if we are now out of the image, return an error tracking
-  if (!isInArea(this->firstBorder_u, this->firstBorder_v)) {
-    vpDEBUG_TRACE(3, "Border pixel coordinates (%d, %d) of the dot are not in the area", this->firstBorder_u,
-                  this->firstBorder_v);
+  if (!isInArea(m_firstBorder_u, m_firstBorder_v)) {
     return false;
   }
 
   // store the new direction and dot border coordinates.
-  direction_list.push_back(dir);
+  m_direction_list.push_back(dir);
   vpImagePoint ip;
-  ip.set_u(this->firstBorder_u);
-  ip.set_v(this->firstBorder_v);
+  ip.set_u(m_firstBorder_u);
+  ip.set_v(m_firstBorder_v);
 
-  ip_edges_list.push_back(ip);
+  m_ip_edges_list.push_back(ip);
 
-  int border_u = static_cast<int>(this->firstBorder_u);
-  int border_v = static_cast<int>(this->firstBorder_v);
+  int border_u = static_cast<int>(m_firstBorder_u);
+  int border_v = static_cast<int>(m_firstBorder_v);
   int du, dv;
   float dS, dMu, dMv, dMuv, dMu2, dMv2;
   m00 = 0.0;
@@ -1642,8 +1646,8 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_
   // while we didn't come back to the first point, follow the border
   do {
     // if it was asked, show the border
-    if (graphics) {
-      for (int t = 0; t < static_cast<int>(thickness); ++t) {
+    if (m_graphics) {
+      for (int t = 0; t < static_cast<int>(m_thickness); ++t) {
         ip.set_u(border_u + t);
         ip.set_v(border_v);
 
@@ -1666,50 +1670,43 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_
     m00 += dS;  // enclosed area
     m10 += dMu; // First order moment along v axis
     m01 += dMv; // First order moment along u axis
-    if (compute_moment) {
+    if (m_compute_moment) {
       m11 += dMuv; // Second order moment
       m20 += dMu2; // Second order moment along v axis
       m02 += dMv2; // Second order moment along u axis
     }
     // if we are now out of the image, return an error tracking
     if (!isInArea(static_cast<unsigned int>(border_u), static_cast<unsigned int>(border_v))) {
-
-      vpDEBUG_TRACE(3, "Dot (%d, %d) is not in the area", border_u, border_v);
       // Can Occur on a single pixel dot located on the top border
       return false;
     }
 
     // store the new direction and dot border coordinates.
 
-    direction_list.push_back(dir);
+    m_direction_list.push_back(dir);
 
     ip.set_u(border_u);
     ip.set_v(border_v);
-    ip_edges_list.push_back(ip);
+    m_ip_edges_list.push_back(ip);
 
     // update the extreme point of the dot.
-    if (border_v < bbox_v_min) {
-      bbox_v_min = border_v;
+    if (border_v < m_bbox_v_min) {
+      m_bbox_v_min = border_v;
     }
-    if (border_v > bbox_v_max) {
-      bbox_v_max = border_v;
+    if (border_v > m_bbox_v_max) {
+      m_bbox_v_max = border_v;
     }
-    if (border_u < bbox_u_min) {
-      bbox_u_min = border_u;
+    if (border_u < m_bbox_u_min) {
+      m_bbox_u_min = border_u;
     }
-    if (border_u > bbox_u_max) {
-      bbox_u_max = border_u;
+    if (border_u > m_bbox_u_max) {
+      m_bbox_u_max = border_u;
     }
 
     // move around the tracked entity by following the border.
     if (computeFreemanChainElement(I, static_cast<unsigned int>(border_u), static_cast<unsigned int>(border_v), dir) == false) {
-      vpDEBUG_TRACE(3, "Can't compute Freeman chain for dot (%d, %d)", border_u, border_v);
       return false;
     }
-
-    //     vpTRACE("border_u: %d border_v: %d dir: %d", border_u, border_v,
-    //     dir);
-
   } while (((getFirstBorder_u() != static_cast<unsigned int>(border_u)) || (getFirstBorder_v() != static_cast<unsigned int>(border_v)) ||
             (firstDir != dir)) &&
            isInArea(static_cast<unsigned int>(border_u), static_cast<unsigned int>(border_v)));
@@ -1725,7 +1722,6 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_
   // if( m00 == 0 || m00 == 1 )
   if ((std::fabs(m00) <= std::numeric_limits<double>::epsilon()) ||
       (std::fabs(m00 - 1.) <= (vpMath::maximum(std::fabs(m00), 1.) * std::numeric_limits<double>::epsilon()))) {
-    vpDEBUG_TRACE(3, "The center of gravity of the dot wasn't properly detected");
     return false;
   }
   else // compute the center
@@ -1735,19 +1731,19 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &v_
     double tmpCenter_v = m01 / m00;
 
     // Updates the second order centered moments
-    if (compute_moment) {
+    if (m_compute_moment) {
       mu11 = m11 - (tmpCenter_u * m01);
       mu02 = m02 - (tmpCenter_v * m01);
       mu20 = m20 - (tmpCenter_u * m10);
     }
 
-    cog.set_u(tmpCenter_u);
-    cog.set_v(tmpCenter_v);
+    m_cog.set_u(tmpCenter_u);
+    m_cog.set_v(tmpCenter_v);
   }
 
-  width = (bbox_u_max - bbox_u_min) + 1;
-  height = (bbox_v_max - bbox_v_min) + 1;
-  surface = m00;
+  m_width = (m_bbox_u_max - m_bbox_u_min) + 1;
+  m_height = (m_bbox_v_max - m_bbox_v_min) + 1;
+  m_surface = m00;
 
   computeMeanGrayLevel(I);
   return true;
@@ -1775,28 +1771,24 @@ bool vpDot2::findFirstBorder(const vpImage<unsigned char> &I, const unsigned int
 
   // NOTE:
   // from here we use int and not double. This is because we don't have
-  // rounding problems and it's actually more a trouble than smth else to
+  // rounding problems and it's actually more a trouble than something else to
   // work with double when navigating around the dot.
   border_u = u;
   border_v = v;
   double epsilon = 0.001;
 
 #ifdef DEBUG
-  std::cout << "gray level: " << gray_level_min << " " << gray_level_max << std::endl;
+  std::cout << "gray level: " << m_gray_level_min << " " << m_gray_level_max << std::endl;
 #endif
-  while (hasGoodLevel(I, border_u + 1, border_v) && (border_u < area.getRight()) /*I.getWidth()*/) {
+  while (hasGoodLevel(I, border_u + 1, border_v) && (border_u < m_area.getRight()) /*I.getWidth()*/) {
     // if the width of this dot was initialised and we already crossed the dot
     // on more than the max possible width, no need to continue, return an
     // error tracking
     if ((getWidth() > 0) && ((border_u - u) > ((getWidth() / getMaxSizeSearchDistPrecision()) + epsilon))) {
-      vpDEBUG_TRACE(3,
-                    "The found dot (%d, %d, %d) has a greater width than the "
-                    "required one",
-                    u, v, border_u);
       return false;
     }
 #ifdef DEBUG
-    vpDisplay::displayPoint(I, (int)border_v, (int)border_u + 1, vpColor::green);
+    vpDisplay::displayPoint(I, static_cast<int>(border_v), static_cast<int>(border_u) + 1, vpColor::green);
     vpDisplay::flush(I);
 #endif
 
@@ -1826,22 +1818,29 @@ bool vpDot2::findFirstBorder(const vpImage<unsigned char> &I, const unsigned int
 bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v,
                                         unsigned int &element)
 {
-
   if (hasGoodLevel(I, u, v)) {
     unsigned int v_u = u;
     unsigned int v_v = v;
+    const unsigned int val_1 = 1;
+    const unsigned int val_2 = 2;
+    const unsigned int val_3 = 3;
+    const unsigned int val_4 = 4;
+    const unsigned int val_5 = 5;
+    const unsigned int val_6 = 6;
+    const unsigned int val_7 = 7;
+    const unsigned int val_8 = 8;
     // get the point on the right of the point passed in
-    updateFreemanPosition(v_u, v_v, (element + 2) % 8);
+    updateFreemanPosition(v_u, v_v, (element + val_2) % val_8);
     if (hasGoodLevel(I, v_u, v_v)) {
-      element = (element + 2) % 8; // turn right
+      element = (element + val_2) % val_8; // turn right
     }
     else {
       unsigned int v_u1 = u;
       unsigned int v_v1 = v;
-      updateFreemanPosition(v_u1, v_v1, (element + 1) % 8);
+      updateFreemanPosition(v_u1, v_v1, (element + val_1) % val_8);
 
       if (hasGoodLevel(I, v_u1, v_v1)) {
-        element = (element + 1) % 8; // turn diag right
+        element = (element + val_1) % val_8; // turn diag right
       }
       else {
         unsigned int v_u2 = u;
@@ -1854,42 +1853,42 @@ bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const u
         else {
           unsigned int v_u3 = u;
           unsigned int v_v3 = v;
-          updateFreemanPosition(v_u3, v_v3, (element + 7) % 8); // diag left
+          updateFreemanPosition(v_u3, v_v3, (element + val_7) % val_8); // diag left
 
           if (hasGoodLevel(I, v_u3, v_v3)) {
-            element = (element + 7) % 8; // turn diag left
+            element = (element + val_7) % val_8; // turn diag left
           }
           else {
             unsigned int v_u4 = u;
             unsigned int v_v4 = v;
-            updateFreemanPosition(v_u4, v_v4, (element + 6) % 8); // left
+            updateFreemanPosition(v_u4, v_v4, (element + val_6) % val_8); // left
 
             if (hasGoodLevel(I, v_u4, v_v4)) {
-              element = (element + 6) % 8; // turn left
+              element = (element + val_6) % val_8; // turn left
             }
             else {
               unsigned int v_u5 = u;
               unsigned int v_v5 = v;
-              updateFreemanPosition(v_u5, v_v5, (element + 5) % 8); // left
+              updateFreemanPosition(v_u5, v_v5, (element + val_5) % val_8); // left
 
               if (hasGoodLevel(I, v_u5, v_v5)) {
-                element = (element + 5) % 8; // turn diag down
+                element = (element + val_5) % val_8; // turn diag down
               }
               else {
                 unsigned int v_u6 = u;
                 unsigned int v_v6 = v;
-                updateFreemanPosition(v_u6, v_v6, (element + 4) % 8); // left
+                updateFreemanPosition(v_u6, v_v6, (element + val_4) % val_8); // left
 
                 if (hasGoodLevel(I, v_u6, v_v6)) {
-                  element = (element + 4) % 8; // turn down
+                  element = (element + val_4) % val_8; // turn down
                 }
                 else {
                   unsigned int v_u7 = u;
                   unsigned int v_v7 = v;
-                  updateFreemanPosition(v_u7, v_v7, (element + 3) % 8); // diag
+                  updateFreemanPosition(v_u7, v_v7, (element + val_3) % val_8); // diag
 
                   if (hasGoodLevel(I, v_u7, v_v7)) {
-                    element = (element + 3) % 8; // turn diag right down
+                    element = (element + val_3) % val_8; // turn diag right down
                   }
                   else {
                     // No neighbor with a good level
@@ -1910,6 +1909,89 @@ bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const u
   }
 
   return true;
+}
+
+namespace
+{
+/*!
+* Given the previous position of a pixel (u_p, v_p) on the dot border, the
+* direction to reach the next pixel on the border being top right and
+* because with use the moment, compute Freeman parameters.
+* \param u_p : Previous value of the row coordinate of a pixel on a border.
+* \param v_p : Previous value of the column coordinate of a pixel on a border.
+* \param dMuv : Moment increases. Cumulated values of dMuv gives m11.
+* \param dMu2 : Second order moment along v axis increases. Cumulated values
+* of dMu2 gives m20.
+* \param dMv2 : Second order moment along u axis increases. Cumulated values
+* of dMv2 gives m02.
+*/
+void computeTopRightWithMoment(const int &u_p, const int &v_p, float &dMuv, float &dMu2, float &dMv2)
+{
+  float half_u_p = static_cast<float>(0.5 * u_p);
+  dMuv = static_cast<float>((v_p * v_p * (0.25 + half_u_p)) + (v_p * ((1. / 3.) + half_u_p)) + ((1. / 6.) * u_p) + 0.125);
+  dMu2 = static_cast<float>(((-1. / 3.) * u_p * ((u_p * u_p) + (1.5 * u_p) + 1.)) - (1. / 12.0));
+  dMv2 = static_cast<float>(((1. / 3.) * v_p * ((v_p * v_p) + (1.5 * v_p) + 1.)) + (1. / 12.0));
+}
+
+/*!
+* Given the previous position of a pixel (u_p, v_p) on the dot border, the
+* direction to reach the next pixel on the border being top left and
+* because with use the moment, compute Freeman parameters.
+* \param u_p : Previous value of the row coordinate of a pixel on a border.
+* \param v_p : Previous value of the column coordinate of a pixel on a border.
+* \param dMuv : Moment increases. Cumulated values of dMuv gives m11.
+* \param dMu2 : Second order moment along v axis increases. Cumulated values
+* of dMu2 gives m20.
+* \param dMv2 : Second order moment along u axis increases. Cumulated values
+* of dMv2 gives m02.
+*/
+void computeTopLeftWithMoment(const int &u_p, const int &v_p, float &dMuv, float &dMu2, float &dMv2)
+{
+  float half_u_p = static_cast<float>(0.5 * u_p);
+  dMuv = static_cast<float>((((v_p * v_p * (0.25 - half_u_p)) + (v_p * ((1. / 3.) - half_u_p))) - ((1. / 6.) * u_p)) + 0.125);
+  dMu2 = static_cast<float>(((-1. / 3.) * u_p * (((u_p * u_p) - (1.5 * u_p)) + 1.)) - (1. / 12.0));
+  dMv2 = static_cast<float>(((-1. / 3.) * v_p * ((v_p * v_p) + (1.5 * v_p) + 1.)) - (1. / 12.0));
+}
+
+/*!
+* Given the previous position of a pixel (u_p, v_p) on the dot border, the
+* direction to reach the next pixel on the border being down right and
+* because with use the moment, compute Freeman parameters.
+* \param u_p : Previous value of the row coordinate of a pixel on a border.
+* \param v_p : Previous value of the column coordinate of a pixel on a border.
+* \param dMuv : Moment increases. Cumulated values of dMuv gives m11.
+* \param dMu2 : Second order moment along v axis increases. Cumulated values
+* of dMu2 gives m20.
+* \param dMv2 : Second order moment along u axis increases. Cumulated values
+* of dMv2 gives m02.
+*/
+void computeDownRightWithMoment(const int &u_p, const int &v_p, float &dMuv, float &dMu2, float &dMv2)
+{
+  float half_u_p = static_cast<float>(0.5 * u_p);
+  dMuv = static_cast<float>(((v_p * v_p * (0.25 + half_u_p)) - (v_p * ((1. / 3.) + half_u_p))) + ((1. / 6.) * u_p) + 0.125);
+  dMu2 = static_cast<float>(((1. / 3.) * u_p * ((u_p * u_p) + (1.5 * u_p) + 1.)) + (1. / 12.0));
+  dMv2 = static_cast<float>(((1. / 3.) * v_p * (((v_p * v_p) - (1.5 * v_p)) + 1.)) - (1. / 12.0));
+}
+
+/*!
+* Given the previous position of a pixel (u_p, v_p) on the dot border, the
+* direction to reach the next pixel on the border being down left and
+* because with use the moment, compute Freeman parameters.
+* \param u_p : Previous value of the row coordinate of a pixel on a border.
+* \param v_p : Previous value of the column coordinate of a pixel on a border.
+* \param dMuv : Moment increases. Cumulated values of dMuv gives m11.
+* \param dMu2 : Second order moment along v axis increases. Cumulated values
+* of dMu2 gives m20.
+* \param dMv2 : Second order moment along u axis increases. Cumulated values
+* of dMv2 gives m02.
+*/
+void computeDownLeftWithMoment(const int &u_p, const int &v_p, float &dMuv, float &dMu2, float &dMv2)
+{
+  float half_u_p = static_cast<float>(0.5 * u_p);
+  dMuv = static_cast<float>((((v_p * v_p * (0.25 - half_u_p)) - (v_p * ((1. / 3.) - half_u_p))) - ((1. / 6.) * u_p)) + 0.125);
+  dMu2 = static_cast<float>(((1. / 3.) * u_p * (((u_p * u_p) - (1.5 * u_p)) + 1.)) - (1. / 12.0));
+  dMv2 = static_cast<float>(((-1. / 3.) * v_p * (((v_p * v_p) - (1.5 * v_p)) + 1.)) - (1. / 12.0));
+}
 }
 
 /*!
@@ -1944,123 +2026,119 @@ bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const u
 void vpDot2::computeFreemanParameters(const int &u_p, const int &v_p, unsigned int &element, int &du, int &dv,
                                       float &dS, float &dMu, float &dMv, float &dMuv, float &dMu2, float &dMv2)
 {
+  /*
+      3  2  1
+       \ | /
+        \|/
+    4 ------- 0
+        /|\
+       / | \
+      5  6  7
+  */
+  const unsigned int go_right = 0;
+  const unsigned int go_right_top = 1;
+  const unsigned int go_top = 2;
+  const unsigned int go_top_left = 3;
+  const unsigned int go_left = 4;
+  const unsigned int go_left_down = 5;
+  const unsigned int go_down = 6;
+  const unsigned int go_down_right = 7;
   du = 0;
   dv = 0;
   dMuv = 0;
   dMu2 = 0;
   dMv2 = 0;
-
-  /*
-           3  2  1
-            \ | /
-             \|/
-         4 ------- 0
-             /|\
-            / | \
-           5  6  7
-  */
+  const unsigned int val_2 = 2;
   switch (element) {
-  case 0: // go right
+  case go_right: // go right
     du = 1;
     dS = static_cast<float>(v_p);
     dMu = 0.0;
     dMv = static_cast<float>(0.5 * v_p * v_p);
-    if (compute_moment) {
-      dMuv = static_cast<float>(0.25 * v_p * v_p * ((2 * u_p) + 1));
+    if (m_compute_moment) {
+      dMuv = static_cast<float>(0.25 * v_p * v_p * ((val_2 * u_p) + 1));
       dMu2 = 0;
       dMv2 = static_cast<float>((1.0 / 3.) * v_p * v_p * v_p);
     }
     break;
 
-  case 1: // go right top
+  case go_right_top: // go right top
     du = 1;
     dv = 1;
     dS = static_cast<float>(v_p + 0.5);
     dMu = -static_cast<float>((0.5 * u_p * (u_p + 1)) + (1.0 / 6.0));
     dMv = static_cast<float>((0.5 * v_p * (v_p + 1)) + (1.0 / 6.0));
-    if (compute_moment) {
-      float half_u_p = static_cast<float>(0.5 * u_p);
-      dMuv = static_cast<float>((v_p * v_p * (0.25 + half_u_p)) + (v_p * ((1. / 3.) + half_u_p)) + ((1. / 6.) * u_p) + 0.125);
-      dMu2 = static_cast<float>(((-1. / 3.) * u_p * ((u_p * u_p) + (1.5 * u_p) + 1.)) - (1. / 12.0));
-      dMv2 = static_cast<float>(((1. / 3.) * v_p * ((v_p * v_p) + (1.5 * v_p) + 1.)) + (1. / 12.0));
+    if (m_compute_moment) {
+      computeTopRightWithMoment(u_p, v_p, dMuv, dMu2, dMv2);
     }
     break;
 
-  case 2: // go top
+  case go_top: // go top
     dv = 1;
     dS = 0.0;
     dMu = static_cast<float>(-0.5 * u_p * u_p);
     dMv = 0.0;
-    if (compute_moment) {
+    if (m_compute_moment) {
       dMuv = 0;
       dMu2 = static_cast<float>((-1.0 / 3.) * u_p * u_p * u_p);
       dMv2 = 0;
     }
     break;
 
-  case 3:
+  case go_top_left:
     du = -1;
     dv = 1;
     dS = static_cast<float>(-v_p - 0.5);
     dMu = -static_cast<float>((0.5 * u_p * (u_p - 1)) + (1.0 / 6.0));
     dMv = -static_cast<float>((0.5 * v_p * (v_p + 1)) + (1.0 / 6.0));
-    if (compute_moment) {
-      float half_u_p = static_cast<float>(0.5 * u_p);
-      dMuv = static_cast<float>((((v_p * v_p * (0.25 - half_u_p)) + (v_p * ((1. / 3.) - half_u_p))) - ((1. / 6.) * u_p)) + 0.125);
-      dMu2 = static_cast<float>(((-1. / 3.) * u_p * (((u_p * u_p) - (1.5 * u_p)) + 1.)) - (1. / 12.0));
-      dMv2 = static_cast<float>(((-1. / 3.) * v_p * ((v_p * v_p) + (1.5 * v_p) + 1.)) - (1. / 12.0));
+    if (m_compute_moment) {
+      computeTopLeftWithMoment(u_p, v_p, dMuv, dMu2, dMv2);
     }
     break;
 
-  case 4:
+  case go_left:
     du = -1;
     dS = static_cast<float>(-v_p);
     dMv = static_cast<float>(-0.5 * v_p * v_p);
     dMu = 0.0;
-    if (compute_moment) {
-      dMuv = static_cast<float>(-0.25 * v_p * v_p * ((2 * u_p) - 1));
+    if (m_compute_moment) {
+      dMuv = static_cast<float>(-0.25 * v_p * v_p * ((val_2 * u_p) - 1));
       dMu2 = 0;
       dMv2 = static_cast<float>((-1.0 / 3.) * v_p * v_p * v_p);
     }
     break;
 
-  case 5:
+  case go_left_down:
     du = -1;
     dv = -1;
     dS = static_cast<float>(-v_p + 0.5);
     dMu = static_cast<float>((0.5 * u_p * (u_p - 1)) + (1.0 / 6.0));
     dMv = static_cast<float>(-((0.5 * v_p * (v_p - 1)) + (1.0 / 6.0)));
-    if (compute_moment) {
-      float half_u_p = static_cast<float>(0.5 * u_p);
-      dMuv = static_cast<float>((((v_p * v_p * (0.25 - half_u_p)) - (v_p * ((1. / 3.) - half_u_p))) - ((1. / 6.) * u_p)) + 0.125);
-      dMu2 = static_cast<float>(((1. / 3.) * u_p * (((u_p * u_p) - (1.5 * u_p)) + 1.)) - (1. / 12.0));
-      dMv2 = static_cast<float>(((-1. / 3.) * v_p * (((v_p * v_p) - (1.5 * v_p)) + 1.)) - (1. / 12.0));
+    if (m_compute_moment) {
+      computeDownLeftWithMoment(u_p, v_p, dMuv, dMu2, dMv2);
     }
     break;
 
-  case 6:
+  case go_down:
     dv = -1;
     dS = 0.0;
     dMu = static_cast<float>(0.5 * u_p * u_p);
     dMv = 0.0;
-    if (compute_moment) {
+    if (m_compute_moment) {
       dMuv = 0;
       dMu2 = static_cast<float>((1.0 / 3.) * u_p * u_p * u_p);
       dMv2 = 0;
     }
     break;
 
-  case 7:
+  case go_down_right:
     du = 1;
     dv = -1;
     dS = static_cast<float>(v_p - 0.5);
     dMu = static_cast<float>((0.5 * u_p * (u_p + 1)) + (1.0 / 6.0));
     dMv = static_cast<float>((0.5 * v_p * (v_p - 1)) + (1.0 / 6.0));
-    if (compute_moment) {
-      float half_u_p = static_cast<float>(0.5 * u_p);
-      dMuv = static_cast<float>(((v_p * v_p * (0.25 + half_u_p)) - (v_p * ((1. / 3.) + half_u_p))) + ((1. / 6.) * u_p) + 0.125);
-      dMu2 = static_cast<float>(((1. / 3.) * u_p * ((u_p * u_p) + (1.5 * u_p) + 1.)) + (1. / 12.0));
-      dMv2 = static_cast<float>(((1. / 3.) * v_p * (((v_p * v_p) - (1.5 * v_p)) + 1.)) - (1. / 12.0));
+    if (m_compute_moment) {
+      computeDownRightWithMoment(u_p, v_p, dMuv, dMu2, dMv2);
     }
     break;
 
@@ -2084,32 +2162,49 @@ void vpDot2::computeFreemanParameters(const int &u_p, const int &v_p, unsigned i
 */
 void vpDot2::updateFreemanPosition(unsigned int &u, unsigned int &v, const unsigned int &dir)
 {
+  /*
+      3  2  1
+       \ | /
+        \|/
+    4 ------- 0
+        /|\
+       / | \
+      5  6  7
+  */
+  const unsigned int go_right = 0;
+  const unsigned int go_right_top = 1;
+  const unsigned int go_top = 2;
+  const unsigned int go_top_left = 3;
+  const unsigned int go_left = 4;
+  const unsigned int go_left_down = 5;
+  const unsigned int go_down = 6;
+  const unsigned int go_down_right = 7;
   switch (dir) {
-  case 0:
+  case go_right:
     u += 1;
     break;
-  case 1:
+  case go_right_top:
     u += 1;
     v += 1;
     break;
-  case 2:
+  case go_top:
     v += 1;
     break;
-  case 3:
+  case go_top_left:
     u -= 1;
     v += 1;
     break;
-  case 4:
+  case go_left:
     u -= 1;
     break;
-  case 5:
+  case go_left_down:
     u -= 1;
     v -= 1;
     break;
-  case 6:
+  case go_down:
     v -= 1;
     break;
-  case 7:
+  case go_down_right:
     u += 1;
     v -= 1;
     break;
@@ -2129,7 +2224,7 @@ void vpDot2::updateFreemanPosition(unsigned int &u, unsigned int &v, const unsig
   \return true if the pixel of coordinates (posI, posJ) is in the image and
   false otherwise.
 */
-bool vpDot2::isInImage(const vpImage<unsigned char> &I) const { return isInImage(I, cog); }
+bool vpDot2::isInImage(const vpImage<unsigned char> &I) const { return isInImage(I, m_cog); }
 
 /*!
 
@@ -2171,10 +2266,10 @@ bool vpDot2::isInImage(const vpImage<unsigned char> &I, const vpImagePoint &ip) 
 */
 bool vpDot2::isInArea(const unsigned int &u, const unsigned int &v) const
 {
-  unsigned int area_u_min = static_cast<unsigned int>(area.getLeft());
-  unsigned int area_u_max = static_cast<unsigned int>(area.getRight());
-  unsigned int area_v_min = static_cast<unsigned int>(area.getTop());
-  unsigned int area_v_max = static_cast<unsigned int>(area.getBottom());
+  unsigned int area_u_min = static_cast<unsigned int>(m_area.getLeft());
+  unsigned int area_u_max = static_cast<unsigned int>(m_area.getRight());
+  unsigned int area_v_min = static_cast<unsigned int>(m_area.getTop());
+  unsigned int area_v_max = static_cast<unsigned int>(m_area.getBottom());
 
   if ((u < area_u_min) || (u > area_u_max)) {
     return false;
@@ -2228,40 +2323,41 @@ void vpDot2::getGridSize(unsigned int &gridWidth, unsigned int &gridHeight)
 */
 void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
 {
-  int cog_u = static_cast<int>(cog.get_u());
-  int cog_v = static_cast<int>(cog.get_v());
+  int cog_u = static_cast<int>(m_cog.get_u());
+  int cog_v = static_cast<int>(m_cog.get_v());
 
   unsigned int sum_value = 0;
   unsigned int nb_pixels = 0;
 
-  for (unsigned int i = static_cast<unsigned int>(this->bbox_u_min); i <= static_cast<unsigned int>(this->bbox_u_max); ++i) {
+  for (unsigned int i = static_cast<unsigned int>(m_bbox_u_min); i <= static_cast<unsigned int>(m_bbox_u_max); ++i) {
     unsigned int pixel_gray = static_cast<unsigned int>(I[static_cast<unsigned int>(cog_v)][i]);
     if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
       sum_value += pixel_gray;
       ++nb_pixels;
     }
   }
-  for (unsigned int i = static_cast<unsigned int>(this->bbox_v_min); i <= static_cast<unsigned int>(this->bbox_v_max); ++i) {
+  for (unsigned int i = static_cast<unsigned int>(m_bbox_v_min); i <= static_cast<unsigned int>(m_bbox_v_max); ++i) {
     unsigned char pixel_gray = I[i][static_cast<unsigned int>(cog_u)];
     if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
       sum_value += pixel_gray;
       ++nb_pixels;
     }
   }
-  if (nb_pixels < 10) { // could be good to choose the min nb points from area of dot
+  const unsigned int nb_min_pixels = 10;
+  if (nb_pixels < nb_min_pixels) { // could be good to choose the min nb points from area of dot
     // add diagonals points to have enough point
     int imin, imax;
-    if ((cog_u - bbox_u_min) >(cog_v - bbox_v_min)) {
-      imin = cog_v - bbox_v_min;
+    if ((cog_u - m_bbox_u_min) >(cog_v - m_bbox_v_min)) {
+      imin = cog_v - m_bbox_v_min;
     }
     else {
-      imin = cog_u - bbox_u_min;
+      imin = cog_u - m_bbox_u_min;
     }
-    if ((bbox_u_max - cog_u) > (bbox_v_max - cog_v)) {
-      imax = bbox_v_max - cog_v;
+    if ((m_bbox_u_max - cog_u) > (m_bbox_v_max - cog_v)) {
+      imax = m_bbox_v_max - cog_v;
     }
     else {
-      imax = bbox_u_max - cog_u;
+      imax = m_bbox_u_max - cog_u;
     }
     for (int i = -imin; i <= imax; ++i) {
       unsigned int pixel_gray = static_cast<unsigned int>(I[static_cast<unsigned int>(cog_v + i)][static_cast<unsigned int>(cog_u + i)]);
@@ -2271,17 +2367,17 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
       }
     }
 
-    if ((cog_u - bbox_u_min) > (bbox_v_max - cog_v)) {
-      imin = bbox_v_max - cog_v;
+    if ((cog_u - m_bbox_u_min) > (m_bbox_v_max - cog_v)) {
+      imin = m_bbox_v_max - cog_v;
     }
     else {
-      imin = cog_u - bbox_u_min;
+      imin = cog_u - m_bbox_u_min;
     }
-    if ((bbox_u_max - cog_u) > (cog_v - bbox_v_min)) {
-      imax = cog_v - bbox_v_min;
+    if ((m_bbox_u_max - cog_u) > (cog_v - m_bbox_v_min)) {
+      imax = cog_v - m_bbox_v_min;
     }
     else {
-      imax = bbox_u_max - cog_u;
+      imax = m_bbox_u_max - cog_u;
     }
 
     for (int i = -imin; i <= imax; ++i) {
@@ -2298,7 +2394,7 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No point was found"));
   }
   else {
-    mean_gray_level = sum_value / nb_pixels;
+    m_mean_gray_level = sum_value / nb_pixels;
   }
 }
 
@@ -2341,6 +2437,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
   // read from file and tracks the dots
   if (fromFile) {
     try {
+      const unsigned int cross_size = 10;
       for (i = 0; i < n; ++i) {
         cog.set_uv(Cogs[i][0], Cogs[i][1]);
         dot[i].setGraphics(true);
@@ -2348,7 +2445,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
         if (trackDot) {
           dot[i].initTracking(I, cog);
           dot[i].track(I);
-          vpDisplay::displayCross(I, cog, 10, col);
+          vpDisplay::displayCross(I, cog, cross_size, col);
         }
       }
     }
@@ -2381,6 +2478,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
     vpDisplay::flush(I);
 
     std::cout << "Click on the " << n << " dots clockwise starting from upper/left dot..." << std::endl;
+    const unsigned int cross_size = 10;
     for (i = 0; i < n; ++i) {
       if (trackDot) {
         dot[i].setGraphics(true);
@@ -2393,7 +2491,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
       }
       Cogs[i][0] = cog.get_u();
       Cogs[i][1] = cog.get_v();
-      vpDisplay::displayCross(I, cog, 10, col);
+      vpDisplay::displayCross(I, cog, cross_size, col);
       vpDisplay::flush(I);
     }
   }
@@ -2439,17 +2537,20 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsign
   // trajectories
   unsigned int cogs_size = cogs.size();
   for (i = n; i < cogs_size; ++i) {
-    vpDisplay::displayCircle(I, cogs[i], 4, vpColor::green, true);
+    const unsigned int circle_size = 4;
+    vpDisplay::displayCircle(I, cogs[i], circle_size, vpColor::green, true);
   }
   // initial position
   for (i = 0; i < n; ++i) {
-    vpDisplay::displayCircle(I, cogs[i], 4, vpColor::blue, true);
+    const unsigned int circle_size = 4;
+    vpDisplay::displayCircle(I, cogs[i], circle_size, vpColor::blue, true);
   }
   // if exists, desired position
   if (cogStar != nullptr) {
+    const unsigned int circle_size = 10;
     for (i = 0; i < n; ++i) {
       vpDisplay::displayDotLine(I, cogStar[i], dot[i].getCog(), vpColor::red);
-      vpDisplay::displayCircle(I, cogStar[i], 4, vpColor::red, true);
+      vpDisplay::displayCircle(I, cogStar[i], circle_size, vpColor::red, true);
     }
   }
   vpDisplay::flush(I);
@@ -2472,7 +2573,10 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsign
 void vpDot2::display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
                      const std::list<vpImagePoint> &edges_list, vpColor color, unsigned int thickness)
 {
-  vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
+  const unsigned int val_3 = 3;
+  const unsigned int val_8 = 8;
+
+  vpDisplay::displayCross(I, cog, (val_3 * thickness) + val_8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
 
   std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
@@ -2498,7 +2602,9 @@ void vpDot2::display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
 void vpDot2::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
                      vpColor color, unsigned int thickness)
 {
-  vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
+  const unsigned int val_3 = 3;
+  const unsigned int val_8 = 8;
+  vpDisplay::displayCross(I, cog, (val_3 * thickness) + val_8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
   std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
   for (it = edges_list.begin(); it != edges_list_end; ++it) {

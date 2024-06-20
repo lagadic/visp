@@ -87,7 +87,7 @@ protected:
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram
   std::string m_fragmentShader;
-  PT(Shader) m_shader;
+  PointerTo<Shader> m_shader;
   Texture *m_texture;
   GraphicsOutput *m_buffer;
 

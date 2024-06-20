@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +34,6 @@
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
@@ -394,45 +392,45 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 
   Here an example of SVD decomposition of a non square Matrix M.
 
-\code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix M(3,2);
-  M[0][0] = 1;
-  M[1][0] = 2;
-  M[2][0] = 0.5;
+  int main()
+  {
+    vpMatrix M(3,2);
+    M[0][0] = 1;
+    M[1][0] = 2;
+    M[2][0] = 0.5;
 
-  M[0][1] = 6;
-  M[1][1] = 8 ;
-  M[2][1] = 9 ;
+    M[0][1] = 6;
+    M[1][1] = 8 ;
+    M[2][1] = 9 ;
 
-  vpMatrix V;
-  vpColVector w;
-  vpMatrix Mrec;
-  vpMatrix Sigma;
+    vpMatrix V;
+    vpColVector w;
+    vpMatrix Mrec;
+    vpMatrix Sigma;
 
-  M.svdEigen3(w, V);
-  // Here M is modified and is now equal to U
+    M.svdEigen3(w, V);
+    // Here M is modified and is now equal to U
 
-  // Construct the diagonal matrix from the singular values
-  Sigma.diag(w);
+    // Construct the diagonal matrix from the singular values
+    Sigma.diag(w);
 
-  // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * V.t();
+    // Reconstruct the initial matrix M using the decomposition
+    Mrec =  M * Sigma * V.t();
 
-  // Here, Mrec is obtained equal to the initial value of M
-  // Mrec[0][0] = 1;
-  // Mrec[1][0] = 2;
-  // Mrec[2][0] = 0.5;
-  // Mrec[0][1] = 6;
-  // Mrec[1][1] = 8 ;
-  // Mrec[2][1] = 9 ;
+    // Here, Mrec is obtained equal to the initial value of M
+    // Mrec[0][0] = 1;
+    // Mrec[1][0] = 2;
+    // Mrec[2][0] = 0.5;
+    // Mrec[0][1] = 6;
+    // Mrec[1][1] = 8 ;
+    // Mrec[2][1] = 9 ;
 
-  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
-}
+    std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+  }
   \endcode
 
   \sa svd(), svdLapack(), svdOpenCV()

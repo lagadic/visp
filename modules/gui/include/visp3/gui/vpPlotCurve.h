@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +29,14 @@
  *
  * Description:
  * Define a curve for the vpPlot class.
- *
-*****************************************************************************/
+ */
+
+#ifndef VP_PLOT_CURVE_H
+#define VP_PLOT_CURVE_H
+
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#ifndef vpPlotCurve_H
-#define vpPlotCurve_H
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -61,9 +61,6 @@ public:
   vpColor color;
   vpCurveStyle curveStyle;
   unsigned int thickness;
-  // vpMarkerStyle markerStyle;
-  // char lineStyle[20];
-  // vpList<vpImagePoint> pointList;
   unsigned int nbPoint;
   vpImagePoint lastPoint;
   std::list<double> pointListx;

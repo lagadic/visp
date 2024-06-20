@@ -838,7 +838,7 @@ VP_CHECK_PACKAGE(Log1p)
 # We use CDash set through CTestConfig.cmake file
 # Dashboards are sent to https://cdash-ci.inria.fr/index.php?project=ViSP
 #----------------------------------------------------------------------
-if(BUILD_TESTS)
+if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_DEMOS)
   enable_testing()
   mark_as_advanced(DART_ROOT)
   mark_as_advanced(BUILD_TESTING)
@@ -1281,6 +1281,10 @@ VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND B
 if(VISP_DATASET_FOUND)
   VP_SET(VISP_HAVE_DATASET TRUE)
   set(VISP_HAVE_DATASET_VERSION "(${VISP_DATASET_VERSION_MAJOR}<<16 | ${VISP_DATASET_VERSION_MINOR}<<8 | ${VISP_DATASET_VERSION_PATCH})") # for vpConfig.h
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/vision/include/visp3/vision/vpHomography.h")
+  set(VISP_HAVE_HOMOGRAPHY TRUE)
 endif()
 
 # libraries for Pioneer mobile robots

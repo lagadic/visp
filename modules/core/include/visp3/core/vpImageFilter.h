@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief  Various image filter, convolution, etc...
  */
 
-#ifndef _vpImageFilter_h_
-#define _vpImageFilter_h_
+#ifndef VP_IMAGE_FILTER_H
+#define VP_IMAGE_FILTER_H
 
 #include <fstream>
 #include <iostream>
@@ -1304,10 +1304,11 @@ public:
   {
     const unsigned int height = I.getHeight(), width = I.getWidth();
     const unsigned int stopJ = width - 3;
+    const unsigned int val_3 = 3;
     resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
     for (unsigned int i = 0; i < height; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         // If a mask is used, the image is already initialized with 0s
         bool computeVal = (p_mask == nullptr);
         if (computeVal) {
@@ -1393,8 +1394,8 @@ public:
     const unsigned int height = I.getHeight(), width = I.getWidth();
     const unsigned int stopI = height - 3;
     resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
-
-    for (unsigned int i = 0; i < 3; ++i) {
+    const unsigned int val_3 = 3;
+    for (unsigned int i = 0; i < val_3; ++i) {
       for (unsigned int j = 0; j < width; ++j) {
         // We have to compute the value for each pixel if we don't have a mask or for
         // pixels for which the mask is true otherwise
@@ -1579,15 +1580,18 @@ public:
                                         -100, -75, -30, -5,  0,   0,  0,  0,  0,   0,   0,   5,   30,  75, 100, 75,  30,
                                         5,    4,   24,  60,  80,  60, 24, 4,  1,   6,   15,  20,  15,  6,  1 };
     const vpArray2D<FilterType> smoothingKernel(3, 3);
-    smoothingKernel[0][0] = 1.0;
-    smoothingKernel[0][1] = 2.0;
-    smoothingKernel[0][2] = 1.0;
-    smoothingKernel[1][0] = 2.0;
-    smoothingKernel[1][1] = 4.0;
-    smoothingKernel[1][2] = 2.0;
-    smoothingKernel[2][0] = 1.0;
-    smoothingKernel[2][1] = 2.0;
-    smoothingKernel[2][2] = 1.0;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    smoothingKernel[index_0][index_0] = 1.0;
+    smoothingKernel[index_0][index_1] = 2.0;
+    smoothingKernel[index_0][index_2] = 1.0;
+    smoothingKernel[index_1][index_0] = 2.0;
+    smoothingKernel[index_1][index_1] = 4.0;
+    smoothingKernel[index_1][index_2] = 2.0;
+    smoothingKernel[index_2][index_0] = 1.0;
+    smoothingKernel[index_2][index_1] = 2.0;
+    smoothingKernel[index_2][index_2] = 1.0;
 
     if (size == 0) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");

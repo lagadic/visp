@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,15 @@
  * Key point used in matching algorithm.
  */
 
-#ifndef vpBasicKeyPoint_H
-#define vpBasicKeyPoint_H
+#ifndef VP_BASIC_KEYPOINT_H
+#define VP_BASIC_KEYPOINT_H
 
 /*!
  * \file vpBasicKeyPoint.h
  *  \brief Class that defines what is a keypoint.
 */
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>

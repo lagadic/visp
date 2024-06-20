@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,19 +46,19 @@ namespace VISP_NAMESPACE_NAME
 bool isBimodal(const std::vector<float> &hist_float)
 {
   int modes = 0;
-
+  const int bimodalVal = 2;
   size_t hist_float_size_m_1 = hist_float.size() - 1;
   for (size_t cpt = 1; cpt < hist_float_size_m_1; ++cpt) {
     if ((hist_float[cpt - 1] < hist_float[cpt]) && (hist_float[cpt] > hist_float[cpt + 1])) {
       ++modes;
     }
 
-    if (modes > 2) {
+    if (modes > bimodalVal) {
       return false;
     }
   }
 
-  return (modes == 2);
+  return (modes == bimodalVal);
 }
 
 int computeThresholdHuang(const vpHistogram &hist)
@@ -135,7 +135,8 @@ int computeThresholdHuang(const vpHistogram &hist)
 
 int computeThresholdIntermodes(const vpHistogram &hist)
 {
-  if (hist.getSize() < 3) {
+  const unsigned int minSize = 3;
+  if (hist.getSize() < minSize) {
     return -1;
   }
 
@@ -160,23 +161,26 @@ int computeThresholdIntermodes(const vpHistogram &hist)
   }
 
   int iter = 0;
+  const float nbPtsAverage = 3.;
+  const int maxIter = 10000;
   while (!isBimodal(hist_float)) {
     // Smooth with a 3 point running mean filter
     size_t hist_float_size_m_1 = hist_float.size() - 1;
     for (size_t cpt = 1; cpt < hist_float_size_m_1; ++cpt) {
-      hist_float[cpt] = (hist_float[cpt - 1] + hist_float[cpt] + hist_float[cpt + 1]) / 3;
+      hist_float[cpt] = (hist_float[cpt - 1] + hist_float[cpt] + hist_float[cpt + 1]) / nbPtsAverage;
     }
 
     // First value
     hist_float[0] = (hist_float[0] + hist_float[1]) / 2.0f;
 
     // Last value
-    hist_float[hist_float.size() - 1] = (((hist_float.size() - 2) + hist_float.size()) - 1) / 2.0f;
+    const size_t var2 = 2;
+    hist_float[hist_float.size() - 1] = (((hist_float.size() - var2) + hist_float.size()) - 1) / 2.0f;
 
     ++iter;
 
-    if (iter > 10000) {
-      std::cerr << "Intermodes Threshold not found after 10000 iterations!" << std::endl;
+    if (iter > maxIter) {
+      std::cerr << "Intermodes Threshold not found after " << maxIter << " iterations!" << std::endl;
       return -1;
     }
   }
@@ -220,7 +224,8 @@ int computeThresholdIsoData(const vpHistogram &hist, unsigned int imageSize)
 
   //% STEP 3 to n: repeat step 2 if T(i)~=T(i-1)
   while (std::abs(T2 - T) >= 1) {
-    MBT = sum_ip[static_cast<size_t>(T2 - 2)] / cumsum[static_cast<size_t>(T2 - 2)];
+    const int val_2 = 2;
+    MBT = sum_ip[static_cast<size_t>(T2 - val_2)] / cumsum[static_cast<size_t>(T2 - val_2)];
     MAT = (sum_ip.back() - sum_ip[static_cast<size_t>(T2 - 1)]) / (cumsum.back() - cumsum[static_cast<size_t>(T2 - 1)]);
 
     T = T2;
@@ -267,7 +272,8 @@ int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
 
   bool w_f_eq_nul = false;
   int cpt = 0;
-  while ((cpt < 256) && (!w_f_eq_nul)) {
+  const int maxCpt = 256;
+  while ((cpt < maxCpt) && (!w_f_eq_nul)) {
     w_B += hist[cpt];
     bool w_b_eq_nul = vpMath::nul(w_B, std::numeric_limits<float>::epsilon());
     if (!w_b_eq_nul) {
@@ -412,9 +418,10 @@ unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMeth
     break;
   }
 
+  const unsigned char threshold2 = 255;
   if (threshold != -1) {
     // Threshold
-    vpImageTools::binarise(I, static_cast<unsigned char>(threshold), static_cast<unsigned char>(255), backgroundValue, foregroundValue,
+    vpImageTools::binarise(I, static_cast<unsigned char>(threshold), threshold2, backgroundValue, foregroundValue,
                            foregroundValue);
   }
 

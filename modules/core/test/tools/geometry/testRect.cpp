@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,9 +29,11 @@
  *
  * Description:
  * Test vpRect.
- *
-*****************************************************************************/
+ */
 
+/*!
+  \example testRect.cpp
+ */
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRect.h>

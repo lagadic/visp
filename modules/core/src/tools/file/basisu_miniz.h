@@ -1224,7 +1224,7 @@ tinfl_status tinfl_decompress(tinfl_decompressor *r, const mz_uint8 *pIn_buf_nex
             *pOut_buf_cur++ = (mz_uint8)counter;
           }
           else {
-            mz_uint sym2;
+            mz_int16 sym2;
             mz_uint code_len;
 #if TINFL_USE_64BIT_BITBUF
             if (num_bits < 30) { bit_buf |= (((tinfl_bit_buf_t)MZ_READ_LE32(pIn_buf_cur)) << num_bits); pIn_buf_cur += 4; num_bits += 32; }

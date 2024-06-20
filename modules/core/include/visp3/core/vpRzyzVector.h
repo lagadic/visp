@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
   Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
-#ifndef _vpRzyzVector_h_
-#define _vpRzyzVector_h_
+#ifndef VP_RZYZ_VECTOR_H
+#define VP_RZYZ_VECTOR_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ BEGIN_VISP_NAMESPACE
   * \param[in] suf The suffix of the list.
   * \return std::string The list of available items.
   */
-std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const std::string &sep,
-                                                  const std::string &suf)
+  std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const std::string &sep,
+                                                    const std::string &suf)
 {
   std::string list(pref);
   for (unsigned int i = 0; i < (CANNY_COUNT_BACKEND - 1); ++i) {
@@ -574,14 +574,15 @@ void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<
 {
   const unsigned int w = I.getWidth() / 2;
   const unsigned int height = I.getHeight();
+  const unsigned int val_2 = 2;
 
   GI.resize(height, w);
   for (unsigned int i = 0; i < height; ++i) {
     GI[i][0] = I[i][0];
     for (unsigned int j = 1; j < (w - 1); ++j) {
-      GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, 2 * j);
+      GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, val_2 * j);
     }
-    GI[i][w - 1] = I[i][(2 * w) - 1];
+    GI[i][w - 1] = I[i][(val_2 * w) - 1];
   }
 }
 
@@ -589,14 +590,15 @@ void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<
 {
   const unsigned int h = I.getHeight() / 2;
   const unsigned int width = I.getWidth();
+  const unsigned int val_2 = 2;
 
   GI.resize(h, width);
   for (unsigned int j = 0; j < width; ++j) {
     GI[0][j] = I[0][j];
     for (unsigned int i = 1; i < (h - 1); ++i) {
-      GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
+      GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, val_2 * i, j);
     }
-    GI[h - 1][j] = I[(2 * h) - 1][j];
+    GI[h - 1][j] = I[(val_2 * h) - 1][j];
   }
 }
 
@@ -682,7 +684,8 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
   std::vector<float> meds(3);
   const int orderMeds[] = { 2, 1, 0 }; // To keep the order R, G, B
   const int orderCvChannels[] = { 0, 1, 2 }; // Because the order of the cv::Mat is B, G, R
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     meds[orderMeds[i]] = median(channels[orderCvChannels[i]]);
   }
   return meds;

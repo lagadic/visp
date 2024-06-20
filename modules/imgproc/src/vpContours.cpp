@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,8 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
   i2j2 = i1j1;
   vpImagePoint i3j3 = ij; //(3.2)
 
-  bool checked[8] = { false, false, false, false, false, false, false, false };
+  const int sizeChecked = 8;
+  bool checked[sizeChecked] = { false, false, false, false, false, false, false, false };
 
   bool i4j4_eq_ij_and_i3j3_eq_i1j1 = false;
   while (i4j4_eq_ij_and_i3j3_eq_i1j1 == false) {
@@ -196,7 +197,7 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
     vpImagePoint i4j4(-1, -1);
 
     // Reset checked
-    for (int cpt = 0; cpt < 8; ++cpt) {
+    for (int cpt = 0; cpt < sizeChecked; ++cpt) {
       checked[cpt] = false;
     }
 

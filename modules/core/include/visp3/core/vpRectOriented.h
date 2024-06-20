@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Defines a (possibly oriented) rectangle in the plane.
  */
 
-#ifndef _vpRectOriented_h_
-#define _vpRectOriented_h_
+#ifndef VP_RECT_ORIENTED_H
+#define VP_RECT_ORIENTED_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>

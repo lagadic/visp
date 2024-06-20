@@ -110,7 +110,7 @@ class HeaderEnvironment():
         current_mapping[alias.alias] = get_type(alias.type, {}, current_mapping)
 
       for typedef in data.typedefs:
-        if not name_is_anonymous(typedef.type.typename):
+        if not typedef_is_anonymous(typedef.type):
           current_mapping[typedef.name] = get_type(typedef.type, {}, current_mapping)
         else:
           current_mapping[typedef.name] = scope + typedef.name

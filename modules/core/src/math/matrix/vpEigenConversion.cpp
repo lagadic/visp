@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +67,7 @@ void eigen2visp(const Eigen::VectorXd &src, VISP_NAMESPACE_ADDRESSING vpColVecto
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void eigen2visp(const Eigen::RowVectorXd &src, VISP_NAMESPACE_ADDRESSING vpRowVector &dst)
 {
@@ -82,7 +81,7 @@ void eigen2visp(const Eigen::RowVectorXd &src, VISP_NAMESPACE_ADDRESSING vpRowVe
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 

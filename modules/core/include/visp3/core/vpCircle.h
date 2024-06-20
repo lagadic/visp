@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,11 @@
   \brief  class that defines what is a circle
 */
 
-#ifndef _vpCircle_h_
-#define _vpCircle_h_
+#ifndef VP_CIRCLE_H
+#define VP_CIRCLE_H
 
 #include <math.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
@@ -109,19 +108,19 @@ public:
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
 
-  double get_n20() const { return p[2]; }
-  double get_n11() const { return p[3]; }
-  double get_n02() const { return p[4]; }
+  double get_n20() const { const unsigned int index_2 = 2; return p[index_2]; }
+  double get_n11() const { const unsigned int index_3 = 3; return p[index_3]; }
+  double get_n02() const { const unsigned int index_4 = 4; return p[index_4]; }
 
-  double getA() const { return cP[0]; }
-  double getB() const { return cP[1]; }
-  double getC() const { return cP[2]; }
+  double getA() const { const unsigned int index_0 = 0; return cP[index_0]; }
+  double getB() const { const unsigned int index_1 = 1; return cP[index_1]; }
+  double getC() const { const unsigned int index_2 = 2; return cP[index_2]; }
 
-  double getX() const { return cP[3]; }
-  double getY() const { return cP[4]; }
-  double getZ() const { return cP[5]; }
+  double getX() const { const unsigned int index_3 = 3; return cP[index_3]; }
+  double getY() const { const unsigned int index_4 = 4; return cP[index_4]; }
+  double getZ() const { const unsigned int index_5 = 5; return cP[index_5]; }
 
-  double getR() const { return cP[6]; }
+  double getR() const { const unsigned int index_6 = 6; return cP[index_6]; }
 
   void projection() vp_override;
   void projection(const vpColVector &cP, vpColVector &p) const vp_override;
@@ -147,21 +146,21 @@ public:
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_20 = mu_20/a\f$.
    */
-  vp_deprecated double get_mu20() const { return p[2]; }
+  vp_deprecated double get_mu20() const { const unsigned int index_2 = 2; return p[index_2]; }
   /*!
    * \deprecated You should rather use get_n11().
    * This function is incorrectly named and is confusing since it
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_11 = mu@name Deprecated functions_11/a\f$.
    */
-  vp_deprecated double get_mu11() const { return p[3]; }
+  vp_deprecated double get_mu11() const { const unsigned int index_3 = 3; return p[index_3]; }
   /*!
    * \deprecated You should rather use get_n02().
    * This function is incorrectly named and is confusing since it
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_02 = mu_02/a\f$.
    */
-  vp_deprecated double get_mu02() const { return p[4]; }
+  vp_deprecated double get_mu02() const { const unsigned int index_4 = 4; return p[index_4]; }
   //@}
 #endif
 protected:

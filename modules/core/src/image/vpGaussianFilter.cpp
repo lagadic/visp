@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,8 +86,9 @@ public:
   {
     I_blur.resize(I.getHeight(), I.getWidth());
     if (!m_deinterleave) {
-      SimdGaussianBlurRun(m_funcPtrRGBa, reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth() * 4,
-                          reinterpret_cast<unsigned char *>(I_blur.bitmap), I_blur.getWidth() * 4);
+      const unsigned int rgba_size = 4;
+      SimdGaussianBlurRun(m_funcPtrRGBa, reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth() * rgba_size,
+                          reinterpret_cast<unsigned char *>(I_blur.bitmap), I_blur.getWidth() * rgba_size);
     }
     else {
       vpImageConvert::split(I, &m_red, &m_green, &m_blue);

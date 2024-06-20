@@ -44,6 +44,7 @@
 
 #include <limits> // numeric_limits
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/sensor/vpKinect.h>
 

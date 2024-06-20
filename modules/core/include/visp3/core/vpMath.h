@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  * the C mathematics library (math.h)
  */
 
-#ifndef _vpMATH_H_
-#define _vpMATH_H_
+#ifndef VP_MATH_H
+#define VP_MATH_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -77,16 +77,16 @@
 
 #endif
 
-#ifndef M_PIf
-#define M_PIf 3.14159265358979323846f
+#ifndef M_PI_FLOAT
+#define M_PI_FLOAT 3.14159265358979323846f
 #endif
 
-#ifndef M_PI_2f
-#define M_PI_2f (M_PIf / 2.0f)
+#ifndef M_PI_2_FLOAT
+#define M_PI_2_FLOAT (M_PI_FLOAT / 2.0f)
 #endif
 
-#ifndef M_PI_4f
-#define M_PI_4f (M_PIf / 4.0f)
+#ifndef M_PI_4_FLOAT
+#define M_PI_4_FLOAT (M_PI_FLOAT / 4.0f)
 #endif
 
 #include <visp3/core/vpException.h>
@@ -139,11 +139,11 @@ public:
   static float getAngleBetweenMinPiAndPi(const float &theta)
   {
     float theta1 = theta;
-    if (theta1 > M_PIf) {
-      theta1 -= 2.0f * M_PIf;
+    if (theta1 > M_PI_FLOAT) {
+      theta1 -= 2.0f * M_PI_FLOAT;
     }
-    else if (theta1 <= -M_PIf) {
-      theta1 += 2.0f * M_PIf;
+    else if (theta1 <= -M_PI_FLOAT) {
+      theta1 += 2.0f * M_PI_FLOAT;
     }
     return theta1;
   }

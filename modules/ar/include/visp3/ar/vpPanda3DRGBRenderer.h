@@ -111,7 +111,7 @@ private:
 
   NodePath m_backgroundImage;
   DisplayRegion *m_display2d;
-  PT(Texture) m_backgroundTexture;
+  Texture* m_backgroundTexture;
 
 };
 
