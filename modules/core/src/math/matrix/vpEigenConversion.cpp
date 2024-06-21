@@ -29,8 +29,7 @@
  *
  * Description:
  * ViSP <--> Eigen conversion.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpEigenConversion.h>
 

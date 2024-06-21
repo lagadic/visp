@@ -29,8 +29,7 @@
  *
  * Description:
  * Operation on row vectors.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRowVector.cpp

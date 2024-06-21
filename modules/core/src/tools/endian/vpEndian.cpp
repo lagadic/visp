@@ -46,7 +46,13 @@ namespace vpEndian
   Swap 16 bits by shifting to the right the first byte and by shifting to the
   left the second byte.
 */
-uint16_t swap16bits(uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
+uint16_t swap16bits(uint16_t val)
+{
+  const unsigned int magic_8 = 8;
+  const unsigned int magic_0x00FF = 0x00FF;
+  const unsigned int magic_0xFF00 = 0xFF00;
+  return (((val >> magic_8) & magic_0x00FF) | ((val << magic_8) & magic_0xFF00));
+}
 
 /*!
   Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
@@ -54,8 +60,14 @@ uint16_t swap16bits(uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) 
 */
 uint32_t swap32bits(uint32_t val)
 {
-  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
-          ((val << 24) & 0xFF000000));
+  const unsigned int magic_8 = 8;
+  const unsigned int magic_24 = 24;
+  const unsigned int magic_0x000000FF = 0x000000FF;
+  const unsigned int magic_0x0000FF00 = 0x0000FF00;
+  const unsigned int magic_0x00FF0000 = 0x00FF0000;
+  const unsigned int magic_0xFF000000 = 0xFF000000;
+  return (((val >> magic_24) & magic_0x000000FF) | ((val >> magic_8) & magic_0x0000FF00) | ((val << magic_8) & magic_0x00FF0000) |
+          ((val << magic_24) & magic_0xFF000000));
 }
 
 /*!

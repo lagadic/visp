@@ -29,8 +29,7 @@
  *
  * Description:
  * Matrix LU decomposition.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 

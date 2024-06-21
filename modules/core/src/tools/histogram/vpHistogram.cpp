@@ -511,7 +511,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
   Smoothes the histogram.
 
   A simple average scheme is used where each value \f$h(i)\f$ in the
-  histogram is replaced by the average of itself and the neighbours.
+  histogram is replaced by the average of itself and the neighbors.
 
   \f[h(i) = \sum_{j=i-\frac{fsize}{2}}^{i+\frac{fsize}{2}} h(j) \f]
 
@@ -519,7 +519,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
   around each point used to compute the mean value.
 
   \exception vpImageException::notInitializedError : Histogram array
-  not initialsed. Means that the histogram was not calculated before.
+  not initialised. Means that the histogram was not calculated before.
 
   \sa calculate()
 
