@@ -67,7 +67,7 @@ BEGIN_VISP_NAMESPACE
 
 int main()
 {
-#ifndef WIN32
+#ifndef _WIN32
   vpSerial serial("/dev/ttyUSB0");
 #endif
 }
@@ -79,7 +79,7 @@ int main()
 
 int main()
 {
-#ifndef WIN32
+#ifndef _WIN32
   vpSerial serial;
   serial.setPort("/dev/ttyUSB0");
   serial.open();
@@ -146,7 +146,7 @@ void vpSerial::setStopbits(const stopbits_t &stopbits) { m_stopbits = stopbits; 
 
 int main()
 {
-#ifndef WIN32
+#ifndef _WIN32
   vpSerial serial;
   serial.setPort("/dev/ttyUSB0");
   serial.open();
@@ -207,7 +207,7 @@ void vpSerial::close()
 
 int main()
 {
-#ifndef WIN32
+#ifndef _WIN32
   vpSerial serial;
 
   serial.setPort("/dev/ttyUSB0");

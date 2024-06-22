@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
 
 int main()
 {
-#ifndef WIN32
+#ifndef _WIN32
   vpSerial serial("/dev/ttyUSB0");
   serial.write("Hello world");
 #endif
