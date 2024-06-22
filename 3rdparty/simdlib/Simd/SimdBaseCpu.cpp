@@ -33,7 +33,7 @@
 #include <sstream>
 #include <iostream>
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -77,7 +77,7 @@ namespace Simd {
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
     bool CheckBit(int eax, int ecx, Cpuid::Register index, Cpuid::Bit bit) {
       unsigned int registers[4] = { 0, 0, 0, 0 };
-#if defined(_MSC_VER)
+#if defined(_WIN32)
       __cpuidex((int*)registers, eax, ecx);
 #elif (defined __GNUC__)
       if (__get_cpuid_max(0, NULL) < eax)
@@ -124,7 +124,7 @@ namespace Simd {
       }
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
     typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION Info;
 
     void GetLogicalProcessorInformation(std::vector<Info>& info) {

@@ -53,7 +53,7 @@
  // 4723 : potential divide by 0
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef NAN
 // https://msdn.microsoft.com/en-us/library/w22adx1s%28v=vs.120%29.aspx
 // http://tdistler.com/2011/03/24/how-to-define-nan-not-a-number-on-windows
