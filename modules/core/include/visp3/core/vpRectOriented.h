@@ -67,9 +67,7 @@ public:
   vpRectOriented &operator=(const vpRect &rect);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  explicit operator vpRect();
-#else
-  operator vpRect();
+  VP_EXPLICIT operator vpRect();
 #endif
 
   void setCenter(const vpImagePoint &center);
