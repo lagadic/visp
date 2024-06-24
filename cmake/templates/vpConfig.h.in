@@ -701,7 +701,7 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Add the macro for explicit keyword
 #ifndef VP_EXPLICIT
-#  if ((__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)) && defined(ENABLE_EXPLICIT_KEYWORD)
+#  if defined(ENABLE_EXPLICIT_KEYWORD)
 #    define VP_EXPLICIT explicit
 #  else
 #    define VP_EXPLICIT
