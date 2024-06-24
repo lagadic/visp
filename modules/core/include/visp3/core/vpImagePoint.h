@@ -221,7 +221,7 @@ public:
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
       return { end.get_i() - (line_slope * (end.get_j() - j_)), j_ };
 #else
-      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j_), j_);
+      return vpImagePoint(end.get_i() - (line_slope * (end.get_j() - j_)), j_);
 #endif
     }
     else {

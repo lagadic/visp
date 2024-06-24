@@ -172,7 +172,7 @@ public:
    * \deprecated Use rather getDesiredArea()
    * Retrieves the desired surface \e a* as specified in the constructor.
    */
-  vp_deprecated double getDesiredSurface() const { return desiredSurface; }
+  VP_DEPRECATED double getDesiredSurface() const { return desiredSurface; }
   //@}
 #endif
 

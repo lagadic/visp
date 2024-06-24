@@ -169,6 +169,7 @@ public:
     \sa getWidth()
    */
   inline unsigned int getCols() const { return width; }
+
   /*!
     Get the image height.
 
@@ -245,9 +246,9 @@ public:
 
   //! Set the size of the image
   void init(unsigned int height, unsigned int width);
-  //! Set the size of the image
+  //! Set the size of the image and initialize all the elements to 'value'
   void init(unsigned int height, unsigned int width, Type value);
-  //! init from an image stored as a continuous array in memory
+  //! Initialization from an image stored as a continuous array in memory
   void init(Type *const array, unsigned int height, unsigned int width, bool copyData = false);
   void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
@@ -371,10 +372,6 @@ private:
 template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
   init(h, w);
-  /*
-  //  for (unsigned int i = 0; i < npixels; ++i)
-  //    bitmap[i] = value;
-  */
   std::fill(bitmap, bitmap + npixels, value);
 }
 
@@ -487,7 +484,8 @@ template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
   : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
-  init(h, w, 0);
+  Type val(0);
+  init(h, w, val);
 }
 
 /*!

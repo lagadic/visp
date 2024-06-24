@@ -209,7 +209,7 @@ public:
 
 public:
   vpV4l2Grabber();
-  explicit vpV4l2Grabber(bool verbose);
+  VP_EXPLICIT vpV4l2Grabber(bool verbose);
   vpV4l2Grabber(unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);

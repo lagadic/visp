@@ -33,8 +33,8 @@
  *
 *****************************************************************************/
 
-#ifndef _vpConfig_h_
-#define _vpConfig_h_
+#ifndef VP_CONFIG_H
+#define VP_CONFIG_H
 
 // To get access to EXIT_SUCCESS and EXIT_FAILURE
 #include <cstdlib>
@@ -610,15 +610,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 #include <visp3/core/vpNullptrEmulated.h>
 #endif
 
-// Macro to be able to add override keyword
-#ifndef vp_override
-  #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
-    #define vp_override override
-  #else
-    #define vp_override
-  #endif
-#endif
-
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.
@@ -668,12 +659,52 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  define VISP_LOCAL
 #endif
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 // Add the material to produce a warning when deprecated functions are used
-#ifndef vp_deprecated
+#  ifndef vp_deprecated
+#    if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#      define vp_deprecated __attribute__((deprecated))
+#    else
+#      define vp_deprecated __declspec(deprecated)
+#    endif
+#  endif
+// Macro to be able to add override keyword
+#  ifndef vp_override
+#   if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+#     define vp_override override
+#   else
+#     define vp_override
+#   endif
+#  endif
+#endif
+
+// Add the material to produce a warning when deprecated functions are used
+#ifndef VP_DEPRECATED
 #  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#    define vp_deprecated __attribute__((deprecated))
+#    define VP_DEPRECATED __attribute__((deprecated))
 #  else
-#    define vp_deprecated __declspec(deprecated)
+#    define VP_DEPRECATED __declspec(deprecated)
+#  endif
+#endif
+
+// Macro to be able to add override keyword
+#ifndef VP_OVERRIDE
+#  if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+#    define VP_OVERRIDE override
+#  else
+#    define VP_OVERRIDE
+#  endif
+#endif
+
+// Defined if the user wants to enable explicit keyword
+#cmakedefine ENABLE_EXPLICIT_KEYWORD
+
+// Add the macro for explicit keyword
+#ifndef VP_EXPLICIT
+#  if ((__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)) && defined(ENABLE_EXPLICIT_KEYWORD)
+#    define VP_EXPLICIT explicit
+#  else
+#    define VP_EXPLICIT
 #  endif
 #endif
 

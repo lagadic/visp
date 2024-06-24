@@ -267,19 +267,19 @@ public:
   vpFeaturePointPolar &build(const double &rho, const double &theta, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1) const vp_override;
+    unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1) const vp_override;
+    unsigned int thickness = 1) const VP_OVERRIDE;
 
   // feature duplication
-  vpFeaturePointPolar *duplicate() const vp_override;
+  vpFeaturePointPolar *duplicate() const VP_OVERRIDE;
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   // basic construction
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 
   // get the point rho-coordinates
   double get_rho() const;
@@ -289,10 +289,10 @@ public:
   double get_Z() const;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   // print the name of the feature
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   // set the point rho-coordinates
   void set_rho(double rho);

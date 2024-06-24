@@ -209,22 +209,22 @@ public:
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu);
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q);
-  explicit vpHomogeneousMatrix(const vpPoseVector &p);
-  explicit vpHomogeneousMatrix(const std::vector<float> &v);
-  explicit vpHomogeneousMatrix(const std::vector<double> &v);
+  VP_EXPLICIT vpHomogeneousMatrix(const vpPoseVector &p);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::vector<float> &v);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  explicit vpHomogeneousMatrix(const std::initializer_list<double> &list);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
-  vp_deprecated void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
-  vp_deprecated void buildFrom(const vpPoseVector &p);
-  vp_deprecated void buildFrom(const std::vector<float> &v);
-  vp_deprecated void buildFrom(const std::vector<double> &v);
-  vp_deprecated void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
+  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
+  VP_DEPRECATED void buildFrom(const vpPoseVector &p);
+  VP_DEPRECATED void buildFrom(const std::vector<float> &v);
+  VP_DEPRECATED void buildFrom(const std::vector<double> &v);
+  VP_DEPRECATED void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
 #endif
   vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -403,11 +403,11 @@ public:
     * \deprecated Provided only for compat with previous releases.
     *  This function does nothing.
     */
-  vp_deprecated void init() { }
+  VP_DEPRECATED void init() { }
   /*!
    *  \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
+  VP_DEPRECATED void setIdentity();
   //@}
 #endif
 

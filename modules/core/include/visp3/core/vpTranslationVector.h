@@ -121,15 +121,15 @@ public:
   vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { }
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
-  explicit vpTranslationVector(const vpHomogeneousMatrix &M);
-  explicit vpTranslationVector(const vpPoseVector &p);
-  explicit vpTranslationVector(const vpColVector &v);
+  VP_EXPLICIT vpTranslationVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpTranslationVector(const vpPoseVector &p);
+  VP_EXPLICIT vpTranslationVector(const vpColVector &v);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpTranslationVector buildFrom(double tx, double ty, double tz);
-  vp_deprecated vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
-  vp_deprecated vpTranslationVector buildFrom(const vpPoseVector &p);
-  vp_deprecated vpTranslationVector buildFrom(const vpColVector &v);
+  VP_DEPRECATED vpTranslationVector buildFrom(double tx, double ty, double tz);
+  VP_DEPRECATED vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
+  VP_DEPRECATED vpTranslationVector buildFrom(const vpPoseVector &p);
+  VP_DEPRECATED vpTranslationVector buildFrom(const vpColVector &v);
 #endif
   vpTranslationVector &build(const double &tx, const double &ty, const double &tz);
   vpTranslationVector &build(const vpHomogeneousMatrix &M);
@@ -202,7 +202,7 @@ public:
       @name Deprecated functions
   */
   //@{
-  vp_deprecated double euclideanNorm() const;
+  VP_DEPRECATED double euclideanNorm() const;
   //}
 #endif
 

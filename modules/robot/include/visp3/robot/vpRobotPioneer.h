@@ -70,7 +70,7 @@ private: /* Not allowed functions. */
 
 public:
   vpRobotPioneer();
-  virtual ~vpRobotPioneer() vp_override;
+  virtual ~vpRobotPioneer() VP_OVERRIDE;
 
   /*!
    * Get the robot Jacobian expressed at point E, the point located at the
@@ -121,7 +121,7 @@ private: // Set as private since not implemented
   void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) vp_override { };
 
 public:
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
 
   /*!
    * Enable or disable sonar device usage.

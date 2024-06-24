@@ -104,7 +104,7 @@ public:
   typedef enum { AUTO = 1, CONTROLLED = 2, RELEASED = 3 } vpControllerType;
 
   vpServolens();
-  explicit vpServolens(const char *port);
+  VP_EXPLICIT vpServolens(const char *port);
   virtual ~vpServolens();
 
   void open(const char *port = "/dev/ttyS0");

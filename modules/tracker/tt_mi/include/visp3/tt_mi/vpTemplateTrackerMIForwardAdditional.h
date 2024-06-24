@@ -77,7 +77,7 @@ public:
   vpTemplateTrackerMIForwardAdditional()
     : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
   { }
-  explicit vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
+  VP_EXPLICIT vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
   void setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method) { minimizationMethod = method; }
 };
 END_VISP_NAMESPACE

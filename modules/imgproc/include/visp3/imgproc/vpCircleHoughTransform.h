@@ -686,7 +686,7 @@ public:
    * from a \b vpCircleHoughTransformParams object.
    * \param[in] algoParams The parameters of the Circle Hough Transform.
    */
-  explicit vpCircleHoughTransform(const vpCircleHoughTransformParams &algoParams);
+  VP_EXPLICIT vpCircleHoughTransform(const vpCircleHoughTransformParams &algoParams);
 
   /**
    * \brief Destroy the vp Circle Hough Transform object
@@ -758,7 +758,7 @@ public:
    * does not exist.
    * \param[in] jsonPath The path towards the JSON configuration file.
    */
-  explicit vpCircleHoughTransform(const std::string &jsonPath);
+  VP_EXPLICIT vpCircleHoughTransform(const std::string &jsonPath);
 
   /**
    * \brief Initialize all the algorithm parameters using the JSON file

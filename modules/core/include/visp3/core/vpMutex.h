@@ -67,7 +67,7 @@ namespace VISP_NAMESPACE_NAME
 
    \sa vpScopedLock
 */
-class vp_deprecated vpMutex
+class VP_DEPRECATED vpMutex
 {
 public:
   vpMutex() : m_mutex()

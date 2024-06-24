@@ -127,7 +127,7 @@ public:
   /*!
    * Constructor from a vector of points.
    */
-  explicit vpPose(const std::vector<vpPoint> &lP);
+  VP_EXPLICIT vpPose(const std::vector<vpPoint> &lP);
 
   /*!
    * Destructor that deletes the array of point (freed the memory).

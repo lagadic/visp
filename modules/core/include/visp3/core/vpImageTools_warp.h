@@ -209,9 +209,9 @@ void vpImageTools::warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<T
     unsigned int dst_width = dst.getWidth();
     for (unsigned int i = 0; i < dst_height; ++i) {
       for (unsigned int j = 0; j < dst_width; ++j) {
-        double x = ((a0 * (centerCorner ? j + 0.5 : j)) + (a1 * (centerCorner ? i + 0.5 : i))) + a2;
-        double y = ((a3 * (centerCorner ? j + 0.5 : j)) + (a4 * (centerCorner ? i + 0.5 : i))) + a5;
-        double w = ((a6 * (centerCorner ? j + 0.5 : j)) + (a7 * (centerCorner ? i + 0.5 : i))) + a8;
+        double x = ((a0 * (centerCorner ? (j + 0.5) : j)) + (a1 * (centerCorner ? (i + 0.5) : i))) + a2;
+        double y = ((a3 * (centerCorner ? (j + 0.5) : j)) + (a4 * (centerCorner ? (i + 0.5) : i))) + a5;
+        double w = ((a6 * (centerCorner ? (j + 0.5) : j)) + (a7 * (centerCorner ? (i + 0.5) : i))) + a8;
 
         if (vpMath::nul(w, std::numeric_limits<double>::epsilon())) {
           w = 1.0;
@@ -281,22 +281,22 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
               const Type val10 = src[y_ + 1][x_];
               const Type val11 = src[y_ + 1][x_ + 1];
               const int64_t interp_i64 =
-                static_cast<int64_t>(s_1 * t_1 * val00 + s * t_1 * val01 + s_1 * t * val10 + s * t * val11);
-              const float interp = (interp_i64 >> (nbits * 2)) + (interp_i64 & 0xFFFFFFFF) * precision_2;
+                static_cast<int64_t>(((s_1 * t_1) * val00) + ((s * t_1) * val01) + ((s_1 * t) * val10) + ((s * t) * val11));
+              const float interp = (interp_i64 >> (nbits * 2)) + ((interp_i64 & 0xFFFFFFFF) * precision_2);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (y_ < (static_cast<int>(src.getHeight()) - 1)) {
               const Type val00 = src[y_][x_];
               const Type val10 = src[y_ + 1][x_];
-              const int64_t interp_i64 = static_cast<int64_t>(t_1 * val00 + t * val10);
-              const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
+              const int64_t interp_i64 = static_cast<int64_t>((t_1 * val00) + (t * val10));
+              const float interp = (interp_i64 >> nbits) + ((interp_i64 & 0xFFFF) * precision_1);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (x_ < (static_cast<int>(src.getWidth()) - 1)) {
               const Type val00 = src[y_][x_];
               const Type val01 = src[y_][x_ + 1];
-              const int64_t interp_i64 = static_cast<int64_t>(s_1 * val00 + s * val01);
-              const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
+              const int64_t interp_i64 = static_cast<int64_t>((s_1 * val00) + (s * val01));
+              const float interp = (interp_i64 >> nbits) + ((interp_i64 & 0xFFFF) * precision_1);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else {

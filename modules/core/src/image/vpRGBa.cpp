@@ -44,12 +44,42 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
-  Copy operator (from an unsigned char value)
+  Copy operator that initializes all the components to `v`.
 
-  \param v : Input color ( R = G = B = v )
+  \param v : Value used to initialize the object ( R = G = B = v ).
 */
 vpRGBa &vpRGBa::operator=(const unsigned char &v)
 {
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
+  return *this;
+}
+
+/*!
+  Copy operator that initializes all the components to `v`.
+
+  \param v : Value used to initialize the object ( R = G = B = v ).
+*/
+vpRGBa &vpRGBa::operator=(const unsigned int &v)
+{
+  assert(v < 256);
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
+  return *this;
+}
+
+/*!
+  Copy operator that initializes all the components to `v`.
+
+  \param v : Value used to initialize the object ( R = G = B = v ).
+*/
+vpRGBa &vpRGBa::operator=(const int &v)
+{
+  assert(v < 256);
   this->R = v;
   this->G = v;
   this->B = v;
@@ -251,10 +281,24 @@ bool vpRGBa::operator>(const vpRGBa &v) const
   return (gray1 > gray2);
 }
 
-vpRGBa operator*(const double &x, const  vpRGBa &rgb) { return rgb * x; }
+/*!
+ * Scale RGB components by x. Alpha component remain unchanged.
+ *
+ * @param x : Value used to scale RGB color components.
+ * @param rgb : RGB color components to rescale.
+ * @return Rescaled components with RGB * x.
+ */
+vpRGBa operator*(const double &x, const  vpRGBa &rgb)
+{
+  vpRGBa rgba;
+  rgba.R = rgb.R * x;
+  rgba.G = rgb.G * x;
+  rgba.B = rgb.B * x;
+  rgba.A = rgb.A;
+  return rgba;
+}
 
 /*!
-
   \relates vpRGBa
 
   Writes the RGBA values to the stream \e os, and
@@ -262,17 +306,17 @@ vpRGBa operator*(const double &x, const  vpRGBa &rgb) { return rgb * x; }
   coordinates are separated by a comma.
 
   The following code prints the intensity of the pixel in the middle of the image:
-\code
-#include <visp3/core/vpImage.h>
+  \code
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<vpRGBa> I(480,640);
+  int main()
+  {
+    vpImage<vpRGBa> I(480,640);
 
-  std::cout << "RGB: " << I[240][320] << std::endl;
+    std::cout << "RGB: " << I[240][320] << std::endl;
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)

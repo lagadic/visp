@@ -171,41 +171,41 @@ public:
   vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
-  explicit vpThetaUVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpThetaUVector(const vpHomogeneousMatrix &M);
   // constructor initialize a Theta U vector from a pose vector
-  explicit vpThetaUVector(const vpPoseVector &p);
+  VP_EXPLICIT vpThetaUVector(const vpPoseVector &p);
   // constructor initialize a Theta U vector from a rotation matrix
-  explicit vpThetaUVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpThetaUVector(const vpRotationMatrix &R);
   // constructor initialize a Theta U vector from a RzyxVector
-  explicit vpThetaUVector(const vpRzyxVector &rzyx);
+  VP_EXPLICIT vpThetaUVector(const vpRzyxVector &rzyx);
   // constructor initialize a Theta U vector from a RzyzVector
-  explicit vpThetaUVector(const vpRzyzVector &rzyz);
+  VP_EXPLICIT vpThetaUVector(const vpRzyzVector &rzyz);
   // constructor initialize a Theta U vector from a RxyzVector
-  explicit vpThetaUVector(const vpRxyzVector &rxyz);
-  explicit vpThetaUVector(const vpQuaternionVector &q);
-  explicit vpThetaUVector(const vpColVector &tu);
-  explicit vpThetaUVector(const std::vector<double> &tu);
+  VP_EXPLICIT vpThetaUVector(const vpRxyzVector &rxyz);
+  VP_EXPLICIT vpThetaUVector(const vpQuaternionVector &q);
+  VP_EXPLICIT vpThetaUVector(const vpColVector &tu);
+  VP_EXPLICIT vpThetaUVector(const std::vector<double> &tu);
 
   vpThetaUVector(double tux, double tuy, double tuz);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert an homogeneous matrix into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
   // convert a pose vector into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpPoseVector &p);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpPoseVector &p);
   // convert a rotation matrix into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpRotationMatrix &R);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpRotationMatrix &R);
   // convert an Rzyx vector into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
   // convert an Rzyz vector into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpRzyzVector &zyz);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpRzyzVector &zyz);
   // convert an Rxyz vector into Theta U vector
-  vp_deprecated vpThetaUVector buildFrom(const vpRxyzVector &xyz);
-  vp_deprecated vpThetaUVector buildFrom(const vpQuaternionVector &q);
-  vp_deprecated vpThetaUVector buildFrom(const vpColVector &tu);
-  vp_deprecated vpThetaUVector buildFrom(const std::vector<double> &tu);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpRxyzVector &xyz);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpQuaternionVector &q);
+  VP_DEPRECATED vpThetaUVector buildFrom(const vpColVector &tu);
+  VP_DEPRECATED vpThetaUVector buildFrom(const std::vector<double> &tu);
 
-  vp_deprecated void buildFrom(double tux, double tuy, double tuz);
+  VP_DEPRECATED void buildFrom(double tux, double tuy, double tuz);
 #endif
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector &build(const vpHomogeneousMatrix &M);

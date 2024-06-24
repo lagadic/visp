@@ -123,7 +123,7 @@ public:
   {
     *this = sick;
   };
-  virtual ~vpSickLDMRS() vp_override;
+  virtual ~vpSickLDMRS() VP_OVERRIDE;
 
   /*! Copy operator. */
   vpSickLDMRS &operator=(const vpSickLDMRS &sick)

@@ -246,7 +246,7 @@ public:
                                 // value present in it
 
   // Constructors
-  explicit vpMomentObject(unsigned int order);
+  VP_EXPLICIT vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject &srcobj);
   /*!
   Virtual destructor to allow polymorphic usage.

@@ -354,7 +354,7 @@ private:
   //#endif
 
 public:
-  explicit vp1394TwoGrabber(bool reset = true);
+  VP_EXPLICIT vp1394TwoGrabber(bool reset = true);
   virtual ~vp1394TwoGrabber();
 
   void acquire(vpImage<unsigned char> &I);

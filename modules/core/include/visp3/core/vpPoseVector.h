@@ -191,7 +191,7 @@ public:
   // constructor from 3 angles (in radian)
   vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // constructor convert an homogeneous matrix in a pose
-  explicit vpPoseVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpPoseVector(const vpHomogeneousMatrix &M);
   // constructor  convert a translation and a "thetau" vector into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu);
   // constructor  convert a translation and a rotation matrix into a pose
@@ -200,13 +200,13 @@ public:
   virtual ~vpPoseVector() { }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+  VP_DEPRECATED vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
-  vp_deprecated vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
-  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
   //  convert a translation and a rotation matrix into a pose
-  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
 #endif
 
   vpPoseVector &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
@@ -319,7 +319,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  vp_deprecated void init() { };
+  VP_DEPRECATED void init() { };
   //@}
 #endif
 };

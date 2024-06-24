@@ -76,7 +76,7 @@ BEGIN_VISP_NAMESPACE
  *   vpImage<unsigned char> I(240, 320);
  *
  *   // Fill the image with a black rectangle
- *   I = 0;
+ *   I = 0u;
  *   for (int i = 100; i < 180; i ++) {
  *     for (int j = 0; j < 320; j ++) {
  *       I[i][j] = 255;

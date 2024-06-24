@@ -147,7 +147,7 @@ public:
    *
    * \param c : Value of the constant gain. A typical value is 0.5.
    */
-  explicit vpAdaptiveGain(double c);
+  VP_EXPLICIT vpAdaptiveGain(double c);
 
   /*!
    * Constructor that initializes the gain as adaptive.

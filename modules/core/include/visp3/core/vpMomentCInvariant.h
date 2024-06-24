@@ -141,7 +141,7 @@ private:
   bool flg_sxsynormalization_;
 
 public:
-  explicit vpMomentCInvariant(bool flg_sxsynormalization = false);
+  VP_EXPLICIT vpMomentCInvariant(bool flg_sxsynormalization = false);
 
   /*!
     Shorcut for getting the value of \f$C_1\f$.

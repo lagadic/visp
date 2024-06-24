@@ -54,7 +54,6 @@ BEGIN_VISP_NAMESPACE
   vpRotationMatrix R;
   vpMatrix M = R;
   \endcode
-
 */
 vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 {
@@ -62,6 +61,160 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 
   if ((data != nullptr) && (A.data != nullptr) && (data != A.data)) {
     memcpy(data, A.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a homogenous matrix to a matrix.
+
+  \param R : Homogeneous matrix.
+
+  The following example shows how to create a matrix from a homogenous matrix:
+  \code
+  vpHomogeneousMatrix M;
+  vpMatrix M = M;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpHomogeneousMatrix &M)
+{
+  resize(M.getRows(), M.getCols(), false, false);
+
+  if ((data != nullptr) && (M.data != nullptr) && (data != M.data)) {
+    memcpy(data, M.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a rotation matrix to a matrix.
+
+  \param R : Rotation matrix.
+
+  The following example shows how to create a matrix from a rotation matrix:
+  \code
+  vpRotationMatrix R;
+  vpMatrix M = R;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpRotationMatrix &R)
+{
+  resize(R.getRows(), R.getCols(), false, false);
+
+  if ((data != nullptr) && (R.data != nullptr) && (data != R.data)) {
+    memcpy(data, R.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a velocity twist matrix to a matrix.
+
+  \param V : Velocity twist matrix.
+
+  The following example shows how to create a matrix from a velocity twist matrix:
+  \code
+  vpVelocityTwistMatrix V;
+  vpMatrix M = V;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpVelocityTwistMatrix &V)
+{
+  resize(V.getRows(), V.getCols(), false, false);
+
+  if ((data != nullptr) && (V.data != nullptr) && (data != V.data)) {
+    memcpy(data, V.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a force twist matrix to a matrix.
+
+  \param F : Force twist matrix.
+
+  The following example shows how to create a matrix from a force twist matrix:
+  \code
+  vpForceTwistMatrix F;
+  vpMatrix M = F;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpForceTwistMatrix &F)
+{
+  resize(F.getRows(), F.getCols(), false, false);
+
+  if ((data != nullptr) && (F.data != nullptr) && (data != F.data)) {
+    memcpy(data, F.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a column vector to a matrix.
+
+  \param v : Column vector.
+
+  The following example shows how to create a matrix from a column vector:
+  \code
+  vpColVector v(3);
+  vpMatrix M = v;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpColVector &v)
+{
+  resize(v.getRows(), v.getCols(), false, false);
+
+  if ((data != nullptr) && (v.data != nullptr) && (data != v.data)) {
+    memcpy(data, v.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a row vector to a matrix.
+
+  \param v : Column vector.
+
+  The following example shows how to create a matrix from a row vector:
+  \code
+  vpRowVector v(3);
+  vpMatrix M = v;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpRowVector &v)
+{
+  resize(v.getRows(), v.getCols(), false, false);
+
+  if ((data != nullptr) && (v.data != nullptr) && (data != v.data)) {
+    memcpy(data, v.data, dsize * sizeof(double));
+  }
+
+  return *this;
+}
+
+/*!
+  Copy operator that allows to convert a translation vector to a matrix.
+
+  \param t : Translation vector.
+
+  The following example shows how to create a matrix from a translation vector:
+  \code
+  vpTranslationVector t;
+  vpMatrix M = t;
+  \endcode
+*/
+vpMatrix &vpMatrix::operator=(const vpTranslationVector &t)
+{
+  resize(t.getRows(), t.getCols(), false, false);
+
+  if ((data != nullptr) && (t.data != nullptr) && (data != t.data)) {
+    memcpy(data, t.data, dsize * sizeof(double));
   }
 
   return *this;

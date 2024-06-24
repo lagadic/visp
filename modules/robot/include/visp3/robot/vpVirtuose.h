@@ -209,7 +209,7 @@ public:
    *
    * \sa setIpAddressAndPort()
    */
-  vp_deprecated inline void setIpAddress(const std::string &ip_port) { m_ip_port = ip_port; }
+  VP_DEPRECATED inline void setIpAddress(const std::string &ip_port) { m_ip_port = ip_port; }
   //@}
 #endif
 

@@ -183,11 +183,11 @@ public:
   */
   //@{
   template <class Type>
-  vp_deprecated static void createSubImage(const vpImage<Type> &I, unsigned int i_sub, unsigned int j_sub,
+  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, unsigned int i_sub, unsigned int j_sub,
                                            unsigned int nrow_sub, unsigned int ncol_sub, vpImage<Type> &S);
 
   template <class Type>
-  vp_deprecated static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
+  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
   //@}
 #endif
 
@@ -435,23 +435,23 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 
   if (v_scale == 1 && h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
-      void *src = (void *)(bitmap + ((i + i_min_u) * width + j_min_u) * sizeof(Type));
+      void *src = (void *)(bitmap + ((((i + i_min_u) * width) + j_min_u) * sizeof(Type)));
       void *dst = (void *)(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i = 0; i < r_height; ++i) {
-      void *src = (void *)(bitmap + ((i + i_min_u) * width * v_scale + j_min_u) * sizeof(Type));
+      void *src = (void *)(bitmap + (((((i + i_min_u) * width) * v_scale) + j_min_u) * sizeof(Type)));
       void *dst = (void *)(crop[i]);
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else {
     for (unsigned int i = 0; i < r_height; ++i) {
-      unsigned int i_src = (i + i_min_u) * width * v_scale + j_min_u * h_scale;
+      unsigned int i_src = (((i + i_min_u) * width) * v_scale) + (j_min_u * h_scale);
       for (unsigned int j = 0; j < r_width; ++j) {
-        void *src = (void *)(bitmap + (i_src + j * h_scale) * sizeof(Type));
+        void *src = (void *)(bitmap + ((i_src + (j * h_scale)) * sizeof(Type)));
         void *dst = (void *)(&crop[i][j]);
         memcpy(dst, src, sizeof(Type));
       }

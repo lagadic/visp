@@ -45,6 +45,7 @@
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
+BEGIN_VISP_NAMESPACE
 /*!
   Convert a cv::Mat to a vpImage\<vpRGBa\>.
 
@@ -515,5 +516,7 @@ void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
   cv::Mat vpToMat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_32FC3, (void *)src.bitmap);
   cv::cvtColor(vpToMat, dest, cv::COLOR_RGB2BGR);
 }
+
+END_VISP_NAMESPACE
 
 #endif

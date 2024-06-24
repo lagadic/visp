@@ -169,16 +169,15 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
     uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + ((y_ + 1) * width) + x_);
 
-    return static_cast<unsigned char>(((((up & magic_0x00FF) * rfrac) + ((down & magic_0x00FF) * rratio)) * cfrac +
-                                       (((up >> magic_8) * rfrac) + ((down >> 8) * rratio)) * cratio) >>
-                                      magic_32);
+    return static_cast<unsigned char>((((((up & magic_0x00FF) * rfrac) + ((down & magic_0x00FF) * rratio)) * cfrac)
+                                       + (((up >> magic_8) * rfrac) + ((down >> magic_8) * rratio)) * cratio) >> magic_32);
   }
   else if ((y_ + 1) < height) {
-    return static_cast<unsigned char>(((row[y_][x_] * rfrac) + (row[y_ + 1][x_] * rratio)) >> 16);
+    return static_cast<unsigned char>(((row[y_][x_] * rfrac) + (row[y_ + 1][x_] * rratio)) >> magic_16);
   }
   else if ((x_ + 1) < width) {
     uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ * width) + x_);
-    return static_cast<unsigned char>((((up & 0x00FF) * cfrac) + ((up >> 8) * cratio)) >> magic_16);
+    return static_cast<unsigned char>((((up & magic_0x00FF) * cfrac) + ((up >> magic_8) * cratio)) >> magic_16);
   }
   else {
     return row[y_][x_];

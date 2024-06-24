@@ -123,8 +123,7 @@ vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row);
 
 /*!
   Construct a matrix as a sub-matrix of the input matrix \e M.
-  \sa init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int
-  nrows, unsigned int ncols)
+  \sa init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols)
 */
 vpMatrix::vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols)
   : vpArray2D<double>()
@@ -138,6 +137,69 @@ vpMatrix::vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned i
   }
 
   init(M, r, c, nrows, ncols);
+}
+
+/*!
+ * Create a matrix from a homogeneous matrix.
+ * @param M : Homogeneous matrix.
+ */
+vpMatrix::vpMatrix(const vpHomogeneousMatrix &M)
+{
+  *this = M;
+}
+
+/*!
+ * Create a matrix from a velocity twist matrix.
+ * @param V : Velocity twist matrix.
+ */
+vpMatrix::vpMatrix(const vpVelocityTwistMatrix &V)
+{
+  *this = V;
+}
+
+/*!
+ * Create a matrix from a force twist matrix.
+ * @param F : Force twist matrix.
+ */
+vpMatrix::vpMatrix(const vpForceTwistMatrix &F)
+{
+  *this = F;
+}
+
+/*!
+ * Create a matrix from a row vector.
+ * @param v : Row vector.
+ */
+vpMatrix::vpMatrix(const vpRotationMatrix &R)
+{
+  *this = R;
+}
+
+/*!
+ * Create a matrix from a column vector.
+ * @param v : Column vector.
+ */
+vpMatrix::vpMatrix(const vpColVector &v)
+{
+  *this = v;
+}
+
+/*!
+ * Create a matrix from a row vector.
+ * @param v : Row vector.
+ */
+vpMatrix::vpMatrix(const vpRowVector &v)
+{
+  *this = v;
+}
+
+/*!
+ * Create a matrix from a row vector.
+ * @param v : Row vector.
+ */
+vpMatrix::vpMatrix(const vpTranslationVector &t)
+{
+  *this = t;
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

@@ -39,6 +39,8 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_YARP
+
+BEGIN_VISP_NAMESPACE
 /*!
   Convert a vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
 
@@ -323,5 +325,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src,
     }
   }
 }
+
+END_VISP_NAMESPACE
 
 #endif

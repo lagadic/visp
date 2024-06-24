@@ -88,7 +88,7 @@ public:
    */
   void getRender(vpImage<vpRGBa> &I) const;
 
-  void addNodeToScene(const NodePath &object) vp_override;
+  void addNodeToScene(const NodePath &object) VP_OVERRIDE;
 
   void setBackgroundImage(const vpImage<vpRGBa> &background);
 
@@ -98,8 +98,8 @@ public:
 
 
 protected:
-  void setupScene() vp_override;
-  void setupRenderTarget() vp_override;
+  void setupScene() VP_OVERRIDE;
+  void setupRenderTarget() VP_OVERRIDE;
   virtual std::string makeFragmentShader(bool hasTexture, bool specular);
 
 private:
@@ -111,7 +111,7 @@ private:
 
   NodePath m_backgroundImage;
   DisplayRegion *m_display2d;
-  Texture* m_backgroundTexture;
+  Texture *m_backgroundTexture;
 
 };
 

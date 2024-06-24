@@ -169,7 +169,7 @@ public:
   // copy constructor
   vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V);
   // constructor from an homogeneous transformation
-  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
+  VP_EXPLICIT vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
 
   // Construction from Translation and rotation (matrix parameterization)
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
@@ -177,15 +177,15 @@ public:
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
-  explicit vpVelocityTwistMatrix(const vpRotationMatrix &R);
-  explicit vpVelocityTwistMatrix(const vpThetaUVector &thetau);
+  VP_EXPLICIT vpVelocityTwistMatrix(const vpRotationMatrix &R);
+  VP_EXPLICIT vpVelocityTwistMatrix(const vpThetaUVector &thetau);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
-  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
-  vp_deprecated vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
+  VP_DEPRECATED vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  VP_DEPRECATED vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  VP_DEPRECATED vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+  VP_DEPRECATED vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
+  VP_DEPRECATED vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
 #endif
   vpVelocityTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpVelocityTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
@@ -232,11 +232,11 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() { }
+  VP_DEPRECATED void init() { }
   /*!
      \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
+  VP_DEPRECATED void setIdentity();
 //@}
 #endif
 };

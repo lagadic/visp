@@ -183,23 +183,23 @@ public:
   vpRxyzVector(double phi, double theta, double psi);
 
   // initialize a Rxyz vector from a rotation matrix
-  explicit vpRxyzVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpRxyzVector(const vpRotationMatrix &R);
 
   // initialize a Rxyz vector from a ThetaU vector
-  explicit vpRxyzVector(const vpThetaUVector &tu);
-  explicit vpRxyzVector(const vpColVector &rxyz);
-  explicit vpRxyzVector(const std::vector<double> &rxyz);
+  VP_EXPLICIT vpRxyzVector(const vpThetaUVector &tu);
+  VP_EXPLICIT vpRxyzVector(const vpColVector &rxyz);
+  VP_EXPLICIT vpRxyzVector(const std::vector<double> &rxyz);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert a rotation matrix into Rxyz vector
-  vp_deprecated vpRxyzVector buildFrom(const vpRotationMatrix &R);
+  VP_DEPRECATED vpRxyzVector buildFrom(const vpRotationMatrix &R);
 
   // convert a ThetaU vector into a Rxyz vector
-  vp_deprecated vpRxyzVector buildFrom(const vpThetaUVector &tu);
-  vp_deprecated vpRxyzVector buildFrom(const vpColVector &rxyz);
-  vp_deprecated vpRxyzVector buildFrom(const std::vector<double> &rxyz);
+  VP_DEPRECATED vpRxyzVector buildFrom(const vpThetaUVector &tu);
+  VP_DEPRECATED vpRxyzVector buildFrom(const vpColVector &rxyz);
+  VP_DEPRECATED vpRxyzVector buildFrom(const std::vector<double> &rxyz);
 
-  vp_deprecated void buildFrom(double phi, double theta, double psi);
+  VP_DEPRECATED void buildFrom(double phi, double theta, double psi);
 #endif
   // convert a rotation matrix into Rxyz vector
   vpRxyzVector &build(const vpRotationMatrix &R);

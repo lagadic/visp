@@ -29,8 +29,7 @@
  *
  * Description:
  * Defines a (possibly oriented) rectangle in the plane.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpRectOriented.h>
 
 #include <cmath>
@@ -125,7 +124,8 @@ vpRectOriented &vpRectOriented::operator=(const vpRect &rect)
   return *this;
 }
 
-/** Conversion to vpRect operator.
+/**
+ * Conversion to vpRect operator.
  */
 vpRectOriented::operator vpRect()
 {

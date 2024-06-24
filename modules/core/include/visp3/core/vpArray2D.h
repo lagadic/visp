@@ -254,13 +254,13 @@ public:
     A.data = nullptr;
   }
 
-  explicit vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
   {
     resize(1, static_cast<unsigned int>(list.size()), false, false);
     std::copy(list.begin(), list.end(), data);
   }
 
-  explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
+  VP_EXPLICIT vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
     : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
   {
     if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
@@ -273,7 +273,7 @@ public:
     std::copy(list.begin(), list.end(), data);
   }
 
-  explicit vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
   {
     unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
     for (auto &l : lists) {

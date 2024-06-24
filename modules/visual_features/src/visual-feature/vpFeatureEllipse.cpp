@@ -467,20 +467,20 @@ unsigned int vpFeatureEllipse::select_n02() { return FEATURE_LINE[4]; }
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_20 = mu_20/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
 /*!
  * \deprecated You should rather use select_n20().
  * This function is incorrectly named and is confusing since it
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_11 = mu_11/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
 /*!
  * \deprecated You should rather use select_n20().
  * This function is incorrectly named and is confusing since it
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_02 = mu_02/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
 #endif
 END_VISP_NAMESPACE

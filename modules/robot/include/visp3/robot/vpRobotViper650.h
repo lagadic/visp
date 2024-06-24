@@ -383,7 +383,7 @@ private: /* Attributs prives. */
   vpControlModeType m_controlMode;
 
 public: /* Methode publiques */
-  explicit vpRobotViper650(bool verbose = true);
+  VP_EXPLICIT vpRobotViper650(bool verbose = true);
   virtual ~vpRobotViper650(void);
 
   // Force/Torque control
@@ -423,8 +423,8 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe) vp_override;
-  void get_fJe(vpMatrix &fJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void init(void);
   void
@@ -450,7 +450,7 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -459,7 +459,7 @@ public: /* Methode publiques */
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 

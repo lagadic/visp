@@ -210,11 +210,11 @@ public:
   vpFeatureLine &build(const double &rho, const double &theta, const double &A, const double &B, const double &C, const double &D);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
-  vpFeatureLine *duplicate() const vp_override;
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
+  vpFeatureLine *duplicate() const VP_OVERRIDE;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   /*!
    * Return the \f$ \rho \f$ subset value of the visual feature \f$ s \f$.
@@ -226,9 +226,9 @@ public:
    */
   double getTheta() const { return s[1]; }
 
-  void init() vp_override;
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void init() VP_OVERRIDE;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void setRhoTheta(double rho, double theta);
   void setABCD(double A, double B, double C, double D);

@@ -34,8 +34,6 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 
-BEGIN_VISP_NAMESPACE
-
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_MINIZ)
 #define USE_ZLIB_API 0
 
@@ -57,6 +55,7 @@ using namespace buminiz;
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
 
 #include <regex>
+
 
 char visp::cnpy::BigEndianTest()
 {
@@ -433,5 +432,3 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 }
 
 #endif
-
-END_VISP_NAMESPACE

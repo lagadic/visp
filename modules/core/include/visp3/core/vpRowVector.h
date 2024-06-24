@@ -68,42 +68,42 @@ class vpColVector;
 
   The code below shows how to create a 3-element row vector of doubles, set the element values and access them:
   \code
-#include <visp3/code/vpRowVector.h
+  #include <visp3/code/vpRowVector.h
 
-int main()
-{
-  vpRowVector v(3);
-  v[0] = -1; v[1] = -2.1; v[2] = -3;
+  int main()
+  {
+    vpRowVector v(3);
+    v[0] = -1; v[1] = -2.1; v[2] = -3;
 
-  std::cout << "v:" << std::endl;
-  for (unsigned int i = 0; i < v.size(); ++i) {
-    std::cout << v[i] << " ";
+    std::cout << "v:" << std::endl;
+    for (unsigned int i = 0; i < v.size(); ++i) {
+      std::cout << v[i] << " ";
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
-}
   \endcode
   Once build, this previous code produces the following output:
   \code
-v:
--1 -2.1 -3
+  v:
+  -1 -2.1 -3
   \endcode
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpRowVector.h
+  #include <visp3/code/vpRowVector.h
 
-int main()
-{
-  vpRowVector v{-1, -2.1, -3};
-  std::cout << "v:\n" << v << std::endl;
-}
+  int main()
+  {
+    vpRowVector v{-1, -2.1, -3};
+    std::cout << "v:\n" << v << std::endl;
+  }
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
-int main()
-{
-  vpRowVector v;
-  v = {-1, -2.1, -3};
-}
+  int main()
+  {
+    vpRowVector v;
+    v = {-1, -2.1, -3};
+  }
   \endcode
 */
 class VISP_EXPORT vpRowVector : public vpArray2D<double>
@@ -113,20 +113,20 @@ public:
   vpRowVector() : vpArray2D<double>() { }
   //! Construct a row vector of size n. All the elements are initialized to
   //! zero.
-  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n) { }
+  VP_EXPLICIT vpRowVector(unsigned int n) : vpArray2D<double>(1, n) { }
   //! Construct a row vector of size n. Each element is set to \e val.
   vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) { }
   //! Copy constructor that allows to construct a row vector from an other
   //! one.
   vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) { }
   vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
-  explicit vpRowVector(const vpMatrix &M);
+  VP_EXPLICIT vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
-  explicit vpRowVector(const std::vector<double> &v);
-  explicit vpRowVector(const std::vector<float> &v);
+  VP_EXPLICIT vpRowVector(const std::vector<double> &v);
+  VP_EXPLICIT vpRowVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  explicit vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+  VP_EXPLICIT vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
 
   /*!
@@ -163,23 +163,22 @@ public:
     (*this) *= d2r;
   }
 
-
   /*!
-     Extract a sub-row vector from a row vector.
-     \param c : Index of the column corresponding to the first element of the
-     vector to extract.
-     \param rowsize : Size of the vector to extract.
-     \exception vpException::fatalError If the vector to extract is not
-     contained in the original one.
+    Extract a sub-row vector from a row vector.
+    \param c : Index of the column corresponding to the first element of the
+    vector to extract.
+    \param rowsize : Size of the vector to extract.
+    \exception vpException::fatalError If the vector to extract is not
+    contained in the original one.
 
-     \code
-     vpRowVector r1;
-     for (unsigned int i=0; i<4; ++i)
-       r1.stack(i);
-     // r1 is equal to [0 1 2 3]
-     vpRowVector r2 = r1.extract(1, 3);
-     // r2 is equal to [1 2 3]
-     \endcode
+    \code
+    vpRowVector r1;
+    for (unsigned int i=0; i<4; ++i)
+      r1.stack(i);
+    // r1 is equal to [0 1 2 3]
+    vpRowVector r2 = r1.extract(1, 3);
+    // r2 is equal to [1 2 3]
+    \endcode
    */
   vpRowVector extract(unsigned int c, unsigned int rowsize) const
   {
@@ -194,6 +193,16 @@ public:
   }
 
   double frobeniusNorm() const;
+
+  /*!
+   * Compute the Hadamard product (element wise vector multiplication).
+   *
+   * \param v : Second vector;
+   * \return v1.hadamard(v2) The kronecker product :
+   * \f$ v1 \circ v2 = (v1 \circ v2)_{i} = (v1)_{i} (v2)_{i} \f$
+   */
+  vpRowVector hadamard(const vpRowVector &v) const;
+
   void init(const vpRowVector &v, unsigned int c, unsigned int ncols);
   void insert(unsigned int i, const vpRowVector &v);
 
@@ -309,21 +318,21 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() { }
+  VP_DEPRECATED void init() { }
   /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */
-  vp_deprecated void stackMatrices(const vpRowVector &r) { stack(r); }
+  VP_DEPRECATED void stackMatrices(const vpRowVector &r) { stack(r); }
   /*!
      \deprecated You should rather use stack(const vpRowVector &A, const
      vpRowVector &B)
    */
-  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); }
+  VP_DEPRECATED static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpRowVector &A, const
      vpRowVector &B, vpRowVector &C)
    */
-  vp_deprecated static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
+  VP_DEPRECATED static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
   {
     stack(A, B, C);
   }
@@ -331,8 +340,8 @@ public:
   /*!
      \deprecated You should rather use eye()
    */
-  vp_deprecated void setIdentity(const double &val = 1.0);
-  vp_deprecated double euclideanNorm() const;
+  VP_DEPRECATED void setIdentity(const double &val = 1.0);
+  VP_DEPRECATED double euclideanNorm() const;
   //@}
 #endif
 };

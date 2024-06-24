@@ -97,21 +97,21 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   \param list : List of double.
   The following code shows how to use this constructor to initialize a rotation matrix:
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R
-  R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
-  std::cout << "R:\n" << R << std::endl;
-}
-  \endcode
-  It produces the following output:
-  \code
-R:
-0  0  -1
-0  -1  0
--1  0  0
+  int main()
+  {
+    vpRotationMatrix R
+    R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+    std::cout << "R:\n" << R << std::endl;
+  }
+    \endcode
+    It produces the following output:
+    \code
+  R:
+  0  0  -1
+  0  -1  0
+  -1  0  0
   \endcode
   \sa operator<<()
  */
@@ -1112,7 +1112,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
  */
 void vpRotationMatrix::orthogonalize()
 {
-  vpMatrix U = *this;
+  vpMatrix U(*this);
   vpColVector w;
   vpMatrix V;
   U.svd(w, V);

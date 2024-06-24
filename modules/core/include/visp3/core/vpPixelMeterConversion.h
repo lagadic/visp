@@ -308,8 +308,8 @@ public:
           /*
           // new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta)
           */
-        double theta_fix = (theta * (val_1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
-          (val_1 + val_3 * k0_theta2 + val_5 * k1_theta4 + val_7 * k2_theta6 + val_9 * k3_theta8);
+        double theta_fix = ((theta * (val_1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8)) - r_d)
+          / (val_1 + (val_3 * k0_theta2) + (val_5 * k1_theta4) + (val_7 * k2_theta6) + (val_9 * k3_theta8));
         theta = theta - theta_fix;
         if (fabs(theta_fix) < EPS) {
           break;

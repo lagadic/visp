@@ -97,7 +97,7 @@ public:
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 1)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
   /*!
    * Associated moment name.
@@ -199,7 +199,7 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
   /*!
    * Associated moment name.

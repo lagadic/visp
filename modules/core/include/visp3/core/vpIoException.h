@@ -87,7 +87,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpIoException(int id) : vpException(id) { }
+  VP_EXPLICIT vpIoException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

@@ -394,7 +394,7 @@ private: /* Attributs prives. */
 #endif
 
 public: /* Methode publiques */
-  explicit vpRobotViper850(bool verbose = true);
+  VP_EXPLICIT vpRobotViper850(bool verbose = true);
   virtual ~vpRobotViper850(void);
 
   // Force/Torque control
@@ -416,7 +416,7 @@ public: /* Methode publiques */
   vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) VP_OVERRIDE;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
@@ -434,8 +434,8 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe) vp_override;
-  void get_fJe(vpMatrix &fJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void init(void);
   void
@@ -461,7 +461,7 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -471,7 +471,7 @@ public: /* Methode publiques */
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
   void unbiasForceTorqueSensor();

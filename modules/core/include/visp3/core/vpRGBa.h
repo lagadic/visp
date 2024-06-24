@@ -40,6 +40,8 @@
 #ifndef VP_RGBA_H
 #define VP_RGBA_H
 
+#include <assert.h>
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
@@ -92,7 +94,31 @@ public:
 
     \param v : Value to set.
   */
-  inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) { }
+  explicit inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) { }
+
+  /*!
+    Constructor.
+
+    Initialize all the R, G, B, A components to \e v.
+
+    \param v : Value to set.
+  */
+  explicit inline vpRGBa(unsigned int v) : R(v), G(v), B(v), A(v)
+  {
+    assert(v < 256);
+  }
+
+  /*!
+    Constructor.
+
+    Initialize all the R, G, B, A components to \e v.
+
+    \param v : Value to set.
+  */
+  explicit inline vpRGBa(int v) : R(v), G(v), B(v), A(v)
+  {
+    assert(v < 256);
+  }
 
   /*!
     Copy constructor.
@@ -107,7 +133,7 @@ public:
     B=v[2]
     A=v[3]
   */
-  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
+  explicit inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
 
   // We cannot add here the following destructor without changing the
   // hypothesis that the size of this class is 4. With the destructor it
@@ -115,6 +141,8 @@ public:
   // virtual ~vpRGBa() {}; // Not to implement
 
   vpRGBa &operator=(const unsigned char &v);
+  vpRGBa &operator=(const unsigned int &v);
+  vpRGBa &operator=(const int &v);
   vpRGBa &operator=(const vpRGBa &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBa &operator=(const vpRGBa &&v);

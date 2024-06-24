@@ -113,17 +113,17 @@ public:
   /** @name Inherited functionalities from vpSimulatorCamera */
   //@{
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
 
   vpHomogeneousMatrix getPosition() const;
   void getPosition(vpHomogeneousMatrix &wMc) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE;
   void setPosition(const vpHomogeneousMatrix &wMc);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
   //@}
 
 private:
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 
   // Non implemented virtual pure functions
   void get_fJe(vpMatrix & /*_fJe */) vp_override { };

@@ -108,7 +108,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeEllipse() vp_override;
+  virtual ~vpMeEllipse() VP_OVERRIDE;
 
   /*!
    * Display the ellipse or arc of ellipse
@@ -390,14 +390,14 @@ public:
   /*!
    * \deprecated Use rather displayEllipse().
    */
-  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+  VP_DEPRECATED static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
                                     const double &E, const double &smallalpha, const double &highalpha,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   /*!
    * \deprecated Use rather displayEllipse().
    */
-  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+  VP_DEPRECATED static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
                                     const double &E, const double &smallalpha, const double &highalpha,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
@@ -611,7 +611,7 @@ protected:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) VP_OVERRIDE;
 
   /*!
    * Compute the \f$ theta \f$ angle for each vpMeSite.

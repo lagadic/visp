@@ -119,29 +119,29 @@ class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
 public:
   vpRotationMatrix();
   vpRotationMatrix(const vpRotationMatrix &R);
-  explicit vpRotationMatrix(const vpHomogeneousMatrix &M);
-  explicit vpRotationMatrix(const vpThetaUVector &r);
-  explicit vpRotationMatrix(const vpPoseVector &p);
-  explicit vpRotationMatrix(const vpRzyzVector &r);
-  explicit vpRotationMatrix(const vpRxyzVector &r);
-  explicit vpRotationMatrix(const vpRzyxVector &r);
-  explicit vpRotationMatrix(const vpQuaternionVector &q);
-  explicit vpRotationMatrix(const vpMatrix &R);
+  VP_EXPLICIT vpRotationMatrix(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpRotationMatrix(const vpThetaUVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpPoseVector &p);
+  VP_EXPLICIT vpRotationMatrix(const vpRzyzVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpRxyzVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpRzyxVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpQuaternionVector &q);
+  VP_EXPLICIT vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(double tux, double tuy, double tuz);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  explicit vpRotationMatrix(const std::initializer_list<double> &list);
+  VP_EXPLICIT vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
-  vp_deprecated vpRotationMatrix buildFrom(const vpThetaUVector &v);
-  vp_deprecated vpRotationMatrix buildFrom(const vpPoseVector &p);
-  vp_deprecated vpRotationMatrix buildFrom(const vpRzyzVector &v);
-  vp_deprecated vpRotationMatrix buildFrom(const vpRxyzVector &v);
-  vp_deprecated vpRotationMatrix buildFrom(const vpRzyxVector &v);
-  vp_deprecated vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  vp_deprecated vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpThetaUVector &v);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpPoseVector &p);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRzyzVector &v);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRxyzVector &v);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRzyxVector &v);
+  VP_DEPRECATED vpRotationMatrix buildFrom(const vpQuaternionVector &q);
+  VP_DEPRECATED vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
 #endif
   vpRotationMatrix &build(const vpHomogeneousMatrix &M);
   vpRotationMatrix &build(const vpThetaUVector &v);
@@ -216,11 +216,11 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() { }
+  VP_DEPRECATED void init() { }
   /*!
      \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
+  VP_DEPRECATED void setIdentity();
   //@}
 #endif
 

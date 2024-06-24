@@ -301,7 +301,7 @@ public:
    * - In the control law the pseudo inverse will be used. The method
    *   setInteractionMatrixType() allows to use the transpose instead.
    */
-  explicit vpServo(vpServoType servo_type);
+  VP_EXPLICIT vpServo(vpServoType servo_type);
 
   /*!
    * Destructor.

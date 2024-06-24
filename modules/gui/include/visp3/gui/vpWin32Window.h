@@ -109,7 +109,7 @@ private:
   vpWin32Renderer *renderer;
 
 public:
-  explicit vpWin32Window(vpWin32Renderer *rend = nullptr);
+  VP_EXPLICIT vpWin32Window(vpWin32Renderer *rend = nullptr);
   virtual ~vpWin32Window();
 
   HWND getHWnd() { return hWnd; }

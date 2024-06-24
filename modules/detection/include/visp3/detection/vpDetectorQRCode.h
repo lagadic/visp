@@ -114,7 +114,7 @@ protected:
 
 public:
   vpDetectorQRCode();
-  bool detect(const vpImage<unsigned char> &I) vp_override;
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

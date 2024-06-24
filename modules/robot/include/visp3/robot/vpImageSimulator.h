@@ -206,7 +206,7 @@ private:
   bool needClipping;
 
 public:
-  explicit vpImageSimulator(const vpColorPlan &col = COLORED);
+  VP_EXPLICIT vpImageSimulator(const vpColorPlan &col = COLORED);
   vpImageSimulator(const vpImageSimulator &text);
   virtual ~vpImageSimulator();
 

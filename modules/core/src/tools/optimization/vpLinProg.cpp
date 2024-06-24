@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Linear Programming
- *
- * Authors:
- * Olivier Kermorgant
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpLinProg.h>
 
@@ -153,7 +148,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         while (A.getCols() < n - m) {
           // add next column and check rank of A^T.A
           if (!allZero(IQQt.getCol(j))) {
-            A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
+            A = vpMatrix::juxtaposeMatrices(A, vpMatrix(IQQt.getCol(j)));
             if (A.qr(Q, R, false, false, tol) != A.getCols())
               A.resize(n, A.getCols() - 1, false);
           }
@@ -196,7 +191,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       while (A.getCols() < n - r) {
         // add next column and check rank of A^T.A
         if (!allZero(IQQt.getCol(j))) {
-          A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
+          A = vpMatrix::juxtaposeMatrices(A, vpMatrix(IQQt.getCol(j)));
           if (A.qr(Q, R, false, false, tol) != A.getCols())
             A.resize(n, A.getCols() - 1, false);
         }

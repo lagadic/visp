@@ -88,7 +88,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpTrackingException(int id) : vpException(id) { }
+  VP_EXPLICIT vpTrackingException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

@@ -89,7 +89,7 @@ public:
   vpFeatureMomentCentered(vpMomentDatabase &moments, double A, double B, double C,
                           vpFeatureMomentDatabase *featureMoments = nullptr);
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /* Add function due to pure virtual definition in vpBasicFeature.h */

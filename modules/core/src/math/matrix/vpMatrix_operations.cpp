@@ -887,4 +887,87 @@ vpMatrix vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2)
 */
 vpMatrix vpMatrix::kron(const vpMatrix &m) const { return kron(*this, m); }
 
+vpMatrix vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode)
+{
+  vpMatrix res;
+  conv2(M, kernel, res, mode);
+  return res;
+}
+
+void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode)
+{
+  if (((M.getRows() * M.getCols()) == 0) || ((kernel.getRows() * kernel.getCols()) == 0)) {
+    return;
+  }
+
+  if (mode == "valid") {
+    if ((kernel.getRows() > M.getRows()) || (kernel.getCols() > M.getCols())) {
+      return;
+    }
+  }
+
+  vpMatrix M_padded, res_same;
+
+  if ((mode == "full") || (mode == "same")) {
+    const unsigned int pad_x = kernel.getCols() - 1;
+    const unsigned int pad_y = kernel.getRows() - 1;
+    const unsigned int pad = 2;
+    M_padded.resize(M.getRows() + (pad * pad_y), M.getCols() + (pad * pad_x), true, false);
+    M_padded.insert(M, pad_y, pad_x);
+
+    if (mode == "same") {
+      res.resize(M.getRows(), M.getCols(), false, false);
+      res_same.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+    else {
+      res.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+  }
+  else if (mode == "valid") {
+    M_padded = M;
+    res.resize((M.getRows() - kernel.getRows()) + 1, (M.getCols() - kernel.getCols()) + 1);
+  }
+  else {
+    return;
+  }
+
+  if (mode == "same") {
+    unsigned int res_same_rows = res_same.getRows();
+    unsigned int res_same_cols = res_same.getCols();
+    unsigned int kernel_rows = kernel.getRows();
+    unsigned int kernel_cols = kernel.getCols();
+    for (unsigned int i = 0; i < res_same_rows; ++i) {
+      for (unsigned int j = 0; j < res_same_cols; ++j) {
+        for (unsigned int k = 0; k < kernel_rows; ++k) {
+          for (unsigned int l = 0; l < kernel_cols; ++l) {
+            res_same[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+
+    const unsigned int start_i = kernel.getRows() / 2;
+    const unsigned int start_j = kernel.getCols() / 2;
+    unsigned int m_rows = M.getRows();
+    for (unsigned int i = 0; i < m_rows; ++i) {
+      memcpy(res.data + (i * M.getCols()), res_same.data + ((i + start_i) * res_same.getCols()) + start_j,
+             sizeof(double) * M.getCols());
+    }
+  }
+  else {
+    unsigned int res_rows = res.getRows();
+    unsigned int res_cols = res.getCols();
+    unsigned int kernel_rows = kernel.getRows();
+    unsigned int kernel_cols = kernel.getCols();
+    for (unsigned int i = 0; i < res_rows; ++i) {
+      for (unsigned int j = 0; j < res_cols; ++j) {
+        for (unsigned int k = 0; k < kernel_rows; ++k) {
+          for (unsigned int l = 0; l < kernel_cols; ++l) {
+            res[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+  }
+}
 END_VISP_NAMESPACE

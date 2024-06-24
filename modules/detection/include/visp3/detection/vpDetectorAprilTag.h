@@ -249,8 +249,8 @@ public:
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
   vpDetectorAprilTag(const vpDetectorAprilTag &o);
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
-  virtual ~vpDetectorAprilTag() vp_override;
-  bool detect(const vpImage<unsigned char> &I) vp_override;
+  virtual ~vpDetectorAprilTag() VP_OVERRIDE;
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
 
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
@@ -312,8 +312,8 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated void setAprilTagRefinePose(bool refinePose);
-  vp_deprecated void setAprilTagRefineDecode(bool refineDecode);
+  VP_DEPRECATED void setAprilTagRefinePose(bool refinePose);
+  VP_DEPRECATED void setAprilTagRefineDecode(bool refineDecode);
   //@}
 #endif
 

@@ -231,16 +231,16 @@ public:
   virtual ~vpMbEdgeKltTracker();
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
   virtual inline vpColVector getError() const vp_override { return m_error_hybrid; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false) vp_override;
+                                                               bool displayFullModel = false) VP_OVERRIDE;
 
   virtual inline vpColVector getRobustWeights() const vp_override { return m_w_hybrid; }
 
@@ -251,13 +251,13 @@ public:
    */
   virtual inline double getNearClippingDistance() const vp_override { return vpMbKltTracker::getNearClippingDistance(); }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) vp_override;
-  void resetTracker() vp_override;
+                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) VP_OVERRIDE;
+  void resetTracker() VP_OVERRIDE;
 
-  virtual void setCameraParameters(const vpCameraParameters &cam) vp_override;
+  virtual void setCameraParameters(const vpCameraParameters &cam) VP_OVERRIDE;
 
   /*!
    * Specify which clipping to use.
@@ -309,8 +309,8 @@ public:
     vpMbKltTracker::setScanLineVisibilityTest(v);
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 
   /*!
    * Set if the projection error criteria has to be computed.
@@ -324,23 +324,23 @@ public:
   }
 
   virtual void testTracking() vp_override { }
-  virtual void track(const vpImage<unsigned char> &I) vp_override;
-  virtual void track(const vpImage<vpRGBa> &I_color) vp_override;
+  virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
                           unsigned int lvl = 0, double *edge_residual = nullptr, double *klt_residual = nullptr);
-  virtual void computeVVSInit() vp_override;
-  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
+  virtual void computeVVSInit() VP_OVERRIDE;
+  virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE;
   using vpMbTracker::computeCovarianceMatrixVVS;
   using vpMbTracker::computeVVSPoseEstimation;
 
-  virtual void init(const vpImage<unsigned char> &I) vp_override;
+  virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
   virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
-                          const std::string &name = "") vp_override;
-  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "") vp_override;
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
+                          const std::string &name = "") VP_OVERRIDE;
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "") VP_OVERRIDE;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
   unsigned int initMbtTracking(unsigned int level = 0);
 
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt, unsigned int lvl = 0);

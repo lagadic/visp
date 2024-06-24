@@ -306,7 +306,7 @@ int main(int argc, const char **argv)
 
     // set the robot at the desired position
     sim.setCameraPosition(cMo);
-    I = 0;
+    I = 0u;
     sim.getImage(I, cam); // and aquire the image Id
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)

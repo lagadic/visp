@@ -103,7 +103,7 @@ public:
 
   //! Constructor that constructs a vector of size n and initialize all values
   //! to zero.
-  explicit vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) { }
+  VP_EXPLICIT vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) { }
 
   /*!
     Copy operator.

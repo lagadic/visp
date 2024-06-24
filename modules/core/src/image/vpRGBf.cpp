@@ -45,11 +45,24 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
-  Copy operator (from a floating-point value)
+  Copy operator (from a floating-point value).
 
   \param v : Input color ( R = G = B = v )
 */
 vpRGBf &vpRGBf::operator=(float v)
+{
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  return *this;
+}
+
+/*!
+  Copy operator.
+
+  \param v : Input color ( R = G = B = v )
+*/
+vpRGBf &vpRGBf::operator=(int v)
 {
   this->R = v;
   this->G = v;
@@ -252,7 +265,21 @@ bool vpRGBf::operator>(const vpRGBf &v) const
   return (gray1 > gray2);
 }
 
-VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const vpRGBf &rgb) { return rgb * x; }
+/*!
+ * Scale RGB components by x.
+ *
+ * @param x : Value used to scale RGB color components.
+ * @param rgb : RGB color components to rescale.
+ * @return Rescaled components with RGB * x.
+ */
+vpRGBf operator*(double x, const vpRGBf &rgb)
+{
+  vpRGBf rgbf;
+  rgbf.R = rgb.R * x;
+  rgbf.G = rgb.G * x;
+  rgbf.B = rgb.B * x;
+  return rgbf;
+}
 
 /*!
   \relates vpRGBf
@@ -262,17 +289,17 @@ VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const vpRGBf &r
   coordinates are separated by a comma.
 
   The following code prints the intensity of the pixel in the middle of the image:
-\code
-#include <visp3/core/vpImage.h>
+  \code
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<vpRGBf> I(480,640);
+  int main()
+  {
+    vpImage<vpRGBf> I(480,640);
 
-  std::cout << "RGB: " << I[240][320] << std::endl;
+    std::cout << "RGB: " << I[240][320] << std::endl;
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb)

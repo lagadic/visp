@@ -116,7 +116,7 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
   /*!
    * Associated moment name.
    */
@@ -133,7 +133,7 @@ public:
     return "vpFeatureMomentAlpha";
   }
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

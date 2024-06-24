@@ -106,17 +106,17 @@ public:
   };
 
   vpPolygon();
-  explicit vpPolygon(const std::vector<vpImagePoint> &corners);
-  explicit vpPolygon(const std::list<vpImagePoint> &corners);
+  VP_EXPLICIT vpPolygon(const std::vector<vpImagePoint> &corners);
+  VP_EXPLICIT vpPolygon(const std::list<vpImagePoint> &corners);
   vpPolygon(const vpPolygon &poly);
   virtual ~vpPolygon();
 
   vpPolygon &operator=(const vpPolygon &poly);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
-  vp_deprecated void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
-  vp_deprecated void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+  VP_DEPRECATED void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
+  VP_DEPRECATED void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
+  VP_DEPRECATED void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
                  const bool create_convex_hull = false);
 #endif
   vpPolygon &build(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull = false);
