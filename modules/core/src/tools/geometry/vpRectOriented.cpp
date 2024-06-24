@@ -124,6 +124,7 @@ vpRectOriented &vpRectOriented::operator=(const vpRect &rect)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
  * Conversion to vpRect operator.
  */
@@ -135,6 +136,7 @@ vpRectOriented::operator vpRect()
 
   return vpRect(m_topLeft, m_bottomRight);
 }
+#endif
 
 /** Set the corners of the rectangle.
  *  @warning This method doesn't check whether the 4 points actually form a rectangle!
