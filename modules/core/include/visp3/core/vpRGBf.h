@@ -86,7 +86,7 @@ public:
 
     \param v : Value to set.
   */
-  explicit inline vpRGBf(float v) : R(v), G(v), B(v) { }
+  VP_EXPLICIT inline vpRGBf(float v) : R(v), G(v), B(v) { }
 
   /*!
     Constructor.
@@ -95,7 +95,7 @@ public:
 
     \param v : Value to set.
   */
-  explicit inline vpRGBf(int v)
+  VP_EXPLICIT inline vpRGBf(int v)
   {
     *this = v;
   }
@@ -112,7 +112,7 @@ public:
     G=v[1]
     B=v[2]
   */
-  explicit inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
+  VP_EXPLICIT inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
 
   vpRGBf &operator=(float v);
   vpRGBf &operator=(int v);

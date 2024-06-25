@@ -94,7 +94,7 @@ public:
 
     \param v : Value to set.
   */
-  explicit inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) { }
+  VP_EXPLICIT inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) { }
 
   /*!
     Constructor.
@@ -103,7 +103,7 @@ public:
 
     \param v : Value to set.
   */
-  explicit inline vpRGBa(unsigned int v) : R(v), G(v), B(v), A(v)
+  VP_EXPLICIT inline vpRGBa(unsigned int v) : R(v), G(v), B(v), A(v)
   {
     assert(v < 256);
   }
@@ -115,7 +115,7 @@ public:
 
     \param v : Value to set.
   */
-  explicit inline vpRGBa(int v) : R(v), G(v), B(v), A(v)
+  VP_EXPLICIT inline vpRGBa(int v) : R(v), G(v), B(v), A(v)
   {
     assert(v < 256);
   }
@@ -133,7 +133,7 @@ public:
     B=v[2]
     A=v[3]
   */
-  explicit inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
+  VP_EXPLICIT inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
 
   // We cannot add here the following destructor without changing the
   // hypothesis that the size of this class is 4. With the destructor it
