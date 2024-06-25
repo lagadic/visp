@@ -61,14 +61,14 @@ public:
     return m_depthNormalFeatureEstimationMethod;
   }
 
-  virtual inline vpColVector getError() const vp_override { return m_error_depthNormal; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_depthNormal; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
                                                                bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_depthNormal; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_depthNormal; }
 
   virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
 

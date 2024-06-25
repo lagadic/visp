@@ -62,12 +62,12 @@ public:
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
   }
 
-  bool isRendering3DScene() const vp_override
+  bool isRendering3DScene() const VP_OVERRIDE
   {
     return false;
   }
 
-  GraphicsOutput *getMainOutputBuffer() vp_override { return m_buffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_buffer; }
 
 protected:
   virtual void setupScene() VP_OVERRIDE;

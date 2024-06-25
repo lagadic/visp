@@ -282,7 +282,7 @@ protected:
   void findHighestPositioningSpeed(vpColVector &q);
   void getExternalImage(vpImage<vpRGBa> &I);
 
-  inline void get_fMi(vpHomogeneousMatrix *fMit) vp_override
+  inline void get_fMi(vpHomogeneousMatrix *fMit) VP_OVERRIDE
   {
     m_mutex_fMi.lock();
     for (int i = 0; i < 8; i++) {

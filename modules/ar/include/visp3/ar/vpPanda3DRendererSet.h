@@ -186,9 +186,9 @@ public:
   }
 
 protected:
-  void setupScene() vp_override { }
+  void setupScene() VP_OVERRIDE { }
 
-  void setupCamera() vp_override { }
+  void setupCamera() VP_OVERRIDE { }
 
 private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;

@@ -261,7 +261,7 @@ public:
   virtual void getClipping(unsigned int &clippingFlag1, unsigned int &clippingFlag2) const;
   virtual void getClipping(std::map<std::string, unsigned int> &mapOfClippingFlags) const;
 
-  virtual inline vpColVector getError() const vp_override { return m_error; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error; }
 
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces() VP_OVERRIDE;
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces(const std::string &cameraName);
@@ -364,7 +364,7 @@ public:
 
   virtual std::string getReferenceCameraName() const;
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w; }
 
   virtual int getTrackerType() const;
 
@@ -691,9 +691,9 @@ private:
     TrackerWrapper();
     explicit TrackerWrapper(int trackerType);
 
-    virtual inline vpColVector getError() const vp_override { return m_error; }
+    virtual inline vpColVector getError() const VP_OVERRIDE { return m_error; }
 
-    virtual inline vpColVector getRobustWeights() const vp_override { return m_w; }
+    virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w; }
 
     virtual inline int getTrackerType() const { return m_trackerType; }
 

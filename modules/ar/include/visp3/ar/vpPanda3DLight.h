@@ -111,7 +111,7 @@ class VISP_EXPORT vpPanda3DAmbientLight : public vpPanda3DLight
 public:
   vpPanda3DAmbientLight(const std::string &name, const vpRGBf &color) : vpPanda3DLight(name, color) { }
 
-  void addToScene(NodePath &scene) const vp_override
+  void addToScene(NodePath &scene) const VP_OVERRIDE
   {
     PT(AmbientLight) light = new AmbientLight(m_name);
     light->set_color(LColor(m_color.R, m_color.G, m_color.B, 1));
@@ -159,7 +159,7 @@ public:
     }
   }
 
-  void addToScene(NodePath &scene) const vp_override
+  void addToScene(NodePath &scene) const VP_OVERRIDE
   {
     PT(PointLight) light = new PointLight(m_name);
     light->set_color(LColor(m_color.R, m_color.G, m_color.B, 1));
@@ -204,7 +204,7 @@ public:
     m_direction.normalize();
   }
 
-  void addToScene(NodePath &scene) const vp_override
+  void addToScene(NodePath &scene) const VP_OVERRIDE
   {
     PT(DirectionalLight) light = new DirectionalLight(m_name);
     light->set_color(LColor(m_color.R, m_color.G, m_color.B, 1));
@@ -256,7 +256,7 @@ public:
    * \throws if the scene is not setup (setLightableScene or constructor with NodePath has not been called)
    * \param light light to add
    */
-  void addLight(const vpPanda3DLight &light) vp_override
+  void addLight(const vpPanda3DLight &light) VP_OVERRIDE
   {
     if (m_lightableScene.is_empty()) {
       throw vpException(vpException::notInitialized, "Tried to add a light to a scene that is not initialized.");

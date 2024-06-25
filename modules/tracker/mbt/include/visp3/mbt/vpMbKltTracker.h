@@ -321,9 +321,9 @@ public:
    */
   inline double getKltThresholdAcceptation() const { return threshold_outlier; }
 
-  virtual inline vpColVector getError() const vp_override { return m_error_klt; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_klt; }
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_klt; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_klt; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
@@ -367,7 +367,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setOgreVisibilityTest(const bool &v) vp_override
+  virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -380,7 +380,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setScanLineVisibilityTest(const bool &v) vp_override
+  virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setScanLineVisibilityTest(v);
 
@@ -397,7 +397,7 @@ public:
    * \param flag : True if the projection error criteria has to be computed,
    * false otherwise
    */
-  virtual void setProjectionErrorComputation(const bool &flag) vp_override
+  virtual void setProjectionErrorComputation(const bool &flag) VP_OVERRIDE
   {
     if (flag)
       std::cerr << "This option is not yet implemented in vpMbKltTracker, "

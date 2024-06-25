@@ -57,14 +57,14 @@ public:
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual inline vpColVector getError() const vp_override { return m_error_depthDense; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_depthDense; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
                                                                bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_depthDense; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_depthDense; }
 
   virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
 

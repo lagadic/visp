@@ -234,7 +234,7 @@ private:
    * \exception vpRobotException::constructionError If the config file cannot be
    * opened.
    */
-  void init() vp_override { };
+  void init() VP_OVERRIDE { };
 
   /*!
    * Get the robot displacement since the last call of this method.
@@ -256,7 +256,7 @@ private:
    * \exception vpRobotException::wrongStateError If a not supported frame type
    * is given.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d) vp_override
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d) VP_OVERRIDE
   {
     (void)frame;
     (void)d;

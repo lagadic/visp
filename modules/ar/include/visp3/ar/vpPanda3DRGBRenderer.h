@@ -92,7 +92,7 @@ public:
 
   void setBackgroundImage(const vpImage<vpRGBa> &background);
 
-  GraphicsOutput *getMainOutputBuffer() vp_override { return m_colorBuffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_colorBuffer; }
 
   bool isShowingSpeculars() const { return m_showSpeculars; }
 

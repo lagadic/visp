@@ -373,9 +373,9 @@ public:
    */
   inline double getGoodMovingEdgesRatioThreshold() const { return percentageGdPt; }
 
-  virtual inline vpColVector getError() const vp_override { return m_error_edge; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_edge; }
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_edge; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_edge; }
 
   virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
 
@@ -388,7 +388,7 @@ public:
   *
   * \param cam : The new camera parameters.
   */
-  virtual void setCameraParameters(const vpCameraParameters &cam) vp_override
+  virtual void setCameraParameters(const vpCameraParameters &cam) VP_OVERRIDE
   {
     m_cam = cam;
 
@@ -424,7 +424,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setOgreVisibilityTest(const bool &v) vp_override
+  virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -437,7 +437,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setScanLineVisibilityTest(const bool &v) vp_override
+  virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setScanLineVisibilityTest(v);
 

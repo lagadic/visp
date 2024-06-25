@@ -402,10 +402,10 @@ public:
   void build(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
-               unsigned int = 1) const vp_override
+               unsigned int = 1) const VP_OVERRIDE
   { }
   void display(const vpCameraParameters &, const vpImage<vpRGBa> &, const vpColor & = vpColor::green,
-               unsigned int = 1) const vp_override
+               unsigned int = 1) const VP_OVERRIDE
   { }
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;

@@ -224,7 +224,7 @@ BEGIN_VISP_NAMESPACE
 
   ~SessionDelegate() { }
 
-  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) vp_override
+  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) VP_OVERRIDE
   {
     switch (event) {
     case ST::CaptureSessionEventId::Booting:
@@ -251,7 +251,7 @@ BEGIN_VISP_NAMESPACE
     }
   }
 
-  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample &sample) vp_override
+  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample &sample) VP_OVERRIDE
   {
     // acquire sampleLock mutex.
     std::lock_guard<std::mutex> u(m_sampleLock);
