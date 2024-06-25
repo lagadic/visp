@@ -63,6 +63,10 @@ BEGIN_VISP_NAMESPACE
  * #include <iostream>
  * #include <visp3/core/vpClient.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   std::string servername = "localhost";

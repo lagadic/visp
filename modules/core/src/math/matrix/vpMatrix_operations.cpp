@@ -657,6 +657,10 @@ vpMatrix vpMatrix::AtA() const
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A;
@@ -702,6 +706,10 @@ void vpMatrix::diag(const vpColVector &A)
   #include <iostream>
 
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

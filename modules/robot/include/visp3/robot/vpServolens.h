@@ -68,24 +68,27 @@ BEGIN_VISP_NAMESPACE
   the position of the focal lens.
 
   \code
-#include <iostream>
-#include <visp3/vs/vpServolens.h>
+  #include <iostream>
+  #include <visp3/vs/vpServolens.h>
 
-int main()
-{
-  // Open the serial device to communicate with the Servolens lens
-  vpServolens servolens("/dev/ttyS0");
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Get the current zoom position
-  unsigned zoom;
-  servolens.getPosition(vpServolens::ZOOM, zoom);
-  std::cout << "Actual zoom value: " << zoom << std::endl;
+  int main()
+  {
+    // Open the serial device to communicate with the Servolens lens
+    vpServolens servolens("/dev/ttyS0");
 
-  // Set a new zoom value
-  servolens.setPosition(vpServolens::ZOOM, zoom+1000);
-}
+    // Get the current zoom position
+    unsigned zoom;
+    servolens.getPosition(vpServolens::ZOOM, zoom);
+    std::cout << "Actual zoom value: " << zoom << std::endl;
+
+    // Set a new zoom value
+    servolens.setPosition(vpServolens::ZOOM, zoom+1000);
+  }
   \endcode
-
 */
 
 class VISP_EXPORT vpServolens

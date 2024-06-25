@@ -676,15 +676,19 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int win_x, int win_y, const std::
   To initialize the display size, you need to call init().
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayGTK.h>
 
-int main()
-{
-  vpDisplayGTK d(100, 200, "My display");
-  vpImage<unsigned char> I(240,384);
-  d.init(I);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayGTK d(100, 200, "My display");
+    vpImage<unsigned char> I(240,384);
+    d.init(I);
+  }
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title) : vpDisplay(), m_impl(new Impl())
@@ -702,15 +706,19 @@ vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title) :
   init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayGTK.h>
 
-int main()
-{
-  vpDisplayGTK d;
-  vpImage<unsigned char> I(240,384);
-  d.init(I, 100, 200, "My display");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayGTK d;
+    vpImage<unsigned char> I(240,384);
+    d.init(I, 100, 200, "My display");
+  }
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK() : vpDisplay(), m_impl(new Impl()) { }

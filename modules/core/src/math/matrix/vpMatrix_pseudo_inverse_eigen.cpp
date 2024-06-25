@@ -59,6 +59,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -112,6 +116,10 @@ vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -172,6 +180,10 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) con
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -279,6 +291,10 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -357,6 +373,10 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -412,6 +432,10 @@ vpMatrix vpMatrix::pseudoInverseEigen3(int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -481,6 +505,10 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -594,6 +622,10 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) co
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

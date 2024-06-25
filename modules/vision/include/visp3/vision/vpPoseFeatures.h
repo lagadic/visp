@@ -678,6 +678,10 @@ private:
  * \code
  * #include <visp3/vision/vpPoseFeatures.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * void vp_createPoint(vpFeaturePoint &fp,const vpPoint &p) {
  *   vpFeatureBuilder::create(fp,p);
  * }
@@ -745,6 +749,10 @@ void vpPoseFeatures::addSpecificFeature(RetType(*fct_ptr)(ArgsFunc...), Args &&.
  *
  * \code
  * #include <visp3/vision/vpPoseFeatures.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * class vp_createClass{
  * public:

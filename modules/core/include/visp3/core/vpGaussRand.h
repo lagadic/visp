@@ -52,6 +52,10 @@ BEGIN_VISP_NAMESPACE
 #include <iostream>
 #include <visp3/core/vpGaussRand.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 int main()
 {
   vpGaussRand noise(0.5, 10);
@@ -85,6 +89,10 @@ current time. The code becomes:
   #include <iostream>
   #include <visp3/core/vpGaussRand.h>
   #include <visp3/core/vpTime.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

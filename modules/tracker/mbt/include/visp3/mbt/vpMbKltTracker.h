@@ -83,6 +83,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined VISP_HAVE_OPENCV
@@ -132,6 +136,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined VISP_HAVE_OPENCV
@@ -168,6 +176,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

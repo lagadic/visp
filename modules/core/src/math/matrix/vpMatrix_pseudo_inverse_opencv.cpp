@@ -59,6 +59,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -112,6 +116,10 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -173,6 +181,10 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) con
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -280,6 +292,10 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -358,6 +374,10 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -413,6 +433,10 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -482,6 +506,10 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -595,6 +623,10 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) co
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

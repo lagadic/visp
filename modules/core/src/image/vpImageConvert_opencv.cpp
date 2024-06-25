@@ -70,6 +70,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/core/vpRGBa.h>
   #include <visp3/io/vpImageIo.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_OPENCV)
@@ -185,6 +189,10 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   #include <visp3/core/vpImage.h>
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/io/vpImageIo.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -414,6 +422,10 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool fli
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/io/vpImageIo.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_OPENCV)
@@ -457,6 +469,10 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
   \code
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/io/vpImageIo.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

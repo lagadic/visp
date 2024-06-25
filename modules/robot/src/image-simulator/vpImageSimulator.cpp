@@ -562,6 +562,10 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<vpRGBa> Icamera(480, 640, vpRGBa(0));
@@ -759,6 +763,10 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   #include <list>
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

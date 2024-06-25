@@ -227,6 +227,10 @@ vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
@@ -252,6 +256,10 @@ vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
@@ -275,6 +283,10 @@ vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initialize
   The following code shows how to use this constructor to initialize a 2-by-3 matrix function:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -307,6 +319,10 @@ vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &
   The following code shows how to use this function:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -373,6 +389,10 @@ void vpMatrix::init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned 
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(4,5);
@@ -438,6 +458,10 @@ vpMatrix vpMatrix::extract(unsigned int r, unsigned int c, unsigned int nrows, u
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -489,6 +513,10 @@ vpColVector vpMatrix::getCol(unsigned int j, unsigned int i_begin, unsigned int 
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -530,6 +558,10 @@ vpColVector vpMatrix::getCol(unsigned int j) const { return getCol(j, 0, rowNum)
   #include <visp3/core/vpMatrix.h>
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -570,6 +602,10 @@ vpRowVector vpMatrix::getRow(unsigned int i) const { return getRow(i, 0, colNum)
   \code
   #include <visp3/core/vpMatrix.h>
   #include <visp3/core/vpRowVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -619,6 +655,10 @@ vpRowVector vpMatrix::getRow(unsigned int i, unsigned int j_begin, unsigned int 
   The following example shows how to use this function:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -871,6 +911,10 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(2,3);
@@ -926,6 +970,10 @@ std::ostream &vpMatrix::matlabPrint(std::ostream &os) const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(2,3);
@@ -969,6 +1017,10 @@ std::ostream &vpMatrix::maplePrint(std::ostream &os) const
   The following code
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1017,6 +1069,10 @@ std::ostream &vpMatrix::csvPrint(std::ostream &os) const
   The following code shows how to use this function:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1110,6 +1166,10 @@ void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
 
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1220,6 +1280,10 @@ vpColVector vpMatrix::eigenValues() const
 
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1550,6 +1614,10 @@ unsigned int vpMatrix::nullSpace(vpMatrix &kerA, int dim) const
   #include <iostream>
 
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

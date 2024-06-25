@@ -88,6 +88,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpPoseVector pose;
@@ -117,6 +121,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -130,6 +138,10 @@ class vpRowVector;
   If ViSP is build with c++11 support, you could also initialize the vector using:
   \code
   #include <visp3/core/vpPoseVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -148,6 +160,10 @@ class vpRowVector;
   and reload the values from this JSON file.
   \code
   #include <visp3/core/vpPoseVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

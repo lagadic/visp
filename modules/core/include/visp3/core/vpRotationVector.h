@@ -71,26 +71,30 @@ class vpColVector;
   vpRxyzVector.
 
   \code
-#include <iostream>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRxyzVector.h>
+  #include <iostream>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRxyzVector.h>
 
-int main()
-{
-  vpRxyzVector r;         // By default initialized to zero
-  // Rotation around x set to 45 degres converted in radians
-  r[0] = vpMath::rad(45);
-  // Rotation around y set to PI radians
-  r[1] = M_PI;
-  // Rotation around z set to 0 radians
-  r[2] = 0;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "Rxyz rotation vector: " << r << std::endl;
+  int main()
+  {
+    vpRxyzVector r;         // By default initialized to zero
+    // Rotation around x set to 45 degres converted in radians
+    r[0] = vpMath::rad(45);
+    // Rotation around y set to PI radians
+    r[1] = M_PI;
+    // Rotation around z set to 0 radians
+    r[2] = 0;
 
-  double rx = r[0];       // Get the value of the angle around x axis
-  double ry = r[1];       // Get the value of the angle around y axis
-  double rz = r[2];       // Get the value of the angle around z axis
-}
+    std::cout << "Rxyz rotation vector: " << r << std::endl;
+
+    double rx = r[0];       // Get the value of the angle around x axis
+    double ry = r[1];       // Get the value of the angle around y axis
+    double rz = r[2];       // Get the value of the angle around z axis
+  }
   \endcode
 
 */

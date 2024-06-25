@@ -268,6 +268,10 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M;
@@ -302,6 +306,10 @@ vpMatrix &vpMatrix::operator=(const std::initializer_list<double> &list)
   The following example shows how to set each element of a 2-by-3 matrix.
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

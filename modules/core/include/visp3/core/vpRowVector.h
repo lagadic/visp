@@ -70,6 +70,10 @@ class vpColVector;
   \code
   #include <visp3/code/vpRowVector.h
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector v(3);
@@ -91,6 +95,10 @@ class vpColVector;
   \code
   #include <visp3/code/vpRowVector.h
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector v{-1, -2.1, -3};
@@ -99,6 +107,12 @@ class vpColVector;
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
+  #include <visp3/code/vpRowVector.h
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector v;

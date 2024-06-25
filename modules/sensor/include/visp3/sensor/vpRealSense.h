@@ -78,51 +78,55 @@ BEGIN_VISP_NAMESPACE
   -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
   file that allows to build sample-realsense.cpp that uses vpRealSense class.
   \code
-project(sample)
-cmake_minimum_required(VERSION 3.5)
+  project(sample)
+  cmake_minimum_required(VERSION 3.5)
 
-find_package(VISP REQUIRED)
-include_directories(${VISP_INCLUDE_DIRS})
+  find_package(VISP REQUIRED)
+  include_directories(${VISP_INCLUDE_DIRS})
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
+  if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  endif()
 
-add_executable(sample-realsense sample-realsense.cpp)
-target_link_libraries(sample-realsense ${VISP_LIBRARIES})
+  add_executable(sample-realsense sample-realsense.cpp)
+  target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   \endcode
 
   To acquire images from the RealSense color camera and convert them into grey
   level images, a good starting is to use the following code that corresponds to
   the content of sample-realsense.cpp:
   \code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main()
-{
-  vpRealSense rs;
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
-#ifdef VISP_HAVE_X11
-  vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
-#endif
+  int main()
+  {
+    vpRealSense rs;
+    rs.open();
 
-  while (1) {
-    rs.acquire(I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
+    vpImage<unsigned char> I(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+  #ifdef VISP_HAVE_X11
+    vpDisplayX d(I);
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d(I);
+  #endif
+
+    while (1) {
+      rs.acquire(I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   If you want to acquire color images, in the previous sample replace:
@@ -139,45 +143,49 @@ int main()
   visualize the point cloud:
 
   \code
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
+  #include <pcl/visualization/cloud_viewer.h>
+  #include <pcl/visualization/pcl_visualizer.h>
 
-int main()
-{
-  vpRealSense rs;
-  rs.open();
-  std::cout << rs << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+  int main()
+  {
+    vpRealSense rs;
+    rs.open();
+    std::cout << rs << std::endl;
 
-  rs.acquire(pointcloud);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
-  viewer->setBackgroundColor (0, 0, 0);
-  viewer->addCoordinateSystem (1.0);
-  viewer->initCameraParameters ();
-  viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
-
-  while (1) {
     rs.acquire(pointcloud);
 
-    static bool update = false;
-    if (! update) {
-      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-      update = true;
-    }
-    else {
-      viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-    }
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    viewer->setBackgroundColor (0, 0, 0);
+    viewer->addCoordinateSystem (1.0);
+    viewer->initCameraParameters ();
+    viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
 
-    viewer->spinOnce (100);
+    while (1) {
+      rs.acquire(pointcloud);
+
+      static bool update = false;
+      if (! update) {
+        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+        viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+        update = true;
+      }
+      else {
+        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      }
+
+      viewer->spinOnce (100);
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   If you want to change the default stream parameters, you can use \p
@@ -185,134 +193,154 @@ int main()
   to set the stream settings. The following code allows to capture the color
   stream in 1920x1080 also with the infrared stream:
 
-\code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense.h>
+  \code
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main() {
-  vpRealSense rs;
-  rs.setEnableStream(rs::stream::color, true);
-  rs.setEnableStream(rs::stream::depth, false);
-  rs.setEnableStream(rs::stream::infrared, true);
-  rs.setEnableStream(rs::stream::infrared2, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
-  rs.setStreamSettings(rs::stream::infrared, vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 30));
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
-  vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height,
-rs.getIntrinsics(rs::stream::infrared).width);
+  int main()
+  {
+    vpRealSense rs;
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, false);
+    rs.setEnableStream(rs::stream::infrared, true);
+    rs.setEnableStream(rs::stream::infrared2, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
+    rs.setStreamSettings(rs::stream::infrared, vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 30));
+    rs.open();
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX di(Ii, 100, 100, "Infrared");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI di(Ii, 100, 100, "Infrared");
-#endif
+    vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+    vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height,
+  rs.getIntrinsics(rs::stream::infrared).width);
 
-  while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ii);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ii);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
-      break;
+  #ifdef VISP_HAVE_X11
+    vpDisplayX dc(Ic, 0, 0, "Color");
+    vpDisplayX di(Ii, 100, 100, "Infrared");
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(Ic, 0, 0, "Color");
+    vpDisplayGDI di(Ii, 100, 100, "Infrared");
+  #endif
+
+    while (1) {
+      rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
+      vpDisplay::display(Ic);
+      vpDisplay::display(Ii);
+      vpDisplay::flush(Ic);
+      vpDisplay::flush(Ii);
+      if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   This example shows how to get depth stream aligned on color stream:
   \code
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main() {
-  vpRealSense rs;
-  rs.setEnableStream(rs::stream::color, true);
-  rs.setEnableStream(rs::stream::depth, true);
-  rs.setEnableStream(rs::stream::infrared, false);
-  rs.setEnableStream(rs::stream::infrared2, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
-  rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
-  vpImage<uint16_t> Id_raw(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
-  vpImage<vpRGBa> Id(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
+  int main()
+  {
+    vpRealSense rs;
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, true);
+    rs.setEnableStream(rs::stream::infrared, false);
+    rs.setEnableStream(rs::stream::infrared2, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+    rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
+    rs.open();
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
-#endif
+    vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+    vpImage<uint16_t> Id_raw(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
+    vpImage<vpRGBa> Id(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
 
-  while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, nullptr,
-               rs::stream::color, rs::stream::depth_aligned_to_color);
-    vpImageConvert::createDepthHistogram(Id_raw, Id);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Id);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Id);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
-      break;
+  #ifdef VISP_HAVE_X11
+    vpDisplayX dc(Ic, 0, 0, "Color");
+    vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(Ic, 0, 0, "Color");
+    vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
+  #endif
+
+    while (1) {
+      rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, nullptr,
+                rs::stream::color, rs::stream::depth_aligned_to_color);
+      vpImageConvert::createDepthHistogram(Id_raw, Id);
+      vpDisplay::display(Ic);
+      vpDisplay::display(Id);
+      vpDisplay::flush(Ic);
+      vpDisplay::flush(Id);
+      if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   This is how you get intrinsics for non native stream (the native stream has
   to be enabled!):
 
-\code
-#include <visp3/sensor/vpRealSense.h>
+  \code
+  #include <visp3/sensor/vpRealSense.h>
 
-int main() {
-  vpRealSense rs;
-  rs.setEnableStream(rs::stream::color, true);
-  rs.setEnableStream(rs::stream::depth, true);
-  rs.setEnableStream(rs::stream::infrared, false);
-  rs.setEnableStream(rs::stream::infrared2, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
-  rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  rs::device * dev = rs.getHandler();
-  rs::intrinsics depth_aligned_intrinsic = dev->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
-  std::cout << "Intrinsics [fx, fy, ppx, ppy]: " << depth_aligned_intrinsic.fx << " ; " << depth_aligned_intrinsic.fy
-            << " ; " << depth_aligned_intrinsic.ppx << " ; " << depth_aligned_intrinsic.ppy << std::endl; return 0;
-}
+  int main()
+  {
+    vpRealSense rs;
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, true);
+    rs.setEnableStream(rs::stream::infrared, false);
+    rs.setEnableStream(rs::stream::infrared2, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+    rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
+    rs.open();
+
+    rs::device * dev = rs.getHandler();
+    rs::intrinsics depth_aligned_intrinsic = dev->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
+    std::cout << "Intrinsics [fx, fy, ppx, ppy]: " << depth_aligned_intrinsic.fx << " ; " << depth_aligned_intrinsic.fy
+              << " ; " << depth_aligned_intrinsic.ppx << " ; " << depth_aligned_intrinsic.ppy << std::endl; return 0;
+  }
   \endcode
 
   Useful information can be retrieved using \p getHandler():
   \code
-#include <librealsense/rs.hpp>
-#include <visp3/sensor/vpRealSense.h>
+  #include <librealsense/rs.hpp>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main() {
-  vpRealSense rs;
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  rs::device *device = rs.getHandler();
-  std::cout << "Stream width: " << device->get_stream_width(rs::stream::color) << std::endl;
-  std::cout << "Stream height: " << device->get_stream_height(rs::stream::color) << std::endl;
-  std::cout << "Stream format: " << device->get_stream_format(rs::stream::color) << std::endl;
-  std::cout << "Stream framerate: " << device->get_stream_framerate(rs::stream::color) << std::endl;
+  int main()
+  {
+    vpRealSense rs;
+    rs.open();
 
-  std::cout << "API version: " << rs_get_api_version(nullptr) << std::endl;
-  std::cout << "Firmware: " << rs_get_device_firmware_version((const rs_device *) device, nullptr) << std::endl;
-  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+    rs::device *device = rs.getHandler();
+    std::cout << "Stream width: " << device->get_stream_width(rs::stream::color) << std::endl;
+    std::cout << "Stream height: " << device->get_stream_height(rs::stream::color) << std::endl;
+    std::cout << "Stream format: " << device->get_stream_format(rs::stream::color) << std::endl;
+    std::cout << "Stream framerate: " << device->get_stream_framerate(rs::stream::color) << std::endl;
 
-  return 0;
-}
+    std::cout << "API version: " << rs_get_api_version(nullptr) << std::endl;
+    std::cout << "Firmware: " << rs_get_device_firmware_version((const rs_device *) device, nullptr) << std::endl;
+    std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+
+    return 0;
+  }
   \endcode
 
   Camera parameters can be set in the following manner:

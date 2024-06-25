@@ -93,58 +93,62 @@ grab and display images from a firewire camera under Windows.
 how to grab and display images from the first camera found on the bus.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_CMU1394)
-  std::cout << "ViSP Image acquisition example" << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I;
-  vp1394CMUGrabber g;
-
-  if( g.getNumberOfConnectedCameras() > 1 )
-    std::cout << "There are " << g.getNumberOfConnectedCameras() << " connected cameras." << std::endl;
-    if( g.getNumberOfConnectedCameras() == 1 )
-      std::cout << "There is " << g.getNumberOfConnectedCameras() << " connected camera." << std::endl;
-    else
-      std::cout << "There is no connected camera." << std::endl;
-
-  // Setting camera parameters manually
-  g.selectCamera(0);
-  g.setGain(0);
-  g.setShutter(2000);
-  g.setFramerate(3);    // 15 FPS
-  g.setVideoMode(0, 5); // 640x480 - MONO
-
-  g.acquire(I);
-
-  // Display camera description
-  g.displayCameraDescription(0);
-  g.displayCameraModel();
-  std::cout << "Height: " << g.getHeight() << " Width: " << g.getWidth() << std::endl;
-
-  vpDisplayOpenCV d(I);
-  vpDisplay::display(I);
-
-  for(;;)
+  int main()
   {
-    g.acquire(I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) // a click to exit
-        break;
-  }
+  #if defined(VISP_HAVE_CMU1394)
+    std::cout << "ViSP Image acquisition example" << std::endl;
 
-  g.close();
-#endif
-  std::cout << "ViSP exiting..." <<std::endl;
-  return 0;
-}
+    vpImage<unsigned char> I;
+    vp1394CMUGrabber g;
+
+    if( g.getNumberOfConnectedCameras() > 1 )
+      std::cout << "There are " << g.getNumberOfConnectedCameras() << " connected cameras." << std::endl;
+      if( g.getNumberOfConnectedCameras() == 1 )
+        std::cout << "There is " << g.getNumberOfConnectedCameras() << " connected camera." << std::endl;
+      else
+        std::cout << "There is no connected camera." << std::endl;
+
+    // Setting camera parameters manually
+    g.selectCamera(0);
+    g.setGain(0);
+    g.setShutter(2000);
+    g.setFramerate(3);    // 15 FPS
+    g.setVideoMode(0, 5); // 640x480 - MONO
+
+    g.acquire(I);
+
+    // Display camera description
+    g.displayCameraDescription(0);
+    g.displayCameraModel();
+    std::cout << "Height: " << g.getHeight() << " Width: " << g.getWidth() << std::endl;
+
+    vpDisplayOpenCV d(I);
+    vpDisplay::display(I);
+
+    for(;;)
+    {
+      g.acquire(I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false)) // a click to exit
+          break;
+    }
+
+    g.close();
+  #endif
+    std::cout << "ViSP exiting..." <<std::endl;
+    return 0;
+  }
   \endcode
 */
 

@@ -52,56 +52,60 @@ BEGIN_VISP_NAMESPACE
   \ingroup group_sensor_ft
 
   Interface for data acquisition devices supported by Comedi. Comedi is a
-linux control and measurement device interface. For more information see
-http://www.comedi.org.
+  linux control and measurement device interface. For more information see
+  http://www.comedi.org.
 
   This class was tested with ATI Gamma 65-SI FT sensor connected to a
   National Instrument NI DAQmx PCI-6220 board.
 
   \warning If you experience an exception like
   \code
-Could not open device /dev/comedi0
+  Could not open device /dev/comedi0
   \endcode
-  you may set up udev permissions for Comedi device files. Once Comedi is
-installed you also need to make sure that the user has appropriate permissions
-for accessing the Comedi device files. That is you need to be able to have
-read and write access to the /dev/comedi* files. One elegant way to achieve
-this to create a new group and tell udev to add the Comedi device files to
-this group. To this end:
+    you may set up udev permissions for Comedi device files. Once Comedi is
+  installed you also need to make sure that the user has appropriate permissions
+  for accessing the Comedi device files. That is you need to be able to have
+  read and write access to the /dev/comedi* files. One elegant way to achieve
+  this to create a new group and tell udev to add the Comedi device files to
+  this group. To this end:
   1. Login as root
   2. Create a new group "iocard":
   \code
-$ addgroup --system iocard
+  $ addgroup --system iocard
   \endcode
   3. Add udev rules to the /etc/udev/rules.d directory:
   \code
-$ echo 'KERNEL=="comedi*", MODE="0660", GROUP="iocard"' >
-/etc/udev/rules.d/95-comedi.rules \endcode
+  $ echo 'KERNEL=="comedi*", MODE="0660", GROUP="iocard"' > /etc/udev/rules.d/95-comedi.rules
+  \endcode
   4. Add users to the "iocard" group:
   \code
-$ adduser <username> iocard
+  $ adduser <username> iocard
   \endcode
   5. Reboot
 
   The following example shows how to run an synchronous data acquisition at
-500 Hz, calling getPhyData() each 2 ms:
+  500 Hz, calling getPhyData() each 2 ms:
 
-\code
-#include <visp3/sensor/vpComedi.h>
+  \code
+  #include <visp3/sensor/vpComedi.h>
 
-int main()
-{
-  vpComedi comedi;
-  comedi.setDevice("/dev/comedi0");
-  comedi.setChannelNumbers(6); // to read a F/T tensor
-  comedi.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  for(unsigned int i=0; i < 500; i++) {
-    std::cout << "Physical data (in " << comedi.getPhyDataUnits() << "): " << comedi.getPhyData().t() << std::endl;
-    vpTime::wait(2);
+  int main()
+  {
+    vpComedi comedi;
+    comedi.setDevice("/dev/comedi0");
+    comedi.setChannelNumbers(6); // to read a F/T tensor
+    comedi.open();
+
+    for(unsigned int i=0; i < 500; i++) {
+      std::cout << "Physical data (in " << comedi.getPhyDataUnits() << "): " << comedi.getPhyData().t() << std::endl;
+      vpTime::wait(2);
+    }
+    comedi.close();
   }
-  comedi.close();
-}
   \endcode
 */
 class VISP_EXPORT vpComedi

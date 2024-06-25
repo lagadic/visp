@@ -86,6 +86,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/visual_features/vpFeatureDepth.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpServo task; // Visual servoing task
@@ -131,6 +135,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpColVector.h>
  * #include <visp3/core/vpMatrix.h>
  * #include <visp3/visual_features/vpFeatureDepth.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

@@ -309,6 +309,10 @@ vpRGBa operator*(const double &x, const  vpRGBa &rgb)
   \code
   #include <visp3/core/vpImage.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<vpRGBa> I(480,640);

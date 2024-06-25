@@ -90,6 +90,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMath.h>
  * #include <visp3/robot/vpSimulatorAfma6.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpSimulatorAfma6 robot;
@@ -125,6 +129,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpColVector.h>
  * #include <visp3/core/vpMath.h>
  * #include <visp3/robot/vpSimulatorAfma6.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

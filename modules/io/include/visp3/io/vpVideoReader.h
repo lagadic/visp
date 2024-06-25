@@ -89,6 +89,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/io/vpVideoReader.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #ifdef VISP_HAVE_OPENCV
@@ -122,6 +126,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/io/vpVideoReader.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<vpRGBa> I;
@@ -144,6 +152,10 @@ BEGIN_VISP_NAMESPACE
  * Note that it is also possible to access to a specific frame using getFrame().
  * \code
  * #include <visp3/io/vpVideoReader.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

@@ -146,6 +146,10 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -213,6 +217,10 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -290,6 +298,10 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, int rank_in) const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -352,6 +364,10 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -424,6 +440,10 @@ vpMatrix vpMatrix::pseudoInverse(int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -500,6 +520,10 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -589,6 +613,10 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -666,6 +694,10 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -756,6 +788,10 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -877,6 +913,10 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

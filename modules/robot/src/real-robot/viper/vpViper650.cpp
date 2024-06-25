@@ -509,42 +509,46 @@ file.
   attached to the robot.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper650.h>
-#include <visp3/robot/vpViper650.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/robot/vpViper650.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I(480, 640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
+  int main()
+  {
+    vpImage<unsigned char> I(480, 640);
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
-#endif
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
 
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
-#else
-  vpViper650 robot;
-#endif
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+  #endif
 
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  // Camera parameters are read from
-  // /udd/fspindle/robot/Viper650/current/include/const_camera_Viper650.xml
-  // if VISP_HAVE_VIPER650_DATA macro is defined
-  // in vpConfig.h file
-  try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
+  #else
+    vpViper650 robot;
+  #endif
+
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    // Camera parameters are read from
+    // /udd/fspindle/robot/Viper650/current/include/const_camera_Viper650.xml
+    // if VISP_HAVE_VIPER650_DATA macro is defined
+    // in vpConfig.h file
+    try {
+      robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera
@@ -722,42 +726,46 @@ file.
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper650.h>
-#include <visp3/robot/vpViper650.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/robot/vpViper650.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I(480, 640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
+  int main()
+  {
+    vpImage<unsigned char> I(480, 640);
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
-#endif
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
 
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
-#else
-  vpViper650 robot;
-#endif
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+  #endif
 
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  try {
-    robot.getCameraParameters (cam, I);
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
+  #else
+    vpViper650 robot;
+  #endif
+
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    try {
+      robot.getCameraParameters (cam, I);
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera
-parameters are not found.
+  parameters are not found.
 
 */
 void vpViper650::getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I) const
@@ -786,38 +794,42 @@ file.
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper650.h>
-#include <visp3/robot/vpViper650.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/robot/vpViper650.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I(480, 640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
+  int main()
+  {
+    vpImage<vpRGBa> I(480, 640);
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
-#endif
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
 
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
-#else
-  vpViper650 robot;
-#endif
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+  #endif
 
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  try {
-    robot.getCameraParameters (cam, I);
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
+  #else
+    vpViper650 robot;
+  #endif
+
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    try {
+      robot.getCameraParameters (cam, I);
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera

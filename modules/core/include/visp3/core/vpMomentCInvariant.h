@@ -75,51 +75,54 @@ class vpMomentBasic;
 
   The example below shows how to retrieve the \f$C_2\f$ invariant:
   \code
-#include <iostream>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  #include <iostream>
+  #include <visp3/core/vpMomentCInvariant.h>
+  #include <visp3/core/vpMomentCommon.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  vpPoint p;
-  std::vector<vpPoint> vec_p;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(2); p.set_y(3); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(0); p.set_y(1.2); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
+  int main()
+  {
+    vpPoint p;
+    std::vector<vpPoint> vec_p;
 
-  vpMomentObject obj(5); // Create an image moment object with 5 as maximum order
-  obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
-  obj.fromVector(vec_p);
+    p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(2); p.set_y(3); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
+    p.set_x(0); p.set_y(1.2); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
 
-  //initialisation with default values
-  vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),
-                    vpMomentCommon::getAlpha(obj),1.);
-  bool success;
+    vpMomentObject obj(5); // Create an image moment object with 5 as maximum order
+    obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
+    obj.fromVector(vec_p);
 
-  db.updateAll(obj); // Update AND compute all moments
+    //initialisation with default values
+    vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),
+                      vpMomentCommon::getAlpha(obj),1.);
+    bool success;
 
-  //get C-invariant
-  const vpMomentCInvariant& C
-    = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
-  if(success)
-      std::cout << C.get(1) << std:: endl; // print C2 invariant
-  else
-      std::cout << "vpMomentCInvariant not found." << std::endl;
+    db.updateAll(obj); // Update AND compute all moments
 
-  return 0;
-}
-\endcode
+    //get C-invariant
+    const vpMomentCInvariant& C
+      = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+    if(success)
+        std::cout << C.get(1) << std:: endl; // print C2 invariant
+    else
+        std::cout << "vpMomentCInvariant not found." << std::endl;
 
-vpMomentCInvariant depends on vpMomentCentered (see vpMomentDatabase and
-vpMomentCommon).
+    return 0;
+  }
+  \endcode
+
+  vpMomentCInvariant depends on vpMomentCentered (see vpMomentDatabase and vpMomentCommon).
 */
 class VISP_EXPORT vpMomentCInvariant : public vpMoment
 {

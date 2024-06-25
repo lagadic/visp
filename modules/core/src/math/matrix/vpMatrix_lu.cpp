@@ -94,6 +94,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -208,6 +212,10 @@ vpMatrix vpMatrix::inverseByLU() const
 
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,3);
@@ -263,6 +271,10 @@ double vpMatrix::detByLU() const
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -367,6 +379,10 @@ vpMatrix vpMatrix::inverseByLULapack() const
 
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,3);
@@ -466,6 +482,10 @@ double vpMatrix::detByLULapack() const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -513,6 +533,10 @@ vpMatrix vpMatrix::inverseByLUOpenCV() const
 
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,3);
@@ -554,6 +578,10 @@ double vpMatrix::detByLUOpenCV() const
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -602,6 +630,10 @@ vpMatrix vpMatrix::inverseByLUEigen3() const
   #include <iostream>
 
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

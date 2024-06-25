@@ -98,6 +98,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpImagePoint.h>
  * #include <visp3/me/vpMeLine.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<unsigned char> I(240, 320);

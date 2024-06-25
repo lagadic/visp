@@ -78,6 +78,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpForceTwistMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector stp(0.1, 0.2, 0.3);
@@ -116,6 +120,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpForceTwistMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRotationMatrix sRp( {0,  0, -1,
@@ -142,6 +150,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpForceTwistMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

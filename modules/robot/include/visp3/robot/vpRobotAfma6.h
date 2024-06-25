@@ -100,16 +100,18 @@ BEGIN_VISP_NAMESPACE
   class by calling the default constructor:
 
   \code
-#include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/robot/vpRobotAfma6.h>
 
-#ifdef VISP_HAVE_AFMA6
-int main()
-{
-  vpRobotAfma6 robot;
-}
-#else
-int main() {}
-#endif
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifdef VISP_HAVE_AFMA6
+    vpRobotAfma6 robot;
+  #endif
+  }
   \endcode
 
   This initialize the robot kinematics with the eMc extrinsic camera

@@ -805,22 +805,26 @@ bool vpVideoReader::isVideoExtensionSupported() const
   \param I : The captured image.
 
   \code
-#include <visp3/io/vpVideoReader.h>
+  #include <visp3/io/vpVideoReader.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vpVideoReader reader;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialize the reader.
-  reader.setFileName("./image/image%04d.jpeg");
-  reader.setFirstFrameIndex(10);
-  reader.setLastFrameIndex(20);
-  reader.open(I);
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vpVideoReader reader;
 
-  while (! reader.end() )
-  reader >> I;
-}
+    // Initialize the reader.
+    reader.setFileName("./image/image%04d.jpeg");
+    reader.setFirstFrameIndex(10);
+    reader.setLastFrameIndex(20);
+    reader.open(I);
+
+    while (! reader.end() )
+    reader >> I;
+  }
   \endcode
  */
 vpVideoReader &vpVideoReader::operator>>(vpImage<unsigned char> &I)
@@ -834,22 +838,26 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<unsigned char> &I)
   \param I : The captured image.
 
   \code
-#include <visp3/io/vpVideoReader.h>
+  #include <visp3/io/vpVideoReader.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpVideoReader reader;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialize the reader.
-  reader.setFileName("./image/image%04d.jpeg");
-  reader.setFirstFrameIndex(10);
-  reader.setLastFrameIndex(20);
-  reader.open(I);
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vpVideoReader reader;
 
-  while (! reader.end() )
-  reader >> I;
-}
+    // Initialize the reader.
+    reader.setFileName("./image/image%04d.jpeg");
+    reader.setFirstFrameIndex(10);
+    reader.setLastFrameIndex(20);
+    reader.open(I);
+
+    while (! reader.end() )
+    reader >> I;
+  }
   \endcode
  */
 vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)

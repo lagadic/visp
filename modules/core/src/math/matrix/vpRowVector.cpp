@@ -157,6 +157,10 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
   \code
   #include <visp3/core/vpRowVector.cpp>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector r;
@@ -478,16 +482,20 @@ vpRowVector &vpRowVector::operator-=(vpRowVector v)
   Copy operator.
   Allows operation such as A << v
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector A, B(5);
-  for (unsigned int i=0; i<B.size(); i++)
-    B[i] = i;
-  A << B;
-  std::cout << "A: " << A << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector A, B(5);
+    for (unsigned int i=0; i<B.size(); i++)
+      B[i] = i;
+    A << B;
+    std::cout << "A: " << A << std::endl;
+  }
   \endcode
   In row vector A we get:
   \code
@@ -682,27 +690,31 @@ vpMatrix vpRowVector::reshape(unsigned int nrows, unsigned int ncols)
   \param ncols : number of columns of the matrix.
 
   \exception vpException::dimensionError If the matrix and the row vector have
-not the same size.
+  not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  int var=0;
-  vpMatrix mat(3, 4);
-  for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 4; j++)
-          mat[i][j] = ++var;
-  std::cout << "mat: \n" << mat << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRowVector row = mat.stackRows();
-  std::cout << "row vector: " << row << std::endl;
+  int main()
+  {
+    int var=0;
+    vpMatrix mat(3, 4);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 4; j++)
+            mat[i][j] = ++var;
+    std::cout << "mat: \n" << mat << std::endl;
 
-  vpMatrix remat = row.reshape(3, 4);
-  std::cout << "remat: \n" << remat << std::endl;
-}
+    vpRowVector row = mat.stackRows();
+    std::cout << "row vector: " << row << std::endl;
+
+    vpMatrix remat = row.reshape(3, 4);
+    std::cout << "remat: \n" << remat << std::endl;
+  }
   \endcode
 
   If you run the previous example, you get:
@@ -747,6 +759,10 @@ void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
   The following example shows how to use this function:
   \code
   #include <visp3/core/vpRowVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1159,6 +1175,10 @@ double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
   \code
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector v(4);
@@ -1208,6 +1228,10 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
   \code
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector r(3);
@@ -1252,6 +1276,10 @@ std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixN
   \code
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     std::ofstream ofs("log.csv", std::ofstream::out);
@@ -1289,6 +1317,10 @@ std::ostream &vpRowVector::csvPrint(std::ostream &os) const
   \code
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector r(3);
@@ -1324,6 +1356,10 @@ std::ostream &vpRowVector::maplePrint(std::ostream &os) const
   The following code
   \code
   #include <visp3/core/vpRowVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

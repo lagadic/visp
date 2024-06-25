@@ -1731,15 +1731,19 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y, const std::string &titl
   To initialize the display size, you need to call init().
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpDisplayX d(100, 200, "My display");
-  vpImage<unsigned char> I(240, 384);
-  d.init(I);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayX d(100, 200, "My display");
+    vpImage<unsigned char> I(240, 384);
+    d.init(I);
+  }
   \endcode
 */
 vpDisplayX::vpDisplayX(int x, int y, const std::string &title) : vpDisplay(), m_impl(new Impl())
@@ -1758,15 +1762,19 @@ vpDisplayX::vpDisplayX(int x, int y, const std::string &title) : vpDisplay(), m_
   init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpDisplayX d;
-  vpImage<unsigned char> I(240, 384);
-  d.init(I, 100, 200, "My display");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayX d;
+    vpImage<unsigned char> I(240, 384);
+    d.init(I, 100, 200, "My display");
+  }
   \endcode
 */
 vpDisplayX::vpDisplayX() : vpDisplay(), m_impl(new Impl()) { }

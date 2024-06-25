@@ -97,6 +97,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpHomogeneousMatrix M;
@@ -125,6 +129,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -140,6 +148,10 @@ BEGIN_VISP_NAMESPACE
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -163,6 +175,10 @@ BEGIN_VISP_NAMESPACE
   and reload the values from this JSON file.
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

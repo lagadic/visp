@@ -72,6 +72,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpArray2D.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a(2, 3);
@@ -97,6 +101,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpArray2D.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
@@ -105,6 +113,12 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  * The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
  * \code
+ * #include <visp3/code/vpArray2D.h
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a;
@@ -115,6 +129,10 @@ BEGIN_VISP_NAMESPACE
  * You can also use reshape() function:
  * \code
  * #include <visp3/code/vpArray2D.h
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

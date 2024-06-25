@@ -1124,6 +1124,10 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/io/vpImageIo.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<vpRGBa> Ic; // A color image

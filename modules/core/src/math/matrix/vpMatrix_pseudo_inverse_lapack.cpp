@@ -69,6 +69,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -123,6 +127,10 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -184,6 +192,10 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -292,6 +304,10 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -370,6 +386,10 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(2, 3);
@@ -426,6 +446,10 @@ vpMatrix vpMatrix::pseudoInverseLapack(int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -494,6 +518,10 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, int rank_in) const
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -607,6 +635,10 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) co
 
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

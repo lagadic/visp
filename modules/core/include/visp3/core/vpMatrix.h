@@ -94,6 +94,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/code/vpMatrix.h
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(2, 3);
@@ -119,6 +123,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/code/vpMatrix.h
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
@@ -129,6 +137,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/code/vpMatrix.h
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
@@ -137,6 +149,12 @@ BEGIN_VISP_NAMESPACE
 
   The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
   \code
+  #include <visp3/code/vpMatrix.h
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M;
@@ -751,6 +769,10 @@ public:
     \code
     #include <visp3/core/vpMatrix.h>
 
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
+
     int main()
     {
       std::string filename("matrix.bin");
@@ -821,6 +843,10 @@ public:
     The following example shows how to use this function:
     \code
     #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {
@@ -899,6 +925,10 @@ public:
     \code
     #include <visp3/core/vpMatrix.h>
 
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
+
     int main()
     {
       std::string filename("matrix.bin");
@@ -970,6 +1000,10 @@ public:
     The following example shows how to use this function:
     \code
     #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {

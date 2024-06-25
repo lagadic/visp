@@ -776,23 +776,27 @@ void vpDisplay::displayText(const vpImage<unsigned char> &I, int i, int j, const
   to show the overlay. Because it's time spending, use it parcimoniously.
 
   \code
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/core/vpColor.h>
+  #include <visp3/core/vpDisplay.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImagePoint.h>
+  #include <visp3/gui/vpDisplayGDI.h>
 
-int main() {
-  vpImage<unsigned char> I(240, 380);
-  vpDisplayGDI d;
-  d.init(I);
-  vpDisplay::display(I); // display the image
-  vpImagePoint center;
-  unsigned int radius = 100;
-  vpDisplay::displayCircle(I, center, radius, vpColor::red);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay::flush(I); // Mandatory to display the requested features.
-}
+  int main() {
+    vpImage<unsigned char> I(240, 380);
+    vpDisplayGDI d;
+    d.init(I);
+    vpDisplay::display(I); // display the image
+    vpImagePoint center;
+    unsigned int radius = 100;
+    vpDisplay::displayCircle(I, center, radius, vpColor::red);
+
+    vpDisplay::flush(I); // Mandatory to display the requested features.
+  }
   \endcode
 
   \sa flushROI()
@@ -993,6 +997,10 @@ bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMou
   #include <visp3/gui/vpDisplayOpenCV.h>
   #include <visp3/gui/vpDisplayX.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<unsigned char> I(240, 320); // Create a black image
@@ -1082,6 +1090,10 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
   #include <visp3/gui/vpDisplayGTK.h>
   #include <visp3/gui/vpDisplayOpenCV.h>
   #include <visp3/gui/vpDisplayX.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1173,6 +1185,10 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &k
   #include <visp3/gui/vpDisplayGTK.h>
   #include <visp3/gui/vpDisplayOpenCV.h>
   #include <visp3/gui/vpDisplayX.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

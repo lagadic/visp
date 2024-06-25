@@ -122,6 +122,10 @@ void display_gsl(gsl_matrix *M)
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -352,6 +356,10 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -404,6 +412,10 @@ vpMatrix vpMatrix::inverseByQR() const
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   double residual(vpMatrix M1, vpMatrix M2)
   {
@@ -681,6 +693,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   double residual(vpMatrix M1, vpMatrix M2)
   {
     return (M1 - M2).frobeniusNorm();
@@ -899,6 +915,10 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   double residual(vpMatrix M1, vpMatrix M2)
   {
       return (M1 - M2).frobeniusNorm();
@@ -1078,6 +1098,10 @@ unsigned int vpMatrix::qrPivotLapackGSL(vpMatrix &Q, vpMatrix &R, vpMatrix &P, b
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   double residual(vpMatrix M1, vpMatrix M2)
   {
@@ -1263,6 +1287,11 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,3);
@@ -1313,6 +1342,11 @@ void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,3);

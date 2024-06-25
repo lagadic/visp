@@ -260,6 +260,10 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   #include <visp3/core/vpImage.h>
   #include <visp3/core/vpImageFilter.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     // Constants for the Canny operator.
@@ -305,6 +309,10 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
   \code
   #include <visp3/core/vpImage.h>
   #include <visp3/core/vpImageFilter.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -366,6 +374,10 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
  * \code
  * #include <visp3/core/vpImage.h>
  * #include <visp3/core/vpImageFilter.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

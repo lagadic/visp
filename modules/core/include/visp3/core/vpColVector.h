@@ -76,6 +76,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpColVector.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpColVector v(3);
@@ -98,6 +102,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpColVector.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpColVector v;
@@ -110,6 +118,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpColVector.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpColVector v({-1, -2.1, -3});
@@ -118,6 +130,10 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  * The vector could also be initialized using operator=(const std::initializer_list< double > &)
  * \code
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpColVector v;
@@ -132,6 +148,10 @@ BEGIN_VISP_NAMESPACE
  * and reload the values from this JSON file.
  * \code
  * #include <visp3/core/vpColVector.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -295,6 +315,10 @@ public:
    * \code
    * #include <visp3/core/vpColVector.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector v(3);
@@ -321,6 +345,10 @@ public:
    * The following code
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -435,6 +463,10 @@ public:
    * \code
    * #include <visp3/core/vpColVector.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector v(4);
@@ -465,6 +497,10 @@ public:
    * The following example shows how to use this function:
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -498,6 +534,10 @@ public:
    * \code
    * #include <visp3/core/vpColVector.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector v(3);
@@ -526,6 +566,10 @@ public:
    * The following code
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -654,6 +698,10 @@ public:
    * \return The modified vector.
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -878,6 +926,10 @@ public:
    * \code
    * #include <visp3/core/vpColVector.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector A, B(5);
@@ -900,6 +952,10 @@ public:
    * The following example shows how to use this operator.
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -925,6 +981,10 @@ public:
    * \code
    * #include <visp3/code/vpColVector.h
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector v;
@@ -944,6 +1004,10 @@ public:
    * This operator could be used to set column vector elements:
    * \code
    * #include <visp3/code/vpColVector.h
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -1007,6 +1071,10 @@ public:
    * The following example shows how to use this method.
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -1222,6 +1290,10 @@ public:
    * \code
    * #include <visp3/core/vpColVector.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector v(10);
@@ -1277,6 +1349,10 @@ public:
    * Example:
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -1384,6 +1460,10 @@ public:
    * The following example shows how to use this function:
    * \code
    * #include <visp3/core/vpColVector.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {

@@ -71,6 +71,10 @@
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<vpRGBa> Icamera(480,640,vpRGBa(0));

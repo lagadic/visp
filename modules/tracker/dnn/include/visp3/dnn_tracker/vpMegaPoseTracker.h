@@ -56,6 +56,10 @@ BEGIN_VISP_NAMESPACE
  * \code{.cpp}
  * #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpCameraParameters cam;

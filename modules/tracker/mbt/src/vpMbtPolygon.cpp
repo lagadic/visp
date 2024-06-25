@@ -239,31 +239,35 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
 
   The sample code below shows how to introduce this feature:
   \code
-#include <visp3/io/vpImageIo.h>
-#include <visp3/mbt/vpMbEdgeTracker.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/mbt/vpMbEdgeTracker.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Acquire an image
-  vpImageIo::read(I, "my-image.pgm");
+  int main()
+  {
+    vpImage<unsigned char> I;
 
-  std::string object = "my-object";
-  vpMbEdgeTracker tracker;
-  tracker.loadConfigFile( object+".xml" );
-  tracker.loadModel( object+".cao" );
+    // Acquire an image
+    vpImageIo::read(I, "my-image.pgm");
 
-  tracker.setLod(true);
-  tracker.setMinLineLengthThresh(20.);
-  tracker.setMinPolygonAreaThresh(20.*20.);
+    std::string object = "my-object";
+    vpMbEdgeTracker tracker;
+    tracker.loadConfigFile( object+".xml" );
+    tracker.loadModel( object+".cao" );
 
-  tracker.initClick(I, object+".init" );
+    tracker.setLod(true);
+    tracker.setMinLineLengthThresh(20.);
+    tracker.setMinPolygonAreaThresh(20.*20.);
 
-  while (true) {
-    // tracking loop
+    tracker.initClick(I, object+".init" );
+
+    while (true) {
+      // tracking loop
+    }
   }
-}
   \endcode
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()

@@ -58,6 +58,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/io/vpImageIo.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_YARP)
@@ -108,6 +112,10 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::Image
     #include <yarp/sig/ImageFile.h>
   #endif
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_YARP)
@@ -153,6 +161,10 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/core/vpRGBa.h>
   #include <visp3/io/vpImageIo.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -203,6 +215,10 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp
     #include <yarp/sig/ImageFile.h>
   #endif
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_YARP)
@@ -244,6 +260,10 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src
   #include <visp3/core/vpImageConvert.h>
   #include <visp3/core/vpRGBa.h>
   #include <visp3/io/vpImageIo.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -294,6 +314,10 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp
 
   #if defined(VISP_HAVE_YARP)
     #include <yarp/sig/ImageFile.h>
+  #endif
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
   #endif
 
   int main()

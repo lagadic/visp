@@ -89,6 +89,10 @@ BEGIN_VISP_NAMESPACE
  * //generic function for printing
  * void print (double i) { std::cout << i << "\t";}
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpPoint p;

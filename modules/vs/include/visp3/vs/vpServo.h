@@ -81,6 +81,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/visual_features/vpFeatureTranslation.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   // Creation of an homogeneous matrix that represent the displacement
@@ -908,6 +912,10 @@ public:
    * #include <visp3/visual_features/vpFeaturePoint.h>
    * #include <visp3/vs/vpServo.h>
    *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
    * int main()
    * {
    *   vpServo servo;

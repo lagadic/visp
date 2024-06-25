@@ -88,6 +88,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   vpMatrix A(3,3);
@@ -139,6 +143,10 @@ void vpMatrix::solveBySVD(const vpColVector &b, vpColVector &x) const { x = pseu
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -215,6 +223,10 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix M(3,2);
@@ -286,6 +298,10 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -373,6 +389,10 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -576,6 +596,10 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

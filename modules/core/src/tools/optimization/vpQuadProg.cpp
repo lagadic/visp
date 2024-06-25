@@ -62,9 +62,14 @@ BEGIN_VISP_NAMESPACE
   \Leftrightarrow
   \begin{array}{lll}
   \mathbf{x} = &  \arg\min & \frac{1}{2}\mathbf{x}^T\left[\begin{array}{cc}4 & 1 \\ 1 & 2\end{array}\right]\mathbf{x} +
-  [1~1]\mathbf{x}\\ & \text{s.t.}& [1~1]\mathbf{x} = 1 \end{array} \f$ \code
+  [1~1]\mathbf{x}\\ & \text{s.t.}& [1~1]\mathbf{x} = 1 \end{array} \f$
 
+  \code
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -209,8 +214,11 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMa
   \mathbf{x} = &  \arg\min & (x_1-1)^2 + x_2^2  \\
                & \text{s.t.}& x_1 + x_2 = 1\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -282,8 +290,11 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &
   \mathbf{x} = &  \arg\min & (x_1-1)^2 + x_2^2  \\
                & \text{s.t.}& x_1 + x_2 = 1\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -345,8 +356,11 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, v
                & \text{s.t.}& x_1 + x_2 = 1  \\
                 & \text{s.t.} & x_2 \geq 1\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -418,8 +432,11 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
                & \text{s.t.}& x_1 + x_2 \leq 1  \\
                 & \text{s.t.} & x_1, x_2 \geq 0\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

@@ -846,6 +846,10 @@ template <class Type> void vpImageTools::flip(const vpImage<Type> &I, vpImage<Ty
   #include <visp3/core/vpImageTools.h>
   #include <visp3/io/vpImageIo.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<vpRGBa> I;

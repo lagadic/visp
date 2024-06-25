@@ -879,6 +879,10 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   \code
   #include <visp3/core/vpImage.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<unsigned char> A(288, 384);

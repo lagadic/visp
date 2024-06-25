@@ -603,6 +603,10 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
   \code
   #include <visp3/core/vpTranslationVector.cpp>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t = {0, 0.1, 0.5};
@@ -637,6 +641,10 @@ vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<
   \code
   #include <visp3/core/vpTranslationVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -666,6 +674,10 @@ vpTranslationVector &vpTranslationVector::operator<<(double val)
   The following example shows how to initialize a translations vector from a list of 3 values [meter].
   \code
   #include <visp3/core/vpTranslationVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

@@ -74,20 +74,24 @@ BEGIN_VISP_NAMESPACE
   (".pgm" for PGM P5 and ".ppm" for PPM P6).
 
   \code
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-#if defined(_WIN32)
-  std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
-#else // UNIX
-  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
-#endif
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImageIo::read(I, filename); // Convert the color image in a gray level image
-  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
-}
+  int main()
+  {
+    vpImage<unsigned char> I;
+  #if defined(_WIN32)
+    std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
+  #else // UNIX
+    std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
+  #endif
+
+    vpImageIo::read(I, filename); // Convert the color image in a gray level image
+    vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
+  }
   \endcode
 
   This other example available in tutorial-image-reader.cpp shows how to

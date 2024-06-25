@@ -68,6 +68,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpRotationMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRotationMatrix R;
@@ -95,6 +99,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpRotationMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRotationMatrix R;
@@ -106,6 +114,10 @@ BEGIN_VISP_NAMESPACE
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
   #include <visp3/code/vpRotationMatrix.h
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

@@ -142,6 +142,10 @@ BEGIN_VISP_NAMESPACE
   \code
   include <visp3/core/vpIoTools.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     std::string tmp_path = vpIoTools::getTempPath();
@@ -298,6 +302,10 @@ std::string vpIoTools::getUserName()
   #include <iostream>
   #include <string>
   #include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -650,6 +658,10 @@ std::string getUuid()
   The following sample shows how to use this function to create unique temporary directories:
   \code
   include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1076,33 +1088,36 @@ std::string vpIoTools::getViSPImagesDataPath()
 }
 
 /*!
-   Returns the extension of the file or an empty string if the file has no
-   extension. If checkFile flag is set, it will check first if the pathname
-   denotes a directory and so return an empty string and second it will check
-   if the file denoted by the pathanme exists. If so, it will return the
-   extension if present.
+  Returns the extension of the file or an empty string if the file has no
+  extension. If checkFile flag is set, it will check first if the pathname
+  denotes a directory and so return an empty string and second it will check
+  if the file denoted by the pathanme exists. If so, it will return the
+  extension if present.
 
-   \param pathname : The pathname of the file we want to get the extension.
-   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
-   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
-pathname is empty.
+  \param pathname : The pathname of the file we want to get the extension.
+  \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+  \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
+  pathname is empty.
 
-   The following code shows how to use this function:
-   \code
-#include <visp3/core/vpIoTools.h>
+  The following code shows how to use this function:
+  \code
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::string filename = "my/path/to/file.xml"
-  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
-  std::cout << "ext: " << ext << std::endl;
-}
-   \endcode
-   It produces the following output:
-   \code
-ext: .xml
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
+  int main()
+  {
+    std::string filename = "my/path/to/file.xml"
+    std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+    std::cout << "ext: " << ext << std::endl;
+  }
+  \endcode
+  It produces the following output:
+  \code
+  ext: .xml
+  \endcode
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkFile)
 {
@@ -1228,24 +1243,28 @@ std::string vpIoTools::getNameWE(const std::string &pathname)
 
   The following sample code shows how to use this function:
   \code
-#include <visp3/core/vpIoTools.h>
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-1
-40
--1
-3
--1
+  1
+  40
+  -1
+  3
+  -1
   \endcode
 */
 long vpIoTools::getIndex(const std::string &filename, const std::string &format)
@@ -1326,16 +1345,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-  }
+}
 
-  /**
-   * @brief Return a upper-case version of the string \b input .
-   * Numbers and special characters stay the same
-   *
-   * @param input The input string for which we want to ensure that all the characters are in upper case.
-   * @return std::string A upper-case version of the string \b input, where
-   * numbers and special characters stay the same
-   */
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -1347,16 +1366,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-  }
+}
 
-  /*!
-    Returns the absolute path using realpath() on Unix systems or
-    GetFullPathName() on Windows systems. \return According to realpath()
-    manual, returns an absolute pathname that names the same file, whose
-    resolution does not involve '.', '..', or symbolic links for Unix systems.
-    According to GetFullPathName() documentation, retrieves the full path of the
-    specified file for Windows systems.
-   */
+/*!
+  Returns the absolute path using realpath() on Unix systems or
+  GetFullPathName() on Windows systems. \return According to realpath()
+  manual, returns an absolute pathname that names the same file, whose
+  resolution does not involve '.', '..', or symbolic links for Unix systems.
+  According to GetFullPathName() documentation, retrieves the full path of the
+  specified file for Windows systems.
+ */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 
@@ -1590,6 +1609,10 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pat
   The following code shows how to use this function:
   \code
   #include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

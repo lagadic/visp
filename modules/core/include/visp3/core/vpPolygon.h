@@ -63,6 +63,10 @@ BEGIN_VISP_NAMESPACE
 
   #include <visp3/core/vpPolygon.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     std::vector<vpImagePoint> corners;

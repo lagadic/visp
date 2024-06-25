@@ -307,6 +307,10 @@ vpQuaternionVector vpQuaternionVector::operator/(double l) const
   \code
   #include <visp3/core/vpQuaternionVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpColVector v(4);
@@ -417,6 +421,10 @@ double &vpQuaternionVector::w() { const unsigned int index_3 = 3; return data[in
   Set vector from a list of 4 double angle values.
   \code
   #include <visp3/core/vpQuaternionVector.cpp>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

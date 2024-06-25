@@ -56,151 +56,159 @@
 
 BEGIN_VISP_NAMESPACE
  /*!
-   \class vpOccipitalStructure
+  \class vpOccipitalStructure
 
-   \ingroup group_sensor_rgbd
+  \ingroup group_sensor_rgbd
 
-   This class provides a wrapper over the Occipital Structure SDK
-   library https://structure.io/developers. It allows to capture
-   data from the Occipital Structure Core camera.
+  This class provides a wrapper over the Occipital Structure SDK
+  library https://structure.io/developers. It allows to capture
+  data from the Occipital Structure Core camera.
 
-   \note Supported devices for Occipital Structure SDK 0.9:
-   - Occipital Structure Core.
+  \note Supported devices for Occipital Structure SDK 0.9:
+  - Occipital Structure Core.
 
-   The usage of vpOccipitalStructure class is enabled when libStructure 3rd party is
-   successfully installed. The following tutorials explain how to proceed:
-   - \ref tutorial-install-ubuntu
-   - \ref tutorial-install-win10-msvc16
-   - \ref tutorial-install-osx-homebrew
+  The usage of vpOccipitalStructure class is enabled when libStructure 3rd party is
+  successfully installed. The following tutorials explain how to proceed:
+  - \ref tutorial-install-ubuntu
+  - \ref tutorial-install-win10-msvc16
+  - \ref tutorial-install-osx-homebrew
 
-   Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
-   propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
-   or pcl::PointCloud<pcl::PointXYZRGB> data structures.
+  Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
+  propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
+  or pcl::PointCloud<pcl::PointXYZRGB> data structures.
 
-   \warning Notice that the usage of this class requires compiler and library
-   support for the ISO C++ 2011 standard. This support is enabled by default
-   in ViSP when supported by the compiler. Hereafter we give an example of a
-   CMakeLists.txt file that allows to build `sample-structure-core.cpp` that
-   uses vpOccipitalStructure class.
+  \warning Notice that the usage of this class requires compiler and library
+  support for the ISO C++ 2011 standard. This support is enabled by default
+  in ViSP when supported by the compiler. Hereafter we give an example of a
+  CMakeLists.txt file that allows to build `sample-structure-core.cpp` that
+  uses vpOccipitalStructure class.
 
-   \code
- cmake_minimum_required(VERSION 3.5)
+  \code
+  cmake_minimum_required(VERSION 3.5)
 
- project(sample)
+  project(sample)
 
- find_package(VISP REQUIRED)
- include_directories(${VISP_INCLUDE_DIRS})
+  find_package(VISP REQUIRED)
+  include_directories(${VISP_INCLUDE_DIRS})
 
- add_executable(sample-structure-core sample-structure-core.cpp)
- target_link_libraries(sample-structure-core ${VISP_LIBRARIES})
-   \endcode
+  add_executable(sample-structure-core sample-structure-core.cpp)
+  target_link_libraries(sample-structure-core ${VISP_LIBRARIES})
+  \endcode
 
-   To acquire images from the Structure Core color camera and convert them into grey
-   level images, a good starting is to use the following code that corresponds to
-   the content of ``sample-structure-core.cpp`:
+  To acquire images from the Structure Core color camera and convert them into grey
+  level images, a good starting is to use the following code that corresponds to
+  the content of ``sample-structure-core.cpp`:
 
-   \code
- #include <visp3/gui/vpDisplayGDI.h>
- #include <visp3/gui/vpDisplayX.h>
- #include <visp3/sensor/vpOccipitalStructure.h>
+  \code
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpOccipitalStructure.h>
 
- int main()
- {
-   vpOccipitalStructure sc;
-   ST::CaptureSessionSettings settings;
-   settings.source = ST::CaptureSessionSourceId::StructureCore;
-   settings.structureCore.visibleEnabled = true;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-   sc.open(settings);
+  int main()
+  {
+    vpOccipitalStructure sc;
+    ST::CaptureSessionSettings settings;
+    settings.source = ST::CaptureSessionSourceId::StructureCore;
+    settings.structureCore.visibleEnabled = true;
 
-   vpImage<unsigned char> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
- #ifdef VISP_HAVE_X11
-   vpDisplayX d(I);
- #elif defined(VISP_HAVE_GDI)
-   vpDisplayGDI d(I);
- #endif
+    sc.open(settings);
 
-   while (true) {
-     sc.acquire(I);
-     vpDisplay::display(I);
-     vpDisplay::flush(I);
-     if (vpDisplay::getClick(I, false))
-       break;
-   }
-   return 0;
- }
-   \endcode
+    vpImage<unsigned char> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
+  #ifdef VISP_HAVE_X11
+    vpDisplayX d(I);
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d(I);
+  #endif
 
-   If you want to acquire color images, in the previous sample replace:
-   \code
-   vpImage<unsigned char> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
-   \endcode
-   by
-   \code
-   vpImage<vpRGBa> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
-   \endcode
+    while (true) {
+      sc.acquire(I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+    }
+    return 0;
+  }
+  \endcode
 
-   If you are interested in the point cloud and if ViSP is build with PCL
-   support, you can start from the following example where we use PCL library to
-   visualize the point cloud
+  If you want to acquire color images, in the previous sample replace:
+  \code
+  vpImage<unsigned char> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
+  \endcode
+  by
+  \code
+  vpImage<vpRGBa> I(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible));
+  \endcode
 
-   \code
- #include <pcl/visualization/cloud_viewer.h>
- #include <pcl/visualization/pcl_visualizer.h>
- #include <visp3/sensor/vpOccipitalStructure.h>
+  If you are interested in the point cloud and if ViSP is build with PCL
+  support, you can start from the following example where we use PCL library to
+  visualize the point cloud
 
- int main()
- {
-   vpOccipitalStructure sc;
-   ST::CaptureSessionSettings settings;
-   settings.source = ST::CaptureSessionSourceId::StructureCore;
-   settings.structureCore.visibleEnabled = true;
-   settings.applyExpensiveCorrection = true; // Apply a correction and clean filter to the depth before streaming.
+  \code
+  #include <pcl/visualization/cloud_viewer.h>
+  #include <pcl/visualization/pcl_visualizer.h>
+  #include <visp3/sensor/vpOccipitalStructure.h>
 
-   sc.open(settings);
-   // Calling these 2 functions to set internal variables.
-   sc.getCameraParameters(vpOccipitalStructure::visible);
-   sc.getCameraParameters(vpOccipitalStructure::depth);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-   pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+  int main()
+  {
+    vpOccipitalStructure sc;
+    ST::CaptureSessionSettings settings;
+    settings.source = ST::CaptureSessionSourceId::StructureCore;
+    settings.structureCore.visibleEnabled = true;
+    settings.applyExpensiveCorrection = true; // Apply a correction and clean filter to the depth before streaming.
 
-   sc.acquire(nullptr, nullptr, nullptr, pointcloud);
+    sc.open(settings);
+    // Calling these 2 functions to set internal variables.
+    sc.getCameraParameters(vpOccipitalStructure::visible);
+    sc.getCameraParameters(vpOccipitalStructure::depth);
 
-   pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
-   viewer->setBackgroundColor(0, 0, 0);
-   viewer->initCameraParameters();
-   viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-   while (true) {
-     sc.acquire(nullptr, nullptr, nullptr, pointcloud);
+    sc.acquire(nullptr, nullptr, nullptr, pointcloud);
 
-     static bool update = false;
-     if (!update) {
-       viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-       viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-       update = true;
-     } else {
-       viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-     }
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->initCameraParameters();
+    viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
-     viewer->spinOnce(30);
-   }
-   return 0;
- }
-   \endcode
+    while (true) {
+      sc.acquire(nullptr, nullptr, nullptr, pointcloud);
 
-   References to `ST::CaptureSession` and `ST::CaptureSessionSettings` can be retrieved
-   with (`sc.open() must be called before`):
-   \code
-   ST::CaptureSession &getCaptureSession();
-   ST::CaptureSessionSettings &getCaptureSessionSettings();
-   \endcode
+      static bool update = false;
+      if (!update) {
+        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+        viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+        update = true;
+      } else {
+        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      }
+
+      viewer->spinOnce(30);
+    }
+    return 0;
+  }
+  \endcode
+
+  References to `ST::CaptureSession` and `ST::CaptureSessionSettings` can be retrieved
+  with (`sc.open() must be called before`):
+  \code
+  ST::CaptureSession &getCaptureSession();
+  ST::CaptureSessionSettings &getCaptureSessionSettings();
+  \endcode
 
  */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-struct SessionDelegate : ST::CaptureSessionDelegate
+  struct SessionDelegate : ST::CaptureSessionDelegate
 {
   std::mutex m_sampleLock;
   std::condition_variable cv_sampleLock;

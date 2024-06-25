@@ -62,6 +62,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpLinProg.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,4);
@@ -224,6 +228,10 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   \code
   #include <visp3/core/vpLinProg.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(3,4);
@@ -311,8 +319,11 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
                 & \text{s.t.}& x, y, z \geq 0\\
                 & \text{s.t.}& z \leq 6\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -513,8 +524,11 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
                & \text{s.t.}& 2x + 5y + 3z + s_2 = 15\\
                 & \text{s.t.}& x, y, z, s_1, s_2 \geq 0\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
