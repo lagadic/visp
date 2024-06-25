@@ -35,6 +35,7 @@
 #define VP_IMAGE_TOOLS_WARP_H
 
 // Warning: this file shouldn't be included by the user. Internal usage only to reduce length of vpImage.h
+#include <visp3/core/vpImageTools.h>
 
 /*!
   Apply a warping (affine or perspective) transformation to an image.

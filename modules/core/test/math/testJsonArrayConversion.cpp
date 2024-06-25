@@ -68,12 +68,12 @@ public:
     : m_type(type), m_messageMatcher(messageMatcher)
   { }
 
-  bool match(vpException const &in) const vp_override
+  bool match(vpException const &in) const VP_OVERRIDE
   {
     return m_type == in.getCode() && m_messageMatcher.match(in.getStringMessage());
   }
 
-  std::string describe() const vp_override
+  std::string describe() const VP_OVERRIDE
   {
     std::ostringstream ss;
     ss << "vpException has type " << m_type << " and message " << m_messageMatcher.describe();
@@ -98,8 +98,8 @@ public:
     static_cast<void>(next());
   }
 
-  vpArray2D<double> const &get() const vp_override { return current; }
-  bool next() vp_override
+  vpArray2D<double> const &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     const unsigned nCols = m_dim_dist(m_rand);
     const unsigned nRows = m_dim_dist(m_rand);
@@ -129,8 +129,8 @@ public:
     static_cast<void>(next());
   }
 
-  const vpColVector &get() const vp_override { return current; }
-  bool next() vp_override
+  const vpColVector &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     const unsigned nRows = m_dim_dist(m_rand);
     current.resize(nRows);
