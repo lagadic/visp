@@ -716,7 +716,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the
+  \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
@@ -780,7 +780,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<unsi
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the camera
+  \warning Third method needs also an access to the files containing the camera
   parameters in XML format. This access is available if
 VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.

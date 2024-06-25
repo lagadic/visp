@@ -121,7 +121,7 @@ BEGIN_VISP_NAMESPACE
   robot with:
 
   \code
-  // Set the extrinsic camera parameters obtained with a perpective
+  // Set the extrinsic camera parameters obtained with a perspective
   // projection model including a distortion parameter
   robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode

@@ -168,7 +168,7 @@ BEGIN_VISP_NAMESPACE
   #ifdef VISP_HAVE_VIPER650
     vpRobotViper650 robot;
 
-    // Set the extrinsic camera parameters obtained with a perpective
+    // Set the extrinsic camera parameters obtained with a perspective
     // projection model including a distortion parameter
     robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
         vpCameraParameters::perspectiveProjWithDistortion);

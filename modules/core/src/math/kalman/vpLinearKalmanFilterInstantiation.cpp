@@ -80,7 +80,7 @@ BEGIN_VISP_NAMESPACE
   vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel
   model implemented in initStateConstVelWithColoredNoise_MeasureVel().
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   \exception vpException::notInitialized : If the state model is not
   initialized. To initialize it you need to call setStateModel().
@@ -448,7 +448,7 @@ by the number of signal to filter.
   \param rho : Degree of correlation between successive accelerations. Values
   are in [0:1[.
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   The example below shows how to filter a two dimensional target
   trajectory with an estimation of the target velocity from velocity
@@ -667,7 +667,7 @@ mutually uncorrelated stationary random variables with variance
 
   \param delta_t : Sampling time \f$\Delta t\f$ expressed is second.
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   The example below shows how to filter a two dimensional target
   trajectory with an estimation of the target velocity from velocity
@@ -831,7 +831,7 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
   else if (iter == 1) {
     if (model == stateConstVel_MeasurePos) {
       for (unsigned int i = 0; i < size_measure * nsignal; i++) {
-        double z_prev = Xest[size_state * i]; // Previous mesured position
+        double z_prev = Xest[size_state * i]; // Previous measured position
         Xest[size_state * i] = z[i];
         Xest[size_state * i + 1] = (z[i] - z_prev) / dt;
       }

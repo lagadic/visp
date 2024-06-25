@@ -950,7 +950,7 @@ void vpSimulatorViper850::computeArticularVelocity()
 /*!
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param vel : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1036,7 +1036,7 @@ void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame, v
 /*!
   Get the robot time stamped velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param vel : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1058,7 +1058,7 @@ void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame, v
 /*!
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \return Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1111,7 +1111,7 @@ vpColVector vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame)
 /*!
   Get the time stamped robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param timestamp : Unix time in second since January 1st 1970.
 
@@ -1495,14 +1495,14 @@ void vpSimulatorViper850::setPosition(const char *filename)
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param q : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.
@@ -1604,14 +1604,14 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, v
   Get the current time stamped position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param q : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.

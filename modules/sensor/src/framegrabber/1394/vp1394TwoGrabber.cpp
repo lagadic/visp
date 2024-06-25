@@ -2137,7 +2137,7 @@ void vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \return Pointer to the libdc1394-2.x image data structure.
@@ -2196,7 +2196,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (8 bits image).
@@ -2252,7 +2252,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (8 bits image).
@@ -2415,7 +2415,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (32 bits RGBa image).

@@ -147,7 +147,7 @@ void emergencyStopViper650(int signo)
   #ifdef VISP_HAVE_VIPER650
     vpRobotViper650 robot;
 
-    // Set the extrinsic camera parameters obtained with a perpective
+    // Set the extrinsic camera parameters obtained with a perspective
     // projection model including a distortion parameter
     robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
         vpCameraParameters::perspectiveProjWithDistortion);
@@ -382,7 +382,7 @@ void vpRobotViper650::init(void)
   #ifdef VISP_HAVE_VIPER650
     vpRobotViper650 robot;
 
-    // Set the extrinsic camera parameters obtained with a perpective
+    // Set the extrinsic camera parameters obtained with a perspective
     // projection model including a distortion parameter
     robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
@@ -1406,14 +1406,14 @@ void vpRobotViper650::setPosition(const std::string &filename)
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param position : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.
@@ -1811,7 +1811,7 @@ void vpRobotViper650::setVelocity(const vpRobot::vpControlFrameType frame, const
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param velocity : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1999,7 +1999,7 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param timestamp : Time in second since last robot power on.
 

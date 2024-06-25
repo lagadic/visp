@@ -165,7 +165,7 @@ VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+  Returns a vpImagePoint which is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
@@ -175,7 +175,7 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+  Returns a vpImagePoint which is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
@@ -269,7 +269,7 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the difference between \f$ ip1 \f$ and \f$
+  Returns a vpImagePoint which is the difference between \f$ ip1 \f$ and \f$
   ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &ip2)

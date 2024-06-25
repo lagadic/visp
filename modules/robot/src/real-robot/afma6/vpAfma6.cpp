@@ -1210,7 +1210,7 @@ void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
   vpAfma6::CONST_CAMERA_AFMA6_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the
+  \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_AFMA6_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
