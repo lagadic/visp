@@ -98,9 +98,9 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 {
-  unsigned int v_size = v.size();
+  size_t v_size = v.size();
   resize(v_size);
-  for (unsigned int i = 0; i < v_size; ++i) {
+  for (size_t i = 0; i < v_size; ++i) {
     (*this)[i] = v[i];
   }
   return *this;
@@ -110,9 +110,9 @@ vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<float> &v)
 {
-  unsigned int v_size = v.size();
+  size_t v_size = v.size();
   resize(v_size);
-  for (unsigned int i = 0; i < v_size; ++i) {
+  for (size_t i = 0; i < v_size; ++i) {
     (*this)[i] = static_cast<float>(v[i]);
   }
   return *this;
@@ -579,8 +579,8 @@ vpRowVector::vpRowVector(const vpMatrix &M) : vpArray2D<double>(1, M.getCols())
  */
 vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  unsigned int v_size = v.size();
-  for (unsigned int j = 0; j < v_size; ++j) {
+  size_t v_size = v.size();
+  for (size_t j = 0; j < v_size; ++j) {
     (*this)[j] = v[j];
   }
 }
@@ -589,8 +589,8 @@ vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, st
  */
 vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  unsigned int v_size = v.size();
-  for (unsigned int j = 0; j < v_size; ++j) {
+  size_t v_size = v.size();
+  for (size_t j = 0; j < v_size; ++j) {
     (*this)[j] = static_cast<double>(v[j]);
   }
 }
@@ -600,8 +600,8 @@ vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, sta
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-  row vector to construct. \param ncols : Number of columns of the constructed
-  row vector.
+  row vector to construct.
+  \param ncols : Number of columns of the constructed row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
   is used to initialize the constructed row vector.

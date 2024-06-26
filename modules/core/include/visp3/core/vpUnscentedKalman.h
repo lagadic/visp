@@ -414,12 +414,12 @@ public:
    */
   inline static vpColVector simpleMean(const std::vector<vpColVector> &vals, const std::vector<double> &wm)
   {
-    unsigned int nbPoints = vals.size();
+    size_t nbPoints = vals.size();
     if (nbPoints == 0) {
       throw(vpException(vpException::dimensionError, "No points to add when computing the mean"));
     }
     vpColVector mean = vals[0] * wm[0];
-    for (unsigned int i = 1; i < nbPoints; ++i) {
+    for (size_t i = 1; i < nbPoints; ++i) {
       mean += vals[i] * wm[i];
     }
     return mean;

@@ -29,8 +29,7 @@
  *
  * Description:
  * 32-bit floating point RGB pixel.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRGBf.cpp
@@ -64,9 +63,9 @@ vpRGBf &vpRGBf::operator=(float v)
 */
 vpRGBf &vpRGBf::operator=(int v)
 {
-  this->R = v;
-  this->G = v;
-  this->B = v;
+  this->R = static_cast<float>(v);
+  this->G = static_cast<float>(v);
+  this->B = static_cast<float>(v);
   return *this;
 }
 
@@ -273,6 +272,22 @@ bool vpRGBf::operator>(const vpRGBf &v) const
  * @return Rescaled components with RGB * x.
  */
 vpRGBf operator*(double x, const vpRGBf &rgb)
+{
+  vpRGBf rgbf;
+  rgbf.R = static_cast<float>(rgb.R * x);
+  rgbf.G = static_cast<float>(rgb.G * x);
+  rgbf.B = static_cast<float>(rgb.B * x);
+  return rgbf;
+}
+
+/*!
+ * Scale RGB components by x.
+ *
+ * @param x : Value used to scale RGB color components.
+ * @param rgb : RGB color components to rescale.
+ * @return Rescaled components with RGB * x.
+ */
+vpRGBf operator*(float x, const vpRGBf &rgb)
 {
   vpRGBf rgbf;
   rgbf.R = rgb.R * x;

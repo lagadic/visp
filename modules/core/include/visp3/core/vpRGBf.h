@@ -142,6 +142,7 @@ public:
   float B; //!< Blue component.
 
   friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
+  friend VISP_EXPORT vpRGBf operator*(float x, const vpRGBf &rgb);
 };
 END_VISP_NAMESPACE
 #endif
