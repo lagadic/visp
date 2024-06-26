@@ -71,7 +71,6 @@ vpDisplay *displayFactory()
   return new vpDisplayOpenCV();
 #endif
 #else
-  (void)I;
   return nullptr;
 #endif
 }
