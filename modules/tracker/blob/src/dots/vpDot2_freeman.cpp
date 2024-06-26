@@ -36,6 +36,7 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 /*!
@@ -119,6 +120,7 @@ void computeDownLeftWithMoment(const int &u_p, const int &v_p, float &dMuv, floa
 }
 }
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 /*!
 
   Gets the list of Freeman chain code used to turn around the dot

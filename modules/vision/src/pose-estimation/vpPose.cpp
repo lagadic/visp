@@ -53,12 +53,14 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 const int def_vvsIterMax = 200;
 const unsigned int def_ransacNbInlier = 4;
 const int def_ransacMaxTrials = 1000;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpPose::vpPose()
   : npt(0), listP(), residual(0), m_lambda(0.9), m_dementhonSvThresh(1e-6), vvsIterMax(def_vvsIterMax), c3d(),

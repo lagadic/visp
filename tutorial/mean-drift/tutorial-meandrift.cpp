@@ -308,6 +308,7 @@ unsigned int meanDriftArrayToNbActivated(const bool array[vpStatisticalTestAbstr
   return nbActivated;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //! [Structure_Parameters]
 /**
  * \brief Structure that contains the parameters of the different algorithms.
@@ -350,6 +351,7 @@ typedef struct ParametersForAlgo
 }ParametersForAlgo;
 //! [Structure_Parameters]
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanDrift::ParametersForAlgo parameters,
                     const float &mean, const float &mean_drift, const float &stdev)

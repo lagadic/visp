@@ -89,6 +89,7 @@
 #define MINIZ_HAS_64BIT_REGISTERS 1
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace buminiz
 {
 
@@ -598,6 +599,7 @@ mz_uint tdefl_create_comp_flags_from_zip_params(int level, int window_bits, int 
 
 } // namespace buminiz
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // MINIZ_HEADER_INCLUDED
 
 // ------------------- End of Header: Implementation follows. (If you only want the header, define MINIZ_HEADER_FILE_ONLY.)
@@ -607,6 +609,7 @@ mz_uint tdefl_create_comp_flags_from_zip_params(int level, int window_bits, int 
 #include <string.h>
 #include <assert.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace buminiz
 {
 
@@ -2419,4 +2422,5 @@ void *tdefl_write_image_to_png_file_in_memory(const void *pImage, mz_uint8 w, mz
 
 } // namespace buminiz
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // MINIZ_HEADER_FILE_ONLY

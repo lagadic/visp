@@ -47,6 +47,8 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 /*!
@@ -106,6 +108,8 @@ vpMatrix homography2collineation(const vpMatrix &H, const vpCameraParameters &ca
   return G;
 }
 } // namespace
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbKltTracker::vpMbKltTracker()
   :

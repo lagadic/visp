@@ -56,6 +56,8 @@
 #define EPS 1e-6
 
 BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 // For std::map<vpPoint>
@@ -156,6 +158,7 @@ struct FindDegeneratePoint
   vpPoint m_pt;
 };
 } // namespace
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 bool vpPose::vpRansacFunctor::poseRansacImpl()
 {

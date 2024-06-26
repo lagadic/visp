@@ -667,6 +667,7 @@ public:
   typedef vpCircleHoughTransformParams vpCircleHoughTransformParameters;
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   /**
    * \brief Data storage for the computation of the center candidates.
    */
@@ -675,6 +676,7 @@ public:
     std::pair<float, float> m_position;
     float m_votes;
   } vpCenterVotes;
+#endif
 
 /**
  * \brief Construct a new vpCircleHoughTransform object with default parameters.

@@ -50,6 +50,7 @@ BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_THREADS)
 #include <thread>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 struct vpHistogram_Param_t
@@ -172,6 +173,7 @@ void computeHistogramThread(vpHistogram_Param_t *histogram_param)
   }
 }
 } // namespace
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif
 
 bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second);

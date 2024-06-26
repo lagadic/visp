@@ -254,6 +254,8 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, 
   return true;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 // Code adapted from: https://stackoverflow.com/a/37146523
 class vpFrameQueue
 {
@@ -575,7 +577,7 @@ public:
             }
             else if (m_save_pcl_npz_format) {
 #ifdef VISP_HAVE_MINIZ
-// Write Npz headers
+              // Write Npz headers
               std::vector<char> vec_filename(filename_point_cloud.begin(), filename_point_cloud.end());
               // Null-terminated character is handled at reading
               // For null-terminated character handling, see:
@@ -661,6 +663,8 @@ private:
 #endif
 };
 } // Namespace
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 int main(int argc, const char *argv[])
 {
@@ -935,10 +939,10 @@ int main(int argc, const char *argv[])
 #else
       if (save_pointcloud) {
         ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
-    }
+      }
       save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-  }
+    }
 
     double delta_time = vpTime::measureTimeMs() - start;
     vec_delta_time.push_back(delta_time);
@@ -982,10 +986,10 @@ int main(int argc, const char *argv[])
 #else
             if (save_pointcloud) {
               ptr_pointCloud = std::make_unique<std::vector<vpColVector>>(pointCloud);
-          }
+            }
             save_queue.push(ptr_colorImg, ptr_depthImg, ptr_pointCloud, ptr_infraredImg);
 #endif
-        }
+          }
           break;
 
         case vpMouseButton::button2:
@@ -995,9 +999,9 @@ int main(int argc, const char *argv[])
           quit = true;
           save_queue.cancel();
           break;
+        }
       }
     }
-}
   }
 
   double mean_vec_delta_time = vpMath::getMean(vec_delta_time);

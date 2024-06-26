@@ -56,6 +56,8 @@
 #include <complex>
 
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace visp
 {
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
@@ -73,6 +75,7 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
   }
   return ~crcu32;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_MINIZ
 namespace cnpy
@@ -126,8 +129,6 @@ struct NpyArray
 
 using npz_t = std::map<std::string, NpyArray>;
 VISP_EXPORT npz_t npz_load(std::string fname);
-
-
 VISP_EXPORT char BigEndianTest();
 VISP_EXPORT char map_type(const std::type_info &t);
 template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape);

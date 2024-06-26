@@ -15,6 +15,7 @@ using json = nlohmann::json; //! json namespace shortcut
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //! [Enum]
 enum vpInteractionMatrixTypeSubset
 {
@@ -30,10 +31,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
   {CURRENT, "current"},
   {DESIRED, "desired"},
   {MEAN, "mean"} }
-);
-//! [Enum conversion]
+  );
+  //! [Enum conversion]
 
-//! [Arguments]
+  //! [Arguments]
 class Arguments
 {
 public:
@@ -224,6 +225,7 @@ void saveResults(const ServoingExperimentData &results, const std::string &path)
   file.close();
 }
 //! [write json to file]
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 int main(int argc, char *argv[])
 {
