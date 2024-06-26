@@ -130,7 +130,7 @@ public:
    * \param[in] nbThreads The number of threads the user would like to use. Negative value to set the maximum number
    * of threads available when using OpenMP.
    */
-  vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed = -1, const int &nbThreads = -1);
+  VP_EXPLICIT vpParticleFilter(const unsigned int &N, const std::vector<double> &stdev, const long &seed = -1, const int &nbThreads = -1);
 
   inline virtual ~vpParticleFilter() { }
 
