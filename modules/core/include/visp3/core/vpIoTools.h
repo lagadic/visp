@@ -405,6 +405,10 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * #include <string>
  * #include <visp3/core/vpIoTools.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   std::string username;
@@ -459,6 +463,10 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * #include <iostream>
  * #include <string>
  * #include <visp3/core/vpIoTools.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

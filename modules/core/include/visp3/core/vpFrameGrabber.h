@@ -62,6 +62,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/sensor/vp1394TwoGrabber.h>
  * #include <visp3/sensor/vpV4l2Grabber.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)

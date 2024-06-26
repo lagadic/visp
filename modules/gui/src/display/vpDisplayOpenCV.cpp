@@ -220,15 +220,19 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::st
   To initialize the display size, you need to call init().
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
 
-int main()
-{
-  vpDisplayOpenCV d(100, 200, "My display");
-  vpImage<unsigned char> I(240, 384);
-  d.init(I);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayOpenCV d(100, 200, "My display");
+    vpImage<unsigned char> I(240, 384);
+    d.init(I);
+  }
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
@@ -276,15 +280,19 @@ vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
   init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
 
-int main()
-{
-  vpDisplayOpenCV d;
-  vpImage<unsigned char> I(240, 384);
-  d.init(I, 100, 200, "My display");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayOpenCV d;
+    vpImage<unsigned char> I(240, 384);
+    d.init(I, 100, 200, "My display");
+  }
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV()

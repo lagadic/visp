@@ -179,7 +179,7 @@ int main(int argc, const char **argv)
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    I = 0;
+    I = 0u;
 
     vpRect roi(I.getWidth() / 4, I.getHeight() / 4, I.getWidth() / 2, I.getHeight() / 2);
     vpDisplay::displayROI(I, roi);

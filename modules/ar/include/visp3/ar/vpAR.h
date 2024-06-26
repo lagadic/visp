@@ -88,6 +88,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/core/vpHomogeneousMatrix.h>
   #include <visp3/core/vpImage.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   #ifdef VISP_HAVE_COIN3D_AND_GUI
   static void *mainloopfunction(void *_simu)
   {

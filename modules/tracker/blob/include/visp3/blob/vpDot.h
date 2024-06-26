@@ -78,6 +78,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/sensor/vp1394TwoGrabber.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined(VISP_HAVE_DC1394)
@@ -187,9 +191,9 @@ public:
 
 public:
   vpDot();
-  explicit vpDot(const vpImagePoint &ip);
+  VP_EXPLICIT vpDot(const vpImagePoint &ip);
   vpDot(const vpDot &d);
-  virtual ~vpDot() vp_override;
+  virtual ~vpDot() VP_OVERRIDE;
 
   void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 

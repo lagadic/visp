@@ -165,7 +165,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated void getRoiClipped(std::vector<vpPoint> &points);
+  VP_DEPRECATED void getRoiClipped(std::vector<vpPoint> &points);
 //@}
 #endif
 

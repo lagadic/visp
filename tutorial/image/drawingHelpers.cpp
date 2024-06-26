@@ -32,40 +32,44 @@
 
 #include <visp3/core/vpImageConvert.h>
 
-#if defined(VISP_HAVE_X11)
-VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d_Iinput;
-VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d_dIx;
-VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d_dIy;
-VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d_IcannyVisp;
-VISP_NAMESPACE_ADDRESSING vpDisplayX drawingHelpers::d_IcannyImgFilter;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d_Iinput;
-VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d_dIx;
-VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d_dIy;
-VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d_IcannyVisp;
-VISP_NAMESPACE_ADDRESSING vpDisplayOpenCV drawingHelpers::d_IcannyImgFilter;
-#elif defined(VISP_HAVE_GTK)
-VISP_NAMESPACE_ADDRESSING VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d_Iinput;
-VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d_dIx;
-VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d_dIy;
-VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d_IcannyVisp;
-VISP_NAMESPACE_ADDRESSING vpDisplayGTK drawingHelpers::d_IcannyImgFilter;
-#elif defined(VISP_HAVE_GDI)
-VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d_Iinput;
-VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d_dIx;
-VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d_dIy;
-VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d_IcannyVisp;
-VISP_NAMESPACE_ADDRESSING vpDisplayGDI drawingHelpers::d_IcannyImgFilter;
-#elif defined(VISP_HAVE_D3D9)
-VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d_Iinput;
-VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d_dIx;
-VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d_dIy;
-VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d_IcannyVisp;
-VISP_NAMESPACE_ADDRESSING vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void drawingHelpers::init(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &Iinput, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &IcannyVisp, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_dIx,
-                          VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_dIy, VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> *p_IcannyimgFilter)
+#if defined(VISP_HAVE_X11)
+vpDisplayX drawingHelpers::d_Iinput;
+vpDisplayX drawingHelpers::d_dIx;
+vpDisplayX drawingHelpers::d_dIy;
+vpDisplayX drawingHelpers::d_IcannyVisp;
+vpDisplayX drawingHelpers::d_IcannyImgFilter;
+#elif defined(HAVE_OPENCV_HIGHGUI)
+vpDisplayOpenCV drawingHelpers::d_Iinput;
+vpDisplayOpenCV drawingHelpers::d_dIx;
+vpDisplayOpenCV drawingHelpers::d_dIy;
+vpDisplayOpenCV drawingHelpers::d_IcannyVisp;
+vpDisplayOpenCV drawingHelpers::d_IcannyImgFilter;
+#elif defined(VISP_HAVE_GTK)
+vpDisplayGTK drawingHelpers::d_Iinput;
+vpDisplayGTK drawingHelpers::d_dIx;
+vpDisplayGTK drawingHelpers::d_dIy;
+vpDisplayGTK drawingHelpers::d_IcannyVisp;
+vpDisplayGTK drawingHelpers::d_IcannyImgFilter;
+#elif defined(VISP_HAVE_GDI)
+vpDisplayGDI drawingHelpers::d_Iinput;
+vpDisplayGDI drawingHelpers::d_dIx;
+vpDisplayGDI drawingHelpers::d_dIy;
+vpDisplayGDI drawingHelpers::d_IcannyVisp;
+vpDisplayGDI drawingHelpers::d_IcannyImgFilter;
+#elif defined(VISP_HAVE_D3D9)
+vpDisplayD3D drawingHelpers::d_Iinput;
+vpDisplayD3D drawingHelpers::d_dIx;
+vpDisplayD3D drawingHelpers::d_dIy;
+vpDisplayD3D drawingHelpers::d_IcannyVisp;
+vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
+#endif
+
+void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
+                           vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
 {
 #if defined(VISP_HAVE_DISPLAY)
   d_Iinput.init(Iinput, 10, 10);
@@ -88,14 +92,14 @@ void drawingHelpers::init(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &Iinp
 #endif
 }
 
-void drawingHelpers::display(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::string &title)
+void drawingHelpers::display(vpImage<unsigned char> &I, const std::string &title)
 {
   vpDisplay::display(I);
   vpDisplay::setTitle(I, title);
   vpDisplay::flush(I);
 }
 
-bool drawingHelpers::waitForClick(VISP_NAMESPACE_ADDRESSING const vpImage<unsigned char> &I, const bool &blockingMode)
+bool drawingHelpers::waitForClick(const vpImage<unsigned char> &I, const bool &blockingMode)
 {
   vpDisplay::displayText(I, 15, 15, "Left click to continue...", vpColor::red);
   vpDisplay::displayText(I, 35, 15, "Right click to stop...", vpColor::red);

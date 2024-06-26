@@ -115,6 +115,10 @@ const unsigned int vpV4l2Grabber::FRAME_SIZE = 288;
   #include <visp3/io/vpImageIo.h>
   #include <visp3/sensor/vpV4l2Grabber.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_X11)
@@ -1419,19 +1423,23 @@ void vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
 
 /*!
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   \code
-#include <visp3/sensor/vpV4l2Grabber.h>
+  \code
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vpV4l2Grabber g;
-  g >> I;
-}
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vpV4l2Grabber g;
+    g >> I;
+  }
+  \endcode
  */
 vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<unsigned char> &I)
 {
@@ -1441,19 +1449,23 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<unsigned char> &I)
 
 /*!
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   \code
-#include <visp3/sensor/vpV4l2Grabber.h>
+  \code
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpV4l2Grabber g;
-  g >> I;
-}
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vpV4l2Grabber g;
+    g >> I;
+  }
+  \endcode
  */
 vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 {

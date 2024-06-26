@@ -116,26 +116,30 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<doub
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<float> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<float> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
@@ -160,35 +164,39 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2
   \param list : List of double.
   The following code shows how to use this constructor to initialize an homogeneous matrix:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M {
-    0, 0, 1, 0.1,
-    0, 1, 0, 0.2,
-    1, 0, 0, 0.3 };
-  std::cout << "M:\n" << M << std::endl;
-  vpHomogeneousMatrix N {
-    0, 0, 1, 0.1,
-    0, 1, 0, 0.2,
-    1, 0, 0, 0.3,
-    0, 0, 0, 1 };
-  std::cout << "N:\n" << N << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpHomogeneousMatrix M {
+      0, 0, 1, 0.1,
+      0, 1, 0, 0.2,
+      1, 0, 0, 0.3 };
+    std::cout << "M:\n" << M << std::endl;
+    vpHomogeneousMatrix N {
+      0, 0, 1, 0.1,
+      0, 1, 0, 0.2,
+      1, 0, 0, 0.3,
+      0, 0, 0, 1 };
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list)
@@ -265,36 +273,40 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<double> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<double> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3
-1  0  0  0.4
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3
+  1  0  0  0.4
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4), m_index(0)
@@ -371,41 +383,45 @@ void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux,
 
   Build an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<float> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<float> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.build(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.build(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3000000119
-1  0  0  0.400000006
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3000000119
+  1  0  0  0.400000006
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 void vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
@@ -421,37 +437,41 @@ homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<double> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<double> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.build(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.build(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3
-1  0  0  0.4
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3
+  1  0  0  0.4
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
@@ -530,41 +550,45 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::build(const double &tx, const double &
 /*!
   Build an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<float> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<float> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.build(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.build(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3000000119
-1  0  0  0.400000006
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3000000119
+  1  0  0  0.400000006
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 vpHomogeneousMatrix &vpHomogeneousMatrix::build(const std::vector<float> &v)
@@ -582,41 +606,45 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::build(const std::vector<float> &v)
 /*!
   Build an homogeneous matrix from a vector of double.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<double> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); ++i)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<double> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.build(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.build(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3
-1  0  0  0.4
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3
+  1  0  0  0.4
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 vpHomogeneousMatrix &vpHomogeneousMatrix::build(const std::vector<double> &v)
@@ -650,16 +678,20 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M
   Operator that allow to multiply an homogeneous matrix by an other one.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix aMb, bMc;
-  // Initialize aMb and bMc...
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Compute aMc * bMc
-  vpHomogeneousMatrix aMc = aMb * bMc;
-}
+  int main()
+  {
+    vpHomogeneousMatrix aMb, bMc;
+    // Initialize aMb and bMc...
+
+    // Compute aMc * bMc
+    vpHomogeneousMatrix aMc = aMb * bMc;
+  }
   \endcode
 
 */
@@ -690,16 +722,20 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M)
   Operator that allow to multiply an homogeneous matrix by an other one.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M1, M2;
-  // Initialize M1 and M2...
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Compute M1 = M1 * M2
-  M1 *= M2;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M1, M2;
+    // Initialize M1 and M2...
+
+    // Compute M1 = M1 * M2
+    M1 *= M2;
+  }
   \endcode
 
 */
@@ -837,36 +873,40 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpRotationMatrix &R) co
 
   The following example shows how to initialize a rotation matrix using this operator.
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
-  M << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3;
-  std::cout << "M:\n" << M << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpHomogeneousMatrix N;
-  N << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3,
-       0, 0, 0, 1;
-  std::cout << "N:\n" << N << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+    M << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3;
+    std::cout << "M:\n" << M << std::endl;
+
+    vpHomogeneousMatrix N;
+    N << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3,
+        0, 0, 0, 1;
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
 
   \sa operator,()
@@ -886,36 +926,40 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::operator<<(double val)
 
   The following example shows how to initialize an homogeneous matrix using this operator.
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
-  M << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3;
-  std::cout << "M:\n" << M << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpHomogeneousMatrix N;
-  N << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3,
-       0, 0, 0, 1;
-  std::cout << "N:\n" << N << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+    M << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3;
+    std::cout << "M:\n" << M << std::endl;
+
+    vpHomogeneousMatrix N;
+    N << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3,
+        0, 0, 0, 1;
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
 
   \sa operator<<()
@@ -1275,29 +1319,33 @@ vpThetaUVector vpHomogeneousMatrix::getThetaUVector() const
 /*!
   Extract a column vector from an homogeneous matrix.
   \warning All the indexes start from 0 in this function.
-  \param j : Index of the column to extract. If j=0, the first column is
-extracted. \return The extracted column vector.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector t = M.getCol(3);
-  std::cout << "Last column: \n" << t << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+
+    vpColVector t = M.getCol(3);
+    std::cout << "Last column: \n" << t << std::endl;
+  }
   \endcode
-It produces the following output:
+  It produces the following output:
   \code
-Last column:
-0
-0
-1
-0
+  Last column:
+  0
+  0
+  1
+  0
   \endcode
  */
 vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const

@@ -316,7 +316,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
       vpMatrix AB, AB_true;
       BENCHMARK(oss.str().c_str())
       {
-        AB_true = dgemm_regular(A, B);
+        AB_true = dgemm_regular(A, static_cast<vpMatrix>(B));
         return AB_true;
       };
 
@@ -388,7 +388,7 @@ TEST_CASE("Benchmark matrix-rotation matrix multiplication", "[benchmark]")
     vpRotationMatrix B(vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                        vpMath::deg(getRandomValues(0, 360)));
 
-    vpMatrix AB_true = dgemm_regular(A, B);
+    vpMatrix AB_true = dgemm_regular(A, static_cast<vpMatrix>(B));
     vpMatrix AB = A * B;
     REQUIRE(equalMatrix(AB, AB_true));
   }
@@ -410,7 +410,7 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
       vpMatrix AB, AB_true;
       BENCHMARK(oss.str().c_str())
       {
-        AB_true = dgemm_regular(A, B);
+        AB_true = dgemm_regular(A, static_cast<vpMatrix>(B));
         return AB_true;
       };
 
@@ -483,9 +483,9 @@ TEST_CASE("Benchmark matrix-homogeneous matrix multiplication", "[benchmark]")
                           vpMath::deg(getRandomValues(0, 360)), vpMath::deg(getRandomValues(0, 360)),
                           vpMath::deg(getRandomValues(0, 360)));
 
-    vpMatrix AB_true = dgemm_regular(A, B);
+    vpMatrix AB_true = dgemm_regular(A, static_cast<vpMatrix>(B));
     vpMatrix AB;
-    vpMatrix::mult2Matrices(A, B, AB);
+    vpMatrix::mult2Matrices(A, static_cast<vpMatrix>(B), AB);
     REQUIRE(equalMatrix(AB, AB_true));
   }
 }
@@ -505,7 +505,7 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
       vpColVector C, C_true;
       BENCHMARK(oss.str().c_str())
       {
-        C_true = dgemv_regular(A, B);
+        C_true = dgemv_regular(A, static_cast<vpColVector>(B));
         return C_true;
       };
 
@@ -516,7 +516,7 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
         C = A * B;
         return C;
       };
-      REQUIRE(equalMatrix(C, C_true));
+      REQUIRE(equalMatrix(static_cast<vpMatrix>(C), static_cast<vpMatrix>(C_true)));
 
       if (runBenchmarkAll) {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -574,7 +574,7 @@ TEST_CASE("Benchmark matrix-vector multiplication", "[benchmark]")
 
     vpColVector C_true = dgemv_regular(A, B);
     vpColVector C = A * B;
-    REQUIRE(equalMatrix(C, C_true));
+    REQUIRE(equalMatrix(static_cast<vpMatrix>(C), static_cast<vpMatrix>(C_true)));
   }
 }
 
@@ -747,7 +747,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
       vpMatrix AV, AV_true;
       BENCHMARK(oss.str().c_str())
       {
-        AV_true = dgemm_regular(A, V);
+        AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
         return AV_true;
       };
 
@@ -817,7 +817,7 @@ TEST_CASE("Benchmark matrix-velocity twist multiplication", "[benchmark]")
     vpMatrix A = generateRandomMatrix(rows, cols);
     vpVelocityTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
-    vpMatrix AV_true = dgemm_regular(A, V);
+    vpMatrix AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
     vpMatrix AV = A * V;
     REQUIRE(equalMatrix(AV, AV_true));
   }
@@ -837,7 +837,7 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
       vpMatrix AV, AV_true;
       BENCHMARK(oss.str().c_str())
       {
-        AV_true = dgemm_regular(A, V);
+        AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
         return AV_true;
       };
 
@@ -907,7 +907,7 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]")
     vpMatrix A = generateRandomMatrix(rows, cols);
     vpForceTwistMatrix V(vpTranslationVector(0.1, -0.4, 1.5), vpThetaUVector(0.4, -0.1, 0.7));
 
-    vpMatrix AV_true = dgemm_regular(A, V);
+    vpMatrix AV_true = dgemm_regular(A, static_cast<vpMatrix>(V));
     vpMatrix AV = A * V;
     REQUIRE(equalMatrix(AV, AV_true));
   }

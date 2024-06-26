@@ -87,23 +87,23 @@ class VISP_EXPORT vpCircle : public vpForwardProjection
 {
 public:
   vpCircle();
-  explicit vpCircle(const vpColVector &oP);
+  VP_EXPLICIT vpCircle(const vpColVector &oP);
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
-  virtual ~vpCircle() vp_override;
-  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const vp_override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
+  virtual ~vpCircle() VP_OVERRIDE;
+  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const VP_OVERRIDE;
+  void changeFrame(const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) vp_override;
+               unsigned int thickness = 1) VP_OVERRIDE;
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) VP_OVERRIDE;
 
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpCircle *duplicate() const vp_override;
+  vpCircle *duplicate() const VP_OVERRIDE;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -122,9 +122,9 @@ public:
 
   double getR() const { const unsigned int index_6 = 6; return cP[index_6]; }
 
-  void projection() vp_override;
-  void projection(const vpColVector &cP, vpColVector &p) const vp_override;
-  void setWorldCoordinates(const vpColVector &oP) vp_override;
+  void projection() VP_OVERRIDE;
+  void projection(const vpColVector &cP, vpColVector &p) const VP_OVERRIDE;
+  void setWorldCoordinates(const vpColVector &oP) VP_OVERRIDE;
 
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 
@@ -146,25 +146,25 @@ public:
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_20 = mu_20/a\f$.
    */
-  vp_deprecated double get_mu20() const { const unsigned int index_2 = 2; return p[index_2]; }
+  VP_DEPRECATED double get_mu20() const { const unsigned int index_2 = 2; return p[index_2]; }
   /*!
    * \deprecated You should rather use get_n11().
    * This function is incorrectly named and is confusing since it
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_11 = mu@name Deprecated functions_11/a\f$.
    */
-  vp_deprecated double get_mu11() const { const unsigned int index_3 = 3; return p[index_3]; }
+  VP_DEPRECATED double get_mu11() const { const unsigned int index_3 = 3; return p[index_3]; }
   /*!
    * \deprecated You should rather use get_n02().
    * This function is incorrectly named and is confusing since it
    * returns second order centered moments of the ellipse normalized
    * by its area that corresponds to \f$n_02 = mu_02/a\f$.
    */
-  vp_deprecated double get_mu02() const { const unsigned int index_4 = 4; return p[index_4]; }
+  VP_DEPRECATED double get_mu02() const { const unsigned int index_4 = 4; return p[index_4]; }
   //@}
 #endif
 protected:
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

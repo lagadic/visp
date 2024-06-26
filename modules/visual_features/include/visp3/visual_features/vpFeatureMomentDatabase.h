@@ -89,6 +89,10 @@ class vpMomentObject;
  * #include <visp3/visual_features/vpFeatureMomentCentered.h>
  * #include <visp3/visual_features/vpFeatureMomentDatabase.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   try {

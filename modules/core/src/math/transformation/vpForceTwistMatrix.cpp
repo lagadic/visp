@@ -255,19 +255,23 @@ vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double t
 /*!
 
   Operator that allows to multiply a force/torque twist transformation matrix
-by an other force/torque skew transformation matrix.
+  by an other force/torque skew transformation matrix.
 
-\code
-#include <visp3/core/vpForceTwistMatrix.h>
+  \code
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  vpForceTwistMatrix aFb, bFc;
-  // ... initialize the force/torque twist transformations aFb and bFc
-  // Compute the force/torque transformation from frame a to c
-  vpForceTwistMatrix aFc = aFb * bFc;
-}
-\endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpForceTwistMatrix aFb, bFc;
+    // ... initialize the force/torque twist transformations aFb and bFc
+    // Compute the force/torque transformation from frame a to c
+    vpForceTwistMatrix aFc = aFb * bFc;
+  }
+  \endcode
 
 */
 vpForceTwistMatrix vpForceTwistMatrix::operator*(const vpForceTwistMatrix &F) const
@@ -333,6 +337,10 @@ vpMatrix vpForceTwistMatrix::operator*(const vpMatrix &M) const
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpForceTwistMatrix.h>
   #include <visp3/robot/vpRobotViper850.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

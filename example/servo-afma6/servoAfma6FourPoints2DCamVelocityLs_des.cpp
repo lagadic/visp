@@ -98,8 +98,8 @@ int main()
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured camera velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
+  // - the 6 measured camera velocities (m/s, rad/s)
+  // - the 6 measured joint positions (m, rad)
   // - the 8 values of s - s*
   std::string username;
   // Get the user login name

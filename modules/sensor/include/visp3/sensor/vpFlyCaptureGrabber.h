@@ -70,7 +70,7 @@ BEGIN_VISP_NAMESPACE
   Grab loop had an error: There is an image consistency issue with this image.
   \endcode
   follow instruction provide
-[here](https://www.flir.fr/support-center/iis/machine-vision/knowledge-base/lost-ethernet-data-packets-on-linux-systems)
+  [here](https://www.flir.fr/support-center/iis/machine-vision/knowledge-base/lost-ethernet-data-packets-on-linux-systems)
   to increase receive buffer size.
 
   Once installed configure ViSP using cmake to detect FlyCapture SDK and build
@@ -84,31 +84,35 @@ BEGIN_VISP_NAMESPACE
   The following example shows how to use this class to capture images
   from the first camera that is found.
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpFlyCaptureGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/sensor/vpFlyCaptureGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_FLYCAPTURE)
-  try {
-  int nframes = 100;
-  vpImage<unsigned char> I;
-  char filename[FILENAME_MAX];
-  vpFlyCaptureGrabber g;
-  std::cout << "Number of cameras detected: " << g.getNumCameras() << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  g.setCameraIndex(0); // Default camera is the first on the bus
-  g.getCameraInfo(std::cout);
-  g.open(I);
+  int main()
+  {
+  #if defined(VISP_HAVE_FLYCAPTURE)
+    try {
+    int nframes = 100;
+    vpImage<unsigned char> I;
+    char filename[FILENAME_MAX];
+    vpFlyCaptureGrabber g;
+    std::cout << "Number of cameras detected: " << g.getNumCameras() << std::endl;
 
-  for(int i=0; i< nframes; i++) {
-    g.acquire(I);
-    snprintf(filename, FILENAME_MAX, "image%04d.pgm", i);
-    vpImageIo::write(I, filename);
+    g.setCameraIndex(0); // Default camera is the first on the bus
+    g.getCameraInfo(std::cout);
+    g.open(I);
+
+    for(int i=0; i< nframes; i++) {
+      g.acquire(I);
+      snprintf(filename, FILENAME_MAX, "image%04d.pgm", i);
+      vpImageIo::write(I, filename);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   If more than one camera is detected, you can use setCamera(const unsigned int &)
@@ -121,6 +125,10 @@ int main()
   #include <visp3/core/vpImage.h>
   #include <visp3/io/vpImageIo.h>
   #include <visp3/sensor/vpFlyCaptureGrabber.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

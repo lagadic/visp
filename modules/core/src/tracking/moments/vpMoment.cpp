@@ -47,7 +47,7 @@ BEGIN_VISP_NAMESPACE
  * \param os : a std::stream.
  * \param m : a moment instance.
  */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
+  VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
 {
   for (std::vector<double>::const_iterator i = m.values.begin(); i != m.values.end(); ++i)
     os << *i << ",";
@@ -72,6 +72,10 @@ vpMoment::vpMoment() : object(nullptr), moments(nullptr), values() { }
  * #include <visp3/core/vpMomentGravityCenter.h>
  * #include <visp3/core/vpMomentObject.h>
  * #include <visp3/core/vpPoint.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

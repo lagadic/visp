@@ -81,7 +81,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpSimulatorException(int id);
+  VP_EXPLICIT vpSimulatorException(int id);
 };
 END_VISP_NAMESPACE
 #endif

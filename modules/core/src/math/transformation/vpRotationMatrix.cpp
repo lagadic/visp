@@ -97,21 +97,25 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   \param list : List of double.
   The following code shows how to use this constructor to initialize a rotation matrix:
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R
-  R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
-  std::cout << "R:\n" << R << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix R
+    R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+    std::cout << "R:\n" << R << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-R:
-0  0  -1
-0  -1  0
--1  0  0
+  R:
+  0  0  -1
+  0  -1  0
+  -1  0  0
   \endcode
   \sa operator<<()
  */
@@ -188,6 +192,10 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
   \code
   #include <visp3/core/vpRotationMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRotationMatrix R;
@@ -221,6 +229,10 @@ vpRotationMatrix &vpRotationMatrix::operator<<(double val)
   The following example shows how to initialize a rotation matrix using this operator.
   \code
   #include <visp3/core/vpRotationMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -345,6 +357,10 @@ vpHomogeneousMatrix vpRotationMatrix::operator*(const vpHomogeneousMatrix &M) co
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpRotationMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -559,20 +575,24 @@ vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<doub
   \param list : List of double.
   The following code shows how to use this constructor to initialize a rotation matrix:
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
-  std::cout << "R:\n" << R << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+    std::cout << "R:\n" << R << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-R:
-0  0  -1
-0  -1  0
--1  0  0
+  R:
+  0  0  -1
+  0  -1  0
+  -1  0  0
   \endcode
  */
 vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list)
@@ -630,15 +650,19 @@ vpRotationMatrix vpRotationMatrix::inverse() const
   \param R (output): Inverted rotation matrix.
 
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R, Rinv;
-  // ... Update rotation matrix R
-  // Compute the inverse in Rinv
-  R.inverse(Rinv);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix R, Rinv;
+    // ... Update rotation matrix R
+    // Compute the inverse in Rinv
+    R.inverse(Rinv);
+  }
   \endcode
 */
 void vpRotationMatrix::inverse(vpRotationMatrix &R) const { R = inverse(); }
@@ -989,23 +1013,27 @@ vpThetaUVector vpRotationMatrix::getThetaUVector()
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector r = R.getCol(2);
-  std::cout << "Last column: \n" << r << std::endl;
-}
+  int main()
+  {
+    vpRotationMatrix R;
+
+    vpColVector r = R.getCol(2);
+    std::cout << "Last column: \n" << r << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-Last column:
-0
-0
-1
+  Last column:
+  0
+  0
+  1
   \endcode
  */
 vpColVector vpRotationMatrix::getCol(unsigned int j) const
@@ -1112,7 +1140,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
  */
 void vpRotationMatrix::orthogonalize()
 {
-  vpMatrix U = *this;
+  vpMatrix U(*this);
   vpColVector w;
   vpMatrix V;
   U.svd(w, V);

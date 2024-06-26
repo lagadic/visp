@@ -161,7 +161,11 @@
     "primitiveset": "cpp",
     "stateattribute": "cpp",
     "uniform": "cpp",
-    "polytope": "cpp"
+    "polytope": "cpp",
+    "core": "cpp",
+    "dense": "cpp",
+    "stdvector": "cpp",
+    "numericaldiff": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,

@@ -98,7 +98,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpMatrixException(int id) : vpException(id) { }
+  VP_EXPLICIT vpMatrixException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

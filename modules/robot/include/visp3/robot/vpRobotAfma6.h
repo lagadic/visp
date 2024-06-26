@@ -100,16 +100,18 @@ BEGIN_VISP_NAMESPACE
   class by calling the default constructor:
 
   \code
-#include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/robot/vpRobotAfma6.h>
 
-#ifdef VISP_HAVE_AFMA6
-int main()
-{
-  vpRobotAfma6 robot;
-}
-#else
-int main() {}
-#endif
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifdef VISP_HAVE_AFMA6
+    vpRobotAfma6 robot;
+  #endif
+  }
   \endcode
 
   This initialize the robot kinematics with the eMc extrinsic camera
@@ -119,7 +121,7 @@ int main() {}
   robot with:
 
   \code
-  // Set the extrinsic camera parameters obtained with a perpective
+  // Set the extrinsic camera parameters obtained with a perspective
   // projection model including a distortion parameter
   robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
@@ -250,7 +252,7 @@ public: /* Constantes */
   static const double defaultPositioningVelocity; // = 20.0;
 
 public: /* Methode publiques */
-  explicit vpRobotAfma6(bool verbose = true);
+  VP_EXPLICIT vpRobotAfma6(bool verbose = true);
   virtual ~vpRobotAfma6(void);
 
   bool checkJointLimits(vpColVector &jointsStatus);
@@ -259,7 +261,7 @@ public: /* Methode publiques */
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
 
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) VP_OVERRIDE;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
@@ -276,8 +278,8 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe) vp_override;
-  void get_fJe(vpMatrix &_fJe) vp_override;
+  void get_eJe(vpMatrix &_eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &_fJe) VP_OVERRIDE;
 
   void init(void);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc);
@@ -299,7 +301,7 @@ public: /* Methode publiques */
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition(const vpRobot::vpControlFrameType frame, const vpPoseVector &pose);
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -312,7 +314,7 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 };

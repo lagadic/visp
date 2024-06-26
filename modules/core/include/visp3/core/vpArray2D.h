@@ -72,6 +72,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpArray2D.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a(2, 3);
@@ -97,6 +101,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/code/vpArray2D.h
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
@@ -105,6 +113,12 @@ BEGIN_VISP_NAMESPACE
  * \endcode
  * The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
  * \code
+ * #include <visp3/code/vpArray2D.h
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpArray2D<float> a;
@@ -115,6 +129,10 @@ BEGIN_VISP_NAMESPACE
  * You can also use reshape() function:
  * \code
  * #include <visp3/code/vpArray2D.h
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -254,13 +272,13 @@ public:
     A.data = nullptr;
   }
 
-  explicit vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
   {
     resize(1, static_cast<unsigned int>(list.size()), false, false);
     std::copy(list.begin(), list.end(), data);
   }
 
-  explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
+  VP_EXPLICIT vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
     : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
   {
     if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
@@ -273,7 +291,7 @@ public:
     std::copy(list.begin(), list.end(), data);
   }
 
-  explicit vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
   {
     unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
     for (auto &l : lists) {

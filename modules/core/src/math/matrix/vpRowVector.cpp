@@ -29,8 +29,7 @@
  *
  * Description:
  * Operation on row vectors.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRowVector.cpp
@@ -48,6 +47,10 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
+
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 BEGIN_VISP_NAMESPACE
 //! Copy operator.   Allow operation such as A = v
@@ -152,18 +155,22 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 /*!
   Set vector elements from a list of double.
   \code
-#include <visp3/core/vpRowVector.cpp>
+  #include <visp3/core/vpRowVector.cpp>
 
-int main()
-{
-  vpRowVector r;
-  r = {1, 2, 3};
-  std::cout << "r: " << r << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r;
+    r = {1, 2, 3};
+    std::cout << "r: " << r << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-r: 1  2  3
+  r: 1  2  3
   \endcode
   \sa operator<<()
 */
@@ -475,16 +482,20 @@ vpRowVector &vpRowVector::operator-=(vpRowVector v)
   Copy operator.
   Allows operation such as A << v
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector A, B(5);
-  for (unsigned int i=0; i<B.size(); i++)
-    B[i] = i;
-  A << B;
-  std::cout << "A: " << A << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector A, B(5);
+    for (unsigned int i=0; i<B.size(); i++)
+      B[i] = i;
+    A << B;
+    std::cout << "A: " << A << std::endl;
+  }
   \endcode
   In row vector A we get:
   \code
@@ -544,6 +555,7 @@ vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i) : vpArray2D<double>(
     (*this)[j] = M[i][j];
   }
 }
+
 /*!
    Constructor that creates a row vector from a 1-by-n matrix \e M.
 
@@ -678,40 +690,44 @@ vpMatrix vpRowVector::reshape(unsigned int nrows, unsigned int ncols)
   \param ncols : number of columns of the matrix.
 
   \exception vpException::dimensionError If the matrix and the row vector have
-not the same size.
+  not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  int var=0;
-  vpMatrix mat(3, 4);
-  for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 4; j++)
-          mat[i][j] = ++var;
-  std::cout << "mat: \n" << mat << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRowVector row = mat.stackRows();
-  std::cout << "row vector: " << row << std::endl;
+  int main()
+  {
+    int var=0;
+    vpMatrix mat(3, 4);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 4; j++)
+            mat[i][j] = ++var;
+    std::cout << "mat: \n" << mat << std::endl;
 
-  vpMatrix remat = row.reshape(3, 4);
-  std::cout << "remat: \n" << remat << std::endl;
-}
+    vpRowVector row = mat.stackRows();
+    std::cout << "row vector: " << row << std::endl;
+
+    vpMatrix remat = row.reshape(3, 4);
+    std::cout << "remat: \n" << remat << std::endl;
+  }
   \endcode
 
   If you run the previous example, you get:
   \code
-mat:
-1  2  3  4
-5  6  7  8
-9  10  11  12
-row vector: 1  2  3  4  5  6  7  8  9  10  11  12
-remat:
-1  2  3  4
-5  6  7  8
-9  10  11  12
+  mat:
+  1  2  3  4
+  5  6  7  8
+  9  10  11  12
+  row vector: 1  2  3  4  5  6  7  8  9  10  11  12
+  remat:
+  1  2  3  4
+  5  6  7  8
+  9  10  11  12
   \endcode
 */
 void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
@@ -737,33 +753,38 @@ void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
 
 /*!
   Insert a row vector.
-  \param i : Index of the first element to introduce. This index starts from
-0. \param v : Row vector to insert.
+  \param i : Index of the first element to introduce. This index starts from 0.
+  \param v : Row vector to insert.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector v(4);
-  for (unsigned int i=0; i < v.size(); i++)
-    v[i] = i;
-  std::cout << "v: " << v << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRowVector w(2);
-  for (unsigned int i=0; i < w.size(); i++)
-    w[i] = i+10;
-  std::cout << "w: " << w << std::endl;
+  int main()
+  {
+    vpRowVector v(4);
+    for (unsigned int i=0; i < v.size(); i++)
+      v[i] = i;
+    std::cout << "v: " << v << std::endl;
 
-  v.insert(1, w);
-  std::cout << "v: " << v << std::endl;
-}  \endcode
+    vpRowVector w(2);
+    for (unsigned int i=0; i < w.size(); i++)
+      w[i] = i+10;
+    std::cout << "w: " << w << std::endl;
+
+    v.insert(1, w);
+    std::cout << "v: " << v << std::endl;
+  }
+  \endcode
   It produces the following output:
   \code
-v: 0  1  2  3
-w: 10  11
-v: 0  10  11  3
+  v: 0  1  2  3
+  w: 10  11
+  v: 0  10  11  3
   \endcode
  */
 void vpRowVector::insert(unsigned int i, const vpRowVector &v)
@@ -1084,7 +1105,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   Return the sum of all the elements \f$v_{i}\f$ of the row vector v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j\f$.
-  */
+ */
 double vpRowVector::sum() const
 {
   double sum = 0.0;
@@ -1101,7 +1122,7 @@ double vpRowVector::sum() const
   v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j^{2}\f$.
-  */
+ */
 double vpRowVector::sumSquare() const
 {
   double sum_square = 0.0;
@@ -1118,7 +1139,7 @@ double vpRowVector::sumSquare() const
   Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Frobenius norm if the vector is initialized, 0 otherwise.
-*/
+ */
 double vpRowVector::frobeniusNorm() const
 {
   double norm = sumSquare();
@@ -1154,6 +1175,10 @@ double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
   \code
   #include <visp3/core/vpRowVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRowVector v(4);
@@ -1168,8 +1193,8 @@ double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
     std::cout << "w: " << w << std::endl;
   }
   \endcode
-    It produces the following output:
-    \code
+  It produces the following output:
+  \code
   v: 0 1 2 3
   w: 1 2
   \endcode
@@ -1202,6 +1227,10 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
   The following code shows how to use this function:
   \code
   #include <visp3/core/vpRowVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1245,23 +1274,27 @@ std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixN
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  std::ofstream ofs("log.csv", std::ofstream::out);
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  r.csvPrint(ofs);
+  int main()
+  {
+    std::ofstream ofs("log.csv", std::ofstream::out);
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
 
-  ofs.close();
-}
+    r.csvPrint(ofs);
+
+    ofs.close();
+  }
   \endcode
   produces log.csv file that contains:
   \code
-0, 1, 2
+  0, 1, 2
   \endcode
 */
 std::ostream &vpRowVector::csvPrint(std::ostream &os) const
@@ -1282,21 +1315,25 @@ std::ostream &vpRowVector::csvPrint(std::ostream &os) const
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
-  std::cout << "r = "; r.maplePrint(std::cout);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
+    std::cout << "r = "; r.maplePrint(std::cout);
+  }
   \endcode
   produces this output:
   \code
-r = ([
-[0, 1, 2, ],
-])
+  r = ([
+  [0, 1, 2, ],
+  ])
   \endcode
   that could be copy/paste in Maple.
 */
@@ -1318,29 +1355,33 @@ std::ostream &vpRowVector::maplePrint(std::ostream &os) const
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
-  std::cout << "r = "; r.matlabPrint(std::cout);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
+    std::cout << "r = "; r.matlabPrint(std::cout);
+  }
   \endcode
   produces this output:
   \code
-r = [ 0, 1, 2, ]
+  r = [ 0, 1, 2, ]
   \endcode
   that could be copy/paste in Matlab:
   \code
->> r = [ 0, 1, 2, ]
+  >> r = [ 0, 1, 2, ]
 
-r =
+  r =
 
-    0   1   2
+      0   1   2
 
->>
+  >>
   \endcode
 */
 std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
@@ -1363,5 +1404,23 @@ vpRowVector operator*(const double &x, const vpRowVector &v)
   vpRowVector vout;
   vout = v * x;
   return vout;
+}
+
+vpRowVector vpRowVector::hadamard(const vpRowVector &v) const
+{
+  if ((v.getRows() != rowNum) || (v.getCols() != colNum)) {
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
+  }
+
+  vpRowVector out;
+  out.resize(colNum, false);
+#if defined(VISP_HAVE_SIMDLIB)
+  SimdVectorHadamard(data, v.data, colNum, out.data);
+#else
+  for (unsigned int i = 0; i < dsize; ++i) {
+    out.data[i] = data[i] * v.data[i];
+  }
+#endif
+  return out;
 }
 END_VISP_NAMESPACE

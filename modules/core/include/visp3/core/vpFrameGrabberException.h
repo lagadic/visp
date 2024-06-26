@@ -86,7 +86,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpFrameGrabberException(int id) : vpException(id) { }
+  VP_EXPLICIT vpFrameGrabberException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

@@ -62,7 +62,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480, 640);
-  I = 255;
+  I = vpRGBa(255);
 #if defined(VISP_HAVE_DISPLAY)
   display.init(I, 0, 0, "The External view");
 #endif
@@ -87,7 +87,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480, 640);
-  I = 255;
+  I = vpRGBa(255);
 
 #if defined(VISP_HAVE_DISPLAY)
   if (do_display)

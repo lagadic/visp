@@ -72,6 +72,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/robot/vpSimulatorPioneerPan.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpHomogeneousMatrix wMc;
@@ -118,20 +122,20 @@ public:
 public:
   /** @name Inherited functionalities from vpSimulatorPioneerPan */
   //@{
-  void get_eJe(vpMatrix &eJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) VP_OVERRIDE;
   //@}
 
 private:
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */) vp_override { };
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
+  void get_fJe(vpMatrix & /*_fJe */) VP_OVERRIDE { };
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) VP_OVERRIDE { };
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) VP_OVERRIDE { };
 };
 END_VISP_NAMESPACE
 #endif

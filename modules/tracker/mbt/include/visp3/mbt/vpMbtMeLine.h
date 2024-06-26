@@ -68,7 +68,7 @@ public:
 
 public:
   vpMbtMeLine();
-  virtual ~vpMbtMeLine() vp_override;
+  virtual ~vpMbtMeLine() VP_OVERRIDE;
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
@@ -113,7 +113,7 @@ public:
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) vp_override;
+  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) VP_OVERRIDE;
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);

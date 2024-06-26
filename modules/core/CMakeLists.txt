@@ -161,7 +161,24 @@ if(USE_OPENCV)
 endif(USE_OPENCV)
 
 if(USE_YARP)
-  list(APPEND opt_incs ${YARP_INCLUDE_DIRS})
+  foreach(lib_ ${YARP_LIBRARIES})
+    get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+    if(imported_libs_)
+      list(APPEND YARP_LIBS ${lib_})
+      list(APPEND YARP_IMPORTED_LIBS ${imported_libs_})
+    else()
+      list(APPEND YARP_LIBS ${lib_})
+    endif()
+
+    get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+    if(imported_incs_)
+      list(APPEND YARP_IMPORTED_INCLUDE_DIRS ${imported_incs_})
+    endif()
+  endforeach()
+  vp_list_unique(YARP_IMPORTED_LIBS)
+  vp_list_unique(YARP_IMPORTED_INCLUDE_DIRS)
+
+  list(APPEND opt_incs ${YARP_IMPORTED_INCLUDE_DIRS})
 
   # Work around to add Yarp libraries and also third party libraries requested by Yarp
   list(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
@@ -182,21 +199,8 @@ if(USE_YARP)
       else()
         list(APPEND opt_libs ${YARP_LIB}) # Append full absolute library path and name
       endif()
-      # Get 3rd party libraries requested by Yarp
-      get_target_property(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}")
-      list(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
     endforeach()
   endforeach()
-
-  # Remove Yarp libraries since they were added previously with full absolute library path and name
-  if(YARP_LINK_LIBS)
-    foreach(lib ${YARP_LIBRARIES})
-      list(REMOVE_ITEM YARP_LINK_LIBS ${lib})
-    endforeach()
-  endif()
-  # Add 3rd party libraries requested by Yarp
-  list(APPEND opt_libs ${YARP_LINK_LIBS})
-  add_definitions(${YARP_DEFINES})
 endif(USE_YARP)
 
 # Math: eigen3, gsl, mkl, openblas, atlas, netlib, OpenCV

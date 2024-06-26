@@ -75,6 +75,10 @@ class vpMomentDatabase;
  * #include <visp3/visual_features/vpFeatureMomentDatabase.h>
  * #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpPoint p;
@@ -163,17 +167,17 @@ public:
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 2)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const vp_override { return "vpMomentGravityCenter"; }
+  const std::string momentName() const VP_OVERRIDE { return "vpMomentGravityCenter"; }
 
   /*!
    * Feature name.
    */
-  const std::string name() const vp_override { return "vpFeatureMomentGravityCenter"; }
+  const std::string name() const VP_OVERRIDE { return "vpFeatureMomentGravityCenter"; }
 
   /*!
    * Shortcut selector for \f$x_g\f$.
@@ -235,17 +239,17 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 2)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const vp_override { return "vpMomentGravityCenter"; }
+  const std::string momentName() const VP_OVERRIDE { return "vpMomentGravityCenter"; }
 
  /*!
   * Feature name.
   */
-  const std::string name() const vp_override { return "vpFeatureMomentGravityCenter"; }
+  const std::string name() const VP_OVERRIDE { return "vpFeatureMomentGravityCenter"; }
 
   /*!
    * Shortcut selector for \f$x_g\f$.

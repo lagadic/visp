@@ -87,7 +87,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpParallelPortException(int id) : vpException(id) { }
+  VP_EXPLICIT vpParallelPortException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

@@ -66,6 +66,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/detection/vpDetectorDataMatrixCode.h>
  * #include <visp3/io/vpImageIo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #ifdef VISP_HAVE_DMTX
@@ -107,11 +111,11 @@ BEGIN_VISP_NAMESPACE
  * Other examples are also provided in tutorial-barcode-detector.cpp and
  * tutorial-barcode-detector-live.cpp
  */
-class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
+  class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {
 public:
   vpDetectorDataMatrixCode();
-  bool detect(const vpImage<unsigned char> &I) vp_override;
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

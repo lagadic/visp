@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Serial communication.
  */
 
-#ifndef _vpSerial_h_
-#define _vpSerial_h_
+#ifndef VP_SERIAL_H
+#define VP_SERIAL_H
 
 #if !defined(_WIN32)
 
@@ -50,15 +50,19 @@ BEGIN_VISP_NAMESPACE
 
   The following example shows how to write a string on port `/dev/ttyUSB0` using the default constructor:
   \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef _WIN32
-  vpSerial serial("/dev/ttyUSB0");
-  serial.write("Hello world");
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifndef WIN32
+    vpSerial serial("/dev/ttyUSB0");
+    serial.write("Hello world");
+  #endif
+  }
   \endcode
 
   \note This class is not implemented on windows-like OS.

@@ -66,6 +66,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpImage.h>
  * #include <visp3/io/vpDiskGrabber.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main(){
  *   vpImage<unsigned char> I; // Grey level image
  *
@@ -127,7 +131,7 @@ public:
   /*!
    * Constructor that takes a generic image sequence as input.
    */
-  explicit vpDiskGrabber(const std::string &genericName);
+  VP_EXPLICIT vpDiskGrabber(const std::string &genericName);
 
   /*!
    * Destructor.
@@ -145,7 +149,7 @@ public:
    * \param noz : Number of zero to code the image number.
    * \param ext : Extension of the image file.
    */
-  explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
+  VP_EXPLICIT vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
                          const std::string &ext);
 
   /*!

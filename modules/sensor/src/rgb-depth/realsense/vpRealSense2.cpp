@@ -69,7 +69,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  */
-vpRealSense2::vpRealSense2()
+  vpRealSense2::vpRealSense2()
   : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
   m_points(), m_pos(), m_quat(), m_rot(), m_product_line(), m_init(false)
 { }
@@ -142,46 +142,51 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   The following code shows how to use this function to get color, infrared 1 and infrared 2 frames
   acquired by a D435 device:
   \code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main() {
-  vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 1, 640, 480, RS2_FORMAT_Y8, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 2, 640, 480, RS2_FORMAT_Y8, 30);
-  rs.open(config);
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  vpImage<unsigned char> Ii1(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-                             rs.getIntrinsics(RS2_STREAM_INFRARED).width);
-  vpImage<unsigned char> Ii2(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-                             rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX di1(Ii1, 100, 100, "Infrared 1");
-  vpDisplayX di2(Ii2, 200, 200, "Infrared 2");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI di1(Ii1, 100, 100, "Infrared 1");
-  vpDisplayGDI di2(Ii2, 100, 100, "Infrared 2");
-#endif
+  int main()
+  {
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 1, 640, 480, RS2_FORMAT_Y8, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 2, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
+    vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+    vpImage<unsigned char> Ii1(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                              rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+    vpImage<unsigned char> Ii2(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                              rs.getIntrinsics(RS2_STREAM_INFRARED).width);
 
-  while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii1.bitmap, Ii2.bitmap, nullptr);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ii1);
-    vpDisplay::display(Ii2);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ii1);
-    vpDisplay::flush(Ii2);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii1, false) || vpDisplay::getClick(Ii2, false))
-      break;
+  #ifdef VISP_HAVE_X11
+    vpDisplayX dc(Ic, 0, 0, "Color");
+    vpDisplayX di1(Ii1, 100, 100, "Infrared 1");
+    vpDisplayX di2(Ii2, 200, 200, "Infrared 2");
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(Ic, 0, 0, "Color");
+    vpDisplayGDI di1(Ii1, 100, 100, "Infrared 1");
+    vpDisplayGDI di2(Ii2, 100, 100, "Infrared 2");
+  #endif
+
+    while (true) {
+      rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii1.bitmap, Ii2.bitmap, nullptr);
+      vpDisplay::display(Ic);
+      vpDisplay::display(Ii1);
+      vpDisplay::display(Ii2);
+      vpDisplay::flush(Ic);
+      vpDisplay::flush(Ii1);
+      vpDisplay::flush(Ii2);
+      if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii1, false) || vpDisplay::getClick(Ii2, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
@@ -1569,15 +1574,19 @@ struct stream_and_index
 
   The following example shows how to use this method.
   \code
-#include <visp3/sensor/vpRealSense2.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main()
-{
-  vpRealSense2 rs;
-  rs.open();
-  std::cout << "RealSense sensor information:\n" << rs << std::endl;
-  return 0;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRealSense2 rs;
+    rs.open();
+    std::cout << "RealSense sensor information:\n" << rs << std::endl;
+    return 0;
+  }
   \endcode
  */
 std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)

@@ -67,81 +67,87 @@ BEGIN_VISP_NAMESPACE
   The following example shows how to use this class to stream force-torque data at 1kHz and print a measurement each
   second.
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpTime.h>
-#include <visp3/sensor/vpForceTorqueIitSensor.h>
+  #include <visp3/core/vpTime.h>
+  #include <visp3/sensor/vpForceTorqueIitSensor.h>
 
-int main()
-{
-#ifdef VISP_HAVE_FT_IIT_SDK
-  vpForceTorqueIitSensor iit_ft;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  if ( ! iit_ft.connected() ) {
-    std::cout << "Unable to connect to IIT force-torque sensor" << std::endl;
+  int main()
+  {
+  #ifdef VISP_HAVE_FT_IIT_SDK
+    vpForceTorqueIitSensor iit_ft;
+
+    if ( ! iit_ft.connected() ) {
+      std::cout << "Unable to connect to IIT force-torque sensor" << std::endl;
+      return EXIT_SUCCESS;
+    }
+
+    iit_ft.bias();
+    iit_ft.startStreaming();
+    vpColVector ft;
+    for(int i=0; i < 10; i++) {
+      ft = iit_ft.getForceTorque();
+      std::cout << ft.t() << std::endl;
+      vpTime::sleepMs(1000);
+    }
+    iit_ft.stopStreaming();
+
+  #else
+    std::cout << "ViSP is not build with IIT force-torque SDK support" << std::endl;
+  #endif
     return EXIT_SUCCESS;
   }
-
-  iit_ft.bias();
-  iit_ft.startStreaming();
-  vpColVector ft;
-  for(int i=0; i < 10; i++) {
-    ft = iit_ft.getForceTorque();
-    std::cout << ft.t() << std::endl;
-    vpTime::sleepMs(1000);
-  }
-  iit_ft.stopStreaming();
-
-#else
-  std::cout << "ViSP is not build with IIT force-torque SDK support" << std::endl;
-#endif
-  return EXIT_SUCCESS;
-}
   \endcode
 
   Once build, in the same folder as the binary you should find a configuration file named `configurationSettings.ini`.
   - Such a file is provided in `$VISP_WS/modules/sensor/test/force-torque/configurationSettings.ini` with default
-    settings. \include configurationSettings.ini
+    settings.
+    \include configurationSettings.ini
   - To modify default settings you need first to identify your Ethernet link:
   \code
-$ ifconfig
-enp0s31f6: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.100.100  netmask 255.255.255.0  broadcast 192.168.100.255
+  $ ifconfig
+  enp0s31f6: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+          inet 192.168.100.100  netmask 255.255.255.0  broadcast 192.168.100.255
   \endcode
   - and then modify accordingly the following lines:
   \verbatim
-LOCAL_IFACE_IP = 192.168.100.100       ; Host Computer's local interface IP
-LOCAL_IFACE = enp0s31f6                ; Host Computer's local interface name (it is required only in Linux)
+  LOCAL_IFACE_IP = 192.168.100.100       ; Host Computer's local interface IP
+  LOCAL_IFACE = enp0s31f6                ; Host Computer's local interface name (it is required only in Linux)
   \endverbatim
   - The sensor default IP is set to `192.168.1.1`. Browsing to this address with Firefox allows to modify it's default
     IP address. If the new sensor IP address is for example `192.168.100.10`, you need to modify the following line:
   \verbatim
-USE_DEFAULT_SETTINGS = false           ; If "true", the library will use the
-                                       ; DEFAULT_SETTINGS. Note that the sensor
-                                       ; needs to be in the "DEF" IP position.
-                                       ; If "false", the library will use the
-                                       ; USER_SETTINGS to initialize the communication
-                                       ; with the sensor.
-[USER_SETTINGS]                        ; USER SETTINGS FOR USE IN SINGLE_SENSOR_MODE when USE_DEFAULT_SETTINGS=false
-USER_IP = 192.168.100.10               ; User Sensor IP
+  USE_DEFAULT_SETTINGS = false           ; If "true", the library will use the
+                                        ; DEFAULT_SETTINGS. Note that the sensor
+                                        ; needs to be in the "DEF" IP position.
+                                        ; If "false", the library will use the
+                                        ; USER_SETTINGS to initialize the communication
+                                        ; with the sensor.
+  [USER_SETTINGS]                        ; USER SETTINGS FOR USE IN SINGLE_SENSOR_MODE when USE_DEFAULT_SETTINGS=false
+  USER_IP = 192.168.100.10               ; User Sensor IP
   \endverbatim
 
   When running a binary that uses vpForceTorqueIitSensor class,
   - if you experience the following error:
   \code
-$ cd $VISP_WS/modules/sensor
-$ ./testForceTorqueIitSensor-simple
-./testForceTorqueIitSensor-simple: error while loading shared libraries: libftSensorLib.so.0.0.1: cannot open shared
-object file: No such file or directory \endcode
+  $ cd $VISP_WS/modules/sensor
+  $ ./testForceTorqueIitSensor-simple
+  ./testForceTorqueIitSensor-simple: error while loading shared libraries: libftSensorLib.so.0.0.1: cannot open shared
+  object file: No such file or directory
+  \endcode
   - it means that you need to add the location of the library in `LD_LIBRARY_PATH` environment variable. This could be
     achieved running:
   \code
-$ export
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
+  $ export
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
   \endcode
   where `$VISP_WS/3rdparty/FT_SDK_01_4` contains IIT SDK.
 
-  To configure the sensor, you may access the sensor through the web interface using uour favorite browser.
+  To configure the sensor, you may access the sensor through the web interface using your favorite browser.
   \image html vpForceTorqueIitSensor-ethernet.png
 
 */

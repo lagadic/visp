@@ -245,31 +245,35 @@ corresponding camera velocity skew from the joint velocities knowing the robot
 jacobian.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpSimulatorCamera.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/core/vpVelocityTwistMatrix.h>
+  #include <visp3/robot/vpSimulatorCamera.h>
 
-int main()
-{
-  vpSimulatorCamera robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector q_vel(6); // Joint velocity on the 6 joints
-  // ... q_vel need here to be initialized
+  int main()
+  {
+    vpSimulatorCamera robot;
 
-  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
+    vpColVector q_vel(6); // Joint velocity on the 6 joints
+    // ... q_vel need here to be initialized
 
-  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
-  robot.get_cVe(cVe);
+    vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
 
-  vpMatrix eJe;       // Robot jacobian
-  robot.get_eJe(eJe);
+    vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+    robot.get_cVe(cVe);
 
-  // Compute the velocity in the camera frame
-  c_v = cVe * eJe * q_vel;
+    vpMatrix eJe;       // Robot jacobian
+    robot.get_eJe(eJe);
 
-  return 0;
-}
+    // Compute the velocity in the camera frame
+    c_v = cVe * eJe * q_vel;
+
+    return 0;
+  }
   \endcode
 
   \exception vpException::dimensionError If M is not a 6 rows dimension

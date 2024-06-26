@@ -29,8 +29,7 @@
  *
  * Description:
  * Matrix SVD decomposition.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
@@ -72,11 +71,205 @@ extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *l
 #endif
 
 BEGIN_VISP_NAMESPACE
-/*---------------------------------------------------------------------
 
-SVD related functions
+/*!
 
----------------------------------------------------------------------*/
+  Solve a linear system \f$ A X = B \f$ using Singular Value
+  Decomposition (SVD).
+
+  Non destructive wrt. A and B.
+
+  \param b : Vector\f$ B \f$.
+
+  \param x : Vector \f$ X \f$.
+
+  Here an example:
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  vpMatrix A(3,3);
+
+  A[0][0] = 4.64;
+  A[0][1] = 0.288;
+  A[0][2] = -0.384;
+
+  A[1][0] = 0.288;
+  A[1][1] = 7.3296;
+  A[1][2] = 2.2272;
+
+  A[2][0] = -0.384;
+  A[2][1] = 2.2272;
+  A[2][2] = 6.0304;
+
+  vpColVector X(3), B(3);
+  B[0] = 1;
+  B[1] = 2;
+  B[2] = 3;
+
+  A.solveBySVD(B, X);
+
+  // Obtained values of X
+  // X[0] = 0.2468;
+  // X[1] = 0.120782;
+  // X[2] = 0.468587;
+
+  std::cout << "X:\n" << X << std::endl;
+  }
+  \endcode
+
+  \sa solveBySVD(const vpColVector &)
+*/
+void vpMatrix::solveBySVD(const vpColVector &b, vpColVector &x) const { x = pseudoInverse(1e-6) * b; }
+
+/*!
+
+  Solve a linear system \f$ A X = B \f$ using Singular Value
+  Decomposition (SVD).
+
+  Non destructive wrt. A and B.
+
+  \param B : Vector\f$ B \f$.
+
+  \return Vector \f$ X \f$.
+
+  Here an example:
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  vpMatrix A(3,3);
+
+  A[0][0] = 4.64;
+  A[0][1] = 0.288;
+  A[0][2] = -0.384;
+
+  A[1][0] = 0.288;
+  A[1][1] = 7.3296;
+  A[1][2] = 2.2272;
+
+  A[2][0] = -0.384;
+  A[2][1] = 2.2272;
+  A[2][2] = 6.0304;
+
+  vpColVector X(3), B(3);
+  B[0] = 1;
+  B[1] = 2;
+  B[2] = 3;
+
+  X = A.solveBySVD(B);
+  // Obtained values of X
+  // X[0] = 0.2468;
+  // X[1] = 0.120782;
+  // X[2] = 0.468587;
+
+  std::cout << "X:\n" << X << std::endl;
+  }
+  \endcode
+
+  \sa solveBySVD(const vpColVector &, vpColVector &)
+*/
+vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
+{
+  vpColVector X(colNum);
+
+  solveBySVD(B, X);
+  return X;
+}
+
+/*!
+
+  Matrix singular value decomposition (SVD).
+
+  This function calls the first following function that is available:
+  - svdLapack() if Lapack 3rd party is installed
+  - svdEigen3() if Eigen3 3rd party is installed
+  - svdOpenCV() if OpenCV 3rd party is installed.
+
+  If none of these previous 3rd parties is installed, we use by default
+  svdLapack() with a Lapack built-in version.
+
+  Given matrix \f$M\f$, this function computes it singular value decomposition
+  such as
+
+  \f[ M = U \Sigma V^{\top} \f]
+
+  \warning This method is destructive wrt. to the matrix \f$ M \f$ to
+  decompose. You should make a COPY of that matrix if needed.
+
+  \param w : Vector of singular values: \f$ \Sigma = diag(w) \f$.
+
+  \param V : Matrix \f$ V \f$.
+
+  The matrix object `(*this) is updated with \f$ U \f$.
+
+  \note The singular values are ordered in decreasing
+  fashion in \e w. It means that the highest singular value is in \e w[0].
+
+  Here an example of SVD decomposition of a non square Matrix M.
+
+  \code
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix M(3,2);
+    M[0][0] = 1;   M[0][1] = 6;
+    M[1][0] = 2;   M[1][1] = 8;
+    M[2][0] = 0.5; M[2][1] = 9;
+
+    vpColVector w;
+    vpMatrix V, Sigma, U = M;
+
+    U.svd(w, V);
+
+    // Construct the diagonal matrix from the singular values
+    Sigma.diag(w);
+
+    // Reconstruct the initial matrix using the decomposition
+    vpMatrix Mrec =  U * Sigma * V.t();
+
+    // Here, Mrec is obtained equal to the initial value of M
+    // Mrec[0][0] = 1;   Mrec[0][1] = 6;
+    // Mrec[1][0] = 2;   Mrec[1][1] = 8;
+    // Mrec[2][0] = 0.5; Mrec[2][1] = 9;
+
+    std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+  }
+  \endcode
+
+  \sa svdLapack(), svdEigen3(), svdOpenCV()
+*/
+void vpMatrix::svd(vpColVector &w, vpMatrix &V)
+{
+#if defined(VISP_HAVE_LAPACK)
+  svdLapack(w, V);
+#elif defined(VISP_HAVE_EIGEN3)
+  svdEigen3(w, V);
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
+  svdOpenCV(w, V);
+#else
+  (void)w;
+  (void)V;
+  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 
@@ -105,6 +298,10 @@ SVD related functions
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -192,6 +389,10 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -395,6 +596,10 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

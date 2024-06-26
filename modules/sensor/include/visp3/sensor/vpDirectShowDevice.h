@@ -61,7 +61,7 @@ class VISP_EXPORT vpDirectShowDevice
 
 public:
   vpDirectShowDevice() : inUse(false) { }
-  explicit vpDirectShowDevice(const CComPtr<IMoniker> &moniker) : inUse(false) { init(moniker); }
+  VP_EXPLICIT vpDirectShowDevice(const CComPtr<IMoniker> &moniker) : inUse(false) { init(moniker); }
 
   bool init(const CComPtr<IMoniker> &moniker);
 

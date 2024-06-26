@@ -62,6 +62,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/detection/vpDetectorFace.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_OBJDETECT)
@@ -93,7 +97,7 @@ protected:
 public:
   vpDetectorFace();
 
-  bool detect(const vpImage<unsigned char> &I) vp_override;
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
   bool detect(const cv::Mat &frame_gray);
   void setCascadeClassifierFile(const std::string &filename);
 };

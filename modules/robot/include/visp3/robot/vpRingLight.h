@@ -63,46 +63,51 @@ BEGIN_VISP_NAMESPACE
   the lighting system.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRingLight.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRingLight.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_PARPORT) && defined(VISP_HAVE_DC1394)
-  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third party lib
-  vpImage<unsigned char> I;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRingLight light; // Open the device to access to the ring light.
+  int main()
+  {
+  #if defined(VISP_HAVE_PARPORT) && defined(VISP_HAVE_DC1394)
+    vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third party lib
+    vpImage<unsigned char> I;
 
-  for (int i=0; i < 10; i++) {
-    light.pulse(); // Send a pulse to the lighting system
-    g.acquire(I); // Acquire an image
+    vpRingLight light; // Open the device to access to the ring light.
+
+    for (int i=0; i < 10; i++) {
+      light.pulse(); // Send a pulse to the lighting system
+      g.acquire(I); // Acquire an image
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   Here is an example showing how to turn on the lighting during 10 seconds.
   \code
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRingLight.h>
+  #include <visp3/core/vpTime.h>
+  #include <visp3/robot/vpRingLight.h>
 
-int main()
-{
-#ifdef VISP_HAVE_PARPORT
-  vpRingLight light;         // Open the device to access to the ring light.
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  int nsec = 10;             // Time to wait in seconds
-  light.on();                // Turn the ring light on
-  vpTime::wait(nsec * 1000); // Wait 10 s
-  light.off();               // and then turn the ring light off
-#endif
-}
+  int main()
+  {
+  #ifdef VISP_HAVE_PARPORT
+    vpRingLight light;         // Open the device to access to the ring light.
+
+    int nsec = 10;             // Time to wait in seconds
+    light.on();                // Turn the ring light on
+    vpTime::wait(nsec * 1000); // Wait 10 s
+    light.off();               // and then turn the ring light off
+  #endif
+  }
   \endcode
-
-
-
 */
 class VISP_EXPORT vpRingLight
 {

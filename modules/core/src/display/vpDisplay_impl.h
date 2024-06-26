@@ -212,11 +212,12 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
       double n11_p = coef2;
       double n02_p = coef3;
       double num = n20_p - n02_p;
-      double d = num * num + 4.0 * n11_p * n11_p; // always >= 0
+      double d = (num * num) + (4.0 * n11_p * n11_p); // always >= 0
 
       if (d <= std::numeric_limits<double>::epsilon()) { // circle
         e = 0.0;                                         // case n20 = n02 and n11 = 0 : circle, e undefined
-        a = b = 2.0 * sqrt(n20_p);
+        b = 2.0 * sqrt(n20_p);
+        a = b;
       }
       else {                             // real ellipse
         e = atan2(2.0 * n11_p, num) / 2.0; // e in [-Pi/2 ; Pi/2]

@@ -71,7 +71,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
 
   void setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method) { minimizationMethod = method; }
 };

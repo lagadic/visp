@@ -84,6 +84,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpMatrix A(4,4);
@@ -126,6 +130,10 @@ vpMatrix vpMatrix::inverseByCholesky() const
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -278,6 +286,10 @@ vpMatrix vpMatrix::choleskyByLapack()const
   Here an example:
   \code
   #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

@@ -76,7 +76,7 @@ int main()
     std::cout << "rMv:\n" << rMv << std::endl;
     vpVelocityTwistMatrix rVv(rMv);
 
-    // Set the extrinsic camera parameters obtained with a perpective
+    // Set the extrinsic camera parameters obtained with a perspective
     // projection model including a distortion parameter
     robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
     // Initialize the controller to position control

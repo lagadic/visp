@@ -56,7 +56,7 @@ BEGIN_VISP_NAMESPACE
   The algorithm implemented in this class is described in \cite Irani98a and
   \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional : public vpTemplateTrackerZNCC
+  class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional : public vpTemplateTrackerZNCC
 {
 protected:
   bool compoInitialised;
@@ -68,7 +68,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
 };
 END_VISP_NAMESPACE
 #endif

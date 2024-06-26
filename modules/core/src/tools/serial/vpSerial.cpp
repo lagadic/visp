@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Serial communication.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -63,28 +61,36 @@ BEGIN_VISP_NAMESPACE
 /*!
   Creates a serial port object that opens the port if the parameter is not empty.
   \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef _WIN32
-  vpSerial serial("/dev/ttyUSB0");
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifndef WIN32
+    vpSerial serial("/dev/ttyUSB0");
+  #endif
+  }
   \endcode
 
   Otherwise the port needs to be opened using open().
   \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef _WIN32
-  vpSerial serial;
-  serial.setPort("/dev/ttyUSB0");
-  serial.open();
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifndef WIN32
+    vpSerial serial;
+    serial.setPort("/dev/ttyUSB0");
+    serial.open();
+  #endif
+  }
   \endcode
 
   \param[in] port : Serial port name. A string similar to `/dev/ttyUSB0`, `/dev/ttySO`, `/dev/ttyAMA0`...
@@ -92,11 +98,11 @@ int main()
   \param[in] bytesize : Size of each byte in the serial transmission of data. Default is 8 bits.
   \param[in] parity : Parity parameter. Default is without parity check.
   \param[in] stopbits : Number of stop bits used. Default is 1 stop bit.
-  \param[in] flowcontrol : Type of flowcontrol used. Default is no flow control.
+  \param[in] flowcontrol : Type of flow control used. Default is no flow control.
 
  */
-vpSerial::vpSerial(const std::string &port, unsigned long baudrate, bytesize_t bytesize, parity_t parity,
-                   stopbits_t stopbits, flowcontrol_t flowcontrol)
+  vpSerial::vpSerial(const std::string &port, unsigned long baudrate, bytesize_t bytesize, parity_t parity,
+                     stopbits_t stopbits, flowcontrol_t flowcontrol)
   : m_port(port), m_fd(-1), m_is_open(false), m_xonxoff(false), m_rtscts(false), m_baudrate(baudrate), m_parity(parity),
   m_bytesize(bytesize), m_stopbits(stopbits), m_flowcontrol(flowcontrol)
 {
@@ -142,16 +148,20 @@ void vpSerial::setStopbits(const stopbits_t &stopbits) { m_stopbits = stopbits; 
 /*!
   Set the serial port name. The name is a string similar to `/dev/ttyUSB0`, `/dev/ttySO`, `/dev/ttyAMA0`...
   \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef _WIN32
-  vpSerial serial;
-  serial.setPort("/dev/ttyUSB0");
-  serial.open();
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifndef WIN32
+    vpSerial serial;
+    serial.setPort("/dev/ttyUSB0");
+    serial.open();
+  #endif
+  }
   \endcode
 
   \sa getPort()
@@ -203,23 +213,27 @@ void vpSerial::close()
 
    The following example shows how to open the serial port `/dev/ttyUSB0` without using the constructor:
    \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef _WIN32
-  vpSerial serial;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  serial.setPort("/dev/ttyUSB0");
-  serial.setBaudrate(9600);
-  serial.setBytesize(vpSerial::eightbits);
-  serial.setParity(vpSerial::parity_none);
-  serial.setStopbits(vpSerial::stopbits_one);
-  serial.setFlowcontrol(vpSerial::flowcontrol_none);
+  int main()
+  {
+  #ifndef _WIN32
+    vpSerial serial;
 
-  serial.open();
-#endif
-}
+    serial.setPort("/dev/ttyUSB0");
+    serial.setBaudrate(9600);
+    serial.setBytesize(vpSerial::eightbits);
+    serial.setParity(vpSerial::parity_none);
+    serial.setStopbits(vpSerial::stopbits_one);
+    serial.setFlowcontrol(vpSerial::flowcontrol_none);
+
+    serial.open();
+  #endif
+  }
    \endcode
 
  */
