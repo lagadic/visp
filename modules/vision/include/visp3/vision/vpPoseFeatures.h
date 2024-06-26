@@ -301,29 +301,29 @@ public:
     func_ptr = f_ptr; // std::move(f_ptr);
     m_tuple = new std::tuple<Args...>(args...);
   }
-  virtual ~vpPoseSpecificFeatureTemplate() vp_override
+  virtual ~vpPoseSpecificFeatureTemplate() VP_OVERRIDE
   {
     delete m_tuple;
   }
 
-  virtual void createDesired() vp_override
+  virtual void createDesired() VP_OVERRIDE
   {
     buildDesiredFeatureWithTuple(m_desiredFeature, func_ptr, *m_tuple);
   }
 
-  virtual vpColVector error() vp_override
+  virtual vpColVector error() VP_OVERRIDE
   {
     // std::cout << "Getting S... : " << std::get<0>(*tuple).get_s() <<
     // std::endl;
     return m_currentFeature.error(m_desiredFeature);
   }
 
-  virtual vpMatrix currentInteraction() vp_override
+  virtual vpMatrix currentInteraction() VP_OVERRIDE
   {
     return m_currentFeature.interaction();
   }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo) vp_override
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     buildCurrentFeatureWithTuple(m_currentFeature, cMo, func_ptr, *m_tuple);
   }
@@ -358,27 +358,27 @@ public:
     m_obj = o;
   }
 
-  virtual ~vpPoseSpecificFeatureTemplateObject() vp_override
+  virtual ~vpPoseSpecificFeatureTemplateObject() VP_OVERRIDE
   {
     delete m_tuple;
   }
 
-  virtual void createDesired() vp_override
+  virtual void createDesired() VP_OVERRIDE
   {
     buildDesiredFeatureObjectWithTuple(m_obj, m_desiredFeature, func_ptr, *m_tuple);
   }
 
-  virtual vpColVector error() vp_override
+  virtual vpColVector error() VP_OVERRIDE
   {
     return m_currentFeature.error(m_desiredFeature);
   }
 
-  virtual vpMatrix currentInteraction() vp_override
+  virtual vpMatrix currentInteraction() VP_OVERRIDE
   {
     return m_currentFeature.interaction();
   }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo) vp_override
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
     buildCurrentFeatureObjectWithTuple(m_obj, m_currentFeature, cMo, func_ptr, *m_tuple);
   }
@@ -678,6 +678,10 @@ private:
  * \code
  * #include <visp3/vision/vpPoseFeatures.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * void vp_createPoint(vpFeaturePoint &fp,const vpPoint &p) {
  *   vpFeatureBuilder::create(fp,p);
  * }
@@ -745,6 +749,10 @@ void vpPoseFeatures::addSpecificFeature(RetType(*fct_ptr)(ArgsFunc...), Args &&.
  *
  * \code
  * #include <visp3/vision/vpPoseFeatures.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * class vp_createClass{
  * public:

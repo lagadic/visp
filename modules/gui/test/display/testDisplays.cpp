@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,13 @@
  *
  * Description:
  * Test for image display.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testDisplays.cpp
+
+  \brief Test all the displays. Draws several shapes.
+*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -56,12 +57,6 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-
-/*!
-  \example testDisplays.cpp
-
-  \brief Test all the displays. Draws several shapes.
-*/
 
 // List of allowed command line options
 #define GETOPTARGS "hldc"
@@ -282,7 +277,8 @@ template <typename Type> static void draw(vpImage<Type> &I)
   vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
 }
 
-template <typename Type> static void runTest(bool opt_display, bool opt_click_allowed)
+template <typename Type>
+static void runTest(bool opt_display, bool opt_click_allowed)
 {
   vpImage<Type> Ix;
   vpImage<Type> Igtk;
@@ -292,7 +288,7 @@ template <typename Type> static void runTest(bool opt_display, bool opt_click_al
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX *displayX = new vpDisplayX;
-  Ix.init(480, 640, 255);
+  Ix.init(480, 640, Type(255));
   if (opt_display) {
     displayX->init(Ix, 100, 100, "Display X11");
     vpDisplay::display(Ix);
@@ -305,7 +301,7 @@ template <typename Type> static void runTest(bool opt_display, bool opt_click_al
 
 #if defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV *displayCv = new vpDisplayOpenCV;
-  Icv.init(480, 640, 255);
+  Icv.init(480, 640, Type(255));
   if (opt_display) {
     displayCv->init(Icv, 100, 100, "Display OpenCV");
     vpDisplay::display(Icv);
@@ -318,7 +314,7 @@ template <typename Type> static void runTest(bool opt_display, bool opt_click_al
 
 #if defined(VISP_HAVE_GTK)
   vpDisplayGTK *displayGtk = new vpDisplayGTK;
-  Igtk.init(480, 640, 255);
+  Igtk.init(480, 640, Type(255));
   if (opt_display) {
     displayGtk->init(Igtk, 100, 100, "Display GTK");
     vpDisplay::display(Igtk);
@@ -332,7 +328,7 @@ template <typename Type> static void runTest(bool opt_display, bool opt_click_al
 #if defined(VISP_HAVE_GDI)
 
   vpDisplayGDI *displayGdi = new vpDisplayGDI;
-  Igdi.init(480, 640, 255);
+  Igdi.init(480, 640, Type(255));
   if (opt_display) {
     displayGdi->init(Igdi, 100, 100, "Display GDI");
     vpDisplay::display(Igdi);
@@ -345,7 +341,7 @@ template <typename Type> static void runTest(bool opt_display, bool opt_click_al
 
 #if defined(VISP_HAVE_D3D9)
   vpDisplayD3D *displayD3d = new vpDisplayD3D;
-  Id3d.init(480, 640, 255);
+  Id3d.init(480, 640, Type(255));
   if (opt_display) {
     displayD3d->init(Id3d, 100, 100, "Display Direct 3D");
     vpDisplay::display(Id3d);
@@ -419,16 +415,16 @@ int main(int argc, const char **argv)
         std::cout << "  No display is available\n";
       }
       return EXIT_FAILURE;
-  }
+    }
 
-  // Create a color image for each display.
+    // Create a color image for each display.
     runTest<vpRGBa>(opt_display, opt_click_allowed);
 
     // Create a grayscale image for each display.
     runTest<unsigned char>(opt_display, opt_click_allowed);
 
     return EXIT_SUCCESS;
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

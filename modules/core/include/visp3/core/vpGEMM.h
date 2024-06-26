@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Matrix generalized multiplication.
  */
 
-#ifndef _vpGEMM_h_
-#define _vpGEMM_h_
+#ifndef VP_GEMM_H
+#define VP_GEMM_H
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>

@@ -40,6 +40,8 @@
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
+
+#include <visp3/core/vpDebug.h>
 BEGIN_VISP_NAMESPACE
 vpNetwork::vpNetwork()
   : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(), max_size_message(999999),

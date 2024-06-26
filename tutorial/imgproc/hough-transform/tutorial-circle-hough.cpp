@@ -118,7 +118,7 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
     drawingHelpers::display(edgeMap, "Edge map", true);
   }
   return drawingHelpers::display(I_disp, "Detection results", blockingMode);
-      }
+}
 
 int main(int argc, char **argv)
 {
@@ -463,10 +463,10 @@ int main(int argc, char **argv)
         << std::endl;
       return EXIT_SUCCESS;
     }
-    }
+  }
 
-    //! [Algo params]
-  vpCircleHoughTransform::vpCircleHoughTransformParameters
+  //! [Algo params]
+  vpCircleHoughTransform::vpCircleHoughTransformParams
     algoParams(opt_gaussianKernelSize
       , opt_gaussianSigma
       , opt_sobelKernelSize
@@ -540,4 +540,4 @@ int main(int argc, char **argv)
   }
 
   return EXIT_SUCCESS;
-  }
+}

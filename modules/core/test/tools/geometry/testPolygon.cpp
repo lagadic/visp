@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,11 @@
  *
  * Description:
  * Example which test the polygon.
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testPolygon.cpp
+ */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPolygon.h>

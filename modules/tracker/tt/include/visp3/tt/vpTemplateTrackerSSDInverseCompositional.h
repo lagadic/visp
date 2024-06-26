@@ -68,7 +68,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
    * this feature is disabled. */

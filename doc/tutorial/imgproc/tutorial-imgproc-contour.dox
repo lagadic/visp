@@ -7,23 +7,23 @@
 
 This tutorial will show you how to extract the contours from a binary image. The contour extraction algorithm is based on \cite articleSuzuki article and most of the implementation has been ported from \cite Hare:2011:OIJ:2072298.2072421 library.
 
-The function to call is vp::findContours(const vpImage<unsigned char> &, vpContour &, std::vector<std::vector<vpImagePoint> > &, const vpContourRetrievalType&):
+The function to call is findContours(const vpImage<unsigned char> &, vpContour &, std::vector<std::vector<vpImagePoint> > &, const vpContourRetrievalType &)
 - the first argument is the image where '0' pixel value means the background and '1' pixel value means the foreground. **Other values are not allowed.**
-- the second argument is a vp::vpContour structure that contains the list of contours in a tree
+- the second argument is a VISP_NAMESPACE_NAME::vpContour structure that contains the list of contours in a tree
 - the third argument is the list of contours
-- the last argument is an option to choose the type of contour extraction, see vp::vpContourRetrievalType
+- the last argument is an option to choose the type of contour extraction, see VISP_NAMESPACE_NAME::vpContourRetrievalType
 
-The vp::vpContour structure is composed of:
-- std::vector< \ref vp::vpContour * > m_children, the list of children contours for the current contour
-- vp::vpContourType m_contourType, the type of contour (vp::CONTOUR_OUTER or vp::CONTOUR_HOLE)
-- vp::vpContour * m_parent, the parent contour for the current contour
+The vpContour structure is composed of:
+- std::vector< VISP_NAMESPACE_NAME::vpContour * > m_children, the list of children contours for the current contour
+- vpContourType m_contourType, the type of contour (VISP_NAMESPACE_NAME::CONTOUR_OUTER or VISP_NAMESPACE_NAME::CONTOUR_HOLE)
+- VISP_NAMESPACE_NAME::vpContour * m_parent, the parent contour for the current contour
 - std::vector< \ref vpImagePoint > m_points, the list of contour points
-- the first or top level contour is called the root contour (with vp::CONTOUR_HOLE type by default) and contains in \a m_children the list of contours
+- the first or top level contour is called the root contour (with VISP_NAMESPACE_NAME::CONTOUR_HOLE type by default) and contains in \a m_children the list of contours
 
 The different contour extraction methods are:
-- vp::CONTOUR_RETR_TREE, all the contours are extracted and stored in a hierarchical tree. 
-- vp::CONTOUR_RETR_LIST, all the contours are extracted and stored in a list. The top level contour contains in \a m_children the list of all the extracted contours.
-- vp::CONTOUR_RETR_EXTERNAL, only the external contours are extracted and stored in a list. The top level contour contains in \a m_children the list of the external extracted contours.
+- VISP_NAMESPACE_NAME::CONTOUR_RETR_TREE, all the contours are extracted and stored in a hierarchical tree.
+- VISP_NAMESPACE_NAME::CONTOUR_RETR_LIST, all the contours are extracted and stored in a list. The top level contour contains in \a m_children the list of all the extracted contours.
+- VISP_NAMESPACE_NAME::CONTOUR_RETR_EXTERNAL, only the external contours are extracted and stored in a list. The top level contour contains in \a m_children the list of the external extracted contours.
 
 The next section will provide a concrete example for better understanding.
 
@@ -33,7 +33,7 @@ The following example also available in tutorial-contour.cpp will demonstrate on
 
 \include tutorial-contour.cpp
 
-These functions are provided in a \a vp:: namespace and accessible using this include:
+These functions are provided in a \a VISP_NAMESPACE_NAME namespace and accessible using this include:
 
 \snippet tutorial-contour.cpp Include
 
@@ -44,21 +44,21 @@ The first steps are:
 \snippet tutorial-contour.cpp Otsu
 If the object of interest is in white in the image, the formula for the binarization is:
 \f[
-  I_{bin}\left ( i,j \right ) = 
+  I_{bin}\left ( i,j \right ) =
   \left \{ \begin{matrix}
-  0 \text{ if } I_{src}\left ( i,j \right ) < \text{threshold} \\ 
+  0 \text{ if } I_{src}\left ( i,j \right ) < \text{threshold} \\
   1 \text{ otherwise}
   \end{matrix} \right.
 \f]
 If the object of interest is in black in the image, the formula for the binarization is:
 \f[
-  I_{bin}\left ( i,j \right ) = 
+  I_{bin}\left ( i,j \right ) =
   \left \{ \begin{matrix}
-  1 \text{ if } I_{src}\left ( i,j \right ) < \text{threshold} \\ 
+  1 \text{ if } I_{src}\left ( i,j \right ) < \text{threshold} \\
   0 \text{ otherwise}
   \end{matrix} \right.
 \f]
-- extract the contours (by default, it is the vp::CONTOUR_RETR_TREE method)
+- extract the contours (by default, it is the VISP_NAMESPACE_NAME::CONTOUR_RETR_TREE method)
 \snippet tutorial-contour.cpp Find contours
 - draw the contours if wanted
 \snippet tutorial-contour.cpp Draw contours
@@ -82,7 +82,8 @@ The image after binarisation:
 
 \image html img-tutorial-contour-binarisation2.png "Image after binarization using the Otsu method"
 
-Instead of drawing all the contours with the same color, we can assign a first color for vp::CONTOUR_OUTER contour and a second color for vp::CONTOUR_HOLE contour.
+Instead of drawing all the contours with the same color, we can assign a first color for
+VISP_NAMESPACE_NAME::CONTOUR_OUTER contour and a second color for VISP_NAMESPACE_NAME::CONTOUR_HOLE contour.
 
 The function to navigate in the contour tree is the following:
 
@@ -100,7 +101,7 @@ To display the hierarchy, we can use this function:
 
 \snippet tutorial-contour.cpp Print contours hierarchy func
 
-For the vp::CONTOUR_RETR_TREE method, the output is:
+For the VISP_NAMESPACE_NAME::CONTOUR_RETR_TREE method, the output is:
 
 <blockquote>
 Contour:\n
@@ -166,7 +167,7 @@ Contour:\n
 
 The top level contour is always the root contour with zero contour point and which contains the list of contours.
 
-For the vp::CONTOUR_RETR_EXTERNAL method, the output is:
+For the VISP_NAMESPACE_NAME::CONTOUR_RETR_EXTERNAL method, the output is:
 
 <blockquote>
 Contour:\n
@@ -198,7 +199,7 @@ The result image is:
 
 \image html img-tutorial-contour-draw-contours3.png "External contours extracted and displayed on a new image"
 
-For the vp::CONTOUR_RETR_LIST method, the output is:
+For the VISP_NAMESPACE_NAME::CONTOUR_RETR_LIST method, the output is:
 
 <blockquote>
 Contour:\n

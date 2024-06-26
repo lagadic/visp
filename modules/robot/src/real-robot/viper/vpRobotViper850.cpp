@@ -133,38 +133,42 @@ void emergencyStopViper850(int signo)
   including the distortion, use the code below:
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distortion parameter
-  robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
-  \endcode
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  Now, you can get the intrinsic camera parameters associated to an
-  image acquired by the camera attached to the robot, with:
+    // Set the extrinsic camera parameters obtained with a perspective
+    // projection model including a distortion parameter
+    robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
+    \endcode
 
-  \code
-  vpImage<unsigned char> I(480, 640);
+    Now, you can get the intrinsic camera parameters associated to an
+    image acquired by the camera attached to the robot, with:
 
-  // Get an image from the camera attached to the robot
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
-  g.acquire(I);
-#endif
-  vpCameraParameters cam;
-  robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model
-  // with distortion.
-#endif
-}
+    \code
+    vpImage<unsigned char> I(480, 640);
+
+    // Get an image from the camera attached to the robot
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
+    g.acquire(I);
+  #endif
+    vpCameraParameters cam;
+    robot.getCameraParameters(cam, I);
+    // In cam, you get the intrinsic parameters of the projection model
+    // with distortion.
+  #endif
+  }
   \endcode
 
   \sa vpCameraParameters, init(vpViper850::vpToolType,
@@ -380,38 +384,42 @@ void vpRobotViper850::init(void)
   including the distortion, use the code below:
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distortion parameter
-  robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
-  \endcode
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  Now, you can get the intrinsic camera parameters associated to an
-  image acquired by the camera attached to the robot, with:
+    // Set the extrinsic camera parameters obtained with a perspective
+    // projection model including a distortion parameter
+    robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
+    \endcode
 
-  \code
-  vpImage<unsigned char> I(480, 640);
+    Now, you can get the intrinsic camera parameters associated to an
+    image acquired by the camera attached to the robot, with:
 
-  // Get an image from the camera attached to the robot
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
-  g.acquire(I);
-#endif
-  vpCameraParameters cam;
-  robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model
-  // with distortion.
-#endif
-}
+    \code
+    vpImage<unsigned char> I(480, 640);
+
+    // Get an image from the camera attached to the robot
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
+    g.acquire(I);
+  #endif
+    vpCameraParameters cam;
+    robot.getCameraParameters(cam, I);
+    // In cam, you get the intrinsic parameters of the projection model
+    // with distortion.
+  #endif
+  }
   \endcode
 
   \sa vpCameraParameters,
@@ -466,36 +474,40 @@ void vpRobotViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCa
   M}_c\f$ matrix, use the code below:
 
   \code
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the transformation between the end-effector frame
-  // and the tool frame from a file
-  std::string filename("./EffectorToolTransformation.cnf");
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  robot.init(vpViper850::TOOL_CUSTOM, filename);
-#endif
-}
+    // Set the transformation between the end-effector frame
+    // and the tool frame from a file
+    std::string filename("./EffectorToolTransformation.cnf");
+
+    robot.init(vpViper850::TOOL_CUSTOM, filename);
+  #endif
+  }
   \endcode
 
   The configuration file should have the form below:
 
   \code
-# Start with any number of consecutive lines
-# beginning with the symbol '#'
-#
-# The 3 following lines contain the name of the camera,
-# the rotation parameters of the geometric transformation
-# using the Euler angles in degrees with convention XYZ and
-# the translation parameters expressed in meters
-CAMERA CameraName
-eMc_ROT_XYZ 10.0 -90.0 20.0
-eMc_TRANS_XYZ  0.05 0.01 0.06
-    \endcode
+  # Start with any number of consecutive lines
+  # beginning with the symbol '#'
+  #
+  # The 3 following lines contain the name of the camera,
+  # the rotation parameters of the geometric transformation
+  # using the Euler angles in degrees with convention XYZ and
+  # the translation parameters expressed in meters
+  CAMERA CameraName
+  eMc_ROT_XYZ 10.0 -90.0 20.0
+  eMc_TRANS_XYZ  0.05 0.01 0.06
+  \endcode
 
   \sa init(), init(vpViper850::vpToolType,
   vpCameraParameters::vpCameraParametersProjType),
@@ -546,21 +558,25 @@ void vpRobotViper850::init(vpViper850::vpToolType tool, const std::string &filen
   M}_c\f$ matrix, use the code below:
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the transformation between the end-effector frame
-  // and the tool frame.
-  vpHomogeneousMatrix eMc(0.001, 0.0, 0.1, 0.0, 0.0, M_PI/2);
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  robot.init(vpViper850::TOOL_CUSTOM, eMc);
-#endif
-}
+    // Set the transformation between the end-effector frame
+    // and the tool frame.
+    vpHomogeneousMatrix eMc(0.001, 0.0, 0.1, 0.0, 0.0, M_PI/2);
+
+    robot.init(vpViper850::TOOL_CUSTOM, eMc);
+  #endif
+  }
   \endcode
 
   \sa vpCameraParameters, init(), init(vpViper850::vpToolType,
@@ -1022,26 +1038,30 @@ void vpRobotViper850::get_fJe(vpMatrix &fJe)
   be in ]0:100].
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpColVector position(6);
-  position = 0; // position in rad
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpColVector position(6);
+    position = 0; // position in rad
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpRobotViper850 robot;
 
-  // Set the max velocity to 20%
-  robot.setPositioningVelocity(20);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot to the joint position [0,0,0,0,0,0]
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, position);
-#endif
-}
+    // Set the max velocity to 20%
+    robot.setPositioningVelocity(20);
+
+    // Moves the robot to the joint position [0,0,0,0,0,0]
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, position);
+  #endif
+  }
   \endcode
 
   \sa getPositioningVelocity()
@@ -1089,32 +1109,36 @@ double vpRobotViper850::getPositioningVelocity(void) const { return m_positionin
   position is out of range.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpColVector position(6);
-  // Set positions in the camera frame
-  position[0] = 0.1;    // x axis, in meter
-  position[1] = 0.2;    // y axis, in meter
-  position[2] = 0.3;    // z axis, in meter
-  position[3] = M_PI/8; // rotation around x axis, in rad
-  position[4] = M_PI/4; // rotation around y axis, in rad
-  position[5] = M_PI;   // rotation around z axis, in rad
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpColVector position(6);
+    // Set positions in the camera frame
+    position[0] = 0.1;    // x axis, in meter
+    position[1] = 0.2;    // y axis, in meter
+    position[2] = 0.3;    // z axis, in meter
+    position[3] = M_PI/8; // rotation around x axis, in rad
+    position[4] = M_PI/4; // rotation around y axis, in rad
+    position[5] = M_PI;   // rotation around z axis, in rad
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpRobotViper850 robot;
 
-  // Set the max velocity to 20%
-  robot.setPositioningVelocity(20);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, position);
-#endif
-}
+    // Set the max velocity to 20%
+    robot.setPositioningVelocity(20);
+
+    // Moves the robot in the camera frame
+    robot.setPosition(vpRobot::CAMERA_FRAME, position);
+  #endif
+  }
   \endcode
 
   To catch the exception if the position is out of range, modify the code
@@ -1287,30 +1311,34 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
   position is out of range.
 
   \code
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  // Set positions in the camera frame
-  double pos1 = 0.1;    // x axis, in meter
-  double pos2 = 0.2;    // y axis, in meter
-  double pos3 = 0.3;    // z axis, in meter
-  double pos4 = M_PI/8; // rotation around x axis, in rad
-  double pos5 = M_PI/4; // rotation around y axis, in rad
-  double pos6 = M_PI;   // rotation around z axis, in rad
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    // Set positions in the camera frame
+    double pos1 = 0.1;    // x axis, in meter
+    double pos2 = 0.2;    // y axis, in meter
+    double pos3 = 0.3;    // z axis, in meter
+    double pos4 = M_PI/8; // rotation around x axis, in rad
+    double pos5 = M_PI/4; // rotation around y axis, in rad
+    double pos6 = M_PI;   // rotation around z axis, in rad
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpRobotViper850 robot;
 
-  // Set the max velocity to 20%
-  robot.setPositioningVelocity(20);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
-#endif
-}
+    // Set the max velocity to 20%
+    robot.setPositioningVelocity(20);
+
+    // Moves the robot in the camera frame
+    robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
+  #endif
+  }
   \endcode
 
   \sa setPosition()
@@ -1348,20 +1376,24 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, doubl
 
   This method has the same behavior than the sample code given below;
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpColVector q;
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  robot.readPosFile("MyPositionFilename.pos", q);
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-#endif
-}
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpColVector q;
+    vpRobotViper850 robot;
+
+    robot.readPosFile("MyPositionFilename.pos", q);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  #endif
+  }
   \endcode
 
   \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
@@ -1393,14 +1425,14 @@ void vpRobotViper850::setPosition(const std::string &filename)
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param position : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.
@@ -1413,39 +1445,43 @@ void vpRobotViper850::setPosition(const std::string &filename)
   \param timestamp : Time in second since last robot power on.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRxyzVector.h>
+  #include <visp3/core/vpTranslationVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector position;
-  double timestamp;
-  robot.getPosition(vpRobot::REFERENCE_FRAME, position, timestamp);
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  vpTranslationVector ftc; // reference frame to camera frame translations
-  vpRxyzVector frc; // reference frame to camera frame rotations
+    vpColVector position;
+    double timestamp;
+    robot.getPosition(vpRobot::REFERENCE_FRAME, position, timestamp);
 
-  // Update the transformation between reference frame and camera frame
-  for (unsigned int i=0; i < 3; i++) {
-    ftc[i] = position[i];   // tx, ty, tz
-    frc[i] = position[i+3]; // ry, ry, rz
+    vpTranslationVector ftc; // reference frame to camera frame translations
+    vpRxyzVector frc; // reference frame to camera frame rotations
+
+    // Update the transformation between reference frame and camera frame
+    for (unsigned int i=0; i < 3; i++) {
+      ftc[i] = position[i];   // tx, ty, tz
+      frc[i] = position[i+3]; // ry, ry, rz
+    }
+
+    // Create a rotation matrix from the Rxyz rotation angles
+    vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
+
+    // Create the camera to fix frame transformation in terms of a
+    // homogeneous matrix
+    vpHomogeneousMatrix fMc(ftc, fRc);
+  #endif
   }
-
-  // Create a rotation matrix from the Rxyz rotation angles
-  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
-
-  // Create the camera to fix frame transformation in terms of a
-  // homogeneous matrix
-  vpHomogeneousMatrix fMc(ftc, fRc);
-#endif
-}
   \endcode
 
   \exception vpRobotException::lowLevelError : If the position cannot
@@ -1641,38 +1677,42 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector qvel(6);
-  // Set a joint velocity
-  qvel[0] = 0.1;             // Joint 1 velocity in rad/s
-  qvel[1] = vpMath::rad(15); // Joint 2 velocity in rad/s
-  qvel[2] = 0;               // Joint 3 velocity in rad/s
-  qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
-  qvel[4] = 0;               // Joint 5 velocity in rad/s
-  qvel[5] = 0;               // Joint 6 velocity in rad/s
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  // Initialize the controller to velocity control
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpColVector qvel(6);
+    // Set a joint velocity
+    qvel[0] = 0.1;             // Joint 1 velocity in rad/s
+    qvel[1] = vpMath::rad(15); // Joint 2 velocity in rad/s
+    qvel[2] = 0;               // Joint 3 velocity in rad/s
+    qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
+    qvel[4] = 0;               // Joint 5 velocity in rad/s
+    qvel[5] = 0;               // Joint 6 velocity in rad/s
 
-  while (1) {
-    // Apply a velocity in the joint space
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+    // Initialize the controller to velocity control
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    // Compute new velocities qvel...
+    while (1) {
+      // Apply a velocity in the joint space
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+
+      // Compute new velocities qvel...
+    }
+
+    // Stop the robot
+    robot.setRobotState(vpRobot::STATE_STOP);
+  #endif
   }
-
-  // Stop the robot
-  robot.setRobotState(vpRobot::STATE_STOP);
-#endif
-}
   \endcode
 */
 void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
@@ -1802,7 +1842,7 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param velocity : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1811,47 +1851,51 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
 
   \warning In camera frame, reference frame and mixt frame, the representation
   of the rotation is \f$ \theta {\bf u}\f$. In that cases, \f$velocity = [\dot
-x, \dot y, \dot z, \dot {\theta u}_x, \dot {\theta u}_y, \dot {\theta
-u}_z]\f$.
+  x, \dot y, \dot z, \dot {\theta u}_x, \dot {\theta u}_y, \dot {\theta
+  u}_z]\f$.
 
   \warning The first time this method is called, \e velocity is set to 0. The
   first call is used to intialise the velocity computation for the next call.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  // Set requested joint velocities
-  vpColVector q_dot(6);
-  q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
-  q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
-  q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
-  q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
-  q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
-  q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    // Set requested joint velocities
+    vpColVector q_dot(6);
+    q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
+    q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
+    q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
+    q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
+    q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
+    q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpRobotViper850 robot;
 
-  // Moves the joint in velocity
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  // Initialisation of the velocity measurement
-  vpColVector q_dot_mes; // Measured velocities
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
-  // q_dot_mes is resized to 6, the number of joint
+    // Moves the joint in velocity
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
 
-  while (1) {
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
-     vpTime::wait(40); // wait 40 ms
-     // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    // Initialisation of the velocity measurement
+    vpColVector q_dot_mes; // Measured velocities
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
+    // q_dot_mes is resized to 6, the number of joint
+
+    while (1) {
+      robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
+      vpTime::wait(40); // wait 40 ms
+      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    }
+  #endif
   }
-#endif
-}
   \endcode
 */
 void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity, double &timestamp)
@@ -1986,7 +2030,7 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param timestamp : Time in second since last robot power on.
 
@@ -1994,41 +2038,45 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
   and rotations in rad/s.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  // Set requested joint velocities
-  vpColVector q_dot(6);
-  q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
-  q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
-  q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
-  q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
-  q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
-  q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    // Set requested joint velocities
+    vpColVector q_dot(6);
+    q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
+    q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
+    q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
+    q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
+    q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
+    q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpRobotViper850 robot;
 
-  // Moves the joint in velocity
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  // Initialisation of the velocity measurement
-  vpColVector q_dot_mes; // Measured velocities
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
-  // q_dot_mes is resized to 6, the number of joint
+    // Moves the joint in velocity
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
 
-  double timestamp;
-  while (1) {
-     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME, timestamp);
-     vpTime::wait(40); // wait 40 ms
-     // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    // Initialisation of the velocity measurement
+    vpColVector q_dot_mes; // Measured velocities
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
+    // q_dot_mes is resized to 6, the number of joint
+
+    double timestamp;
+    while (1) {
+      q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME, timestamp);
+      vpTime::wait(40); // wait 40 ms
+      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    }
+  #endif
   }
-#endif
-}
   \endcode
 */
 vpColVector vpRobotViper850::getVelocity(vpRobot::vpControlFrameType frame, double &timestamp)
@@ -2058,67 +2106,71 @@ vpColVector vpRobotViper850::getVelocity(vpRobot::vpControlFrameType frame)
 
 /*!
 
-Read joint positions in a specific Viper850 position file.
+  Read joint positions in a specific Viper850 position file.
 
-This position file has to start with a header. The six joint positions
-are given after the "R:" keyword. The first 3 values correspond to the
-joint translations X,Y,Z expressed in meters. The 3 last values
-correspond to the joint rotations A,B,C expressed in degres to be more
-representative for the user. Theses values are then converted in
-radians in \e q. The character "#" starting a line indicates a
-comment.
+  This position file has to start with a header. The six joint positions
+  are given after the "R:" keyword. The first 3 values correspond to the
+  joint translations X,Y,Z expressed in meters. The 3 last values
+  correspond to the joint rotations A,B,C expressed in degres to be more
+  representative for the user. Theses values are then converted in
+  radians in \e q. The character "#" starting a line indicates a
+  comment.
 
-A typical content of such a file is given below:
+  A typical content of such a file is given below:
 
-\code
-#Viper - Position - Version 1.0
-# file: "myposition.pos "
-#
-# R: A B C D E F
-# Joint position in degrees
-#
+  \code
+  #Viper - Position - Version 1.0
+  # file: "myposition.pos "
+  #
+  # R: A B C D E F
+  # Joint position in degrees
+  #
 
-R: 0.1 0.3 -0.25 -80.5 80 0
-\endcode
+  R: 0.1 0.3 -0.25 -80.5 80 0
+  \endcode
 
-\param filename : Name of the position file to read.
+  \param filename : Name of the position file to read.
 
-\param q : The six joint positions. Values are expressed in radians.
+  \param q : The six joint positions. Values are expressed in radians.
 
-\return true if the positions were successfully readen in the file. false, if
-an error occurs.
+  \return true if the positions were successfully readen in the file. false, if
+  an error occurs.
 
-The code below shows how to read a position from a file and move the robot to
-this position.
-\code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpRobotViper850.h>
+  The code below shows how to read a position from a file and move the robot to
+  this position.
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Enable the position control of the robot
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  // Get the current robot joint positions
-  vpColVector q;        // Current joint position
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
+    // Enable the position control of the robot
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Save this position in a file named "current.pos"
-  robot.savePosFile("current.pos", q);
+    // Get the current robot joint positions
+    vpColVector q;        // Current joint position
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
 
-  // Get the position from a file and move to the registered position
-  robot.readPosFile("current.pos", q); // Set the joint position from the file
+    // Save this position in a file named "current.pos"
+    robot.savePosFile("current.pos", q);
 
-  robot.setPositioningVelocity(5); // Positioning velocity set to 5%
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
-#endif
-}
-\endcode
+    // Get the position from a file and move to the registered position
+    robot.readPosFile("current.pos", q); // Set the joint position from the file
 
-\sa savePosFile()
+    robot.setPositioningVelocity(5); // Positioning velocity set to 5%
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+  #endif
+  }
+  \endcode
+
+  \sa savePosFile()
 */
 
 bool vpRobotViper850::readPosFile(const std::string &filename, vpColVector &q)
@@ -2390,27 +2442,31 @@ void vpRobotViper850::unbiasForceTorqueSensor()
 bias.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpTime.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpColVector  H; // force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper850 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpColVector  H; // force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
 
-  // Bias the force/torque sensor
-  robot.biasForceTorqueSensor();
+    vpRobotViper850 robot;
 
-  for (unsigned int i=0; i< 10; i++) {
-    robot.getForceTorque(H) ;
-    std::cout << "Measured force/torque: " << H.t() << std::endl;
-    vpTime::wait(5);
+    // Bias the force/torque sensor
+    robot.biasForceTorqueSensor();
+
+    for (unsigned int i=0; i< 10; i++) {
+      robot.getForceTorque(H) ;
+      std::cout << "Measured force/torque: " << H.t() << std::endl;
+      vpTime::wait(5);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \exception vpRobotException::lowLevelError : If the force/torque measures
@@ -2454,25 +2510,29 @@ void vpRobotViper850::getForceTorque(vpColVector &H) const
 bias.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpTime.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Bias the force/torque sensor
-  robot.biasForceTorqueSensor();
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
 
-  for (unsigned int i=0; i< 10; i++) {
-    vpColVector H = robot.getForceTorque(); // force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
-    std::cout << "Measured force/torque: " << H.t() << std::endl;
-    vpTime::wait(5);
+    // Bias the force/torque sensor
+    robot.biasForceTorqueSensor();
+
+    for (unsigned int i=0; i< 10; i++) {
+      vpColVector H = robot.getForceTorque(); // force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
+      std::cout << "Measured force/torque: " << H.t() << std::endl;
+      vpTime::wait(5);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \exception vpRobotException::lowLevelError : If the force/torque measures

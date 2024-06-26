@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,10 +284,11 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
 
   // array in which likelihood ratios will be stored
   double *likelihood = new double[(2 * range) + 1];
+  const unsigned int val_2 = 2;
 
   if (test_contrast) {
     double diff = 1e6;
-    for (unsigned int n = 0; n < ((2 * range) + 1); ++n) {
+    for (unsigned int n = 0; n < ((val_2 * range) + 1); ++n) {
       //   convolution results
       double convolution_ = list_query_pixels[n].convolution(I, me);
       double threshold = list_query_pixels[n].getContrastThreshold();
@@ -317,7 +318,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
     }
   }
   else { // test on contrast only
-    for (unsigned int n = 0; n < ((2 * range) + 1); ++n) {
+    for (unsigned int n = 0; n < ((val_2 * range) + 1); ++n) {
       double threshold = list_query_pixels[n].getContrastThreshold();
 
       if (me->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD) {
@@ -330,7 +331,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
 
       // convolution results
       double convolution_ = list_query_pixels[n].convolution(I, me);
-      likelihood[n] = fabs(2 * convolution_);
+      likelihood[n] = fabs(val_2 * convolution_);
       if ((likelihood[n] > max) && (likelihood[n] > threshold)) {
         max_convolution = convolution_;
         max = likelihood[n];
@@ -416,29 +417,30 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const d
 
 void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
+  const unsigned int cross_size = 3;
   switch (state) {
   case NO_SUPPRESSION:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::green, 1);
     break;
 
   case CONTRAST:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::blue, 1);
     break;
 
   case THRESHOLD:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::purple, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::purple, 1);
     break;
 
   case M_ESTIMATOR:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::red, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::red, 1);
     break;
 
   case OUTSIDE_ROI_MASK:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::cyan, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::cyan, 1);
     break;
 
   default:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::yellow, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::yellow, 1);
   }
 }
 

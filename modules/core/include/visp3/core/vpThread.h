@@ -64,7 +64,7 @@ namespace VISP_NAMESPACE_NAME
    native Windows threading capabilities if pthread is not available under
    Windows.
 */
-class vp_deprecated vpThread
+class VP_DEPRECATED vpThread
 {
 public:
 #if defined(VISP_HAVE_PTHREAD)

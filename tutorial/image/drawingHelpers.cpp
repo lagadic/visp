@@ -69,7 +69,7 @@ vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
 #endif
 
 void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
-                          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
+                           vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
 {
 #if defined(VISP_HAVE_DISPLAY)
   d_Iinput.init(Iinput, 10, 10);

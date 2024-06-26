@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Test vpCameraParameters JSON parse / save.
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file testJsonCamera.cpp
+  \example testJsonCamera.cpp
 
   Test saving and parsing JSON configuration for vpCameraParameters.
 */
@@ -74,8 +72,8 @@ public:
     static_cast<void>(next());
   }
 
-  const vpCameraParameters &get() const vp_override { return current; }
-  bool next() vp_override
+  const vpCameraParameters &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     const double px = m_dist(m_rand);
     const double py = m_dist(m_rand);

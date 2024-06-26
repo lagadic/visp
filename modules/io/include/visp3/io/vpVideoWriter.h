@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Write videos and sequences of images.
 */
 
-#ifndef _vpVideoWriter_h_
-#define _vpVideoWriter_h_
+#ifndef VP_VIDEO_WRITER_H
+#define VP_VIDEO_WRITER_H
 
 #include <string>
 
@@ -87,68 +87,76 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/core/vpConfig.h>
   #include <visp3/io/vpVideoWriter.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpVideoWriter writer;
-
-  //Initialize the writer.
-  writer.setFileName("./image/image%04d.jpeg");
-
-  writer.open(I);
-
-  for ( ; ; )
+  int main()
   {
-    //Here the code to capture or create an image and stores it in I.
+    vpImage<vpRGBa> I;
 
-    //Save the image
-    writer.saveFrame(I);
+    vpVideoWriter writer;
+
+    //Initialize the writer.
+    writer.setFileName("./image/image%04d.jpeg");
+
+    writer.open(I);
+
+    for ( ; ; )
+    {
+      //Here the code to capture or create an image and stores it in I.
+
+      //Save the image
+      writer.saveFrame(I);
+    }
+
+    writer.close();
+
+    return 0;
   }
-
-  writer.close();
-
-  return 0;
- }
   \endcode
 
   The other following example explains how to use the class to write directly
   an mpeg file.
 
   \code
-#include <visp3/io/vpVideoWriter.h>
+  #include <visp3/io/vpVideoWriter.h>
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
-  vpImage<vpRGBa> I;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpVideoWriter writer;
+  int main()
+  {
+  #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+    vpImage<vpRGBa> I;
 
-  // Set up the framerate to 30Hz. Default is 25Hz.
-  writer.setFramerate(30);
+    vpVideoWriter writer;
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-  writer.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1'));
-#else
-  writer.setCodec(CV_FOURCC('P', 'I', 'M', '1'));
-#endif
+    // Set up the framerate to 30Hz. Default is 25Hz.
+    writer.setFramerate(30);
 
-  writer.setFileName("./test.mpeg");
+  #if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    writer.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1'));
+  #else
+    writer.setCodec(CV_FOURCC('P', 'I', 'M', '1'));
+  #endif
 
-  writer.open(I);
+    writer.setFileName("./test.mpeg");
 
-  for (; ; ) {
-    // Here the code to capture or create an image and store it in I.
+    writer.open(I);
 
-    // Save the image
-    writer.saveFrame(I);
+    for (; ; ) {
+      // Here the code to capture or create an image and store it in I.
+
+      // Save the image
+      writer.saveFrame(I);
+    }
+
+    writer.close();
+  #endif
+    return 0;
   }
-
-  writer.close();
-#endif
-  return 0;
-}
   \endcode
 */
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +44,6 @@
 #include <assert.h>
 #include <sstream>
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 
@@ -72,8 +70,9 @@ vpForceTwistMatrix &vpForceTwistMatrix::operator=(const vpForceTwistMatrix &M)
 */
 void vpForceTwistMatrix::eye()
 {
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       if (i == j) {
         (*this)[i][j] = 1.0;
       }
@@ -256,29 +255,33 @@ vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double t
 /*!
 
   Operator that allows to multiply a force/torque twist transformation matrix
-by an other force/torque skew transformation matrix.
+  by an other force/torque skew transformation matrix.
 
-\code
-#include <visp3/core/vpForceTwistMatrix.h>
+  \code
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  vpForceTwistMatrix aFb, bFc;
-  // ... initialize the force/torque twist transformations aFb and bFc
-  // Compute the force/torque transformation from frame a to c
-  vpForceTwistMatrix aFc = aFb * bFc;
-}
-\endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpForceTwistMatrix aFb, bFc;
+    // ... initialize the force/torque twist transformations aFb and bFc
+    // Compute the force/torque transformation from frame a to c
+    vpForceTwistMatrix aFc = aFb * bFc;
+  }
+  \endcode
 
 */
 vpForceTwistMatrix vpForceTwistMatrix::operator*(const vpForceTwistMatrix &F) const
 {
   vpForceTwistMatrix Fout;
-
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 6; ++k) {
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * F.rowPtrs[k][j];
       }
       Fout[i][j] = s;
@@ -296,18 +299,18 @@ vpForceTwistMatrix vpForceTwistMatrix::operator*(const vpForceTwistMatrix &F) co
 */
 vpMatrix vpForceTwistMatrix::operator*(const vpMatrix &M) const
 {
-
-  if (6 != M.getRows()) {
+  const unsigned int nparam = 6;
+  if (nparam != M.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply (6x6) force/torque twist matrix by a (%dx%d) matrix", M.getRows(), M.getCols()));
   }
 
   unsigned int m_col = M.getCols();
-  vpMatrix p(6, M.getCols());
-  for (unsigned int i = 0; i < 6; ++i) {
+  vpMatrix p(nparam, M.getCols());
+  for (unsigned int i = 0; i < nparam; ++i) {
     for (unsigned int j = 0; j < m_col; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 6; ++k) {
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * M[k][j];
       }
       p[i][j] = s;
@@ -319,41 +322,44 @@ vpMatrix vpForceTwistMatrix::operator*(const vpMatrix &M) const
 /*!
 
   Operator that allows to multiply a force/torque skew transformation matrix
-by a column vector.
+  by a column vector.
 
-  \param H : Force/torque skew vector \f${\bf H} = [f_x, f_y, f_z, \tau_x,
-\tau_y, \tau_z] \f$.
+  \param H : Force/torque skew vector \f${\bf H} = [f_x, f_y, f_z, \tau_x, \tau_y, \tau_z] \f$.
 
   For example, this operator can be used to convert a force/torque skew from
-sensor frame into the probe frame :
+  sensor frame into the probe frame :
 
   \f[{^p}{\bf H}_{p} = {^p}{\bf F}_s \; {^s}{\bf H}_s\f]
 
   The example below shows how to handle that transformation.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpForceTwistMatrix.h>
-#include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpForceTwistMatrix.h>
+  #include <visp3/robot/vpRobotViper850.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
-  vpColVector sH = robot.getForceTorque(); // Get the force/torque measures
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the transformation from sensor frame to the probe frame
-  vpHomogeneousMatrix pMs;
-  pMs[2][3] = -0.262; // tz only
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
+    vpColVector sH = robot.getForceTorque(); // Get the force/torque measures
 
-  // Set the force/torque twist transformation
-  vpForceTwistMatrix pFs(pMs); // Twist transformation matrix from probe to sensor frame
+    // Set the transformation from sensor frame to the probe frame
+    vpHomogeneousMatrix pMs;
+    pMs[2][3] = -0.262; // tz only
 
-  // Compute the resulting force/torque in the probe frame
-  vpColVector pH(6); // Force/torque in the probe frame
-  pH = pFs * sH;
-#endif
-}
+    // Set the force/torque twist transformation
+    vpForceTwistMatrix pFs(pMs); // Twist transformation matrix from probe to sensor frame
+
+    // Compute the resulting force/torque in the probe frame
+    vpColVector pH(6); // Force/torque in the probe frame
+    pH = pFs * sH;
+  #endif
+  }
   \endcode
 
   \exception vpException::dimensionError If \f$ \bf H \f$is not a 6
@@ -362,7 +368,8 @@ int main()
 */
 vpColVector vpForceTwistMatrix::operator*(const vpColVector &H) const
 {
-  vpColVector Hout(6);
+  const unsigned int nparam = 6;
+  vpColVector Hout(nparam);
 
   if (6 != H.getRows()) {
     throw(vpException(vpException::dimensionError,
@@ -373,8 +380,8 @@ vpColVector vpForceTwistMatrix::operator*(const vpColVector &H) const
 
   Hout = 0.0;
 
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       Hout[i] += rowPtrs[i][j] * H[j];
     }
   }
@@ -544,8 +551,9 @@ vpForceTwistMatrix &vpForceTwistMatrix::build(const vpTranslationVector &t, cons
 {
   vpMatrix skewaR = t.skew(t) * R;
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i + 3][j] = skewaR[i][j];
@@ -572,8 +580,9 @@ vpForceTwistMatrix &vpForceTwistMatrix::build(const vpTranslationVector &t, cons
 */
 vpForceTwistMatrix &vpForceTwistMatrix::build(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i + 3][j] = 0;

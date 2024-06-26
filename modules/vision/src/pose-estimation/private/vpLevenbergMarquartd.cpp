@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@
 #include <visp3/core/vpMath.h>
 #include "vpLevenbergMarquartd.h"
 
-BEGIN_VISP_NAMESPACE
-
 #define SIGN(x) ((x) < 0 ? -1 : 1)
 #define SWAP(a, b, c)                                                                                                  \
   {                                                                                                                    \
@@ -51,6 +49,8 @@ BEGIN_VISP_NAMESPACE
 #define MIJ(m, i, j, s) ((m) + ((long)(i) * (long)(s)) + (long)(j))
 #define TRUE 1
 #define FALSE 0
+
+BEGIN_VISP_NAMESPACE
 
 double enorm(const double *x, int n)
 {
@@ -643,23 +643,249 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doub
   return 0;
 }
 
+bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+          double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, unsigned int maxfev,
+          double *diag, int nprint, int *info, unsigned int *nfev, int *ipvt,
+          double *qtf, double *wa1, double *wa2, double *wa3, double *wa4, const double &gnorm, int &iter, double &delta, double &par, double &pnorm,
+          int &iflag, double &fnorm, double &xnorm)
+{
+  const double tol1 = 0.1, tol5 = 0.5, tol25 = 0.25, tol75 = 0.75, tol0001 = 0.0001;
+  /* epsmch est la precision machine.  */
+  const double epsmch = std::numeric_limits<double>::epsilon();
+  /*
+   *  debut de la boucle la plus interne.
+   */
+  double ratio = 0.0;
+  while (ratio < tol0001) {
+
+    /*
+     *  determination du parametre de Levenberg-Marquardt.
+     */
+    lmpar(n, fjac, ldfjac, ipvt, diag, qtf, &delta, &par, wa1, wa2, wa3, wa4);
+
+    /*
+     *  stockage de la direction p et x + p. calcul de la norme de p.
+     */
+
+    for (int j = 0; j < n; ++j) {
+      wa1[j] = -wa1[j];
+      wa2[j] = x[j] + wa1[j];
+      wa3[j] = diag[j] * wa1[j];
+    }
+
+    pnorm = enorm(wa3, n);
+
+    /*
+     *  a la premiere iteration, ajustement de la premiere limite de
+     *  l'etape.
+     */
+
+    if (iter == 1) {
+      delta = vpMath::minimum(delta, pnorm);
+    }
+
+    /*
+     *  evaluation de la fonction en x + p et calcul de leur norme.
+     */
+
+    iflag = 1;
+    (*ptr_fcn)(m, n, wa2, wa4, fjac, ldfjac, iflag);
+
+    ++(*nfev);
+
+    if (iflag < 0) {
+      // termination, normal ou imposee par l'utilisateur.
+      if (iflag < 0) {
+        *info = iflag;
+      }
+
+      iflag = 0;
+
+      if (nprint > 0) {
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+      }
+
+      return true;
+    }
+
+    double fnorm1 = enorm(wa4, m);
+
+    /*
+     *  calcul de la reduction reelle mise a l'echelle.
+     */
+
+    double actred = -1.0;
+
+    if ((tol1 * fnorm1) < fnorm) {
+      actred = 1.0 - ((fnorm1 / fnorm) * (fnorm1 / fnorm));
+    }
+
+    /*
+     *  calcul de la reduction predite mise a l'echelle et
+     *  de la derivee directionnelle mise a l'echelle.
+     */
+
+    for (int i = 0; i < n; ++i) {
+      wa3[i] = 0.0;
+      int l = ipvt[i];
+      double temp = wa1[l];
+      for (int j = 0; j <= i; ++j) {
+        wa3[j] += *MIJ(fjac, i, j, ldfjac) * temp;
+      }
+    }
+
+    double temp1 = enorm(wa3, n) / fnorm;
+    double temp2 = (sqrt(par) * pnorm) / fnorm;
+    double prered = (temp1 * temp1) + ((temp2 * temp2) / tol5);
+    double dirder = -((temp1 * temp1) + (temp2 * temp2));
+
+    /*
+     *  calcul du rapport entre la reduction reel et predit.
+     */
+
+    ratio = 0.0;
+
+    // --in comment: if (prered != 0.0)
+    if (std::fabs(prered) > std::numeric_limits<double>::epsilon()) {
+      ratio = actred / prered;
+    }
+
+    /*
+     * mise a jour de la limite de l'etape.
+     */
+
+    if (ratio > tol25) {
+      // --comment: if par eq 0.0 or ratio lesseq tol75
+      if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75)) {
+        delta = pnorm / tol5;
+        par *= tol5;
+      }
+    }
+    else {
+      double temp;
+      if (actred >= 0.0) {
+        temp = tol5;
+      }
+      else {
+        temp = (tol5 * dirder) / (dirder + (tol5 * actred));
+      }
+
+      if (((tol1 * fnorm1) >= fnorm) || (temp < tol1)) {
+        temp = tol1;
+      }
+
+      delta = temp * vpMath::minimum(delta, (pnorm / tol1));
+      par /= temp;
+    }
+
+    /*
+     *  test pour une iteration reussie.
+     */
+    if (ratio >= tol0001) {
+      /*
+       *  iteration reussie. mise a jour de x, de fvec, et  de
+       *  leurs normes.
+       */
+
+      for (int j = 0; j < n; ++j) {
+        x[j] = wa2[j];
+        wa2[j] = diag[j] * x[j];
+      }
+
+      for (int i = 0; i < m; ++i) {
+        fvec[i] = wa4[i];
+      }
+
+      xnorm = enorm(wa2, n);
+      fnorm = fnorm1;
+      ++iter;
+    }
+
+    /*
+     *  tests pour convergence.
+     */
+
+    if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0)) {
+      *info = 1;
+    }
+
+    if (delta <= (xtol * xnorm)) {
+      *info = 2;
+    }
+
+    if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0) && (*info == 2)) {
+      *info = 3;
+    }
+
+    if (*info != 0) {
+      /*
+       * termination, normal ou imposee par l'utilisateur.
+       */
+      if (iflag < 0) {
+        *info = iflag;
+      }
+
+      iflag = 0;
+
+      if (nprint > 0) {
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+      }
+
+      return true;
+    }
+    /*
+     *  tests pour termination et
+     *  verification des tolerances.
+     */
+
+    if (*nfev >= maxfev) {
+      *info = 5;
+    }
+
+    if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && ((tol5 * ratio) <= 1.0)) {
+      *info = 6;
+    }
+
+    if (delta <= (epsmch * xnorm)) {
+      *info = 7;
+    }
+
+    if (gnorm <= epsmch) {
+      *info = 8;
+    }
+
+    if (*info != 0) {
+      /*
+       * termination, normal ou imposee par l'utilisateur.
+       */
+      if (iflag < 0) {
+        *info = iflag;
+      }
+
+      iflag = 0;
+
+      if (nprint > 0) {
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+      }
+
+      return true;
+    }
+  } /* fin while ratio >=tol0001  */
+  return false;
+}
+
 int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
           double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, double gtol, unsigned int maxfev,
           double *diag, int mode, const double factor, int nprint, int *info, unsigned int *nfev, int *njev, int *ipvt,
           double *qtf, double *wa1, double *wa2, double *wa3, double *wa4)
 {
-  const double tol1 = 0.1, tol5 = 0.5, tol25 = 0.25, tol75 = 0.75, tol0001 = 0.0001;
   int oncol = TRUE;
   int iflag, iter;
   int count = 0;
   int i, j, l;
-  double actred, delta, dirder, epsmch, fnorm, fnorm1;
-  double ratio = std::numeric_limits<double>::epsilon();
-  double par, pnorm, prered;
-  double sum, temp, temp1, temp2, xnorm = 0.0;
-
-  /* epsmch est la precision machine.  */
-  epsmch = std::numeric_limits<double>::epsilon();
+  double delta, fnorm;
+  double par, pnorm;
+  double sum, temp, xnorm = 0.0;
 
   *info = 0;
   iflag = 0;
@@ -946,224 +1172,12 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
       }
     }
 
-    /*
-     *  debut de la boucle la plus interne.
-     */
-    ratio = 0.0;
-    while (ratio < tol0001) {
-
-      /*
-       *  determination du parametre de Levenberg-Marquardt.
-       */
-      lmpar(n, fjac, ldfjac, ipvt, diag, qtf, &delta, &par, wa1, wa2, wa3, wa4);
-
-      /*
-       *  stockage de la direction p et x + p. calcul de la norme de p.
-       */
-
-      for (j = 0; j < n; ++j) {
-        wa1[j] = -wa1[j];
-        wa2[j] = x[j] + wa1[j];
-        wa3[j] = diag[j] * wa1[j];
-      }
-
-      pnorm = enorm(wa3, n);
-
-      /*
-       *  a la premiere iteration, ajustement de la premiere limite de
-       *  l'etape.
-       */
-
-      if (iter == 1) {
-        delta = vpMath::minimum(delta, pnorm);
-      }
-
-      /*
-       *  evaluation de la fonction en x + p et calcul de leur norme.
-       */
-
-      iflag = 1;
-      (*ptr_fcn)(m, n, wa2, wa4, fjac, ldfjac, iflag);
-
-      ++(*nfev);
-
-      if (iflag < 0) {
-        // termination, normal ou imposee par l'utilisateur.
-        if (iflag < 0) {
-          *info = iflag;
-        }
-
-        iflag = 0;
-
-        if (nprint > 0) {
-          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
-        }
-
-        return count;
-      }
-
-      fnorm1 = enorm(wa4, m);
-
-      /*
-       *  calcul de la reduction reelle mise a l'echelle.
-       */
-
-      actred = -1.0;
-
-      if ((tol1 * fnorm1) < fnorm) {
-        actred = 1.0 - ((fnorm1 / fnorm) * (fnorm1 / fnorm));
-      }
-
-      /*
-       *  calcul de la reduction predite mise a l'echelle et
-       *  de la derivee directionnelle mise a l'echelle.
-       */
-
-      for (i = 0; i < n; ++i) {
-        wa3[i] = 0.0;
-        l = ipvt[i];
-        temp = wa1[l];
-        for (j = 0; j <= i; ++j) {
-          wa3[j] += *MIJ(fjac, i, j, ldfjac) * temp;
-        }
-      }
-
-      temp1 = enorm(wa3, n) / fnorm;
-      temp2 = (sqrt(par) * pnorm) / fnorm;
-      prered = (temp1 * temp1) + ((temp2 * temp2) / tol5);
-      dirder = -((temp1 * temp1) + (temp2 * temp2));
-
-      /*
-       *  calcul du rapport entre la reduction reel et predit.
-       */
-
-      ratio = 0.0;
-
-      // --in comment: if (prered != 0.0)
-      if (std::fabs(prered) > std::numeric_limits<double>::epsilon()) {
-        ratio = actred / prered;
-      }
-
-      /*
-       * mise a jour de la limite de l'etape.
-       */
-
-      if (ratio > tol25) {
-        // --comment: if par eq 0.0 or ratio lesseq tol75
-        if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75)) {
-          delta = pnorm / tol5;
-          par *= tol5;
-        }
-      }
-      else {
-        if (actred >= 0.0) {
-          temp = tol5;
-        }
-        else {
-          temp = (tol5 * dirder) / (dirder + (tol5 * actred));
-        }
-
-        if (((tol1 * fnorm1) >= fnorm) || (temp < tol1)) {
-          temp = tol1;
-        }
-
-        delta = temp * vpMath::minimum(delta, (pnorm / tol1));
-        par /= temp;
-      }
-
-      /*
-       *  test pour une iteration reussie.
-       */
-      if (ratio >= tol0001) {
-        /*
-         *  iteration reussie. mise a jour de x, de fvec, et  de
-         *  leurs normes.
-         */
-
-        for (j = 0; j < n; ++j) {
-          x[j] = wa2[j];
-          wa2[j] = diag[j] * x[j];
-        }
-
-        for (i = 0; i < m; ++i) {
-          fvec[i] = wa4[i];
-        }
-
-        xnorm = enorm(wa2, n);
-        fnorm = fnorm1;
-        ++iter;
-      }
-
-      /*
-       *  tests pour convergence.
-       */
-
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0)) {
-        *info = 1;
-      }
-
-      if (delta <= (xtol * xnorm)) {
-        *info = 2;
-      }
-
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0) && (*info == 2)) {
-        *info = 3;
-      }
-
-      if (*info != 0) {
-        /*
-         * termination, normal ou imposee par l'utilisateur.
-         */
-        if (iflag < 0) {
-          *info = iflag;
-        }
-
-        iflag = 0;
-
-        if (nprint > 0) {
-          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
-        }
-
-        return count;
-      }
-      /*
-       *  tests pour termination et
-       *  verification des tolerances.
-       */
-
-      if (*nfev >= maxfev) {
-        *info = 5;
-      }
-
-      if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && ((tol5 * ratio) <= 1.0)) {
-        *info = 6;
-      }
-
-      if (delta <= (epsmch * xnorm)) {
-        *info = 7;
-      }
-
-      if (gnorm <= epsmch) {
-        *info = 8;
-      }
-
-      if (*info != 0) {
-        /*
-         * termination, normal ou imposee par l'utilisateur.
-         */
-        if (iflag < 0) {
-          *info = iflag;
-        }
-
-        iflag = 0;
-
-        if (nprint > 0) {
-          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
-        }
-
-        return count;
-      }
-    } /* fin while ratio >=tol0001  */
+    bool hasFinished = lmderMostInnerLoop(ptr_fcn, m, n, x, fvec, fjac, ldfjac, ftol, xtol, maxfev,
+          diag, nprint, info, nfev, ipvt, qtf, wa1, wa2, wa3, wa4, gnorm, iter, delta, par, pnorm,
+          iflag, fnorm, xnorm);
+    if (hasFinished) {
+      return count;
+    }
   }   /*fin while 1*/
 
   return 0;
@@ -1205,7 +1219,7 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
   return 0;
 }
 
+END_VISP_NAMESPACE
+
 #undef TRUE
 #undef FALSE
-
-END_VISP_NAMESPACE

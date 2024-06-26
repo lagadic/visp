@@ -38,6 +38,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <string>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -755,32 +756,31 @@ vpRobot::vpRobotStateType vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateT
   Apply a velocity to the robot.
 
   \param frame : Control frame in which the velocity is expressed. Velocities
-  could be expressed in articular, camera frame, reference frame or mixt
-frame.
+  could be expressed in articular, camera frame, reference frame or mixt frame.
 
   \param vel : Velocity vector. The size of this vector
   is always 6.
 
   - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4,
-  \dot{q}_5, \dot{q}_6]^t \f$ correspond to joint velocities in rad/s.
+    \dot{q}_5, \dot{q}_6]^t \f$ correspond to joint velocities in rad/s.
 
   - In camera frame, \f$ vel = [^{c} v_x, ^{c} v_y, ^{c} v_z, ^{c}
-  \omega_x, ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector
-expressed in the camera frame, with translations velocities \f$ ^{c} v_x, ^{c}
-v_y, ^{c} v_z \f$ in m/s and rotation velocities \f$ ^{c}\omega_x, ^{c}
-\omega_y, ^{c} \omega_z \f$ in rad/s.
+    \omega_x, ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector
+    expressed in the camera frame, with translations velocities \f$ ^{c} v_x, ^{c}
+    v_y, ^{c} v_z \f$ in m/s and rotation velocities \f$ ^{c}\omega_x, ^{c}
+    \omega_y, ^{c} \omega_z \f$ in rad/s.
 
   - In reference frame, \f$ vel = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{r}
-  \omega_x, ^{r} \omega_y, ^{r} \omega_z]^t \f$ is a velocity twist vector
-expressed in the reference frame, with translations velocities \f$ ^{c} v_x,
-^{c} v_y, ^{c} v_z \f$ in m/s and rotation velocities \f$ ^{c}\omega_x, ^{c}
-\omega_y, ^{c} \omega_z \f$ in rad/s.
+    \omega_x, ^{r} \omega_y, ^{r} \omega_z]^t \f$ is a velocity twist vector
+    expressed in the reference frame, with translations velocities \f$ ^{c} v_x,
+    ^{c} v_y, ^{c} v_z \f$ in m/s and rotation velocities \f$ ^{c}\omega_x, ^{c}
+    \omega_y, ^{c} \omega_z \f$ in rad/s.
 
   - In mixt frame, \f$ vel = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{c} \omega_x,
-  ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector where,
-translations \f$ ^{r} v_x, ^{r} v_y, ^{r} v_z \f$ are expressed in the
-reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
-\omega_z \f$ in the camera frame in rad/s.
+    ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector where,
+    translations \f$ ^{r} v_x, ^{r} v_y, ^{r} v_z \f$ are expressed in the
+    reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
+    \omega_z \f$ in the camera frame in rad/s.
 
   \exception vpRobotException::wrongStateError : If a the robot is not
   configured to handle a velocity. The robot can handle a velocity only if the
@@ -793,35 +793,39 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  vpSimulatorAfma6 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector qvel(6);
-  // Set a joint velocity
-  qvel[0] = 0.1;             // Joint 1 velocity in m/s
-  qvel[1] = 0.1;             // Joint 2 velocity in m/s
-  qvel[2] = 0.1;             // Joint 3 velocity in m/s
-  qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
-  qvel[4] = 0;               // Joint 5 velocity in rad/s
-  qvel[5] = 0;               // Joint 6 velocity in rad/s
+  int main()
+  {
+    vpSimulatorAfma6 robot;
 
-  // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpColVector qvel(6);
+    // Set a joint velocity
+    qvel[0] = 0.1;             // Joint 1 velocity in m/s
+    qvel[1] = 0.1;             // Joint 2 velocity in m/s
+    qvel[2] = 0.1;             // Joint 3 velocity in m/s
+    qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
+    qvel[4] = 0;               // Joint 5 velocity in rad/s
+    qvel[5] = 0;               // Joint 6 velocity in rad/s
 
-  for ( ; ; ) {
-    // Apply a velocity in the joint space
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+    // Initialize the controller to position control
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    // Compute new velocities qvel...
+    for ( ; ; ) {
+      // Apply a velocity in the joint space
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+
+      // Compute new velocities qvel...
+    }
+    // Stop the robot
+    robot.setRobotState(vpRobot::STATE_STOP);
   }
-  // Stop the robot
-  robot.setRobotState(vpRobot::STATE_STOP);
-}
   \endcode
 */
 void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
@@ -1013,46 +1017,50 @@ void vpSimulatorAfma6::computeArticularVelocity()
 /*!
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param vel : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
 
   \warning In camera frame, reference frame and mixt frame, the representation
   of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y,
-\dot z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
+  \dot z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  // Set requested joint velocities
-  vpColVector q_dot(6);
-  q_dot[0] = 0.1;    // Joint 1 velocity in m/s
-  q_dot[1] = 0.2;    // Joint 2 velocity in m/s
-  q_dot[2] = 0.3;    // Joint 3 velocity in m/s
-  q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
-  q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
-  q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpSimulatorAfma6 robot;
+  int main()
+  {
+    // Set requested joint velocities
+    vpColVector q_dot(6);
+    q_dot[0] = 0.1;    // Joint 1 velocity in m/s
+    q_dot[1] = 0.2;    // Joint 2 velocity in m/s
+    q_dot[2] = 0.3;    // Joint 3 velocity in m/s
+    q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
+    q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
+    q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpSimulatorAfma6 robot;
 
-  // Moves the joint in velocity
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  // Initialisation of the velocity measurement
-  vpColVector q_dot_mes; // Measured velocities
+    // Moves the joint in velocity
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
 
-  for ( ; ; ) {
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
-     vpTime::wait(40); // wait 40 ms
-     // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    // Initialisation of the velocity measurement
+    vpColVector q_dot_mes; // Measured velocities
+
+    for ( ; ; ) {
+      robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
+      vpTime::wait(40); // wait 40 ms
+      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    }
   }
-}
   \endcode
 */
 void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &vel)
@@ -1095,7 +1103,7 @@ void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpCo
 /*!
   Get the robot time stamped velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param vel : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1117,42 +1125,46 @@ void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpCo
 /*!
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \return Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  // Set requested joint velocities
-  vpColVector q_dot(6);
-  q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
-  q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
-  q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
-  q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
-  q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
-  q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpSimulatorAfma6 robot;
+  int main()
+  {
+    // Set requested joint velocities
+    vpColVector q_dot(6);
+    q_dot[0] = 0.1;    // Joint 1 velocity in rad/s
+    q_dot[1] = 0.2;    // Joint 2 velocity in rad/s
+    q_dot[2] = 0.3;    // Joint 3 velocity in rad/s
+    q_dot[3] = M_PI/8; // Joint 4 velocity in rad/s
+    q_dot[4] = M_PI/4; // Joint 5 velocity in rad/s
+    q_dot[5] = M_PI/16;// Joint 6 velocity in rad/s
 
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpSimulatorAfma6 robot;
 
-  // Moves the joint in velocity
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  // Initialisation of the velocity measurement
-  vpColVector q_dot_mes; // Measured velocities
+    // Moves the joint in velocity
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, q_dot);
 
-  for ( ; ; ) {
-     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
-     vpTime::wait(40); // wait 40 ms
-     // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    // Initialisation of the velocity measurement
+    vpColVector q_dot_mes; // Measured velocities
+
+    for ( ; ; ) {
+      q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
+      vpTime::wait(40); // wait 40 ms
+      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
+    }
   }
-}
   \endcode
 */
 vpColVector vpSimulatorAfma6::getVelocity(vpRobot::vpControlFrameType frame)
@@ -1166,7 +1178,7 @@ vpColVector vpSimulatorAfma6::getVelocity(vpRobot::vpControlFrameType frame)
 /*!
   Get the time stamped robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param timestamp : Unix time in second since January 1st 1970.
 
@@ -1231,30 +1243,34 @@ void vpSimulatorAfma6::findHighestPositioningSpeed(vpColVector &q)
   position is out of range.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  vpColVector position(6);
-  // Set positions in the camera frame
-  position[0] = 0.1;    // x axis, in meter
-  position[1] = 0.2;    // y axis, in meter
-  position[2] = 0.3;    // z axis, in meter
-  position[3] = M_PI/8; // rotation around x axis, in rad
-  position[4] = M_PI/4; // rotation around y axis, in rad
-  position[5] = M_PI;   // rotation around z axis, in rad
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpSimulatorAfma6 robot;
+  int main()
+  {
+    vpColVector position(6);
+    // Set positions in the camera frame
+    position[0] = 0.1;    // x axis, in meter
+    position[1] = 0.2;    // y axis, in meter
+    position[2] = 0.3;    // z axis, in meter
+    position[3] = M_PI/8; // rotation around x axis, in rad
+    position[4] = M_PI/4; // rotation around y axis, in rad
+    position[5] = M_PI;   // rotation around z axis, in rad
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpSimulatorAfma6 robot;
 
-  // Set the max velocity to 20%
-  robot.setPositioningVelocity(20);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, position);
-}
+    // Set the max velocity to 20%
+    robot.setPositioningVelocity(20);
+
+    // Moves the robot in the camera frame
+    robot.setPosition(vpRobot::CAMERA_FRAME, position);
+  }
   \endcode
 
   To catch the exception if the position is out of range, modify the code
@@ -1443,28 +1459,32 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   position is out of range.
 
   \code
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  // Set positions in the camera frame
-  double pos1 = 0.1;    // x axis, in meter
-  double pos2 = 0.2;    // y axis, in meter
-  double pos3 = 0.3;    // z axis, in meter
-  double pos4 = M_PI/8; // rotation around x axis, in rad
-  double pos5 = M_PI/4; // rotation around y axis, in rad
-  double pos6 = M_PI;   // rotation around z axis, in rad
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpSimulatorAfma6 robot;
+  int main()
+  {
+    // Set positions in the camera frame
+    double pos1 = 0.1;    // x axis, in meter
+    double pos2 = 0.2;    // y axis, in meter
+    double pos3 = 0.3;    // z axis, in meter
+    double pos4 = M_PI/8; // rotation around x axis, in rad
+    double pos5 = M_PI/4; // rotation around y axis, in rad
+    double pos6 = M_PI;   // rotation around z axis, in rad
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpSimulatorAfma6 robot;
 
-  // Set the max velocity to 20%
-  robot.setPositioningVelocity(20);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
-}
+    // Set the max velocity to 20%
+    robot.setPositioningVelocity(20);
+
+    // Moves the robot in the camera frame
+    robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
+  }
   \endcode
 
   \sa setPosition()
@@ -1501,18 +1521,22 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, doub
 
   This method has the same behavior than the sample code given below;
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  vpColVector q;
-  vpSimulatorAfma6 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  robot.readPosFile("MyPositionFilename.pos", q);
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-}
+  int main()
+  {
+    vpColVector q;
+    vpSimulatorAfma6 robot;
+
+    robot.readPosFile("MyPositionFilename.pos", q);
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  }
   \endcode
 
   \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
@@ -1542,14 +1566,14 @@ void vpSimulatorAfma6::setPosition(const char *filename)
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param q : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.
@@ -1560,41 +1584,44 @@ void vpSimulatorAfma6::setPosition(const char *filename)
   below show how to convert this position into a vpHomogeneousMatrix:
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRxyzVector.h>
+  #include <visp3/core/vpTranslationVector.h>
+  #include <visp3/robot/vpSimulatorAfma6.h>
 
-int main()
-{
-  vpSimulatorAfma6 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector position;
-  robot.getPosition(vpRobot::REFERENCE_FRAME, position);
+  int main()
+  {
+    vpSimulatorAfma6 robot;
 
-  vpTranslationVector ftc; // reference frame to camera frame translations
-  vpRxyzVector frc; // reference frame to camera frame rotations
+    vpColVector position;
+    robot.getPosition(vpRobot::REFERENCE_FRAME, position);
 
-  // Update the transformation between reference frame and camera frame
-  for (int i=0; i < 3; i++) {
-    ftc[i] = position[i];   // tx, ty, tz
-    frc[i] = position[i+3]; // ry, ry, rz
+    vpTranslationVector ftc; // reference frame to camera frame translations
+    vpRxyzVector frc; // reference frame to camera frame rotations
+
+    // Update the transformation between reference frame and camera frame
+    for (int i=0; i < 3; i++) {
+      ftc[i] = position[i];   // tx, ty, tz
+      frc[i] = position[i+3]; // ry, ry, rz
+    }
+
+    // Create a rotation matrix from the Rxyz rotation angles
+    vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
+
+    // Create the camera to fix frame transformation in terms of a
+    // homogeneous matrix
+    vpHomogeneousMatrix fMc(fRc, ftc);
   }
-
-  // Create a rotation matrix from the Rxyz rotation angles
-  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
-
-  // Create the camera to fix frame transformation in terms of a
-  // homogeneous matrix
-  vpHomogeneousMatrix fMc(fRc, ftc);
-}
   \endcode
 
-  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q,
-double &timestamp) \sa setPosition(const vpRobot::vpControlFrameType frame,
-const vpColVector & r)
+  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp)
+  \sa setPosition(const vpRobot::vpControlFrameType frame, const vpColVector & r)
 
 */
 void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
@@ -1646,14 +1673,14 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpCo
   Get the current time stamped position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param q : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 6 dimension vector corresponding to the joint
   position of each dof in radians.

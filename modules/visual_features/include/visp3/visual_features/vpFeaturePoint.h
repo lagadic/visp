@@ -87,6 +87,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/visual_features/vpFeaturePoint.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpServo task; // Visual servoing task
@@ -142,6 +146,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMatrix.h>
  * #include <visp3/visual_features/vpFeaturePoint.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpFeaturePoint sd; //The desired point feature.
@@ -189,13 +197,13 @@ public:
   vpFeaturePoint &build(const double &x, const double &y, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
 
-  vpFeaturePoint *duplicate() const vp_override;
+  vpFeaturePoint *duplicate() const VP_OVERRIDE;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   double get_x() const;
 
@@ -203,9 +211,9 @@ public:
 
   double get_Z() const;
 
-  void init() vp_override;
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void init() VP_OVERRIDE;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void set_x(double x);
 

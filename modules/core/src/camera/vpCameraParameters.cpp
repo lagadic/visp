@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,6 @@
 #include <limits>
 #include <sstream>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpMath.h>
@@ -171,6 +170,10 @@ void vpCameraParameters::init()
  * #include <visp3/core/vpCameraParameters.h>
  * #include <visp3/core/vpImage.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<unsigned char> I(480, 640);
@@ -234,6 +237,10 @@ void vpCameraParameters::initPersProjWithoutDistortion(double cam_px, double cam
  *  \code
  * #include <visp3/core/vpCameraParameters.h>
  * #include <visp3/core/vpImage.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -347,13 +354,17 @@ void vpCameraParameters::init(const vpCameraParameters &c) { *this = c; }
  */
 void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &K)
 {
-  if ((K.getRows() != 3) || (K.getCols() != 3)) {
+  const unsigned int nparam = 3;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  if ((K.getRows() != nparam) || (K.getCols() != nparam)) {
     throw vpException(vpException::dimensionError, "bad size for calibration matrix");
   }
-  if (std::fabs(K[2][2] - 1.0) > std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(K[index_2][index_2] - 1.0) > std::numeric_limits<double>::epsilon()) {
     throw vpException(vpException::badValue, "bad value: K[2][2] must be equal to 1");
   }
-  initPersProjWithoutDistortion(K[0][0], K[1][1], K[0][2], K[1][2]);
+  initPersProjWithoutDistortion(K[index_0][index_0], K[index_1][index_1], K[index_0][index_2], K[index_1][index_2]);
 }
 
 /*!
@@ -368,6 +379,10 @@ void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &K)
  *  \code
  * #include <visp3/core/vpCameraParameters.h>
  * #include <visp3/core/vpImage.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -397,8 +412,8 @@ void vpCameraParameters::initFromFov(const unsigned int &w, const unsigned int &
   m_projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
   m_u0 = static_cast<double>(w) / 2.;
   m_v0 = static_cast<double>(h) / 2.;
-  m_px = m_u0 / tan(hfov / 2);
-  m_py = m_v0 / tan(vfov / 2);
+  m_px = m_u0 / tan(hfov / 2.);
+  m_py = m_v0 / tan(vfov / 2.);
   m_kud = 0;
   m_kdu = 0;
   m_inv_px = 1. / m_px;
@@ -507,7 +522,13 @@ void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h
 {
   bool cond1 = (!m_isFov) || (w != m_width) || (h != m_height);
   if (cond1 && (w != 0) && (h != 0)) {
-    m_fovNormals = std::vector<vpColVector>(4);
+    const unsigned int nparam_3 = 3;
+    const unsigned int nparam_4 = 4;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
+    m_fovNormals = std::vector<vpColVector>(nparam_4);
 
     m_isFov = true;
 
@@ -519,7 +540,7 @@ void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h
     m_width = w;
     m_height = h;
 
-    vpColVector n(3);
+    vpColVector n(nparam_3);
     n = 0;
     n[0] = 1.0;
 
@@ -529,10 +550,10 @@ void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h
     vpColVector nLeft, nRight;
 
     nLeft = Rleft * (-n);
-    m_fovNormals[0] = nLeft.normalize();
+    m_fovNormals[index_0] = nLeft.normalize();
 
     nRight = Rright * n;
-    m_fovNormals[1] = nRight.normalize();
+    m_fovNormals[index_1] = nRight.normalize();
 
     n = 0;
     n[1] = 1.0;
@@ -543,10 +564,10 @@ void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h
     vpColVector nUp, nDown;
 
     nUp = Rup * (-n);
-    m_fovNormals[2] = nUp.normalize();
+    m_fovNormals[index_2] = nUp.normalize();
 
     nDown = Rdown * n;
-    m_fovNormals[3] = nDown.normalize();
+    m_fovNormals[index_3] = nDown.normalize();
 
     m_hFovAngle = hFovAngle + minushFovAngle;
     m_vFovAngle = vFovAngle + minusvFovAngle;
@@ -566,12 +587,15 @@ void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h
  */
 vpMatrix vpCameraParameters::get_K() const
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
   vpMatrix K(3, 3, 0.);
-  K[0][0] = m_px;
-  K[1][1] = m_py;
-  K[0][2] = m_u0;
-  K[1][2] = m_v0;
-  K[2][2] = 1.0;
+  K[index_0][index_0] = m_px;
+  K[index_1][index_1] = m_py;
+  K[index_0][index_2] = m_u0;
+  K[index_1][index_2] = m_v0;
+  K[index_2][index_2] = 1.0;
 
   return K;
 }
@@ -588,12 +612,16 @@ vpMatrix vpCameraParameters::get_K() const
  */
 vpMatrix vpCameraParameters::get_K_inverse() const
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+
   vpMatrix K_inv(3, 3, 0.);
-  K_inv[0][0] = m_inv_px;
-  K_inv[1][1] = m_inv_py;
-  K_inv[0][2] = -m_u0 * m_inv_px;
-  K_inv[1][2] = -m_v0 * m_inv_py;
-  K_inv[2][2] = 1.0;
+  K_inv[index_0][index_0] = m_inv_px;
+  K_inv[index_1][index_1] = m_inv_py;
+  K_inv[index_0][index_2] = -m_u0 * m_inv_px;
+  K_inv[index_1][index_2] = -m_v0 * m_inv_py;
+  K_inv[index_2][index_2] = 1.0;
 
   return K_inv;
 }
@@ -657,7 +685,8 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
   }
   case vpCameraParameters::perspectiveProjWithDistortion: {
     std::ios_base::fmtflags original_flags = os.flags();
-    os.precision(10);
+    const unsigned int precision = 10;
+    os.precision(precision);
     os << "Camera parameters for perspective projection with distortion:" << std::endl;
     os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
     os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
@@ -668,8 +697,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
   }
   case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
     os << "Camera parameters for projection with Kannala-Brandt distortion:" << std::endl;
-    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
-    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
+    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl  << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     os << "  Coefficients: ";
     std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoefficients();
     unsigned int tmp_coefs_size = tmp_coefs.size();

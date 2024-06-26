@@ -131,6 +131,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/visual_features/vpFeatureTranslation.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpServo task; // Visual servoing task
@@ -187,6 +191,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMatrix.h>
  * #include <visp3/visual_features/vpFeatureTranslation.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpHomogeneousMatrix cdMc;
@@ -222,6 +230,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpHomogeneousMatrix.h>
  * #include <visp3/visual_features/vpFeatureTranslation.h>
  * #include <visp3/vs/vpServo.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -292,7 +304,7 @@ public:
   // basic constructor
   vpFeatureTranslation();
   // basic constructor specifying the type of translation feature
-  explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r);
+  VP_EXPLICIT vpFeatureTranslation(vpFeatureTranslationRepresentationType r);
   // constructor : build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
   vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r);
@@ -307,16 +319,16 @@ public:
   vpFeatureTranslation &build(const vpHomogeneousMatrix &f2Mf1);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
 
   //! Feature duplication
-  vpFeatureTranslation *duplicate() const vp_override;
+  vpFeatureTranslation *duplicate() const VP_OVERRIDE;
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
 
@@ -325,12 +337,12 @@ public:
   double get_Tz() const;
 
   // basic construction
-  void init() vp_override;
+  void init() VP_OVERRIDE;
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   // print the name of the feature
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void set_Tx(double t_x);
   void set_Ty(double t_y);

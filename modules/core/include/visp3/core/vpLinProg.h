@@ -81,6 +81,10 @@ public:
    * \code
    * #include <visp3/core/vpLinProg.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    *   vpColVector c(3), x;

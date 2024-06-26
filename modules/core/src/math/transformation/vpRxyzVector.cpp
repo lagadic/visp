@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,18 +150,21 @@ vpRxyzVector &vpRxyzVector::build(const vpRotationMatrix &R)
 {
   double COEF_MIN_ROT = 1e-6;
   double phi;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
 
-  if ((fabs(R[1][2]) < COEF_MIN_ROT) && (fabs(R[2][2]) < COEF_MIN_ROT)) {
+  if ((fabs(R[index_1][index_2]) < COEF_MIN_ROT) && (fabs(R[index_2][index_2]) < COEF_MIN_ROT)) {
     phi = 0;
   }
   else {
-    phi = atan2(-R[1][2], R[2][2]);
+    phi = atan2(-R[index_1][index_2], R[index_2][index_2]);
   }
 
   double si = sin(phi);
   double co = cos(phi);
-  double theta = atan2(R[0][2], (-si * R[1][2]) + (co * R[2][2]));
-  double psi = atan2((co * R[1][0]) + (si * R[2][0]), (co * R[1][1]) + (si * R[2][1]));
+  double theta = atan2(R[index_0][index_2], (-si * R[index_1][index_2]) + (co * R[index_2][index_2]));
+  double psi = atan2((co * R[index_1][index_0]) + (si * R[index_2][index_0]), (co * R[index_1][index_1]) + (si * R[index_2][index_1]));
 
   build(phi, theta, psi);
 
@@ -192,9 +194,12 @@ vpRxyzVector &vpRxyzVector::build(const vpThetaUVector &tu)
 */
 vpRxyzVector &vpRxyzVector::build(const double &phi, const double &theta, const double &psi)
 {
-  data[0] = phi;
-  data[1] = theta;
-  data[2] = psi;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  data[index_0] = phi;
+  data[index_1] = theta;
+  data[index_2] = psi;
   return *this;
 }
 
@@ -207,7 +212,8 @@ vpRxyzVector &vpRxyzVector::build(const vpColVector &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-xyz vector from a %d-dimension col vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rxyz[i];
   }
 
@@ -223,7 +229,8 @@ vpRxyzVector &vpRxyzVector::build(const std::vector<double> &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-xyz vector from a %d-dimension std::vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rxyz[i];
   }
 
@@ -239,6 +246,10 @@ vpRxyzVector &vpRxyzVector::build(const std::vector<double> &rxyz)
   \code
   #include <visp3/core/vpMath.h>
   #include <visp3/core/vpRxyzVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -268,6 +279,10 @@ vpRxyzVector &vpRxyzVector::operator=(double v)
   \code
   #include <visp3/core/vpRxyzVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpColVector v(3);
@@ -286,7 +301,8 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot set a R-xyz vector from a %d-dimension col vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; ++i) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rxyz[i];
   }
 
@@ -298,6 +314,10 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
   Set vector from a list of 3 double angle values in radians.
   \code
   #include <visp3/core/vpRxyzVector.cpp>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

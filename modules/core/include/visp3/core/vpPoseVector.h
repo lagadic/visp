@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
     translation vector.
 */
 
-#ifndef _vpPOSEVECTOR_H_
-#define _vpPOSEVECTOR_H_
+#ifndef VP_POSE_VECTOR_H
+#define VP_POSE_VECTOR_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
@@ -88,6 +88,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpPoseVector pose;
@@ -117,6 +121,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -130,6 +138,10 @@ class vpRowVector;
   If ViSP is build with c++11 support, you could also initialize the vector using:
   \code
   #include <visp3/core/vpPoseVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -148,6 +160,10 @@ class vpRowVector;
   and reload the values from this JSON file.
   \code
   #include <visp3/core/vpPoseVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -191,7 +207,7 @@ public:
   // constructor from 3 angles (in radian)
   vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // constructor convert an homogeneous matrix in a pose
-  explicit vpPoseVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpPoseVector(const vpHomogeneousMatrix &M);
   // constructor  convert a translation and a "thetau" vector into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu);
   // constructor  convert a translation and a rotation matrix into a pose
@@ -200,13 +216,13 @@ public:
   virtual ~vpPoseVector() { }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+  VP_DEPRECATED vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
-  vp_deprecated vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
-  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
   //  convert a translation and a rotation matrix into a pose
-  vp_deprecated vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
+  VP_DEPRECATED vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
 #endif
 
   vpPoseVector &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
@@ -319,7 +335,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  vp_deprecated void init() { };
+  VP_DEPRECATED void init() { };
   //@}
 #endif
 };

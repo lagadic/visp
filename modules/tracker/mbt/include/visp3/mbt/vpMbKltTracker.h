@@ -83,6 +83,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined VISP_HAVE_OPENCV
@@ -132,6 +136,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined VISP_HAVE_OPENCV
@@ -168,6 +176,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbKltTracker.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -258,9 +270,9 @@ public:
 
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, const std::string &name = "");
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
   /*! Return the address of the circle feature list. */
   virtual std::list<vpMbtDistanceCircle *> &getFeaturesCircle() { return circles_disp; }
@@ -309,22 +321,22 @@ public:
    */
   inline double getKltThresholdAcceptation() const { return threshold_outlier; }
 
-  virtual inline vpColVector getError() const vp_override { return m_error_klt; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_klt; }
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_klt; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_klt; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false) vp_override;
+                                                               bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                            bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
-  void resetTracker() vp_override;
+  void resetTracker() VP_OVERRIDE;
 
-  void setCameraParameters(const vpCameraParameters &cam) vp_override;
+  void setCameraParameters(const vpCameraParameters &cam) VP_OVERRIDE;
 
   /*!
    * Set the erosion of the mask used on the Model faces.
@@ -355,7 +367,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setOgreVisibilityTest(const bool &v) vp_override
+  virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -368,7 +380,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setScanLineVisibilityTest(const bool &v) vp_override
+  virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setScanLineVisibilityTest(v);
 
@@ -376,8 +388,8 @@ public:
       (*it)->useScanLine = v;
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 
   /*!
    * Set if the projection error criteria has to be computed.
@@ -385,7 +397,7 @@ public:
    * \param flag : True if the projection error criteria has to be computed,
    * false otherwise
    */
-  virtual void setProjectionErrorComputation(const bool &flag) vp_override
+  virtual void setProjectionErrorComputation(const bool &flag) VP_OVERRIDE
   {
     if (flag)
       std::cerr << "This option is not yet implemented in vpMbKltTracker, "
@@ -395,9 +407,9 @@ public:
 
   void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 
-  virtual void testTracking() vp_override;
-  virtual void track(const vpImage<unsigned char> &I) vp_override;
-  virtual void track(const vpImage<vpRGBa> &I_color) vp_override;
+  virtual void testTracking() VP_OVERRIDE;
+  virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
 
   /*!
     @name Deprecated functions
@@ -410,7 +422,7 @@ public:
    *
    * \return The erosion.
    */
-  /* vp_deprecated */ inline unsigned int getMaskBorder() const { return maskBorder; }
+  /* VP_DEPRECATED */ inline unsigned int getMaskBorder() const { return maskBorder; }
 
   /*!
    * Get the current number of klt points.
@@ -418,7 +430,7 @@ public:
    *
    * \return the number of features
    */
-  /* vp_deprecated */ inline int getNbKltPoints() const { return tracker.getNbFeatures(); }
+  /* VP_DEPRECATED */ inline int getNbKltPoints() const { return tracker.getNbFeatures(); }
 
   /*!
    * Get the threshold for the acceptation of a point.
@@ -427,14 +439,14 @@ public:
    * \return threshold_outlier : Threshold for the weight below which a point
    * is rejected.
    */
-  /* vp_deprecated */ inline double getThresholdAcceptation() const { return threshold_outlier; }
+  /* VP_DEPRECATED */ inline double getThresholdAcceptation() const { return threshold_outlier; }
 
   /*!
    * Set the erosion of the mask used on the Model faces.
    *
    * \param  e : The desired erosion.
    */
-  /* vp_deprecated */ inline void setMaskBorder(const unsigned int &e)
+  /* VP_DEPRECATED */ inline void setMaskBorder(const unsigned int &e)
   {
     maskBorder = e;
     // if(useScanLine)
@@ -447,7 +459,7 @@ public:
    *
    * \param th : Threshold for the weight below which a point is rejected.
    */
-  /* vp_deprecated */ inline void setThresholdAcceptation(double th) { threshold_outlier = th; }
+  /* VP_DEPRECATED */ inline void setThresholdAcceptation(double th) { threshold_outlier = th; }
 
   //@}
 
@@ -455,16 +467,16 @@ protected:
   /** @name Protected Member Functions Inherited from vpMbKltTracker */
   //@{
   void computeVVS();
-  virtual void computeVVSInit() vp_override;
-  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
+  virtual void computeVVSInit() VP_OVERRIDE;
+  virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE;
 
   virtual std::vector<std::vector<double> > getFeaturesForDisplayKlt();
 
-  virtual void init(const vpImage<unsigned char> &I) vp_override;
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int, const std::string &name = "") vp_override;
-  virtual void initCylinder(const vpPoint &, const vpPoint &, double, int, const std::string &name = "") vp_override;
+  virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int, const std::string &name = "") VP_OVERRIDE;
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double, int, const std::string &name = "") VP_OVERRIDE;
 
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);

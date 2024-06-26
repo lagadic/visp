@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief File and directories basic tools.
  */
 
-#ifndef _vpIoTools_h_
-#define _vpIoTools_h_
+#ifndef VP_IO_TOOLS_H
+#define VP_IO_TOOLS_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -405,6 +405,10 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * #include <string>
  * #include <visp3/core/vpIoTools.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   std::string username;
@@ -459,6 +463,10 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
  * #include <iostream>
  * #include <string>
  * #include <visp3/core/vpIoTools.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test some vpMatrix functionalities.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testMatrix.cpp
@@ -197,11 +195,11 @@ int main(int argc, char *argv[])
       vpMatrix M(3, 3);
       M[2][0] = M[1][1] = M[0][2] = 1.;
       vpRotationMatrix R1(M);
-      if (test("R1", R1, bench) == false)
+      if (test("R1", static_cast<vpMatrix>(R1), bench) == false)
         return EXIT_FAILURE;
       vpRotationMatrix R2;
       R2 = M;
-      if (test("R2", R2, bench) == false)
+      if (test("R2", static_cast<vpMatrix>(R2), bench) == false)
         return EXIT_FAILURE;
     }
     {
@@ -291,7 +289,7 @@ int main(int argc, char *argv[])
       std::cout << "M1: \n" << M1 << std::endl;
       vpMatrix M2(M1);
       std::cout << "M2: \n" << M2 << std::endl;
-      vpMatrix M3 = R;
+      vpMatrix M3 = static_cast<vpMatrix>(R);
       std::cout << "M3: \n" << M3 << std::endl;
       vpMatrix M4 = M1;
       std::cout << "M4: \n" << M4 << std::endl;

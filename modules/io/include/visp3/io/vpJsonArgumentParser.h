@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * An argument parser that can both use JSON files and command line arguments as inputs.
  */
 
-#ifndef _vpJsonArgumentParser_h_
-#define _vpJsonArgumentParser_h_
+#ifndef VP_JSON_ARGUMENT_PARSER_H
+#define VP_JSON_ARGUMENT_PARSER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -181,7 +181,7 @@ public:
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;

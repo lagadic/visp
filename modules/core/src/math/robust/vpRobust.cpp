@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,7 @@
  *
  * Description:
  * M-Estimator and various influence function.
- *
- * Authors:
- * Andrew Comport
- * Jean Laneurit
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRobust.cpp
@@ -49,7 +43,6 @@
 #include <string.h>
 
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRobust.h>
 
@@ -272,12 +265,13 @@ int vpRobust::partition(vpColVector &a, int l, int r)
   double v = a[r];
 
   for (;;) {
-    while (a[++i] < v)
-      ;
-    while (v < a[--j])
+    while (a[++i] < v) { }
+
+    while (v < a[--j]) {
       if (j == l) {
         break;
       }
+    }
     if (i >= j) {
       break;
     }
@@ -326,8 +320,6 @@ vpRobust::vpRobust(unsigned int n_data)
 #endif
   m_size(n_data), m_mad(0)
 {
-  vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
-
   m_normres.resize(n_data);
   m_sorted_normres.resize(n_data);
   m_sorted_residues.resize(n_data);
@@ -358,8 +350,6 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   switch (method) {
   case TUKEY: {
     psiTukey(m_mad, all_normres, weights);
-
-    vpCDEBUG(2) << "Tukey's function computed" << std::endl;
     break;
   }
   case CAUCHY: {

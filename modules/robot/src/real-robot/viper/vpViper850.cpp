@@ -492,10 +492,10 @@ void vpViper850::parseConfigFile(const std::string &filename)
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the
+  \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
-file.
+  file.
 
   - If VISP_HAVE_VIPER850_DATA macro is defined, this method gets the camera parameters
   from const_camera_Viper850.xml config file.
@@ -511,46 +511,50 @@ file.
   attached to the robot.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/robot/vpViper850.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/robot/vpViper850.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I(480, 640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
+  int main()
+  {
+    vpImage<unsigned char> I(480, 640);
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
-#endif
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
 
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
-#else
-  vpViper850 robot;
-#endif
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+  #endif
 
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  // Camera parameters are read from
-  // /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
-  // if VISP_HAVE_VIPER850_DATA macro is defined
-  // in vpConfig.h file
-  try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
+  #else
+    vpViper850 robot;
+  #endif
+
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    // Camera parameters are read from
+    // /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+    // if VISP_HAVE_VIPER850_DATA macro is defined
+    // in vpConfig.h file
+    try {
+      robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera
-parameters are not found.
+  parameters are not found.
 
 */
 
@@ -712,7 +716,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the
+  \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
@@ -776,7 +780,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<unsi
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the camera
+  \warning Third method needs also an access to the files containing the camera
   parameters in XML format. This access is available if
 VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
@@ -791,38 +795,42 @@ file.
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/robot/vpViper850.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper850.h>
+  #include <visp3/robot/vpViper850.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I(480, 640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-#ifdef VISP_HAVE_DC1394
-  vp1394TwoGrabber g;
+  int main()
+  {
+    vpImage<vpRGBa> I(480, 640);
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
-#endif
+  #ifdef VISP_HAVE_DC1394
+    vp1394TwoGrabber g;
 
-#ifdef VISP_HAVE_VIPER850
-  vpRobotViper850 robot;
-#else
-  vpViper850 robot;
-#endif
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+  #endif
 
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  try {
-    robot.getCameraParameters (cam, I);
+  #ifdef VISP_HAVE_VIPER850
+    vpRobotViper850 robot;
+  #else
+    vpViper850 robot;
+  #endif
+
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    try {
+      robot.getCameraParameters (cam, I);
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera

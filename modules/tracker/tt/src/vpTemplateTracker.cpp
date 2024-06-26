@@ -291,28 +291,32 @@ void vpTemplateTracker::resetTracker()
 
   The following code shows how to use display capabilities:
   \code
-#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+  #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+  #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vpTemplateTrackerWarpHomography warp;
-  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
-  vpTemplateTrackerZone zoneRef, zoneWarped;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Display the warped zone
-  tracker.display(I, vpColor::red);
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vpTemplateTrackerWarpHomography warp;
+    vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+    vpTemplateTrackerZone zoneRef, zoneWarped;
 
-  // Display the reference zone
-  zoneRef = tracker.getZoneRef();
-  zoneRef.display(I, vpColor::green);
+    // Display the warped zone
+    tracker.display(I, vpColor::red);
 
-  // Display the warped zone
-  vpColVector p = tracker.getp();
-  warp.warpZone(zoneRef, p, zoneWarped);
-  zoneWarped.display(I, vpColor::blue);
-}
+    // Display the reference zone
+    zoneRef = tracker.getZoneRef();
+    zoneRef.display(I, vpColor::green);
+
+    // Display the warped zone
+    vpColVector p = tracker.getp();
+    warp.warpZone(zoneRef, p, zoneWarped);
+    zoneWarped.display(I, vpColor::blue);
+  }
   \endcode
  */
 void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
@@ -333,28 +337,32 @@ void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &
 
   The following code shows how to use display capabilities:
   \code
-#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+  #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+  #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpTemplateTrackerWarpHomography warp;
-  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
-  vpTemplateTrackerZone zoneRef, zoneWarped;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Display the warped zone
-  tracker.display(I, vpColor::red);
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vpTemplateTrackerWarpHomography warp;
+    vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+    vpTemplateTrackerZone zoneRef, zoneWarped;
 
-  // Display the reference zone
-  zoneRef = tracker.getZoneRef();
-  zoneRef.display(I, vpColor::green);
+    // Display the warped zone
+    tracker.display(I, vpColor::red);
 
-  // Display the warped zone
-  vpColVector p = tracker.getp();
-  warp.warpZone(zoneRef, p, zoneWarped);
-  zoneWarped.display(I, vpColor::blue);
-}
+    // Display the reference zone
+    zoneRef = tracker.getZoneRef();
+    zoneRef.display(I, vpColor::green);
+
+    // Display the warped zone
+    vpColVector p = tracker.getp();
+    warp.warpZone(zoneRef, p, zoneWarped);
+    zoneWarped.display(I, vpColor::blue);
+  }
   \endcode
  */
 void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness)

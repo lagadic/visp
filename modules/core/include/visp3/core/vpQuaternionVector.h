@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
  * operations on it.
  */
 
-#ifndef _vpQuaternionVector_h_
-#define _vpQuaternionVector_h_
+#ifndef VP_QUATERNION_VECTOR_H
+#define VP_QUATERNION_VECTOR_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
@@ -108,17 +108,17 @@ public:
   vpQuaternionVector();
   vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const double qx, const double qy, const double qz, const double qw);
-  explicit vpQuaternionVector(const vpRotationMatrix &R);
-  explicit vpQuaternionVector(const vpThetaUVector &tu);
-  explicit vpQuaternionVector(const vpColVector &q);
-  explicit vpQuaternionVector(const std::vector<double> &q);
+  VP_EXPLICIT vpQuaternionVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpQuaternionVector(const vpThetaUVector &tu);
+  VP_EXPLICIT vpQuaternionVector(const vpColVector &q);
+  VP_EXPLICIT vpQuaternionVector(const std::vector<double> &q);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  vp_deprecated vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
-  vp_deprecated vpQuaternionVector buildFrom(const vpRotationMatrix &R);
-  vp_deprecated vpQuaternionVector buildFrom(const vpThetaUVector &tu);
-  vp_deprecated vpQuaternionVector buildFrom(const vpColVector &q);
-  vp_deprecated vpQuaternionVector buildFrom(const std::vector<double> &q);
+  VP_DEPRECATED vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
+  VP_DEPRECATED vpQuaternionVector buildFrom(const vpRotationMatrix &R);
+  VP_DEPRECATED vpQuaternionVector buildFrom(const vpThetaUVector &tu);
+  VP_DEPRECATED vpQuaternionVector buildFrom(const vpColVector &q);
+  VP_DEPRECATED vpQuaternionVector buildFrom(const std::vector<double> &q);
 #endif
   vpQuaternionVector &build(const double &qx, const double &qy, const double &qz, const double &qw);
   vpQuaternionVector &build(const vpRotationMatrix &R);

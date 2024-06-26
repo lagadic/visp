@@ -49,7 +49,7 @@ class VISP_EXPORT vpPanda3DLuminanceFilter : public vpPanda3DPostProcessFilter
 {
 public:
   vpPanda3DLuminanceFilter(const std::string &name, std::shared_ptr<vpPanda3DRGBRenderer> inputRenderer, bool isOutput);
-  FrameBufferProperties getBufferProperties() const vp_override;
+  FrameBufferProperties getBufferProperties() const VP_OVERRIDE;
   void getRender(vpImage<unsigned char> &I) const;
 
 private:
@@ -67,7 +67,7 @@ class VISP_EXPORT vpPanda3DGaussianBlur : public vpPanda3DPostProcessFilter
 {
 public:
   vpPanda3DGaussianBlur(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput);
-  FrameBufferProperties getBufferProperties() const vp_override;
+  FrameBufferProperties getBufferProperties() const VP_OVERRIDE;
   void getRender(vpImage<unsigned char> &I) const;
 
 private:
@@ -88,12 +88,12 @@ class VISP_EXPORT vpPanda3DCanny : public vpPanda3DPostProcessFilter
 {
 public:
   vpPanda3DCanny(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold);
-  FrameBufferProperties getBufferProperties() const vp_override;
+  FrameBufferProperties getBufferProperties() const VP_OVERRIDE;
   void getRender(vpImage<vpRGBf> &I) const;
   void setEdgeThreshold(float edgeThreshold);
 
 protected:
-  void setupScene() vp_override;
+  void setupScene() VP_OVERRIDE;
 
 private:
   static const char *FRAGMENT_SHADER;

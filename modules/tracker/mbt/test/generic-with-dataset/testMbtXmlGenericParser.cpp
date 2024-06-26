@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test vpMbtXmlGenericParser parse / save.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file testMbtXmlGenericParser.cpp
@@ -159,7 +157,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
-    }
+  }
 #elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
 #elif !(defined(VISP_HAVE_PUGIXML))
@@ -168,4 +166,4 @@ int main()
 
   std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
-  }
+}

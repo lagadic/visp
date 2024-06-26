@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   (cannot be used as is !)
 */
 
-#ifndef _vpRotationVector_h_
-#define _vpRotationVector_h_
+#ifndef VP_ROTATION_VECTOR_H
+#define VP_ROTATION_VECTOR_H
 
 #include <iostream>
 #include <math.h>
@@ -71,26 +71,30 @@ class vpColVector;
   vpRxyzVector.
 
   \code
-#include <iostream>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRxyzVector.h>
+  #include <iostream>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRxyzVector.h>
 
-int main()
-{
-  vpRxyzVector r;         // By default initialized to zero
-  // Rotation around x set to 45 degres converted in radians
-  r[0] = vpMath::rad(45);
-  // Rotation around y set to PI radians
-  r[1] = M_PI;
-  // Rotation around z set to 0 radians
-  r[2] = 0;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "Rxyz rotation vector: " << r << std::endl;
+  int main()
+  {
+    vpRxyzVector r;         // By default initialized to zero
+    // Rotation around x set to 45 degres converted in radians
+    r[0] = vpMath::rad(45);
+    // Rotation around y set to PI radians
+    r[1] = M_PI;
+    // Rotation around z set to 0 radians
+    r[2] = 0;
 
-  double rx = r[0];       // Get the value of the angle around x axis
-  double ry = r[1];       // Get the value of the angle around y axis
-  double rz = r[2];       // Get the value of the angle around z axis
-}
+    std::cout << "Rxyz rotation vector: " << r << std::endl;
+
+    double rx = r[0];       // Get the value of the angle around x axis
+    double ry = r[1];       // Get the value of the angle around y axis
+    double rz = r[2];       // Get the value of the angle around z axis
+  }
   \endcode
 
 */
@@ -103,7 +107,7 @@ public:
 
   //! Constructor that constructs a vector of size n and initialize all values
   //! to zero.
-  explicit vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) { }
+  VP_EXPLICIT vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) { }
 
   /*!
     Copy operator.

@@ -255,10 +255,10 @@ if __name__ == '__main__':
   Zd = I_depth[h // 2, w // 2] * depth_scale
   print(f'Desired depth is {Zd}')
   sd = FeaturePoint()
-  sd.buildFrom(xd, yd, Zd)
+  sd.build(xd, yd, Zd)
 
   s = FeaturePoint()
-  s.buildFrom(0.0, 0.0, Zd)
+  s.build(0.0, 0.0, Zd)
 
   task = Servo()
   task.addFeature(s, sd)
@@ -309,14 +309,14 @@ if __name__ == '__main__':
       kalman.filter(ColVector([x, y]), (1 / fps))
       kalman_state = kalman.getXest()
       last_detection_time = time.time()
-      s.buildFrom(kalman_state[0], kalman_state[3], Zd)
+      s.build(kalman_state[0], kalman_state[3], Zd)
       v = task.computeControlLaw()
     else:
       if last_detection_time < 0.0:
         raise RuntimeError('No detection at first iteration')
       kalman.predict(time.time() - last_detection_time)
       kalman_pred = kalman.getXpred()
-      s.buildFrom(kalman_pred[0], kalman_pred[3], Zd)
+      s.build(kalman_pred[0], kalman_pred[3], Zd)
       task.computeControlLaw()
 
     error: ColVector = task.getError()
@@ -333,7 +333,7 @@ if __name__ == '__main__':
     Display.flush(I)
     Display.getImage(I, Idisp)
     robot.getPosition(Robot.ControlFrameType.REFERENCE_FRAME, r)
-    cTw.buildFrom(r)
+    cTw.build(r)
     plotter.on_iter(Idisp, v, error, cTw)
 
     # Move robot/update simulator

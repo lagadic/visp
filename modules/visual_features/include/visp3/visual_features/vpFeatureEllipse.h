@@ -81,15 +81,15 @@ public:
   vpFeatureEllipse &build(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &A, const double &B, const double &C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   //! Feature duplication
-  vpFeatureEllipse *duplicate() const vp_override;
+  vpFeatureEllipse *duplicate() const VP_OVERRIDE;
 
   //! compute the error between two visual features from a subset
   //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   /*!
    * Returns the visual feature corresponding to the ellipse centroid coordinate along camera x-axis.
@@ -116,12 +116,12 @@ public:
   double get_n02() const { return s[4]; }
 
   //! Default initialization.
-  void init() vp_override;
+  void init() VP_OVERRIDE;
   //! compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   //! Print the name of the feature
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void set_x(double x);
   void set_y(double y);
@@ -145,31 +145,31 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated void setMu(double mu20, double mu11, double mu02);
-  vp_deprecated static unsigned int selectMu20();
-  vp_deprecated static unsigned int selectMu11();
-  vp_deprecated static unsigned int selectMu02();
+  VP_DEPRECATED void setMu(double mu20, double mu11, double mu02);
+  VP_DEPRECATED static unsigned int selectMu20();
+  VP_DEPRECATED static unsigned int selectMu11();
+  VP_DEPRECATED static unsigned int selectMu02();
   /*!
    * \deprecated You should rather use get_n20().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_20 = mu_20/a\f$.
    */
-  vp_deprecated double getMu20() const { return s[2]; }
+  VP_DEPRECATED double getMu20() const { return s[2]; }
   /*!
    * \deprecated You should rather use get_n11().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_11 = mu_11/a\f$.
    */
-  vp_deprecated double getMu11() const { return s[3]; }
+  VP_DEPRECATED double getMu11() const { return s[3]; }
   /*!
    * \deprecated You should rather use get_n02().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_02 = mu_02/a\f$.
    */
-  vp_deprecated double getMu02() const { return s[4]; }
+  VP_DEPRECATED double getMu02() const { return s[4]; }
 
   //@}
 #endif

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   Class vpXmlParserRectOriented allows to load and save oriented rectangles in a file XML
 */
 
-#ifndef _vpXmlParserRectOriented_h_
-#define _vpXmlParserRectOriented_h_
+#ifndef VP_XML_PARSER_RECT_ORIENTED_H
+#define VP_XML_PARSER_RECT_ORIENTED_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -55,31 +55,41 @@ BEGIN_VISP_NAMESPACE
 
   The following example shows how to save an oriented rectangle in an xml file:
   \code
-#include <visp3/core/vpRectOriented.h>
-#include <visp3/core/vpXmlParserRectOriented.h>
-int main()
-{
-  vpRectOriented rect(vpImagePoint(10, 15), 20, 12, 0.25);
-  vpXmlParserRectOriented parser;
-  parser.setRectangle(rect);
-  std::string filename = "myRectangle.xml";
-  parser.save(filename);
-  return 0;
-}
+  #include <visp3/core/vpRectOriented.h>
+  #include <visp3/core/vpXmlParserRectOriented.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRectOriented rect(vpImagePoint(10, 15), 20, 12, 0.25);
+    vpXmlParserRectOriented parser;
+    parser.setRectangle(rect);
+    std::string filename = "myRectangle.xml";
+    parser.save(filename);
+    return 0;
+  }
   \endcode
 
   The following example shows how to read an oriented rectangle from an xml file:
   \code
-#include <visp3/core/vpRectOriented.h>
-#include <visp3/core/vpXmlParserRectOriented.h>
-int main()
-{
-  vpXmlParserRectOriented parser;
-  std::string filename = "myRectangle.xml";
-  parser.parse(filename);
-  vpRectOriented rect = parser.getRectangle();
-  return 0;
-}
+  #include <visp3/core/vpRectOriented.h>
+  #include <visp3/core/vpXmlParserRectOriented.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpXmlParserRectOriented parser;
+    std::string filename = "myRectangle.xml";
+    parser.parse(filename);
+    vpRectOriented rect = parser.getRectangle();
+    return 0;
+  }
   \endcode
 
   \warning This class is only available if pugixml third-party is successfully

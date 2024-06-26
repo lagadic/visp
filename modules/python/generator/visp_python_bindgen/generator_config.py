@@ -116,7 +116,7 @@ class GeneratorConfig(object):
   pcpp_config: Final[PreprocessorConfig] = PreprocessorConfig(
     defines={
       'VISP_EXPORT': '', # remove symbol as it messes up the cxxheaderparsing
-      'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
+      'VP_DEPRECATED': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
       'CV_OUT': '', # In vpKeyPoint, this appears and breaks parsing

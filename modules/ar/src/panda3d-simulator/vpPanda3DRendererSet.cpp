@@ -59,10 +59,10 @@ void vpPanda3DRendererSet::initFramework()
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = m_framework->open_window(winProps, flags);
+  m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, flags));
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = m_framework->open_window(winProps, 0);
+    m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, 0));
   }
   if (m_window == nullptr) {
     throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Framegrabber based on Video4Linux2 driver.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpV4l2Grabber.cpp
@@ -54,6 +52,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpFrameGrabberException.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 //#include <visp3/io/vpImageIo.h>
@@ -89,10 +88,10 @@ const unsigned int vpV4l2Grabber::FRAME_SIZE = 288;
     fps. These framerates are reachable only if enought buffers are set.
 
   - Input board: vpV4l2Grabber::DEFAULT_INPUT. Video input port. Use
-setInput() to change it.
+    setInput() to change it.
 
   - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either
-setScale() or setWidth() and setHeight() to change it.
+    setScale() or setWidth() and setHeight() to change it.
 
     \code
     vpImage<unsigned char> I; // Grey level image
@@ -108,40 +107,43 @@ setScale() or setWidth() and setHeight() to change it.
     \endcode
 
   The grabber allows also to grab a portion of an image using a region of
-interest. The following example shows how to grab a 320x240 region located on
-the top/left corner of the image that has a higher resolution (ie 640x480).
+  interest. The following example shows how to grab a 320x240 region located on
+  the top/left corner of the image that has a higher resolution (ie 640x480).
 
   \code
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_X11)
-  vpDisplayX *d;
-  vpImage<vpRGBa> I;
-  vpRect roi(0, 0, 320, 240); // specify the region to crop
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpV4l2Grabber g;
+  int main()
+  {
+  #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_X11)
+    vpDisplayX *d;
+    vpImage<vpRGBa> I;
+    vpRect roi(0, 0, 320, 240); // specify the region to crop
 
-  bool first = true;
-  while (1) {
-    g.acquire(I, roi);
-    if(first) {
-      d = new vpDisplayX(I);
-      first = false;
+    vpV4l2Grabber g;
+
+    bool first = true;
+    while (1) {
+      g.acquire(I, roi);
+      if(first) {
+        d = new vpDisplayX(I);
+        first = false;
+      }
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
     }
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
-  }
-  vpImageIo::write(I, "image.pgm"); // Save the last image
-  delete d;
-#endif
+    vpImageIo::write(I, "image.pgm"); // Save the last image
+    delete d;
+  #endif
   \endcode
-
 */
 vpV4l2Grabber::vpV4l2Grabber()
   : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
@@ -179,10 +181,10 @@ vpV4l2Grabber::vpV4l2Grabber()
     fps. These framerates are reachable only if enought buffers are set.
 
   - Input board: vpV4l2Grabber::DEFAULT_INPUT. Video input port. Use
-  setInput() to change it.
+    setInput() to change it.
 
   - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either
-  setScale() or setWidth() and setHeight to change it.
+    setScale() or setWidth() and setHeight to change it.
 
     \code
     vpImage<unsigned char> I; // Grey level image
@@ -195,7 +197,6 @@ vpV4l2Grabber::vpV4l2Grabber()
     g.open(I);        // Open the grabber
 
     g.acquire(I);     // Acquire a 768x576 grey image
-
     \endcode
 
 */
@@ -242,7 +243,6 @@ vpV4l2Grabber::vpV4l2Grabber(bool verbose)
     g.open(I);             // Open the grabber
 
     g.acquire(I);          // Acquire a 384x288 grey image
-
     \endcode
 */
 vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
@@ -279,7 +279,7 @@ vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
     set the number of buffers to 3.
 
   - Framerate acquisition: 25 fps. Use setFramerate() to set 25 fps or 50
-    fps. These framerates are reachable only if enought buffers are set.
+    fps. These framerates are reachable only if enough buffers are set.
 
     \code
     vpImage<unsigned char> I; // Grey level image
@@ -336,9 +336,7 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned
                               // images and open the grabber
 
     g.acquire(I);             // Acquire a 384x288 color image
-
     \endcode
-
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale)
   : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
@@ -1425,19 +1423,23 @@ void vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
 
 /*!
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   \code
-#include <visp3/sensor/vpV4l2Grabber.h>
+  \code
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vpV4l2Grabber g;
-  g >> I;
-}
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vpV4l2Grabber g;
+    g >> I;
+  }
+  \endcode
  */
 vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<unsigned char> &I)
 {
@@ -1447,19 +1449,23 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<unsigned char> &I)
 
 /*!
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   \code
-#include <visp3/sensor/vpV4l2Grabber.h>
+  \code
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpV4l2Grabber g;
-  g >> I;
-}
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vpV4l2Grabber g;
+    g >> I;
+  }
+  \endcode
  */
 vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 {

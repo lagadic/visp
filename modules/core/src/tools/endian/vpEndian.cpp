@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +46,13 @@ namespace vpEndian
   Swap 16 bits by shifting to the right the first byte and by shifting to the
   left the second byte.
 */
-uint16_t swap16bits(uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
+uint16_t swap16bits(uint16_t val)
+{
+  const unsigned int magic_8 = 8;
+  const unsigned int magic_0x00FF = 0x00FF;
+  const unsigned int magic_0xFF00 = 0xFF00;
+  return (((val >> magic_8) & magic_0x00FF) | ((val << magic_8) & magic_0xFF00));
+}
 
 /*!
   Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
@@ -55,8 +60,14 @@ uint16_t swap16bits(uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) 
 */
 uint32_t swap32bits(uint32_t val)
 {
-  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
-          ((val << 24) & 0xFF000000));
+  const unsigned int magic_8 = 8;
+  const unsigned int magic_24 = 24;
+  const unsigned int magic_0x000000FF = 0x000000FF;
+  const unsigned int magic_0x0000FF00 = 0x0000FF00;
+  const unsigned int magic_0x00FF0000 = 0x00FF0000;
+  const unsigned int magic_0xFF000000 = 0xFF000000;
+  return (((val >> magic_24) & magic_0x000000FF) | ((val >> magic_8) & magic_0x0000FF00) | ((val << magic_8) & magic_0x00FF0000) |
+          ((val << magic_24) & magic_0xFF000000));
 }
 
 /*!
@@ -71,11 +82,15 @@ float swapFloat(float f)
     unsigned char b[4];
   } dat1, dat2;
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
+  dat2.b[index_0] = dat1.b[index_3];
+  dat2.b[index_1] = dat1.b[index_2];
+  dat2.b[index_2] = dat1.b[index_1];
+  dat2.b[index_3] = dat1.b[index_0];
   return dat2.f;
 }
 
@@ -91,15 +106,23 @@ double swapDouble(double d)
     unsigned char b[8];
   } dat1, dat2;
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
   dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
+  dat2.b[index_0] = dat1.b[index_7];
+  dat2.b[index_1] = dat1.b[index_6];
+  dat2.b[index_2] = dat1.b[index_5];
+  dat2.b[index_3] = dat1.b[index_4];
+  dat2.b[index_4] = dat1.b[index_3];
+  dat2.b[index_5] = dat1.b[index_2];
+  dat2.b[index_6] = dat1.b[index_1];
+  dat2.b[index_7] = dat1.b[index_0];
   return dat2.d;
 }
 

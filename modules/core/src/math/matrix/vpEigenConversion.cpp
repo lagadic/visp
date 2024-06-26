@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * ViSP <--> Eigen conversion.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpEigenConversion.h>
 
@@ -39,24 +37,24 @@ namespace VISP_NAMESPACE_NAME
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
-void eigen2visp(const Eigen::MatrixXd &src, VISP_NAMESPACE_ADDRESSING vpMatrix &dst)
+void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()), static_cast<unsigned int>(src.cols()), false, false);
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(),
                                                                                       src.cols()) = src;
 }
 
-void eigen2visp(const Eigen::MatrixXd &src, VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &dst)
+void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
 {
   if ((src.rows() != 4) || (src.cols() != 4)) {
-    throw VISP_NAMESPACE_ADDRESSING vpException(VISP_NAMESPACE_ADDRESSING vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
+    throw  vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
   }
 
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(),
                                                                                       src.cols()) = src;
 }
 
-void eigen2visp(const Eigen::VectorXd &src, VISP_NAMESPACE_ADDRESSING vpColVector &dst)
+void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
@@ -70,7 +68,7 @@ void eigen2visp(const Eigen::VectorXd &src, VISP_NAMESPACE_ADDRESSING vpColVecto
   }
 }
 
-void eigen2visp(const Eigen::RowVectorXd &src, VISP_NAMESPACE_ADDRESSING vpRowVector &dst)
+void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.cols()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
@@ -84,9 +82,9 @@ void eigen2visp(const Eigen::RowVectorXd &src, VISP_NAMESPACE_ADDRESSING vpRowVe
   }
 }
 
-void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
+void visp2eigen(const  vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 
-void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpRowVector &src, Eigen::RowVectorXd &dst)
+void visp2eigen(const  vpRowVector &src, Eigen::RowVectorXd &dst)
 {
   dst = Eigen::RowVectorXd::Map(src.data, src.size());
 }

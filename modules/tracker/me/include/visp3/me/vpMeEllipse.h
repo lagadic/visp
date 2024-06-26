@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  * \brief Moving edges on an ellipse
  */
 
-#ifndef _vpMeEllipse_h_
-#define _vpMeEllipse_h_
+#ifndef VP_ME_ELLIPSE_H
+#define VP_ME_ELLIPSE_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -108,7 +108,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeEllipse() vp_override;
+  virtual ~vpMeEllipse() VP_OVERRIDE;
 
   /*!
    * Display the ellipse or arc of ellipse
@@ -134,9 +134,12 @@ public:
   inline vpColVector get_nij() const
   {
     vpColVector nij(3);
-    nij[0] = m_n20;
-    nij[1] = m_n11;
-    nij[2] = m_n02;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    nij[index_0] = m_n20;
+    nij[index_1] = m_n11;
+    nij[index_2] = m_n02;
 
     return nij;
   }
@@ -153,9 +156,12 @@ public:
   inline vpColVector get_ABE() const
   {
     vpColVector ABE(3);
-    ABE[0] = m_a;
-    ABE[1] = m_b;
-    ABE[2] = m_e;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    ABE[index_0] = m_a;
+    ABE[index_1] = m_b;
+    ABE[index_2] = m_e;
 
     return ABE;
   }
@@ -384,14 +390,14 @@ public:
   /*!
    * \deprecated Use rather displayEllipse().
    */
-  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+  VP_DEPRECATED static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
                                     const double &E, const double &smallalpha, const double &highalpha,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   /*!
    * \deprecated Use rather displayEllipse().
    */
-  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+  VP_DEPRECATED static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
                                     const double &E, const double &smallalpha, const double &highalpha,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
@@ -558,6 +564,30 @@ protected:
   unsigned int leastSquareRobust(const vpImage<unsigned char> &I);
 
   /*!
+   * Robust least squares method to compute the ellipse to which the vpMeSite
+   * belong, when we track a circle. Manage also the lists of vpMeSite and corresponding angles,
+   * and update the expected density of points.
+   *
+   * \param um Half width of the image.
+   * \param vm Half height of the image.
+   * \param k Count the number of tracked MEs.
+   * \param w Weights computed by robust estimation.
+   */
+  void leastSquareRobustCircle(const double &um, const double &vm, unsigned int &k, vpColVector &w);
+
+  /*!
+   * Robust least squares method to compute the ellipse to which the vpMeSite
+   * belong, when we track an ellipse. Manage also the lists of vpMeSite and corresponding angles,
+   * and update the expected density of points.
+   *
+   * \param um Half width of the image.
+   * \param vm Half height of the image.
+   * \param k Count the number of tracked MEs.
+   * \param w Weights computed by robust estimation.
+   */
+  void leastSquareRobustEllipse(const double &um, const double &vm, unsigned int &k, vpColVector &w);
+
+  /*!
    * Seek along the ellipse or arc of ellipse its two extremities to try
    * recovering lost points. Try also to complete the parts with no tracked points.
    *
@@ -581,7 +611,7 @@ protected:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) VP_OVERRIDE;
 
   /*!
    * Compute the \f$ theta \f$ angle for each vpMeSite.

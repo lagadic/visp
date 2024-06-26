@@ -60,6 +60,7 @@
 #include "vpView.h"
 #include "vpVwstack.h"
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpIoTools.h>
@@ -760,7 +761,7 @@ void vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   vp2jlc_matrix(cdMo.inverse(), o44cd);
 
   if (displayImageSimulator) {
-    I = 255;
+    I = vpRGBa(255);
 
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
@@ -857,7 +858,7 @@ void vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   }
 
   if (displayImageSimulator) {
-    I = 255;
+    I = vpRGBa(255);
 
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
@@ -977,7 +978,7 @@ void vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, const vpHomogene
   add_vwstack("start", "window", -u, u, -v, v);
 
   if (displayImageSimulator) {
-    I = 255;
+    I = vpRGBa(255);
 
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
@@ -1029,7 +1030,7 @@ void vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   vp2jlc_matrix(cdMo.inverse(), o44cd);
 
   if (displayImageSimulator) {
-    I = 255;
+    I = 255u;
 
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
@@ -1126,7 +1127,7 @@ void vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   }
 
   if (displayImageSimulator) {
-    I = 255;
+    I = 255u;
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
       imSim->setCameraPosition(rotz * camMf * fMo);
@@ -1245,7 +1246,7 @@ void vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpH
   add_vwstack("start", "window", -u, u, -v, v);
 
   if (displayImageSimulator) {
-    I = 255;
+    I = 255u;
     for (std::list<vpImageSimulator>::iterator it = objectImage.begin(); it != objectImage.end(); ++it) {
       vpImageSimulator *imSim = &(*it);
       imSim->setCameraPosition(rotz * cam_Mf * fMo);

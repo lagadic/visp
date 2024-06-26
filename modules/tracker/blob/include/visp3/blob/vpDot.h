@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,15 @@
  *
  * Description:
  * Track a white dot.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDot.h
   \brief Track a white dot
 */
 
-#ifndef vpDot_hh
-#define vpDot_hh
+#ifndef VP_DOT_H
+#define VP_DOT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
@@ -79,6 +77,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/blob/vpDot.h>
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/sensor/vp1394TwoGrabber.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -126,9 +128,6 @@ public:
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
-#else
-private:
-#endif
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot search. */
 
   double m00;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -188,12 +187,13 @@ private:
 
                      \sa setComputeMoments()
                 */
+#endif
 
 public:
   vpDot();
-  explicit vpDot(const vpImagePoint &ip);
+  VP_EXPLICIT vpDot(const vpImagePoint &ip);
   vpDot(const vpDot &d);
-  virtual ~vpDot() vp_override;
+  virtual ~vpDot() VP_OVERRIDE;
 
   void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 
@@ -209,9 +209,12 @@ public:
   inline vpColVector get_nij() const
   {
     vpColVector nij(3);
-    nij[0] = mu20 / m00;
-    nij[1] = mu11 / m00;
-    nij[2] = mu02 / m00;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    nij[index_0] = mu20 / m00;
+    nij[index_1] = mu11 / m00;
+    nij[index_2] = mu02 / m00;
 
     return nij;
   }
@@ -232,16 +235,16 @@ public:
   {
     vpRect bbox;
 
-    bbox.setRect(this->u_min, this->v_min, this->u_max - this->u_min + 1, this->v_max - this->v_min + 1);
+    bbox.setRect(m_u_min, m_v_min, (m_u_max - m_u_min) + 1, (m_v_max - m_v_min) + 1);
 
-    return (bbox);
+    return bbox;
   };
   /*!
    * Return the location of the dot center of gravity.
    *
    * \return The coordinates of the center of gravity.
    */
-  inline vpImagePoint getCog() const { return cog; }
+  inline vpImagePoint getCog() const { return m_cog; }
 
   /*!
    * Return the list of all the image points on the border of the dot.
@@ -249,7 +252,7 @@ public:
    * \warning Doesn't return the image points inside the dot anymore. To get
    * those points see getConnexities().
    */
-  inline std::list<vpImagePoint> getEdges() const { return this->ip_edges_list; };
+  inline std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; };
 
   /*!
    * Return the list of all the image points inside the dot.
@@ -257,41 +260,41 @@ public:
    * \return The list of all the images points in the dot.
    * This list is updated after a call to track().
    */
-  inline std::list<vpImagePoint> getConnexities() const { return this->ip_connexities_list; };
+  inline std::list<vpImagePoint> getConnexities() const { return m_ip_connexities_list; };
 
-  inline double getGamma() const { return this->gamma; };
+  inline double getGamma() const { return m_gamma; };
 
   /*!
    * Return the precision of the gray level of the dot. It is a double
    * precision float witch value is in ]0,1]. 1 means full precision, whereas
    * values close to 0 show a very bad precision.
    */
-  double getGrayLevelPrecision() const { return grayLevelPrecision; }
-  double getMaxDotSize() const { return this->maxDotSizePercentage; }
+  double getGrayLevelPrecision() const { return m_grayLevelPrecision; }
+  double getMaxDotSize() const { return m_maxDotSizePercentage; }
 
   /*!
    * Return the mean gray level value of the dot.
    */
-  double getMeanGrayLevel() const { return (this->mean_gray_level); };
+  double getMeanGrayLevel() const { return m_mean_gray_level; };
 
   /*!
    * \return a vpPolygon made from the edges of the dot.
    */
-  vpPolygon getPolygon() const { return (vpPolygon(ip_edges_list)); };
+  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); };
 
   /*!
    * Return the width of the dot.
    *
    * \sa getHeight()
    */
-  inline unsigned int getWidth() const { return (this->u_max - this->u_min + 1); };
+  inline unsigned int getWidth() const { return ((m_u_max - m_u_min) + 1); };
 
   /*!
    * Return the width of the dot.
    *
    * \sa getHeight()
    */
-  inline unsigned int getHeight() const { return (this->v_max - this->v_min + 1); };
+  inline unsigned int getHeight() const { return ((m_v_max - m_v_min) + 1); };
 
   void initTracking(const vpImage<unsigned char> &I);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
@@ -306,9 +309,9 @@ public:
   void print(std::ostream &os) { os << *this << std::endl; }
 
   /*!
-   * Initialize the dot coordinates with \e ip.
+   * Initialize the dot center of gravity coordinates with \e cog.
    */
-  inline void setCog(const vpImagePoint &ip) { this->cog = ip; }
+  inline void setCog(const vpImagePoint &cog) { m_cog = cog; }
 
   /*!
    * Activates the dot's moments computation.
@@ -323,15 +326,15 @@ public:
    * The coordinates of the region's centroid (u, v) can be computed from the
    * moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
    */
-  void setComputeMoments(bool activate) { compute_moment = activate; }
+  void setComputeMoments(bool activate) { m_compute_moment = activate; }
 
   /*!
    * Set the type of connexity: 4 or 8.
    */
-  void setConnexity(vpConnexityType type) { this->connexityType = type; };
+  void setConnexity(const vpConnexityType &connexityType) { m_connexityType = connexityType; };
   void setMaxDotSize(double percentage);
-  void setGrayLevelMin(const unsigned int &level_min) { this->gray_level_min = level_min; };
-  void setGrayLevelMax(const unsigned int &level_max) { this->gray_level_max = level_max; };
+  void setGrayLevelMin(const unsigned int &level_min) { m_gray_level_min = level_min; };
+  void setGrayLevelMax(const unsigned int &level_max) { m_gray_level_max = level_max; };
   void setGrayLevelPrecision(const double &grayLevelPrecision);
 
   /*!
@@ -348,64 +351,17 @@ public:
    * \sa setGraphicsThickness()
    */
 
-  void setGraphics(bool activate) { graphics = activate; }
+  void setGraphics(bool activate) { m_graphics = activate; }
   /*!
    * Modify the default thickness that is set to 1 of the drawings in overlay
    * when setGraphics() is enabled.
    *
    * \sa setGraphics()
    */
-  void setGraphicsThickness(unsigned int t) { this->thickness = t; };
+  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; };
 
   void track(const vpImage<unsigned char> &I);
   void track(const vpImage<unsigned char> &I, vpImagePoint &ip);
-
-private:
-  //! internal use only
-  std::list<vpImagePoint> ip_connexities_list;
-
-  //! List of border points
-  std::list<vpImagePoint> ip_edges_list;
-
-  /*! Type of connexity
-
-   \warning In previous version this variable was called connexity
-  */
-  vpConnexityType connexityType;
-
-  //! coordinates of the point center of gravity
-  vpImagePoint cog;
-
-  // Bounding box
-  unsigned int u_min, u_max, v_min, v_max;
-
-  // Flag used to allow display
-  bool graphics;
-
-  unsigned int thickness; // Graphics thickness
-
-  double maxDotSizePercentage;
-  unsigned char gray_level_out;
-
-  double mean_gray_level;      // Mean gray level of the dot
-  unsigned int gray_level_min; // left threshold for binarization
-  unsigned int gray_level_max; // right threshold for binarization
-  double grayLevelPrecision;   // precision of the gray level of the dot.
-  // It is a double precision float witch value is in ]0,1].
-  // 1 means full precision, whereas values close to 0 show a very bad
-  // precision
-  double gamma;
-  //! flag : true moment are computed
-  bool compute_moment;
-  double nbMaxPoint;
-
-  void init();
-  void setGrayLevelOut();
-  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
-               double &v_cog, double &n);
-  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
-               double &v_cog, double &n, std::vector<bool> &checkTab);
-  void COG(const vpImage<unsigned char> &I, double &u, double &v);
 
   // Static Functions
 public:
@@ -414,6 +370,116 @@ public:
                       unsigned int thickness = 1);
   static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
                       vpColor color = vpColor::red, unsigned int thickness = 1);
+
+#ifndef VISP_BUILD_DEPRECATED_FUNCTIONS
+private:
+  static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot search. */
+
+  double m00;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+                    with \f$i = j = 0 \f$.
+
+                    \sa setComputeMoments()
+                */
+  double m01;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+                    obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
+
+                    \sa setComputeMoments()
+                */
+  double m10;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+                    obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
+
+                    \sa setComputeMoments()
+                */
+  double m11;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
+                    obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+
+                    \sa setComputeMoments()
+                */
+  double m20;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+                    obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+
+                    \sa setComputeMoments()
+                */
+  double m02;  /*!< Considering the general distribution moments for \f$ N \f$
+                    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                    u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+                    obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+
+                     \sa setComputeMoments()
+                */
+  double mu11; /*!< \f$ \mu_{11} \f$ is a second order centered moment defined
+                    by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+
+                    \sa setComputeMoments()
+                */
+  double mu20; /*!< \f$ \mu_{20} \f$ is a second order centered moment defined
+                    by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+
+                    \sa setComputeMoments()
+                */
+  double mu02; /*!< \f$ \mu_{02} \f$ is a second order centered moment defined
+                     by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+
+                     \sa setComputeMoments()
+                */
+#endif
+
+private:
+  //! internal use only
+  std::list<vpImagePoint> m_ip_connexities_list;
+
+  //! List of border points
+  std::list<vpImagePoint> m_ip_edges_list;
+
+  /*! Type of connexity
+
+   \warning In previous version this variable was called connexity
+  */
+  vpConnexityType m_connexityType;
+
+  //! Coordinates of the point center of gravity
+  vpImagePoint m_cog;
+
+  // Bounding box
+  unsigned int m_u_min, m_u_max, m_v_min, m_v_max;
+
+  // Flag used to allow display
+  bool m_graphics;
+
+  unsigned int m_thickness; // Graphics thickness
+
+  double m_maxDotSizePercentage;
+  unsigned char m_gray_level_out;
+
+  double m_mean_gray_level;      // Mean gray level of the dot
+  unsigned int m_gray_level_min; // left threshold for binarization
+  unsigned int m_gray_level_max; // right threshold for binarization
+  double m_grayLevelPrecision;   // precision of the gray level of the dot.
+  // It is a double precision float witch value is in ]0,1].
+  // 1 means full precision, whereas values close to 0 show a very bad
+  // precision
+  double m_gamma;
+  //! flag : true moment are computed
+  bool m_compute_moment;
+  double m_nbMaxPoint;
+
+  void init();
+  void setGrayLevelOut();
+  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value,
+               vpImagePoint &uv_cog, unsigned int &npoints);
+  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value,
+               vpImagePoint &uv_cog, unsigned int &npoints, std::vector<bool> &checkTab);
+  void COG(const vpImage<unsigned char> &I, double &u, double &v);
 };
 
 END_VISP_NAMESPACE

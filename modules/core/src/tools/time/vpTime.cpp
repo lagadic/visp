@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +39,6 @@
 
 #include <ctime>
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
 // https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
@@ -211,17 +209,17 @@ int wait(double t0, double t)
                       "vpTime::wait() is not implemented on Windows Phone 8.0"));
 #endif
 #endif
-    }
   }
+}
 
-  /*!
-    Wait t miliseconds from now.
+/*!
+  Wait t miliseconds from now.
 
-    The waiting is done by a call to usleep() if the time to wait is greater
-    than vpTime::minTimeForUsleepCall.
+  The waiting is done by a call to usleep() if the time to wait is greater
+  than vpTime::minTimeForUsleepCall.
 
-    \param t : Time to wait in ms.
-  */
+  \param t : Time to wait in ms.
+*/
 void wait(double t)
 {
   double timeToWait = t;
@@ -262,14 +260,14 @@ void wait(double t)
                       "vpTime::wait() is not implemented on Windows Phone 8.0"));
 #endif
 #endif
-    }
   }
+}
 
-  /*!
-    Sleep t miliseconds from now.
+/*!
+  Sleep t miliseconds from now.
 
-    \param t : Time to sleep in ms.
-  */
+  \param t : Time to sleep in ms.
+*/
 void sleepMs(double t)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -336,26 +334,29 @@ characters| CDT | | %%        | A % sign                                        
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpTime.h>
+  #include <visp3/core/vpTime.h>
 
-int main()
-{
-  std::cout << "%Y/%m/%d %H:%M:%S (default): " << vpTime::getDateTime() << std::endl;
-  std::cout << "%Y-%m-%d_%H.%M.%S format   : " << vpTime::getDateTime("%Y-%m-%d_%H.%M.%S") << std::endl;
-  std::cout << "%F format   : " << vpTime::getDateTime("%F") << std::endl;
-  std::cout << "%X format   : " << vpTime::getDateTime("%X") << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
-   \endcode
-   It produces the following output:
-   \code
-%Y/%m/%d %H:%M:%S (default): 2016/10/05 19:42:44
-%Y-%m-%d_%H.%M.%S format   : 2016-10-05_19.42.44
-%F                format   : 2016-10-05
-%X                format   : 19:42:44
-   \endcode
+  int main()
+  {
+    std::cout << "%Y/%m/%d %H:%M:%S (default): " << vpTime::getDateTime() << std::endl;
+    std::cout << "%Y-%m-%d_%H.%M.%S format   : " << vpTime::getDateTime("%Y-%m-%d_%H.%M.%S") << std::endl;
+    std::cout << "%F format   : " << vpTime::getDateTime("%F") << std::endl;
+    std::cout << "%X format   : " << vpTime::getDateTime("%X") << std::endl;
 
+    return 0;
+  }
+  \endcode
+  It produces the following output:
+  \code
+  %Y/%m/%d %H:%M:%S (default): 2016/10/05 19:42:44
+  %Y-%m-%d_%H.%M.%S format   : 2016-10-05_19.42.44
+  %F                format   : 2016-10-05
+  %X                format   : 19:42:44
+  \endcode
  */
 std::string getDateTime(const std::string &format)
 {

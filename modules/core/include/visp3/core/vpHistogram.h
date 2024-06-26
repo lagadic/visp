@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
 
 */
 
-#ifndef _vpHistogram_h_
-#define _vpHistogram_h_
+#ifndef VP_HISTOGRAM_H
+#define VP_HISTOGRAM_H
 
 #include <sstream>
 
@@ -48,10 +48,6 @@
 #include <visp3/core/vpHistogramPeak.h>
 #include <visp3/core/vpHistogramValey.h>
 #include <visp3/core/vpImage.h>
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#include <visp3/core/vpList.h>
-#endif
 
 #include <list>
 
@@ -111,8 +107,8 @@ class VISP_EXPORT vpHistogram
 public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
-  explicit vpHistogram(const vpImage<unsigned char> &I);
-  explicit vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
   virtual ~vpHistogram();
 
   vpHistogram &operator=(const vpHistogram &h);

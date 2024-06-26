@@ -38,6 +38,7 @@
   For more details see \cite Collewet08c.
 */
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>

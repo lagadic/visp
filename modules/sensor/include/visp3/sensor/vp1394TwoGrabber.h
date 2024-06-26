@@ -102,6 +102,10 @@ BEGIN_VISP_NAMESPACE
     #include <visp3/io/vpImageIo.h>
     #include <visp3/sensor/vp1394TwoGrabber.h>
 
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
+
     int main()
     {
     #if defined(VISP_HAVE_DC1394)
@@ -140,6 +144,10 @@ BEGIN_VISP_NAMESPACE
     #include <visp3/core/vpImage.h>
     #include <visp3/io/vpImageIo.h>
     #include <visp3/sensor/vp1394TwoGrabber.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {
@@ -354,7 +362,7 @@ private:
   //#endif
 
 public:
-  explicit vp1394TwoGrabber(bool reset = true);
+  VP_EXPLICIT vp1394TwoGrabber(bool reset = true);
   virtual ~vp1394TwoGrabber();
 
   void acquire(vpImage<unsigned char> &I);

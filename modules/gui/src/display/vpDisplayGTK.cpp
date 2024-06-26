@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Image display.
- *
- * Authors:
- * Christophe Collewet
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplayGTK.cpp
@@ -56,7 +51,6 @@
 #include <visp3/gui/vpDisplayGTK.h>
 
 // debug / exception
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
@@ -682,15 +676,19 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int win_x, int win_y, const std::
   To initialize the display size, you need to call init().
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayGTK.h>
 
-int main()
-{
-  vpDisplayGTK d(100, 200, "My display");
-  vpImage<unsigned char> I(240,384);
-  d.init(I);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayGTK d(100, 200, "My display");
+    vpImage<unsigned char> I(240,384);
+    d.init(I);
+  }
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title) : vpDisplay(), m_impl(new Impl())
@@ -708,15 +706,19 @@ vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title) :
   init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayGTK.h>
 
-int main()
-{
-  vpDisplayGTK d;
-  vpImage<unsigned char> I(240,384);
-  d.init(I, 100, 200, "My display");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayGTK d;
+    vpImage<unsigned char> I(240,384);
+    d.init(I, 100, 200, "My display");
+  }
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK() : vpDisplay(), m_impl(new Impl()) { }
@@ -985,7 +987,10 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint 
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImage(const unsigned char * /* I */) { vpTRACE(" not implemented "); }
+void vpDisplayGTK::displayImage(const unsigned char * /* I */)
+{
+  // not implemented
+}
 
 /*!
   Close the window.
@@ -1033,7 +1038,10 @@ void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigned i
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(const vpColor & /* color */) { vpTRACE("Not implemented"); }
+void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
+{
+  // Not implemented
+}
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.

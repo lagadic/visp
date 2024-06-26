@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _vpCannyEdgeDetection_h_
-#define _vpCannyEdgeDetection_h_
+#ifndef VP_CANNY_EDGE_DETECTION_H
+#define VP_CANNY_EDGE_DETECTION_H
 
 // System includes
 #include <map>

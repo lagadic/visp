@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +39,6 @@
 
 // display
 #include <visp3/core/vpDisplay.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
 
 // math
 #include <visp3/core/vpMath.h>
@@ -151,12 +147,17 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11
 {
   vpImagePoint center;
   double n20_p, n11_p, n02_p;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
   vpCircle circle;
-  circle.p[0] = x;
-  circle.p[1] = y;
-  circle.p[2] = n20;
-  circle.p[3] = n11;
-  circle.p[4] = n02;
+  circle.p[index_0] = x;
+  circle.p[index_1] = y;
+  circle.p[index_2] = n20;
+  circle.p[index_3] = n11;
+  circle.p[index_4] = n02;
 
   vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
   vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);
@@ -264,12 +265,17 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11
 {
   vpImagePoint center;
   double n20_p, n11_p, n02_p;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
   vpCircle circle;
-  circle.p[0] = x;
-  circle.p[1] = y;
-  circle.p[2] = n20;
-  circle.p[3] = n11;
-  circle.p[4] = n02;
+  circle.p[index_0] = x;
+  circle.p[index_1] = y;
+  circle.p[index_2] = n20;
+  circle.p[index_3] = n11;
+  circle.p[index_4] = n02;
 
   vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
   vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);

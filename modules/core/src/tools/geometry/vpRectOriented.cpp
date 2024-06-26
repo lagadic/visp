@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Defines a (possibly oriented) rectangle in the plane.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpRectOriented.h>
 
 #include <cmath>
@@ -126,7 +124,9 @@ vpRectOriented &vpRectOriented::operator=(const vpRect &rect)
   return *this;
 }
 
-/** Conversion to vpRect operator.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/**
+ * Conversion to vpRect operator.
  */
 vpRectOriented::operator vpRect()
 {
@@ -136,6 +136,7 @@ vpRectOriented::operator vpRect()
 
   return vpRect(m_topLeft, m_bottomRight);
 }
+#endif
 
 /** Set the corners of the rectangle.
  *  @warning This method doesn't check whether the 4 points actually form a rectangle!

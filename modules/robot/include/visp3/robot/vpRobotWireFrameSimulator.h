@@ -165,7 +165,7 @@ protected:
 
 public:
   vpRobotWireFrameSimulator();
-  explicit vpRobotWireFrameSimulator(bool display);
+  VP_EXPLICIT vpRobotWireFrameSimulator(bool display);
 
   /** @name Inherited functionalities from vpRobotWireFrameSimulator */
   //@{

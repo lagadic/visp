@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
   \file vpRobust.h
 */
 
-#ifndef vpRobust_h
-#define vpRobust_h
+#ifndef VP_ROBUST_H
+#define VP_ROBUST_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
@@ -140,7 +140,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated explicit vpRobust(unsigned int n_data);
+  VP_DEPRECATED VP_EXPLICIT vpRobust(unsigned int n_data);
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, const vpColVector &all_residues,
                   vpColVector &weights);
@@ -148,7 +148,7 @@ public:
    * \deprecated Set iteration. This function is to call before simultMEstimator().
    * \param iter : The first call iter should be set to 0.
    */
-  vp_deprecated void setIteration(unsigned int iter) { m_iter = iter; }
+  VP_DEPRECATED void setIteration(unsigned int iter) { m_iter = iter; }
   /*!
     \deprecated You should rather use setMinMedianAbsoluteDeviation().
     Set minimal median absolute deviation (MAD) value.
@@ -157,8 +157,8 @@ public:
     \param mad_min : Minimal Median Absolute Deviation value.
     Default value is set to 0.0017 in the default constructor.
   */
-  vp_deprecated inline void setThreshold(double mad_min) { m_mad_min = mad_min; }
-  vp_deprecated vpColVector simultMEstimator(vpColVector &residues);
+  VP_DEPRECATED inline void setThreshold(double mad_min) { m_mad_min = mad_min; }
+  VP_DEPRECATED vpColVector simultMEstimator(vpColVector &residues);
   //@}
 #endif
 private:

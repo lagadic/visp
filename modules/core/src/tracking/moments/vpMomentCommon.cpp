@@ -84,6 +84,10 @@ vpMomentCommon::vpMomentCommon(double dstSurface, const std::vector<double> &ref
   #include <visp3/core/vpMomentObject.h>
   #include <visp3/core/vpPoint.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     // Define two discrete points

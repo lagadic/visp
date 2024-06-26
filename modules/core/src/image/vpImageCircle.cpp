@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,10 +51,12 @@ vpImageCircle::vpImageCircle(const vpImagePoint &center, const float &radius)
 
 #ifdef HAVE_OPENCV_CORE
 vpImageCircle::vpImageCircle(const cv::Vec3f &vec)
-  : m_center(vec[1], vec[0])
-  , m_radius(vec[2])
 {
-
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  m_center = vpImagePoint(vec[index_1], vec[index_0]);
+  m_radius = vec[index_2];
 }
 #endif
 
@@ -78,7 +80,7 @@ void computeIntersectionsLeftBorder(const float &u_c, const float &umin_roi, con
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
   delta_theta = theta_max - theta_min;
-  if ((u_c < umin_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
+  if ((u_c < umin_roi) && (std::abs(delta_theta - (2 * M_PI_FLOAT)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -102,8 +104,8 @@ void computeIntersectionsRightBorder(const float &u_c, const float &umax_roi, co
   float theta2 = -1.f * theta1;
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
-  delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
-  if ((u_c > umax_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
+  delta_theta = (2.f * M_PI_FLOAT) - (theta_max - theta_min);
+  if ((u_c > umax_roi) && (std::abs(delta_theta - (2 * M_PI_FLOAT)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -127,25 +129,25 @@ void computeIntersectionsTopBorder(const float &v_c, const float &vmin_roi, cons
 
   float theta2 = 0.f;
   if (theta1 >= 0.f) {
-    theta2 = M_PIf - theta1;
+    theta2 = M_PI_FLOAT - theta1;
   }
   else {
-    theta2 = -theta1 - M_PIf;
+    theta2 = -theta1 - M_PI_FLOAT;
   }
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
   if ((std::abs(theta_max - theta_min) * radius) < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
-    delta_theta = 2.f * M_PIf;
+    delta_theta = 2.f * M_PI_FLOAT;
   }
   else if (theta1 > 0.f) {
-    delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
+    delta_theta = (2.f * M_PI_FLOAT) - (theta_max - theta_min);
   }
   else {
     delta_theta = theta_max - theta_min;
   }
-  if ((v_c < vmin_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
+  if ((v_c < vmin_roi) && (std::abs(delta_theta - (2 * M_PI_FLOAT)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -169,25 +171,25 @@ void computeIntersBottomBorder(const float &v_c, const float &vmax_roi, const fl
 
   float theta2 = 0.f;
   if (theta1 >= 0.f) {
-    theta2 = M_PIf - theta1;
+    theta2 = M_PI_FLOAT - theta1;
   }
   else {
-    theta2 = -theta1 - M_PIf;
+    theta2 = -theta1 - M_PI_FLOAT;
   }
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
   if ((std::abs(theta_max - theta_min) * radius) < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
-    delta_theta = 2.f * M_PIf;
+    delta_theta = 2.f * M_PI_FLOAT;
   }
   else if (theta1 > 0.f) {
     delta_theta = theta_max - theta_min;
   }
   else {
-    delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
+    delta_theta = (2.f * M_PI_FLOAT) - (theta_max - theta_min);
   }
-  if ((v_c > vmax_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
+  if ((v_c > vmax_roi) && (std::abs(delta_theta - (2 * M_PI_FLOAT)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -218,10 +220,10 @@ void computePerpendicularAxesInters(const float &u_c, const float &v_c, const fl
   theta_u_cross = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross);
   float theta_u_cross_2 = 0.f;
   if (theta_u_cross > 0) {
-    theta_u_cross_2 = M_PIf - theta_u_cross;
+    theta_u_cross_2 = M_PI_FLOAT - theta_u_cross;
   }
   else {
-    theta_u_cross_2 = -M_PIf - theta_u_cross;
+    theta_u_cross_2 = -M_PI_FLOAT - theta_u_cross;
   }
   // Computing the corresponding u-coordinates at which the u-axis is crossed
   float u_ucross = u_c + (radius * std::cos(theta_u_cross));
@@ -347,13 +349,13 @@ void computeIntersectionsTopRight(const float &u_c, const float &v_c, const floa
     delta_theta = theta_v_max - theta_u_min;
     if (delta_theta < 0) {
       // The arc cannot be negative
-      delta_theta += 2.f * M_PIf;
+      delta_theta += 2.f * M_PI_FLOAT;
     }
   }
   else if ((u_umin <= umax_roi) && (v_vmin >= vmin_roi) && (u_umax <= umax_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
-    delta_theta = (2 * M_PIf) - ((theta_u_min - theta_u_max) + (theta_v_min - theta_v_max));
+    delta_theta = (2 * M_PI_FLOAT) - ((theta_u_min - theta_u_max) + (theta_v_min - theta_v_max));
   }
   else if ((u_umin >= umax_roi) && (v_vmin >= vmin_roi) && (u_umax >= umax_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses the u-axis outside the roi
@@ -453,13 +455,13 @@ void computeIntersectionsBottomRight(const float &u_c, const float &v_c, const f
     delta_theta = theta_u_min - theta_v_min;
     if (delta_theta < 0) {
       // An arc length cannot be negative it means that theta_u_max was comprise in the bottom left quadrant of the circle
-      delta_theta += 2.f * M_PIf;
+      delta_theta += 2.f * M_PI_FLOAT;
     }
   }
   else if ((u_umin <= umax_roi) && (u_umax <= umax_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
-    delta_theta = (2.f * M_PIf) - ((theta_v_min - theta_v_max) + (theta_u_max - theta_u_min));
+    delta_theta = (2.f * M_PI_FLOAT) - ((theta_v_min - theta_v_max) + (theta_u_max - theta_u_min));
   }
   else if ((u_umin > umax_roi) && (u_umax > umax_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses the u-axis outside the roi
@@ -577,7 +579,7 @@ void computeIntersTopRightBottom(const float &u_c, const float &v_c, const float
   float u_umax_bottom = crossing_theta_u_max.second;
   if ((u_umax_top <= umax_roi) && (u_umax_bottom <= umax_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case intersection top + right + bottom twice
-    delta_theta = (2.f * M_PIf) - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
+    delta_theta = (2.f * M_PI_FLOAT) - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
   }
   else if ((u_umin_top <= umax_roi) && (u_umax_top > umax_roi) && (v_vmin <= vmin_roi) && (u_umin_bottom <= umax_roi) && (u_umax_bottom > umax_roi) && (v_vmax >= vmax_roi)) {
     // case intersection top and bottom
@@ -618,10 +620,10 @@ void computeIntersTopBottomOnly(const float &u_c, const float &v_c, const float 
   theta_u_cross_top = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross_top);
   float theta_u_cross_top_2 = 0.f;
   if (theta_u_cross_top > 0) {
-    theta_u_cross_top_2 = M_PIf - theta_u_cross_top;
+    theta_u_cross_top_2 = M_PI_FLOAT - theta_u_cross_top;
   }
   else {
-    theta_u_cross_top_2 = -M_PIf - theta_u_cross_top;
+    theta_u_cross_top_2 = -M_PI_FLOAT - theta_u_cross_top;
   }
 
   // Computing the corresponding u-coordinates at which the u-axis is crossed
@@ -645,10 +647,10 @@ void computeIntersTopBottomOnly(const float &u_c, const float &v_c, const float 
   theta_u_cross_bottom = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross_bottom);
   float theta_u_cross_bottom_2 = 0.f;
   if (theta_u_cross_bottom > 0) {
-    theta_u_cross_bottom_2 = M_PIf - theta_u_cross_bottom;
+    theta_u_cross_bottom_2 = M_PI_FLOAT - theta_u_cross_bottom;
   }
   else {
-    theta_u_cross_bottom_2 = -M_PIf - theta_u_cross_bottom;
+    theta_u_cross_bottom_2 = -M_PI_FLOAT - theta_u_cross_bottom;
   }
 
   // Computing the corresponding u-coordinates at which the u-axis is crossed
@@ -668,7 +670,7 @@ void computeIntersTopBottomOnly(const float &u_c, const float &v_c, const float 
 
   // Computing the the length of the angular interval of the circle when it intersects
   // only with the top and bottom borders of the Region of Interest (RoI)
-  delta_theta = (2.f * M_PIf) - ((theta_u_cross_top_min - theta_u_cross_top_max) + (theta_u_cross_bottom_max - theta_u_cross_bottom_min));
+  delta_theta = (2.f * M_PI_FLOAT) - ((theta_u_cross_top_min - theta_u_cross_top_max) + (theta_u_cross_bottom_max - theta_u_cross_bottom_min));
 }
 
 /*!
@@ -931,7 +933,7 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     // Easy case
     // The circle has its center in the image and its radius is not too great
     // to make it fully contained in the RoI
-    delta_theta = 2.f * M_PIf;
+    delta_theta = 2.f * M_PI_FLOAT;
   }
   else if (touchBottomBorder && (!touchLeftBorder) && (!touchRightBorder) && (!touchTopBorder)) {
     // Touches/intersects only the bottom border of the RoI
@@ -1002,14 +1004,14 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
 
-  if ((delta_theta < 0) || (delta_theta >(2.f * M_PIf))) { // Needed since M_PIf is used
-    float rest = vpMath::modulo(delta_theta, 2.f * M_PIf);
-    if ((rest < roundingTolerance) && ((delta_theta < -M_PIf) || (delta_theta > M_PIf))) {
-      // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
-      delta_theta = 2.f * M_PIf;
+  if ((delta_theta < 0) || (delta_theta >(2.f * M_PI_FLOAT))) { // Needed since M_PI_FLOAT is used
+    float rest = vpMath::modulo(delta_theta, 2.f * M_PI_FLOAT);
+    if ((rest < roundingTolerance) && ((delta_theta < -M_PI_FLOAT) || (delta_theta > M_PI_FLOAT))) {
+      // If the angle is a negative multiple of 2.f * M_PI_FLOAT we consider it to be 2.f * M_PI_FLOAT
+      delta_theta = 2.f * M_PI_FLOAT;
     }
     else {
-      //Otherwise, it corresponds to delta_theta modulo 2.f * M_PIf
+      //Otherwise, it corresponds to delta_theta modulo 2.f * M_PI_FLOAT
       delta_theta = rest;
     }
   }
@@ -1036,7 +1038,7 @@ void incrementIfIsInMask(const vpImage<bool> &mask, const int &width, const int 
   }
   if (mask[y][x]) {
     // Increment only if the pixel value of the mask is true
-    count++;
+    ++count;
   }
 }
 };
@@ -1065,7 +1067,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
 #endif
   unsigned int count = 0; // Count the number of pixels of the circle whose value in the mask is true
 
-  const float thetaStop = M_PI_2f;
+  const float thetaStop = M_PI_2_FLOAT;
   float theta = 0;
   int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
   int y1 = 0, y2 = 0, y3 = 0, y4 = 0;

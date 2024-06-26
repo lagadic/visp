@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +43,18 @@ BEGIN_VISP_NAMESPACE
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
                               vpColVector &centroid, double &normalized_weights)
 {
-  unsigned int max_iter = 10;
+  const unsigned int max_iter = 10;
   double prev_error = 1e3;
   double error = 1e3 - 1;
-  unsigned int nPoints = static_cast<unsigned int>(point_cloud_face.size() / 3);
+  const unsigned int size3DPt = 3;
+  unsigned int nPoints = static_cast<unsigned int>(point_cloud_face.size() / size3DPt);
+  const unsigned int idX = 0;
+  const unsigned int idY = 1;
+  const unsigned int idZ = 2;
 
   vpColVector weights(nPoints, 1.0);
   vpColVector residues(nPoints);
-  vpMatrix M(nPoints, 3);
+  vpMatrix M(nPoints, size3DPt);
   vpRobust tukey;
   tukey.setMinMedianAbsoluteDeviation(1e-4);
   vpColVector normal;
@@ -67,9 +71,9 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
     double total_w = 0.0;
 
     for (unsigned int i = 0; i < nPoints; ++i) {
-      centroid_x += weights[i] * point_cloud_face[(3 * i) + 0];
-      centroid_y += weights[i] * point_cloud_face[(3 * i) + 1];
-      centroid_z += weights[i] * point_cloud_face[(3 * i) + 2];
+      centroid_x += weights[i] * point_cloud_face[(size3DPt * i) + idX];
+      centroid_y += weights[i] * point_cloud_face[(size3DPt * i) + idY];
+      centroid_z += weights[i] * point_cloud_face[(size3DPt * i) + idZ];
       total_w += weights[i];
     }
 
@@ -79,9 +83,9 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
 
     // Minimization
     for (unsigned int i = 0; i < nPoints; ++i) {
-      M[static_cast<unsigned int>(i)][0] = weights[i] * (point_cloud_face[(3 * i) + 0] - centroid_x);
-      M[static_cast<unsigned int>(i)][1] = weights[i] * (point_cloud_face[(3 * i) + 1] - centroid_y);
-      M[static_cast<unsigned int>(i)][2] = weights[i] * (point_cloud_face[(3 * i) + 2] - centroid_z);
+      M[static_cast<unsigned int>(i)][idX] = weights[i] * (point_cloud_face[(size3DPt * i) + idX] - centroid_x);
+      M[static_cast<unsigned int>(i)][idY] = weights[i] * (point_cloud_face[(size3DPt * i) + idY] - centroid_y);
+      M[static_cast<unsigned int>(i)][idZ] = weights[i] * (point_cloud_face[(size3DPt * i) + idZ] - centroid_z);
     }
 
     vpColVector W;
@@ -102,15 +106,17 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
     normal = V.getCol(indexSmallestSv);
 
     // Compute plane equation
-    double A = normal[0], B = normal[1], C = normal[2];
+    double A = normal[idX];
+    double B = normal[idY];
+    double C = normal[idZ];
     double D = -((A * centroid_x) + (B * centroid_y) + (C * centroid_z));
 
     // Compute error points to estimated plane
     prev_error = error;
     error = 0.0;
     for (unsigned int i = 0; i < nPoints; ++i) {
-      residues[i] = std::fabs((A * point_cloud_face[3 * i]) + (B * point_cloud_face[(3 * i) + 1]) +
-                              (C * point_cloud_face[(3 * i) + 2]) + D) /
+      residues[i] = std::fabs((A * point_cloud_face[size3DPt * i]) + (B * point_cloud_face[(size3DPt * i) + idY]) +
+                              (C * point_cloud_face[(size3DPt * i) + idZ]) + D) /
         sqrt((A * A) + (B * B) + (C * C));
       error += weights[i] * residues[i];
     }
@@ -125,23 +131,23 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
   tukey.MEstimator(vpRobust::TUKEY, residues, weights);
 
   // Update final centroid
-  centroid.resize(3, false);
+  centroid.resize(size3DPt, false);
   double total_w = 0.0;
 
   for (unsigned int i = 0; i < nPoints; ++i) {
-    centroid[0] += weights[i] * point_cloud_face[3 * i];
-    centroid[1] += weights[i] * point_cloud_face[(3 * i) + 1];
-    centroid[2] += weights[i] * point_cloud_face[(3 * i) + 2];
+    centroid[idX] += weights[i] * point_cloud_face[size3DPt * i];
+    centroid[idY] += weights[i] * point_cloud_face[(size3DPt * i) + idY];
+    centroid[idZ] += weights[i] * point_cloud_face[(size3DPt * i) + idZ];
     total_w += weights[i];
   }
 
-  centroid[0] /= total_w;
-  centroid[1] /= total_w;
-  centroid[2] /= total_w;
+  centroid[idX] /= total_w;
+  centroid[idY] /= total_w;
+  centroid[idZ] /= total_w;
 
   // Compute final plane equation
-  double A = normal[0], B = normal[1], C = normal[2];
-  double D = -((A * centroid[0]) + (B * centroid[1]) + (C * centroid[2]));
+  double A = normal[0], B = normal[1], C = normal[idZ];
+  double D = -((A * centroid[0]) + (B * centroid[1]) + (C * centroid[idZ]));
 
   // Update final plane equation
   plane_equation_estimated.setABCD(A, B, C, D);
@@ -248,19 +254,19 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
                                              const std::vector<std::vector<vpPoint> > &point3d,
                                              vpHomogeneousMatrix &cMo, double *confidence_index, bool coplanar_points)
 {
-
-  if (corners.size() != point3d.size()) {
+  const size_t nb3dPoints = point3d.size();
+  const size_t nbCorners = corners.size();
+  if (nbCorners != nb3dPoints) {
     throw(vpException(vpException::fatalError,
                       "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
-                      point3d.size(), corners.size()));
+                      nb3dPoints, nbCorners));
   }
   std::vector<vpPoint> pose_points;
   if (confidence_index != nullptr) {
     *confidence_index = 0.0;
   }
 
-  size_t point3d_size = point3d.size();
-  for (size_t i = 0; i < point3d_size; ++i) {
+  for (size_t i = 0; i < nb3dPoints; ++i) {
     std::vector<vpPoint> tagPoint3d = point3d[i];
     size_t tagpoint3d_size = tagPoint3d.size();
     for (size_t j = 0; j < tagpoint3d_size; ++j) {
@@ -322,15 +328,17 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
   }
 
   size_t nb_points_3d = 0;
+  const size_t sizePt3D = 3;
 
   if (coplanar_points) {
-    nb_points_3d = tag_points_3d.size() / 3;
+    nb_points_3d = tag_points_3d.size() / sizePt3D;
   }
   else {
-    nb_points_3d = nb_points_3d_non_planar / 3;
+    nb_points_3d = nb_points_3d_non_planar / sizePt3D;
   }
 
-  if (nb_points_3d > 4) {
+  const size_t minNbPts = 4;
+  if (nb_points_3d > minNbPts) {
     std::vector<vpPoint> p, q;
 
     // Plane equation
@@ -342,8 +350,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       // If all objects are coplanar, use points insides tag_points_3d to estimate the plane
       estimatePlaneEquationSVD(tag_points_3d, plane_equation, centroid, normalized_weights);
       int count = 0;
-      size_t corners_size = corners.size();
-      for (size_t j = 0; j < corners_size; ++j) {
+      for (size_t j = 0; j < nbCorners; ++j) {
         std::vector<vpImagePoint> tag_corner = corners[j];
         size_t tag_corner_size = tag_corner.size();
         for (size_t i = 0; i < tag_corner_size; ++i) {
@@ -370,8 +377,9 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       for (size_t k = 0; k < tag_points_3d_nonplanar_size; ++k) {
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
         double tag_normalized_weights = 0;
-
-        if (rec_points_3d.size() >= 9) {
+        const size_t minNbPtsForPlaneSVD = 3;
+        const size_t minSizeForPlaneSVD = minNbPtsForPlaneSVD * sizePt3D;
+        if (rec_points_3d.size() >= minSizeForPlaneSVD) {
           // The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
           estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
           normalized_weights += tag_normalized_weights;
@@ -405,8 +413,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       normalized_weights = normalized_weights / tag_points_3d_nonplanar.size();
     }
 
-    size_t point3d_size = point3d.size();
-    for (size_t i = 0; i < point3d_size; ++i) {
+    for (size_t i = 0; i < nb3dPoints; ++i) {
       std::vector<vpPoint> tagPoint3d = point3d[i];
       // Sometimes an object may do not have enough points registered due to small size.
       // The issue happens with Orbbec camera while Realsenses was fine.

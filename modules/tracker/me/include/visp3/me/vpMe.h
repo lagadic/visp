@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Moving edges
  */
 
-#ifndef _vpMe_h_
-#define _vpMe_h_
+#ifndef VP_ME_H
+#define VP_ME_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -63,6 +63,10 @@ BEGIN_VISP_NAMESPACE
  * and reload the values from this JSON file.
  * \code
  * #include <visp3/me/vpMe.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

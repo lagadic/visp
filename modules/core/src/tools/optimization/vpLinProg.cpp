@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * Linear Programming
- *
- * Authors:
- * Olivier Kermorgant
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpLinProg.h>
 
@@ -66,6 +61,10 @@ BEGIN_VISP_NAMESPACE
 
   \code
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -153,7 +152,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         while (A.getCols() < n - m) {
           // add next column and check rank of A^T.A
           if (!allZero(IQQt.getCol(j))) {
-            A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
+            A = vpMatrix::juxtaposeMatrices(A, vpMatrix(IQQt.getCol(j)));
             if (A.qr(Q, R, false, false, tol) != A.getCols())
               A.resize(n, A.getCols() - 1, false);
           }
@@ -196,7 +195,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       while (A.getCols() < n - r) {
         // add next column and check rank of A^T.A
         if (!allZero(IQQt.getCol(j))) {
-          A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
+          A = vpMatrix::juxtaposeMatrices(A, vpMatrix(IQQt.getCol(j)));
           if (A.qr(Q, R, false, false, tol) != A.getCols())
             A.resize(n, A.getCols() - 1, false);
         }
@@ -228,6 +227,10 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasible).
   \code
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -316,8 +319,11 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
                 & \text{s.t.}& x, y, z \geq 0\\
                 & \text{s.t.}& z \leq 6\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -518,8 +524,11 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
                & \text{s.t.}& 2x + 5y + 3z + s_2 = 15\\
                 & \text{s.t.}& x, y, z, s_1, s_2 \geq 0\end{array}\f$
   \code
-
   #include <visp3/core/vpLinProg.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

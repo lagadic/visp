@@ -55,7 +55,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Initialise the memory space requested for segment visual feature.
  */
-void vpFeatureSegment::init()
+  void vpFeatureSegment::init()
 {
   // feature dimension
   dim_s = 4;
@@ -142,6 +142,10 @@ vpFeatureSegment::vpFeatureSegment(bool normalized)
  * \code
  * #include <visp3/core/vpPoint.h>
  * #include <visp3/visual_features/vpFeatureSegment.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

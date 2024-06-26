@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@
  * frame to an other.
  */
 
-#ifndef _vpForceTwistMatrix_h_
-#define _vpForceTwistMatrix_h_
+#ifndef VP_FORCE_TWIST_MATRIX_H
+#define VP_FORCE_TWIST_MATRIX_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -76,27 +76,31 @@ BEGIN_VISP_NAMESPACE
   There are different ways to initialize such a full force/torque twist matrix. The following
   example shows how to proceed setting the translation and rotation matrix transformations:
   \code
-#include <visp3/core/vpForceTwistMatrix.h>
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  vpTranslationVector stp(0.1, 0.2, 0.3);
-  vpRotationMatrix sRp( {0,  0, -1,
-                         0, -1,  0,
-                        -1,  0,  0} );
-  vpForceTwistMatrix sFp(stp, sRp);
-  std::cout << "sFp:\n" << sFp << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpTranslationVector stp(0.1, 0.2, 0.3);
+    vpRotationMatrix sRp( {0,  0, -1,
+                          0, -1,  0,
+                          -1,  0,  0} );
+    vpForceTwistMatrix sFp(stp, sRp);
+    std::cout << "sFp:\n" << sFp << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-sFp:
-0  0  -1  0  0  0
-0  -1  0  0  0  0
--1  0  0  0  0  0
--0.2  0.3  0  0  0  -1
-0.1  0  -0.3  0  -1  0
-0  -0.1  0.2  -1  0  0
+  sFp:
+  0  0  -1  0  0  0
+  0  -1  0  0  0  0
+  -1  0  0  0  0  0
+  -0.2  0.3  0  0  0  -1
+  0.1  0  -0.3  0  -1  0
+  0  -0.1  0.2  -1  0  0
   \endcode
 
   When the point where the velocity is expressed doesn't change, the matrix
@@ -114,26 +118,30 @@ sFp:
   To initialize such a force/torque twist matrix where translation is not taken into account you
   can proceed like in the following code:
   \code
-#include <visp3/core/vpForceTwistMatrix.h>
+  #include <visp3/core/vpForceTwistMatrix.h>
 
-int main()
-{
-  vpRotationMatrix sRp( {0,  0, -1,
-                         0, -1,  0,
-                        -1,  0,  0} );
-  vpForceTwistMatrix sFp(sRp);
-  std::cout << "sFp:\n" << sFp << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix sRp( {0,  0, -1,
+                          0, -1,  0,
+                          -1,  0,  0} );
+    vpForceTwistMatrix sFp(sRp);
+    std::cout << "sFp:\n" << sFp << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-sFp:
-0  0  -1  0  0  0
-0  -1  0  0  0  0
--1  0  0  0  0  0
-0  0  0  0  0  -1
-0  0  0  0  -1  0
-0  0  0  -1  0  0
+  sFp:
+  0  0  -1  0  0  0
+  0  -1  0  0  0  0
+  -1  0  0  0  0  0
+  0  0  0  0  0  -1
+  0  0  0  0  -1  0
+  0  0  0  -1  0  0
   \endcode
 
   The code belows shows for example how to convert a force/torque skew
@@ -142,6 +150,10 @@ sFp:
   \code
   #include <visp3/core/vpColVector.h>
   #include <visp3/core/vpForceTwistMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -174,7 +186,7 @@ public:
   // copy constructor
   vpForceTwistMatrix(const vpForceTwistMatrix &F);
   // constructor from an homogeneous transformation
-  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
+  VP_EXPLICIT vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
 
   // Construction from Translation and rotation (matrix parameterization)
   vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
@@ -182,16 +194,16 @@ public:
   vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
-  explicit vpForceTwistMatrix(const vpRotationMatrix &R);
-  explicit vpForceTwistMatrix(const vpThetaUVector &thetau);
+  VP_EXPLICIT vpForceTwistMatrix(const vpRotationMatrix &R);
+  VP_EXPLICIT vpForceTwistMatrix(const vpThetaUVector &thetau);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vp_deprecated vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vp_deprecated vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
 
-  vp_deprecated vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
-  vp_deprecated vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
+  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
+  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
 #endif
   vpForceTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpForceTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
@@ -235,11 +247,11 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() { }
+  VP_DEPRECATED void init() { }
   /*!
      \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
+  VP_DEPRECATED void setIdentity();
   //@}
 #endif
 };

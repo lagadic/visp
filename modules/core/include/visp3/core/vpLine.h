@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief  class that defines what is a line
  */
 
-#ifndef _vpLine_H_
-#define _vpLine_H_
+#ifndef VP_LINE_H
+#define VP_LINE_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -104,20 +104,20 @@ class VISP_EXPORT vpLine : public vpForwardProjection
 public:
   vpLine();
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const vp_override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const VP_OVERRIDE;
+  void changeFrame(const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) vp_override;
+               unsigned int thickness = 1) VP_OVERRIDE;
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) VP_OVERRIDE;
 
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpLine *duplicate() const vp_override;
+  vpLine *duplicate() const VP_OVERRIDE;
 
 
   /*!
@@ -167,12 +167,12 @@ public:
 
   void setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2);
 
-  void setWorldCoordinates(const vpColVector &oP) vp_override;
-  void projection() vp_override;
-  void projection(const vpColVector &cP, vpColVector &p) const vp_override;
+  void setWorldCoordinates(const vpColVector &oP) VP_OVERRIDE;
+  void projection() VP_OVERRIDE;
+  void projection(const vpColVector &cP, vpColVector &p) const VP_OVERRIDE;
 
 protected:
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

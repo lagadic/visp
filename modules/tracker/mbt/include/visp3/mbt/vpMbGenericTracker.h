@@ -90,6 +90,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/mbt/vpMbGenericTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -212,20 +216,20 @@ public:
 
   vpMbGenericTracker();
   vpMbGenericTracker(unsigned int nbCameras, int trackerType = EDGE_TRACKER);
-  explicit vpMbGenericTracker(const std::vector<int> &trackerTypes);
+  VP_EXPLICIT vpMbGenericTracker(const std::vector<int> &trackerTypes);
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
-  virtual ~vpMbGenericTracker() vp_override;
+  virtual ~vpMbGenericTracker() VP_OVERRIDE;
 
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
-    const vpCameraParameters &_cam) vp_override;
+    const vpCameraParameters &_cam) VP_OVERRIDE;
   virtual double computeCurrentProjectionError(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &_cMo,
     const vpCameraParameters &_cam);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
   virtual void display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1,
@@ -247,7 +251,7 @@ public:
   virtual std::vector<std::string> getCameraNames() const;
 
   using vpMbTracker::getCameraParameters;
-  virtual void getCameraParameters(vpCameraParameters &camera) const vp_override;
+  virtual void getCameraParameters(vpCameraParameters &camera) const VP_OVERRIDE;
   virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const;
   virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const;
 
@@ -257,9 +261,9 @@ public:
   virtual void getClipping(unsigned int &clippingFlag1, unsigned int &clippingFlag2) const;
   virtual void getClipping(std::map<std::string, unsigned int> &mapOfClippingFlags) const;
 
-  virtual inline vpColVector getError() const vp_override { return m_error; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error; }
 
-  virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces() vp_override;
+  virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces() VP_OVERRIDE;
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces(const std::string &cameraName);
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
@@ -304,7 +308,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
     const vpHomogeneousMatrix &cMo,
     const vpCameraParameters &cam,
-    bool displayFullModel = false) vp_override;
+    bool displayFullModel = false) VP_OVERRIDE;
   virtual void getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
     const std::map<std::string, unsigned int> &mapOfwidths,
     const std::map<std::string, unsigned int> &mapOfheights,
@@ -341,30 +345,30 @@ public:
   virtual unsigned int getNbPoints(unsigned int level = 0) const;
   virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, unsigned int level = 0) const;
 
-  virtual unsigned int getNbPolygon() const vp_override;
+  virtual unsigned int getNbPolygon() const VP_OVERRIDE;
   virtual void getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const;
 
-  virtual vpMbtPolygon *getPolygon(unsigned int index) vp_override;
+  virtual vpMbtPolygon *getPolygon(unsigned int index) VP_OVERRIDE;
   virtual vpMbtPolygon *getPolygon(const std::string &cameraName, unsigned int index);
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-    getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false) vp_override;
+    getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false) VP_OVERRIDE;
   virtual void getPolygonFaces(std::map<std::string, std::vector<vpPolygon> > &mapOfPolygons,
     std::map<std::string, std::vector<std::vector<vpPoint> > > &mapOfPoints,
     bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
 
   using vpMbTracker::getPose;
-  virtual void getPose(vpHomogeneousMatrix &cMo) const vp_override;
+  virtual void getPose(vpHomogeneousMatrix &cMo) const VP_OVERRIDE;
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual std::string getReferenceCameraName() const;
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w; }
 
   virtual int getTrackerType() const;
 
-  virtual void init(const vpImage<unsigned char> &I) vp_override;
+  virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
 #ifdef VISP_HAVE_MODULE_GUI
   using vpMbTracker::initClick;
@@ -399,7 +403,7 @@ public:
     const std::map<std::string, std::string> &mapOfInitPoints);
 
   using vpMbTracker::initFromPose;
-  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo) vp_override;
+  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   virtual void initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const std::string &initFile1, const std::string &initFile2);
   virtual void initFromPose(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
@@ -420,7 +424,7 @@ public:
   virtual void initFromPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose = true);
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose = true);
 
@@ -429,7 +433,7 @@ public:
 #endif
 
   virtual void loadModel(const std::string &modelFile, bool verbose = false,
-    const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) vp_override;
+    const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) VP_OVERRIDE;
   virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
     const vpHomogeneousMatrix &T1 = vpHomogeneousMatrix(),
     const vpHomogeneousMatrix &T2 = vpHomogeneousMatrix());
@@ -465,17 +469,17 @@ public:
       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses, bool verbose = false,
       const std::map<std::string, vpHomogeneousMatrix> &mapOfT = std::map<std::string, vpHomogeneousMatrix>());
 
-  virtual void resetTracker() vp_override;
+  virtual void resetTracker() VP_OVERRIDE;
 
-  virtual void setAngleAppear(const double &a) vp_override;
+  virtual void setAngleAppear(const double &a) VP_OVERRIDE;
   virtual void setAngleAppear(const double &a1, const double &a2);
   virtual void setAngleAppear(const std::map<std::string, double> &mapOfAngles);
 
-  virtual void setAngleDisappear(const double &a) vp_override;
+  virtual void setAngleDisappear(const double &a) VP_OVERRIDE;
   virtual void setAngleDisappear(const double &a1, const double &a2);
   virtual void setAngleDisappear(const std::map<std::string, double> &mapOfAngles);
 
-  virtual void setCameraParameters(const vpCameraParameters &camera) vp_override;
+  virtual void setCameraParameters(const vpCameraParameters &camera) VP_OVERRIDE;
   virtual void setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2);
   virtual void setCameraParameters(const std::map<std::string, vpCameraParameters> &mapOfCameraParameters);
 
@@ -484,7 +488,7 @@ public:
   virtual void
     setCameraTransformationMatrix(const std::map<std::string, vpHomogeneousMatrix> &mapOfTransformationMatrix);
 
-  virtual void setClipping(const unsigned int &flags) vp_override;
+  virtual void setClipping(const unsigned int &flags) VP_OVERRIDE;
   virtual void setClipping(const unsigned int &flags1, const unsigned int &flags2);
   virtual void setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags);
 
@@ -501,9 +505,9 @@ public:
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
   virtual void setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY);
 
-  virtual void setDisplayFeatures(bool displayF) vp_override;
+  virtual void setDisplayFeatures(bool displayF) VP_OVERRIDE;
 
-  virtual void setFarClippingDistance(const double &dist) vp_override;
+  virtual void setFarClippingDistance(const double &dist) VP_OVERRIDE;
   virtual void setFarClippingDistance(const double &dist1, const double &dist2);
   virtual void setFarClippingDistance(const std::map<std::string, double> &mapOfClippingDists);
 
@@ -528,28 +532,28 @@ public:
   virtual void setKltThresholdAcceptation(double th);
 #endif
 
-  virtual void setLod(bool useLod, const std::string &name = "") vp_override;
+  virtual void setLod(bool useLod, const std::string &name = "") VP_OVERRIDE;
 
-  virtual void setMask(const vpImage<bool> &mask) vp_override;
+  virtual void setMask(const vpImage<bool> &mask) VP_OVERRIDE;
 
-  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "") vp_override;
-  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "") vp_override;
+  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "") VP_OVERRIDE;
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "") VP_OVERRIDE;
 
   virtual void setMovingEdge(const vpMe &me);
   virtual void setMovingEdge(const vpMe &me1, const vpMe &me2);
   virtual void setMovingEdge(const std::map<std::string, vpMe> &mapOfMe);
 
-  virtual void setNearClippingDistance(const double &dist) vp_override;
+  virtual void setNearClippingDistance(const double &dist) VP_OVERRIDE;
   virtual void setNearClippingDistance(const double &dist1, const double &dist2);
   virtual void setNearClippingDistance(const std::map<std::string, double> &mapOfDists);
 
-  virtual void setOgreShowConfigDialog(bool showConfigDialog) vp_override;
-  virtual void setOgreVisibilityTest(const bool &v) vp_override;
+  virtual void setOgreShowConfigDialog(bool showConfigDialog) VP_OVERRIDE;
+  virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE;
 
-  virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt) vp_override;
+  virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt) VP_OVERRIDE;
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo);
@@ -561,15 +565,15 @@ public:
   virtual void setPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void setProjectionErrorComputation(const bool &flag) vp_override;
+  virtual void setProjectionErrorComputation(const bool &flag) VP_OVERRIDE;
 
-  virtual void setProjectionErrorDisplay(bool display) vp_override;
-  virtual void setProjectionErrorDisplayArrowLength(unsigned int length) vp_override;
-  virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness) vp_override;
+  virtual void setProjectionErrorDisplay(bool display) VP_OVERRIDE;
+  virtual void setProjectionErrorDisplayArrowLength(unsigned int length) VP_OVERRIDE;
+  virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness) VP_OVERRIDE;
 
   virtual void setReferenceCameraName(const std::string &referenceCameraName);
 
-  virtual void setScanLineVisibilityTest(const bool &v) vp_override;
+  virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE;
 
   virtual void setTrackerType(int type);
   virtual void setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes);
@@ -581,10 +585,10 @@ public:
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 #endif
 
-  virtual void testTracking() vp_override;
+  virtual void testTracking() VP_OVERRIDE;
 
-  virtual void track(const vpImage<unsigned char> &I) vp_override;
-  virtual void track(const vpImage<vpRGBa> &I_color) vp_override;
+  virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
 
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2);
@@ -622,23 +626,23 @@ protected:
 
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
-  virtual void computeVVSInit() vp_override;
+  virtual void computeVVSInit() VP_OVERRIDE;
   virtual void computeVVSInit(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
-  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
+  virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE;
   virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
     std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
   using vpMbTracker::computeVVSWeights;
   virtual void computeVVSWeights();
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-    const std::string &name = "") vp_override;
+    const std::string &name = "") VP_OVERRIDE;
 
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-    const std::string &name = "") vp_override;
+    const std::string &name = "") VP_OVERRIDE;
 
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE;
 
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
 
   virtual void loadConfigFileXML(const std::string &configFile, bool verbose = true);
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -687,60 +691,60 @@ private:
     TrackerWrapper();
     explicit TrackerWrapper(int trackerType);
 
-    virtual inline vpColVector getError() const vp_override { return m_error; }
+    virtual inline vpColVector getError() const VP_OVERRIDE { return m_error; }
 
-    virtual inline vpColVector getRobustWeights() const vp_override { return m_w; }
+    virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w; }
 
     virtual inline int getTrackerType() const { return m_trackerType; }
 
     virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
     virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
     virtual std::vector<std::vector<double> > getFeaturesForDisplay();
 
     virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
       const vpHomogeneousMatrix &cMo,
       const vpCameraParameters &cam,
-      bool displayFullModel = false) vp_override;
+      bool displayFullModel = false) VP_OVERRIDE;
 
-    virtual void init(const vpImage<unsigned char> &I) vp_override;
+    virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
-    virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
+    virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
       const vpHomogeneousMatrix &cMo, bool verbose = false,
-      const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) vp_override;
+      const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) VP_OVERRIDE;
     virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
       const vpHomogeneousMatrix &cMo, bool verbose = false,
       const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
 
-    virtual void resetTracker() vp_override;
+    virtual void resetTracker() VP_OVERRIDE;
 
-    virtual void setCameraParameters(const vpCameraParameters &camera) vp_override;
+    virtual void setCameraParameters(const vpCameraParameters &camera) VP_OVERRIDE;
 
-    virtual void setClipping(const unsigned int &flags) vp_override;
+    virtual void setClipping(const unsigned int &flags) VP_OVERRIDE;
 
-    virtual void setFarClippingDistance(const double &dist) vp_override;
+    virtual void setFarClippingDistance(const double &dist) VP_OVERRIDE;
 
-    virtual void setNearClippingDistance(const double &dist) vp_override;
+    virtual void setNearClippingDistance(const double &dist) VP_OVERRIDE;
 
-    virtual void setOgreVisibilityTest(const bool &v) vp_override;
+    virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE;
 
-    virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
-    virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
+    virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
+    virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 
-    virtual void setProjectionErrorComputation(const bool &flag) vp_override;
+    virtual void setProjectionErrorComputation(const bool &flag) VP_OVERRIDE;
 
-    virtual void setScanLineVisibilityTest(const bool &v) vp_override;
+    virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE;
 
     virtual void setTrackerType(int type);
 
-    virtual void testTracking() vp_override;
+    virtual void testTracking() VP_OVERRIDE;
 
-    virtual void track(const vpImage<unsigned char> &I) vp_override;
-    virtual void track(const vpImage<vpRGBa> &I_color) vp_override;
+    virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
+    virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
     // Fix error: using declaration ‘using vpMbDepthDenseTracker::setPose’ conflicts with a previous
     // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
@@ -755,22 +759,22 @@ private:
 
   protected:
     virtual void computeVVS(const vpImage<unsigned char> *const ptr_I);
-    virtual void computeVVSInit() vp_override;
+    virtual void computeVVSInit() VP_OVERRIDE;
     virtual void computeVVSInit(const vpImage<unsigned char> *const ptr_I);
-    virtual void computeVVSInteractionMatrixAndResidu() vp_override;
+    virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE;
     using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;
     virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> *const ptr_I);
     using vpMbTracker::computeVVSWeights;
-    virtual void computeVVSWeights() vp_override;
+    virtual void computeVVSWeights() VP_OVERRIDE;
 
     virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-      const std::string &name = "") vp_override;
+      const std::string &name = "") VP_OVERRIDE;
 
     virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-      const std::string &name = "") vp_override;
+      const std::string &name = "") VP_OVERRIDE;
 
-    virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
-    virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
+    virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE;
+    virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
 
     virtual void initMbtTracking(const vpImage<unsigned char> *const ptr_I);
 
@@ -803,7 +807,7 @@ private:
 #endif
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
-      const vpHomogeneousMatrix &cdMo) vp_override;
+      const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 #else
     virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
       const vpHomogeneousMatrix &cdMo);

@@ -40,6 +40,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 /*
  * Interface with libdc1394 2.x
@@ -98,6 +99,10 @@ const char *vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM] = {
   \code
   #include <visp3/core/vpImage.h>
   #include <visp3/sensor/vp1394TwoGrabber.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -175,101 +180,113 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
   Here an example of single capture from the last camera found on the bus:
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  unsigned int ncameras; // Number of cameras on the bus
-  vpImage<unsigned char> I;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vp1394TwoGrabber g;
-  ncameras = g.getNumCameras();
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    unsigned int ncameras; // Number of cameras on the bus
+    vpImage<unsigned char> I;
 
-  int last = 0;
-  if (ncameras > 1)
-    last = ncameras-1;
+    vp1394TwoGrabber g;
+    ncameras = g.getNumCameras();
 
-  g.setCamera(last); // To dial with the last camera on the bus
-  while(1)
-    g.acquire(I);// I contains the frame captured by the last camera on the bus
-#endif
-}
+    int last = 0;
+    if (ncameras > 1)
+      last = ncameras-1;
+
+    g.setCamera(last); // To dial with the last camera on the bus
+    while(1)
+      g.acquire(I);// I contains the frame captured by the last camera on the bus
+  #endif
+  }
   \endcode
 
   If more than one camera is connected, it is also possible to select a
-specific camera by its GUID:
-\code
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  specific camera by its GUID:
+  \code
+  #include <visp3/core/vpImage.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I; // Create a gray level image container
-  bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  unsigned int ncameras; // Number of cameras on the bus
-  ncameras = g.getNumCameras();
-  std::cout << ncameras << " cameras found:" << std::endl;
-
-  for(int i=0; i< ncameras; i++)
+  int main()
   {
-    g.setCamera(i);
-    uint64_t guid = g.getGuid();
-    printf("camera %d with guid 0x%lx\n", i, guid);
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I; // Create a gray level image container
+    bool reset = false; // Disable bus reset during construction
+    vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+
+    unsigned int ncameras; // Number of cameras on the bus
+    ncameras = g.getNumCameras();
+    std::cout << ncameras << " cameras found:" << std::endl;
+
+    for(int i=0; i< ncameras; i++)
+    {
+      g.setCamera(i);
+      uint64_t guid = g.getGuid();
+      printf("camera %d with guid 0x%lx\n", i, guid);
+    }
+
+    // produce:
+    // 2 cameras found:
+    // camera 0 with guid 0xb09d01009b329c
+    // camera 1 with guid 0xb09d01007e0ee7
+
+    g.setCamera( 0xb09d01009b329c );
+
+    printf("Use camera with GUID: 0x%lx\n", g.getGuid());
+    g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
+
+    vpImageIo::write(I, "image.pgm"); // Write image on the disk
+  #endif
   }
-
-  // produce:
-  // 2 cameras found:
-  // camera 0 with guid 0xb09d01009b329c
-  // camera 1 with guid 0xb09d01007e0ee7
-
-  g.setCamera( 0xb09d01009b329c );
-
-  printf("Use camera with GUID: 0x%lx\n", g.getGuid());
-  g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
-
-  vpImageIo::write(I, "image.pgm"); // Write image on the disk
-#endif
-}
   \endcode
 
   Here an example of multi camera capture:
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  unsigned int ncameras; // Number of cameras on the bus
-  vp1394TwoGrabber g;
-  ncameras = g.getNumCameras();
-  vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
-  g.setCamera(0);
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    unsigned int ncameras; // Number of cameras on the bus
+    vp1394TwoGrabber g;
+    ncameras = g.getNumCameras();
+    vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
 
-  if (ncameras >= 2) {
-    // If the second camera support 30 fps acquisition
-    g.setCamera(1);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-  }
+    // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
+    g.setCamera(0);
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
 
-  while(1) {
-    for (unsigned int camera=0; camera < ncameras; camera ++) {
-      g.setCamera(camera);
-      g.acquire(I[camera]);
+    if (ncameras >= 2) {
+      // If the second camera support 30 fps acquisition
+      g.setCamera(1);
+      g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
     }
+
+    while(1) {
+      for (unsigned int camera=0; camera < ncameras; camera ++) {
+        g.setCamera(camera);
+        g.acquire(I[camera]);
+      }
+    }
+    delete [] I;
+  #endif
   }
-  delete [] I;
-#endif
-}
   \endcode
 
   \sa setFormat(), setVideoMode(), setFramerate(), getNumCameras()
@@ -421,22 +438,26 @@ to the new video capture mode.
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \sa getVideoMode(), getVideoModeSupported(), setCamera()
@@ -918,22 +939,26 @@ bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode, vp1394T
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \sa getColorCoding(), getColorCodingSupported() , setCamera()
@@ -1279,22 +1304,22 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top, unsign
 
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
-    }
   }
-  /*!
+}
+/*!
 
-    Open ohci and asign handle to it and get the camera nodes and
-    describe them as we find them.
+  Open ohci and asign handle to it and get the camera nodes and
+  describe them as we find them.
 
-    \param reset : If "true", reset the bus attached to the first
-    camera found. Bus reset may help to make firewire working if the
-    program was not properly stopped by a CTRL-C.
+  \param reset : If "true", reset the bus attached to the first
+  camera found. Bus reset may help to make firewire working if the
+  program was not properly stopped by a CTRL-C.
 
-    \exception initializationError : If a raw1394 handle can't be aquired,
-    or if no camera is found.
+  \exception initializationError : If a raw1394 handle can't be aquired,
+  or if no camera is found.
 
-    \sa close()
-   */
+  \sa close()
+ */
 void vp1394TwoGrabber::initialize(bool reset)
 {
   if (init == false) {
@@ -1360,7 +1385,7 @@ void vp1394TwoGrabber::initialize(bool reset)
                     "`ohci1394' are loaded \n"
                     "  - if you have read/write access to /dev/raw1394\n\n");
       throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Unable to look for cameras"));
-  }
+    }
 #endif
 
     if (num_cameras == 0) {
@@ -1398,7 +1423,7 @@ void vp1394TwoGrabber::initialize(bool reset)
     }
 
     init = true;
-}
+  }
 }
 /*!
 
@@ -1430,23 +1455,23 @@ void vp1394TwoGrabber::open()
         else {
           if (status == DC1394_ON) {
             vpTRACE("ISO transmission refuses to stop");
-        }
+          }
 #ifdef VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
           // No yet in the new API
           cameras[camera_id]->is_iso_on = status;
 #endif
+        }
+        //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
+        // libdc1394-2.0.0-rc7
       }
-      //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-      // libdc1394-2.0.0-rc7
+      //#endif
     }
-    //#endif
-  }
     setCamera(camera_id);
     // setIsoSpeed(DC1394_ISO_SPEED_400);
     setCapture(DC1394_ON);
     setTransmission(DC1394_ON);
     camIsOpen[camera_id] = true;
-}
+  }
 }
 /*!
 
@@ -1496,8 +1521,8 @@ void vp1394TwoGrabber::close()
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
         dc1394_free_camera(cameras[i]);
 #endif
-        }
       }
+    }
     if (camIsOpen != nullptr) {
       delete[] camIsOpen;
       camIsOpen = nullptr;
@@ -1538,21 +1563,21 @@ void vp1394TwoGrabber::close()
     }
 
     init = false;
-    }
-    }
+  }
+}
 
-    /*!
+/*!
 
-      Set the ring buffer size used for the capture.
-      To know the current ring buffer size see getRingBufferSize().
+  Set the ring buffer size used for the capture.
+  To know the current ring buffer size see getRingBufferSize().
 
-      \param size : Ring buffer size.
+  \param size : Ring buffer size.
 
-      \exception vpFrameGrabberException::settingError : If ring buffer size is
-      not valid.
+  \exception vpFrameGrabberException::settingError : If ring buffer size is
+  not valid.
 
-      \sa getRingBufferSize()
-    */
+  \sa getRingBufferSize()
+*/
 void vp1394TwoGrabber::setRingBufferSize(unsigned int size)
 {
   if (size < 1) {
@@ -1596,22 +1621,26 @@ the shutter as manual.
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(); // Enable auto shutter
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(); // Enable auto shutter
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \exception vpFrameGrabberException::settingError : If we can't set
@@ -1663,22 +1692,26 @@ void vp1394TwoGrabber::setAutoShutter(bool enable)
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \exception vpFrameGrabberException::settingError : If we can't set
@@ -1741,22 +1774,26 @@ void vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxv
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoGain(true); // Enable auto gain
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoGain(true); // Enable auto gain
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \exception vpFrameGrabberException::settingError : If we can't set
@@ -1808,22 +1845,26 @@ void vp1394TwoGrabber::setAutoGain(bool enable)
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoGain(1600*20-1, 1600*20); // Set gain min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoGain(1600*20-1, 1600*20); // Set gain min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 
   \exception vpFrameGrabberException::settingError : If we can't set
@@ -1989,22 +2030,26 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
   Below you will find an example that shows how to grab images in
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g(false); // Don't reset the bus
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
-  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
-  while(1)
-    g.acquire(I);
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g(false); // Don't reset the bus
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+    g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+    g.setAutoShutter(1600*20-1, 1600*20); // Set shutter min and max values
+    g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+    while(1)
+      g.acquire(I);
+  #endif
+  }
   \endcode
 */
 void vp1394TwoGrabber::setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed)
@@ -2092,7 +2137,7 @@ void vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \return Pointer to the libdc1394-2.x image data structure.
@@ -2105,24 +2150,28 @@ void vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vp1394TwoGrabber g;
-  dc1394video_frame_t *frame;
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-  while(1) {
-    frame = g.dequeue();
-    // Current image is now in frame structure
-    // Do your stuff
-    g.enqueue(frame);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vp1394TwoGrabber g;
+    dc1394video_frame_t *frame;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+    while(1) {
+      frame = g.dequeue();
+      // Current image is now in frame structure
+      // Do your stuff
+      g.enqueue(frame);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \sa enqueue()
@@ -2147,7 +2196,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (8 bits image).
@@ -2162,25 +2211,29 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
-  dc1394video_frame_t *frame;
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-  while(1) {
-    frame = g.dequeue(I);
-    // Current image is now in frame structure and in I
-    // Do your stuff
-    g.enqueue(frame);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
+    dc1394video_frame_t *frame;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+    while(1) {
+      frame = g.dequeue(I);
+      // Current image is now in frame structure and in I
+      // Do your stuff
+      g.enqueue(frame);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \sa enqueue()
@@ -2199,7 +2252,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (8 bits image).
@@ -2219,27 +2272,31 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
-  dc1394video_frame_t *frame;
-  uint64_t timestamp_us; // timestamp in us
-  uint32_t id;
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-  while(1) {
-    frame = g.dequeue(I, timestamp_us, id); // get the last image
-    // Current image is now in frame structure and in I
-    // Do your stuff
-    g.enqueue(frame);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
+    dc1394video_frame_t *frame;
+    uint64_t timestamp_us; // timestamp in us
+    uint32_t id;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+    while(1) {
+      frame = g.dequeue(I, timestamp_us, id); // get the last image
+      // Current image is now in frame structure and in I
+      // Do your stuff
+      g.enqueue(frame);
+    }
+  #endif
   }
-#endif
-}
  \endcode
 
   \sa enqueue()
@@ -2303,7 +2360,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I, uint64
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (32 bits RGBa image).
@@ -2317,25 +2374,29 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I, uint64
   dequeue() ensure to get the last image, while the enqueue() frees
   the ring buffer to be sure that the next image is the last one.
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<vpRGBa> I;
-  vp1394TwoGrabber g;
-  dc1394video_frame_t *frame;
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-  while(1) {
-    frame = g.dequeue(I);
-    // Current image is now in frame structure and in I
-    // Do your stuff
-    g.enqueue(frame);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<vpRGBa> I;
+    vp1394TwoGrabber g;
+    dc1394video_frame_t *frame;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+    while(1) {
+      frame = g.dequeue(I);
+      // Current image is now in frame structure and in I
+      // Do your stuff
+      g.enqueue(frame);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \sa enqueue()
@@ -2354,7 +2415,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
 
 /*!
 
-  Get an image from the active camera frame buffer. This buffer neads to be
+  Get an image from the active camera frame buffer. This buffer needs to be
   released by enqueue().
 
   \param I : Image data structure (32 bits RGBa image).
@@ -2374,27 +2435,31 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<vpRGBa> I;
-  vp1394TwoGrabber g;
-  dc1394video_frame_t *frame;
-  uint64_t timestamp_us; // timestamp in us
-  uint32_t id;
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-  while(1) {
-    frame = g.dequeue(I, timestamp_us, id); // get the last image
-    // Current image is now in frame structure and in I
-    // Do your stuff
-    g.enqueue(frame);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    vpImage<vpRGBa> I;
+    vp1394TwoGrabber g;
+    dc1394video_frame_t *frame;
+    uint64_t timestamp_us; // timestamp in us
+    uint32_t id;
+    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+    while(1) {
+      frame = g.dequeue(I, timestamp_us, id); // get the last image
+      // Current image is now in frame structure and in I
+      // Do your stuff
+      g.enqueue(frame);
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \sa enqueue()
@@ -2768,22 +2833,22 @@ void vp1394TwoGrabber::printCameraInfo()
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     dc1394_print_feature_set(&features);
 #endif
-}
-  std::cout << "----------------------------------------------------------" << std::endl;
   }
+  std::cout << "----------------------------------------------------------" << std::endl;
+}
 
-  /*!
+/*!
 
-    Converts the video mode identifier into a string containing the description
-    of the mode.
+  Converts the video mode identifier into a string containing the description
+  of the mode.
 
-    \param videomode : The camera capture video mode.
+  \param videomode : The camera capture video mode.
 
-    \return A string describing the mode, an empty string if the mode is not
-    supported.
+  \return A string describing the mode, an empty string if the mode is not
+  supported.
 
-    \sa string2videoMode()
-  */
+  \sa string2videoMode()
+*/
 std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
 {
   std::string _str = "";
@@ -2952,29 +3017,33 @@ vp1394TwoGrabber::vp1394TwoColorCodingType vp1394TwoGrabber::string2colorCoding(
 
 /*!
   Resets the IEEE1394 bus which camera is attached to.  Calling this function
-is "rude" to other devices because it causes them to re-enumerate on the bus
-and may cause a temporary disruption in their current activities.  Thus, use
-it sparingly.  Its primary use is if a program shuts down uncleanly and needs
-to free leftover ISO channels or bandwidth.  A bus reset will free those
-things as a side effect.
+  is "rude" to other devices because it causes them to re-enumerate on the bus
+  and may cause a temporary disruption in their current activities.  Thus, use
+  it sparingly.  Its primary use is if a program shuts down uncleanly and needs
+  to free leftover ISO channels or bandwidth.  A bus reset will free those
+  things as a side effect.
 
   The example below shows how to reset the bus attached to the last
   camera found.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  unsigned int ncameras; // Number of cameras on the bus
-  vp1394TwoGrabber g;
-  ncameras = g.getNumCameras();
-  g.setCamera(ncameras-1); // To dial with the last camera on the bus
-  g.resetBus(); // Reset the bus attached to "ncameras-1"
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394)
+    unsigned int ncameras; // Number of cameras on the bus
+    vp1394TwoGrabber g;
+    ncameras = g.getNumCameras();
+    g.setCamera(ncameras-1); // To dial with the last camera on the bus
+    g.resetBus(); // Reset the bus attached to "ncameras-1"
+  #endif
+  }
   \endcode
 
   \exception vpFrameGrabberException::initializationError : If no
@@ -3359,19 +3428,23 @@ inline void vp1394TwoGrabber::updateDataStructToCam()
 
 /*!
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   \code
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  \code
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
-  g >> I;
-}
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
+    g >> I;
+  }
+  \endcode
  */
 vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<unsigned char> &I)
 {
@@ -3380,20 +3453,23 @@ vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<unsigned char> &I)
 }
 
 /*!
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
+  \code
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-   \code
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vp1394TwoGrabber g;
-  g >> I;
-}
-   \endcode
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vp1394TwoGrabber g;
+    g >> I;
+  }
+  \endcode
  */
 vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<vpRGBa> &I)
 {

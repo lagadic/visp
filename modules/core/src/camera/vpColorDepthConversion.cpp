@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,19 +200,21 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && (curr_pixel != end_pixel);
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const auto depth = depth_scale * data[static_cast<int>((curr_pixel.get_v() * depth_width) + curr_pixel.get_u())];
+    bool stop_for_loop = false;
     if (std::fabs(depth) <= std::numeric_limits<double>::epsilon()) {
-      continue;
+      stop_for_loop = true;
     }
+    if (!stop_for_loop) {
+      const auto point = deproject(depth_intrinsics, curr_pixel, depth);
+      const auto transformed_point = transform(color_M_depth, point);
+      const auto projected_pixel = project(color_intrinsics, transformed_point);
 
-    const auto point = deproject(depth_intrinsics, curr_pixel, depth);
-    const auto transformed_point = transform(color_M_depth, point);
-    const auto projected_pixel = project(color_intrinsics, transformed_point);
-
-    const auto new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
-      vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
-    if ((new_dist < min_dist) || (min_dist < 0)) {
-      min_dist = new_dist;
-      depth_pixel = curr_pixel;
+      const auto new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
+        vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
+      if ((new_dist < min_dist) || (min_dist < 0)) {
+        min_dist = new_dist;
+        depth_pixel = curr_pixel;
+      }
     }
   }
 
@@ -236,18 +238,22 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   for (vpImagePoint curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
-    if (std::fabs(depth) <= std::numeric_limits<double>::epsilon())
-      continue;
 
-    const vpColVector point = deproject(depth_intrinsics, curr_pixel, depth);
-    const vpColVector transformed_point = transform(color_M_depth, point);
-    const vpImagePoint projected_pixel = project(color_intrinsics, transformed_point);
+    bool stop_for_loop = false;
+    if (std::fabs(depth) <= std::numeric_limits<double>::epsilon()) {
+      stop_for_loop = true;
+    }
+    if (!stop_for_loop) {
+      const vpColVector point = deproject(depth_intrinsics, curr_pixel, depth);
+      const vpColVector transformed_point = transform(color_M_depth, point);
+      const vpImagePoint projected_pixel = project(color_intrinsics, transformed_point);
 
-    const double new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
-      vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
-    if (new_dist < min_dist || min_dist < 0) {
-      min_dist = new_dist;
-      depth_pixel = curr_pixel;
+      const double new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
+        vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
+      if (new_dist < min_dist || min_dist < 0) {
+        min_dist = new_dist;
+        depth_pixel = curr_pixel;
+      }
     }
   }
 #endif

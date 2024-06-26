@@ -216,11 +216,11 @@ public: /* Constantes */
   static const double defaultPositioningVelocity; // = 20.0;
 
 public: /* Methode publiques */
-  explicit vpRobotAfma4(bool verbose = true);
+  VP_EXPLICIT vpRobotAfma4(bool verbose = true);
   virtual ~vpRobotAfma4(void);
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) VP_OVERRIDE;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
 
   double getPositioningVelocity(void);
@@ -237,8 +237,8 @@ public: /* Methode publiques */
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_cVf(vpVelocityTwistMatrix &cVf) const;
-  void get_eJe(vpMatrix &eJe) vp_override;
-  void get_fJe(vpMatrix &fJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void init(void);
 
@@ -251,7 +251,7 @@ public: /* Methode publiques */
   static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, const double q1, const double q2, const double q4,
                    const double q5);
   void setPosition(const char *filename);
@@ -263,7 +263,7 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 };

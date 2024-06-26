@@ -49,7 +49,7 @@ public:
 
 
   virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-                         const vpColor &color = vpColor::green, unsigned int thickness = 1) const vp_override
+                         const vpColor &color = vpColor::green, unsigned int thickness = 1) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -59,7 +59,7 @@ public:
     );
   }
   virtual void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-                       unsigned int thickness = 1) const vp_override
+                       unsigned int thickness = 1) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -69,7 +69,7 @@ public:
     );
   }
 
-  virtual void init() vp_override
+  virtual void init() VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -78,7 +78,7 @@ public:
       );
   }
 
-  virtual vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override
+  virtual vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       vpColVector,           /* Return type */
@@ -90,7 +90,7 @@ public:
   }
 
 
-  virtual vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override
+  virtual vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       vpMatrix,           /* Return type */
@@ -99,7 +99,7 @@ public:
       select              /* Argument(s) */
     );
   }
-  virtual void print(unsigned int select = FEATURE_ALL) const vp_override
+  virtual void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
@@ -109,7 +109,7 @@ public:
     );
   }
 
-  virtual vpBasicFeature *duplicate() const vp_override
+  virtual vpBasicFeature *duplicate() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       vpBasicFeature *,           /* Return type */

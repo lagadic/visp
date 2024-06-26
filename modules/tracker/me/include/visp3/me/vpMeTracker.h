@@ -36,8 +36,8 @@
  * \brief Contains abstract elements for a Distance to Feature type feature.
  */
 
-#ifndef _vpMeTracker_h_
-#define _vpMeTracker_h_
+#ifndef VP_ME_TRACKER_H
+#define VP_ME_TRACKER_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpTracker.h>
@@ -74,7 +74,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker() vp_override;
+  virtual ~vpMeTracker() VP_OVERRIDE;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
@@ -296,7 +296,7 @@ public:
    * \param i : Pixel coordinate along the rows.
    * \param j : Pixel coordinate along the columns.
    */
-  vp_deprecated static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
+  VP_DEPRECATED static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
   {
     return inRoiMask(mask, i, j);
   }

@@ -80,7 +80,7 @@ protected:
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
 
 public:
-  explicit vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp);
 
   void setGain(double _gain) { gain = _gain; }
 };

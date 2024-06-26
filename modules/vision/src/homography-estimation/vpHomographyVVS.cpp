@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,12 +51,13 @@ const double vpHomography::m_threshold_displacement = 1e-18;
 static void updatePoseRotation(vpColVector &dx, vpHomogeneousMatrix &mati)
 {
   vpRotationMatrix rd;
+  const unsigned int val_3 = 3;
 
   double s = sqrt((dx[0] * dx[0]) + (dx[1] * dx[1]) + (dx[2] * dx[2]));
   if (s > 1.e-25) {
     double u[3];
 
-    for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       u[i] = dx[i] / s;
     }
     double sinu = sin(s);
@@ -73,8 +74,8 @@ static void updatePoseRotation(vpColVector &dx, vpHomogeneousMatrix &mati)
     rd[2][2] = cosi + (mcosi * u[2] * u[2]);
   }
   else {
-    for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         rd[i][j] = 0.0;
       }
       rd[i][i] = 1.0;
@@ -106,6 +107,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   bool only_1 = false;
   bool only_2 = false;
   int iter = 0;
+  const unsigned int val_3 = 3;
 
   unsigned int n = 0;
   for (unsigned int i = 0; i < nbpoint; ++i) {
@@ -135,8 +137,8 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
     // compute current position
 
     // Change frame (current)
-    for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         c2Rc1[i][j] = c2Mc1[i][j];
       }
     }
@@ -250,7 +252,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
     vpColVector c2rc1, v(6);
 
     c2rc1 = -2 * Lp * W * e;
-    for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       v[i + 3] = c2rc1[i];
     }
 

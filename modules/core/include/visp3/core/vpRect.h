@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Defines a rectangle in the plane.
  */
 
-#ifndef _vpRect_h_
-#define _vpRect_h_
+#ifndef VP_RECT_H
+#define VP_RECT_H
 
 #include <algorithm>
 #include <cassert>
@@ -83,7 +83,7 @@ public:
   vpRect(const vpImagePoint &topLeft, double width, double height);
   vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight);
   vpRect(const vpRect &r);
-  explicit vpRect(const std::vector<vpImagePoint> &ip);
+  VP_EXPLICIT vpRect(const std::vector<vpImagePoint> &ip);
 
   /*!
     Returns the area of the rectangle.
@@ -389,8 +389,9 @@ public:
   */
   inline void moveCenter(double x, double y)
   {
-    this->left = (x - (this->width / 2)) + 0.5;
-    this->top = (y - (this->height / 2)) + 0.5;
+    const unsigned int magic_2 = 2;
+    this->left = (x - (this->width / magic_2)) + 0.5;
+    this->top = (y - (this->height / magic_2)) + 0.5;
   }
 
   /*!
@@ -401,8 +402,9 @@ public:
   */
   inline void moveCenter(const vpImagePoint &center)
   {
-    this->left = (center.get_u() - (this->width / 2)) + 0.5;
-    this->top = (center.get_v() - (this->height / 2)) + 0.5;
+    const unsigned int magic_2 = 2;
+    this->left = (center.get_u() - (this->width / magic_2)) + 0.5;
+    this->top = (center.get_v() - (this->height / magic_2)) + 0.5;
   }
 
 private:

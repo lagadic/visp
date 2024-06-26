@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -489,20 +488,23 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
 {
   double lon = vpMath::rad(lonDeg);
   double lat = vpMath::rad(latDeg);
-
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   vpHomogeneousMatrix ecef_M_ned;
-  ecef_M_ned[0][0] = -sin(lat) * cos(lon);
-  ecef_M_ned[0][1] = -sin(lon);
-  ecef_M_ned[0][2] = -cos(lat) * cos(lon);
-  ecef_M_ned[0][3] = radius * cos(lon) * cos(lat);
-  ecef_M_ned[1][0] = -sin(lat) * sin(lon);
-  ecef_M_ned[1][1] = cos(lon);
-  ecef_M_ned[1][2] = -cos(lat) * sin(lon);
-  ecef_M_ned[1][3] = radius * sin(lon) * cos(lat);
-  ecef_M_ned[2][0] = cos(lat);
-  ecef_M_ned[2][1] = 0;
-  ecef_M_ned[2][2] = -sin(lat);
-  ecef_M_ned[2][3] = radius * sin(lat);
+  ecef_M_ned[index_0][index_0] = -sin(lat) * cos(lon);
+  ecef_M_ned[index_0][index_1] = -sin(lon);
+  ecef_M_ned[index_0][index_2] = -cos(lat) * cos(lon);
+  ecef_M_ned[index_0][index_3] = radius * cos(lon) * cos(lat);
+  ecef_M_ned[index_1][index_0] = -sin(lat) * sin(lon);
+  ecef_M_ned[index_1][index_1] = cos(lon);
+  ecef_M_ned[index_1][index_2] = -cos(lat) * sin(lon);
+  ecef_M_ned[index_1][index_3] = radius * sin(lon) * cos(lat);
+  ecef_M_ned[index_2][index_0] = cos(lat);
+  ecef_M_ned[index_2][index_1] = 0;
+  ecef_M_ned[index_2][index_2] = -sin(lat);
+  ecef_M_ned[index_2][index_3] = radius * sin(lat);
 
   return ecef_M_ned;
 }
@@ -550,20 +552,24 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
 {
   double lon = vpMath::rad(lonDeg);
   double lat = vpMath::rad(latDeg);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
   vpHomogeneousMatrix ecef_M_enu;
-  ecef_M_enu[0][0] = -sin(lon);
-  ecef_M_enu[0][1] = -sin(lat) * cos(lon);
-  ecef_M_enu[0][2] = cos(lat) * cos(lon);
-  ecef_M_enu[0][3] = radius * cos(lon) * cos(lat);
-  ecef_M_enu[1][0] = cos(lon);
-  ecef_M_enu[1][1] = -sin(lat) * sin(lon);
-  ecef_M_enu[1][2] = cos(lat) * sin(lon);
-  ecef_M_enu[1][3] = radius * sin(lon) * cos(lat);
-  ecef_M_enu[2][0] = 0;
-  ecef_M_enu[2][1] = cos(lat);
-  ecef_M_enu[2][2] = sin(lat);
-  ecef_M_enu[2][3] = radius * sin(lat);
+  ecef_M_enu[index_0][index_0] = -sin(lon);
+  ecef_M_enu[index_0][index_1] = -sin(lat) * cos(lon);
+  ecef_M_enu[index_0][index_2] = cos(lat) * cos(lon);
+  ecef_M_enu[index_0][index_3] = radius * cos(lon) * cos(lat);
+  ecef_M_enu[index_1][index_0] = cos(lon);
+  ecef_M_enu[index_1][index_1] = -sin(lat) * sin(lon);
+  ecef_M_enu[index_1][index_2] = cos(lat) * sin(lon);
+  ecef_M_enu[index_1][index_3] = radius * sin(lon) * cos(lat);
+  ecef_M_enu[index_2][index_0] = 0;
+  ecef_M_enu[index_2][index_1] = cos(lat);
+  ecef_M_enu[index_2][index_2] = sin(lat);
+  ecef_M_enu[index_2][index_3] = radius * sin(lat);
 
   return ecef_M_enu;
 }
@@ -677,20 +683,24 @@ vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &t
   vpColVector forward = (from - to).normalize();
   vpColVector right = vpColVector::crossProd(tmp.normalize(), forward).normalize();
   vpColVector up = vpColVector::crossProd(forward, right).normalize();
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
   vpHomogeneousMatrix wMc;
-  wMc[0][0] = right[0];
-  wMc[0][1] = up[0];
-  wMc[0][2] = forward[0];
-  wMc[0][3] = from[0];
-  wMc[1][0] = right[1];
-  wMc[1][1] = up[1];
-  wMc[1][2] = forward[1];
-  wMc[1][3] = from[1];
-  wMc[2][0] = right[2];
-  wMc[2][1] = up[2];
-  wMc[2][2] = forward[2];
-  wMc[2][3] = from[2];
+  wMc[index_0][index_0] = right[index_0];
+  wMc[index_0][index_1] = up[index_0];
+  wMc[index_0][index_2] = forward[index_0];
+  wMc[index_0][index_3] = from[index_0];
+  wMc[index_1][index_0] = right[index_1];
+  wMc[index_1][index_1] = up[index_1];
+  wMc[index_1][index_2] = forward[index_1];
+  wMc[index_1][index_3] = from[index_1];
+  wMc[index_2][index_0] = right[index_2];
+  wMc[index_2][index_1] = up[index_2];
+  wMc[index_2][index_2] = forward[index_2];
+  wMc[index_2][index_3] = from[index_2];
 
   return wMc;
 }
@@ -754,11 +764,14 @@ vpColVector vpMath::rad(const vpColVector &r)
 vpHomogeneousMatrix vpMath::enu2ned(const vpHomogeneousMatrix &enu_M)
 {
   vpHomogeneousMatrix ned_M_enu;
-  ned_M_enu[0][0] = 0;
-  ned_M_enu[0][1] = 1;
-  ned_M_enu[1][0] = 1;
-  ned_M_enu[1][1] = 0;
-  ned_M_enu[2][2] = -1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  ned_M_enu[index_0][index_0] = 0;
+  ned_M_enu[index_0][index_1] = 1;
+  ned_M_enu[index_1][index_0] = 1;
+  ned_M_enu[index_1][index_1] = 0;
+  ned_M_enu[index_2][index_2] = -1;
 
   vpHomogeneousMatrix ned_M = ned_M_enu * enu_M;
   return ned_M;

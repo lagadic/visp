@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,16 +70,19 @@ BEGIN_VISP_NAMESPACE
  *
  * \return The size of the point cloud.
  */
-int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
-                                       const vpCameraParameters &cam_depth,
-                                       pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, std::mutex *pointcloud_mutex,
-                                       const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
+  int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
+                                         const vpCameraParameters &cam_depth,
+                                         pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, std::mutex *pointcloud_mutex,
+                                         const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
 {
 
   int size = static_cast<int>(depth_raw.getSize());
   unsigned int width = depth_raw.getWidth();
   unsigned int height = depth_raw.getHeight();
   int pcl_size = 0;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
 
   if (depth_mask) {
     if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
@@ -105,11 +107,11 @@ int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float 
             unsigned int i = (p - j) / width;
             vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
             vpColVector point_3D({ x * Z, y * Z, Z });
-            if (point_3D[2] > Z_min) {
+            if (point_3D[index_2] > Z_min) {
 #if defined(_OPENMP)
               std::lock_guard<std::mutex> lock(mutex);
 #endif
-              pointcloud->push_back(pcl::PointXYZ(point_3D[0], point_3D[1], point_3D[2]));
+              pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
             }
           }
         }
@@ -139,11 +141,11 @@ int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float 
           unsigned int i = (p - j) / width;
           vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
           vpColVector point_3D({ x * Z, y * Z, Z, 1 });
-          if (point_3D[2] >= 0.1) {
+          if (point_3D[index_2] >= 0.1) {
 #if defined(_OPENMP)
             std::lock_guard<std::mutex> lock(mutex);
 #endif
-            pointcloud->push_back(pcl::PointXYZ(point_3D[0], point_3D[1], point_3D[2]));
+            pointcloud->push_back(pcl::PointXYZ(point_3D[index_0], point_3D[index_1], point_3D[index_2]));
           }
         }
       }
@@ -189,6 +191,9 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
   unsigned int width = depth_raw.getWidth();
   unsigned int height = depth_raw.getHeight();
   int pcl_size = 0;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
 
   if (depth_mask) {
     if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
@@ -213,18 +218,18 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
             unsigned int i = (p - j) / width;
             vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
             vpColVector point_3D({ x * Z, y * Z, Z });
-            if (point_3D[2] > Z_min) {
+            if (point_3D[index_2] > Z_min) {
 #if defined(_OPENMP)
               std::lock_guard<std::mutex> lock(mutex);
 #endif
 #if PCL_VERSION_COMPARE(>=,1,14,1)
-              pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
+              pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
                                                      color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
 #else
               pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
-              pt.x = point_3D[0];
-              pt.y = point_3D[1];
-              pt.z = point_3D[2];
+              pt.x = point_3D[index_0];
+              pt.y = point_3D[index_1];
+              pt.z = point_3D[index_2];
               pointcloud->push_back(pcl::PointXYZRGB(pt));
 #endif
             }
@@ -256,18 +261,18 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
           unsigned int i = (p - j) / width;
           vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
           vpColVector point_3D({ x * Z, y * Z, Z, 1 });
-          if (point_3D[2] >= 0.1) {
+          if (point_3D[index_2] >= 0.1) {
 #if defined(_OPENMP)
             std::lock_guard<std::mutex> lock(mutex);
 #endif
 #if PCL_VERSION_COMPARE(>=,1,14,1)
-            pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
+            pointcloud->push_back(pcl::PointXYZRGB(point_3D[index_0], point_3D[index_1], point_3D[index_2],
                                                    color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
 #else
             pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
-            pt.x = point_3D[0];
-            pt.y = point_3D[1];
-            pt.z = point_3D[2];
+            pt.x = point_3D[index_0];
+            pt.y = point_3D[index_1];
+            pt.z = point_3D[index_2];
             pointcloud->push_back(pcl::PointXYZRGB(pt));
 #endif
           }

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Base class for object detection.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpDetectorBase_h_
-#define _vpDetectorBase_h_
+#ifndef VP_DETECTOR_BASE_H
+#define VP_DETECTOR_BASE_H
 
 #include <assert.h>
 #include <string>
@@ -60,15 +58,9 @@ BEGIN_VISP_NAMESPACE
  *   acquired by a camera.
  * - AprilTags using vpDetectorAprilTag class
  * - faces using vpDetectorFace. An example is provided in tutorial-face-detector-live.cpp.
- */
+*/
 class VISP_EXPORT vpDetectorBase
 {
-protected:
-  std::vector<std::vector<vpImagePoint> > m_polygon; //!< For each object, defines the polygon that contains the object.
-  std::vector<std::string> m_message;                //!< Message attached to each object.
-  size_t m_nb_objects;                               //!< Number of detected objects.
-  unsigned long m_timeout_ms;                        //!< Detection timeout.
-
 public:
   /*!
    *  Default constructor.
@@ -131,6 +123,12 @@ public:
   inline void setTimeout(unsigned long timeout_ms) { m_timeout_ms = timeout_ms; }
 
   //@}
+
+protected:
+  std::vector<std::vector<vpImagePoint> > m_polygon; //!< For each object, defines the polygon that contains the object.
+  std::vector<std::string> m_message;                //!< Message attached to each object.
+  size_t m_nb_objects;                               //!< Number of detected objects.
+  unsigned long m_timeout_ms;                        //!< Detection timeout.
 };
 
 END_VISP_NAMESPACE

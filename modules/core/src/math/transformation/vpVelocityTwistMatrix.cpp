@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +68,9 @@ vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMat
 */
 void vpVelocityTwistMatrix::eye()
 {
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       if (i == j) {
         (*this)[i][j] = 1.0;
       }
@@ -223,11 +223,11 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(double tx, double ty, double tz, do
 vpVelocityTwistMatrix vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
 {
   vpVelocityTwistMatrix p;
-
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       double s = 0;
-      for (int k = 0; k < 6; ++k) {
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * V.rowPtrs[k][j];
       }
       p[i][j] = s;
@@ -245,31 +245,35 @@ corresponding camera velocity skew from the joint velocities knowing the robot
 jacobian.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpSimulatorCamera.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/core/vpVelocityTwistMatrix.h>
+  #include <visp3/robot/vpSimulatorCamera.h>
 
-int main()
-{
-  vpSimulatorCamera robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector q_vel(6); // Joint velocity on the 6 joints
-  // ... q_vel need here to be initialized
+  int main()
+  {
+    vpSimulatorCamera robot;
 
-  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
+    vpColVector q_vel(6); // Joint velocity on the 6 joints
+    // ... q_vel need here to be initialized
 
-  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
-  robot.get_cVe(cVe);
+    vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
 
-  vpMatrix eJe;       // Robot jacobian
-  robot.get_eJe(eJe);
+    vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+    robot.get_cVe(cVe);
 
-  // Compute the velocity in the camera frame
-  c_v = cVe * eJe * q_vel;
+    vpMatrix eJe;       // Robot jacobian
+    robot.get_eJe(eJe);
 
-  return 0;
-}
+    // Compute the velocity in the camera frame
+    c_v = cVe * eJe * q_vel;
+
+    return 0;
+  }
   \endcode
 
   \exception vpException::dimensionError If M is not a 6 rows dimension
@@ -277,17 +281,18 @@ matrix.
 */
 vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 {
-  if (6 != M.getRows()) {
+  const unsigned int nparam = 6;
+  if (nparam != M.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot multiply a (6x6) velocity twist matrix by a (%dx%d) matrix",
                       M.getRows(), M.getCols()));
   }
 
-  vpMatrix p(6, M.getCols());
+  vpMatrix p(nparam, M.getCols());
   unsigned int m_col = M.getCols();
-  for (unsigned int i = 0; i < 6; ++i) {
+  for (unsigned int i = 0; i < nparam; ++i) {
     for (unsigned int j = 0; j < m_col; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 6; ++k) {
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * M[k][j];
       }
       p[i][j] = s;
@@ -309,9 +314,10 @@ vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 */
 vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 {
-  vpColVector c(6);
+  const unsigned int nparam = 6;
+  vpColVector c(nparam);
 
-  if (6 != v.getRows()) {
+  if (nparam != v.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply a (6x6) velocity twist matrix by a "
                       "(%d) column vector",
@@ -320,8 +326,8 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 
   c = 0.0;
 
-  for (unsigned int i = 0; i < 6; ++i) {
-    for (unsigned int j = 0; j < 6; ++j) {
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       c[i] += rowPtrs[i][j] * v[j];
     }
   }
@@ -444,8 +450,9 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix
 */
 vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = 0;
@@ -472,8 +479,9 @@ vpVelocityTwistMatrix &vpVelocityTwistMatrix::build(const vpTranslationVector &t
 {
   vpMatrix skewaR = t.skew(t) * R;
 
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = skewaR[i][j];
@@ -574,8 +582,9 @@ void vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const { V = invers
 //! Extract the rotation matrix from the velocity twist matrix.
 void vpVelocityTwistMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       R[i][j] = (*this)[i][j];
     }
   }
@@ -587,16 +596,20 @@ void vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
   vpRotationMatrix R;
   extract(R);
   vpMatrix skTR(3, 3);
-  for (unsigned int i = 0; i < 3; ++i) {
-    for (unsigned int j = 0; j < 3; ++j) {
-      skTR[i][j] = (*this)[i][j + 3];
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
+      skTR[i][j] = (*this)[i][j + val_3];
     }
   }
 
   vpMatrix skT = skTR * R.t();
-  tv[0] = skT[2][1];
-  tv[1] = skT[0][2];
-  tv[2] = skT[1][0];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  tv[index_0] = skT[index_2][index_1];
+  tv[index_1] = skT[index_0][index_2];
+  tv[index_2] = skT[index_1][index_0];
 }
 
 /*!

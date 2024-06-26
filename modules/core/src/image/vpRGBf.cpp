@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,17 +40,29 @@
 
 #include <limits>
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBf.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
-  Copy operator (from a floating-point value)
+  Copy operator (from a floating-point value).
 
   \param v : Input color ( R = G = B = v )
 */
 vpRGBf &vpRGBf::operator=(float v)
+{
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  return *this;
+}
+
+/*!
+  Copy operator.
+
+  \param v : Input color ( R = G = B = v )
+*/
+vpRGBf &vpRGBf::operator=(int v)
 {
   this->R = v;
   this->G = v;
@@ -93,13 +104,17 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
 */
 vpRGBf &vpRGBf::operator=(const vpColVector &v)
 {
-  if (v.getRows() != 3) {
-    vpERROR_TRACE("Bad vector dimension");
+  const unsigned int rows_size = 3;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+
+  if (v.getRows() != rows_size) {
     throw(vpException(vpException::dimensionError, "Bad vector dimension"));
   }
-  R = static_cast<float>(v[0]);
-  G = static_cast<float>(v[1]);
-  B = static_cast<float>(v[2]);
+  R = static_cast<float>(v[index_0]);
+  G = static_cast<float>(v[index_1]);
+  B = static_cast<float>(v[index_2]);
   return *this;
 }
 
@@ -142,9 +157,12 @@ bool vpRGBf::operator!=(const vpRGBf &v) const
 vpColVector vpRGBf::operator-(const vpRGBf &v) const
 {
   vpColVector n(3); // new color
-  n[0] = static_cast<double>(R) - static_cast<double>(v.R);
-  n[1] = static_cast<double>(G) - static_cast<double>(v.G);
-  n[2] = static_cast<double>(B) - static_cast<double>(v.B);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[index_1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[index_2] = static_cast<double>(B) - static_cast<double>(v.B);
   return n;
 }
 
@@ -171,9 +189,12 @@ vpRGBf vpRGBf::operator+(const vpRGBf &v) const
 vpColVector vpRGBf::operator-(const vpColVector &v) const
 {
   vpColVector n(3); // new color
-  n[0] = R - v[0];
-  n[1] = G - v[1];
-  n[2] = B - v[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R - v[index_0];
+  n[index_1] = G - v[index_1];
+  n[index_2] = B - v[index_2];
   return n;
 }
 
@@ -185,9 +206,12 @@ vpColVector vpRGBf::operator-(const vpColVector &v) const
 vpColVector vpRGBf::operator+(const vpColVector &v) const
 {
   vpColVector n(3); // new color
-  n[0] = R + v[0];
-  n[1] = G + v[1];
-  n[2] = B + v[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R + v[index_0];
+  n[index_1] = G + v[index_1];
+  n[index_2] = B + v[index_2];
   return n;
 }
 
@@ -199,9 +223,12 @@ vpColVector vpRGBf::operator+(const vpColVector &v) const
 vpColVector vpRGBf::operator*(float v) const
 {
   vpColVector n(3);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
   return n;
 }
 
@@ -213,9 +240,12 @@ vpColVector vpRGBf::operator*(float v) const
 vpColVector vpRGBf::operator*(double v) const
 {
   vpColVector n(3);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
   return n;
 }
 
@@ -235,7 +265,21 @@ bool vpRGBf::operator>(const vpRGBf &v) const
   return (gray1 > gray2);
 }
 
-VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const vpRGBf &rgb) { return rgb * x; }
+/*!
+ * Scale RGB components by x.
+ *
+ * @param x : Value used to scale RGB color components.
+ * @param rgb : RGB color components to rescale.
+ * @return Rescaled components with RGB * x.
+ */
+vpRGBf operator*(double x, const vpRGBf &rgb)
+{
+  vpRGBf rgbf;
+  rgbf.R = rgb.R * x;
+  rgbf.G = rgb.G * x;
+  rgbf.B = rgb.B * x;
+  return rgbf;
+}
 
 /*!
   \relates vpRGBf
@@ -245,17 +289,21 @@ VISP_EXPORT VISP_NAMESPACE_ADDRESSING vpRGBf operator*(double x, const vpRGBf &r
   coordinates are separated by a comma.
 
   The following code prints the intensity of the pixel in the middle of the image:
-\code
-#include <visp3/core/vpImage.h>
+  \code
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<vpRGBf> I(480,640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "RGB: " << I[240][320] << std::endl;
+  int main()
+  {
+    vpImage<vpRGBf> I(480,640);
 
-  return 0;
-}
+    std::cout << "RGB: " << I[240][320] << std::endl;
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBf &rgb)

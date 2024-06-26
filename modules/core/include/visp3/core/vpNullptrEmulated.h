@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _vpNullptrEmulated_h_
-#define _vpNullptrEmulated_h_
+#ifndef VP_NULLPTR_EMULATED_H
+#define VP_NULLPTR_EMULATED_H
 
 #include <visp3/core/vpConfig.h>
 

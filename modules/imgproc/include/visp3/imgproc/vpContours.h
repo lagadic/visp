@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@
   \brief Basic contours extraction.
 */
 
-#ifndef _vpContours_h_
-#define _vpContours_h_
+#ifndef VP_CONTOURS_H
+#define VP_CONTOURS_H
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -96,8 +96,9 @@ typedef enum
 /*!
  * Direction object.
  */
-struct vpDirection
+class vpDirection
 {
+public:
   //! Direction
   vpDirectionType m_direction;
 
@@ -112,25 +113,27 @@ struct vpDirection
    */
   vpDirection()
   {
+    const unsigned int dir0 = 0, dir1 = 1, dir2 = 2, dir3 = 3;
+    const unsigned int dir4 = 4, dir5 = 5, dir6 = 6, dir7 = 7;
     m_direction = NORTH;
 
-    m_dirx[0] = 0;
-    m_dirx[1] = 1;
-    m_dirx[2] = 1;
-    m_dirx[3] = 1;
-    m_dirx[4] = 0;
-    m_dirx[5] = -1;
-    m_dirx[6] = -1;
-    m_dirx[7] = -1;
+    m_dirx[dir0] = 0;
+    m_dirx[dir1] = 1;
+    m_dirx[dir2] = 1;
+    m_dirx[dir3] = 1;
+    m_dirx[dir4] = 0;
+    m_dirx[dir5] = -1;
+    m_dirx[dir6] = -1;
+    m_dirx[dir7] = -1;
 
-    m_diry[0] = -1;
-    m_diry[1] = -1;
-    m_diry[2] = 0;
-    m_diry[3] = 1;
-    m_diry[4] = 1;
-    m_diry[5] = 1;
-    m_diry[6] = 0;
-    m_diry[7] = -1;
+    m_diry[dir0] = -1;
+    m_diry[dir1] = -1;
+    m_diry[dir2] = 0;
+    m_diry[dir3] = 1;
+    m_diry[dir4] = 1;
+    m_diry[dir5] = 1;
+    m_diry[dir6] = 0;
+    m_diry[dir7] = -1;
   }
 
   /*!
@@ -222,7 +225,7 @@ struct vpContour
   /*!
    * Constructor of a given contour type.
    */
-  explicit vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
+  VP_EXPLICIT vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
 
   /*!
    * Copy constructor.

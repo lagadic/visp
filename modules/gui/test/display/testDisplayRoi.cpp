@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test for image roi display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testDisplayRoi.cpp
@@ -181,7 +179,7 @@ int main(int argc, const char **argv)
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    I = 0;
+    I = 0u;
 
     vpRect roi(I.getWidth() / 4, I.getHeight() / 4, I.getWidth() / 2, I.getHeight() / 2);
     vpDisplay::displayROI(I, roi);
@@ -207,10 +205,10 @@ int main(int argc, const char **argv)
       std::cout << "A click in the image to exit..." << std::endl;
       vpDisplay::getClick(C);
     }
-    }
+  }
 #else
   (void)argc;
   (void)argv;
 #endif
   return EXIT_SUCCESS;
-  }
+}

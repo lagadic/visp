@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,9 @@
   \brief Read/write images
 */
 
-#ifndef _vpImageIo_h_
-#define _vpImageIo_h_
+#ifndef VP_IMAGE_IO_H
+#define VP_IMAGE_IO_H
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
@@ -75,20 +74,24 @@ BEGIN_VISP_NAMESPACE
   (".pgm" for PGM P5 and ".ppm" for PPM P6).
 
   \code
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-#if defined(_WIN32)
-  std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
-#else // UNIX
-  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
-#endif
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImageIo::read(I, filename); // Convert the color image in a gray level image
-  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
-}
+  int main()
+  {
+    vpImage<unsigned char> I;
+  #if defined(_WIN32)
+    std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
+  #else // UNIX
+    std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
+  #endif
+
+    vpImageIo::read(I, filename); // Convert the color image in a gray level image
+    vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
+  }
   \endcode
 
   This other example available in tutorial-image-reader.cpp shows how to

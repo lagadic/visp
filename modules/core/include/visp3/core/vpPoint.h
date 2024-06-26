@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief  class that defines what is a point
 */
 
-#ifndef _vpPoint_H_
-#define _vpPoint_H_
+#ifndef VP_POINT_H
+#define VP_POINT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
@@ -82,25 +82,25 @@ public:
   //! Basic constructor.
   vpPoint();
   vpPoint(double oX, double oY, double oZ);
-  explicit vpPoint(const vpColVector &oP);
-  explicit vpPoint(const std::vector<double> &oP);
+  VP_EXPLICIT vpPoint(const vpColVector &oP);
+  VP_EXPLICIT vpPoint(const std::vector<double> &oP);
 
 public:
   // Compute the 3D coordinates _cP  (camera frame)
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const vp_override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const VP_OVERRIDE;
+  void changeFrame(const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) vp_override;
+               unsigned int thickness = 1) VP_OVERRIDE;
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) VP_OVERRIDE;
 
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpPoint *duplicate() const vp_override;
+  vpPoint *duplicate() const VP_OVERRIDE;
 
   // Get coordinates
   double get_X() const;
@@ -125,8 +125,8 @@ public:
   //! Projection onto the image plane of a point. Input: the 3D coordinates in
   //! the camera frame _cP, output : the 2D coordinates _p.
 
-  void projection(const vpColVector &_cP, vpColVector &_p) const vp_override;
-  void projection() vp_override;
+  void projection(const vpColVector &_cP, vpColVector &_p) const VP_OVERRIDE;
+  void projection() VP_OVERRIDE;
 
   // Set coordinates
   void set_X(double cX);
@@ -143,12 +143,12 @@ public:
 
   void setWorldCoordinates(double oX, double oY, double oZ);
 
-  void setWorldCoordinates(const vpColVector &oP) vp_override;
+  void setWorldCoordinates(const vpColVector &oP) VP_OVERRIDE;
   void setWorldCoordinates(const std::vector<double> &oP);
 
 protected:
   //! Basic construction.
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 };
 END_VISP_NAMESPACE
 #endif

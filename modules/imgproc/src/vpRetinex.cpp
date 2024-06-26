@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,19 +88,17 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+#define MAX_RETINEX_SCALES 8
 namespace VISP_NAMESPACE_NAME
 {
-
-#define MAX_RETINEX_SCALES 8
-
 std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale)
 {
   std::vector<double> scales(MAX_RETINEX_SCALES);
-
+  const int val_2 = 2;
   if (scaleDiv == 1) {
     scales[0] = scale / 2.0;
   }
-  else if (scaleDiv == 2) {
+  else if (scaleDiv == val_2) {
     scales[0] = scale / 2.0;
     scales[1] = scale;
   }
@@ -158,10 +156,13 @@ void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dyna
   if (kernelSize == -1) {
     // Compute the kernel size from the input image size
     kernelSize = static_cast<int>(std::min<unsigned int>(I.getWidth(), I.getHeight()) / 2.0);
-    kernelSize = (kernelSize - (kernelSize % 2)) + 1;
+    const int moduloForOddityCheck = 2;
+    kernelSize = (kernelSize - (kernelSize % moduloForOddityCheck)) + 1;
   }
 
-  for (int channel = 0; channel < 3; ++channel) {
+  const int nbChannels = 3;
+  const int id0 = 0, id1 = 1, id2 = 2;
+  for (int channel = 0; channel < nbChannels; ++channel) {
     doubleRGB[static_cast<size_t>(channel)] = vpImage<double>(I.getHeight(), I.getWidth());
     doubleResRGB[static_cast<size_t>(channel)] = vpImage<double>(I.getHeight(), I.getWidth());
 
@@ -176,7 +177,7 @@ void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dyna
         doubleRGB[static_cast<size_t>(channel)].bitmap[cpt] = I.bitmap[cpt].G + 1.0;
         break;
 
-      case 2:
+      case id2:
         doubleRGB[static_cast<size_t>(channel)].bitmap[cpt] = I.bitmap[cpt].B + 1.0;
         break;
 
@@ -200,17 +201,17 @@ void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dyna
     }
   }
 
-  std::vector<double> dest(size * 3);
+  std::vector<double> dest(size * nbChannels);
   const double gain = 1.0, alpha = 128.0, offset = 0.0;
 
   for (unsigned int cpt = 0; cpt < size; ++cpt) {
     double logl = std::log(static_cast<double>(I.bitmap[cpt].R + I.bitmap[cpt].G + I.bitmap[cpt].B + 3.0));
 
-    dest[cpt * 3] = (gain * (std::log(alpha * doubleRGB[0].bitmap[cpt]) - logl) * doubleResRGB[0].bitmap[cpt]) + offset;
-    dest[(cpt * 3) + 1] =
-      (gain * (std::log(alpha * doubleRGB[1].bitmap[cpt]) - logl) * doubleResRGB[1].bitmap[cpt]) + offset;
-    dest[(cpt * 3) + 2] =
-      (gain * (std::log(alpha * doubleRGB[2].bitmap[cpt]) - logl) * doubleResRGB[2].bitmap[cpt]) + offset;
+    dest[cpt * nbChannels] = (gain * (std::log(alpha * doubleRGB[id0].bitmap[cpt]) - logl) * doubleResRGB[id0].bitmap[cpt]) + offset;
+    dest[(cpt * nbChannels) + id1] =
+      (gain * (std::log(alpha * doubleRGB[id1].bitmap[cpt]) - logl) * doubleResRGB[id1].bitmap[cpt]) + offset;
+    dest[(cpt * nbChannels) + id2] =
+      (gain * (std::log(alpha * doubleRGB[id2].bitmap[cpt]) - logl) * doubleResRGB[id2].bitmap[cpt]) + offset;
   }
 
   double sum = std::accumulate(dest.begin(), dest.end(), 0.0);
@@ -236,23 +237,25 @@ void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dyna
   }
 
   for (unsigned int cpt = 0; cpt < size; ++cpt) {
-    I.bitmap[cpt].R = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 0] - mini)) / range);
-    I.bitmap[cpt].G = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 1] - mini)) / range);
-    I.bitmap[cpt].B = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 2] - mini)) / range);
+    I.bitmap[cpt].R = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * nbChannels) + id0] - mini)) / range);
+    I.bitmap[cpt].G = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * nbChannels) + id1] - mini)) / range);
+    I.bitmap[cpt].B = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * nbChannels) + id2] - mini)) / range);
   }
 }
 
 void retinex(vpImage<vpRGBa> &I, int scale, int scaleDiv, int level, const double dynamic, int kernelSize)
 {
   // Assert scale
-  if ((scale < 16) || (scale > 250)) {
-    std::cerr << "Scale must be between the interval [16 - 250]" << std::endl;
+  const int minScale = 16, maxScale = 250;
+  if ((scale < minScale) || (scale > maxScale)) {
+    std::cerr << "Scale must be between the interval [" << minScale << " - " << maxScale << "]" << std::endl;
     return;
   }
 
   // Assert scaleDiv
-  if ((scaleDiv < 1) || (scaleDiv > 8)) {
-    std::cerr << "Scale division must be between the interval [1 - 8]" << std::endl;
+  const int minScaleDiv = 1, maxScaleDiv = 8;
+  if ((scaleDiv < minScaleDiv) || (scaleDiv > maxScaleDiv)) {
+    std::cerr << "Scale division must be between the interval [" << minScaleDiv << " - " << maxScaleDiv << "]" << std::endl;
     return;
   }
 

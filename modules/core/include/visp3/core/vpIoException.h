@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Error that can be emitted by the vpIoTools class and its derivatives.
 */
 
-#ifndef _vpIoException_h_
-#define _vpIoException_h_
+#ifndef VP_IO_EXCEPTION_H
+#define VP_IO_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -87,7 +87,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpIoException(int id) : vpException(id) { }
+  VP_EXPLICIT vpIoException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

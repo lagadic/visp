@@ -39,6 +39,7 @@
 
 #include <iostream>
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 
@@ -46,7 +47,7 @@ BEGIN_VISP_NAMESPACE
 /*!
    Basic constructor.
  */
-vp1394CMUGrabber::vp1394CMUGrabber()
+  vp1394CMUGrabber::vp1394CMUGrabber()
   : index(0), // If a camera was not selected the first one (index = 0) will
               // be used
   _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)
@@ -716,14 +717,18 @@ int vp1394CMUGrabber::getFramerate()
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
@@ -738,14 +743,18 @@ vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)

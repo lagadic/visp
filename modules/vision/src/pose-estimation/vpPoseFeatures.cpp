@@ -30,6 +30,8 @@
  * Description:
  * Pose computation from any features.
  */
+
+#include <visp3/core/vpDebug.h>
 #include <visp3/vision/vpPoseFeatures.h>
 
 #if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

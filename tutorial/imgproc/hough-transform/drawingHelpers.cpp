@@ -20,7 +20,7 @@ vpDisplayD3D drawingHelpers::d;
 
 vpImage<vpRGBa> drawingHelpers::I_disp;
 
-bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const bool &blockingMode)
+bool drawingHelpers::display(vpImage< vpRGBa> &I, const std::string &title, const bool &blockingMode)
 {
   I_disp = I;
 #if defined(VISP_HAVE_DISPLAY)

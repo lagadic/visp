@@ -688,32 +688,36 @@ void vpViper::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
   expressed in radians.
 
   \param fMe The homogeneous matrix \f${^f}{\bf M}_e\f$ corresponding to the
-direct geometric model which expresses the transformation between the fix
-frame and the end effector frame.
+  direct geometric model which expresses the transformation between the fix
+  frame and the end effector frame.
 
   Note that this transformation can also be computed by considering the wrist
   frame \f${^f}{\bf M}_e = {^f}{\bf M}_w *{^w}{\bf M}_e\f$.
 
   \code
-#include <visp3/robot/vpViper.h>
+  #include <visp3/robot/vpViper.h>
 
-int main()
-{
-  vpViper robot;
-  vpColVector q(6); // The measured six joint positions
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpHomogeneousMatrix fMe; // Transformation from fix frame to end-effector
-  robot.get_fMe(q, fMe); // Get the forward kinematics
+  int main()
+  {
+    vpViper robot;
+    vpColVector q(6); // The measured six joint positions
 
-  // The forward kinematics can also be computed by considering the wrist frame
-  vpHomogeneousMatrix fMw; // Transformation from fix frame to wrist frame
-  robot.get_fMw(q, fMw);
-  vpHomogeneousMatrix wMe; // Transformation from wrist frame to end-effector
-  robot.get_wMe(wMe); // Constant transformation
+    vpHomogeneousMatrix fMe; // Transformation from fix frame to end-effector
+    robot.get_fMe(q, fMe); // Get the forward kinematics
 
-  // Compute the forward kinematics
-  fMe = fMw * wMe;
-}
+    // The forward kinematics can also be computed by considering the wrist frame
+    vpHomogeneousMatrix fMw; // Transformation from fix frame to wrist frame
+    robot.get_fMw(q, fMw);
+    vpHomogeneousMatrix wMe; // Transformation from wrist frame to end-effector
+    robot.get_wMe(wMe); // Constant transformation
+
+    // Compute the forward kinematics
+    fMe = fMw * wMe;
+  }
   \endcode
 
 */

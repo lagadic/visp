@@ -140,6 +140,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/visual_features/vpFeatureThetaU.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpServo task; // Visual servoing task
@@ -196,6 +200,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMatrix.h>
  * #include <visp3/visual_features/vpFeatureThetaU.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpHomogeneousMatrix cdMc;
@@ -248,7 +256,7 @@ public:
 public:
   // Basic constructor.
   vpFeatureThetaU();
-  explicit vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r);
+  VP_EXPLICIT vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r);
   vpFeatureThetaU(vpThetaUVector &tu, vpFeatureThetaURotationRepresentationType r);
   vpFeatureThetaU(vpRotationMatrix &R, vpFeatureThetaURotationRepresentationType r);
   vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotationRepresentationType r);
@@ -267,16 +275,16 @@ public:
   vpFeatureThetaU &build(const vpHomogeneousMatrix &M);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
 
   //! Feature duplication.
-  vpFeatureThetaU *duplicate() const vp_override;
+  vpFeatureThetaU *duplicate() const VP_OVERRIDE;
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
 
@@ -285,10 +293,10 @@ public:
   double get_TUz() const;
 
   // Basic construction.
-  void init() vp_override;
+  void init() VP_OVERRIDE;
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void set_TUx(double tu_x);
   void set_TUy(double tu_y);

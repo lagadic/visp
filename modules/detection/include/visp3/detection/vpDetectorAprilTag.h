@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +29,9 @@
  *
  * Description:
  * Base class for AprilTag detection.
- *
-*****************************************************************************/
-#ifndef _vpDetectorAprilTag_h_
-#define _vpDetectorAprilTag_h_
+ */
+#ifndef VP_DETECTOR_APRILTAG_H
+#define VP_DETECTOR_APRILTAG_H
 
 #include <map>
 
@@ -45,13 +43,6 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/detection/vpDetectorBase.h>
-
-BEGIN_VISP_NAMESPACE
-class vpDetectorAprilTag;
-END_VISP_NAMESPACE
-
-// Forward declaration to have the operator in the global namespace
-VISP_EXPORT void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2);
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -82,6 +73,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/detection/vpDetectorAprilTag.h>
  * #include <visp3/io/vpImageIo.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -126,6 +121,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/detection/vpDetectorAprilTag.h>
  * #include <visp3/io/vpImageIo.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -174,6 +173,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/detection/vpDetectorAprilTag.h>
  * #include <visp3/io/vpImageIo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #ifdef VISP_HAVE_APRILTAG
@@ -220,8 +223,8 @@ BEGIN_VISP_NAMESPACE
  *
  * Other examples are also provided in tutorial-apriltag-detector.cpp and
  * tutorial-apriltag-detector-live.cpp
- */
-  class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
+*/
+class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
 public:
   enum vpAprilTagFamily
@@ -258,8 +261,8 @@ public:
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
   vpDetectorAprilTag(const vpDetectorAprilTag &o);
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
-  virtual ~vpDetectorAprilTag() vp_override;
-  bool detect(const vpImage<unsigned char> &I) vp_override;
+  virtual ~vpDetectorAprilTag() VP_OVERRIDE;
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
 
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
@@ -308,7 +311,11 @@ public:
     m_displayTagThickness = thickness;
   }
 
-  VISP_EXPORT friend void ::swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
+  inline friend VISP_EXPORT void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
+  {
+    using std::swap;
+    swap(o1.m_impl, o2.m_impl);
+  }
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 
@@ -317,8 +324,8 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated void setAprilTagRefinePose(bool refinePose);
-  vp_deprecated void setAprilTagRefineDecode(bool refineDecode);
+  VP_DEPRECATED void setAprilTagRefinePose(bool refinePose);
+  VP_DEPRECATED void setAprilTagRefineDecode(bool refineDecode);
   //@}
 #endif
 

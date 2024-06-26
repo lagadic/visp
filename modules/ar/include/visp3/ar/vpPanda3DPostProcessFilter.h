@@ -62,21 +62,21 @@ public:
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
   }
 
-  bool isRendering3DScene() const vp_override
+  bool isRendering3DScene() const VP_OVERRIDE
   {
     return false;
   }
 
-  GraphicsOutput *getMainOutputBuffer() vp_override { return m_buffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_buffer; }
 
 protected:
-  virtual void setupScene() vp_override;
+  virtual void setupScene() VP_OVERRIDE;
 
-  void setupCamera() vp_override;
+  void setupCamera() VP_OVERRIDE;
 
-  void setupRenderTarget() vp_override;
+  void setupRenderTarget() VP_OVERRIDE;
 
-  void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
+  void setRenderParameters(const vpPanda3DRenderParameters &params) VP_OVERRIDE;
 
   void getRenderBasic(vpImage<unsigned char> &I) const;
   void getRenderBasic(vpImage<vpRGBf> &I) const;
@@ -87,7 +87,7 @@ protected:
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram
   std::string m_fragmentShader;
-  PT(Shader) m_shader;
+  PointerTo<Shader> m_shader;
   Texture *m_texture;
   GraphicsOutput *m_buffer;
 

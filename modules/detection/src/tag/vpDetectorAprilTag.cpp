@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,11 +279,12 @@ public:
 
   void convertHomogeneousMatrix(const apriltag_pose_t &pose, vpHomogeneousMatrix &cMo)
   {
-    for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < 3; ++j) {
+    const unsigned int val_3 = 3;
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         cMo[i][j] = MATD_EL(pose.R, i, j);
       }
-      cMo[i][3] = MATD_EL(pose.t, i, 0);
+      cMo[i][val_3] = MATD_EL(pose.t, i, 0);
     }
   }
 
@@ -334,7 +334,8 @@ public:
       zarray_get(m_detections, i, &det);
 
       std::vector<vpImagePoint> polygon;
-      for (int j = 0; j < 4; ++j) {
+      const int polygonSize = 4;
+      for (int j = 0; j < polygonSize; ++j) {
         polygon.push_back(vpImagePoint(det->p[j][1], det->p[j][0]));
       }
       polygons[static_cast<size_t>(i)] = polygon;
@@ -349,13 +350,14 @@ public:
         vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
         vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
 
-        vpDisplay::displayLine(I, static_cast<int>(det->p[0][1]), static_cast<int>(det->p[0][0]), static_cast<int>(det->p[1][1]), static_cast<int>(det->p[1][0]), Ox,
+        const unsigned int polyId0 = 0, polyId1 = 1, polyId2 = 2, polyId3 = 3;
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), Ox,
                                thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[0][1]), static_cast<int>(det->p[0][0]), static_cast<int>(det->p[3][1]), static_cast<int>(det->p[3][0]), Oy,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy,
                                thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[1][1]), static_cast<int>(det->p[1][0]), static_cast<int>(det->p[2][1]), static_cast<int>(det->p[2][0]), Ox2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), Ox2,
                                thickness);
-        vpDisplay::displayLine(I, static_cast<int>(det->p[2][1]), static_cast<int>(det->p[2][0]), static_cast<int>(det->p[3][1]), static_cast<int>(det->p[3][0]), Oy2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy2,
                                thickness);
       }
 
@@ -414,14 +416,15 @@ public:
 
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
+      const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
 
-      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
                                                                                        Ox, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
                                                                                        Oy, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()), static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()), static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()),
                                                                                        Ox2, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
                                                                                        Oy2, thickness);
     }
   }
@@ -438,14 +441,15 @@ public:
 
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
+      const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
 
-      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
                                                                                        Ox, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[0].get_i()), static_cast<int>(corners[0].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
                                                                                        Oy, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[1].get_i()), static_cast<int>(corners[1].get_j()), static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()), static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()),
                                                                                        Ox2, thickness);
-      vpDisplay::displayLine(I, static_cast<int>(corners[2].get_i()), static_cast<int>(corners[2].get_j()), static_cast<int>(corners[3].get_i()), static_cast<int>(corners[3].get_j()),
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
                                                                                        Oy2, thickness);
     }
   }
@@ -548,19 +552,21 @@ public:
     pt.set_y(y);
     pts[1] = pt;
 
+    const int idCorner2 = 2;
     pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
-    imPt.set_uv(det->p[2][0], det->p[2][1]);
+    imPt.set_uv(det->p[idCorner2][0], det->p[idCorner2][1]);
     vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
     pt.set_x(x);
     pt.set_y(y);
-    pts[2] = pt;
+    pts[idCorner2] = pt;
 
+    const int idCorner3 = 3;
     pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
-    imPt.set_uv(det->p[3][0], det->p[3][1]);
+    imPt.set_uv(det->p[idCorner3][0], det->p[idCorner3][1]);
     vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
     pt.set_x(x);
     pt.set_y(y);
-    pts[3] = pt;
+    pts[idCorner3] = pt;
 
     pose.addPoints(pts);
 
@@ -614,24 +620,27 @@ public:
         double data_p1[] = { scale, scale, 0 };
         double data_p2[] = { scale, -scale, 0 };
         double data_p3[] = { -scale, -scale, 0 };
-        matd_t *p[4] = { matd_create_data(3, 1, data_p0), matd_create_data(3, 1, data_p1),
-                        matd_create_data(3, 1, data_p2), matd_create_data(3, 1, data_p3) };
-        matd_t *v[4];
-        for (int i = 0; i < 4; ++i) {
+        const unsigned int nbPoints = 4;
+        const int nbRows = 3;
+        matd_t *p[nbPoints] = { matd_create_data(nbRows, 1, data_p0), matd_create_data(nbRows, 1, data_p1),
+                        matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
+        matd_t *v[nbPoints];
+        for (unsigned int i = 0; i < nbPoints; ++i) {
           double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
                              1 };
-          v[i] = matd_create_data(3, 1, data_v);
+          v[i] = matd_create_data(nbRows, 1, data_v);
         }
 
         apriltag_pose_t solution1, solution2;
         const int nIters = 50;
-        solution1.R = matd_create_data(3, 3, cMo.getRotationMatrix().data);
-        solution1.t = matd_create_data(3, 1, cMo.getTranslationVector().data);
+        const int nbCols = 3;
+        solution1.R = matd_create_data(nbRows, nbCols, cMo.getRotationMatrix().data);
+        solution1.t = matd_create_data(nbRows, 1, cMo.getTranslationVector().data);
 
         double err2;
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
-        for (int i = 0; i < 4; ++i) {
+        for (unsigned int i = 0; i < nbPoints; ++i) {
           matd_destroy(p[i]);
           matd_destroy(v[i]);
         }
@@ -657,17 +666,18 @@ public:
     }
 
     if (!m_zAlignedWithCameraFrame) {
+      const unsigned int idX = 0, idY = 1, idZ = 2;
       vpHomogeneousMatrix oMo;
       // Apply a rotation of 180deg around x axis
-      oMo[0][0] = 1;
-      oMo[0][1] = 0;
-      oMo[0][2] = 0;
-      oMo[1][0] = 0;
-      oMo[1][1] = -1;
-      oMo[1][2] = 0;
-      oMo[2][0] = 0;
-      oMo[2][1] = 0;
-      oMo[2][2] = -1;
+      oMo[idX][idX] = 1;
+      oMo[idX][idY] = 0;
+      oMo[idX][idZ] = 0;
+      oMo[idY][idX] = 0;
+      oMo[idY][idY] = -1;
+      oMo[idY][idZ] = 0;
+      oMo[idZ][idX] = 0;
+      oMo[idZ][idY] = 0;
+      oMo[idZ][idZ] = -1;
       cMo = cMo * oMo;
       if (cMo2) {
         *cMo2 = *cMo2 * oMo;
@@ -682,7 +692,8 @@ public:
   {
     apriltag_pose_t pose1, pose2;
     double err_1, err_2;
-    estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, 50);
+    const unsigned int nbIters = 50;
+    estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, nbIters);
     if (err_1 <= err_2) {
       convertHomogeneousMatrix(pose1, cMo1);
       if (cMo2) {
@@ -822,15 +833,19 @@ protected:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
+namespace
+{
+const unsigned int def_tagThickness = 2;
+}
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
-  : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
+  : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
   m_impl(new Impl(tagFamily, poseEstimationMethod))
 { }
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
-  : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
+  : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
   m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
   m_impl(new Impl(*o.m_impl))
 { }
@@ -1022,15 +1037,15 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
   std::vector<std::vector<vpPoint> > tagsPoints3D;
 
   double default_size = -1;
-  {
-    std::map<int, double>::const_iterator it = tagsSize.find(-1);
-    if (it != tagsSize.end()) {
-      default_size = it->second; // Default size
-    }
+
+  std::map<int, double>::const_iterator it = tagsSize.find(-1);
+  if (it != tagsSize.end()) {
+    default_size = it->second; // Default size
   }
+
   size_t tagsid_size = tagsId.size();
   for (size_t i = 0; i < tagsid_size; ++i) {
-    std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
+    it = tagsSize.find(tagsId[i]);
     double tagSize = default_size; // Default size
     if (it == tagsSize.end()) {
       if (default_size < 0) { // no default size found
@@ -1042,17 +1057,19 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
       tagSize = it->second;
     }
     std::vector<vpPoint> points3D(4);
+    const unsigned int idX = 0, idY = 1, idZ = 2, idHomogen = 3;
+    const double middleFactor = 2.0;
     if (m_impl->getZAlignedWithCameraAxis()) {
-      points3D[0] = vpPoint(-tagSize / 2, tagSize / 2, 0);
-      points3D[1] = vpPoint(tagSize / 2, tagSize / 2, 0);
-      points3D[2] = vpPoint(tagSize / 2, -tagSize / 2, 0);
-      points3D[3] = vpPoint(-tagSize / 2, -tagSize / 2, 0);
+      points3D[idX] = vpPoint(-tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idY] = vpPoint(tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idZ] = vpPoint(tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idHomogen] = vpPoint(-tagSize / middleFactor, -tagSize / middleFactor, 0);
     }
     else {
-      points3D[0] = vpPoint(-tagSize / 2, -tagSize / 2, 0);
-      points3D[1] = vpPoint(tagSize / 2, -tagSize / 2, 0);
-      points3D[2] = vpPoint(tagSize / 2, tagSize / 2, 0);
-      points3D[3] = vpPoint(-tagSize / 2, tagSize / 2, 0);
+      points3D[idX] = vpPoint(-tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idY] = vpPoint(tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idZ] = vpPoint(tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idHomogen] = vpPoint(-tagSize / middleFactor, tagSize / middleFactor, 0);
     }
     tagsPoints3D.push_back(points3D);
   }
@@ -1197,16 +1214,7 @@ void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
 }
-
 END_VISP_NAMESPACE
-
-VISP_EXPORT void swap(VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o1, VISP_NAMESPACE_ADDRESSING vpDetectorAprilTag &o2)
-{
-  using std::swap;
-
-  swap(o1.m_impl, o2.m_impl);
-}
-
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
 // no symbols

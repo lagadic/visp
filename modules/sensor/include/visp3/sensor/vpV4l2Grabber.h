@@ -104,6 +104,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/io/vpImageIo.h>
   #include <visp3/sensor/vpV4l2Grabber.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_V4L2)
@@ -209,7 +213,7 @@ public:
 
 public:
   vpV4l2Grabber();
-  explicit vpV4l2Grabber(bool verbose);
+  VP_EXPLICIT vpV4l2Grabber(bool verbose);
   vpV4l2Grabber(unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +61,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
@@ -93,7 +91,6 @@
 #endif
 #endif
 
-
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #define VP_STAT stat
 #elif defined(_WIN32) && defined(__MINGW32__)
@@ -103,404 +100,6 @@
 #else
 #define VP_STAT stat
 #endif
-
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_MINIZ)
-#define USE_ZLIB_API 0
-
-#if !USE_ZLIB_API
-// See: https://github.com/BinomialLLC/basis_universal/blob/master/encoder/basisu_miniz.h
-// Apache License, Version 2.0
-#include "basisu_miniz.h"
-
-using namespace buminiz;
-#else
-#include <zlib.h>
-#endif
-
-// To avoid warnings such as: warning: unused variable ‘littleEndian’ [-Wunused-variable]
-#define UNUSED(x) ((void)(x)) // see: https://stackoverflow.com/a/777359
-
-// Copyright (C) 2011  Carl Rogers
-// Released under MIT License
-// license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
-
-#include <regex>
-
-char visp::cnpy::BigEndianTest()
-{
-  int x = 1;
-  return (((reinterpret_cast<char *>(&x))[0]) ? '<' : '>');
-}
-
-char visp::cnpy::map_type(const std::type_info &t)
-{
-  if (t == typeid(float)) { return 'f'; }
-  if (t == typeid(double)) { return 'f'; }
-  if (t == typeid(long double)) { return 'f'; }
-
-  if (t == typeid(int)) { return 'i'; }
-  if (t == typeid(char)) { return 'i'; }
-  if (t == typeid(short)) { return 'i'; }
-  if (t == typeid(long)) { return 'i'; }
-  if (t == typeid(long long)) { return 'i'; }
-
-  if (t == typeid(unsigned char)) { return 'u'; }
-  if (t == typeid(unsigned short)) { return 'u'; }
-  if (t == typeid(unsigned long)) { return 'u'; }
-  if (t == typeid(unsigned long long)) { return 'u'; }
-  if (t == typeid(unsigned int)) { return 'u'; }
-
-  if (t == typeid(bool)) { return 'b'; }
-
-  if (t == typeid(std::complex<float>)) { return 'c'; }
-  if (t == typeid(std::complex<double>)) { return 'c'; }
-  if (t == typeid(std::complex<long double>)) { return 'c'; }
-
-  else { return '?'; }
-}
-
-void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
-{
-  uint16_t header_len = *reinterpret_cast<uint16_t *>(buffer+8);
-  std::string header(reinterpret_cast<char *>(buffer+9), header_len);
-
-  //fortran order
-  size_t loc1 = header.find("fortran_order")+16;
-  fortran_order = (header.substr(loc1, 4) == "True" ? true : false);
-
-  //shape
-  loc1 = header.find("(");
-  size_t loc2 = header.find(")");
-
-  std::regex num_regex("[0-9][0-9]*");
-  std::smatch sm;
-  shape.clear();
-
-  std::string str_shape = header.substr(loc1+1, loc2-loc1-1);
-  while (std::regex_search(str_shape, sm, num_regex)) {
-    shape.push_back(std::stoi(sm[0].str()));
-    str_shape = sm.suffix().str();
-  }
-
-  //endian, word size, data type
-  //byte order code | stands for not applicable.
-  //not sure when this applies except for byte array
-  loc1 = header.find("descr")+9;
-  bool littleEndian = (((header[loc1] == '<') || (header[loc1] == '|')) ? true : false);
-  UNUSED(littleEndian); assert(littleEndian);
-
-  std::string str_ws = header.substr(loc1+2);
-  loc2 = str_ws.find("'");
-  word_size = atoi(str_ws.substr(0, loc2).c_str());
-}
-
-void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
-{
-  char buffer[256];
-  size_t res = fread(buffer, sizeof(char), 11, fp);
-  if (res != 11) {
-    throw std::runtime_error("parse_npy_header: failed fread");
-  }
-  std::string header = fgets(buffer, 256, fp);
-  assert(header[header.size()-1] == '\n');
-
-  size_t loc1, loc2;
-
-  //fortran order
-  loc1 = header.find("fortran_order");
-  if (loc1 == std::string::npos) {
-    throw std::runtime_error("parse_npy_header: failed to find header keyword: 'fortran_order'");
-  }
-  loc1 += 16;
-  fortran_order = (header.substr(loc1, 4) == "True" ? true : false);
-
-  //shape
-  loc1 = header.find("(");
-  loc2 = header.find(")");
-  if ((loc1 == std::string::npos) || (loc2 == std::string::npos)) {
-    throw std::runtime_error("parse_npy_header: failed to find header keyword: '(' or ')'");
-  }
-
-  std::regex num_regex("[0-9][0-9]*");
-  std::smatch sm;
-  shape.clear();
-
-  std::string str_shape = header.substr(loc1+1, loc2-loc1-1);
-  while (std::regex_search(str_shape, sm, num_regex)) {
-    shape.push_back(std::stoi(sm[0].str()));
-    str_shape = sm.suffix().str();
-  }
-
-  //endian, word size, data type
-  //byte order code | stands for not applicable.
-  //not sure when this applies except for byte array
-  loc1 = header.find("descr");
-  if (loc1 == std::string::npos) {
-    throw std::runtime_error("parse_npy_header: failed to find header keyword: 'descr'");
-  }
-  loc1 += 9;
-  bool littleEndian = ((header[loc1] == '<') || (header[loc1] == '|') ? true : false);
-  UNUSED(littleEndian); assert(littleEndian);
-
-  // --comment: char type equals header[loc1+1];
-  // --comment: assert type equals map_type(T);
-
-  std::string str_ws = header.substr(loc1+2);
-  loc2 = str_ws.find("'");
-  word_size = atoi(str_ws.substr(0, loc2).c_str());
-}
-
-void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset)
-{
-  std::vector<char> footer(22);
-  fseek(fp, -22, SEEK_END);
-  size_t res = fread(&footer[0], sizeof(char), 22, fp);
-  if (res != 22) {
-    throw std::runtime_error("parse_zip_footer: failed fread");
-  }
-
-  uint16_t disk_no, disk_start, nrecs_on_disk, comment_len;
-  disk_no = *(uint16_t *)&footer[4];
-  disk_start = *(uint16_t *)&footer[6];
-  nrecs_on_disk = *(uint16_t *)&footer[8];
-  nrecs = *(uint16_t *)&footer[10];
-  global_header_size = *(uint32_t *)&footer[12];
-  global_header_offset = *(uint32_t *)&footer[16];
-  comment_len = *(uint16_t *)&footer[20];
-
-  UNUSED(disk_no); assert(disk_no == 0);
-  UNUSED(disk_start); assert(disk_start == 0);
-  UNUSED(nrecs_on_disk); assert(nrecs_on_disk == nrecs);
-  UNUSED(comment_len); assert(comment_len == 0);
-}
-
-visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
-{
-  std::vector<size_t> shape;
-  size_t word_size;
-  bool fortran_order;
-  visp::cnpy::parse_npy_header(fp, word_size, shape, fortran_order);
-
-  visp::cnpy::NpyArray arr(shape, word_size, fortran_order);
-  size_t nread = fread(arr.data<char>(), 1, arr.num_bytes(), fp);
-  if (nread != arr.num_bytes()) {
-    throw std::runtime_error("load_the_npy_file: failed fread");
-  }
-  return arr;
-}
-
-visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
-{
-  std::vector<unsigned char> buffer_compr(compr_bytes);
-  std::vector<unsigned char> buffer_uncompr(uncompr_bytes);
-  size_t nread = fread(&buffer_compr[0], 1, compr_bytes, fp);
-  if (nread != compr_bytes) {
-    throw std::runtime_error("load_the_npy_file: failed fread");
-  }
-
-  z_stream d_stream;
-
-  d_stream.zalloc = Z_NULL;
-  d_stream.zfree = Z_NULL;
-  d_stream.opaque = Z_NULL;
-  d_stream.avail_in = 0;
-  d_stream.next_in = Z_NULL;
-  int err = inflateInit2(&d_stream, -MAX_WBITS);
-  UNUSED(err); assert(err == 0);
-
-  d_stream.avail_in = compr_bytes;
-  d_stream.next_in = &buffer_compr[0];
-  d_stream.avail_out = uncompr_bytes;
-  d_stream.next_out = &buffer_uncompr[0];
-
-  err = inflate(&d_stream, Z_FINISH);
-  UNUSED(err); assert(err == 0);
-  err = inflateEnd(&d_stream);
-  UNUSED(err); assert(err == 0);
-
-  std::vector<size_t> shape;
-  size_t word_size;
-  bool fortran_order;
-  visp::cnpy::parse_npy_header(&buffer_uncompr[0], word_size, shape, fortran_order);
-
-  visp::cnpy::NpyArray array(shape, word_size, fortran_order);
-
-  size_t offset = uncompr_bytes - array.num_bytes();
-  memcpy(array.data<unsigned char>(), &buffer_uncompr[0]+offset, array.num_bytes());
-
-  return array;
-}
-
-/*!
-  Load the specified \p fname filepath as arrays of data. This function is similar to the
-  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
-  \param[in] fname : Path to the npz file.
-  \return A map of arrays data. The key represents the variable name, the value is an array of basic data type.
-  \warning This function has only been tested on little endian platform.
-  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
- */
-visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
-{
-  FILE *fp = fopen(fname.c_str(), "rb");
-
-  if (!fp) {
-    throw std::runtime_error("npz_load: Error! Unable to open file "+fname+"!");
-  }
-
-  visp::cnpy::npz_t arrays;
-  bool quit = false;
-  while (!quit) {
-    std::vector<char> local_header(30);
-    size_t headerres = fread(&local_header[0], sizeof(char), 30, fp);
-    if (headerres != 30) {
-      throw std::runtime_error("npz_load: failed fread");
-    }
-
-    //if we've reached the global header, stop reading
-    if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
-      quit = true;
-    }
-    else {
-      //read in the variable name
-      uint16_t name_len = *(uint16_t *)&local_header[26];
-      std::string varname(name_len, ' ');
-      size_t vname_res = fread(&varname[0], sizeof(char), name_len, fp);
-      if (vname_res != name_len) {
-        throw std::runtime_error("npz_load: failed fread");
-      }
-
-      //erase the lagging .npy
-      varname.erase(varname.end()-4, varname.end());
-
-      //read in the extra field
-      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
-      if (extra_field_len > 0) {
-        std::vector<char> buff(extra_field_len);
-        size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, fp);
-        if (efield_res != extra_field_len) {
-          throw std::runtime_error("npz_load: failed fread");
-        }
-      }
-
-      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
-
-      if (compr_method == 0) { arrays[varname] = load_the_npy_file(fp); }
-      else { arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes); }
-    }
-  }
-
-  fclose(fp);
-  return arrays;
-}
-
-/*!
-  Load the specified \p varname array of data from the \p fname npz file. This function is similar to the
-  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
-  \param[in] fname : Path to the npz file.
-  \param[in] varname : Identifier for the requested array of data.
-  \return An array of basic data type.
-  \warning This function has only been tested on little endian platform.
-  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
- */
-visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname)
-{
-  FILE *fp = fopen(fname.c_str(), "rb");
-
-  if (!fp) {
-    throw std::runtime_error("npz_load: Unable to open file "+fname);
-  }
-
-  bool quit = false;
-  while (!quit) {
-    std::vector<char> local_header(30);
-    size_t header_res = fread(&local_header[0], sizeof(char), 30, fp);
-    if (header_res != 30) {
-      throw std::runtime_error("npz_load: failed fread");
-    }
-
-    //if we've reached the global header, stop reading
-    if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
-      quit = true;
-    }
-    else {
-      //read in the variable name
-      uint16_t name_len = *(uint16_t *)&local_header[26];
-      std::string vname(name_len, ' ');
-      size_t vname_res = fread(&vname[0], sizeof(char), name_len, fp);
-      if (vname_res != name_len) {
-        throw std::runtime_error("npz_load: failed fread");
-      }
-      vname.erase(vname.end()-4, vname.end()); //erase the lagging .npy
-
-      //read in the extra field
-      uint16_t extra_field_len = *(uint16_t *)&local_header[28];
-      fseek(fp, extra_field_len, SEEK_CUR); //skip past the extra field
-
-      uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
-      uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+18);
-      uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0]+22);
-
-      if (vname == varname) {
-        NpyArray array = (compr_method == 0) ? load_the_npy_file(fp) : load_the_npz_array(fp, compr_bytes, uncompr_bytes);
-        fclose(fp);
-        return array;
-      }
-      else {
-          //skip past the data
-        uint32_t size = *(uint32_t *)&local_header[22];
-        fseek(fp, size, SEEK_CUR);
-      }
-    }
-  }
-
-  fclose(fp);
-
-  //if we get here, we haven't found the variable in the file
-  throw std::runtime_error("npz_load: Variable name "+varname+" not found in "+fname);
-}
-
-/*!
-  Load the specified npy \p fname filepath as one array of data. This function is similar to the
-  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
-  \param[in] fname : Path to the npy file.
-  \return An array of basic data type.
-  \warning This function has only been tested on little endian platform.
-  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
- */
-visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
-{
-
-  FILE *fp = fopen(fname.c_str(), "rb");
-
-  if (!fp) {
-    throw std::runtime_error("npy_load: Unable to open file "+fname);
-  }
-
-  NpyArray arr = load_the_npy_file(fp);
-
-  fclose(fp);
-  return arr;
-}
-
-#endif
-
-BEGIN_VISP_NAMESPACE
-std::string vpIoTools::baseName = "";
-std::string vpIoTools::baseDir = "";
-std::string vpIoTools::configFile = "";
-std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
-std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
-
-const char vpIoTools::separator =
-#if defined(_WIN32)
-'\\';
-#else
-'/';
-#endif
-END_VISP_NAMESPACE
-
 namespace
 {
 // The following code is not working on iOS since wordexp() is not available
@@ -518,26 +117,6 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 }
 #endif
 #endif
-
-std::string &ltrim(std::string &s)
-{
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
-#else
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-#endif
-  return s;
-}
-
-std::string &rtrim(std::string &s)
-{
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
-#else
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-#endif
-  return s;
-}
 } // namespace
 
 BEGIN_VISP_NAMESPACE
@@ -562,6 +141,10 @@ BEGIN_VISP_NAMESPACE
   The following sample shows how to use this function to create unique temporary directories:
   \code
   include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -637,34 +220,6 @@ std::string vpIoTools::getTempPath()
   throw vpIoException(vpException::fatalError, "Not implemented on this platform!");
 #endif
 }
-
-/*!
-  Sets the base name (prefix) of the experiment files.
-
-  \param s : Prefix of the experiment files.
-*/
-void vpIoTools::setBaseName(const std::string &s) { baseName = s; }
-
-/*!
-  Sets the base directory of the experiment files.
-
-  \param dir : Directory where the data will be saved.
-*/
-void vpIoTools::setBaseDir(const std::string &dir) { baseDir = dir + "/"; }
-
-/*!
-  Gets the base name (prefix) of the experiment files.
-
-  \return the base name of the experiment files.
-*/
-std::string vpIoTools::getBaseName() { return baseName; }
-
-/*!
-  Gets the full path of the experiment files : baseDir/baseName
-
-  \return the full path of the experiment files.
-*/
-std::string vpIoTools::getFullName() { return baseDir + baseName; }
 
 /*!
   Get the user name.
@@ -744,24 +299,28 @@ std::string vpIoTools::getUserName()
   getting the environment variable value.
 
   \code
-#include <iostream>
-#include <string>
-#include <visp3/core/vpIoTools.h>
+  #include <iostream>
+  #include <string>
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::string envvalue;
-  try {
-    std::string env = "HOME";
-    envvalue = vpIoTools::getenv(env);
-    std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    std::string envvalue;
+    try {
+      std::string env = "HOME";
+      envvalue = vpIoTools::getenv(env);
+      std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+    }
+    catch (const vpException &e) {
+      std::cout << e.getMessage() << std::endl;
+      return -1;
+    }
+    return 0;
   }
-  catch (const vpException &e) {
-    std::cout << e.getMessage() << std::endl;
-    return -1;
-  }
-  return 0;
-}
   \endcode
 */
 std::string vpIoTools::getenv(const std::string &env)
@@ -933,22 +492,25 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
   for (size_t pos = 0; (pos = cpy_path.find(vpIoTools::separator)) != std::string::npos;) {
     sub_path += cpy_path.substr(0, pos + 1);
     // Continue if sub_path = separator
+    bool stop_for_loop = false;
     if (pos == 0) {
       cpy_path.erase(0, pos + 1);
-      continue;
+      stop_for_loop = true;
     }
+    if (!stop_for_loop) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
+      if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
-    (void)mode; // var not used
-    if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
+      (void)mode; // var not used
+      if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
 #endif
-    {
-      if (errno != EEXIST) {
-        return -1;
+      {
+        if (errno != EEXIST) {
+          return -1;
+        }
       }
+      cpy_path.erase(0, pos + 1);
     }
-    cpy_path.erase(0, pos + 1);
   }
 
   if (!cpy_path.empty()) {
@@ -1096,6 +658,10 @@ std::string getUuid()
   The following sample shows how to use this function to create unique temporary directories:
   \code
   include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -1470,379 +1036,17 @@ std::string vpIoTools::path(const std::string &pathname)
 }
 
 /*!
- Reads the configuration file and parses it.
+  Get ViSP images data path. ViSP images data can be installed from Debian or
+  Ubuntu \e visp-images-data package. It can be also installed from
+  visp-images-3.x.y.zip that can be found on https://visp.inria.fr/download page.
 
- \param confFile : path to the file containing the configuration parameters to
- parse.
-
- \return true if succeed, false otherwise.
- */
-bool vpIoTools::loadConfigFile(const std::string &confFile)
-{
-  configFile = path(confFile);
-  configVars.clear();
-  configValues.clear();
-  std::ifstream confContent(configFile.c_str(), std::ios::in);
-
-  if (confContent.is_open()) {
-    std::string line, var, val;
-    unsigned long int k;
-    int c;
-    std::string stop[3] = { " ", "\t", "#" };
-    while (std::getline(confContent, line)) {
-      if ((line.compare(0, 1, "#") != 0) && (line.size() > 2)) {
-        // name of the variable
-        k = static_cast<unsigned long>(line.find(" "));
-        var = line.substr(0, k);
-        // look for the end of the actual value
-        c = 200;
-        for (unsigned i = 0; i < 3; ++i) {
-          c = vpMath::minimum(c,
-            static_cast<int>(line.find(stop[i], static_cast<size_t>(k) + static_cast<size_t>(1))));
-        }
-        if (c == -1) {
-          c = static_cast<int>(line.size());
-        }
-        unsigned long int c_ = static_cast<unsigned long int>(c);
-        val = line.substr(static_cast<size_t>(k) + static_cast<size_t>(1),
-          static_cast<size_t>(c_) - static_cast<size_t>(k) - static_cast<size_t>(1));
-        configVars.push_back(var);
-        configValues.push_back(val);
-      }
-    }
-    confContent.close();
-  }
-  else {
-    return false;
-  }
-  return true;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e float.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, float &value)
-{
-  bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
-  while ((k < configvars_size) && (!found)) {
-    if (configVars[k] == var) {
-      if (configValues[k].compare("PI") == 0) {
-        value = static_cast<float>(M_PI);
-      }
-      else if (configValues[k].compare("PI/2") == 0) {
-        value = static_cast<float>(M_PI / 2.0);
-      }
-      else if (configValues[k].compare("-PI/2") == 0) {
-        value = static_cast<float>(-M_PI / 2.0);
-      }
-      else {
-        value = static_cast<float>(atof(configValues[k].c_str()));
-      }
-      found = true;
-    }
-    ++k;
-  }
-  if (!found) {
-    std::cout << var << " not found in config file" << std::endl;
-  }
-  return found;
-}
-/*!
-  Tries to read the parameter named \e var as a \e double.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, double &value)
-{
-  bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
-  while ((k < configvars_size) && (!found)) {
-    if (configVars[k] == var) {
-      if (configValues[k].compare("PI") == 0) {
-        value = M_PI;
-      }
-      else if (configValues[k].compare("PI/2") == 0) {
-        value = M_PI / 2;
-      }
-      else if (configValues[k].compare("-PI/2") == 0) {
-        value = -M_PI / 2;
-      }
-      else {
-        value = atof(configValues[k].c_str());
-      }
-      found = true;
-    }
-    ++k;
-  }
-  if (!found) {
-    std::cout << var << " not found in config file" << std::endl;
-  }
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e int.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, int &value)
-{
-  bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
-  while ((k < configvars_size) && (!found)) {
-    if (configVars[k] == var) {
-      value = atoi(configValues[k].c_str());
-      found = true;
-    }
-    ++k;
-  }
-  if (!found) {
-    std::cout << var << " not found in config file" << std::endl;
-  }
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e unsigned int.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
-{
-  int v = 0;
-  bool found = readConfigVar(var, v);
-  value = static_cast<unsigned int>(v);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e bool.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, bool &value)
-{
-  int v = 0;
-  bool found = readConfigVar(var, v);
-  value = (v != 0);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e vpColor.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read. See vpColor.cpp for the color number.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
-{
-  unsigned int v = 0;
-  bool found = readConfigVar(var, v);
-  value = vpColor::getColor(v);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e std::string.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
-{
-  bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
-  while ((k < configvars_size) && (!found)) {
-    if (configVars[k] == var) {
-      value = configValues[k];
-      found = true;
-    }
-    ++k;
-  }
-  if (!found) {
-    std::cout << var << " not found in config file" << std::endl;
-  }
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e vpMatrix.
-  If \e nCols and \e nRows are indicated, will resize the matrix.
-  Otherwise, will try to read as many values as indicated by the dimension of
-  \e value.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-  \param nCols : Column dimension if resized.
-  \param nRows : Row dimension if resized
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols,
-  const unsigned int &nRows)
-{
-  bool found = false;
-  std::string nb;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
-  while ((k < configvars_size) && (!found)) {
-    if (configVars[k] == var) {
-      found = true;
-      // resize or not
-      if ((nCols != 0) && (nRows != 0)) {
-        value.resize(nRows, nCols);
-      }
-      size_t ind = 0, ind2;
-      unsigned int value_rows = value.getRows();
-      unsigned int value_cols = value.getCols();
-      for (unsigned int i = 0; i < value_rows; ++i) {
-        for (unsigned int j = 0; j < value_cols; ++j) {
-          ind2 = configValues[k].find(",", ind);
-          nb = configValues[k].substr(ind, ind2 - ind);
-          if (nb.compare("PI") == 0) {
-            value[i][j] = M_PI;
-          }
-          else if (nb.compare("PI/2") == 0) {
-            value[i][j] = M_PI / 2;
-          }
-          else if (nb.compare("-PI/2") == 0) {
-            value[i][j] = -M_PI / 2;
-          }
-          else {
-            value[i][j] = atof(nb.c_str());
-          }
-          ind = ind2 + 1;
-        }
-      }
-    }
-    ++k;
-  }
-  if (found == false) {
-    std::cout << var << " not found in config file" << std::endl;
-  }
-  return found;
-}
-
-// construct experiment filename & path
-
-/*!
-  Augments the prefix of the experiment files by \e strTrue if \e cond is
-  verified, and by \e strFalse otherwise.
-
-  \param strTrue : String to add if \e cond is true
-  \param cond : Condition managing the file name
-  \param strFalse : String to add if \e cond is false (default "")
-*/
-void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond, const std::string &strFalse)
-{
-  if (cond) {
-    baseName += "_" + strTrue;
-  }
-  else if (strFalse != "") {
-    baseName += "_" + strFalse;
-  }
-}
-
-/*!
-  Augments the prefix of the experiment files by \e strTrue followed by \e
-  val.
-
-  \param strTrue : String to add
-  \param val : Value to add
-
-*/
-void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
-{
-  // if(val != 0.)
-  if (std::fabs(val) < std::numeric_limits<double>::epsilon()) {
-    std::stringstream valS;
-    valS.precision(4);
-    valS << val;
-    baseName += "_" + strTrue + valS.str();
-  }
-}
-
-/*!
-  Creates the directory \e baseDir/baseName. If already exists, empties
-  it if \e empty is true.
-  Useful to save the images corresponding to a particular experiment.
-
-  \param empty : Indicates if the new directory has to be emptied
-
-*/
-void vpIoTools::createBaseNamePath(const bool &empty)
-{
-  std::string path = baseDir + baseName;
-  if (vpIoTools::checkDirectory(path) == false) {
-    try {
-      vpIoTools::makeDirectory(path);
-      std::cout << "Creating directory " << path << std::endl;
-    }
-    catch (...) {
-      throw(vpException(vpException::fatalError, "Cannot create base name directory %s", path.c_str()));
-    }
-  }
-  else {
-    if (empty) {
-      std::cout << "Emptying directory " << path << std::endl;
-      vpIoTools::remove(path + "/*");
-    }
-  }
-}
-
-/*!
-  Copy the initial configuration file to the experiment directory.
-
-  \param actuallySave : If false, do not copy the file.
-
-*/
-void vpIoTools::saveConfigFile(const bool &actuallySave)
-{
-  if (actuallySave) {
-    std::string dest = baseDir + "/" + baseName + "_config.txt";
-    // file copy
-    vpIoTools::copy(configFile, dest);
-  }
-}
-
-/*!
- Get ViSP images data path. ViSP images data can be installed from Debian or
- Ubuntu \e visp-images-data package. It can be also installed from
- visp-images-3.x.y.zip that can be found on https://visp.inria.fr/download page.
-
- This function returns the path to the folder that contains the data.
- - It checks first if VISP_INPUT_IMAGE_PATH environment variable that gives the
- location of the data is set. In that case returns the content of this
- environment var.
- - Otherwise it checks if \e visp-images-data binary package (Ubuntu, Debian) is installed.
- In that case returns then \e /usr/share/visp-images-data".
- - If the path is not found, returns an empty string.
+  This function returns the path to the folder that contains the data.
+  - It checks first if VISP_INPUT_IMAGE_PATH environment variable that gives the
+  location of the data is set. In that case returns the content of this
+  environment var.
+  - Otherwise it checks if \e visp-images-data binary package (Ubuntu, Debian) is installed.
+  In that case returns then \e /usr/share/visp-images-data".
+  - If the path is not found, returns an empty string.
  */
 std::string vpIoTools::getViSPImagesDataPath()
 {
@@ -1884,33 +1088,36 @@ std::string vpIoTools::getViSPImagesDataPath()
 }
 
 /*!
-   Returns the extension of the file or an empty string if the file has no
-   extension. If checkFile flag is set, it will check first if the pathname
-   denotes a directory and so return an empty string and second it will check
-   if the file denoted by the pathanme exists. If so, it will return the
-   extension if present.
+  Returns the extension of the file or an empty string if the file has no
+  extension. If checkFile flag is set, it will check first if the pathname
+  denotes a directory and so return an empty string and second it will check
+  if the file denoted by the pathanme exists. If so, it will return the
+  extension if present.
 
-   \param pathname : The pathname of the file we want to get the extension.
-   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
-   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
-pathname is empty.
+  \param pathname : The pathname of the file we want to get the extension.
+  \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+  \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
+  pathname is empty.
 
-   The following code shows how to use this function:
-   \code
-#include <visp3/core/vpIoTools.h>
+  The following code shows how to use this function:
+  \code
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::string filename = "my/path/to/file.xml"
-  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
-  std::cout << "ext: " << ext << std::endl;
-}
-   \endcode
-   It produces the following output:
-   \code
-ext: .xml
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
+  int main()
+  {
+    std::string filename = "my/path/to/file.xml"
+    std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+    std::cout << "ext: " << ext << std::endl;
+  }
+  \endcode
+  It produces the following output:
+  \code
+  ext: .xml
+  \endcode
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkFile)
 {
@@ -2036,24 +1243,28 @@ std::string vpIoTools::getNameWE(const std::string &pathname)
 
   The following sample code shows how to use this function:
   \code
-#include <visp3/core/vpIoTools.h>
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-1
-40
--1
-3
--1
+  1
+  40
+  -1
+  3
+  -1
   \endcode
 */
 long vpIoTools::getIndex(const std::string &filename, const std::string &format)
@@ -2390,52 +1601,56 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pat
 }
 
 /*!
- Split a chain.
- \param chain : Input chain to split.
- \param sep : Character separator.
- \return A vector that contains all the subchains.
+  Split a chain.
+  \param chain : Input chain to split.
+  \param sep : Character separator.
+  \return A vector that contains all the subchains.
 
- The following code shows how to use this function:
- \code
-#include <visp3/core/vpIoTools.h>
+  The following code shows how to use this function:
+  \code
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
   {
-    std::string chain("/home/user;/usr/local/include;/usr/include");
-    std::string sep = ";";
+    {
+      std::string chain("/home/user;/usr/local/include;/usr/include");
+      std::string sep = ";";
 
-    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
-    std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); ++i)
-      std::cout << subChain[i] << std::endl;
+      std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+      std::cout << "Found the following subchains: " << std::endl;
+      for (size_t i=0; i < subChain.size(); ++i)
+        std::cout << subChain[i] << std::endl;
+    }
+
+    {
+      std::string chain("This is an other example");
+      std::string sep = " ";
+
+      std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+      std::cout << "Found the following subchains: " << std::endl;
+      for (size_t i=0; i < subChain.size(); ++i)
+        std::cout << subChain[i] << std::endl;
+    }
   }
+  \endcode
 
-  {
-    std::string chain("This is an other example");
-    std::string sep = " ";
-
-    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
-    std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); ++i)
-      std::cout << subChain[i] << std::endl;
-  }
-}
- \endcode
-
- It produces the following output:
- \code
-Found the following subchains:
-/home/user
-/usr/local/include
-/usr/include
-Found the following subchains:
-This
-is
-an
-other
-example
- \endcode
+  It produces the following output:
+  \code
+  Found the following subchains:
+  /home/user
+  /usr/local/include
+  /usr/include
+  Found the following subchains:
+  This
+  is
+  an
+  other
+  example
+  \endcode
  */
 std::vector<std::string> vpIoTools::splitChain(const std::string &chain, const std::string &sep)
 {
@@ -2529,181 +1744,4 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 #endif
 }
 
-/*!
-   Read a 16-bits integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, int16_t &short_value)
-{
-  file.read((char *)(&short_value), sizeof(short_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  short_value = vpEndian::swap16bits((uint16_t)short_value);
-#endif
-}
-
-/*!
-   Read a 16-bits unsigned integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, uint16_t &ushort_value)
-{
-  file.read((char *)(&ushort_value), sizeof(ushort_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  ushort_value = vpEndian::swap16bits(ushort_value);
-#endif
-}
-
-/*!
-   Read a 32-bits integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, int32_t &int_value)
-{
-  file.read((char *)(&int_value), sizeof(int_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  int_value = vpEndian::swap32bits((uint32_t)int_value);
-#endif
-}
-
-/*!
-   Read a 32-bits unsigned integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, uint32_t &uint_value)
-{
-  file.read((char *)(&uint_value), sizeof(uint_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  uint_value = vpEndian::swap32bits(uint_value);
-#endif
-}
-
-/*!
-   Read a float value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, float &float_value)
-{
-  file.read((char *)(&float_value), sizeof(float_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  float_value = vpEndian::swapFloat(float_value);
-#endif
-}
-
-/*!
-   Read a double value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, double &double_value)
-{
-  file.read((char *)(&double_value), sizeof(double_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  double_value = vpEndian::swapDouble(double_value);
-#endif
-}
-
-/*!
-   Write a 16-bits integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int16_t short_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint16_t swap_short = vpEndian::swap16bits((uint16_t)short_value);
-  file.write((char *)(&swap_short), sizeof(swap_short));
-#else
-  file.write((char *)(&short_value), sizeof(short_value));
-#endif
-}
-
-/*!
-   Write a 16-bits unsigned integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint16_t swap_ushort = vpEndian::swap16bits(ushort_value);
-  file.write((char *)(&swap_ushort), sizeof(swap_ushort));
-#else
-  file.write((char *)(&ushort_value), sizeof(ushort_value));
-#endif
-}
-
-/*!
-   Write a 32-bits integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int32_t int_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint32_t swap_int = vpEndian::swap32bits((uint32_t)int_value);
-  file.write((char *)(&swap_int), sizeof(swap_int));
-#else
-  file.write((char *)(&int_value), sizeof(int_value));
-#endif
-}
-
-/*!
-   Write a 32-bits unsigned integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint32_t uint_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint32_t swap_int = vpEndian::swap32bits(uint_value);
-  file.write((char *)(&swap_int), sizeof(swap_int));
-#else
-  file.write((char *)(&uint_value), sizeof(uint_value));
-#endif
-}
-
-/*!
-   Write a float value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, float float_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  float swap_float = vpEndian::swapFloat(float_value);
-  file.write((char *)(&swap_float), sizeof(swap_float));
-#else
-  file.write((char *)(&float_value), sizeof(float_value));
-#endif
-}
-
-/*!
-   Write a double value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, double double_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  double swap_double = vpEndian::swapDouble(double_value);
-  file.write((char *)(&swap_double), sizeof(swap_double));
-#else
-  file.write((char *)(&double_value), sizeof(double_value));
-#endif
-}
-
-bool vpIoTools::parseBoolean(std::string input)
-{
-  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-  std::istringstream is(input);
-  bool b;
-  // Parse string to boolean either in the textual representation
-  // (True/False)  or in numeric representation (1/0)
-  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
-  return b;
-}
-
-/*!
-   Remove leading and trailing whitespaces from a string.
- */
-std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }
 END_VISP_NAMESPACE

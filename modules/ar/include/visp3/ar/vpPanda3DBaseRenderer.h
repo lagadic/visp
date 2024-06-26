@@ -78,7 +78,7 @@ public:
    * @param framework
    * @param window
    */
-  void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window);
+  void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window);
 
 
   virtual void renderFrame();
@@ -281,10 +281,10 @@ protected:
   const std::string m_name; //! name of the renderer
   int m_renderOrder; //! Rendering priority for this renderer and its buffers. A lower value will be rendered first. Should be used when calling make_output in setupRenderTarget()
   std::shared_ptr<PandaFramework> m_framework; //! Pointer to the active panda framework
-  PT(WindowFramework) m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.
+  std::shared_ptr<WindowFramework> m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.
   vpPanda3DRenderParameters m_renderParameters; //! Rendering parameters
   NodePath m_renderRoot; //! Node containing all the objects and the camera for this renderer
-  PT(Camera) m_camera;
+  PointerTo<Camera> m_camera;
   NodePath m_cameraPath; //! NodePath of the camera
   std::vector<GraphicsOutput *> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
 };

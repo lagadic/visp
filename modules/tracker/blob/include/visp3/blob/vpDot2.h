@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,15 @@
  *
  * Description:
  * Track a white dot.
- *
-*****************************************************************************/
+ */
 
-/*
+/*!
   \file vpDot2.h
   \brief This tracker is meant to track some zones on a vpImage.
 */
 
-#ifndef vpDot2_hh
-#define vpDot2_hh
+#ifndef VP_DOT2_H
+#define VP_DOT2_H
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpConfig.h>
@@ -127,7 +125,7 @@ class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  explicit vpDot2(const vpImagePoint &ip);
+  VP_EXPLICIT vpDot2(const vpImagePoint &ip);
   vpDot2(const vpDot2 &twinDot);
 
   static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I,
@@ -147,9 +145,13 @@ public:
   inline vpColVector get_nij() const
   {
     vpColVector nij(3);
-    nij[0] = mu20 / m00;
-    nij[1] = mu11 / m00;
-    nij[2] = mu02 / m00;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+
+    nij[index_0] = mu20 / m00;
+    nij[index_1] = mu11 / m00;
+    nij[index_2] = mu02 / m00;
 
     return nij;
   }
@@ -165,8 +167,8 @@ public:
   {
     vpRect bbox;
 
-    bbox.setRect(this->bbox_u_min, this->bbox_v_min, (this->bbox_u_max - this->bbox_u_min) + 1,
-                 (this->bbox_v_max - this->bbox_v_min) + 1);
+    bbox.setRect(m_bbox_u_min, m_bbox_v_min, (m_bbox_u_max - m_bbox_u_min) + 1,
+                 (m_bbox_v_max - m_bbox_v_min) + 1);
 
     return bbox;
   };
@@ -176,7 +178,7 @@ public:
    *
    * \return The coordinates of the center of gravity.
    */
-  inline vpImagePoint getCog() const { return cog; }
+  inline vpImagePoint getCog() const { return m_cog; }
 
   double getDistance(const vpDot2 &distantDot) const;
   /*!
@@ -186,7 +188,7 @@ public:
    * \param edges_list : The list of all the images points on the dot
    * border. This list is update after a call to track().
    */
-  void getEdges(std::list<vpImagePoint> &edges_list) const { edges_list = this->ip_edges_list; };
+  void getEdges(std::list<vpImagePoint> &edges_list) const { edges_list = m_ip_edges_list; };
 
   /*!
    * Return the list of all the image points on the dot
@@ -195,7 +197,7 @@ public:
    * \return The list of all the images points on the dot
    * border. This list is update after a call to track().
    */
-  std::list<vpImagePoint> getEdges() const { return this->ip_edges_list; };
+  std::list<vpImagePoint> getEdges() const { return m_ip_edges_list; };
 
   /*!
    * Get the percentage of sampled points that are considered non conform
@@ -203,24 +205,24 @@ public:
    *
    * \sa setEllipsoidBadPointsPercentage()
    */
-  double getEllipsoidBadPointsPercentage() const { return allowedBadPointsPercentage_; }
+  double getEllipsoidBadPointsPercentage() const { return m_allowedBadPointsPercentage; }
 
   double getEllipsoidShapePrecision() const;
   void getFreemanChain(std::list<unsigned int> &freeman_chain) const;
 
-  inline double getGamma() const { return this->gamma; };
+  inline double getGamma() const { return m_gamma; };
   /*!
    * Return the color level of pixels inside the dot.
    *
    * \sa getGrayLevelMax()
    */
-  inline unsigned int getGrayLevelMin() const { return gray_level_min; };
+  inline unsigned int getGrayLevelMin() const { return m_gray_level_min; };
   /*!
    * Return the color level of pixels inside the dot.
    *
    * \sa getGrayLevelMin()
    */
-  inline unsigned int getGrayLevelMax() const { return gray_level_max; };
+  inline unsigned int getGrayLevelMax() const { return m_gray_level_max; };
   double getGrayLevelPrecision() const;
 
   double getHeight() const;
@@ -229,12 +231,12 @@ public:
   /*!
    * \return The mean gray level value of the dot.
    */
-  double getMeanGrayLevel() const { return (this->mean_gray_level); };
+  double getMeanGrayLevel() const { return m_mean_gray_level; };
 
   /*!
    * \return a vpPolygon made from the edges of the dot.
    */
-  vpPolygon getPolygon() const { return (vpPolygon(ip_edges_list)); };
+  vpPolygon getPolygon() const { return (vpPolygon(m_ip_edges_list)); };
   double getSizePrecision() const;
   double getWidth() const;
 
@@ -256,7 +258,7 @@ public:
   /*!
    * Initialize the dot coordinates with \e ip.
    */
-  inline void setCog(const vpImagePoint &ip) { this->cog = ip; }
+  inline void setCog(const vpImagePoint &ip) { m_cog = ip; }
 
   /*!
    * Activates the dot's moments computation.
@@ -271,7 +273,7 @@ public:
    * The coordinates of the region's centroid (u, v) can be computed from the
    * moments by \f$u=\frac{m10}{m00}\f$ and \f$v=\frac{m01}{m00}\f$.
    */
-  void setComputeMoments(bool activate) { compute_moment = activate; }
+  void setComputeMoments(bool activate) { m_compute_moment = activate; }
 
   /*!
    * Set the percentage of sampled points that are considered non conform
@@ -288,13 +290,13 @@ public:
   void setEllipsoidBadPointsPercentage(const double &percentage = 0.0)
   {
     if (percentage < 0.) {
-      allowedBadPointsPercentage_ = 0.;
+      m_allowedBadPointsPercentage = 0.;
     }
     else if (percentage > 1.) {
-      allowedBadPointsPercentage_ = 1.;
+      m_allowedBadPointsPercentage = 1.;
     }
     else {
-      allowedBadPointsPercentage_ = percentage;
+      m_allowedBadPointsPercentage = percentage;
     }
   }
 
@@ -313,7 +315,7 @@ public:
    *
    * \sa setGraphicsThickness()
    */
-  void setGraphics(bool activate) { graphics = activate; }
+  void setGraphics(bool activate) { m_graphics = activate; }
 
   /*!
    * Modify the default thickness that is set to 1 of the drawings in overlay
@@ -321,7 +323,7 @@ public:
    *
    * \sa setGraphics()
    */
-  void setGraphicsThickness(unsigned int t) { this->thickness = t; };
+  void setGraphicsThickness(unsigned int thickness) { m_thickness = thickness; };
 
   /*!
    * Set the color level of the dot to search a dot in a region of interest. This
@@ -335,11 +337,12 @@ public:
    */
   inline void setGrayLevelMin(const unsigned int &min)
   {
-    if (min > 255) {
-      this->gray_level_min = 255;
+    const unsigned int val_max = 255;
+    if (min > val_max) {
+      m_gray_level_min = val_max;
     }
     else {
-      this->gray_level_min = min;
+      m_gray_level_min = min;
     }
   };
 
@@ -353,11 +356,12 @@ public:
    */
   inline void setGrayLevelMax(const unsigned int &max)
   {
-    if (max > 255) {
-      this->gray_level_max = 255;
+    const unsigned int val_max = 255;
+    if (max > val_max) {
+      m_gray_level_max = val_max;
     }
     else {
-      this->gray_level_max = max;
+      m_gray_level_max = max;
     }
   };
 
@@ -472,7 +476,7 @@ private:
    *
     \sa getFirstBorder_v()
    */
-  unsigned int getFirstBorder_u() const { return this->firstBorder_u; }
+  unsigned int getFirstBorder_u() const { return m_firstBorder_u; }
 
   /*!
     Get the starting point on a dot border. The dot border is
@@ -480,7 +484,7 @@ private:
    *
     \sa getFirstBorder_u()
    */
-  unsigned int getFirstBorder_v() const { return this->firstBorder_v; }
+  unsigned int getFirstBorder_v() const { return m_firstBorder_v; }
 
   bool computeFreemanChainElement(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v,
                                   unsigned int &element);
@@ -499,41 +503,66 @@ private:
   void setArea(const vpRect &a);
 
   unsigned char getMeanGrayLevel(vpImage<unsigned char> &I) const;
-  //! coordinates (float) of the point center of gravity
-  vpImagePoint cog;
 
-  double width;
-  double height;
-  double surface;
-  unsigned int gray_level_min; // minumum gray level for the dot. Pixel with lower level don't belong to this dot.
+  typedef struct vpSearchDotsInAreaGoodGermData
+  {
+    const vpImage<unsigned char> &m_I;
+    const vpRect &m_area;
+    unsigned int &m_u;
+    unsigned int &m_v;
+    std::list<vpDot2> &m_niceDots;
+    std::list<vpDot2> &m_badDotsVector;
 
-  unsigned int gray_level_max; // maximum gray level for the dot. Pixel with higher level don't belong to this dot.
-  double mean_gray_level;      // Mean gray level of the dot
-  double grayLevelPrecision;
-  double gamma;
-  double sizePrecision;
-  double ellipsoidShapePrecision;
-  double maxSizeSearchDistancePrecision;
-  double allowedBadPointsPercentage_;
+    vpSearchDotsInAreaGoodGermData(const vpImage<unsigned char> &I, const vpRect &area,
+                                   unsigned int &u, unsigned int &v,
+                                   std::list<vpDot2> &niceDots, std::list<vpDot2> &badDotsVector)
+      : m_I(I)
+      , m_area(area)
+      , m_u(u)
+      , m_v(v)
+      , m_niceDots(niceDots)
+      , m_badDotsVector(badDotsVector)
+    {
+
+    }
+  } vpSearchDotsInAreaGoodGermData;
+
+  void searchDotsAreaGoodGerm(vpSearchDotsInAreaGoodGermData &data);
+  //! Coordinates (float) of the point center of gravity
+  vpImagePoint m_cog;
+
+  double m_width;
+  double m_height;
+  double m_surface;
+  unsigned int m_gray_level_min; // minumum gray level for the dot. Pixel with lower level don't belong to this dot.
+
+  unsigned int m_gray_level_max; // maximum gray level for the dot. Pixel with higher level don't belong to this dot.
+  double m_mean_gray_level;      // Mean gray level of the dot
+  double m_grayLevelPrecision;
+  double m_gamma;
+  double m_sizePrecision;
+  double m_ellipsoidShapePrecision;
+  double m_maxSizeSearchDistPrecision;
+  double m_allowedBadPointsPercentage;
   // Area where the dot is to search
-  vpRect area;
+  vpRect m_area;
 
   // other
-  std::list<unsigned int> direction_list;
-  std::list<vpImagePoint> ip_edges_list;
+  std::list<unsigned int> m_direction_list;
+  std::list<vpImagePoint> m_ip_edges_list;
 
   // flag
-  bool compute_moment; // true moment are computed
-  bool graphics;       // true for graphic overlay display
+  bool m_compute_moment; // true moment are computed
+  bool m_graphics;       // true for graphic overlay display
 
-  unsigned int thickness; // Graphics thickness
+  unsigned int m_thickness; // Graphics thickness
 
   // Bounding box
-  int bbox_u_min, bbox_u_max, bbox_v_min, bbox_v_max;
+  int m_bbox_u_min, m_bbox_u_max, m_bbox_v_min, m_bbox_v_max;
 
   // The first point coordinate on the dot border
-  unsigned int firstBorder_u;
-  unsigned int firstBorder_v;
+  unsigned int m_firstBorder_u;
+  unsigned int m_firstBorder_v;
 
 };
 

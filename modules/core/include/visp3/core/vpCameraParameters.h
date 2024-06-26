@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +31,21 @@
  * Camera intrinsic parameters.
  */
 
-/*!
-   \file vpCameraParameters.h
-   \brief Declaration of the vpCameraParameters class.
-   Class vpCameraParameters define the camera intrinsic parameters
+ /*!
+    \file vpCameraParameters.h
+    \brief Declaration of the vpCameraParameters class.
+    Class vpCameraParameters define the camera intrinsic parameters
 
-*/
+ */
 
-#ifndef _vpCameraParameters_h_
-#define _vpCameraParameters_h_
+#ifndef VP_CAMERA_PARAMETERS_H
+#define VP_CAMERA_PARAMETERS_H
 
 #include <iostream>
 #include <vector>
 
-#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -264,6 +263,10 @@ BEGIN_VISP_NAMESPACE
   \code
   #include <visp3/core/vpCameraParameters.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
   #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -358,8 +361,7 @@ public:
   inline double getHorizontalFovAngle() const
   {
     if (!m_isFov) {
-      vpTRACE("Warning: The FOV is not computed, getHorizontalFovAngle() "
-        "won't be significant.");
+      std::cout << "Warning: The FOV is not computed, getHorizontalFovAngle() won't be significant." << std::endl;
     }
     return m_hFovAngle;
   }
@@ -374,8 +376,7 @@ public:
   inline double getVerticalFovAngle() const
   {
     if (!m_isFov) {
-      vpTRACE("Warning: The FOV is not computed, getVerticalFovAngle() won't "
-        "be significant.");
+      std::cout << "Warning: The FOV is not computed, getVerticalFovAngle() won't be significant." << std::endl;
     }
     return m_vFovAngle;
   }
@@ -395,8 +396,7 @@ public:
   inline std::vector<vpColVector> getFovNormals() const
   {
     if (!m_isFov) {
-      vpTRACE("Warning: The FOV is not computed, getFovNormals() won't be "
-        "significant.");
+      std::cout << "Warning: The FOV is not computed, getFovNormals() won't be significant." << std::endl;
     }
     return m_fovNormals;
   }
@@ -544,6 +544,8 @@ inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
     cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
     break;
   }
+  default:
+    break;
   }
 }
 #endif

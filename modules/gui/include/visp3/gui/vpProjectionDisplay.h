@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,10 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
-#ifndef vpProjectionDisplay_H
-#define vpProjectionDisplay_H
+#ifndef VP_PROJECTION_DISPLAY_H
+#define VP_PROJECTION_DISPLAY_H
 
 /*!
   \file vpProjectionDisplay.h
@@ -103,7 +101,7 @@ public:
   {
     init();
   }
-  explicit vpProjectionDisplay(int select)
+  VP_EXPLICIT vpProjectionDisplay(int select)
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
     dIcam(), dIext(),

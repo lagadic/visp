@@ -63,6 +63,10 @@ BEGIN_VISP_NAMESPACE
  * #include <iostream>
  * #include <visp3/core/vpClient.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   std::string servername = "localhost";
@@ -169,7 +173,7 @@ private:
 
 public:
   vpClient();
-  virtual ~vpClient() vp_override;
+  virtual ~vpClient() VP_OVERRIDE;
 
   bool connectToHostname(const std::string &hostname, const unsigned int &port_serv);
   bool connectToIP(const std::string &ip, const unsigned int &port_serv);

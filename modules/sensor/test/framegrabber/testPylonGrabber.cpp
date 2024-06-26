@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,14 +29,10 @@
  *
  * Description:
  * Basler cameras video capture using Pylon SDK.
- *
- * Authors:
- * Wenfeng CAI
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file testPylonGrabber.cpp
+  \example testPylonGrabber.cpp
 
   \brief  Acquire images using Pylon library.
 */
@@ -53,9 +48,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpPylonFactory.h>
-/*!
-  \example testPylonGrabber.cpp
-*/
+
 int main()
 {
 #ifdef ENABLE_VISP_NAMESPACE

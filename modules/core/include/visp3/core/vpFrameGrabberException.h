@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
  *  derivates
  */
 
-#ifndef _vpFrameGrabberException_h_
-#define _vpFrameGrabberException_h_
+#ifndef VP_FRAMEGRABBER_EXCEPTION_H
+#define VP_FRAMEGRABBER_EXCEPTION_H
 
 #include <iostream>
 #include <string>
@@ -86,7 +86,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpFrameGrabberException(int id) : vpException(id) { }
+  VP_EXPLICIT vpFrameGrabberException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

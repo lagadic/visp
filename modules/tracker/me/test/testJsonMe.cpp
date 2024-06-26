@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,8 +104,8 @@ public:
     static_cast<void>(next());
   }
 
-  vpMe const &get() const vp_override { return current; }
-  bool next() vp_override
+  vpMe const &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     current.setThreshold(m_dist(m_rand) * 255);
     current.setMaskNumber(m_int_dist(m_rand) * 10);

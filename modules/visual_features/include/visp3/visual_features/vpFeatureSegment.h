@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,11 @@
  * \brief class that defines the Segment visual feature
  */
 
-#ifndef vpFeatureSegment_H
-#define vpFeatureSegment_H
+#ifndef VP_FEATURE_SEGMENT_H
+#define VP_FEATURE_SEGMENT_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRGBa.h>
@@ -67,7 +68,7 @@ class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
   // empty constructor
-  explicit vpFeatureSegment(bool normalized = false);
+  VP_EXPLICIT vpFeatureSegment(bool normalized = false);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // change values of the segment
@@ -77,14 +78,14 @@ public:
   vpFeatureSegment &build(const double &x1, const double &y1, const double &Z1, const double &x2, const double &y2, const double &Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   //! Feature duplication.
-  vpFeatureSegment *duplicate() const vp_override;
+  vpFeatureSegment *duplicate() const VP_OVERRIDE;
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   /*!
    * Get the x coordinate of the segment center in the image plane.
@@ -136,12 +137,12 @@ public:
   inline double getZ2() const { return Z2_; }
 
   // Basic construction.
-  void init() vp_override;
+  void init() VP_OVERRIDE;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   /*!
    * Indicates if the normalized features are considered.

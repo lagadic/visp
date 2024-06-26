@@ -175,8 +175,8 @@ int main(int argc, const char **argv)
     // Log file creation in /tmp/$USERNAME/log.dat
     // This file contains by line:
     // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
-    // - the 6 mesured camera velocities (m/s, rad/s)
-    // - the 6 mesured joint positions (m, rad)
+    // - the 6 measured camera velocities (m/s, rad/s)
+    // - the 6 measured joint positions (m, rad)
     // - the 8 values of s - s*
     std::string username;
     // Get the user login name
@@ -489,5 +489,5 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

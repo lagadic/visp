@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,12 @@
  * Description:
  * Test descriptor computation.
  */
+
+/*!
+  \example testKeyPoint-6.cpp
+
+  \brief   Test descriptor extraction.
+*/
 
 #include <iostream>
 
@@ -287,7 +293,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       // Init BIN BOOST descriptor for FAST keypoints
       boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
-      }
+    }
 
     double t = vpTime::measureTimeMs();
     cv::Mat descriptor;
@@ -319,7 +325,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         vpDisplay::getClick(I);
       }
     }
-    }
+  }
 
   std::cout << "\n\n";
 
@@ -366,7 +372,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       // Init BIN BOOST descriptor for FAST keypoints
       boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
-      }
+    }
 
     double t = vpTime::measureTimeMs();
     cv::Mat descriptor;
@@ -400,14 +406,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         vpDisplay::getClick(I);
       }
     }
-    }
   }
+}
 
-  /*!
-    \example testKeyPoint-6.cpp
-
-    \brief   Test descriptor extraction.
-  */
 int main(int argc, const char **argv)
 {
   try {

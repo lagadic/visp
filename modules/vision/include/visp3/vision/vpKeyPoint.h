@@ -124,6 +124,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpImage.h>
  * #include <visp3/vision/vpKeyPoint.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if (VISP_HAVE_OPENCV_VERSION >= 0x020300)
@@ -160,6 +164,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpDisplay.h>
  * #include <visp3/core/vpImage.h>
  * #include <visp3/vision/vpKeyPoint.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   images (it defines a RGB 32-bit floating point structure)
 */
 
-#ifndef _vpRGBf_h_
-#define _vpRGBf_h_
+#ifndef VP_RGBF_H
+#define VP_RGBF_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
@@ -86,7 +86,19 @@ public:
 
     \param v : Value to set.
   */
-  inline vpRGBf(float v) : R(v), G(v), B(v) { }
+  VP_EXPLICIT inline vpRGBf(float v) : R(v), G(v), B(v) { }
+
+  /*!
+    Constructor.
+
+    Initialize all the R, G, B components to \e v.
+
+    \param v : Value to set.
+  */
+  VP_EXPLICIT inline vpRGBf(int v)
+  {
+    *this = v;
+  }
 
   /*!
     Copy constructor.
@@ -100,9 +112,10 @@ public:
     G=v[1]
     B=v[2]
   */
-  inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
+  VP_EXPLICIT inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
 
   vpRGBf &operator=(float v);
+  vpRGBf &operator=(int v);
   vpRGBf &operator=(const vpRGBf &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBf &operator=(const vpRGBf &&v);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
 
 */
 
-#ifndef _vpImageMorphology_h_
-#define _vpImageMorphology_h_
+#ifndef VP_IMAGE_MORPHOLOGY_H
+#define VP_IMAGE_MORPHOLOGY_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -112,7 +112,7 @@ public:
     \param I : Gray-scale image to process.
     \param connexity : Type of connexity: 4 or 8.
    */
-  vp_deprecated static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
+  VP_DEPRECATED static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
   {
     vpImageMorphology::erosion<unsigned char>(I, connexity);
   }
@@ -129,7 +129,7 @@ public:
     \param I : Gray-scale image to process.
     \param connexity : Type of connexity: 4 or 8.
    */
-  vp_deprecated static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
+  VP_DEPRECATED static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
   {
     vpImageMorphology::dilatation<unsigned char>(I, connexity);
   }
@@ -431,7 +431,7 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const vpConnexityType &connexi
 template<typename T>
 void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size)
 {
-  if (size % 2 != 1) {
+  if ((size % 2) != 1) {
     throw(vpException(vpException::badValue, "Dilatation/erosion kernel must be odd."));
   }
 

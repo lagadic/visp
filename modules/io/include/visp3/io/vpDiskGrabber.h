@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,11 @@
  * \file vpDiskGrabber.h
  * \brief Class to load image sequence from the disk.
  */
-#ifndef vpDiskGrabber_hh
-#define vpDiskGrabber_hh
+#ifndef VP_DISK_GRABBER_H
+#define VP_DISK_GRABBER_H
 
 #include <string>
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
@@ -66,6 +65,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/core/vpImage.h>
  * #include <visp3/io/vpDiskGrabber.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main(){
  *   vpImage<unsigned char> I; // Grey level image
@@ -128,7 +131,7 @@ public:
   /*!
    * Constructor that takes a generic image sequence as input.
    */
-  explicit vpDiskGrabber(const std::string &genericName);
+  VP_EXPLICIT vpDiskGrabber(const std::string &genericName);
 
   /*!
    * Destructor.
@@ -146,7 +149,7 @@ public:
    * \param noz : Number of zero to code the image number.
    * \param ext : Extension of the image file.
    */
-  explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
+  VP_EXPLICIT vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
                          const std::string &ext);
 
   /*!

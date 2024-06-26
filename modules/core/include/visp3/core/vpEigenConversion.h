@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * ViSP <--> Eigen conversion.
  */
 
-#ifndef _vpEigenConversion_h_
-#define _vpEigenConversion_h_
+#ifndef VP_EIGEN_CONVERSION_H
+#define VP_EIGEN_CONVERSION_H
 
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_EIGEN3
@@ -44,38 +44,43 @@ namespace VISP_NAMESPACE_NAME
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
-VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, VISP_NAMESPACE_ADDRESSING vpMatrix &dst);
+VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst);
 
-VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &dst);
+VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst);
 
-template <typename Type> void eigen2visp(const Eigen::Quaternion<Type> &src, VISP_NAMESPACE_ADDRESSING vpQuaternionVector &dst)
+template <typename Type>
+void eigen2visp(const Eigen::Quaternion<Type> &src, vpQuaternionVector &dst)
 {
   dst.build(src.x(), src.y(), src.z(), src.w());
 }
 
-template <typename Type> void eigen2visp(const Eigen::AngleAxis<Type> &src, VISP_NAMESPACE_ADDRESSING vpThetaUVector &dst)
+template <typename Type>
+void eigen2visp(const Eigen::AngleAxis<Type> &src, vpThetaUVector &dst)
 {
   dst.build(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(2));
 }
 
-VISP_EXPORT void eigen2visp(const Eigen::VectorXd &src, VISP_NAMESPACE_ADDRESSING vpColVector &dst);
+VISP_EXPORT void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst);
 
-VISP_EXPORT void eigen2visp(const Eigen::RowVectorXd &src, VISP_NAMESPACE_ADDRESSING vpRowVector &dst);
+VISP_EXPORT void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst);
 
 /* ViSP to Eigen */
-template <typename Derived> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpMatrix &src, Eigen::MatrixBase<Derived> &dst)
+template <typename Derived>
+void visp2eigen(const  vpMatrix &src, Eigen::MatrixBase<Derived> &dst)
 {
   dst = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(src.data, src.getRows(),
                                                                                             src.getCols());
 }
 
-template <typename Derived> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpHomogeneousMatrix &src, Eigen::MatrixBase<Derived> &dst)
+template <typename Derived>
+void visp2eigen(const  vpHomogeneousMatrix &src, Eigen::MatrixBase<Derived> &dst)
 {
   dst = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(src.data, src.getRows(),
                                                                                             src.getCols());
 }
 
-template <typename Type> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpQuaternionVector &src, Eigen::Quaternion<Type> &dst)
+template <typename Type>
+void visp2eigen(const  vpQuaternionVector &src, Eigen::Quaternion<Type> &dst)
 {
   dst.w() = static_cast<Type>(src.w());
   dst.x() = static_cast<Type>(src.x());
@@ -83,17 +88,21 @@ template <typename Type> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpQuate
   dst.z() = static_cast<Type>(src.z());
 }
 
-template <typename Type> void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpThetaUVector &src, Eigen::AngleAxis<Type> &dst)
+template <typename Type>
+void visp2eigen(const  vpThetaUVector &src, Eigen::AngleAxis<Type> &dst)
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
   dst.angle() = static_cast<Type>(src.getTheta());
-  dst.axis()(0) = static_cast<Type>(src.getU()[0]);
-  dst.axis()(1) = static_cast<Type>(src.getU()[1]);
-  dst.axis()(2) = static_cast<Type>(src.getU()[2]);
+  dst.axis()(index_0) = static_cast<Type>(src.getU()[index_0]);
+  dst.axis()(index_1) = static_cast<Type>(src.getU()[index_1]);
+  dst.axis()(index_2) = static_cast<Type>(src.getU()[index_2]);
 }
 
-VISP_EXPORT void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpColVector &src, Eigen::VectorXd &dst);
+VISP_EXPORT void visp2eigen(const  vpColVector &src, Eigen::VectorXd &dst);
 
-VISP_EXPORT void visp2eigen(const VISP_NAMESPACE_ADDRESSING vpRowVector &src, Eigen::RowVectorXd &dst);
+VISP_EXPORT void visp2eigen(const  vpRowVector &src, Eigen::RowVectorXd &dst);
 #endif
 } // namespace VISP_NAMESPACE_NAME
 #endif

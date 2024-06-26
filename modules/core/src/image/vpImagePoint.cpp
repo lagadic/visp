@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,27 +57,30 @@ bool vpImagePoint::inRectangle(const vpRect &rect) const
 /*!
   Operator +=.
 
-  This operator can be used to compute the center of gravity of a set of image
-points.
+  This operator can be used to compute the center of gravity of a set of image points.
 
   \code
-#include <iostream>
-#include <vector>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <vector>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  std::vector<vpImagePoint> ip(2);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  ip[0].set_ij(100, 200);
-  ip[1].set_ij(300, 400);
+  int main()
+  {
+    std::vector<vpImagePoint> ip(2);
 
-  vpImagePoint cog(0,0);
-  for(unsigned int i=0; i<ip.size(); ++i)
-    cog += ip[i];
-  cog /= ip.size();
-  std::cout << "cog: " << cog << std::endl;
-}
+    ip[0].set_ij(100, 200);
+    ip[1].set_ij(300, 400);
+
+    vpImagePoint cog(0,0);
+    for(unsigned int i=0; i<ip.size(); ++i)
+      cog += ip[i];
+    cog /= ip.size();
+    std::cout << "cog: " << cog << std::endl;
+  }
   \endcode
 
 */
@@ -92,26 +94,29 @@ vpImagePoint &vpImagePoint::operator+=(const vpImagePoint &ip)
 /*!
   Operator /=.
 
-  This operator can be used to compute the center of gravity of a set of image
-points.
-\code
-#include <iostream>
-#include <vector>
-#include <visp3/core/vpImagePoint.h>
+  This operator can be used to compute the center of gravity of a set of image points.
+  \code
+  #include <iostream>
+  #include <vector>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  std::vector<vpImagePoint> ip(2);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  ip[0].set_ij(100, 200);
-  ip[1].set_ij(300, 400);
+  int main()
+  {
+    std::vector<vpImagePoint> ip(2);
 
-  vpImagePoint cog(0,0);
-  for(unsigned int i=0; i<ip.size(); ++i)
-    cog += ip[i];
-  cog /= ip.size();
-  std::cout << "cog: " << cog << std::endl;
-}
+    ip[0].set_ij(100, 200);
+    ip[1].set_ij(300, 400);
+
+    vpImagePoint cog(0,0);
+    for(unsigned int i=0; i<ip.size(); ++i)
+      cog += ip[i];
+    cog /= ip.size();
+    std::cout << "cog: " << cog << std::endl;
+  }
   \endcode
 
 */
@@ -160,7 +165,7 @@ VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+  Returns a vpImagePoint which is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
@@ -170,7 +175,7 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+  Returns a vpImagePoint which is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
@@ -183,17 +188,21 @@ VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint 
   Returns a vpImagePoint with an offset added to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip+10: " << ip+10 << std::endl; // new coordinates (110, 210)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip+10: " << ip+10 << std::endl; // new coordinates (110, 210)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, int offset)
@@ -207,17 +216,21 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, int offset)
   Returns a vpImagePoint with an offset added to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip+10u: " << ip+10u << std::endl; // new coordinates (110, 210)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip+10u: " << ip+10u << std::endl; // new coordinates (110, 210)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, unsigned int offset)
@@ -231,17 +244,21 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, unsigned int offset)
   Returns a vpImagePoint with an offset added to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip+12.34: " << ip+12.34 << std::endl; // new coordinates (112.34, 212.34)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip+12.34: " << ip+12.34 << std::endl; // new coordinates (112.34, 212.34)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset)
@@ -252,7 +269,7 @@ VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint wich is the difference between \f$ ip1 \f$ and \f$
+  Returns a vpImagePoint which is the difference between \f$ ip1 \f$ and \f$
   ip2 \f$.
 */
 VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &ip2)
@@ -266,17 +283,21 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &
   Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip-10: " << ip-10 << std::endl; // new coordinates (90, 190)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip-10: " << ip-10 << std::endl; // new coordinates (90, 190)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset)
@@ -290,17 +311,21 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset)
   Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip-10u: " << ip-10u << std::endl; // new coordinates (90, 190)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip-10u: " << ip-10u << std::endl; // new coordinates (90, 190)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset)
@@ -314,17 +339,21 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset)
   Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip-12.34: " << ip-12.34 << std::endl; // new coordinates (87.66, 187.66)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip-12.34: " << ip-12.34 << std::endl; // new coordinates (87.66, 187.66)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, double offset)
@@ -338,17 +367,21 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, double offset)
   Returns a vpImagePoint with coordinates multiplied by a scale factor.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip*2: " << ip*2 << std::endl; // new coordinates (200, 400)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip*2: " << ip*2 << std::endl; // new coordinates (200, 400)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale)
@@ -362,17 +395,21 @@ VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale)
   Returns a vpImagePoint with coordinates divided by a scale factor.
 
   \code
-#include <iostream>
-#include <visp3/core/vpImagePoint.h>
+  #include <iostream>
+  #include <visp3/core/vpImagePoint.h>
 
-int main()
-{
-  vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
-  std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
-  std::cout << "ip/2: " << ip/2 << std::endl; // new coordinates (50, 100)
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
+  int main()
+  {
+    vpImagePoint ip(100, 200); // Create an image point with coordinates i=100, j=200
+    std::cout << "ip: " << ip << std::endl; // coordinates (100, 200)
+    std::cout << "ip/2: " << ip/2 << std::endl; // new coordinates (50, 100)
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale)
@@ -390,20 +427,25 @@ VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale)
 
   The following code
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/core/vpImagePoint.h>
-int main()
-{
-  vpImagePoint ip;
+  #include <visp3/core/vpImagePoint.h>
 
-  ip.set_i(10);
-  ip.set_j(11.1);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "Image point with coordinates: " << ip << std::endl;
+  int main()
+  {
+    vpImagePoint ip;
 
-  return 0;
-}
+    ip.set_i(10);
+    ip.set_j(11.1);
+
+    std::cout << "Image point with coordinates: " << ip << std::endl;
+
+    return 0;
+  }
   \endcode
 
   produces the output:

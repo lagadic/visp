@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
  * some tools for homography computation.
  */
 
-#ifndef vpHomography_hh
-#define vpHomography_hh
+#ifndef VP_HOMOGRAPHY_H
+#define VP_HOMOGRAPHY_H
 
 #include <list>
 #include <vector>
@@ -95,6 +95,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMath.h>
  * #include <visp3/core/vpMeterPixelConversion.h>
  * #include <visp3/vision/vpHomography.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {

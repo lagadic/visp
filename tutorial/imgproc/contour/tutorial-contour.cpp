@@ -126,7 +126,7 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);
 
-  I_draw_contours = 0;
+  I_draw_contours = vpRGBa(0);
   //! [Draw contours hierarchical]
   drawContoursTree(I_draw_contours, vp_contours);
   //! [Draw contours hierarchical]

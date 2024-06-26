@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,7 @@
  *
  * Description:
  * GDI renderer for windows 32 display
- *
- * Authors:
- * Bruno Renier
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #define GDI_ROBUST
@@ -525,6 +520,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
   double start = vpTime::measureTimeMs();
   while (vpTime::measureTimeMs() - start < 1000) {
     hDCScreen = GetDC(m_hWnd);
+
     if (!hDCScreen)
       continue;
     hDCMem = CreateCompatibleDC(hDCScreen);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Read videos and image sequences
 */
 
-#ifndef _vpVideoReader_h_
-#define _vpVideoReader_h_
+#ifndef VP_VIDEO_READER_H
+#define VP_VIDEO_READER_H
 
 #include <string>
 
@@ -89,6 +89,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/io/vpVideoReader.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #ifdef VISP_HAVE_OPENCV
@@ -122,6 +126,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/io/vpVideoReader.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<vpRGBa> I;
@@ -144,6 +152,10 @@ BEGIN_VISP_NAMESPACE
  * Note that it is also possible to access to a specific frame using getFrame().
  * \code
  * #include <visp3/io/vpVideoReader.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
