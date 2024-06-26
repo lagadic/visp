@@ -29,8 +29,7 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_yarp.cpp
@@ -39,6 +38,8 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_YARP
+
+#include <visp3/core/vpImageConvert.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -65,7 +66,7 @@ BEGIN_VISP_NAMESPACE
   int main()
   {
   #if defined(VISP_HAVE_YARP)
-    vpImage<unsigned char> I; // A mocochrome image
+    vpImage<unsigned char> I; // A monochrome image
     // Read an image on a disk
     vpImageIo::read(I, "image.pgm");
 
@@ -83,7 +84,11 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::Image
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
-    memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth());
+    for (unsigned int i = 0; i < src.getHeight(); ++i) {
+      for (unsigned int j = 0; j < src.getWidth(); ++j) {
+        dest->pixel(j, i) = src[i][j];
+      }
+    }
   }
   else {
     dest->setExternal(src.bitmap, static_cast<int>(src.getCols()), static_cast<int>(src.getRows()));
@@ -136,11 +141,11 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src
                              bool copyData)
 {
   dest.resize(src->height(), src->width());
-  if (copyData) {
-    memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelMono));
-  }
-  else {
-    dest.bitmap = src->getRawImage();
+  (void)(copyData);
+  for (unsigned int i = 0; i < dest.getHeight(); ++i) {
+    for (unsigned int j = 0; j < dest.getWidth(); ++j) {
+      dest[i][j] = src->pixel(j, i);
+    }
   }
 }
 
@@ -238,10 +243,14 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest, bool copyData)
 {
   dest.resize(src->height(), src->width());
-  if (copyData)
-    memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelRgba));
-  else {
-    dest.bitmap = static_cast<vpRGBa *>(src->getRawImage());
+  (void)(copyData);
+  for (unsigned int i = 0; i < dest.getHeight(); ++i) {
+    for (unsigned int j = 0; j < dest.getWidth(); ++j) {
+      dest[i][j].R = src->pixel(j, i).r;
+      dest[i][j].G = src->pixel(j, i).g;
+      dest[i][j].B = src->pixel(j, i).b;
+      dest[i][j].A = src->pixel(j, i).a;
+    }
   }
 }
 
