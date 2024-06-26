@@ -1,5 +1,5 @@
-#ifndef _drawingHelpers_h_
-#define _drawingHelpers_h_
+#ifndef DRAWING_HELPERS_H
+#define DRAWING_HELPERS_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -7,6 +7,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace drawingHelpers
 {
 #if defined(VISP_HAVE_X11)
@@ -28,4 +29,5 @@ bool display(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::str
 bool display(VISP_NAMESPACE_ADDRESSING vpImage<double> &D, const std::string &title, const bool &blockingMode);
 }
 
+#endif
 #endif

@@ -54,11 +54,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
-/*!
-  \example testConversion.cpp
-
-  \brief Manipulation of image conversions.
-*/
 #if defined(VISP_HAVE_YARP)
 #include <yarp/sig/ImageFile.h>
 #endif
