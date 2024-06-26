@@ -59,7 +59,7 @@ class VISP_EXPORT vpSubColVector : public vpColVector
 public:
   vpSubColVector();
   vpSubColVector(vpColVector &v, const unsigned int &offset, const unsigned int &nrows);
-  virtual ~vpSubColVector() vp_override;
+  virtual ~vpSubColVector() VP_OVERRIDE;
 
   void checkParentStatus() const;
 

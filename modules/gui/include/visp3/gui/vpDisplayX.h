@@ -67,6 +67,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/io/vpImageIo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<unsigned char> I; // Grey level image
@@ -157,69 +161,69 @@ public:
   vpDisplayX(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
              vpScaleType type = SCALE_DEFAULT);
 
-  virtual ~vpDisplayX() vp_override;
+  virtual ~vpDisplayX() VP_OVERRIDE;
 
-  void getImage(vpImage<vpRGBa> &I) vp_override;
+  void getImage(vpImage<vpRGBa> &I) VP_OVERRIDE;
   unsigned int getScreenDepth();
-  unsigned int getScreenHeight() vp_override;
-  void getScreenSize(unsigned int &width, unsigned int &height) vp_override;
-  unsigned int getScreenWidth() vp_override;
+  unsigned int getScreenHeight() VP_OVERRIDE;
+  void getScreenSize(unsigned int &width, unsigned int &height) VP_OVERRIDE;
+  unsigned int getScreenWidth() VP_OVERRIDE;
 
-  void init(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "") vp_override;
-  void init(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "") vp_override;
+  void init(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "") VP_OVERRIDE;
+  void init(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "") VP_OVERRIDE;
   void init(unsigned int win_width, unsigned int win_height, int win_x = -1, int win_y = -1,
-            const std::string &win_title = "") vp_override;
+            const std::string &win_title = "") VP_OVERRIDE;
 
 protected:
-  void clearDisplay(const vpColor &color = vpColor::white) vp_override;
+  void clearDisplay(const vpColor &color = vpColor::white) VP_OVERRIDE;
 
-  void closeDisplay() vp_override;
+  void closeDisplay() VP_OVERRIDE;
 
   void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color = vpColor::white,
-                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) vp_override;
+                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) VP_OVERRIDE;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                     unsigned int thickness = 1) vp_override;
-  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) vp_override;
+                     unsigned int thickness = 1) VP_OVERRIDE;
+  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
   void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                      unsigned int thickness = 1) vp_override;
+                      unsigned int thickness = 1) VP_OVERRIDE;
 
-  void displayImage(const vpImage<unsigned char> &I) vp_override;
-  void displayImage(const vpImage<vpRGBa> &I) vp_override;
+  void displayImage(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  void displayImage(const vpImage<vpRGBa> &I) VP_OVERRIDE;
   void displayImage(const unsigned char *I);
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height) vp_override;
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) vp_override;
+                       unsigned int height) VP_OVERRIDE;
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1) vp_override;
-  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1) vp_override;
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1) vp_override;
+                        bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1) vp_override;
-  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1) vp_override;
+                        bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
 
-  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color = vpColor::green) vp_override;
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color = vpColor::green) VP_OVERRIDE;
 
-  void flushDisplay() vp_override;
-  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height) vp_override;
+  void flushDisplay() VP_OVERRIDE;
+  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  bool getClick(bool blocking = true) vp_override;
-  bool getClick(vpImagePoint &ip, bool blocking = true) vp_override;
-  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) vp_override;
-  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) vp_override;
+  bool getClick(bool blocking = true) VP_OVERRIDE;
+  bool getClick(vpImagePoint &ip, bool blocking = true) VP_OVERRIDE;
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) VP_OVERRIDE;
+  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) VP_OVERRIDE;
 
-  bool getKeyboardEvent(bool blocking = true) vp_override;
-  bool getKeyboardEvent(std::string &key, bool blocking = true) vp_override;
+  bool getKeyboardEvent(bool blocking = true) VP_OVERRIDE;
+  bool getKeyboardEvent(std::string &key, bool blocking = true) VP_OVERRIDE;
 
-  bool getPointerMotionEvent(vpImagePoint &ip) vp_override;
-  bool getPointerPosition(vpImagePoint &ip) vp_override;
+  bool getPointerMotionEvent(vpImagePoint &ip) VP_OVERRIDE;
+  bool getPointerPosition(vpImagePoint &ip) VP_OVERRIDE;
 
-  void setFont(const std::string &font) vp_override;
-  void setTitle(const std::string &title) vp_override;
-  void setWindowPosition(int win_x, int win_y) vp_override;
+  void setFont(const std::string &font) VP_OVERRIDE;
+  void setTitle(const std::string &title) VP_OVERRIDE;
+  void setWindowPosition(int win_x, int win_y) VP_OVERRIDE;
 
 private:
   // Implementation

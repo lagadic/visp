@@ -227,9 +227,9 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    vpImage<vpRGBa> Iint(480, 640, 255);
-    vpImage<vpRGBa> Iext1(480, 640, 255);
-    vpImage<vpRGBa> Iext2(480, 640, 255);
+    vpImage<vpRGBa> Iint(480, 640, vpRGBa(255));
+    vpImage<vpRGBa> Iext1(480, 640, vpRGBa(255));
+    vpImage<vpRGBa> Iext2(480, 640, vpRGBa(255));
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display[3];

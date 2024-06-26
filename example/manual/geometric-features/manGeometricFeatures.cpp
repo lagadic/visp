@@ -81,7 +81,7 @@ int main()
     unsigned int height = 288;
     unsigned int width = 384;
     vpImage<unsigned char> I(height, width);
-    I = 255; // I is a white image
+    I = 255u; // I is a white image
 
     // create a display window
 #if defined(VISP_HAVE_X11)

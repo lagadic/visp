@@ -101,7 +101,7 @@ public:
   {
     init();
   }
-  explicit vpProjectionDisplay(int select)
+  VP_EXPLICIT vpProjectionDisplay(int select)
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
     dIcam(), dIext(),

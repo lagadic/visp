@@ -81,6 +81,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/io/vpImageIo.h>
  * #include <visp3/mbt/vpMbEdgeKltTracker.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if defined VISP_HAVE_OPENCV
@@ -231,33 +235,33 @@ public:
   virtual ~vpMbEdgeKltTracker();
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual inline vpColVector getError() const vp_override { return m_error_hybrid; }
+  virtual inline vpColVector getError() const VP_OVERRIDE { return m_error_hybrid; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false) vp_override;
+                                                               bool displayFullModel = false) VP_OVERRIDE;
 
-  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_hybrid; }
+  virtual inline vpColVector getRobustWeights() const VP_OVERRIDE { return m_w_hybrid; }
 
   /*!
    * Get the near distance for clipping.
    *
    * \return Near clipping value.
    */
-  virtual inline double getNearClippingDistance() const vp_override { return vpMbKltTracker::getNearClippingDistance(); }
+  virtual inline double getNearClippingDistance() const VP_OVERRIDE { return vpMbKltTracker::getNearClippingDistance(); }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) VP_OVERRIDE;
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) vp_override;
-  void resetTracker() vp_override;
+                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) VP_OVERRIDE;
+  void resetTracker() VP_OVERRIDE;
 
-  virtual void setCameraParameters(const vpCameraParameters &cam) vp_override;
+  virtual void setCameraParameters(const vpCameraParameters &cam) VP_OVERRIDE;
 
   /*!
    * Specify which clipping to use.
@@ -266,21 +270,21 @@ public:
    *
    * \param flags : New clipping flags.
    */
-  virtual void setClipping(const unsigned int &flags) vp_override { vpMbEdgeTracker::setClipping(flags); }
+  virtual void setClipping(const unsigned int &flags) VP_OVERRIDE { vpMbEdgeTracker::setClipping(flags); }
 
   /*!
    * Set the far distance for clipping.
    *
    * \param dist : Far clipping value.
    */
-  virtual void setFarClippingDistance(const double &dist) vp_override { vpMbEdgeTracker::setFarClippingDistance(dist); }
+  virtual void setFarClippingDistance(const double &dist) VP_OVERRIDE { vpMbEdgeTracker::setFarClippingDistance(dist); }
 
   /*!
    * Set the near distance for clipping.
    *
    * \param dist : Near clipping value.
    */
-  virtual void setNearClippingDistance(const double &dist) vp_override { vpMbEdgeTracker::setNearClippingDistance(dist); }
+  virtual void setNearClippingDistance(const double &dist) VP_OVERRIDE { vpMbEdgeTracker::setNearClippingDistance(dist); }
 
   /*!
    * Use Ogre3D for visibility tests
@@ -290,7 +294,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setOgreVisibilityTest(const bool &v) vp_override
+  virtual void setOgreVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -303,14 +307,14 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setScanLineVisibilityTest(const bool &v) vp_override
+  virtual void setScanLineVisibilityTest(const bool &v) VP_OVERRIDE
   {
     vpMbEdgeTracker::setScanLineVisibilityTest(v);
     vpMbKltTracker::setScanLineVisibilityTest(v);
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE;
 
   /*!
    * Set if the projection error criteria has to be computed.
@@ -318,29 +322,29 @@ public:
    * \param flag : True if the projection error criteria has to be computed,
    * false otherwise
    */
-  virtual void setProjectionErrorComputation(const bool &flag) vp_override
+  virtual void setProjectionErrorComputation(const bool &flag) VP_OVERRIDE
   {
     vpMbEdgeTracker::setProjectionErrorComputation(flag);
   }
 
-  virtual void testTracking() vp_override { }
-  virtual void track(const vpImage<unsigned char> &I) vp_override;
-  virtual void track(const vpImage<vpRGBa> &I_color) vp_override;
+  virtual void testTracking() VP_OVERRIDE { }
+  virtual void track(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  virtual void track(const vpImage<vpRGBa> &I_color) VP_OVERRIDE;
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
                           unsigned int lvl = 0, double *edge_residual = nullptr, double *klt_residual = nullptr);
-  virtual void computeVVSInit() vp_override;
-  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
+  virtual void computeVVSInit() VP_OVERRIDE;
+  virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE;
   using vpMbTracker::computeCovarianceMatrixVVS;
   using vpMbTracker::computeVVSPoseEstimation;
 
-  virtual void init(const vpImage<unsigned char> &I) vp_override;
+  virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE;
   virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
-                          const std::string &name = "") vp_override;
-  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "") vp_override;
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
+                          const std::string &name = "") VP_OVERRIDE;
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "") VP_OVERRIDE;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE;
   unsigned int initMbtTracking(unsigned int level = 0);
 
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt, unsigned int lvl = 0);

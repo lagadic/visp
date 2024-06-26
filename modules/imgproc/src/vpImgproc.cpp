@@ -747,7 +747,7 @@ void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
 void stretchContrast(vpImage<vpRGBa> &I)
 {
   // Find min and max intensity values
-  vpRGBa min = 255, max = 0;
+  vpRGBa min(255), max(0);
 
   // Split the RGBa image into 4 images
   vpImage<unsigned char> pR(I.getHeight(), I.getWidth());

@@ -107,13 +107,13 @@ typedef struct vpBasisFunction
 class VISP_EXPORT vpBSpline
 {
 public /*protected*/:
-//! Vector wich contains the control points
+//! Vector which contains the control points
   std::vector<vpImagePoint> controlPoints;
   //! Vector which contain the knots \f$ {u0, ..., um} \f$
   std::vector<double> knots;
   //! Degree of the B-Spline basis functions.
   unsigned int p;
-  //! Vector wich contains the points used during the interpolation method.
+  //! Vector which contains the points used during the interpolation method.
   std::vector<vpImagePoint> crossingPoints;
 
 public:

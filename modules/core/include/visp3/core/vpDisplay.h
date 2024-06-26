@@ -81,6 +81,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/gui/vpDisplayX.h>
  * #include <visp3/io/vpImageIo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpImage<unsigned char> I; // Grey level image
@@ -613,6 +617,10 @@ public:
    * #include <visp3/gui/vpDisplayX.h>
    * #include <visp3/io/vpImageIo.h>
    *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
+   *
    * int main()
    * {
    * #ifdef VISP_HAVE_DISPLAY
@@ -900,13 +908,13 @@ public:
    * @name Deprecated functions
    */
   //@{
-  vp_deprecated static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
+  VP_DEPRECATED static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
                                               const vpColor &color);
-  vp_deprecated static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
+  VP_DEPRECATED static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
                                               const vpColor &color);
-  vp_deprecated static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
+  VP_DEPRECATED static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
                                               const vpColor &color);
-  vp_deprecated static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string,
+  VP_DEPRECATED static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string,
                                               const vpColor &color);
   //@}
 #endif

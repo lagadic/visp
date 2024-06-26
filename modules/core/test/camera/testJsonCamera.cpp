@@ -72,8 +72,8 @@ public:
     static_cast<void>(next());
   }
 
-  const vpCameraParameters &get() const vp_override { return current; }
-  bool next() vp_override
+  const vpCameraParameters &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     const double px = m_dist(m_rand);
     const double py = m_dist(m_rand);

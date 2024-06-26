@@ -184,13 +184,13 @@ int main(int argc, const char **argv)
   NodePath object = renderer.loadObject(objectName, modelPath);
   renderer.addNodeToScene(object);
 
-  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
+  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2f));
   renderer.addLight(alight);
 
-  vpPanda3DPointLight plight("Point", vpRGBf(1.0), vpColVector({ 0.3, -0.4, -0.2 }), vpColVector({ 0.0, 0.0, 1.0 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(1.0f), vpColVector({ 0.3, -0.4, -0.2 }), vpColVector({ 0.0, 0.0, 1.0 }));
   renderer.addLight(plight);
 
-  vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0), vpColVector({ 1.0, 1.0, 0.0 }));
+  vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0f), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
 
   if (!backgroundPath.empty()) {

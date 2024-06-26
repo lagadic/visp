@@ -125,7 +125,7 @@ class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  explicit vpDot2(const vpImagePoint &ip);
+  VP_EXPLICIT vpDot2(const vpImagePoint &ip);
   vpDot2(const vpDot2 &twinDot);
 
   static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I,

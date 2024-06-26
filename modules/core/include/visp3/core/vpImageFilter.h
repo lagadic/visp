@@ -721,12 +721,6 @@ public:
 
   static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
 
-#ifdef DOXYGEN_SHOULD_SKIP_THIS
-  static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-  static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-  static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-#endif
-
   template<typename ImageType, typename FilterType>
   static inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -740,37 +734,20 @@ public:
   }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
+  static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 
-  static inline double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
+  static double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
 
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  static inline double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
-  }
+  static double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
 
   template <typename ImageType, typename FilterType>
   static inline FilterType filterXLeftBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
@@ -788,57 +765,6 @@ public:
       }
     }
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
-  }
-
-  static inline double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (c > i) {
-        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][i - c].R);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
-
-  static inline double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (c > i) {
-        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][i - c].G);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  static inline double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (c > i) {
-        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][i - c].B);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
   }
 
   template <typename ImageType, typename FilterType>
@@ -859,70 +785,9 @@ public:
     }
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
   }
-
-  static inline double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                           const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    const unsigned int width = I.getWidth();
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((c + i) < width) {
-        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][((2 * width) - c) - i - 1].R + I[r][c - i].R);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
-
-  static inline double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                           const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    const unsigned int width = I.getWidth();
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((c + i) < width) {
-        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][((2 * width) - c) - i - 1].G + I[r][c - i].G);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  static inline double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                           const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    const unsigned int width = I.getWidth();
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((c + i) < width) {
-        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r][(2 * width) - c - i - 1].B + I[r][c - i].B);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
-  }
 #endif
-
 
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-  static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-  static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-#endif
 
   template<typename ImageType, typename FilterType>
   static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size,
@@ -977,37 +842,20 @@ public:
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
   }
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
+  static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
-  static inline double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
+  static double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
 
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  static inline double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
-  }
+  static double filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+  static double filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
 
   template<typename ImageType, typename FilterType>
   static inline FilterType filterYTopBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
@@ -1027,54 +875,6 @@ public:
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
   }
 
-  double static inline filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (r > i) {
-        result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r + i][c].R + I[i - r][c].R);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
-
-  double static inline filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (r > i) {
-        result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r + i][c].G + I[i - r][c].G);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  double static inline filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
-  {
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if (r > i) {
-        result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[r + i][c].B + I[i - r][c].B);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
-  }
-
   template<typename ImageType, typename FilterType>
   static inline FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                                const FilterType *filter, unsigned int size)
@@ -1092,60 +892,6 @@ public:
       }
     }
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
-  }
-
-  double static inline filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                            const double *filter, unsigned int size)
-  {
-    const unsigned int height = I.getHeight();
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((r + i) < height) {
-        result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[((2 * height) - r) - i - 1][c].R + I[r - i][c].R);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].R));
-  }
-
-  double static inline filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                            const double *filter, unsigned int size)
-  {
-    const unsigned int height = I.getHeight();
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((r + i) < height) {
-        result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[((2 * height) - r) - i - 1][c].G + I[r - i][c].G);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].G));
-  }
-
-  double static inline filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                            const double *filter, unsigned int size)
-  {
-    const unsigned int height = I.getHeight();
-    const unsigned int stop = (size - 1) / 2;
-    double result = 0.;
-
-    for (unsigned int i = 1; i <= stop; ++i) {
-      if ((r + i) < height) {
-        result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
-      }
-      else {
-        result += filter[i] * static_cast<double>(I[((2 * height) - r) - i - 1][c].B + I[r - i][c].B);
-      }
-    }
-    return result + (filter[0] * static_cast<double>(I[r][c].B));
   }
 #endif
 
@@ -1660,7 +1406,7 @@ private:
     }
   }
 
-/**
+  /**
    * \brief Indicates if the boolean mask is true at the desired coordinates.
    *
    * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.

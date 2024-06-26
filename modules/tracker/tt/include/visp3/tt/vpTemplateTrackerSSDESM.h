@@ -69,7 +69,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
 };
 END_VISP_NAMESPACE
 #endif

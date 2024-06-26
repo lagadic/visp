@@ -562,17 +562,20 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-    vpImage<vpRGBa> Icamera(480,640,0);
-    vpImage<vpRGBa> Iimage(60,60);
+    vpImage<vpRGBa> Icamera(480, 640, vpRGBa(0));
+    vpImage<vpRGBa> Iimage(60, 60);
 
     // Initialise the image which will be projected into the image Icamera
-    vpRGBa colorb(0,0,255);
-    vpRGBa colorw(255,255,255);
-    vpRGBa colorr(255,0,0);
-    for(int i = 0; i < 60; i++)
-    {
+    vpRGBa colorb(0, 0, 255);
+    vpRGBa colorw(255, 255, 255);
+    vpRGBa colorr(255, 0, 0);
+    for(int i = 0; i < 60; i++) {
       for(int j = 0; j < 20; j++)
         Iimage[i][j] = colorb;
       for(int j = 20; j < 40; j++)
@@ -761,17 +764,20 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-    vpImage<vpRGBa> Icamera(480,640,0);
-    vpImage<vpRGBa> Iimage(60,60);
+    vpImage<vpRGBa> Icamera(480, 640, vpRGBa(0));
+    vpImage<vpRGBa> Iimage(60, 60);
 
     // Initialise the image which will be projected into the image Icamera
-    vpRGBa colorb(0,0,255);
-    vpRGBa colorw(255,255,255);
-    vpRGBa colorr(255,0,0);
-    for(int i = 0; i < 60; i++)
-    {
+    vpRGBa colorb(0, 0, 255);
+    vpRGBa colorw(255, 255, 255);
+    vpRGBa colorr(255, 0, 0);
+    for(int i = 0; i < 60; i++) {
       for(int j = 0; j < 20; j++)
         Iimage[i][j] = colorb;
       for(int j = 20; j < 40; j++)

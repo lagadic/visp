@@ -240,7 +240,7 @@ int main(int argc, char **argv)
     // Create a display to show sensor data
     if (isInitialized == false) {
       I.resize((unsigned int)half_size * 2, (unsigned int)half_size * 2);
-      I = 255;
+      I = 255u;
 
 #if defined(VISP_HAVE_X11)
       d = new vpDisplayX;

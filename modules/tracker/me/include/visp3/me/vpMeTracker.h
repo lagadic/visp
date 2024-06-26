@@ -74,7 +74,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker() vp_override;
+  virtual ~vpMeTracker() VP_OVERRIDE;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
@@ -296,7 +296,7 @@ public:
    * \param i : Pixel coordinate along the rows.
    * \param j : Pixel coordinate along the columns.
    */
-  vp_deprecated static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
+  VP_DEPRECATED static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
   {
     return inRoiMask(mask, i, j);
   }

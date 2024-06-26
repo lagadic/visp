@@ -158,7 +158,7 @@ public:
     useCompositionnal(false), useInverse(false), Warp(nullptr), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
     zoneRef_()
   { }
-  explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
+  VP_EXPLICIT vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
   void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
@@ -279,7 +279,7 @@ public:
     Use rather setThresholdResidualDerivative()
     \param threshold : Unused value.
    */
-  vp_deprecated void setThresholdRMS(double threshold) { (void)threshold; }
+  VP_DEPRECATED void setThresholdRMS(double threshold) { (void)threshold; }
   //@}
 #endif
 

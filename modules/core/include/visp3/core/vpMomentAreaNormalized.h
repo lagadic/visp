@@ -85,6 +85,10 @@ class vpMomentCentered;
  * #include <visp3/core/vpMomentObject.h>
  * #include <visp3/core/vpPoint.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpPoint p;
@@ -172,7 +176,7 @@ public:
    * \deprecated Use rather getDesiredArea()
    * Retrieves the desired surface \e a* as specified in the constructor.
    */
-  vp_deprecated double getDesiredSurface() const { return desiredSurface; }
+  VP_DEPRECATED double getDesiredSurface() const { return desiredSurface; }
   //@}
 #endif
 

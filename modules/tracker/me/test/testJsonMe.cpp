@@ -104,8 +104,8 @@ public:
     static_cast<void>(next());
   }
 
-  vpMe const &get() const vp_override { return current; }
-  bool next() vp_override
+  vpMe const &get() const VP_OVERRIDE { return current; }
+  bool next() VP_OVERRIDE
   {
     current.setThreshold(m_dist(m_rand) * 255);
     current.setMaskNumber(m_int_dist(m_rand) * 10);

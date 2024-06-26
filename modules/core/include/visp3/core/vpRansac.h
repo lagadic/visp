@@ -121,9 +121,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   int maxTrials = maxNbumbersOfTrials; // Maximum number of trials before we give up.
   int maxDataTrials = 1000;            // Max number of attempts to select a non-degenerate
   // data set.
-
-  if (s < 4) {
-    s = 4;
+  const unsigned int magic_4 = 4;
+  if (s < magic_4) {
+    s = magic_4;
   }
 
   // Sentinel value allowing detection of solution failure.
@@ -138,7 +138,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   unsigned int *ind = new unsigned int[s];
   int ninliers = 0;
 
-  while ((N > trialcount) && (consensus > bestscore)) {
+  while ((N > trialcount) && (consensus > bestscore) && (trialcount > maxTrials)) {
     // Select at random s data points to form a trial model, M.
     // In selecting these points we have to check that they are not in
     // a degenerate configuration.
@@ -210,16 +210,13 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       N = (log(1 - p) / log(pNoOutliers));
     }
 
-    trialcount = trialcount + 1;
     // Safeguard against being stuck in this loop forever
-    if (trialcount > maxTrials) {
-      std::cout << "Warning: ransac reached the maximum number of " << maxTrials << " trials" << std::endl;
-      break;
-    }
+    ++trialcount;
   }
-
-  if (solutionFind == true) // We got a solution
-  {
+  if (trialcount > maxTrials) {
+    std::cout << "Warning: ransac reached the maximum number of " << maxTrials << " trials" << std::endl;
+  }
+  if (solutionFind == true) { // We got a solution
     M = bestM;
     inliers = bestinliers;
   }

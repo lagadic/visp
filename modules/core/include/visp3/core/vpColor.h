@@ -103,6 +103,10 @@ BEGIN_VISP_NAMESPACE
   #include <visp3/gui/vpDisplayOpenCV.h>
   #include <visp3/gui/vpDisplayX.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpImage<unsigned char> I(240, 320); // Create a black grey level image

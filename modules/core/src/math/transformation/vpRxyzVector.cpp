@@ -247,6 +247,10 @@ vpRxyzVector &vpRxyzVector::build(const std::vector<double> &rxyz)
   #include <visp3/core/vpMath.h>
   #include <visp3/core/vpRxyzVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpRxyzVector v;
@@ -274,6 +278,10 @@ vpRxyzVector &vpRxyzVector::operator=(double v)
 
   \code
   #include <visp3/core/vpRxyzVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -306,6 +314,10 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
   Set vector from a list of 3 double angle values in radians.
   \code
   #include <visp3/core/vpRxyzVector.cpp>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

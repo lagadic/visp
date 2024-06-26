@@ -144,7 +144,7 @@ struct CalibInfo
 void drawCalibrationOccupancy(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,
                               unsigned int patternW)
 {
-  I = 0;
+  I = 0u;
   unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
   for (size_t idx = 0; idx < calib_info.size(); idx++) {
     const CalibInfo &calib = calib_info[idx];

@@ -165,65 +165,72 @@ void vpMomentObject::cacheValues(std::vector<double> &cache, double x, double y,
   \param points : Vector of points.
 
   The code below shows how to use this function to consider a dense object
-defined by a closed contour.
+  defined by a closed contour.
 
   \code
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  // Define the contour of an object by a 5 clockwise vertices on a plane
-  vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
-  vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
-  vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
-  vec_p.push_back(p);
+  int main()
+  {
+    // Define the contour of an object by a 5 clockwise vertices on a plane
+    vpPoint p;
+    std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
 
-  vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
-  obj.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
-  obj.fromVector(vec_p); // Init the dense object with the polygon
+    p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
+    p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
+    vec_p.push_back(p);
+    p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
+    vec_p.push_back(p);
+    p.set_x(-0.2); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
+    vec_p.push_back(p);
 
-  return 0;
-}
+    vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
+    obj.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
+    obj.fromVector(vec_p); // Init the dense object with the polygon
+
+    return 0;
+  }
   \endcode
 
   This other example shows how to consider an object as a discrete set of four points.
 
   \code
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  // Define 4 discrete points on a plane
-  vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the 4 points
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (point 1)
-  vec_p.push_back(p);
-  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (point 2)
-  vec_p.push_back(p);
-  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (point 3)
-  vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (point 4)
-  vec_p.push_back(p);
+  int main()
+  {
+    // Define 4 discrete points on a plane
+    vpPoint p;
+    std::vector<vpPoint> vec_p; // vector that contains the 4 points
 
-  vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
-  obj.setType(vpMomentObject::DISCRETE); // The object is constituted by discrete points
-  obj.fromVector(vec_p); // Init the dense object with the points
+    p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (point 1)
+    vec_p.push_back(p);
+    p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (point 2)
+    vec_p.push_back(p);
+    p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (point 3)
+    vec_p.push_back(p);
+    p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (point 4)
+    vec_p.push_back(p);
 
-  return 0;
-}
+    vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
+    obj.setType(vpMomentObject::DISCRETE); // The object is constituted by discrete points
+    obj.fromVector(vec_p); // Init the dense object with the points
 
+    return 0;
+  }
   \endcode
 */
 void vpMomentObject::fromVector(std::vector<vpPoint> &points)
@@ -264,25 +271,29 @@ void vpMomentObject::fromVector(std::vector<vpPoint> &points)
 
   The code below shows how to use this function.
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpMomentObject.h>
 
-int main()
-{
-  vpCameraParameters cam;             // Camera parameters used for pixel to
-meter conversion vpImage<unsigned char> I(288, 384); // Image used to define
-the object
-  // ... Initialize the image
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  unsigned char threshold = 128; // Gray level used to define which part of
-the image belong to the dense object
+  int main()
+  {
+    vpCameraParameters cam;             // Camera parameters used for pixel to
+  meter conversion vpImage<unsigned char> I(288, 384); // Image used to define
+  the object
+    // ... Initialize the image
 
-  vpMomentObject obj(3); // Create an image moment object with 3 as maximum
-order obj.fromImage(I, threshold, cam); // Initialize the object from the
-image
+    unsigned char threshold = 128; // Gray level used to define which part of
+  the image belong to the dense object
 
-  return 0;
-}
+    vpMomentObject obj(3); // Create an image moment object with 3 as maximum
+  order obj.fromImage(I, threshold, cam); // Initialize the object from the
+  image
+
+    return 0;
+  }
   \endcode
 */
 

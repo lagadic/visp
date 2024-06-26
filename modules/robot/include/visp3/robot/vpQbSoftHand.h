@@ -67,6 +67,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include <visp3/robot/vpQbSoftHand.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpQbSoftHand qbsofthand;

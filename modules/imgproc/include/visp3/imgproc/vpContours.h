@@ -225,7 +225,7 @@ struct vpContour
   /*!
    * Constructor of a given contour type.
    */
-  explicit vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
+  VP_EXPLICIT vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
 
   /*!
    * Copy constructor.

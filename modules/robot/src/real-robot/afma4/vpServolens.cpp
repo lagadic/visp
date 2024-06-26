@@ -544,25 +544,29 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 /*!
 
   These parameters are computed from the Dragonfly2 DR2-COL camera sensor
-pixel size (7.4 um) and from the servolens zoom position.
+  pixel size (7.4 um) and from the servolens zoom position.
 
   \param I : An image coming from the Dragonfly2 camera attached to the
   servolens.
 
-\code
-#include <visp3/vs/vpServolens.h>
+  \code
+  #include <visp3/vs/vpServolens.h>
 
-int main()
-{
-  // UNIX vpServolens servolens("/dev/ttyS0");
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I(240, 320);
-  vpCameraParameters cam = servolens.getCameraParameters(I);
-  std::cout << "Camera parameters: " << cam << std::endl;
-#endif
-  }
-\endcode
+  int main()
+  {
+    // UNIX vpServolens servolens("/dev/ttyS0");
+  #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+
+    vpImage<unsigned char> I(240, 320);
+    vpCameraParameters cam = servolens.getCameraParameters(I);
+    std::cout << "Camera parameters: " << cam << std::endl;
+  #endif
+    }
+  \endcode
 
   \exception vpRobotException::communicationError : If cannot dial with Servolens.
 

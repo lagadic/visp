@@ -85,6 +85,10 @@ vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3
   \code
   #include <visp3/core/vpThetaUVector.cpp>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpThetaUVector tu(0, M_PI_2, M_PI);
@@ -413,6 +417,10 @@ vpThetaUVector &vpThetaUVector::build(const double &tux, const double &tuy, cons
   #include <visp3/core/vpMath.h>
   #include <visp3/core/vpThetaUVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpThetaUVector tu;
@@ -440,6 +448,10 @@ vpThetaUVector &vpThetaUVector::operator=(double v)
 
   \code
   #include <visp3/core/vpThetaUVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -482,6 +494,10 @@ vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
   \code
   #include <visp3/core/vpThetaUVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
@@ -523,6 +539,10 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
   \code
   #include <visp3/core/vpThetaUVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
@@ -553,6 +573,10 @@ double vpThetaUVector::getTheta() const
   The following example shows how to use this function:
   \code
   #include <visp3/core/vpThetaUVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -608,6 +632,10 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
   Set vector from a list of 3 double angle values in radians.
   \code
   #include <visp3/core/vpThetaUVector.cpp>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {

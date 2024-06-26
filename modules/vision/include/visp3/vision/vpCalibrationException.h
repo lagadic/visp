@@ -89,7 +89,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpCalibrationException(int id) : vpException(id) { }
+  VP_EXPLICIT vpCalibrationException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

@@ -335,7 +335,7 @@ class DocumentationHolder(object):
               for method_def in method_defs:
                 is_const = False if method_def.const == 'no' else True
                 is_static = False if method_def.static == 'no' else True
-                ret_type = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in method_def.type_.content_).replace('vp_deprecated', '').replace('VISP_EXPORT', '')
+                ret_type = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in method_def.type_.content_).replace('VP_DEPRECATED', '').replace('VISP_EXPORT', '')
                 param_types = []
                 for param in method_def.get_param():
                   t = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in param.type_.content_)

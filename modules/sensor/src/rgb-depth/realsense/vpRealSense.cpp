@@ -47,7 +47,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  */
-vpRealSense::vpRealSense()
+  vpRealSense::vpRealSense()
   : m_context(), m_device(nullptr), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enableStreams(),
   m_useStreamPresets(), m_streamPresets(), m_streamParams(), m_invalidDepthValue(0.0f)
 {
@@ -255,14 +255,18 @@ void vpRealSense::close()
   \param serial_no : Device serial number.
 
   \code
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main()
-{
-  vpRealSense rs;
-  rs.setDeviceBySerialNumber("541142003219");
-  rs.open();
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRealSense rs;
+    rs.setDeviceBySerialNumber("541142003219");
+    rs.open();
+  }
   \endcode
  */
 void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
@@ -619,25 +623,29 @@ void vpRealSense::setStreamSettings(const rs::stream &stream, const rs::preset &
   \param params : Stream parameters to use.
 
   \note You can find the stream settings of the different Intel RealSense
-cameras at this <a
-href=https://github.com/IntelRealSense/librealsense/blob/v1.11.0/doc/supported_video_formats.pdf>url</a>.
+  cameras at this <a
+  href=https://github.com/IntelRealSense/librealsense/blob/v1.11.0/doc/supported_video_formats.pdf>url</a>.
 
   \code
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main()
-{
-  vpRealSense rs;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  rs.setEnableStream(rs::stream::color, true);
-  rs.setEnableStream(rs::stream::depth, false);
-  rs.setEnableStream(rs::stream::infrared, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
+  int main()
+  {
+    vpRealSense rs;
 
-  rs.open();
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, false);
+    rs.setEnableStream(rs::stream::infrared, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
 
-  //[...]
-}
+    rs.open();
+
+    //[...]
+  }
   \endcode
  */
 void vpRealSense::setStreamSettings(const rs::stream &stream, const vpRsStreamParams &params)
@@ -652,21 +660,25 @@ void vpRealSense::setStreamSettings(const rs::stream &stream, const vpRsStreamPa
   \param status : Stream status.
 
   \code
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main()
-{
-  vpRealSense rs;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  rs.setEnableStream(rs::stream::color, true);
-  rs.setEnableStream(rs::stream::depth, false);
-  rs.setEnableStream(rs::stream::infrared, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
+  int main()
+  {
+    vpRealSense rs;
 
-  rs.open();
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, false);
+    rs.setEnableStream(rs::stream::infrared, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
 
-  //[...]
-}
+    rs.open();
+
+    //[...]
+  }
   \endcode
  */
 void vpRealSense::setEnableStream(const rs::stream &stream, bool status) { m_enableStreams[stream] = status; }
@@ -1016,15 +1028,19 @@ void vpRealSense::acquire(unsigned char *const data_image, unsigned char *const 
 
   The following example shows how to use this method.
   \code
-#include <visp3/sensor/vpRealSense.h>
+  #include <visp3/sensor/vpRealSense.h>
 
-int main()
-{
-  vpRealSense rs;
-  rs.open();
-  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
-  return 0;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRealSense rs;
+    rs.open();
+    std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+    return 0;
+  }
   \endcode
  */
 std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)

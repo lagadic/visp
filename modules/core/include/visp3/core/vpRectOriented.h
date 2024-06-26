@@ -56,7 +56,7 @@ public:
 
   vpRectOriented(const vpImagePoint &center, double width, double height, double theta = 0);
 
-  explicit vpRectOriented(const vpRect &rect);
+  VP_EXPLICIT vpRectOriented(const vpRect &rect);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRectOriented &operator=(const vpRectOriented &) = default;
@@ -66,7 +66,9 @@ public:
 
   vpRectOriented &operator=(const vpRect &rect);
 
-  operator vpRect();
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  VP_EXPLICIT operator vpRect();
+#endif
 
   void setCenter(const vpImagePoint &center);
 

@@ -204,9 +204,9 @@ public:
    */
   vpColVector getExplainedVariance() const { return m_explainedVariance; }
 
-  void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;
-  void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
-  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
+  void map(const vpImage<unsigned char> &I, vpColVector &s) VP_OVERRIDE;
+  void inverse(const vpColVector &s, vpImage<unsigned char> &I) VP_OVERRIDE;
+  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) VP_OVERRIDE;
 
   /**
    * \brief Save the PCA basis to multiple text files, for later use via the \ref load function.
@@ -354,9 +354,9 @@ public:
 
   vpLuminanceDCT &operator=(const vpLuminanceDCT &other) = default;
 
-  void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;
-  void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
-  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
+  void map(const vpImage<unsigned char> &I, vpColVector &s) VP_OVERRIDE;
+  void inverse(const vpColVector &s, vpImage<unsigned char> &I) VP_OVERRIDE;
+  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) VP_OVERRIDE;
 
 private:
   void computeDCTMatrix(vpMatrix &D, unsigned int n) const;
@@ -389,32 +389,32 @@ class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 public:
   vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const std::shared_ptr<vpLuminanceMapping> mapping);
   vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping);
-  void init() vp_override;
+  void init() VP_OVERRIDE;
   void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, std::shared_ptr<vpLuminanceMapping> mapping);
   void init(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping);
 
   vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f);
   vpFeatureLuminanceMapping &operator=(const vpFeatureLuminanceMapping &f);
-  vpFeatureLuminanceMapping *duplicate() const vp_override;
+  vpFeatureLuminanceMapping *duplicate() const VP_OVERRIDE;
 
   virtual ~vpFeatureLuminanceMapping() = default;
 
   void build(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
-               unsigned int = 1) const vp_override
+               unsigned int = 1) const VP_OVERRIDE
   { }
   void display(const vpCameraParameters &, const vpImage<vpRGBa> &, const vpColor & = vpColor::green,
-               unsigned int = 1) const vp_override
+               unsigned int = 1) const VP_OVERRIDE
   { }
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void interaction(vpMatrix &L);
 
-  void print(unsigned int select = FEATURE_ALL) const vp_override;
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   vpFeatureLuminance &getLuminanceFeature() { return m_featI; }
   std::shared_ptr<vpLuminanceMapping> &getMapping() { return m_mapping; }

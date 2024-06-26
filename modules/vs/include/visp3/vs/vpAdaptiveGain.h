@@ -79,6 +79,10 @@ class vpColVector;
  * #include <visp3/vs/vpAdaptiveGain.h>
  * #include <visp3/vs/vpServo.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
@@ -147,7 +151,7 @@ public:
    *
    * \param c : Value of the constant gain. A typical value is 0.5.
    */
-  explicit vpAdaptiveGain(double c);
+  VP_EXPLICIT vpAdaptiveGain(double c);
 
   /*!
    * Constructor that initializes the gain as adaptive.

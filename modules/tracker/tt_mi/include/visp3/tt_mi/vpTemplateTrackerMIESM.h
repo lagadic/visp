@@ -102,7 +102,7 @@ public:
     : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false), HDirect(), HInverse(),
     HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
   { }
-  explicit vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
+  VP_EXPLICIT vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
   void setMinimizationMethod(vpMinimizationTypeMIESM method) { minimizationMethod = method; }
 };

@@ -107,12 +107,12 @@ public:
     : vpFeatureMoment(moments, A, B, C, featureMoments, 16)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const vp_override
+  const std::string momentName() const VP_OVERRIDE
   {
     return "vpMomentCInvariant";
   }
@@ -120,7 +120,7 @@ public:
   /*!
    * Feature name.
    */
-  const std::string name() const vp_override
+  const std::string name() const VP_OVERRIDE
   {
     return "vpFeatureMomentCInvariant";
   }
@@ -253,18 +253,18 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 16), LI(16)
   { }
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const vp_override
+  const std::string momentName() const VP_OVERRIDE
   {
     return "vpMomentCInvariant";
   }
   /*!
    * Feature name.
    */
-  const std::string name() const vp_override
+  const std::string name() const VP_OVERRIDE
   {
     return "vpFeatureMomentCInvariant";
   }

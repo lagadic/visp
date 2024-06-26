@@ -717,14 +717,18 @@ int vp1394CMUGrabber::getFramerate()
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
@@ -739,14 +743,18 @@ vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)

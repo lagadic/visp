@@ -164,9 +164,9 @@ int main(int argc, const char **argv)
     Three vpImage are created : one for the main camera and the others
     for two external cameras
   */
-    vpImage<vpRGBa> Iint(480, 640, 255);
-    vpImage<vpRGBa> Iext1(480, 640, 255);
-    vpImage<vpRGBa> Iext2(480, 640, 255);
+    vpImage<vpRGBa> Iint(480, 640, vpRGBa(255));
+    vpImage<vpRGBa> Iext1(480, 640, vpRGBa(255));
+    vpImage<vpRGBa> Iext2(480, 640, vpRGBa(255));
 
 /*
 Create a display for each different cameras.
@@ -360,6 +360,6 @@ int main()
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 
 #endif

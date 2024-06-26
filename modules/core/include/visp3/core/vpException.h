@@ -98,7 +98,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpException(int code);
+  VP_EXPLICIT vpException(int code);
 
   /** @name Inherited functionalities from vpException */
   //@{

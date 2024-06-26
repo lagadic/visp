@@ -96,6 +96,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMeterPixelConversion.h>
  * #include <visp3/vision/vpHomography.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   // Initialize in the object frame the coordinates in meters of 4 points that

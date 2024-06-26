@@ -115,7 +115,7 @@ public:
   /*!
    * Constructor.
    */
-  explicit vpRobotException(int id) : vpException(id) { }
+  VP_EXPLICIT vpRobotException(int id) : vpException(id) { }
 };
 END_VISP_NAMESPACE
 #endif

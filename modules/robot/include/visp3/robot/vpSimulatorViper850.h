@@ -89,6 +89,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMath.h>
  * #include <visp3/robot/vpSimulatorViper850.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpSimulatorViper850 robot;
@@ -122,6 +126,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpMath.h>
  * #include <visp3/robot/vpSimulatorViper850.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  *   vpSimulatorViper850 robot;
@@ -152,6 +160,10 @@ BEGIN_VISP_NAMESPACE
  * #include <visp3/core/vpColVector.h>
  * #include <visp3/core/vpMath.h>
  * #include <visp3/robot/vpSimulatorViper850.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main()
  * {
@@ -213,16 +225,16 @@ private:
 
 public:
   vpSimulatorViper850();
-  explicit vpSimulatorViper850(bool display);
-  virtual ~vpSimulatorViper850() vp_override;
+  VP_EXPLICIT vpSimulatorViper850(bool display);
+  virtual ~vpSimulatorViper850() VP_OVERRIDE;
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width, const unsigned int &image_height);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
 
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &displacement) vp_override;
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &displacement) VP_OVERRIDE;
 
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
@@ -235,8 +247,8 @@ public:
 
   void get_cMe(vpHomogeneousMatrix &cMe);
   void get_cVe(vpVelocityTwistMatrix &cVe);
-  void get_eJe(vpMatrix &eJe) vp_override;
-  void get_fJe(vpMatrix &fJe) vp_override;
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void
     init(vpViper850::vpToolType tool,
@@ -251,26 +263,26 @@ public:
 
   void setCameraParameters(const vpCameraParameters &cam);
   void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) vp_override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const char *filename);
   void setPositioningVelocity(double vel) { positioningVelocity = vel; }
-  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) vp_override;
+  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) VP_OVERRIDE;
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 
 protected:
   /** @name Protected Member Functions Inherited from vpSimulatorViper850 */
   //@{
-  void computeArticularVelocity() vp_override;
+  void computeArticularVelocity() VP_OVERRIDE;
   void compute_fMi();
   void findHighestPositioningSpeed(vpColVector &q);
   void getExternalImage(vpImage<vpRGBa> &I);
 
-  inline void get_fMi(vpHomogeneousMatrix *fMit) vp_override
+  inline void get_fMi(vpHomogeneousMatrix *fMit) VP_OVERRIDE
   {
     m_mutex_fMi.lock();
     for (int i = 0; i < 8; i++) {
@@ -278,12 +290,12 @@ protected:
     }
     m_mutex_fMi.unlock();
   }
-  void init() vp_override;
-  void initArms() vp_override;
+  void init() VP_OVERRIDE;
+  void initArms() VP_OVERRIDE;
   void initDisplay();
-  int isInJointLimit() vp_override;
+  int isInJointLimit() VP_OVERRIDE;
   bool singularityTest(const vpColVector &q, vpMatrix &J);
-  void updateArticularPosition() vp_override;
+  void updateArticularPosition() VP_OVERRIDE;
   //@}
 };
 END_VISP_NAMESPACE

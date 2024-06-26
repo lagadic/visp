@@ -74,7 +74,7 @@ protected:
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
 
 public:
-  explicit vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
 
   double getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
   void setGain(double g) { gain = g; }

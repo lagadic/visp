@@ -543,6 +543,8 @@ VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are b
 
 # Allow introduction of "visp" namespace. By default disabled to keep compat with previous versions
 VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" OFF)
+# Allow introduction of "explicit" keyword. By default disabled to keep compat with previous versions
+VP_OPTION(ENABLE_EXPLICIT_KEYWORD "" "" "Enable c++ explicit keyword" "" OFF)
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -1610,11 +1612,12 @@ foreach(m ${VISP_MODULES_DISABLED_AUTO})
 endforeach()
 string(REPLACE "visp_" "" VISP_MODULES_DISABLED_AUTO_ST  "${VISP_MODULES_DISABLED_AUTO_ST}")
 
-status("    To be built:"            VISP_MODULES_BUILD          THEN ${VISP_MODULES_BUILD_ST}          ELSE "-")
-status("    Disabled:"               VISP_MODULES_DISABLED_USER  THEN ${VISP_MODULES_DISABLED_USER_ST}  ELSE "-")
-status("    Disabled by dependency:" VISP_MODULES_DISABLED_AUTO  THEN ${VISP_MODULES_DISABLED_AUTO_ST}  ELSE "-")
-status("    Unavailable:"            VISP_MODULES_DISABLED_FORCE THEN ${VISP_MODULES_DISABLED_FORCE_ST} ELSE "-")
-status("    Enable visp namespace:"  ENABLE_VISP_NAMESPACE       THEN "yes" ELSE "no")
+status("    To be built:"             VISP_MODULES_BUILD          THEN ${VISP_MODULES_BUILD_ST}          ELSE "-")
+status("    Disabled:"                VISP_MODULES_DISABLED_USER  THEN ${VISP_MODULES_DISABLED_USER_ST}  ELSE "-")
+status("    Disabled by dependency:"  VISP_MODULES_DISABLED_AUTO  THEN ${VISP_MODULES_DISABLED_AUTO_ST}  ELSE "-")
+status("    Unavailable:"             VISP_MODULES_DISABLED_FORCE THEN ${VISP_MODULES_DISABLED_FORCE_ST} ELSE "-")
+status("    Enable visp namespace:"   ENABLE_VISP_NAMESPACE       THEN "yes" ELSE "no")
+status("    Enable explicit keyword:" ENABLE_EXPLICIT_KEYWORD     THEN "yes" ELSE "no")
 
 # ========================== Android details ==========================
 if(ANDROID)

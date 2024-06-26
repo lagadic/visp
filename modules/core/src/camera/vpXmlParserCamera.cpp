@@ -1144,20 +1144,20 @@ private:
     node_tmp = node_model.append_child(pugi::node_comment);
     node_tmp.set_value("Distortion coefficients");
     node_tmp = node_model.append_child(LABEL_XML_K1);
-    distortion_coefs.size() == index_0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_0];
+    distortion_coefs.size() == index_0 ? (node_tmp.append_child(pugi::node_pcdata).text() = 0)
+      : (node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_0]);
     node_tmp = node_model.append_child(LABEL_XML_K2);
-    distortion_coefs.size() <= index_1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_1];
+    distortion_coefs.size() <= index_1 ? (node_tmp.append_child(pugi::node_pcdata).text() = 0)
+      : (node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_1]);
     node_tmp = node_model.append_child(LABEL_XML_K3);
-    distortion_coefs.size() <= index_2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_2];
+    distortion_coefs.size() <= index_2 ? (node_tmp.append_child(pugi::node_pcdata).text() = 0)
+      : (node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_2]);
     node_tmp = node_model.append_child(LABEL_XML_K4);
-    distortion_coefs.size() <= index_3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_3];
+    distortion_coefs.size() <= index_3 ? (node_tmp.append_child(pugi::node_pcdata).text() = 0)
+      : (node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_3]);
     node_tmp = node_model.append_child(LABEL_XML_K5);
-    distortion_coefs.size() <= index_4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
-      : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_4];
+    distortion_coefs.size() <= index_4 ? (node_tmp.append_child(pugi::node_pcdata).text() = 0)
+      : (node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[index_4]);
   }
 
   vpCameraParameters camera;
@@ -1219,20 +1219,24 @@ int vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filenam
 
   A typical usage would be the following:
   \code
-#include <visp3/core/vpTime.h>
-#include <visp3/core/vpXmlParserCamera.h>
+  #include <visp3/core/vpTime.h>
+  #include <visp3/core/vpXmlParserCamera.h>
 
-int main()
-{
-  vpCameraParameters cam;
-  std::stringstream ss_additional_info;
-  ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpXmlParserCamera p;
-  if (p.save(cam, "camera.xml", "myCamera", 320, 240, ss_additional_info.str()) != vpXmlParserCamera::SEQUENCE_OK) {
-    std::cout << "Cannot save camera parameters" << std::endl;
+  int main()
+  {
+    vpCameraParameters cam;
+    std::stringstream ss_additional_info;
+    ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
+
+    vpXmlParserCamera p;
+    if (p.save(cam, "camera.xml", "myCamera", 320, 240, ss_additional_info.str()) != vpXmlParserCamera::SEQUENCE_OK) {
+      std::cout << "Cannot save camera parameters" << std::endl;
+    }
   }
-}
   \endcode
   In \c camera.xml file, you will see:
   \code

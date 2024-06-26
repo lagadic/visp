@@ -85,6 +85,10 @@ BEGIN_VISP_NAMESPACE
  * #include <iostream>
  * #include <visp3/core/vpUDPClient.h>
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main() {
  *   try {
  *     std::string servername = "127.0.0.1";
@@ -130,6 +134,10 @@ BEGIN_VISP_NAMESPACE
  *   vpDataType_t() : double_val(0.0), int_val(0) {}
  *   vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
  * };
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
  *
  * int main() {
  *   try {

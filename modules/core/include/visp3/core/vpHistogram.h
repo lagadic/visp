@@ -107,8 +107,8 @@ class VISP_EXPORT vpHistogram
 public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
-  explicit vpHistogram(const vpImage<unsigned char> &I);
-  explicit vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
   virtual ~vpHistogram();
 
   vpHistogram &operator=(const vpHistogram &h);

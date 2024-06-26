@@ -70,14 +70,14 @@ public:
    * The subrenderers will be initialized in the order of their priority as defined by vpPanda3DBaseRenderer::getRenderOrder
    * Thus, if a renderer B depends on A for its render, and if B.getRenderOrder() > A.getRenderOrder() it can rely on A being initialized when B.initFromParent is called (along with the setupCamera, setupRenderTarget).
    */
-  void initFramework() vp_override;
+  void initFramework() VP_OVERRIDE;
 
   /**
    * @brief Set the pose of the camera, using the ViSP convention. This change is propagated to all subrenderers
    *
    * @param wTc Pose of the camera
    */
-  void setCameraPose(const vpHomogeneousMatrix &wTc) vp_override;
+  void setCameraPose(const vpHomogeneousMatrix &wTc) VP_OVERRIDE;
 
   /**
    * @brief Retrieve the pose of the camera. As this renderer contains multiple other renderers.
@@ -87,7 +87,7 @@ public:
    *
    * @return the pose of the camera using the ViSP convention
    */
-  vpHomogeneousMatrix getCameraPose() vp_override;
+  vpHomogeneousMatrix getCameraPose() VP_OVERRIDE;
 
   /**
    * @brief Set the pose of an object for all the subrenderers. The pose is specified using the ViSP convention
@@ -98,7 +98,7 @@ public:
    * @param name
    * @param wTo
    */
-  void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo) vp_override;
+  void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo) VP_OVERRIDE;
 
   /**
    * @brief This method is not supported for this renderer type. Use the std::string version
@@ -107,7 +107,7 @@ public:
    * @param object
    * @param wTo
    */
-  void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo) vp_override;
+  void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo) VP_OVERRIDE;
 
   /**
    * @brief Retrieve the pose of a scene node. The pose is in the world frame, using a ViSP convention.
@@ -119,7 +119,7 @@ public:
    * @param name name of the node
    * @return vpHomogeneousMatrix the pose of the node in the world frame
    */
-  vpHomogeneousMatrix getNodePose(const std::string &name) vp_override;
+  vpHomogeneousMatrix getNodePose(const std::string &name) VP_OVERRIDE;
 
   /**
    * @brief This method is not supported for this renderer type. Use the std::string version
@@ -127,16 +127,16 @@ public:
    * \throws vpException, as this method is not supported
    * @param object
    */
-  vpHomogeneousMatrix getNodePose(NodePath &object) vp_override;
+  vpHomogeneousMatrix getNodePose(NodePath &object) VP_OVERRIDE;
 
   /**
    * \warning This method is not supported and will throw
    */
-  void addNodeToScene(const NodePath &object) vp_override;
+  void addNodeToScene(const NodePath &object) VP_OVERRIDE;
 
-  void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
+  void setRenderParameters(const vpPanda3DRenderParameters &params) VP_OVERRIDE;
 
-  void addLight(const vpPanda3DLight &light) vp_override;
+  void addLight(const vpPanda3DLight &light) VP_OVERRIDE;
 
   /**
    * @brief Add a new subrenderer: This subrenderer should have a unique name, not present in the set.
@@ -186,9 +186,9 @@ public:
   }
 
 protected:
-  void setupScene() vp_override { }
+  void setupScene() VP_OVERRIDE { }
 
-  void setupCamera() vp_override { }
+  void setupCamera() VP_OVERRIDE { }
 
 private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;

@@ -553,45 +553,49 @@ vpHomogeneousMatrix vpAfma6::getForwardKinematics(const vpColVector &q) const
   The code below shows how to compute the inverse geometric model:
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/robot/vpRobotAfma6.h>
 
-int main()
-{
-#ifdef VISP_HAVE_AFMA6
-  vpColVector q1(6), q2(6);
-  vpHomogeneousMatrix fMc;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotAfma6 robot;
+  int main()
+  {
+  #ifdef VISP_HAVE_AFMA6
+    vpColVector q1(6), q2(6);
+    vpHomogeneousMatrix fMc;
 
-  // Get the current articular position of the robot
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
+    vpRobotAfma6 robot;
 
-  // Compute the pose of the camera in the reference frame using the
-  // direct geometric model
-  fMc = robot.getForwardKinematics(q1);
-  // this is similar to  fMc = robot.get_fMc(q1);
-  // or robot.get_fMc(q1, fMc);
+    // Get the current articular position of the robot
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q1);
 
-  // Compute the inverse geometric model
-  int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
-  // get the nearest solution to the current articular position
-  nbsol = robot.getInverseKinematics(fMc, q1, true);
+    // Compute the pose of the camera in the reference frame using the
+    // direct geometric model
+    fMc = robot.getForwardKinematics(q1);
+    // this is similar to  fMc = robot.get_fMc(q1);
+    // or robot.get_fMc(q1, fMc);
 
-  if (nbsol == 0)
-    std::cout << "No solution of the inverse geometric model " << std::endl;
-  else if (nbsol >= 1)
-    std::cout << "First solution: " << q1 << std::endl;
+    // Compute the inverse geometric model
+    int nbsol; // number of solutions (0, 1 or 2) of the inverse geometric model
+    // get the nearest solution to the current articular position
+    nbsol = robot.getInverseKinematics(fMc, q1, true);
 
-  if (nbsol == 2) {
-    // Compute the other solution of the inverse geometric model
-    q2 = q1;
-    robot.getInverseKinematics(fMc, q2, false);
-    std::cout << "Second solution: " << q2 << std::endl;
+    if (nbsol == 0)
+      std::cout << "No solution of the inverse geometric model " << std::endl;
+    else if (nbsol >= 1)
+      std::cout << "First solution: " << q1 << std::endl;
+
+    if (nbsol == 2) {
+      // Compute the other solution of the inverse geometric model
+      q2 = q1;
+      robot.getInverseKinematics(fMc, q2, false);
+      std::cout << "Second solution: " << q2 << std::endl;
+    }
+  #endif
   }
-#endif
-}
   \endcode
 
   \sa getForwardKinematics()
@@ -1206,7 +1210,7 @@ void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
   vpAfma6::CONST_CAMERA_AFMA6_FILENAME and containing the camera
   parameters.
 
-  \warning Thid method needs also an access to the files containing the
+  \warning Third method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_AFMA6_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
@@ -1224,35 +1228,39 @@ void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
   attached to the robot.
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
 
-  vpRobotAfma6 robot;
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  // Camera parameters are read from
-  // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
-  // if VISP_HAVE_AFMA6_DATA macro is defined in vpConfig.h file
-  try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+
+    vpRobotAfma6 robot;
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    // Camera parameters are read from
+    // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
+    // if VISP_HAVE_AFMA6_DATA macro is defined in vpConfig.h file
+    try {
+      robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
+  #endif
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-#endif
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera
@@ -1469,32 +1477,36 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
 
-  vpRobotAfma6 robot;
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  try {
-    robot.getCameraParameters (cam, I);
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+
+    vpRobotAfma6 robot;
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    try {
+      robot.getCameraParameters (cam, I);
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
+  #endif
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-#endif
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera
@@ -1515,32 +1527,36 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const vpImage<unsigne
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotAfma6.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
-  vpImage<vpRGBa> I;
-  vp1394TwoGrabber g;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Acquire an image to update image structure
-  g.acquire(I) ;
+  int main()
+  {
+  #if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
+    vpImage<vpRGBa> I;
+    vp1394TwoGrabber g;
 
-  vpRobotAfma6 robot;
-  vpCameraParameters cam ;
-  // Get the intrinsic camera parameters depending on the image size
-  try {
-    robot.getCameraParameters (cam, I);
+    // Acquire an image to update image structure
+    g.acquire(I) ;
+
+    vpRobotAfma6 robot;
+    vpCameraParameters cam ;
+    // Get the intrinsic camera parameters depending on the image size
+    try {
+      robot.getCameraParameters (cam, I);
+    }
+    catch(...) {
+      std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    }
+    std::cout << "Camera parameters: " << cam << std::endl;
+  #endif
   }
-  catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
-  }
-  std::cout << "Camera parameters: " << cam << std::endl;
-#endif
-}
   \endcode
 
   \exception vpRobotException::readingParametersError : If the camera

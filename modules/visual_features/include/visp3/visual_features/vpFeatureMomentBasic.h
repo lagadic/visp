@@ -83,11 +83,11 @@ public:
   vpFeatureMomentBasic(vpMomentDatabase &moments, double A, double B, double C,
                        vpFeatureMomentDatabase *featureMoments = nullptr);
 
-  void compute_interaction() vp_override;
+  void compute_interaction() VP_OVERRIDE;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /* Add function due to pure virtual definition in vpBasicFeature.h */
-  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */) vp_override
+  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */) VP_OVERRIDE
   {
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
@@ -98,7 +98,7 @@ public:
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const vp_override
+  const std::string momentName() const VP_OVERRIDE
   {
     return "vpMomentBasic";
   }
@@ -106,7 +106,7 @@ public:
   /*!
    * Feature name.
    */
-  const std::string name() const vp_override
+  const std::string name() const VP_OVERRIDE
   {
     return "vpFeatureMomentBasic";
   }

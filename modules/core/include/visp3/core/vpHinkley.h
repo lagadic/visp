@@ -107,9 +107,9 @@ public:
   } vpHinkleyJumpType;
 
 public:
-  vp_deprecated vpHinkley();
+  VP_DEPRECATED vpHinkley();
   virtual ~vpHinkley();
-  vp_deprecated vpHinkley(double alpha, double delta);
+  VP_DEPRECATED vpHinkley(double alpha, double delta);
 
   void init();
   void init(double alpha, double delta);

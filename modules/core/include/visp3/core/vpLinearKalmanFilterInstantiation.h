@@ -124,18 +124,22 @@ protected:
   size of the state and measure vectors.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
-  // Value is 2
-  std::cout << "State vector size: " << kalman.getStateSize() << std::endl;
-  // Value is 1
-  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl;
-}
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
+
+    kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
+    // Value is 2
+    std::cout << "State vector size: " << kalman.getStateSize() << std::endl;
+    // Value is 1
+    std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl;
+  }
   \endcode
 */
 void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)

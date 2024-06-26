@@ -141,6 +141,23 @@ vpMatrix vpColVector::operator*(const vpRowVector &v) const
   return M;
 }
 
+vpMatrix vpColVector::operator*(const vpMatrix &M) const
+{
+  if (M.getRows() != 1) {
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpColVector (%dx1) and vpMatrix (%dx%d) multiplication",
+                      getRows(), M.getRows(), M.getCols()));
+  }
+  vpMatrix R(rowNum, M.getCols());
+  unsigned int M_cols = M.getCols();
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < M_cols; ++j) {
+      R[i][j] = (*this)[i] * M[0][j];
+    }
+  }
+  return R;
+}
+
 vpColVector vpColVector::operator-(const vpColVector &m) const
 {
   if (getRows() != m.getRows()) {
@@ -914,11 +931,10 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 #if defined(VISP_HAVE_SIMDLIB)
   SimdVectorHadamard(data, v.data, rowNum, out.data);
 #else
-
-#endif
   for (unsigned int i = 0; i < dsize; ++i) {
     out.data[i] = data[i] * v.data[i];
   }
+#endif
   return out;
 }
 

@@ -73,6 +73,10 @@ BEGIN_VISP_NAMESPACE
  * \code
  * #include "visp3/sensor/vpSickLDMRS.h"
  *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
  * int main()
  * {
  * #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
@@ -123,7 +127,7 @@ public:
   {
     *this = sick;
   };
-  virtual ~vpSickLDMRS() vp_override;
+  virtual ~vpSickLDMRS() VP_OVERRIDE;
 
   /*! Copy operator. */
   vpSickLDMRS &operator=(const vpSickLDMRS &sick)

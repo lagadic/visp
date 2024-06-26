@@ -86,7 +86,7 @@ class servoMoment
 {
 public:
   servoMoment()
-    : m_width(640), m_height(480), m_cMo(), m_cdMo(), m_robot(false), m_Iint(m_height, m_width, 255), m_task(), m_cam(),
+    : m_width(640), m_height(480), m_cMo(), m_cdMo(), m_robot(false), m_Iint(m_height, m_width, vpRGBa(255)), m_task(), m_cam(),
     m_error(0), m_imsim(), m_interaction_type(), m_src(6), m_dst(6), m_moments(nullptr), m_momentsDes(nullptr),
     m_featureMoments(nullptr), m_featureMomentsDes(nullptr), m_displayInt(nullptr)
   { }

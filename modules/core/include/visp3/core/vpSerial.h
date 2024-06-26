@@ -50,15 +50,19 @@ BEGIN_VISP_NAMESPACE
 
   The following example shows how to write a string on port `/dev/ttyUSB0` using the default constructor:
   \code
-#include <visp3/core/vpSerial.h>
+  #include <visp3/core/vpSerial.h>
 
-int main()
-{
-#ifndef WIN32
-  vpSerial serial("/dev/ttyUSB0");
-  serial.write("Hello world");
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifndef WIN32
+    vpSerial serial("/dev/ttyUSB0");
+    serial.write("Hello world");
+  #endif
+  }
   \endcode
 
   \note This class is not implemented on windows-like OS.
