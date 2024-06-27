@@ -45,6 +45,7 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 // Specific Type transformation functions
@@ -63,6 +64,8 @@ inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point
 }
 
 } // namespace
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)

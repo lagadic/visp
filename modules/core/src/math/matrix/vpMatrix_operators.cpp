@@ -52,7 +52,8 @@ BEGIN_VISP_NAMESPACE
   matrix:
   \code
   vpRotationMatrix R;
-  vpMatrix M = R;
+  vpMatrix M;
+  M = R;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
@@ -69,12 +70,13 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 /*!
   Copy operator that allows to convert a homogenous matrix to a matrix.
 
-  \param R : Homogeneous matrix.
+  \param M : Homogeneous matrix.
 
   The following example shows how to create a matrix from a homogenous matrix:
   \code
-  vpHomogeneousMatrix M;
-  vpMatrix M = M;
+  vpHomogeneousMatrix H;
+  vpMatrix M;
+  M = H;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpHomogeneousMatrix &M)
@@ -96,7 +98,8 @@ vpMatrix &vpMatrix::operator=(const vpHomogeneousMatrix &M)
   The following example shows how to create a matrix from a rotation matrix:
   \code
   vpRotationMatrix R;
-  vpMatrix M = R;
+  vpMatrix M;
+  M = R;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpRotationMatrix &R)
@@ -118,7 +121,8 @@ vpMatrix &vpMatrix::operator=(const vpRotationMatrix &R)
   The following example shows how to create a matrix from a velocity twist matrix:
   \code
   vpVelocityTwistMatrix V;
-  vpMatrix M = V;
+  vpMatrix M;
+  M = V;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpVelocityTwistMatrix &V)
@@ -140,7 +144,8 @@ vpMatrix &vpMatrix::operator=(const vpVelocityTwistMatrix &V)
   The following example shows how to create a matrix from a force twist matrix:
   \code
   vpForceTwistMatrix F;
-  vpMatrix M = F;
+  vpMatrix M;
+  M = F;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpForceTwistMatrix &F)
@@ -162,7 +167,8 @@ vpMatrix &vpMatrix::operator=(const vpForceTwistMatrix &F)
   The following example shows how to create a matrix from a column vector:
   \code
   vpColVector v(3);
-  vpMatrix M = v;
+  vpMatrix M;
+  M = v;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpColVector &v)
@@ -184,7 +190,8 @@ vpMatrix &vpMatrix::operator=(const vpColVector &v)
   The following example shows how to create a matrix from a row vector:
   \code
   vpRowVector v(3);
-  vpMatrix M = v;
+  vpMatrix M;
+  M = v;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpRowVector &v)
@@ -206,7 +213,8 @@ vpMatrix &vpMatrix::operator=(const vpRowVector &v)
   The following example shows how to create a matrix from a translation vector:
   \code
   vpTranslationVector t;
-  vpMatrix M = t;
+  vpMatrix M;
+  M = t;
   \endcode
 */
 vpMatrix &vpMatrix::operator=(const vpTranslationVector &t)

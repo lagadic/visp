@@ -831,12 +831,13 @@ protected:
   zarray_t *m_detections;
   bool m_zAlignedWithCameraFrame;
 };
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 namespace
 {
 const unsigned int def_tagThickness = 2;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),

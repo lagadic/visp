@@ -29,8 +29,7 @@
  *
  * Description:
  * RGBA pixel.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRGBa.cpp
@@ -291,9 +290,9 @@ bool vpRGBa::operator>(const vpRGBa &v) const
 vpRGBa operator*(const double &x, const  vpRGBa &rgb)
 {
   vpRGBa rgba;
-  rgba.R = rgb.R * x;
-  rgba.G = rgb.G * x;
-  rgba.B = rgb.B * x;
+  rgba.R = static_cast<unsigned char>(rgb.R * x);
+  rgba.G = static_cast<unsigned char>(rgb.G * x);
+  rgba.B = static_cast<unsigned char>(rgb.B * x);
   rgba.A = rgb.A;
   return rgba;
 }

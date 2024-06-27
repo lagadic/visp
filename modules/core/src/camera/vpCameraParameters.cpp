@@ -477,8 +477,8 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const
     return false;
   }
 
-  unsigned int m_dist_coefs_size = m_dist_coefs.size();
-  for (unsigned int i = 0; i < m_dist_coefs_size; ++i) {
+  size_t m_dist_coefs_size = m_dist_coefs.size();
+  for (size_t i = 0; i < m_dist_coefs_size; ++i) {
     if (!vpMath::equal(m_dist_coefs[i], c.m_dist_coefs[i], std::numeric_limits<double>::epsilon())) {
       return false;
     }
@@ -633,7 +633,7 @@ vpMatrix vpCameraParameters::get_K_inverse() const
  */
 void vpCameraParameters::printParameters()
 {
-  unsigned int m_dist_coefs_size = m_dist_coefs.size();
+  size_t m_dist_coefs_size = m_dist_coefs.size();
   std::ios::fmtflags original_flags(std::cout.flags());
   switch (m_projModel) {
   case vpCameraParameters::perspectiveProjWithoutDistortion: {
@@ -654,7 +654,7 @@ void vpCameraParameters::printParameters()
   }
   case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
     std::cout << "  Coefficients: ";
-    for (unsigned int i = 0; i < m_dist_coefs_size; ++i) {
+    for (size_t i = 0; i < m_dist_coefs_size; ++i) {
       std::cout << " " << m_dist_coefs[i];
     }
     std::cout << std::endl;
@@ -700,8 +700,8 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl  << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     os << "  Coefficients: ";
     std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoefficients();
-    unsigned int tmp_coefs_size = tmp_coefs.size();
-    for (unsigned int i = 0; i < tmp_coefs_size; ++i) {
+    size_t tmp_coefs_size = tmp_coefs.size();
+    for (size_t i = 0; i < tmp_coefs_size; ++i) {
       os << " " << tmp_coefs[i];
     }
     os << std::endl;

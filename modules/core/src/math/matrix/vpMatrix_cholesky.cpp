@@ -380,7 +380,7 @@ vpMatrix vpMatrix::choleskyByEigen3() const
     }
   }
   Eigen::MatrixXd L = A.llt().matrixL();
-  vpMatrix Lvisp(L.rows(), L.cols(), 0.);
+  vpMatrix Lvisp(static_cast<unsigned int>(L.rows()), static_cast<unsigned int>(L.cols()), 0.);
   for (unsigned int r = 0; r < nbRows; ++r) {
     for (unsigned int c = 0; c <= r; ++c) {
       Lvisp[r][c] = L(r, c);

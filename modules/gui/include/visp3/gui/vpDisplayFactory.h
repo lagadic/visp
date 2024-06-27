@@ -32,8 +32,8 @@
  * Display Factory
  */
 
-#ifndef vpDisplayFactory_h
-#define vpDisplayFactory_h
+#ifndef VP_DISPLAY_FACTORY_H
+#define VP_DISPLAY_FACTORY_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
@@ -101,6 +101,7 @@ vpDisplay *displayFactory(vpImage<T> &I)
   return new vpDisplayD3D(I);
 #endif
 #else
+  (void)I;
   return nullptr;
 #endif
 }
@@ -138,6 +139,8 @@ vpDisplay *displayFactory(vpImage<T> &I, vpDisplay::vpScaleType scale_type)
   return new vpDisplayD3D(I, scale_type);
 #endif
 #else
+  (void)I;
+  (void)scale_type;
   return nullptr;
 #endif
 }

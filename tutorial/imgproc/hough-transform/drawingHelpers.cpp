@@ -2,6 +2,8 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -60,3 +62,5 @@ bool drawingHelpers::display(vpImage<double> &D, const std::string &title, const
   vpImageConvert::convert(D, I);
   return display(I, title, blockingMode);
 }
+
+#endif

@@ -168,7 +168,7 @@ vpMatrix::vpMatrix(const vpForceTwistMatrix &F)
 
 /*!
  * Create a matrix from a row vector.
- * @param v : Row vector.
+ * @param R : Rotation matrix.
  */
 vpMatrix::vpMatrix(const vpRotationMatrix &R)
 {
@@ -195,7 +195,7 @@ vpMatrix::vpMatrix(const vpRowVector &v)
 
 /*!
  * Create a matrix from a row vector.
- * @param v : Row vector.
+ * @param t : Translation vector.
  */
 vpMatrix::vpMatrix(const vpTranslationVector &t)
 {

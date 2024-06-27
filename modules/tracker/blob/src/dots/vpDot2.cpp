@@ -1823,27 +1823,26 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
                              std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar)
 {
-  unsigned int i;
   // tracking
-  for (i = 0; i < n; ++i) {
+  for (unsigned int i = 0; i < n; ++i) {
     dot[i].track(I);
     cogs.push_back(dot[i].getCog());
   }
   // trajectories
-  unsigned int cogs_size = cogs.size();
-  for (i = n; i < cogs_size; ++i) {
+  unsigned int cogs_size = static_cast<unsigned int>(cogs.size());
+  for (unsigned int i = n; i < cogs_size; ++i) {
     const unsigned int circle_size = 4;
     vpDisplay::displayCircle(I, cogs[i], circle_size, vpColor::green, true);
   }
   // initial position
-  for (i = 0; i < n; ++i) {
+  for (unsigned int i = 0; i < n; ++i) {
     const unsigned int circle_size = 4;
     vpDisplay::displayCircle(I, cogs[i], circle_size, vpColor::blue, true);
   }
   // if exists, desired position
   if (cogStar != nullptr) {
     const unsigned int circle_size = 10;
-    for (i = 0; i < n; ++i) {
+    for (unsigned int i = 0; i < n; ++i) {
       vpDisplay::displayDotLine(I, cogStar[i], dot[i].getCog(), vpColor::red);
       vpDisplay::displayCircle(I, cogStar[i], circle_size, vpColor::red, true);
     }

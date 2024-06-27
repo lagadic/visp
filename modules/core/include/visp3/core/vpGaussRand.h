@@ -49,50 +49,42 @@ BEGIN_VISP_NAMESPACE
   their mean equal to 10 with a standard deviation equal to 0.5.
 
   \code
-#include <iostream>
-#include <visp3/core/vpGaussRand.h>
+  #include <iostream>
+  #include <visp3/core/vpGaussRand.h>
 
-#ifdef ENABLE_VISP_NAMESPACE
-using namespace VISP_NAMESPACE_NAME;
-#endif
-
-int main()
-{
-  vpGaussRand noise(0.5, 10);
-  for(int i=0; i< 10; i++) {
-    std::cout << "noise " << i << ": " << noise() << std::endl;
+  int main()
+  {
+    vpGaussRand noise(0.5, 10);
+    for(int i=0; i< 10; i++) {
+      std::cout << "noise " << i << ": " << noise() << std::endl;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   The previous example produces the following printings:
   \verbatim
-noise 0: 10.645
-noise 1: 9.67129
-noise 2: 10.1208
-noise 3: 10.1039
-noise 4: 10.8667
-noise 5: 9.89823
-noise 6: 9.81414
-noise 7: 9.96076
-noise 8: 11.0795
-noise 9: 9.79229
+  noise 0: 10.645
+  noise 1: 9.67129
+  noise 2: 10.1208
+  noise 3: 10.1039
+  noise 4: 10.8667
+  noise 5: 9.89823
+  noise 6: 9.81414
+  noise 7: 9.96076
+  noise 8: 11.0795
+  noise 9: 9.79229
   \endverbatim
 
   Note that the previous example produces always the same "random" results. To
-produce real random values, you need to initialize the random generator with
-different values using seed(). For example, this could be done using the
-current time. The code becomes:
+  produce real random values, you need to initialize the random generator with
+  different values using seed(). For example, this could be done using the
+  current time. The code becomes:
 
   \verbatim
   #include <iostream>
   #include <visp3/core/vpGaussRand.h>
   #include <visp3/core/vpTime.h>
-
-  #ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-  #endif
 
   int main()
   {
@@ -123,15 +115,6 @@ current time. The code becomes:
 */
 class VISP_EXPORT vpGaussRand
 {
-private:
-  double gaussianDraw();
-
-  vpUniRand m_rng;
-  double m_mean;
-  double m_sigma;
-  bool m_AlreadyDone;
-  double m_x2;
-
 public:
   /*!
       Default noise generator constructor.
@@ -172,6 +155,15 @@ public:
       Return a random value from the Gaussian noise generator.
     */
   double operator()() { return m_sigma * gaussianDraw() + m_mean; }
+
+private:
+  double gaussianDraw();
+
+  vpUniRand m_rng;
+  double m_mean;
+  double m_sigma;
+  bool m_AlreadyDone;
+  double m_x2;
 };
 END_VISP_NAMESPACE
 #endif

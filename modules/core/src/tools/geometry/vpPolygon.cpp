@@ -29,8 +29,7 @@
  *
  * Description:
  * Defines a generic 2D polygon.
- *
-*****************************************************************************/
+ */
 
 // System
 #include <limits>
@@ -297,8 +296,8 @@ vpPolygon &vpPolygon::build(const std::vector<vpPoint> &corners, const vpCameraP
                           const bool &create_convex_hull)
 {
   std::vector<vpImagePoint> ipCorners(corners.size());
-  unsigned int corners_size = corners.size();
-  for (unsigned int i = 0; i < corners_size; ++i) {
+  size_t corners_size = corners.size();
+  for (size_t i = 0; i < corners_size; ++i) {
     vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(), corners[i].get_y(), ipCorners[i]);
   }
   build(ipCorners, create_convex_hull);
@@ -467,8 +466,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     infPoint.set_j(infPoint.get_j() + (1000 * generator()));
 
     bool oddNbIntersections = false;
-    unsigned int v_corners_size = _corners.size();
-    for (unsigned int i = 0; i < v_corners_size; ++i) {
+    size_t v_corners_size = _corners.size();
+    for (size_t i = 0; i < v_corners_size; ++i) {
       vpImagePoint ip1 = _corners[i];
       vpImagePoint ip2 = _corners[(i + 1) % _corners.size()];
       bool intersection = false;
@@ -479,7 +478,6 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
         // continue
       }
       else {
-
         try {
           intersection = testIntersectionSegments(ip1, ip2, ip, infPoint);
         }
@@ -562,9 +560,9 @@ void vpPolygon::updateArea()
   }
   _area = 0;
 
-  unsigned int v_corners_size = _corners.size();
-  for (unsigned int i = 0; i < v_corners_size; ++i) {
-    unsigned int i_p_1 = (i + 1) % _corners.size();
+  size_t v_corners_size = _corners.size();
+  for (size_t i = 0; i < v_corners_size; ++i) {
+    size_t i_p_1 = (i + 1) % _corners.size();
     _area += (_corners[i].get_j() * _corners[i_p_1].get_i()) - (_corners[i_p_1].get_j() * _corners[i].get_i());
   }
 
@@ -594,25 +592,16 @@ void vpPolygon::updateCenter()
   }
   double i_tmp = 0;
   double j_tmp = 0;
-#if 0
-  for (unsigned int i = 0; i < (_corners.size() - 1); ++i) {
-    i_tmp += (_corners[i].get_i() + _corners[i + 1].get_i()) *
-      (_corners[i + 1].get_i() * _corners[i].get_j() - _corners[i + 1].get_j() * _corners[i].get_i());
 
-    j_tmp += (_corners[i].get_j() + _corners[i + 1].get_j()) *
-      (_corners[i + 1].get_i() * _corners[i].get_j() - _corners[i + 1].get_j() * _corners[i].get_i());
-  }
-#else
-  unsigned int v_corners_size = _corners.size();
-  for (unsigned int i = 0; i < v_corners_size; ++i) {
-    unsigned int i_p_1 = (i + 1) % _corners.size();
+  size_t v_corners_size = _corners.size();
+  for (size_t i = 0; i < v_corners_size; ++i) {
+    size_t i_p_1 = (i + 1) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
       ((_corners[i_p_1].get_i() * _corners[i].get_j()) - (_corners[i_p_1].get_j() * _corners[i].get_i()));
 
     j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
       ((_corners[i_p_1].get_i() * _corners[i].get_j()) - (_corners[i_p_1].get_j() * _corners[i].get_i()));
   }
-#endif
 
   if (_area > 0) {
     _center.set_i(fabs(i_tmp / (6 * _area)));
@@ -669,8 +658,8 @@ void vpPolygon::updateBoundingBox()
 */
 void vpPolygon::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness) const
 {
-  const unsigned int N = static_cast<unsigned int>(_corners.size());
-  for (unsigned int i = 0; i < N; ++i) {
+  const size_t N = _corners.size();
+  for (size_t i = 0; i < N; ++i) {
     vpDisplay::displayLine(I, _corners[i], _corners[(i + 1) % N], color, thickness);
   }
 }

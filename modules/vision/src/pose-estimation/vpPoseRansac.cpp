@@ -56,6 +56,8 @@
 #define EPS 1e-6
 
 BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 // For std::map<vpPoint>
@@ -156,6 +158,7 @@ struct FindDegeneratePoint
   vpPoint m_pt;
 };
 } // namespace
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 bool vpPose::vpRansacFunctor::poseRansacImpl()
 {
@@ -573,10 +576,10 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
 {
   vpPose pose;
 
-  unsigned int p2D_size = p2D.size();
-  unsigned int p3D_size = p3D.size();
-  for (unsigned int i = 0; i < p2D_size; ++i) {
-    for (unsigned int j = 0; j < p3D_size; ++j) {
+  size_t p2D_size = p2D.size();
+  size_t p3D_size = p3D.size();
+  for (size_t i = 0; i < p2D_size; ++i) {
+    for (size_t j = 0; j < p3D_size; ++j) {
       vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());
