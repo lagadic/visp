@@ -45,6 +45,7 @@
 #include <catch.hpp>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/io/vpImageIo.h>
 
 #ifdef ENABLE_VISP_NAMESPACE

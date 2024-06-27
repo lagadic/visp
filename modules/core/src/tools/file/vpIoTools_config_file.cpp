@@ -32,6 +32,7 @@
  */
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoTools.h>
 
 BEGIN_VISP_NAMESPACE
