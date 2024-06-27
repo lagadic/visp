@@ -1,5 +1,5 @@
 {
-  "ignored_headers": ["vpGEMM.h", "vpDebug.h"],
+  "ignored_headers": ["vpGEMM.h", "vpDebug.h", "vpEndian.h"],
   "ignored_classes": ["vpException", "vpImageException", "vpTrackingException",
                       "vpFrameGrabberException", "vpIoException",
                       "vpDisplayException", "vpMatrixException"],
