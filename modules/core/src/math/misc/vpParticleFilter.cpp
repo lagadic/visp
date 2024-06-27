@@ -42,6 +42,7 @@
 
 #include <visp3/core/vpParticleFilter.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE
 
 vpUniRand vpParticleFilter::sampler;
@@ -397,3 +398,4 @@ void vpParticleFilter::updateMonothread(const vpColVector &z)
   }
 }
 END_VISP_NAMESPACE
+#endif
