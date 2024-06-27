@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef VPPARTICLEFILTER_H
-#define VPPARTICLEFILTER_H
+#ifndef VP_PARTICLE_FILTER_H
+#define VP_PARTICLE_FILTER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -88,9 +88,8 @@ public:
    */
   typedef std::function<vpColVector(const vpColVector &, const vpColVector &, const double &)> vpCommandStateFunction;
 
-
   /**
-   * \brief Likelihood function, which evaluates the likehood of a particle with regard to the measurements.
+   * \brief Likelihood function, which evaluates the likelihood of a particle with regard to the measurements.
    * The first argument is the particle that is evaluated.
    * The second argument is the measurements vector.
    * The return is the likelihood of the particle, which equals to 0 when the particle does not match
