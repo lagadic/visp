@@ -60,7 +60,7 @@ namespace vpDisplayFactory
  * \return A newly allocated vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  */
-vpDisplay *displayFactory()
+vpDisplay *allocateDisplay()
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11

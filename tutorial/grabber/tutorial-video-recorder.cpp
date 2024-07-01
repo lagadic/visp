@@ -80,7 +80,7 @@ int main(int argc, const char *argv[])
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #if defined(VISP_HAVE_DISPLAY)
-    vpDisplay *d = vpDisplayFactory::displayFactory();
+    vpDisplay *d = vpDisplayFactory::allocateDisplay();
     d->init(I, 0, 0, "Camera view");
 #endif
     vpVideoWriter writer;

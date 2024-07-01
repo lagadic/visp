@@ -59,7 +59,7 @@ void displayFunction(std::mutex &mutex_capture, vpImage<unsigned char> &frame, t
 
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
-  vpDisplay *d_ = vpDisplayFactory::displayFactory();
+  vpDisplay *d_ = vpDisplayFactory::allocateDisplay();
 
   do {
     mutex_capture.lock();

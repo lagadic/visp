@@ -618,7 +618,7 @@ int main(const int argc, const char *argv[])
   // first video device which is available
 #ifdef VISP_HAVE_DISPLAY
   std::shared_ptr<vpDisplay> d;
-  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
+  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(static_cast<unsigned char>(255)));
   if (args.m_useDisplay) {
     d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
   }
