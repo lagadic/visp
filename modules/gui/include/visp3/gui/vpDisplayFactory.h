@@ -118,7 +118,10 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
 #endif
 #else
   (void)I;
-  (void)scale_type;
+  (void)winx;
+  (void)winy;
+  (void)title;
+  (void)scaleType;
   return nullptr;
 #endif
 }
@@ -190,6 +193,12 @@ std::shared_ptr<vpDisplay> createDisplay(vpImage<T> &I, const int winx = -1, con
   return std::make_shared<vpDisplayD3D>(I, winx, winy, title, scaleType);
 #endif
 #else
+  (void)I;
+  (void)winx;
+  (void)winy;
+  (void)title;
+  (void)scaleType;
+  return nullptr;
   return std::shared_ptr<vpDisplay>(nullptr);
 #endif
 }
