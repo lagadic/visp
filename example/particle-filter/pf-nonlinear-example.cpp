@@ -568,7 +568,7 @@ int main(const int argc, const char *argv[])
   //! [Constants_for_the_PF]
 
   //! [Initial_estimates]
-  vpColVector X0(4); // The initial guess for the state
+  vpColVector X0(4U); // The initial guess for the state
   X0[0] = radius; // wX = radius m
   X0[1] = 0.; // wY = 0m
   X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
@@ -576,18 +576,18 @@ int main(const int argc, const char *argv[])
   //! [Initial_estimates]
 
   //! [Init_functions]
-  vpParticleFilter::vpProcessFunction processFunc = fx;
+  vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
   vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaLikelihood, sigmaMeasurements, seed);
   using std::placeholders::_1;
   using std::placeholders::_2;
-  vpParticleFilter::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihoodParticle, &markerMeas, _1, _2);
-  vpParticleFilter::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter::simpleResamplingCheck;
-  vpParticleFilter::vpResamplingFunction resamplingFunc = vpParticleFilter::simpleImportanceResampling;
+  vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihoodParticle, &markerMeas, _1, _2);
+  vpParticleFilter<vpColVector>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<vpColVector>::simpleResamplingCheck;
+  vpParticleFilter<vpColVector>::vpResamplingFunction resamplingFunc = vpParticleFilter<vpColVector>::simpleImportanceResampling;
   //! [Init_functions]
 
   //! [Init_PF]
   // Initialize the PF
-  vpParticleFilter filter(nbParticles, stdevsPF, seedPF, nbThread);
+  vpParticleFilter<vpColVector> filter(nbParticles, stdevsPF, seedPF, nbThread);
   filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
   //! [Init_PF]
 
@@ -628,7 +628,7 @@ int main(const int argc, const char *argv[])
   //! [Init_simu]
   // Initialize the simulation
   vpObjectSimulator object(radius, w, phi, wZ);
-  vpColVector object_pos(4, 0.);
+  vpColVector object_pos(4U, 0.);
   object_pos[3] = 1.;
   //! [Init_simu]
 
