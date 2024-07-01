@@ -110,7 +110,7 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> O;
 #ifdef VISP_HAVE_DISPLAY
     if (display_on) {
-      d = vpDisplayFactory::displayFactory(I);
+      d = vpDisplayFactory::allocateDisplay(I);
     }
 #endif
 

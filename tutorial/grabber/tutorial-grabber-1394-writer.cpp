@@ -12,7 +12,7 @@ int main(int argc, char **)
   using namespace VISP_NAMESPACE_NAME;
 #endif
 #ifdef VISP_HAVE_DISPLAY
-  vpDisplay *d = vpDisplayFactory::displayFactory();
+  vpDisplay *d = vpDisplayFactory::allocateDisplay();
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif
