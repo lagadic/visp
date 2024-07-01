@@ -155,7 +155,8 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
 
       visp::cnpy::NpyArray arr_vec_data = npz_data[identifier];
       const bool copy_data = false;
-      vpImage<vpRGBa> I_read(arr_vec_data.data<vpRGBa>(), arr_vec_data.shape[0], arr_vec_data.shape[1], copy_data);
+      vpImage<vpRGBa> I_read(arr_vec_data.data<vpRGBa>(), static_cast<unsigned int>(arr_vec_data.shape[0]),
+                             static_cast<unsigned int>(arr_vec_data.shape[1]), copy_data);
 
       CHECK(I_save_copy.getSize() == I_read.getSize());
       CHECK(I_save_copy == I_read);

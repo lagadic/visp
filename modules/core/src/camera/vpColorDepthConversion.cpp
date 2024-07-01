@@ -47,6 +47,8 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 
 BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 
@@ -133,6 +135,8 @@ vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpIm
 }
 
 } // namespace
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * Project color image point to depth frame.

@@ -283,7 +283,7 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
               const Type val11 = src[y_ + 1][x_ + 1];
               const int64_t interp_i64 =
                 static_cast<int64_t>(((s_1 * t_1) * val00) + ((s * t_1) * val01) + ((s_1 * t) * val10) + ((s * t) * val11));
-              const float interp = (interp_i64 >> (nbits * 2)) + ((interp_i64 & 0xFFFFFFFF) * precision_2);
+              const float interp = (interp_i64 >> (nbits * 2)) + ((interp_i64 & 0xFFFFFFFFU) * precision_2);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (y_ < (static_cast<int>(src.getHeight()) - 1)) {
@@ -498,15 +498,15 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const vpRGBa val11 = src[y_ + 1][x_ + 1];
             const int64_t interpR_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.R) + (s * t_1 * val01.R) + (s_1 * t * val10.R) + (s * t * val11.R));
-            const float interpR = (interpR_i64 >> (nbits * 2)) + ((interpR_i64 & 0xFFFFFFFF) * precision_2);
+            const float interpR = (interpR_i64 >> (nbits * 2)) + ((interpR_i64 & 0xFFFFFFFFU) * precision_2);
 
             const int64_t interpG_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.G) + (s * t_1 * val01.G) + (s_1 * t * val10.G) + (s * t * val11.G));
-            const float interpG = (interpG_i64 >> (nbits * 2)) + ((interpG_i64 & 0xFFFFFFFF) * precision_2);
+            const float interpG = (interpG_i64 >> (nbits * 2)) + ((interpG_i64 & 0xFFFFFFFFU) * precision_2);
 
             const int64_t interpB_i64 =
               static_cast<int64_t>((s_1 * t_1 * val00.B) + (s * t_1 * val01.B) + (s_1 * t * val10.B) + (s * t * val11.B));
-            const float interpB = (interpB_i64 >> (nbits * 2)) + ((interpB_i64 & 0xFFFFFFFF) * precision_2);
+            const float interpB = (interpB_i64 >> (nbits * 2)) + ((interpB_i64 & 0xFFFFFFFFU) * precision_2);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
                                vpMath::saturate<unsigned char>(interpB), 255);

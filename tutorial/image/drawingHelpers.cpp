@@ -32,6 +32,8 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -114,3 +116,5 @@ bool drawingHelpers::waitForClick(const vpImage<unsigned char> &I, const bool &b
 
   return hasToContinue;
 }
+
+#endif

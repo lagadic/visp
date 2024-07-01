@@ -134,6 +134,7 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
   return true;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // Code adapted from the original author Dan Mašek to be compatible with ViSP
 // image
 class vpFrameQueue
@@ -204,7 +205,6 @@ private:
 
 class vpStorageWorker
 {
-
 public:
   vpStorageWorker(vpFrameQueue &queue, const std::string &filename, unsigned int width, unsigned int height)
     : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
@@ -430,6 +430,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
 }
 
 } // Namespace
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 int main(int argc, char *argv[])
 {

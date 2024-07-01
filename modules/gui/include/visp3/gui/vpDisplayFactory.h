@@ -32,8 +32,8 @@
  * Display Factory
  */
 
-#ifndef vpDisplayFactory_h
-#define vpDisplayFactory_h
+#ifndef VP_DISPLAY_FACTORY_H
+#define VP_DISPLAY_FACTORY_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
@@ -117,6 +117,8 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
   return new vpDisplayD3D(I, winx, winy, title, scaleType);
 #endif
 #else
+  (void)I;
+  (void)scale_type;
   return nullptr;
 #endif
 }
@@ -127,19 +129,8 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
  * if a GUI library is available or nullptr otherwise.
  *
  * \tparam T : Any type that an image can handle and that can be displayed.
- * \param[in] I : The image the display must be initialized with.
- * \param[in] winx : The horizontal position of the display on the screen.
- * \param[in] winy : The vertical position of the display on the screen.
- * \param[in] title : The title of the display.
- * \param[in] scaleType : If this parameter is set to:
- * - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image is fully displayed in the screen;
- * - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the same than the image size.
- * - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines and the columns.
- * - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines and the columns.
- * - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
- * - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
  *
- * \return A smart point pointing to a vpDisplay specialization initialized with \b I
+ * \return A smart pointer pointing to a vpDisplay specialization initialized with \b I
  * if a GUI library is available or nullptr otherwise.
  */
 template<typename T>
@@ -179,7 +170,7 @@ std::shared_ptr<vpDisplay> createDisplay()
  * - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines and the columns.
  * - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines and the columns.
  *
- * \return A smart point pointing to a vpDisplay specialization initialized with \b I
+ * \return A smart pointer pointing to a vpDisplay specialization initialized with \b I
  * if a GUI library is available or nullptr otherwise.
  */
 template<typename T>

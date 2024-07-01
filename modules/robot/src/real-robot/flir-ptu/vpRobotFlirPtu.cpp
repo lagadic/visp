@@ -71,7 +71,7 @@ void vpRobotFlirPtu::emergencyStop(int signo)
   case SIGSEGV:
     msg << "SIGSEGV (stop due to a segmentation fault) ";
     break;
-#ifndef WIN32
+#ifndef _WIN32
   case SIGBUS:
     msg << "SIGBUS (stop due to a bus error) ";
     break;
@@ -113,7 +113,7 @@ vpRobotFlirPtu::vpRobotFlirPtu()
 {
   signal(SIGINT, vpRobotFlirPtu::emergencyStop);
   signal(SIGSEGV, vpRobotFlirPtu::emergencyStop);
-#ifndef WIN32
+#ifndef _WIN32
   signal(SIGBUS, vpRobotFlirPtu::emergencyStop);
   signal(SIGKILL, vpRobotFlirPtu::emergencyStop);
   signal(SIGQUIT, vpRobotFlirPtu::emergencyStop);
@@ -547,7 +547,7 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
 
   // Open a port
   if (ceropen(m_cer, portname.c_str(), 0)) {
-#if WIN32
+#if _WIN32
     throw(vpException(vpException::fatalError, "Failed to open %s: %s.", portname.c_str(),
                       cerstrerror(m_cer, errstr, sizeof(errstr))));
 #else

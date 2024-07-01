@@ -102,11 +102,11 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
   m_wc = weights.m_wc;
 
   // Computation of the prior based on the sigma points
-  unsigned int nbPoints = m_chi.size();
+  size_t nbPoints = m_chi.size();
   if (m_Y.size() != nbPoints) {
     m_Y.resize(nbPoints);
   }
-  for (unsigned int i = 0; i < nbPoints; ++i) {
+  for (size_t i = 0; i < nbPoints; ++i) {
     vpColVector prior = m_f(m_chi[i], dt);
     if (m_b) {
       prior = m_stateAddFunction(prior, m_b(u, dt));
@@ -125,11 +125,11 @@ void vpUnscentedKalman::predict(const double &dt, const vpColVector &u)
 
 void vpUnscentedKalman::update(const vpColVector &z)
 {
-  unsigned int nbPoints = m_chi.size();
+  size_t nbPoints = m_chi.size();
   if (m_Z.size() != nbPoints) {
     m_Z.resize(nbPoints);
   }
-  for (unsigned int i = 0; i < nbPoints; ++i) {
+  for (size_t i = 0; i < nbPoints; ++i) {
     m_Z[i] = (m_h(m_Y[i]));
   }
 
@@ -140,8 +140,8 @@ void vpUnscentedKalman::update(const vpColVector &z)
 
   // Computation of the Kalman gain
   vpMatrix Pxz = m_wc[0] * m_stateResFunc(m_Y[0], m_mu) * m_measResFunc(m_Z[0], m_muz).transpose();
-  unsigned int nbPts = m_wc.size();
-  for (unsigned int i = 1; i < nbPts; ++i) {
+  size_t nbPts = m_wc.size();
+  for (size_t i = 1; i < nbPts; ++i) {
     Pxz += m_wc[i] * m_stateResFunc(m_Y[i], m_mu) * m_measResFunc(m_Z[i], m_muz).transpose();
   }
   m_K = Pxz * m_Pz.inverseByCholesky();
@@ -164,8 +164,8 @@ vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransf
 
   // Computation of the covariance
   result.m_P = cov;
-  unsigned int nbSigmaPoints = sigmaPoints.size();
-  for (unsigned int i = 0; i < nbSigmaPoints; ++i) {
+  size_t nbSigmaPoints = sigmaPoints.size();
+  for (size_t i = 0; i < nbSigmaPoints; ++i) {
     vpColVector e = resFunc(sigmaPoints[i], result.m_mu);
     result.m_P += wc[i] * e*e.transpose();
   }

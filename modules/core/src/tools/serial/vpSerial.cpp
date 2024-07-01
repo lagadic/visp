@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Serial communication.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -100,7 +98,7 @@ BEGIN_VISP_NAMESPACE
   \param[in] bytesize : Size of each byte in the serial transmission of data. Default is 8 bits.
   \param[in] parity : Parity parameter. Default is without parity check.
   \param[in] stopbits : Number of stop bits used. Default is 1 stop bit.
-  \param[in] flowcontrol : Type of flowcontrol used. Default is no flow control.
+  \param[in] flowcontrol : Type of flow control used. Default is no flow control.
 
  */
   vpSerial::vpSerial(const std::string &port, unsigned long baudrate, bytesize_t bytesize, parity_t parity,
@@ -223,7 +221,7 @@ void vpSerial::close()
 
   int main()
   {
-  #ifndef WIN32
+  #ifndef _WIN32
     vpSerial serial;
 
     serial.setPort("/dev/ttyUSB0");

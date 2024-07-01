@@ -62,10 +62,10 @@ uint32_t swap32bits(uint32_t val)
 {
   const unsigned int magic_8 = 8;
   const unsigned int magic_24 = 24;
-  const unsigned int magic_0x000000FF = 0x000000FF;
-  const unsigned int magic_0x0000FF00 = 0x0000FF00;
-  const unsigned int magic_0x00FF0000 = 0x00FF0000;
-  const unsigned int magic_0xFF000000 = 0xFF000000;
+  const unsigned int magic_0x000000FF = 0x000000FFU;
+  const unsigned int magic_0x0000FF00 = 0x0000FF00U;
+  const unsigned int magic_0x00FF0000 = 0x00FF0000U;
+  const unsigned int magic_0xFF000000 = 0xFF000000U;
   return (((val >> magic_24) & magic_0x000000FF) | ((val >> magic_8) & magic_0x0000FF00) | ((val << magic_8) & magic_0x00FF0000) |
           ((val << magic_24) & magic_0xFF000000));
 }

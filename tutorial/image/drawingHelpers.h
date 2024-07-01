@@ -27,14 +27,16 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#ifndef _drawingHelpers_h_
-#define _drawingHelpers_h_
+#ifndef DRAWING_HELPERS_H
+#define DRAWING_HELPERS_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace drawingHelpers
 {
@@ -102,4 +104,5 @@ void display(VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const std::str
 bool waitForClick(const VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> &I, const bool &blockingMode);
 }
 
+#endif
 #endif

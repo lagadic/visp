@@ -32,6 +32,7 @@
  */
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoTools.h>
 
 BEGIN_VISP_NAMESPACE
@@ -159,8 +160,8 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
 bool vpIoTools::readConfigVar(const std::string &var, float &value)
 {
   bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
+  size_t configvars_size = configVars.size();
+  size_t k = 0;
   while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
@@ -196,8 +197,8 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
 bool vpIoTools::readConfigVar(const std::string &var, double &value)
 {
   bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
+  size_t configvars_size = configVars.size();
+  size_t k = 0;
   while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0) {
@@ -233,8 +234,8 @@ bool vpIoTools::readConfigVar(const std::string &var, double &value)
 bool vpIoTools::readConfigVar(const std::string &var, int &value)
 {
   bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
+  size_t configvars_size = configVars.size();
+  size_t k = 0;
   while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = atoi(configValues[k].c_str());
@@ -307,8 +308,8 @@ bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
 bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 {
   bool found = false;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
+  size_t configvars_size = configVars.size();
+  size_t k = 0;
   while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       value = configValues[k];
@@ -336,12 +337,12 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
   \return true if the parameter could be read.
 */
 bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols,
-  const unsigned int &nRows)
+                              const unsigned int &nRows)
 {
   bool found = false;
   std::string nb;
-  unsigned int configvars_size = configVars.size();
-  unsigned int k = 0;
+  size_t configvars_size = configVars.size();
+  size_t k = 0;
   while ((k < configvars_size) && (!found)) {
     if (configVars[k] == var) {
       found = true;
