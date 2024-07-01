@@ -55,7 +55,7 @@ BEGIN_VISP_NAMESPACE
   \brief The class permits to use a Particle Filter.
 */
 template <typename MeasurementsType>
-class VISP_EXPORT vpParticleFilter
+class vpParticleFilter
 {
 public:
   /**
