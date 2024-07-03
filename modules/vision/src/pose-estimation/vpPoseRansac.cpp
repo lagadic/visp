@@ -323,7 +323,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
   return foundSolution;
 }
 
-bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
+bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 {
   // Check only for adding / removing problem
   // Do not take into account problem with element modification here
@@ -572,7 +572,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials, bool useParallelRansac, unsigned int nthreads,
-                       bool (*func)(const vpHomogeneousMatrix &))
+                       FuncCheckValidityPose func)
 {
   vpPose pose;
 

@@ -137,6 +137,39 @@ public:
 #endif
 
 private:
+  template <typename T>
+  class vpPixelOperation
+  {
+  public:
+    vpPixelOperation() { }
+
+    virtual T operator()(const T &, const T &) = 0;
+  };
+
+  template <typename T>
+  class vpPixelOperationMax : public vpPixelOperation<T>
+  {
+  public:
+    vpPixelOperationMax() { }
+
+    virtual T operator()(const T &a, const T &b) VP_OVERRIDE
+    {
+      return std::max<T>(a, b);
+    }
+  };
+
+  template <typename T>
+  class vpPixelOperationMin : public vpPixelOperation<T>
+  {
+  public:
+    vpPixelOperationMin() { }
+
+    T operator()(const T &a, const T &b) VP_OVERRIDE
+    {
+      return std::min<T>(a, b);
+    }
+  };
+
   /**
    * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
    * grid.
@@ -149,7 +182,7 @@ private:
    * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
    */
   template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
+  static void imageOperation(vpImage<T> &I, const T &null_value, vpPixelOperation<T> *operation, const vpConnexityType &connexity = CONNEXITY_4);
 
   /**
    * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
@@ -161,7 +194,7 @@ private:
    * \param[in] size Size of the kernel of the operation.
    */
   template <typename T>
-  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
+  static void imageOperation(vpImage<T> &I, vpPixelOperation<T> *operation, const int &size = 3);
 
 };
 
@@ -323,7 +356,7 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 }
 
 template<typename T>
-void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity)
+void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, vpPixelOperation<T> *operation, const vpConnexityType &connexity)
 {
   const int width_in = I.getWidth();
   const int height_in = I.getHeight();
@@ -343,7 +376,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
       for (int j = 0; j < width_in; ++j) {
         T value = null_value;
         for (int k = 0; k < nbOffset; ++k) {
-          value = operation(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
+          value = (*operation)(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
         I[i][j] = value;
@@ -359,7 +392,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
       for (int j = 0; j < width_in; ++j) {
         T value = null_value;
         for (int k = 0; k < nbOffset; ++k) {
-          value = operation(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
+          value = (*operation)(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
         I[i][j] = value;
@@ -394,8 +427,8 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
 template <typename T>
 void vpImageMorphology::erosion(vpImage<T> &I, const vpConnexityType &connexity)
 {
-  const T &(*operation)(const T & a, const T & b) = std::min;
-  vpImageMorphology::imageOperation(I, std::numeric_limits<T>::max(), operation, connexity);
+  vpPixelOperationMin<T> operation;
+  vpImageMorphology::imageOperation(I, std::numeric_limits<T>::max(), &operation, connexity);
 }
 
 /*!
@@ -424,12 +457,12 @@ void vpImageMorphology::erosion(vpImage<T> &I, const vpConnexityType &connexity)
 template <typename T>
 void vpImageMorphology::dilatation(vpImage<T> &I, const vpConnexityType &connexity)
 {
-  const T &(*operation)(const T & a, const T & b) = std::max;
-  vpImageMorphology::imageOperation(I, std::numeric_limits<T>::min(), operation, connexity);
+  vpPixelOperationMax<T> operation;
+  vpImageMorphology::imageOperation(I, std::numeric_limits<T>::min(), &operation, connexity);
 }
 
 template<typename T>
-void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size)
+void vpImageMorphology::imageOperation(vpImage<T> &I, vpPixelOperation<T> *operation, const int &size)
 {
   if ((size % 2) != 1) {
     throw(vpException(vpException::badValue, "Dilatation/erosion kernel must be odd."));
@@ -461,7 +494,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
       }
       for (int r_iterator = r_iterator_start; r_iterator < r_iterator_stop; ++r_iterator) {
         for (int c_iterator = c_iterator_start; c_iterator < c_iterator_stop; ++c_iterator) {
-          value = operation(value, J[r + r_iterator][c + c_iterator]);
+          value = (*operation)(value, J[r + r_iterator][c + c_iterator]);
         }
       }
       I[r][c] = value;
@@ -498,8 +531,8 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
 template <typename T>
 void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
 {
-  const T &(*operation)(const T & a, const T & b) = std::min;
-  vpImageMorphology::imageOperation(I, operation, size);
+  vpPixelOperationMin<T> operation;
+  vpImageMorphology::imageOperation(I, &operation, size);
 }
 
 /**
@@ -530,8 +563,8 @@ void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
 template<typename T>
 void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
 {
-  const T &(*operation)(const T & a, const T & b) = std::max;
-  vpImageMorphology::imageOperation(I, operation, size);
+  vpPixelOperationMax<T> operation;
+  vpImageMorphology::imageOperation(I, &operation, size);
 }
 END_VISP_NAMESPACE
 #endif

@@ -308,9 +308,10 @@ public:  /* --- XML Code--------------------------------------------------------
     // if same name && same projection model && same image size camera already exists, we return SEQUENCE_OK
     // otherwise it is a new camera that need to be updated and we return SEQUENCE_OK
     bool same_name = (cam_name.empty() || (cam_name == camera_name_tmp));
-    bool same_img_size = (abs(static_cast<int>(im_width) - static_cast<int>(image_width_tmp)) < allowedPixelDiffOnImageSize || im_width == 0) &&
-      (abs(static_cast<int>(im_height) - static_cast<int>(image_height_tmp)) < allowedPixelDiffOnImageSize || im_height == 0) &&
-      (test_subsampling_width) && (test_subsampling_height);
+    bool imWidthOk = (abs(static_cast<int>(im_width) - static_cast<int>(image_width_tmp)) < allowedPixelDiffOnImageSize) || (im_width == 0);
+    bool imHeightOk = (abs(static_cast<int>(im_height) - static_cast<int>(image_height_tmp)) < allowedPixelDiffOnImageSize) || (im_height == 0);
+    bool imSizeOk = imWidthOk && imHeightOk;
+    bool same_img_size = imSizeOk && test_subsampling_width && test_subsampling_height;
     if (same_name && same_img_size && same_proj_model) {
       back = SEQUENCE_OK; // Camera exists
       camera = cam_tmp;
@@ -761,10 +762,13 @@ public:  /* --- XML Code--------------------------------------------------------
         }
       }
     }
-    if (!((cam_name == camera_name_tmp) && (im_width == image_width_tmp || im_width == 0) &&
-          (im_height == image_height_tmp || im_height == 0) &&
-          (subsampl_width == subsampling_width_tmp || subsampl_width == 0) &&
-          (subsampl_height == subsampling_height_tmp || subsampl_height == 0))) {
+    bool imHeightOK = (im_height == image_height_tmp) || (im_height == 0);
+    bool imWidthOK = (im_width == image_width_tmp) || (im_width == 0);
+    bool imSizeEqual = imHeightOK && imWidthOK;
+    bool subsampleHeightOK = (subsampl_height == subsampling_height_tmp) || (subsampl_height == 0);
+    bool subsampleWidthOK = (subsampl_width == subsampling_width_tmp) || (subsampl_width == 0);
+    bool subsampleOK = subsampleHeightOK && subsampleWidthOK;
+    if (!((cam_name == camera_name_tmp) && imSizeEqual && subsampleOK)) {
       back = SEQUENCE_ERROR;
     }
     return back;

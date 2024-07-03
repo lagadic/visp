@@ -581,6 +581,8 @@ public:
   int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
+
+  vpMatrix dampedInverse(const double &ratioOfMaxSvd = 1e-4) const;
   //@}
 
   //-------------------------------------------------
