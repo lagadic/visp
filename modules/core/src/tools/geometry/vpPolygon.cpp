@@ -629,7 +629,7 @@ void vpPolygon::updateBoundingBox()
 
   std::set<double> setI;
   std::set<double> setJ;
-  unsigned int v_corners_size = _corners.size();
+  unsigned int v_corners_size = static_cast<unsigned int>(_corners.size());
   for (unsigned int i = 0; i < v_corners_size; ++i) {
     setI.insert(_corners[i].get_i());
     setJ.insert(_corners[i].get_j());

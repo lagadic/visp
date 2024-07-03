@@ -74,12 +74,12 @@ def add_state_vectors(a, b) -> ColVector:
 
 def residual_state_vectors(a, b) -> ColVector:
   """
-  @brief Method that permits to substract a state vector to another.
+  @brief Method that permits to subtract a state vector to another.
 
-  @param a The first state vector to which another state vector must be substracted.
-  @param b The other state vector that must be substracted to a.
+  @param a The first state vector to which another state vector must be subtracted.
+  @param b The other state vector that must be subtracted to a.
 
-  @return ColVector The substraction a - b.
+  @return ColVector The subtraction a - b.
   """
   return a - b
 

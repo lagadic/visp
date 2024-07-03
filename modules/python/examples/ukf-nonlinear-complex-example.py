@@ -73,7 +73,7 @@
 
    where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
 
-   Additionnally, the addition and substraction of angles must be carefully done, as the result
+   Additionnally, the addition and subtraction of angles must be carefully done, as the result
    must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
    the interval \f$[- \pi ; \pi ]\f$ .
 """
@@ -126,17 +126,17 @@ def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVecto
   mean[1::2] = orientations
   return ColVector(mean)
 
-def measurement_residual(meas: ColVector, to_substract: ColVector) -> ColVector:
+def measurement_residual(meas: ColVector, to_subtract: ColVector) -> ColVector:
   """
-  Compute the substraction between two vectors expressed in the measurement space,
+  Compute the subtraction between two vectors expressed in the measurement space,
   such as v[0] = dist_0 ; v[1] = bearing_0; v[2] = dist_1 ; v[3] = bearing_1 ...
 
-  :param meas: Measurement to which we must substract something.
-  :param toSubstract: The something we must substract.
+  :param meas: Measurement to which we must subtract something.
+  :param toSubtract: The something we must subtract.
 
-  :return ColVector: \b meas - \b toSubstract .
+  :return ColVector: \b meas - \b toSubtract .
   """
-  res = meas.numpy() - to_substract.numpy()
+  res = meas.numpy() - to_subtract.numpy()
   res[1::2] = [normalize_angle(angle) for angle in res[1::2]]
   return ColVector(res)
 
@@ -175,13 +175,13 @@ def state_mean_vectors(states: List[ColVector], wm: List[float]) -> ColVector:
 
 def state_residual_vectors(a, b) -> ColVector:
   """
-  Compute the substraction between two vectors expressed in the state space,
+  Compute the subtraction between two vectors expressed in the state space,
   such as v[0] = x ; v[1] = y; v[2] = heading .
 
-  :param a: The first state vector to which another state vector must be substracted.
-  :param b: The other state vector that must be substracted to a.
+  :param a: The first state vector to which another state vector must be subtracted.
+  :param b: The other state vector that must be subtracted to a.
 
-  :return ColVector: The substraction a - b.
+  :return ColVector: The subtraction a - b.
   """
   res = a - b
   return ColVector([res[0], res[1], normalize_angle(res[2])])
@@ -453,9 +453,9 @@ if __name__ == '__main__':
   sigma_bearing = Math.rad(0.5) # Standard deviation of the bearing angle: 0.5deg
   wheelbase = 0.5 # Wheelbase of 0.5m
   process_variance = 0.0001
-  positions = [ (5, 10) , (10, 5), (15, 15), (20, 5), (0, 30), (50, 30), (40, 10)] # Positions of the landmarks constituing the grid
-  landmarks = [LandmarkMeasurements(x, y, sigma_range, sigma_bearing) for x,y in positions] # Vector of landmarks constituing the grid
-  nbLandmarks = len(landmarks) # Number of landmarks constituing the grid
+  positions = [ (5, 10) , (10, 5), (15, 15), (20, 5), (0, 30), (50, 30), (40, 10)] # Positions of the landmarks constituting the grid
+  landmarks = [LandmarkMeasurements(x, y, sigma_range, sigma_bearing) for x,y in positions] # Vector of landmarks constituting the grid
+  nbLandmarks = len(landmarks) # Number of landmarks constituting the grid
   cmds = generate_commands()
   nb_cmds = len(cmds)
 

@@ -201,7 +201,7 @@ Include TensorRT header files.
 \subsection preprocessing Pre-processing
 Prepare input image for inference with OpenCV.
 First, upload image to GPU, resize it to match model's input dimensions, normalize with `meanR` `meanG` `meanB` being
-the values used for mean substraction.
+the values used for mean subtraction.
 Transform data to tensor (copy data to channel by channel to `gpu_input`).
 In the case of `ssd_mobilenet.onnx`, the input dimension is 1x3x300x300.
 \snippet tutorial-dnn-tensorrt-live.cpp Preprocess image
