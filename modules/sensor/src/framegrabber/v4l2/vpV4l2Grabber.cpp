@@ -724,8 +724,9 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
       vpImageTools::crop(bitmap, width, height, roi, I);
     break;
   case V4L2_RGB24_FORMAT: // tested
-    if (roi == vpRect())
+    if (roi == vpRect()) {
       vpImageConvert::RGBToRGBa((unsigned char *)bitmap, (unsigned char *)I.bitmap, width * height);
+    }
     else {
       vpImage<vpRGBa> tmp(height, width);
       vpImageConvert::RGBToRGBa((unsigned char *)bitmap, (unsigned char *)tmp.bitmap, width * height);
