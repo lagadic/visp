@@ -84,10 +84,10 @@ ENV VISP_INPUT_IMAGE_PATH=/root/visp_ws/visp-images
 
 # Download ViSP fork
 RUN cd /root/visp_ws &&\
-    git clone "${GIT_URL}" /root/visp_ws/visp "${GIT_BRANCH_CMD}" &&\
+    git clone ${GIT_URL} /root/visp_ws/visp ${GIT_BRANCH_CMD} &&\
     mkdir -p visp-build &&\
     cd visp-build && mkdir install &&\
-    cmake .. -DCMAKE_INSTALL_PREFIX=/root/visp_ws/visp-build/install &&\
+    cmake ../visp -DCMAKE_INSTALL_PREFIX=/root/visp_ws/visp-build/install &&\
     make -j10 developer_scripts &&\
     make -j10 install
 
