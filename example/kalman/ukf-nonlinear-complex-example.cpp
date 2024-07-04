@@ -28,7 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/** \example ukf-nonlinear-complex-example.cpp
+/**
+ * \example ukf-nonlinear-complex-example.cpp
  * Example of a complex non-linear use-case of the Unscented Kalman Filter (UKF).
  * The system we are interested in is a 4-wheel robot, moving at a low velocity.
  * As such, it can be modeled using a bicycle model.
@@ -118,7 +119,7 @@ double normalizeAngle(const double &angle)
  */
 vpColVector measurementMean(const std::vector<vpColVector> &measurements, const std::vector<double> &wm)
 {
-  const unsigned int nbPoints = measurements.size();
+  const unsigned int nbPoints = static_cast<unsigned int>(measurements.size());
   const unsigned int sizeMeasurement = measurements[0].size();
   const unsigned int nbLandmarks = sizeMeasurement / 2;
   vpColVector mean(sizeMeasurement, 0.);
@@ -138,16 +139,16 @@ vpColVector measurementMean(const std::vector<vpColVector> &measurements, const 
 }
 
 /**
- * \brief Compute the substraction between two vectors expressed in the measurement space,
+ * \brief Compute the subtraction between two vectors expressed in the measurement space,
  * such as v[0] = dist_0 ; v[1] = bearing_0; v[2] = dist_1 ; v[3] = bearing_1 ...
  *
- * \param[in] meas Measurement to which we must substract something.
- * \param[in] toSubstract The something we must substract.
- * \return vpColVector \b meas - \b toSubstract .
+ * \param[in] meas Measurement to which we must subtract something.
+ * \param[in] toSubtract The something we must subtract.
+ * \return vpColVector \b meas - \b toSubtract .
  */
-vpColVector measurementResidual(const vpColVector &meas, const vpColVector &toSubstract)
+vpColVector measurementResidual(const vpColVector &meas, const vpColVector &toSubtract)
 {
-  vpColVector res = meas - toSubstract;
+  vpColVector res = meas - toSubtract;
   unsigned int nbMeasures = res.size();
   for (unsigned int i = 1; i < nbMeasures; i += 2) {
     res[i] = normalizeAngle(res[i]);
@@ -180,7 +181,7 @@ vpColVector stateAdd(const vpColVector &state, const vpColVector &toAdd)
 vpColVector stateMean(const std::vector<vpColVector> &states, const std::vector<double> &wm)
 {
   vpColVector mean(3, 0.);
-  unsigned int nbPoints = states.size();
+  unsigned int nbPoints = static_cast<unsigned int>(states.size());
   double sumCos = 0.;
   double sumSin = 0.;
   for (unsigned int i = 0; i < nbPoints; ++i) {
@@ -194,16 +195,16 @@ vpColVector stateMean(const std::vector<vpColVector> &states, const std::vector<
 }
 
 /**
- * \brief Compute the substraction between two vectors expressed in the state space,
+ * \brief Compute the subtraction between two vectors expressed in the state space,
  * such as v[0] = x ; v[1] = y; v[2] = heading .
  *
- * \param[in] state State to which we must substract something.
- * \param[in] toSubstract The something we must substract.
- * \return vpColVector \b state - \b toSubstract .
+ * \param[in] state State to which we must subtract something.
+ * \param[in] toSubtract The something we must subtract.
+ * \return vpColVector \b state - \b toSubtract .
  */
-vpColVector stateResidual(const vpColVector &state, const vpColVector &toSubstract)
+vpColVector stateResidual(const vpColVector &state, const vpColVector &toSubtract)
 {
-  vpColVector res = state - toSubstract;
+  vpColVector res = state - toSubtract;
   res[2] = normalizeAngle(res[2]);
   return res;
 }
@@ -474,7 +475,7 @@ public:
    */
   vpColVector state_to_measurement(const vpColVector &chi)
   {
-    unsigned int nbLandmarks = m_landmarks.size();
+    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
     vpColVector measurements(2*nbLandmarks);
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].state_to_measurement(chi);
@@ -494,7 +495,7 @@ public:
    */
   vpColVector measureGT(const vpColVector &pos)
   {
-    unsigned int nbLandmarks = m_landmarks.size();
+    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
     vpColVector measurements(2*nbLandmarks);
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureGT(pos);
@@ -514,7 +515,7 @@ public:
    */
   vpColVector measureWithNoise(const vpColVector &pos)
   {
-    unsigned int nbLandmarks = m_landmarks.size();
+    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
     vpColVector measurements(2*nbLandmarks);
     for (unsigned int i = 0; i < nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureWithNoise(pos);
@@ -560,10 +561,10 @@ int main(const int argc, const char *argv[])
                                                         , vpLandmarkMeasurements(20, 5, sigmaRange, sigmaBearing)
                                                         , vpLandmarkMeasurements(0, 30, sigmaRange, sigmaBearing)
                                                         , vpLandmarkMeasurements(50, 30, sigmaRange, sigmaBearing)
-                                                        , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing) }; // Vector of landmarks constituing the grid
-  const unsigned int nbLandmarks = landmarks.size(); // Number of landmarks constituing the grid
+                                                        , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing) }; // Vector of landmarks constituting the grid
+  const unsigned int nbLandmarks = static_cast<unsigned int>(landmarks.size()); // Number of landmarks constituting the grid
   std::vector<vpColVector> cmds = generateCommands();
-  const unsigned int nbCmds = cmds.size();
+  const unsigned int nbCmds = static_cast<unsigned int>(cmds.size());
 
   // Initialize the attributes of the UKF
   std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(3, 0.1, 2., 0, stateResidual, stateAdd);

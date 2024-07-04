@@ -98,9 +98,9 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 {
-  size_t v_size = v.size();
+  unsigned int v_size = static_cast<unsigned int>(v.size());
   resize(v_size);
-  for (size_t i = 0; i < v_size; ++i) {
+  for (unsigned int i = 0; i < v_size; ++i) {
     (*this)[i] = v[i];
   }
   return *this;
@@ -110,9 +110,9 @@ vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<float> &v)
 {
-  size_t v_size = v.size();
+  unsigned int v_size = static_cast<unsigned int>(v.size());
   resize(v_size);
-  for (size_t i = 0; i < v_size; ++i) {
+  for (unsigned int i = 0; i < v_size; ++i) {
     (*this)[i] = static_cast<float>(v[i]);
   }
   return *this;
@@ -579,18 +579,19 @@ vpRowVector::vpRowVector(const vpMatrix &M) : vpArray2D<double>(1, M.getCols())
  */
 vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  size_t v_size = v.size();
-  for (size_t j = 0; j < v_size; ++j) {
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[j] = v[j];
   }
 }
+
 /*!
    Constructor that creates a row vector from a std vector of float.
  */
 vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  size_t v_size = v.size();
-  for (size_t j = 0; j < v_size; ++j) {
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[j] = static_cast<double>(v[j]);
   }
 }

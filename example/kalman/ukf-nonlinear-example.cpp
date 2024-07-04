@@ -75,7 +75,7 @@
 
    where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
 
-   Additionnally, the addition and substraction of angles must be carefully done, as the result
+   Additionnally, the addition and subtraction of angles must be carefully done, as the result
    must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
    the interval \f$[- \pi ; \pi ]\f$ .
 */
@@ -143,7 +143,7 @@ double normalizeAngle(const double &angle)
  */
 vpColVector measurementMean(const std::vector<vpColVector> &measurements, const std::vector<double> &wm)
 {
-  const unsigned int nbPoints = measurements.size();
+  const unsigned int nbPoints = static_cast<unsigned int>(measurements.size());
   const unsigned int sizeMeasurement = measurements[0].size();
   vpColVector mean(sizeMeasurement, 0.);
   double sumCos(0.);
@@ -160,16 +160,16 @@ vpColVector measurementMean(const std::vector<vpColVector> &measurements, const 
 }
 
 /**
- * \brief Compute the substraction between two vectors expressed in the measurement space,
+ * \brief Compute the subtraction between two vectors expressed in the measurement space,
  * such as v[0] = range ; v[1] = elevation_angle
  *
- * \param[in] meas Measurement to which we must substract something.
- * \param[in] toSubstract The something we must substract.
- * \return vpColVector \b meas - \b toSubstract .
+ * \param[in] meas Measurement to which we must subtract something.
+ * \param[in] toSubtract The something we must subtract.
+ * \return vpColVector \b meas - \b toSubtract .
  */
-vpColVector measurementResidual(const vpColVector &meas, const vpColVector &toSubstract)
+vpColVector measurementResidual(const vpColVector &meas, const vpColVector &toSubtract)
 {
-  vpColVector res = meas - toSubstract;
+  vpColVector res = meas - toSubtract;
   res[1] = normalizeAngle(res[1]);
   return res;
 }
