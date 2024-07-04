@@ -25,7 +25,7 @@ ViSP 3.x.x (Version in development)
   - New features and improvements
     . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
     . New specific documentation for Python bindings in https://visp-doc.inria.fr/doxygen/visp-python-daily/
-    . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04 and 22.04. Corresponding images are also available
+    . Updated Dockerfile in docker folder for Ubuntu 18.04, 20.04 and 22.04. Corresponding images are also available
       ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
     . OpenCV 2.4.8 is the minimal supported version
     . Introduce applications in apps folder, a collection of useful tools that
@@ -38,7 +38,8 @@ ViSP 3.x.x (Version in development)
     . New tutorials in tutorial/segmentation/color folder to show how to use HSV color segmentation to
       extract the corresponding point cloud
     . New scene renderer based on Panda3D. See inheritance diagram for vpPanda3DBaseRenderer class and corresponding
-      tutorial.
+      tutorial
+    . New docker image for Ubuntu 24.04 in docker folder
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
