@@ -15,7 +15,7 @@ concurrency:
 
 env:
   # Function to get the most recent tag of a remote repository without having to clone it, excluding tag with 'pr' as in Pre Release
-  FUNCTION_GET_LATEST: 'git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags ${GIT_ADDRESS} '*.*.*' | cut --delimiter='/' --fields=3 | grep -v -e pr | tail --lines=1'
+  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
 
 jobs:
   build-ubuntu-dep-src:
