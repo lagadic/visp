@@ -204,21 +204,22 @@ public:
         // between 0 and 255 for an vpImage<uchar>
         float scaleX = 1.f;
         float scaleY = 1.f;
+        const unsigned int val2 = 2U;
 
         if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / 2));
+            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / 2));
+            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
         else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / 2));
+            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / 2));
+            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
           }
         }
 
@@ -375,13 +376,16 @@ public:
     float accu = 0;
     float t = upperThresholdRatio * totalNbPixels;
     float bon = 0;
-    for (unsigned int i = 0; i < nbBins; ++i) {
+    unsigned int i = 0;
+    bool notFound = true;
+    while ((i < nbBins) && notFound) {
       float tf = static_cast<float>(hist[i]);
       accu = accu + tf;
       if (accu > t) {
         bon = static_cast<float>(i);
-        break;
+        notFound = false;
       }
+      ++i;
     }
     float upperThresh = std::max<float>(bon, 1.f);
     lowerThresh = lowerThresholdRatio * bon;
@@ -397,8 +401,9 @@ public:
    */
   template <class ImageType> static double derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
-    return ((2047.0 * static_cast<double>(I[r][c + 1] - I[r][c - 1])) + (913.0 * static_cast<double>(I[r][c + 2] - I[r][c - 2])) +
-            (112.0 * static_cast<double>(I[r][c + 3] - I[r][c - 3]))) / 8418.0;
+    const int val1 = 1, val2 = 2, val3 = 3;
+    return ((2047.0 * static_cast<double>(I[r][c + val1] - I[r][c - val1])) + (913.0 * static_cast<double>(I[r][c + val2] - I[r][c - val2])) +
+            (112.0 * static_cast<double>(I[r][c + val3] - I[r][c - val3]))) / 8418.0;
   }
 
   /*!
@@ -410,8 +415,9 @@ public:
    */
   template <class ImageType> static double derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
-    return ((2047.0 * static_cast<double>(I[r + 1][c] - I[r - 1][c])) + (913.0 * static_cast<double>(I[r + 2][c] - I[r - 2][c])) +
-            (112.0 * static_cast<double>(I[r + 3][c] - I[r - 3][c]))) / 8418.0;
+    const int val1 = 1, val2 = 2, val3 = 3;
+    return ((2047.0 * static_cast<double>(I[r + val1][c] - I[r - val1][c])) + (913.0 * static_cast<double>(I[r + val2][c] - I[r - val2][c])) +
+            (112.0 * static_cast<double>(I[r + val3][c] - I[r - val3][c]))) / 8418.0;
   }
 
   /*!
@@ -674,11 +680,13 @@ public:
 
   static inline unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return static_cast<unsigned char>(((1. * I[i][j - 2]) + (4. * I[i][j - 1]) + (6. * I[i][j]) + (4. * I[i][j + 1]) + (1. * I[i][j + 2])) / 16.);
+    const int val2 = 2;
+    return static_cast<unsigned char>(((1. * I[i][j - val2]) + (4. * I[i][j - 1]) + (6. * I[i][j]) + (4. * I[i][j + 1]) + (1. * I[i][j + val2])) / 16.);
   }
   static inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return static_cast<unsigned char>(((1. * I[i - 2][j]) + (4. * I[i - 1][j]) + (6. * I[i][j]) + (4. * I[i + 1][j]) + (1. * I[i + 2][j])) / 16.);
+    const int val2 = 2;
+    return static_cast<unsigned char>(((1. * I[i - val2][j]) + (4. * I[i - 1][j]) + (6. * I[i][j]) + (4. * I[i + 1][j]) + (1. * I[i + val2][j])) / 16.);
   }
 
   template <typename ImageType, typename FilterType>
@@ -774,13 +782,14 @@ public:
     const unsigned int stop = (size - 1) / 2;
     const unsigned int width = I.getWidth();
     FilterType result = static_cast<FilterType>(0.);
+    const unsigned int twice = 2;
 
     for (unsigned int i = 1; i <= stop; ++i) {
       if ((c + i) < width) {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
       }
       else {
-        result += filter[i] * static_cast<FilterType>(I[r][((2 * width) - c) - i - 1] + I[r][c - i]);
+        result += filter[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
       }
     }
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
@@ -882,13 +891,13 @@ public:
     const unsigned int height = I.getHeight();
     const unsigned int stop = (size - 1) / 2;
     FilterType result = static_cast<FilterType>(0.);
-
+    const unsigned int twiceHeight = 2 * height;
     for (unsigned int i = 1; i <= stop; ++i) {
       if ((r + i) < height) {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
       }
       else {
-        result += filter[i] * static_cast<FilterType>(I[((2 * height) - r) - i - 1][c] + I[r - i][c]);
+        result += filter[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
       }
     }
     return result + (filter[0] * static_cast<FilterType>(I[r][c]));
@@ -934,13 +943,14 @@ public:
    */
   template <class T> static double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
   {
+    const int val2 = 2;
     return ((15.0 * fr[r][c]) +
             (12.0 * (fr[r - 1][c] + fr[r][c - 1] + fr[r + 1][c] + fr[r][c + 1])) +
             (9.0 * (fr[r - 1][c - 1] + fr[r + 1][c - 1] + fr[r - 1][c + 1] + fr[r + 1][c + 1])) +
-            (5.0 * (fr[r - 2][c] + fr[r][c - 2] + fr[r + 2][c] + fr[r][c + 2])) +
-            (4.0 * (fr[r - 2][c + 1] + fr[r - 2][c - 1] + fr[r - 1][c - 2] + fr[r + 1][c - 2] + fr[r + 2][c - 1] +
-                    fr[r + 2][c + 1] + fr[r - 1][c + 2] + fr[r + 1][c + 2])) +
-            (2.0 * (fr[r - 2][c - 2] + fr[r + 2][c - 2] + fr[r - 2][c + 2] + fr[r + 2][c + 2]))) / 159.0;
+            (5.0 * (fr[r - val2][c] + fr[r][c - val2] + fr[r + val2][c] + fr[r][c + val2])) +
+            (4.0 * (fr[r - val2][c + 1] + fr[r - val2][c - 1] + fr[r - 1][c - val2] + fr[r + 1][c - val2] + fr[r + val2][c - 1] +
+                    fr[r + val2][c + 1] + fr[r - 1][c + val2] + fr[r + 1][c + val2])) +
+            (2.0 * (fr[r - val2][c - val2] + fr[r + val2][c - val2] + fr[r - val2][c + val2] + fr[r + val2][c + val2]))) / 159.0;
   }
   // Gaussian pyramid operation
   static void getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
@@ -966,7 +976,8 @@ public:
   template<typename FilterType>
   static void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
-    if ((size % 2) != 1) {
+    const unsigned int mod2 = 2;
+    if ((size % mod2) != 1) {
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
     }
 
@@ -984,8 +995,9 @@ public:
     if (normalize) {
       // renormalization
       FilterType sum = 0;
+      const unsigned int val2 = 2U;
       for (int i = 1; i <= middle; ++i) {
-        sum += 2 * filter[i];
+        sum += val2 * filter[i];
       }
       sum += filter[0];
 
@@ -1012,7 +1024,8 @@ public:
   template <typename FilterType>
   static void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
-    if ((size % 2) != 1) {
+    const unsigned int mod2 = 2;
+    if ((size % mod2) != 1) {
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
     }
 
@@ -1020,7 +1033,8 @@ public:
       sigma = static_cast<FilterType>((size - 1) / 6.0);
     }
 
-    int middle = (static_cast<int>(size) - 1) / 2;
+    const int half = 2;
+    int middle = (static_cast<int>(size) - 1) / half;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
     FilterType coef_1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
@@ -1243,14 +1257,15 @@ public:
   template <typename FilterType>
   inline static FilterType getScharrKernelX(FilterType *filter, unsigned int size)
   {
+    const unsigned int actualKernelSize = (size * 2) + 1;
     if (size != 1) {
       // Size = 1 => kernel_size = 2*1 + 1 = 3
       std::stringstream errMsg;
-      errMsg << "Cannot get Scharr kernel of size " << ((size * 2) + 1) << " != 3";
+      errMsg << "Cannot get Scharr kernel of size " << actualKernelSize << " != 3";
       throw vpException(vpException::dimensionError, errMsg.str());
     }
 
-    vpArray2D<FilterType> ScharrY((size * 2) + 1, (size * 2) + 1);
+    vpArray2D<FilterType> ScharrY(actualKernelSize, actualKernelSize);
     FilterType norm = getScharrKernelY<FilterType>(ScharrY.data, size);
     memcpy(filter, ScharrY.t().data, ScharrY.getRows() * ScharrY.getCols() * sizeof(FilterType));
     return norm;
@@ -1277,7 +1292,8 @@ public:
     }
 
     const unsigned int kernel_size = (size * 2) + 1;
-    if (kernel_size == 3) {
+    const unsigned int kernel3 = 3;
+    if (kernel_size == kernel3) {
       memcpy(filter, ScharrY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return static_cast<FilterType>(1.0 / 32.0);
     }
@@ -1295,14 +1311,16 @@ public:
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   {
+    const unsigned int maxSize = 20;
     if (size == 0) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
     }
-    if (size > 20) {
+    if (size > maxSize) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
     }
 
-    vpArray2D<FilterType> SobelY((size * 2) + 1, (size * 2) + 1);
+    const unsigned int kernel_size = (size * 2) + 1;
+    vpArray2D<FilterType> SobelY(kernel_size, kernel_size);
     FilterType norm = getSobelKernelY<FilterType>(SobelY.data, size);
     memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(FilterType));
     return norm;
@@ -1339,26 +1357,28 @@ public:
     smoothingKernel[index_2][index_1] = 2.0;
     smoothingKernel[index_2][index_2] = 1.0;
 
+    const unsigned int maxSize = 20;
     if (size == 0) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
     }
-    if (size > 20) {
+    if (size > maxSize) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
     }
 
     const unsigned int kernel_size = (size * 2) + 1;
     FilterType scale = static_cast<FilterType>(1. / 8.); // Scale to normalize Sobel3x3
-    if (kernel_size == 3) {
+    const unsigned int kernel3 = 3, kernel5 = 5, kernel7 = 7;
+    if (kernel_size == kernel3) {
       memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
     scale *= static_cast<FilterType>(1. / 16.); // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
-    if (kernel_size == 5) {
+    if (kernel_size == kernel5) {
       memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
     scale *= static_cast<FilterType>(1. / 16.); // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
-    if (kernel_size == 7) {
+    if (kernel_size == kernel7) {
       memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }

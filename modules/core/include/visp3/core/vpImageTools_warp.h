@@ -55,7 +55,8 @@ template <class Type>
 void vpImageTools::warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
                              const vpImageInterpolationType &interpolation, bool fixedPointArithmetic, bool pixelCenter)
 {
-  if (((T.getRows() != 2) && (T.getRows() != 3)) || (T.getCols() != 3)) {
+  const unsigned int expectedNbCols = 3, expectedNbRows1stOpt = 2, expectedNbRows2ndOpt = 3;
+  if (((T.getRows() != expectedNbRows1stOpt) && (T.getRows() != expectedNbRows2ndOpt)) || (T.getCols() != expectedNbCols)) {
     std::cerr << "Input transformation must be a (2x3) or (3x3) matrix." << std::endl;
     return;
   }
@@ -474,6 +475,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
     unsigned int dst_width = dst.getWidth();
     int src_height = static_cast<int>(src.getHeight());
     int src_width = static_cast<int>(src.getWidth());
+    const unsigned char aChannelVal = 255;
     for (unsigned int i = 0; i < dst_height; ++i) {
       int64_t xi = a2_i64;
       int64_t yi = a5_i64;
@@ -509,12 +511,12 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = (interpB_i64 >> (nbits * 2)) + ((interpB_i64 & 0xFFFFFFFFU) * precision_2);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (y_ < (src_height - 1)) {
             const vpRGBa val00 = src[y_][x_];
             const vpRGBa val10 = src[y_ + 1][x_];
-            const int64_t interpR_i64 = static_cast<int64_t>(t_1 * val00.R + t * val10.R);
+            const int64_t interpR_i64 = static_cast<int64_t>((t_1 * val00.R) + (t * val10.R));
             const float interpR = (interpR_i64 >> nbits) + ((interpR_i64 & 0xFFFF) * precision_1);
 
             const int64_t interpG_i64 = static_cast<int64_t>((t_1 * val00.G) + (t * val10.G));
@@ -524,7 +526,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = (interpB_i64 >> nbits) + ((interpB_i64 & 0xFFFF) * precision_1);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (x_ < (src_width - 1)) {
             const vpRGBa val00 = src[y_][x_];
@@ -539,7 +541,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = (interpB_i64 >> nbits) + ((interpB_i64 & 0xFFFF) * precision_1);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else {
             dst[i][j] = src[y_][x_];
@@ -559,6 +561,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
     unsigned int dst_width = dst.getWidth();
     int src_height = static_cast<int>(src.getHeight());
     int src_width = static_cast<int>(src.getWidth());
+    const unsigned char aChannelVal = 255;
     for (unsigned int i = 0; i < dst_height; ++i) {
       int64_t xi = a2_i64;
       int64_t yi = a5_i64;
@@ -595,7 +598,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = lerp(colB0, colB1, t);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (y_ < (src_height - 1)) {
             const vpRGBa val00 = src[y_][x_];
@@ -605,7 +608,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = lerp(val00.B, val10.B, t);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (x_ < (src_width - 1)) {
             const vpRGBa val00 = src[y_][x_];
@@ -615,7 +618,7 @@ inline void vpImageTools::warpLinearFixedPointNotCenter(const vpImage<vpRGBa> &s
             const float interpB = lerp(val00.B, val01.B, s);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else {
             dst[i][j] = src[y_][x_];
@@ -658,6 +661,7 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     unsigned int dst_width = dst.getWidth();
     int src_height = static_cast<int>(src.getHeight());
     int src_width = static_cast<int>(src.getWidth());
+    const unsigned char aChannelVal = 255;
     for (unsigned int i = 0; i < dst_height; ++i) {
       for (unsigned int j = 0; j < dst_width; ++j) {
         double x = (a0 * (centerCorner ? (j + 0.5) : j)) + (a1 * (centerCorner ? (i + 0.5) : i)) + a2;
@@ -696,7 +700,7 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
             const double interpB = lerp(colB0, colB1, t);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (y_lower < (src_height - 1)) {
             const vpRGBa val00 = src[y_lower][x_lower];
@@ -706,7 +710,7 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
             const double interpB = lerp(val00.B, val10.B, t);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else if (x_lower < (src_width - 1)) {
             const vpRGBa val00 = src[y_lower][x_lower];
@@ -716,7 +720,7 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
             const double interpB = lerp(val00.B, val01.B, s);
 
             dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR), vpMath::saturate<unsigned char>(interpG),
-                               vpMath::saturate<unsigned char>(interpB), 255);
+                               vpMath::saturate<unsigned char>(interpB), aChannelVal);
           }
           else {
             dst[i][j] = src[y_lower][x_lower];

@@ -198,9 +198,9 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     ++cpt;
   }
   // go back to the initial frame
-  cMo[idX][3] -= ((cdg[idX] * cMo[idX][idX]) + (cdg[idY] * cMo[idX][idY]) + (cdg[idZ] * cMo[idX][idZ]));
-  cMo[idY][3] -= ((cdg[idX] * cMo[idY][idX]) + (cdg[idY] * cMo[idY][idY]) + (cdg[idZ] * cMo[idY][idZ]));
-  cMo[idZ][3] -= ((cdg[idX] * cMo[idZ][idX]) + (cdg[idY] * cMo[idZ][idY]) + (cdg[idZ] * cMo[idZ][idZ]));
+  cMo[idX][idTranslation] -= ((cdg[idX] * cMo[idX][idX]) + (cdg[idY] * cMo[idX][idY]) + (cdg[idZ] * cMo[idX][idZ]));
+  cMo[idY][idTranslation] -= ((cdg[idX] * cMo[idY][idX]) + (cdg[idY] * cMo[idY][idY]) + (cdg[idZ] * cMo[idY][idZ]));
+  cMo[idZ][idTranslation] -= ((cdg[idX] * cMo[idZ][idX]) + (cdg[idY] * cMo[idZ][idY]) + (cdg[idZ] * cMo[idZ][idZ]));
 }
 
 static void calculRTheta(double s, double c, double &r, double &theta)
@@ -385,9 +385,9 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   std::list<vpPoint>::const_iterator listp_end_decl2 = listP.end();
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end_decl2; ++it) {
     P = (*it);
-    P.set_oX(P.get_oX() - cdg[0]);
-    P.set_oY(P.get_oY() - cdg[1]);
-    P.set_oZ(P.get_oZ() - cdg[2]);
+    P.set_oX(P.get_oX() - cdg[idX]);
+    P.set_oY(P.get_oY() - cdg[idY]);
+    P.set_oZ(P.get_oZ() - cdg[idZ]);
     c3d.push_back(P);
   }
 

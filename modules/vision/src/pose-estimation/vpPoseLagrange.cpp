@@ -259,13 +259,14 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   unsigned int k = 0;
   unsigned int nl = npt * 2;
 
-  const unsigned int nbColsA = 3, nbColsB = 6;
+  const unsigned int nbColsA = 3U, nbColsB = 6U;
   vpMatrix A(nl, nbColsA);
   vpMatrix B(nl, nbColsB);
   vpPoint P;
 
   std::list<vpPoint>::const_iterator listp_end = listP.end();
-  const unsigned int idHomogeneous = 3, sizeHomogeneous = 4;
+  const unsigned int idHomogeneous = 3U, sizeHomogeneous = 4U;
+  const unsigned int offsetk = 2U;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
 
@@ -299,7 +300,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     B[k + 1][index_4] = -1.0;
     B[k + 1][index_5] = P.get_y();
 
-    k += 2;
+    k += offsetk;
   }
   const unsigned int sizeX1 = nbColsA, sizeX2 = nbColsB, lastX2 = sizeX2 - 1; // X1 is of the size of A^T A and X2 of B^T B
   vpColVector X1(sizeX1);
@@ -349,7 +350,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   for (unsigned int i = 0; i < val_3; ++i) {
     cMf[i][index_0] = X1[i];
     cMf[i][index_1] = X2[i];
-    cMf[i][index_3] = X2[i + 3];
+    cMf[i][index_3] = X2[i + index_3];
   }
 
   // Apply the transform to go back to object frame
@@ -383,6 +384,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     const unsigned int id0 = 0, id1 = 1, id2 = 2;
     const unsigned int id3 = 3, id4 = 4, id5 = 5;
     const unsigned int id6 = 6, id7 = 7, id8 = 8;
+    const unsigned int offsetk = 2U;
     for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
       a[k][id0] = -P.get_oX();
@@ -417,7 +419,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       b[k + 1][id7] = -1.0;
       b[k + 1][id8] = P.get_y();
 
-      k += 2;
+      k += offsetk;
     }
     vpColVector X1(nbColsA); // X1 is of size A^T A
     vpColVector X2(nbColsB); // X2 is of size B^T B
@@ -444,7 +446,8 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     }
 
     s = 1.0 / sqrt(s);
-    for (i = 0; i < 3; ++i) {
+    const unsigned int istop = 3;
+    for (i = 0; i < istop; ++i) {
       X2[i] *= s;
     } /* X2^T X2 = 1  */
 
@@ -455,7 +458,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     const unsigned int nc1 = 3, nc3 = 6;
     calculTranslation(a, b, nl, nc1, nc3, X1, X2);
 
-    for (i = 0; i < 3; ++i) {
+    for (i = 0; i < id3; ++i) {
       cMo[i][id0] = X1[i];
       cMo[i][id1] = X2[i];
       cMo[i][id2] = X2[i + id3];
