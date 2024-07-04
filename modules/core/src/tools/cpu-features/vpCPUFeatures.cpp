@@ -43,7 +43,7 @@ BEGIN_VISP_NAMESPACE
 namespace vpCPUFeatures
 {
 // TODO: try to refactor to keep only SimdCpuInfo code and remove cpu_x86 code?
-static const FeatureDetector::cpu_x86 cpu_features;
+static const FeatureDetector::cpuX86 cpu_features;
 
 bool checkSSE2() { return cpu_features.HW_SSE2; }
 

@@ -1105,17 +1105,14 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
   const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
   const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
   const float half = 0.5f;
-
+  const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
 #pragma omp parallel for schedule(dynamic)
 #endif
-  /*
-  // int ires_height = static_cast<int>(Ires.getHeight());
-  */
-  for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
+  for (int i = 0; i < ires_height; ++i) {
     const float v = ((i + half) * scaleY) - half;
     const float v0 = std::floor(v);
     const float yFrac = v - v0;
@@ -1164,17 +1161,14 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
-
+    const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    /*
-    // int ires_height = static_cast<int>(Ires.getHeight());
-    */
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
+    for (int i = 0; i < ires_height; ++i) {
       float v = ((i + half) * scaleY) - half;
       float yFrac = v - static_cast<int>(v);
 
@@ -1218,17 +1212,14 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
-
+    const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    /*
-    // int ires_height = static_cast<int>(Ires.getHeight());
-    */
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
+    for (int i = 0; i < ires_height; ++i) {
       float v = (i + half) * scaleY - half;
       float yFrac = v - static_cast<int>(v);
 

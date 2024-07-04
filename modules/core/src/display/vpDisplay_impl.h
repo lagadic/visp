@@ -450,13 +450,14 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
                                 unsigned int thickness, bool closed = true)
 {
   if (I.display != nullptr) {
+    const size_t vip_size = vip.size();
     if (closed) {
-      for (unsigned int i = 0; i < vip.size(); ++i) {
+      for (unsigned int i = 0; i < vip_size; ++i) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
       }
     }
     else {
-      for (unsigned int i = 1; i < vip.size(); ++i) {
+      for (unsigned int i = 1; i < vip_size; ++i) {
         (I.display)->displayLine(vip[i - 1], vip[i], color, thickness);
       }
     }

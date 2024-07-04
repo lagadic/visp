@@ -71,13 +71,17 @@ unsigned __int64 _xgetbv(unsigned int index)
 #if defined(__MINGW32__)
 void __cpuidex(unsigned int CPUInfo[4], unsigned int function_id, unsigned int subfunction_id)
 {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   __asm__ __volatile__(
      "cpuid"
-     : "=a" (CPUInfo[0]), "=b" (CPUInfo[1]), "=c" (CPUInfo[2]), "=d" (CPUInfo[3])
+     : "=a" (CPUInfo[index_0]), "=b" (CPUInfo[index_1]), "=c" (CPUInfo[index_2]), "=d" (CPUInfo[index_3])
      : "a" (function_id), "c" (subfunction_id));
 }
 #endif
-void cpu_x86::cpuid(uint32_t out[4], uint32_t x)
+void cpuX86::cpuid(uint32_t out[4], uint32_t x)
 {
 #if defined(__MINGW32__)
   __cpuidex(out, x, 0U);
@@ -119,7 +123,7 @@ BOOL IsWow64()
 #endif
   return bIsWow64;
 }
-bool cpu_x86::detect_OS_x64()
+bool cpuX86::detect_OS_x64()
 {
 #ifdef _M_X64
   return true;
