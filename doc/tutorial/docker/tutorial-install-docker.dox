@@ -77,10 +77,10 @@ In [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci), we prov
 images that can be used on an Ubuntu or macOS host with ViSP already built. Instead, there is also the possibility to
 build docker images from a `Dockerfile` following instruction given in \ref docker_visp_build section.
 
-\subsection docker_visp_pull_ubuntu_18_04 Pull Ubuntu 18.04 image
+\subsection docker_visp_pull_ubuntu_22_04 Pull Ubuntu 22.04 image
 
 \verbatim
-$ docker pull vispci/vispci:ubuntu-18.04
+$ docker pull vispci/vispci:ubuntu-22.04
 \endverbatim
 
 \subsection docker_visp_pull_ubuntu_20_04 Pull Ubuntu 20.04 image
@@ -89,10 +89,10 @@ $ docker pull vispci/vispci:ubuntu-18.04
 $ docker pull vispci/vispci:ubuntu-20.04
 \endverbatim
 
-\subsection docker_visp_pull_ubuntu_22_04 Pull Ubuntu 22.04 image
+\subsection docker_visp_pull_ubuntu_18_04 Pull Ubuntu 18.04 image
 
 \verbatim
-$ docker pull vispci/vispci:ubuntu-22.04
+$ docker pull vispci/vispci:ubuntu-18.04
 \endverbatim
 
 \section docker_visp_build Build docker image from Dockerfile
@@ -101,25 +101,32 @@ We suppose here that you cloned ViSP from github in your workspace.
 
 Change directory to access the `Dockerfile` and build the corresponding docker image
 
-\subsection docker_visp_build_ubuntu_18_04 Build Ubuntu 18.04 image
+\subsection docker_visp_build_ubuntu_24_04 Build Ubuntu 24.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-18.04
-$ docker build -t vispci/vispci:ubuntu-18.04 .
-\endverbatim
-
-\subsection docker_visp_build_ubuntu_20_04 Build Ubuntu 20.04 image
-
-\verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-20.04
-$ docker build -t vispci/vispci:ubuntu-20.04 .
+$ cd $VISP_WS/visp/docker/ubuntu-24.04
+$ docker build -t vispci/vispci:ubuntu-24.04 .
 \endverbatim
 
 \subsection docker_visp_build_ubuntu_22_04 Build Ubuntu 22.04 image
 
 \verbatim
-$ cd $VISP_WS/visp/ci/docker/ubuntu-22.04
+$ cd $VISP_WS/visp/docker/ubuntu-22.04
 $ docker build -t vispci/vispci:ubuntu-22.04 .
+\endverbatim
+
+\subsection docker_visp_build_ubuntu_20_04 Build Ubuntu 20.04 image
+
+\verbatim
+$ cd $VISP_WS/visp/docker/ubuntu-20.04
+$ docker build -t vispci/vispci:ubuntu-20.04 .
+\endverbatim
+
+\subsection docker_visp_build_ubuntu_18_04 Build Ubuntu 18.04 image
+
+\verbatim
+$ cd $VISP_WS/visp/docker/ubuntu-18.04
+$ docker build -t vispci/vispci:ubuntu-18.04 .
 \endverbatim
 
 \section docker_visp_start Start ViSP container

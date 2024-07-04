@@ -267,6 +267,11 @@ double VISP_EXPORT pythag(double a, double b);
 int VISP_EXPORT qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int lipvt, double *rdiag, double *acnorm,
                       double *wa);
 
+/**
+ * \brief Function pointer towards a method that evaluates a function and its Jacobian.
+ */
+typedef void (*ComputeFunctionAndJacobian)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag);
+
 /*
  * PROCEDURE    : lmder
  *
@@ -372,7 +377,7 @@ int VISP_EXPORT qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, i
  * En cas de succes, la valeur zero est retournee.
  * Sinon la valeur -1 est retournee.
  */
-int VISP_EXPORT lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag),
+int VISP_EXPORT lmder(ComputeFunctionAndJacobian ptr_fcn,
                       int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
                       double gtol, unsigned int maxfev, double *diag, int mode, const double factor, int nprint,
                       int *info, unsigned int *nfev, int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
@@ -457,7 +462,7 @@ int VISP_EXPORT lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, d
  * En cas de succes, la valeur zero est retournee.
  * Sinon, la valeur -1.
  */
-int VISP_EXPORT lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag),
+int VISP_EXPORT lmder1(ComputeFunctionAndJacobian ptr_fcn,
                        int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info,
                        int *ipvt, int lwa, double *wa);
 

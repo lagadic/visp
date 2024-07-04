@@ -643,7 +643,7 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doub
   return 0;
 }
 
-bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+bool lmderMostInnerLoop(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
           double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, unsigned int maxfev,
           double *diag, int nprint, int *info, unsigned int *nfev, int *ipvt,
           double *qtf, double *wa1, double *wa2, double *wa3, double *wa4, const double &gnorm, int &iter, double &delta, double &par, double &pnorm,
@@ -874,7 +874,7 @@ bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   return false;
 }
 
-int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+int lmder(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
           double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, double gtol, unsigned int maxfev,
           double *diag, int mode, const double factor, int nprint, int *info, unsigned int *nfev, int *njev, int *ipvt,
           double *qtf, double *wa1, double *wa2, double *wa3, double *wa4)
@@ -1183,7 +1183,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
   return 0;
 }
 
-int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+int lmder1(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
            double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info, int *ipvt, int lwa, double *wa)
 {
   const double factor = 100.0;

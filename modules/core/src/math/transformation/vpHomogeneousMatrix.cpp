@@ -995,8 +995,9 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
   const unsigned int index_2 = 2;
   const unsigned int index_3 = 3;
   const double epsilon = std::numeric_limits<double>::epsilon();
-  return R.isARotationMatrix(threshold) && vpMath::nul((*this)[index_3][index_0], epsilon) && vpMath::nul((*this)[index_3][index_1], epsilon) &&
-    vpMath::nul((*this)[index_3][index_2], epsilon) && vpMath::equal((*this)[index_3][index_3], 1.0, epsilon);
+  bool isLastRowOK = vpMath::nul((*this)[index_3][index_0], epsilon) && vpMath::nul((*this)[index_3][index_1], epsilon) &&
+    vpMath::nul((*this)[index_3][index_2], epsilon);
+  return R.isARotationMatrix(threshold) && isLastRowOK && vpMath::equal((*this)[index_3][index_3], 1.0, epsilon);
 }
 
 /*!

@@ -357,17 +357,17 @@ Finally, we create the UKF and initialize its state:
 
 \snippet tutorial-ukf.cpp Init_UKF
 
-If the internal state cannot use the standard addition and substraction, it would be necessary to write other methods:
+If the internal state cannot use the standard addition and subtraction, it would be necessary to write other methods:
 - a method permitting to add two state vectors (see vpUnscentedKalman::setStateAddFunction),
-- a method permitting to substract two state vectors (see vpUnscentedKalman::setStateResidualFunction),
+- a method permitting to subtract two state vectors (see vpUnscentedKalman::setStateResidualFunction),
 - and a method permitting to compute the mean of several state vectors (see vpUnscentedKalman::setStateMeanFunction).
 
 If some commands are known to have an effect on the internal state, it would be necessary to write other methods:
 - a method for the effects of the commands on the state, without knowing the state (see vpUnscentedKalman::setCommandOnlyFunction),
 - and/or a method for the effects of the commands on the state, knowing the state (see vpUnscentedKalman::setCommandStateFunction).
 
-If the measurement space cannot use the standard addition and substraction, it would be necessary to write other methods:
-- a method permitting to substract two measurement vectors (see vpUnscentedKalman::setMeasurementResidualFunction),
+If the measurement space cannot use the standard addition and subtraction, it would be necessary to write other methods:
+- a method permitting to subtract two measurement vectors (see vpUnscentedKalman::setMeasurementResidualFunction),
 - and a method permitting to compute the mean of several measurement vectors (see vpUnscentedKalman::setMeasurementMeanFunction).
 
 \subsubsection tuto-ukf-tutorial-explained-initgui Details on the initialization of the Graphical User Interface

@@ -107,17 +107,17 @@ def measurement_mean(measurements: List[ColVector], wm: List[float]) -> ColVecto
 
   return ColVector([meanRange, mean_angle])
 
-def measurementResidual(meas: ColVector, to_substract: ColVector) -> ColVector:
+def measurementResidual(meas: ColVector, to_subtract: ColVector) -> ColVector:
   """
-  Compute the substraction between two vectors expressed in the measurement space,
+  Compute the subtraction between two vectors expressed in the measurement space,
    such as v[0] = range ; v[1] = elevation_angle
 
-  :param meas: Measurement to which we must substract something.
-  :param toSubstract: The something we must substract.
+  :param meas: Measurement to which we must subtract something.
+  :param toSubtract: The something we must subtract.
 
-  :return vpColVector: \b meas - \b toSubstract .
+  :return vpColVector: \b meas - \b toSubtract .
   """
-  res_temp = meas - to_substract
+  res_temp = meas - to_subtract
   return ColVector([res_temp[0], normalize_angle(res_temp[1])])
 
 def state_add_vectors(a, b) -> ColVector:
@@ -133,12 +133,12 @@ def state_add_vectors(a, b) -> ColVector:
 
 def state_residual_vectors(a, b) -> ColVector:
   """
-  Method that permits to substract a state vector to another.
+  Method that permits to subtract a state vector to another.
 
-  :param a: The first state vector to which another state vector must be substracted.
-  :param b: The other state vector that must be substracted to a.
+  :param a: The first state vector to which another state vector must be subtracted.
+  :param b: The other state vector that must be subtracted to a.
 
-  :return ColVector: The substraction a - b.
+  :return ColVector: The subtraction a - b.
   """
   return a - b
 

@@ -1010,4 +1010,29 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix
 #endif
 }
 
+/*!
+ * Permits to compute an approximated inverse of a matrix that is ill-conditionned.
+ * If the matrix is well-conditionned, the damped inverse is close to the Moore-Penrose pseudo-inverse.
+ *
+ * The corresponding equation is the following, assuming that \f$ \textbf{A} \f$
+ * is the matrix we want to compute the damped inverse:
+ *
+ * \f$ \textbf{A} \approx ( \lambda \textbf{I} + \textbf{A}^T \textbf{A})^{-1} \textbf{A}^T \f$
+ *
+ * \param[in] ratioOfMaxSvd The ratio of the maximum singular value of \f$ M \f$ we want to set \f$ \lambda \f$.
+ * @return vpMatrix The damped inverse.
+ */
+vpMatrix vpMatrix::dampedInverse(const double &ratioOfMaxSvd) const
+{
+  vpColVector w;
+  vpMatrix V, Mcpy(*this);
+  Mcpy.svd(w, V);
+  double maxSingularValue = w.getMaxValue();
+  vpMatrix I;
+  I.eye(this->colNum);
+  double lambda = ratioOfMaxSvd * maxSingularValue;
+  vpMatrix dampedInv = (lambda * I + this->transpose() * *this).inverseByLU()* this->transpose();
+  return dampedInv;
+}
+
 END_VISP_NAMESPACE
