@@ -10,13 +10,14 @@
  *   - _xgetbv (Visual Studio 2010)
  */
 
- ////////////////////////////////////////////////////////////////////////////////
- ////////////////////////////////////////////////////////////////////////////////
- ////////////////////////////////////////////////////////////////////////////////
- ////////////////////////////////////////////////////////////////////////////////
- //  Dependencies
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//  Dependencies
 #include <Windows.h>
 #include <intrin.h>
+#include <memory.h>
 #include "cpu_x86.h"
 namespace FeatureDetector
 {
@@ -60,29 +61,35 @@ unsigned __int64 _xgetbv(unsigned int index)
 #endif /* defined(__x86_64__) || defined(_AMD64_) */
 
   __asm__ __volatile__(
-    "xgetbv"
-    : "=a" (val1), "=d" (val2)
-    : "c" (index));
+     "xgetbv"
+     : "=a" (val1), "=d" (val2)
+     : "c" (index));
 
   return (((unsigned __int64)val2) << 32) | val1;
 }
 #endif
 #if defined(__MINGW32__)
-void __cpuidex(int CPUInfo[4], int function_id, int subfunction_id)
+void __cpuidex(unsigned int CPUInfo[4], unsigned int function_id, unsigned int subfunction_id)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   const unsigned int index_3 = 3;
   __asm__ __volatile__(
-    "cpuid"
-    : "=a" (CPUInfo[index_0]), "=b" (CPUInfo[index_1]), "=c" (CPUInfo[index_2]), "=d" (CPUInfo[index_3])
-    : "a" (function_id), "c" (subfunction_id));
+     "cpuid"
+     : "=a" (CPUInfo[index_0]), "=b" (CPUInfo[index_1]), "=c" (CPUInfo[index_2]), "=d" (CPUInfo[index_3])
+     : "a" (function_id), "c" (subfunction_id));
 }
 #endif
 void cpuX86::cpuid(uint32_t out[4], uint32_t x)
 {
-  __cpuidex(out, x, 0);
+#if defined(__MINGW32__)
+  __cpuidex(out, x, 0U);
+#else
+  int32_t out_as_int[4];
+  __cpuidex(out_as_int, x, 0U);
+  memcpy(out, out_as_int, sizeof(int32_t) * 4);
+#endif
 }
 __int64 xgetbv(unsigned int x)
 {
@@ -104,7 +111,7 @@ BOOL IsWow64()
   }
 #elif !defined(WINRT) // Turned off on UWP where GetModuleHandle() doesn't exist
   LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
-    GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+      GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
   if (nullptr != fnIsWow64Process) {
     if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64)) {
