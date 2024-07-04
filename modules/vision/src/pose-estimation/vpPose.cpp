@@ -381,7 +381,7 @@ void vpPose::callLagrangePose(vpHomogeneousMatrix &cMo)
   }
 }
 
-bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, funcCheckValidityPose func)
+bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 {
   const int minNbPtDementhon = 4;
   const int minNbPtRansac = 4;

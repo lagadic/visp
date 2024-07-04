@@ -571,8 +571,9 @@ template <class Type> void vp_display_display_roi(const vpImage<Type> &I, const 
   double roiwidth = floor(roi.getWidth());
   double iheight = static_cast<double>(I.getHeight());
   double iwidth = static_cast<double>(I.getWidth());
-
-  if (top < 0 || top > iheight || left < 0 || left > iwidth || top + roiheight > iheight || left + roiwidth > iwidth) {
+  bool vertNOK = (top < 0) || (top > iheight) || ((top + roiheight) > iheight);
+  bool horNOK = (left < 0) || (left > iwidth) || ((left + roiwidth) > iwidth);
+  if (vertNOK || horNOK) {
     throw(vpException(vpException::dimensionError, "Region of interest outside of the image"));
   }
 

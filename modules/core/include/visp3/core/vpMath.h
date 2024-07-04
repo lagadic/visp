@@ -356,9 +356,11 @@ public:
   }
 
   static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
+
+  typedef vpHomogeneousMatrix(*LongLattToHomogeneous)(double lonDeg, double latDeg, double radius);
   static std::vector<vpHomogeneousMatrix>
     getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
-      vpHomogeneousMatrix(*toECEF)(double lonDeg, double latDeg, double radius));
+      LongLattToHomogeneous func);
 
   static vpHomogeneousMatrix lookAt(const vpColVector &from, const vpColVector &to, vpColVector tmp);
 
