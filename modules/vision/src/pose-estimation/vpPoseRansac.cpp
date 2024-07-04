@@ -191,36 +191,39 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
     std::vector<bool> usedPt(size, false);
 
     vpPose poseMin;
-    for (unsigned int i = 0; i < nbMinRandom;) {
+    unsigned int i = 0;
+    bool stop_loop = false;
+    while ((i < nbMinRandom) && (stop_loop == false)) {
       if (static_cast<size_t>(std::count(usedPt.begin(), usedPt.end(), true)) == usedPt.size()) {
-        // All points was picked once, break otherwise we stay in an infinite loop
-        break;
+        // All points were picked once, break otherwise we stay in an infinite loop
+        stop_loop = true;
       }
+      if (!stop_loop) {
+        // Pick a point randomly
+        unsigned int r_ = m_uniRand.uniform(0, size);
 
-      // Pick a point randomly
-      unsigned int r_ = m_uniRand.uniform(0, size);
-
-      while (usedPt[r_]) {
-        // If already picked, pick another point randomly
-        r_ = m_uniRand.uniform(0, size);
-      }
-      // Mark this point as already picked
-      usedPt[r_] = true;
-      vpPoint pt = m_listOfUniquePoints[r_];
-
-      bool degenerate = false;
-      if (m_checkDegeneratePoints) {
-        if (std::find_if(poseMin.listOfPoints.begin(), poseMin.listOfPoints.end(), FindDegeneratePoint(pt)) !=
-            poseMin.listOfPoints.end()) {
-          degenerate = true;
+        while (usedPt[r_]) {
+          // If already picked, pick another point randomly
+          r_ = m_uniRand.uniform(0, size);
         }
-      }
+        // Mark this point as already picked
+        usedPt[r_] = true;
+        vpPoint pt = m_listOfUniquePoints[r_];
 
-      if (!degenerate) {
-        poseMin.addPoint(pt);
-        cur_randoms.push_back(r_);
-        // Increment the number of points picked
-        ++i;
+        bool degenerate = false;
+        if (m_checkDegeneratePoints) {
+          if (std::find_if(poseMin.listOfPoints.begin(), poseMin.listOfPoints.end(), FindDegeneratePoint(pt)) !=
+              poseMin.listOfPoints.end()) {
+            degenerate = true;
+          }
+        }
+
+        if (!degenerate) {
+          poseMin.addPoint(pt);
+          cur_randoms.push_back(r_);
+          // Increment the number of points picked
+          ++i;
+        }
       }
     }
 

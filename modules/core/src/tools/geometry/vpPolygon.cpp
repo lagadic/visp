@@ -499,7 +499,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     // comment: default
     bool oddNodes = false;
     size_t v_corners_size = _corners.size();
-    for (size_t i = 0, j = (v_corners_size - 1); i < v_corners_size; ++i) {
+    size_t j = v_corners_size - 1;
+    for (size_t i = 0; i < v_corners_size; ++i) {
       if (((_corners[i].get_v() < ip.get_v()) && (_corners[j].get_v() >= ip.get_v())) ||
           ((_corners[j].get_v() < ip.get_v()) && (_corners[i].get_v() >= ip.get_v()))) {
         oddNodes ^= (ip.get_v() * m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
@@ -526,7 +527,8 @@ void vpPolygon::precalcValuesPnPoly()
   m_PnPolyMultiples.resize(_corners.size());
 
   size_t v_corners_size = _corners.size();
-  for (size_t i = 0, j = (v_corners_size - 1); i < v_corners_size; ++i) {
+  size_t j = v_corners_size - 1;
+  for (size_t i = 0; i < v_corners_size; ++i) {
     if (vpMath::equal(_corners[j].get_v(), _corners[i].get_v(), std::numeric_limits<double>::epsilon())) {
       m_PnPolyConstants[i] = _corners[i].get_u();
       m_PnPolyMultiples[i] = 0.0;

@@ -306,6 +306,7 @@ int main(int argc, const char **argv)
     catch (const vpException &e) {
       std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
+    std::cout << "Test succeed" << std::endl;
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

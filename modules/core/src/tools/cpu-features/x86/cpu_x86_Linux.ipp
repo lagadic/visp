@@ -1,9 +1,9 @@
 /* cpu_x86_Linux.ipp
- * 
+ *
  * Author           : Alexander J. Yee
  * Date Created     : 04/12/2014
  * Last Modified    : 04/12/2014
- * 
+ *
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,26 +13,34 @@
 //  Dependencies
 #include <cpuid.h>
 #include "cpu_x86.h"
-namespace FeatureDetector{
+namespace FeatureDetector
+{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void cpu_x86::cpuid(uint32_t out[4], uint32_t x){
-    __cpuid_count(x, 0, out[0], out[1], out[2], out[3]);
+void cpuX86::cpuid(uint32_t out[4], uint32_t x)
+{
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  __cpuid_count(x, 0, out[index_0], out[index_1], out[index_2], out[index_3]);
 }
-uint64_t xgetbv(unsigned int index){
-    uint32_t eax, edx;
-    __asm__ __volatile__("xgetbv" : "=a"(eax), "=d"(edx) : "c"(index));
-    return ((uint64_t)edx << 32) | eax;
+uint64_t xgetbv(unsigned int index)
+{
+  uint32_t eax, edx;
+  __asm__ __volatile__("xgetbv" : "=a"(eax), "=d"(edx) : "c"(index));
+  return ((uint64_t)edx << 32) | eax;
 }
 #define _XCR_XFEATURE_ENABLED_MASK  0
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //  Detect 64-bit
-bool cpu_x86::detect_OS_x64(){
-    //  We only support x64 on Linux.
-    return true;
+bool cpuX86::detect_OS_x64()
+{
+//  We only support x64 on Linux.
+  return true;
 }
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

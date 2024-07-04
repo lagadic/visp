@@ -1138,7 +1138,6 @@ private:
     node_tmp = node_model.append_child(LABEL_XML_V0);
     node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
 
-    //<k1>, <k2>, <k3>, <k4>, <k5>
     std::vector<double> distortion_coefs = camera.getKannalaBrandtDistortionCoefficients();
 
     if (distortion_coefs.size() != requiredNbCoeff) {

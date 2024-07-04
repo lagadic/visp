@@ -80,7 +80,7 @@ using std::memset;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void cpu_x86::print(const char *label, bool yes)
+void cpuX86::print(const char *label, bool yes)
 {
   cout << label;
   cout << (yes ? "Yes" : "No") << endl;
@@ -89,12 +89,12 @@ void cpu_x86::print(const char *label, bool yes)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-cpu_x86::cpu_x86()
+cpuX86::cpuX86()
 {
   memset(this, 0, sizeof(*this));
   detect_host();
 }
-bool cpu_x86::detect_OS_AVX()
+bool cpuX86::detect_OS_AVX()
 {
 #ifndef UNKNOWN_ARCH
   //  Copied from: http://stackoverflow.com/a/22521619/922184
@@ -120,7 +120,7 @@ bool cpu_x86::detect_OS_AVX()
   return false;
 #endif
 }
-bool cpu_x86::detect_OS_AVX512()
+bool cpuX86::detect_OS_AVX512()
 {
 #ifndef UNKNOWN_ARCH
   if (!detect_OS_AVX()) {
@@ -133,7 +133,7 @@ bool cpu_x86::detect_OS_AVX512()
   return false;
 #endif
 }
-std::string cpu_x86::get_vendor_string()
+std::string cpuX86::get_vendor_string()
 {
 #ifndef UNKNOWN_ARCH
   uint32_t CPUInfo[4];
@@ -158,7 +158,7 @@ std::string cpu_x86::get_vendor_string()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void cpu_x86::detect_host()
+void cpuX86::detect_host()
 {
 #ifndef UNKNOWN_ARCH
   //  OS Features
@@ -256,7 +256,7 @@ void cpu_x86::detect_host()
   }
 #endif
 }
-void cpu_x86::print() const
+void cpuX86::print() const
 {
   cout << "CPU Vendor:" << endl;
   print("    AMD         = ", Vendor_AMD);
