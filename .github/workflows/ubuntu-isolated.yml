@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   build-ubuntu-dep-apt:
-    if: false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

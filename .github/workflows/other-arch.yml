@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   build-other-architectures:
-    if: false
     # The host should always be linux
     runs-on: ubuntu-20.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}

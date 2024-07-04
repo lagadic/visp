@@ -17,7 +17,6 @@ concurrency:
 
 jobs:
   build-ubuntu-sanitizers:
-    if: false
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

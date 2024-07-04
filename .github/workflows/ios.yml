@@ -15,7 +15,6 @@ concurrency:
 
 jobs:
   build-ios:
-    if: false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
