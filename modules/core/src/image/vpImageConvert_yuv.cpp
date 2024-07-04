@@ -44,14 +44,13 @@ namespace
 {
 void vpSAT(int &c)
 {
-  if (c & (~255)) {
-    if (c < 0) {
-      c = 0;
-    }
-    else {
-      const unsigned int val_255 = 255;
-      c = val_255;
-    }
+  const unsigned int val_255 = 255;
+  if (c < 0) {
+    c = 0;
+  }
+  else if (c > val_255) {
+
+    c = val_255;
   }
 }
 };
