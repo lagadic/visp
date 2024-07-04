@@ -15,7 +15,7 @@ concurrency:
 
 env:
   # Function to get the most recent tag of a remote repository without having to clone it, excluding tag with 'pr' as in Pre Release
-  FUNCTION_GET_LATEST: 'git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags ${GIT_ADDRESS} '*.*.*' | cut --delimiter='/' --fields=3 | grep -v -e pr | tail --lines=1'
+  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
 
 jobs:
   build-ubuntu-dep-src:
@@ -64,8 +64,8 @@ jobs:
         pwd
         echo $GITHUB_WORKSPACE
         GIT_ADDRESS=https://github.com/xianyi/OpenBLAS.git
-        echo ${FUNCTION_GET_LATEST}
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/OpenBLAS
         cd ${HOME}/OpenBLAS
         mkdir install
@@ -83,6 +83,7 @@ jobs:
         export GIT_CLONE_PROTECTION_ACTIVE=false
         GIT_ADDRESS="https://github.com/Kitware/VTK.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
         git clone --recursive --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
@@ -97,6 +98,7 @@ jobs:
         pwd
         GIT_ADDRESS="https://github.com/opencv/opencv.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/opencv
         cd ${HOME}/opencv
         mkdir build && cd build && mkdir install
@@ -110,6 +112,7 @@ jobs:
         pwd
         GIT_ADDRESS="https://github.com/IntelRealSense/librealsense.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
@@ -123,6 +126,7 @@ jobs:
         pwd
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
         git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
