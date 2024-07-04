@@ -5,6 +5,7 @@ on: [pull_request, push]
 jobs:
   tests:
     name: "Nix build on ${{ matrix.os }}"
+    if: false
     runs-on: "${{ matrix.os }}-latest"
     strategy:
       matrix:

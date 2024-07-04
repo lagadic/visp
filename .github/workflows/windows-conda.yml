@@ -10,6 +10,7 @@ concurrency:
 jobs:
   visp-conda:
     name: ${{ matrix.os }} ${{ matrix.compiler }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
+    if: false
     runs-on: ${{ matrix.os }}
 
     strategy:

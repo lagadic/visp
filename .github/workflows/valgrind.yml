@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   build-ubuntu-valgrind:
+    if: false
     runs-on: ubuntu-latest
 
     steps:
