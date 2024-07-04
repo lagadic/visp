@@ -76,6 +76,7 @@ USER ${USERNAME}
 
 # When running a container start in the home folder
 WORKDIR /home/$USERNAME
+ENV HOME=/home/$USERNAME
 
 # Some apps don't show controls without this
 ENV QT_X11_NO_MITSHM=1
@@ -93,7 +94,7 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && make -j$(nproc) \
     && make -j$(nproc) install PREFIX=$(pwd)/install
 
-ENV OpenBLAS_HOME=/3rdparty/OpenBLAS/install
+ENV OpenBLAS_HOME=${HOME}/visp-ws/3rdparty/OpenBLAS/install
 
 # Install VTK from source
 ENV GIT_CLONE_PROTECTION_ACTIVE=false
