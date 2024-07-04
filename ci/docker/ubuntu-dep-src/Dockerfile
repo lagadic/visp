@@ -16,6 +16,7 @@ RUN ["/bin/bash", "-c", ": ${GIT_URL:?Build argument GIT_URL needs to be set and
 ENV GIT_URL="$GIT_URL"
 ENV GIT_BRANCH_CMD="${GIT_BRANCH_NAME}"
 ENV GIT_BRANCH_CMD=${GIT_BRANCH_CMD:+"--branch $GIT_BRANCH_NAME --depth 1"}
+ENV FUNCTION_GET_LATEST='git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
 
 # Update aptitude with default packages
 RUN apt-get update \
@@ -62,7 +63,7 @@ RUN locale-gen en_US en_US.UTF-8 && \
     update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
     export LANG=en_US.UTF-8
 
-ENV USERNAME vispci
+ENV USERNAME=vispci
 
 RUN useradd -U --uid $USER_UID -ms /bin/bash ${USERNAME} \
     && echo "${USERNAME}:${USERNAME}" | chpasswd \
@@ -77,14 +78,16 @@ USER ${USERNAME}
 WORKDIR /home/$USERNAME
 
 # Some apps don't show controls without this
-ENV QT_X11_NO_MITSHM 1
+ENV QT_X11_NO_MITSHM=1
 
 # Create folder for 3rd parties
 RUN mkdir -p ${HOME}/visp-ws/3rdparty
 
 # Install OpenBLAS from source
 RUN cd ${HOME}/visp-ws/3rdparty \
-    && git clone --depth 1 https://github.com/xianyi/OpenBLAS.git \
+    && GIT_ADDRESS="https://github.com/xianyi/OpenBLAS.git" \
+    && LATEST_TAG=`eval $FUNCTION_GET_LATEST` \
+    && git clone --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && cd OpenBLAS \
     && mkdir install \
     && make -j$(nproc) \
@@ -95,7 +98,9 @@ ENV OpenBLAS_HOME=/3rdparty/OpenBLAS/install
 # Install VTK from source
 ENV GIT_CLONE_PROTECTION_ACTIVE=false
 RUN cd ${HOME}/visp-ws/3rdparty \
-    && git clone --recursive --depth 1 --branch v9.3.0 https://github.com/Kitware/VTK.git \
+    && GIT_ADDRESS="https://github.com/Kitware/VTK.git" \
+    && LATEST_TAG=`eval $FUNCTION_GET_LATEST` \
+    && git clone --recursive --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && cd VTK \
     && mkdir build && cd build && mkdir install \
     && cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF \
@@ -107,7 +112,9 @@ ENV VTK_DIR=${HOME}/visp-ws/3rdparty/VTK/build/install
 
 # Install OpenCV from source
 RUN cd ${HOME}/visp-ws/3rdparty \
-    && git clone --depth 1 https://github.com/opencv/opencv.git \
+    && GIT_ADDRESS="https://github.com/opencv/opencv.git" \
+    && LATEST_TAG=`eval $FUNCTION_GET_LATEST` \
+    && git clone --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && mkdir opencv/build \
     && cd opencv/build \
     && mkdir install \
@@ -119,7 +126,9 @@ ENV OpenCV_DIR=${HOME}/visp-ws/3rdparty/opencv/build/install
 
 # Install Intel® RealSense™ SDK
 RUN cd ${HOME}/visp-ws/3rdparty \
-    && git clone --depth 1 https://github.com/IntelRealSense/librealsense.git \
+    && GIT_ADDRESS="https://github.com/IntelRealSense/librealsense.git" \
+    && LATEST_TAG=`eval $FUNCTION_GET_LATEST` \
+    && git clone --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && mkdir librealsense/build \
     && cd librealsense/build \
     && mkdir install \
@@ -131,7 +140,9 @@ ENV REALSENSE2_DIR=${HOME}/visp-ws/3rdparty/librealsense/build/install
 
 # Build PCL from source
 RUN cd ${HOME}/visp-ws/3rdparty \
-    && git clone --depth 1 https://github.com/PointCloudLibrary/pcl.git \
+    && GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git" \
+    && LATEST_TAG=`eval $FUNCTION_GET_LATEST` \
+    && git clone --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && mkdir pcl/build \
     && cd pcl/build \
     && mkdir install \
