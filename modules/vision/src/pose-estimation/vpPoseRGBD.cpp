@@ -202,7 +202,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
 
   unsigned int nb_points_3d = static_cast<unsigned int>(points_3d.size() / 3);
 
-  if (nb_points_3d > 4) {
+  const unsigned int minNbPoints = 4;
+  if (nb_points_3d > minNbPoints) {
     std::vector<vpPoint> p, q;
 
     // Plane equation

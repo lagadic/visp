@@ -68,16 +68,17 @@ struct CompareObjectPointDegenerate
     const unsigned int index_0 = 0;
     const unsigned int index_1 = 1;
     const unsigned int index_2 = 2;
+    const double val3 = 3.;
     bool rc = false;
     const double dist1 =
       (point1.get_oX() * point1.get_oX()) + (point1.get_oY() * point1.get_oY()) + (point1.get_oZ() * point1.get_oZ());
     const double dist2 =
       (point2.get_oX() * point2.get_oX()) + (point2.get_oY() * point2.get_oY()) + (point2.get_oZ() * point2.get_oZ());
 
-    if ((dist1 - dist2) < (-3 * EPS * EPS)) {
+    if ((dist1 - dist2) < (-val3 * EPS * EPS)) {
       return true;
     }
-    if ((dist1 - dist2) > (3 * EPS * EPS)) {
+    if ((dist1 - dist2) > (val3 * EPS * EPS)) {
       return false;
     }
 
@@ -114,10 +115,11 @@ struct CompareImagePointDegenerate
     bool rc = false;
     const double dist1 = (point1.get_x() * point1.get_x()) + (point1.get_y() * point1.get_y());
     const double dist2 = (point2.get_x() * point2.get_x()) + (point2.get_y() * point2.get_y());
-    if ((dist1 - dist2) < (-2 * EPS * EPS)) {
+    const double val2 = 2.;
+    if ((dist1 - dist2) < (-val2 * EPS * EPS)) {
       return true;
     }
-    if ((dist1 - dist2) > (2 * EPS * EPS)) {
+    if ((dist1 - dist2) > (val2 * EPS * EPS)) {
       return false;
     }
 
@@ -230,7 +232,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
     bool stop_for_loop = false;
     if (poseMin.npt < nbMinRandom) {
       ++nbTrials;
-      stop_for_loop = true;;
+      stop_for_loop = true;
     }
 
     if (!stop_for_loop) {

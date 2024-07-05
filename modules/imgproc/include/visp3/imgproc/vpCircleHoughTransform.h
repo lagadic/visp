@@ -1195,6 +1195,19 @@ public:
   static const unsigned char edgeMapOff;
 
 protected:
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  /**
+   * \brief Data storage for the computation of the barycenter of center candidates.
+   */
+  typedef struct vpCentersBarycenter
+  {
+    std::pair<float, float> m_position; /*!< The position of the barycenter.*/
+    float m_totalVotes; /*!< The cumulated number of votes accross all the centers voting for this barycenter.*/
+    float m_nbElectors; /*!< The number of center candidates that have voted for this barycenter.*/
+  }vpCentersBarycenter;
+#endif
+
   /**
    * \brief Initialize the Gaussian filters used to blur the image and
    * compute the gradient images.
@@ -1240,6 +1253,19 @@ protected:
    * \param[in] peak_positions_votes Vector containing raw center candidates.
    */
   virtual void filterCenterCandidates(const std::vector<vpCenterVotes> &peak_positions_votes);
+
+  /**
+   * \brief Look in the list containing the raw center candidates if one is closed to the center candidate
+   * that is currently of interest.
+   *
+   * \param[in] idPeak The ID of the center candidate that is currently of interest.
+   * \param[in] nbPeaks The number of center candidates.
+   * \param[in] squared_distance_max The maximum squared distance between to center candidates to merge them.
+   * \param[in] peak_positions_votes The list containing the raw center candidates.
+   * \param[out] has_been_merged Vector indicating if the center candidates have already been merged.
+   * \return vpCentersBarycenter The barycenter between the center candidate that is currently of interest and similar center candidates.
+   */
+  virtual vpCentersBarycenter mergeSimilarCenters(const unsigned int &idPeak, const unsigned int &nbPeaks, const float &squared_distance_max, const std::vector<vpCenterVotes> &peak_positions_votes, std::vector<bool> &has_been_merged);
 
   /**
    * \brief Compute the probability of \b circle given the number of pixels voting for
