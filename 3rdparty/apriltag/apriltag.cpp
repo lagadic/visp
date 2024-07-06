@@ -40,20 +40,17 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
+#include <errno.h>
 #include <algorithm>
-//#include <inttypes.h>
 
 #include "common/image_u8.h"
 #include "common/image_u8x3.h"
-#include "common/zhash.h"
 #include "common/zarray.h"
 #include "common/matd.h"
 #include "common/homography.h"
 #include "common/timeprofile.h"
 #include "common/math_util.h"
 #include "common/g2d.h"
-#include "common/floats.h"
 
 #include "apriltag_math.h"
 
@@ -228,13 +225,16 @@ static void quick_decode_init(apriltag_family_t *family, int maxhamming)
     qd->entries = (quick_decode_entry *)calloc(qd->nentries, sizeof(struct quick_decode_entry));
     if (qd->entries == NULL) {
         printf("apriltag.c: failed to allocate hamming decode table. Reduce max hamming size.\n");
-        exit(-1);
+       // errno already set to ENOMEM (Error No MEMory) by calloc() failure
+        return;
     }
 
     for (int i = 0; i < qd->nentries; i++)
         qd->entries[i].rcode = UINT64_MAX;
 
-    for (int i = 0; i < family->ncodes; i++) {
+    errno = 0;
+
+    for (uint32_t i = 0; i < family->ncodes; i++) {
         uint64_t code = family->codes[i];
 
         // add exact code (hamming = 0)
@@ -263,6 +263,9 @@ static void quick_decode_init(apriltag_family_t *family, int maxhamming)
 
         if (maxhamming > 3) {
             printf("apriltag.c: maxhamming beyond 3 not supported\n");
+            // set errno to Error INvalid VALue
+            errno = EINVAL;
+            return;
         }
     }
 
@@ -299,7 +302,8 @@ static void quick_decode_codeword(apriltag_family_t *tf, uint64_t rcode,
 {
     struct quick_decode *qd = (struct quick_decode*) tf->impl;
 
-    for (int ridx = 0; ridx < 4; ridx++) {
+    // qd might be null if detector_add_family_bits() failed
+    for (int ridx = 0; qd != NULL && ridx < 4; ridx++) {
 
         for (int bucket = rcode % qd->nentries;
              qd->entries[bucket].rcode != UINT64_MAX;
@@ -366,7 +370,7 @@ apriltag_detector_t *apriltag_detector_create()
 
     td->qtp.max_line_fit_mse = 10.0;
     td->qtp.cos_critical_rad = cos(10 * M_PI / 180);
-    td->qtp.deglitch = 0;
+    td->qtp.deglitch = false;
     td->qtp.min_white_black_diff = 5;
 
     td->tag_families = zarray_create(sizeof(apriltag_family_t*));
@@ -375,11 +379,11 @@ apriltag_detector_t *apriltag_detector_create()
 
     td->tp = timeprofile_create();
 
-    td->refine_edges = 1;
+    td->refine_edges = true;
     td->decode_sharpening = 0.25;
 
 
-    td->debug = 0;
+    td->debug = false;
 
     // NB: defer initialization of td->wp so that the user can
     // override td->nthreads.
@@ -447,8 +451,13 @@ static matd_t* homography_compute2(double c[4][4]) {
             }
         }
 
+        if (max_val_idx < 0) {
+            return NULL;
+        }
+
         if (max_val < epsilon) {
             fprintf(stderr, "WRN: Matrix is singular.\n");
+            return NULL;
         }
 
         // Swap to get best row.
@@ -503,12 +512,15 @@ static int quad_update_homographies(struct quad *quad)
 
     // XXX Tunable
     quad->H = homography_compute2(corr_arr);
-
-    quad->Hinv = matd_inverse(quad->H);
-
-    if (quad->H && quad->Hinv)
-        return 0;
-
+    if (quad->H != NULL) {
+        quad->Hinv = matd_inverse(quad->H);
+        if (quad->Hinv != NULL) {
+	    // Success!
+            return 0;
+        }
+        matd_destroy(quad->H);
+        quad->H = NULL;
+    }
     return -1;
 }
 
@@ -620,7 +632,7 @@ static float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, ima
     graymodel_init(&whitemodel);
     graymodel_init(&blackmodel);
 
-    for (int pattern_idx = 0; pattern_idx < sizeof(patterns)/(5*sizeof(float)); pattern_idx ++) {
+    for (long unsigned int pattern_idx = 0; pattern_idx < sizeof(patterns)/(5*sizeof(float)); pattern_idx ++) {
         float *pattern = &patterns[pattern_idx * 5];
 
         int is_white = pattern[4];
@@ -681,7 +693,7 @@ static float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, ima
     double *values = (double *)calloc(family->total_width*family->total_width, sizeof(double));
 
     int min_coord = (family->width_at_border - family->total_width)/2;
-    for (int i = 0; i < family->nbits; i++) {
+    for (uint32_t i = 0; i < family->nbits; i++) {
         int bity = family->bit_y[i];
         int bitx = family->bit_x[i];
 
@@ -714,7 +726,7 @@ static float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, ima
     sharpen(td, values, family->total_width);
 
     uint64_t rcode = 0;
-    for (int i = 0; i < family->nbits; i++) {
+    for (uint32_t i = 0; i < family->nbits; i++) {
         int bity = family->bit_y[i];
         int bitx = family->bit_x[i];
         rcode = (rcode << 1);
@@ -873,9 +885,10 @@ static void refine_edges(apriltag_detector_t *td, image_u8_t *im_orig, struct qu
 
             double L0 = W00*B0 + W01*B1;
 
-            // compute intersection
-            quad->p[i][0] = lines[i][0] + L0*A00;
-            quad->p[i][1] = lines[i][1] + L0*A10;
+            // Compute intersection. Note that line i represents the line from corner i to (i+1)&3, so
+	    // the intersection of line i with line (i+1)&3 represents corner (i+1)&3.
+            quad->p[(i+1)&3][0] = lines[i][0] + L0*A00;
+            quad->p[(i+1)&3][1] = lines[i][1] + L0*A10;
         } else {
             // this is a bad sign. We'll just keep the corner we had.
 //            printf("bad det: %15f %15f %15f %15f %15f\n", A00, A11, A10, A01, det);
@@ -901,7 +914,7 @@ static void quad_decode_task(void *_u)
         }
 
         // make sure the homographies are computed...
-        if (quad_update_homographies(quad_original))
+        if (quad_update_homographies(quad_original) != 0)
             continue;
 
         for (int famidx = 0; famidx < zarray_size(td->tag_families); famidx++) {
@@ -1005,6 +1018,10 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
     if (td->wp == NULL || td->nthreads != workerpool_get_nthreads(td->wp)) {
         workerpool_destroy(td->wp);
         td->wp = workerpool_create(td->nthreads);
+        if (td->wp == NULL) {
+            // creating workerpool failed - return empty zarray
+            return zarray_create(sizeof(apriltag_detection_t*));
+        }
     }
 
     timeprofile_clear(td->tp);
@@ -1333,8 +1350,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
                 uint8_t data_[] = { (uint8_t)rgb[0], (uint8_t)rgb[1], (uint8_t)rgb[2] };
                 image_u8x3_draw_line(out,
                                      det->p[j][0], det->p[j][1], det->p[k][0], det->p[k][1],
-                                     data_,
-                                     1);
+                                     data_);
             }
         }
 
@@ -1455,10 +1471,10 @@ void apriltag_detections_destroy(zarray_t *detections)
     zarray_destroy(detections);
 }
 
-image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx)
+image_u8_t *apriltag_to_image(apriltag_family_t *fam, uint32_t idx)
 {
     assert(fam != NULL);
-    assert(idx >= 0 && idx < fam->ncodes);
+    assert(idx < fam->ncodes);
 
     uint64_t code = fam->codes[idx];
 
@@ -1475,7 +1491,7 @@ image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx)
     }
 
     int border_start = (fam->total_width - fam->width_at_border)/2;
-    for (int i = 0; i < fam->nbits; i++) {
+    for (uint32_t i = 0; i < fam->nbits; i++) {
         if (code & (APRILTAG_U64_ONE << (fam->nbits - i - 1))) {
             im->buf[(fam->bit_y[i] + border_start)*im->stride + fam->bit_x[i] + border_start] = 255;
         }

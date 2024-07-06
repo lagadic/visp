@@ -40,7 +40,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "apriltag.h"
 #include "common/image_u8x3.h"
 #include "common/zarray.h"
-#include "common/zhash.h"
 #include "common/unionfind.h"
 #include "common/timeprofile.h"
 #include "common/zmaxheap.h"
@@ -112,6 +111,34 @@ struct cluster_task
     unionfind_t* uf;
     image_u8_t* im;
     zarray_t* clusters;
+};
+
+struct minmax_task {
+    int ty;
+
+    image_u8_t *im;
+    uint8_t *im_max;
+    uint8_t *im_min;
+};
+
+struct blur_task {
+    int ty;
+
+    image_u8_t *im;
+    uint8_t *im_max;
+    uint8_t *im_min;
+    uint8_t *im_max_tmp;
+    uint8_t *im_min_tmp;
+};
+
+struct threshold_task {
+    int ty;
+
+    apriltag_detector_t *td;
+    image_u8_t *im;
+    image_u8_t *threshim;
+    uint8_t *im_max;
+    uint8_t *im_min;
 };
 
 struct remove_vertex
@@ -245,8 +272,13 @@ void fit_line(struct line_fit_pt *lfps, int sz, int i0, int i1, double *lineparm
         }
 
         double length = sqrtf(M);
-        lineparm[2] = nx/length;
-        lineparm[3] = ny/length;
+        if (fabs(length) < 1e-12) {
+            lineparm[2] = lineparm[3] = 0;
+        }
+        else {
+            lineparm[2] = nx/length;
+            lineparm[3] = ny/length;
+        }
     }
 
     // sum of squared errors =
@@ -413,7 +445,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
     double err01, err12, err23, err30;
     double mse01, mse12, mse23, mse30;
-    double params01[4], params12[4], params23[4], params30[4];
+    double params01[4], params12[4];
 
     // disallow quads where the angle is less than a critical value.
     double max_dot = td->qtp.cos_critical_rad; //25*M_PI/180);
@@ -443,11 +475,11 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
                 for (int m3 = m2+1; m3 < nmaxima; m3++) {
                     int i3 = maxima[m3];
 
-                    fit_line(lfps, sz, i2, i3, params23, &err23, &mse23);
+                    fit_line(lfps, sz, i2, i3, NULL, &err23, &mse23);
                     if (mse23 > td->qtp.max_line_fit_mse)
                         continue;
 
-                    fit_line(lfps, sz, i3, i0, params30, &err30, &mse30);
+                    fit_line(lfps, sz, i3, i0, NULL, &err30, &mse30);
                     if (mse30 > td->qtp.max_line_fit_mse)
                         continue;
 
@@ -478,7 +510,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 }
 
 // returns 0 if the cluster looks bad.
-int quad_segment_agg(apriltag_detector_t *td, zarray_t *cluster, struct line_fit_pt *lfps, int indices[4])
+int quad_segment_agg(zarray_t *cluster, struct line_fit_pt *lfps, int indices[4])
 {
     int sz = zarray_size(cluster);
 
@@ -825,42 +857,7 @@ int fit_quad(
     // step for segmenting them into four lines.
     if (1) {
         ptsort((struct pt*) cluster->data, zarray_size(cluster));
-
-        // remove duplicate points. (A byproduct of our segmentation system.)
-        if (1) {
-            int outpos = 1;
-
-            struct pt *last;
-            zarray_get_volatile(cluster, 0, &last);
-
-            for (int i = 1; i < sz; i++) {
-
-                struct pt *p;
-                zarray_get_volatile(cluster, i, &p);
-
-                if (p->x != last->x || p->y != last->y) {
-
-                    if (i != outpos)  {
-                        struct pt *out;
-                        zarray_get_volatile(cluster, outpos, &out);
-                        memcpy(out, p, sizeof(struct pt));
-                    }
-
-                    outpos++;
-                }
-
-                last = p;
-            }
-
-            cluster->size = outpos;
-            sz = outpos;
-        }
-
     }
-
-    if (sz < 24)
-        return 0;
-
 
     struct line_fit_pt *lfps = compute_lfps(sz, cluster, im);
 
@@ -869,7 +866,7 @@ int fit_quad(
         if (!quad_segment_maxima(td, cluster, lfps, indices))
             goto finish;
     } else {
-        if (!quad_segment_agg(td, cluster, lfps, indices))
+        if (!quad_segment_agg(cluster, lfps, indices))
             goto finish;
     }
 
@@ -880,10 +877,10 @@ int fit_quad(
         int i0 = indices[i];
         int i1 = indices[(i+1)&3];
 
-        double err;
-        fit_line(lfps, sz, i0, i1, lines[i], NULL, &err);
+        double mse;
+        fit_line(lfps, sz, i0, i1, lines[i], NULL, &mse);
 
-        if (err > td->qtp.max_line_fit_mse) {
+        if (mse > td->qtp.max_line_fit_mse) {
             res = 0;
             goto finish;
         }
@@ -913,11 +910,11 @@ int fit_quad(
         double det = A00 * A11 - A10 * A01;
 
         // inverse.
-        double W00 = A11 / det, W01 = -A01 / det;
         if (fabs(det) < 0.001) {
             res = 0;
             goto finish;
         }
+        double W00 = A11 / det, W01 = -A01 / det;
 
         // solve
         double L0 = W00*B0 + W01*B1;
@@ -990,7 +987,7 @@ int fit_quad(
 
 #define DO_UNIONFIND2(dx, dy) if (im->buf[(y + dy)*s + x + dx] == v) unionfind_connect(uf, y*w + x, (y + dy)*w + x + dx);
 
-static void do_unionfind_first_line(unionfind_t *uf, image_u8_t *im, int h, int w, int s)
+static void do_unionfind_first_line(unionfind_t *uf, image_u8_t *im, int w, int s)
 {
     int y = 0;
     uint8_t v;
@@ -1005,7 +1002,7 @@ static void do_unionfind_first_line(unionfind_t *uf, image_u8_t *im, int h, int 
     }
 }
 
-static void do_unionfind_line2(unionfind_t *uf, image_u8_t *im, int h, int w, int s, int y)
+static void do_unionfind_line2(unionfind_t *uf, image_u8_t *im, int w, int s, int y)
 {
     assert(y > 0);
 
@@ -1051,7 +1048,7 @@ static void do_unionfind_task2(void *p)
     struct unionfind_task *task = (struct unionfind_task*) p;
 
     for (int y = task->y0; y < task->y1; y++) {
-        do_unionfind_line2(task->uf, task->im, task->h, task->w, task->s, y);
+        do_unionfind_line2(task->uf, task->im, task->w, task->s, y);
     }
 }
 
@@ -1066,26 +1063,26 @@ static void do_quad_task(void *p)
 
     for (int cidx = task->cidx0; cidx < task->cidx1; cidx++) {
 
-        zarray_t *cluster;
-        zarray_get(clusters, cidx, &cluster);
+        zarray_t **cluster;
+        zarray_get_volatile(clusters, cidx, &cluster);
 
-        if (zarray_size(cluster) < td->qtp.min_cluster_pixels)
+        if (zarray_size(*cluster) < td->qtp.min_cluster_pixels)
             continue;
 
         // a cluster should contain only boundary points around the
         // tag. it cannot be bigger than the whole screen. (Reject
         // large connected blobs that will be prohibitively slow to
-        // fit quads to.) A typical point along an edge is added three
-        // times (because it has 3 neighbors). The maximum perimeter
-        // is 2w+2h.
-        if (zarray_size(cluster) > 3*(2*w+2*h)) {
+        // fit quads to.) A typical point along an edge is added two
+        // times (because it has 2 unique neighbors). The maximum
+        // perimeter is 2w+2h.
+        if (zarray_size(*cluster) > 2*(2*w+2*h)) {
             continue;
         }
 
         struct quad quad;
         memset(&quad, 0, sizeof(struct quad));
 
-        if (fit_quad(td, task->im, cluster, &quad, task->tag_width, task->normal_border, task->reversed_border)) {
+        if (fit_quad(td, task->im, *cluster, &quad, task->tag_width, task->normal_border, task->reversed_border)) {
             pthread_mutex_lock(&td->mutex);
             zarray_add(quads, &quad);
             pthread_mutex_unlock(&td->mutex);
@@ -1093,6 +1090,122 @@ static void do_quad_task(void *p)
     }
 }
 
+void do_minmax_task(void *p)
+{
+    const int tilesz = 4;
+    struct minmax_task* task = (struct minmax_task*) p;
+    int s = task->im->stride;
+    int ty = task->ty;
+    int tw = task->im->width / tilesz;
+    image_u8_t *im = task->im;
+
+    for (int tx = 0; tx < tw; tx++) {
+        uint8_t max = 0, min = 255;
+
+        for (int dy = 0; dy < tilesz; dy++) {
+
+            for (int dx = 0; dx < tilesz; dx++) {
+
+                uint8_t v = im->buf[(ty*tilesz+dy)*s + tx*tilesz + dx];
+                if (v < min)
+                    min = v;
+                if (v > max)
+                    max = v;
+            }
+        }
+
+        task->im_max[ty*tw+tx] = max;
+        task->im_min[ty*tw+tx] = min;
+    }
+}
+
+void do_blur_task(void *p)
+{
+    const int tilesz = 4;
+    struct blur_task* task = (struct blur_task*) p;
+    int ty = task->ty;
+    int tw = task->im->width / tilesz;
+    int th = task->im->height / tilesz;
+    uint8_t *im_max = task->im_max;
+    uint8_t *im_min = task->im_min;
+
+    for (int tx = 0; tx < tw; tx++) {
+        uint8_t max = 0, min = 255;
+
+        for (int dy = -1; dy <= 1; dy++) {
+            if (ty+dy < 0 || ty+dy >= th)
+                continue;
+            for (int dx = -1; dx <= 1; dx++) {
+                if (tx+dx < 0 || tx+dx >= tw)
+                    continue;
+
+                uint8_t m = im_max[(ty+dy)*tw+tx+dx];
+                if (m > max)
+                    max = m;
+                m = im_min[(ty+dy)*tw+tx+dx];
+                if (m < min)
+                    min = m;
+            }
+        }
+
+        task->im_max_tmp[ty*tw + tx] = max;
+        task->im_min_tmp[ty*tw + tx] = min;
+    }
+}
+
+void do_threshold_task(void *p)
+{
+    const int tilesz = 4;
+    struct threshold_task* task = (struct threshold_task*) p;
+    int ty = task->ty;
+    int tw = task->im->width / tilesz;
+    int s = task->im->stride;
+    uint8_t *im_max = task->im_max;
+    uint8_t *im_min = task->im_min;
+    image_u8_t *im = task->im;
+    image_u8_t *threshim = task->threshim;
+    int min_white_black_diff = task->td->qtp.min_white_black_diff;
+
+    for (int tx = 0; tx < tw; tx++) {
+        int min = im_min[ty*tw + tx];
+        int max = im_max[ty*tw + tx];
+
+        // low contrast region? (no edges)
+        if (max - min < min_white_black_diff) {
+            for (int dy = 0; dy < tilesz; dy++) {
+                int y = ty*tilesz + dy;
+
+                for (int dx = 0; dx < tilesz; dx++) {
+                    int x = tx*tilesz + dx;
+
+                    threshim->buf[y*s+x] = 127;
+                }
+            }
+            continue;
+        }
+
+        // otherwise, actually threshold this tile.
+
+        // argument for biasing towards dark; specular highlights
+        // can be substantially brighter than white tag parts
+        uint8_t thresh = min + (max - min) / 2;
+
+        for (int dy = 0; dy < tilesz; dy++) {
+            int y = ty*tilesz + dy;
+
+            for (int dx = 0; dx < tilesz; dx++) {
+                int x = tx*tilesz + dx;
+
+                uint8_t v = im->buf[y*s+x];
+                if (v > thresh)
+                    threshim->buf[y*s+x] = 255;
+                else
+                    threshim->buf[y*s+x] = 0;
+            }
+        }
+    }
+}
+ 
 image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
 {
     int w = im->width, h = im->height, s = im->stride;
@@ -1135,27 +1248,18 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
     uint8_t *im_max = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
     uint8_t *im_min = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
 
+    struct minmax_task *minmax_tasks = (struct minmax_task *)malloc(sizeof(struct minmax_task)*th);
     // first, collect min/max statistics for each tile
     for (int ty = 0; ty < th; ty++) {
-        for (int tx = 0; tx < tw; tx++) {
-            uint8_t max = 0, min = 255;
+        minmax_tasks[ty].im = im;
+        minmax_tasks[ty].im_max = im_max;
+        minmax_tasks[ty].im_min = im_min;
+        minmax_tasks[ty].ty = ty;
 
-            for (int dy = 0; dy < tilesz; dy++) {
-
-                for (int dx = 0; dx < tilesz; dx++) {
-
-                    uint8_t v = im->buf[(ty*tilesz+dy)*s + tx*tilesz + dx];
-                    if (v < min)
-                        min = v;
-                    if (v > max)
-                        max = v;
-                }
-            }
-
-            im_max[ty*tw+tx] = max;
-            im_min[ty*tw+tx] = min;
-        }
+        workerpool_add_task(td->wp, do_minmax_task, &minmax_tasks[ty]);
     }
+    workerpool_run(td->wp);
+    free(minmax_tasks);
 
     // second, apply 3x3 max/min convolution to "blur" these values
     // over larger areas. This reduces artifacts due to abrupt changes
@@ -1164,77 +1268,38 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
         uint8_t *im_max_tmp = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
         uint8_t *im_min_tmp = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
 
+        struct blur_task *blur_tasks = (struct blur_task *)malloc(sizeof(struct blur_task)*th);
         for (int ty = 0; ty < th; ty++) {
-            for (int tx = 0; tx < tw; tx++) {
-                uint8_t max = 0, min = 255;
+            blur_tasks[ty].im = im;
+            blur_tasks[ty].im_max = im_max;
+            blur_tasks[ty].im_min = im_min;
+            blur_tasks[ty].im_max_tmp = im_max_tmp;
+            blur_tasks[ty].im_min_tmp = im_min_tmp;
+            blur_tasks[ty].ty = ty;
 
-                for (int dy = -1; dy <= 1; dy++) {
-                    if (ty+dy < 0 || ty+dy >= th)
-                        continue;
-                    for (int dx = -1; dx <= 1; dx++) {
-                        if (tx+dx < 0 || tx+dx >= tw)
-                            continue;
-
-                        uint8_t m = im_max[(ty+dy)*tw+tx+dx];
-                        if (m > max)
-                            max = m;
-                        m = im_min[(ty+dy)*tw+tx+dx];
-                        if (m < min)
-                            min = m;
-                    }
-                }
-
-                im_max_tmp[ty*tw + tx] = max;
-                im_min_tmp[ty*tw + tx] = min;
-            }
+            workerpool_add_task(td->wp, do_blur_task, &blur_tasks[ty]);
         }
+        workerpool_run(td->wp);
+        free(blur_tasks);
         free(im_max);
         free(im_min);
         im_max = im_max_tmp;
         im_min = im_min_tmp;
     }
 
+    struct threshold_task *threshold_tasks = (struct threshold_task *)malloc(sizeof(struct threshold_task)*th);
     for (int ty = 0; ty < th; ty++) {
-        for (int tx = 0; tx < tw; tx++) {
+        threshold_tasks[ty].im = im;
+        threshold_tasks[ty].threshim = threshim;
+        threshold_tasks[ty].im_max = im_max;
+        threshold_tasks[ty].im_min = im_min;
+        threshold_tasks[ty].ty = ty;
+        threshold_tasks[ty].td = td;
 
-            int min = im_min[ty*tw + tx];
-            int max = im_max[ty*tw + tx];
-
-            // low contrast region? (no edges)
-            if (max - min < td->qtp.min_white_black_diff) {
-                for (int dy = 0; dy < tilesz; dy++) {
-                    int y = ty*tilesz + dy;
-
-                    for (int dx = 0; dx < tilesz; dx++) {
-                        int x = tx*tilesz + dx;
-
-                        threshim->buf[y*s+x] = 127;
-                    }
-                }
-                continue;
-            }
-
-            // otherwise, actually threshold this tile.
-
-            // argument for biasing towards dark; specular highlights
-            // can be substantially brighter than white tag parts
-            uint8_t thresh = min + (max - min) / 2;
-
-            for (int dy = 0; dy < tilesz; dy++) {
-                int y = ty*tilesz + dy;
-
-                for (int dx = 0; dx < tilesz; dx++) {
-                    int x = tx*tilesz + dx;
-
-                    uint8_t v = im->buf[y*s+x];
-                    if (v > thresh)
-                        threshim->buf[y*s+x] = 255;
-                    else
-                        threshim->buf[y*s+x] = 0;
-                }
-            }
-        }
+        workerpool_add_task(td->wp, do_threshold_task, &threshold_tasks[ty]);
     }
+    workerpool_run(td->wp);
+    free(threshold_tasks);
 
     // we skipped over the non-full-sized tiles above. Fix those now.
     if (1) {
@@ -1278,7 +1343,7 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
 
     // this is a dilate/erode deglitching scheme that does not improve
     // anything as far as I can tell.
-    if (0 || td->qtp.deglitch) {
+    if (td->qtp.deglitch) {
         image_u8_t *tmp = image_u8_create(w, h);
 
         for (int y = 1; y + 1 < h; y++) {
@@ -1440,12 +1505,12 @@ unionfind_t* connected_components(apriltag_detector_t *td, image_u8_t* threshim,
     unionfind_t *uf = unionfind_create(w * h);
 
     if (td->nthreads <= 1) {
-        do_unionfind_first_line(uf, threshim, h, w, ts);
+        do_unionfind_first_line(uf, threshim, w, ts);
         for (int y = 1; y < h; y++) {
-            do_unionfind_line2(uf, threshim, h, w, ts, y);
+            do_unionfind_line2(uf, threshim, w, ts, y);
         }
     } else {
-        do_unionfind_first_line(uf, threshim, h, w, ts);
+        do_unionfind_first_line(uf, threshim, w, ts);
 
         int sz = h;
         int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
@@ -1475,7 +1540,7 @@ unionfind_t* connected_components(apriltag_detector_t *td, image_u8_t* threshim,
 
         // XXX stitch together the different chunks.
         for (int i = 1; i < ntasks; i++) {
-            do_unionfind_line2(uf, threshim, h, w, ts, tasks[i].y0 - 1);
+            do_unionfind_line2(uf, threshim, w, ts, tasks[i].y0 - 1);
         }
 
         free(tasks);
@@ -1493,15 +1558,19 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
     mem_pools[mem_pool_idx] = (struct uint64_zarray_entry *)calloc(mem_chunk_size, sizeof(struct uint64_zarray_entry));
 
     for (int y = y0; y < y1; y++) {
+        bool connected_last = false;
         for (int x = 1; x < w-1; x++) {
 
             uint8_t v0 = threshim->buf[y*ts + x];
-            if (v0 == 127)
+            if (v0 == 127) {
+                connected_last = false;
                 continue;
+            }
 
             // XXX don't query this until we know we need it?
             uint64_t rep0 = unionfind_get_representative(uf, y*w + x);
             if (unionfind_get_set_size(uf, rep0) < 25) {
+                connected_last = false;
                 continue;
             }
 
@@ -1525,6 +1594,7 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
             // A possible optimization would be to combine entries
             // within the same cluster.
 
+            bool connected;
 #define DO_CONN(dx, dy)                                                 \
             if (1) {                                                    \
                 uint8_t v1 = threshim->buf[(y + dy)*ts + x + dx];       \
@@ -1562,6 +1632,7 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
  			    \
                         struct pt p = { (uint16_t)(2*x + dx), (uint16_t)(2*y + dy), (int16_t)(dx*((int) v1-v0)), (int16_t)(dy*((int) v1-v0)), 0.f}; \
                         zarray_add(entry->cluster, &p);                     \
+                        connected = true;                                   \
                     }                                                   \
                 }                                                       \
             }
@@ -1571,8 +1642,16 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
             DO_CONN(0, 1);
 
             // do 8 connectivity
-            DO_CONN(-1, 1);
+            if (!connected_last) {
+                // Checking 1, 1 on the previous x, y, and -1, 1 on the current
+                // x, y result in duplicate points in the final list.  Only
+                // check the potential duplicate if adding this one won't
+                // create a duplicate.
+                DO_CONN(-1, 1);
+            }
+            connected = false;
             DO_CONN(1, 1);
+            connected_last = connected;
         }
     }
 #undef DO_CONN
@@ -1592,14 +1671,14 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
         int n = end - start;
         for (int j = 0; j < n - 1; j++) {
             for (int k = 0; k < n - j - 1; k++) {
-                struct cluster_hash* hash1;
-                struct cluster_hash* hash2;
-                zarray_get(clusters, start + k, &hash1);
-                zarray_get(clusters, start + k + 1, &hash2);
-                if (hash1->id > hash2->id) {
-                    struct cluster_hash tmp = *hash2;
-                    *hash2 = *hash1;
-                    *hash1 = tmp;
+                struct cluster_hash** hash1;
+                struct cluster_hash** hash2;
+                zarray_get_volatile(clusters, start + k, &hash1);
+                zarray_get_volatile(clusters, start + k + 1, &hash2);
+                if ((*hash1)->id > (*hash2)->id) {
+                    struct cluster_hash tmp = **hash2;
+                    **hash2 = **hash1;
+                    **hash1 = tmp;
                 }
             }
         }
@@ -1630,38 +1709,29 @@ zarray_t* merge_clusters(zarray_t* c1, zarray_t* c2) {
     int l2 = zarray_size(c2);
 
     while (i1 < l1 && i2 < l2) {
-        struct cluster_hash* h1;
-        struct cluster_hash* h2;
-        zarray_get(c1, i1, &h1);
-        zarray_get(c2, i2, &h2);
+        struct cluster_hash** h1;
+        struct cluster_hash** h2;
+        zarray_get_volatile(c1, i1, &h1);
+        zarray_get_volatile(c2, i2, &h2);
 
-        if (h1->hash == h2->hash && h1->id == h2->id) {
-            zarray_add_all(h1->data, h2->data);
-            zarray_add(ret, &h1);
+        if ((*h1)->hash == (*h2)->hash && (*h1)->id == (*h2)->id) {
+            zarray_add_range((*h1)->data, (*h2)->data, 0, zarray_size((*h2)->data));
+            zarray_add(ret, h1);
             i1++;
             i2++;
-            zarray_destroy(h2->data);
-            free(h2);
-        } else if (h2->hash < h1->hash || (h2->hash == h1->hash && h2->id < h1->id)) {
-            zarray_add(ret, &h2);
+            zarray_destroy((*h2)->data);
+            free(*h2);
+        } else if ((*h2)->hash < (*h1)->hash || ((*h2)->hash == (*h1)->hash && (*h2)->id < (*h1)->id)) {
+            zarray_add(ret, h2);
             i2++;
         } else {
-            zarray_add(ret, &h1);
+            zarray_add(ret, h1);
             i1++;
         }
     }
 
-    for (; i1 < l1; i1++) {
-        struct cluster_hash* h1;
-        zarray_get(c1, i1, &h1);
-        zarray_add(ret, &h1);
-    }
-
-    for (; i2 < l2; i2++) {
-        struct cluster_hash* h2;
-        zarray_get(c2, i2, &h2);
-        zarray_add(ret, &h2);
-    }
+    zarray_add_range(ret, c1, i1, l1);
+    zarray_add_range(ret, c2, i2, l2);
 
     zarray_destroy(c1);
     zarray_destroy(c2);
@@ -1674,7 +1744,7 @@ zarray_t* gradient_clusters(apriltag_detector_t *td, image_u8_t* threshim, int w
     int nclustermap = 0.2*w*h;
 
     int sz = h - 1;
-    int chunksize = 1 + sz / td->nthreads;
+    int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
     struct cluster_task *tasks = (struct cluster_task *)malloc(sizeof(struct cluster_task)*(sz / chunksize + 1));
 
     int ntasks = 0;
@@ -1720,10 +1790,10 @@ zarray_t* gradient_clusters(apriltag_detector_t *td, image_u8_t* threshim, int w
     clusters = zarray_create(sizeof(zarray_t*));
     zarray_ensure_capacity(clusters, zarray_size(clusters_list[0]));
     for (int i = 0; i < zarray_size(clusters_list[0]); i++) {
-        struct cluster_hash* hash;
-        zarray_get(clusters_list[0], i, &hash);
-        zarray_add(clusters, &hash->data);
-        free(hash);
+        struct cluster_hash** hash;
+        zarray_get_volatile(clusters_list[0], i, &hash);
+        zarray_add(clusters, &(*hash)->data);
+        free(*hash);
     }
     zarray_destroy(clusters_list[0]);
     free(clusters_list);
@@ -1746,7 +1816,8 @@ zarray_t* fit_quads(apriltag_detector_t *td, int w, int h, zarray_t* clusters, i
         normal_border |= !family->reversed_border;
         reversed_border |= family->reversed_border;
     }
-    min_tag_width /= td->quad_decimate;
+    if (td->quad_decimate > 1)
+        min_tag_width /= td->quad_decimate;
     if (min_tag_width < 3) {
         min_tag_width = 3;
     }
@@ -1808,7 +1879,7 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
             for (int x = 0; x < w; x++) {
                 uint32_t v = unionfind_get_representative(uf, y*w+x);
 
-                if (unionfind_get_set_size(uf, v) < td->qtp.min_cluster_pixels)
+                if ((int)unionfind_get_set_size(uf, v) < td->qtp.min_cluster_pixels)
                     continue;
 
                 uint32_t color = colors[v];

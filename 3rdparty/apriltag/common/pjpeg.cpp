@@ -95,7 +95,7 @@ static uint8_t mjpeg_dht[] = { // header
     0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,
 
     /////////////////////////////////////////////////////////////
-    // chrominance DC coefficents
+    // chrominance DC coefficients
     // DC table 1
     0x01,
     // code lengths
@@ -422,7 +422,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                             if (code_pos + ncodes > 0xffff)
                                 return PJPEG_ERR_DHT;
 
-                            for (int ci = 0; ci < ncodes; ci++) {
+                            for (unsigned int ci = 0; ci < ncodes; ci++) {
                                 pjd->huff_codes[htidx][code_pos].nbits = nbits;
                                 pjd->huff_codes[htidx][code_pos].code = code;
                                 code_pos++;
@@ -752,8 +752,8 @@ image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj)
 
     if (Cr_factor_y == 1 && Cr_factor_x == 1 && Cb_factor_y == 1 && Cb_factor_x == 1) {
 
-        for (int y = 0; y < pj->height; y++) {
-            for (int x = 0; x < pj->width; x++) {
+        for (uint32_t y = 0; y < pj->height; y++) {
+            for (uint32_t x = 0; x < pj->width; x++) {
                 int32_t y_val  = Y->data[y*Y->stride + x] * 65536;
                 int32_t cb_val = Cb->data[y*Cb->stride + x] - 128;
                 int32_t cr_val = Cr->data[y*Cr->stride + x] - 128;
@@ -768,8 +768,8 @@ image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj)
             }
         }
     } else if (Cb_factor_y == Cr_factor_y && Cb_factor_x == Cr_factor_x) {
-        for (int by = 0; by < pj->height / Cb_factor_y; by++) {
-            for (int bx = 0; bx < pj->width / Cb_factor_x; bx++) {
+        for (uint32_t by = 0; by < pj->height / Cb_factor_y; by++) {
+            for (uint32_t bx = 0; bx < pj->width / Cb_factor_x; bx++) {
 
                 int32_t cb_val = Cb->data[by*Cb->stride + bx] - 128;
                 int32_t cr_val = Cr->data[by*Cr->stride + bx] - 128;
@@ -799,8 +799,8 @@ image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj)
         }
     } else {
 
-        for (int y = 0; y < pj->height; y++) {
-            for (int x = 0; x < pj->width; x++) {
+        for (uint32_t y = 0; y < pj->height; y++) {
+            for (uint32_t x = 0; x < pj->width; x++) {
                 int32_t y_val  = Y->data[y*Y->stride + x];
                 int32_t cb_val = Cb->data[(y / Cb_factor_y)*Cb->stride + (x / Cb_factor_x)] - 128;
                 int32_t cr_val = Cr->data[(y / Cr_factor_y)*Cr->stride + (x / Cr_factor_x)] - 128;
@@ -823,7 +823,7 @@ image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj)
 // returns NULL if file loading fails.
 pjpeg_t *pjpeg_create_from_file(const char *path, uint32_t flags, int *error)
 {
-    FILE *f = fopen(path, "r");
+    FILE *f = fopen(path, "rb");
     if (f == NULL)
         return NULL;
 
@@ -833,6 +833,12 @@ pjpeg_t *pjpeg_create_from_file(const char *path, uint32_t flags, int *error)
     uint8_t *buf = (uint8_t *)malloc(buflen);
     fseek(f, 0, SEEK_SET);
     int res = fread(buf, 1, buflen, f);
+
+    if ( ferror(f) ){
+        debug_print ("Read failed");
+        clearerr(f);
+    }
+
     fclose(f);
     if (res != buflen) {
         free(buf);
@@ -857,6 +863,7 @@ pjpeg_t *pjpeg_create_from_buffer(uint8_t *buf, int buflen, uint32_t flags, int 
         pjd.inlen = sizeof(mjpeg_dht);
         int result = pjpeg_decode_buffer(&pjd);
         assert(result == 0);
+        (void)result;
     }
 
     pjd.in = buf;

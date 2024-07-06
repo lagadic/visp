@@ -108,20 +108,18 @@ matd_t *matd_identity(int dim)
 }
 
 // row and col are zero-based
-TYPE matd_get(const matd_t *m, int row, int col)
+TYPE matd_get(const matd_t *m, unsigned int row, unsigned int col)
 {
     assert(m != NULL);
     assert(!matd_is_scalar(m));
-    assert(row >= 0);
     assert(row < m->nrows);
-    assert(col >= 0);
     assert(col < m->ncols);
 
     return MATD_EL(m, row, col);
 }
 
 // row and col are zero-based
-void matd_put(matd_t *m, int row, int col, TYPE value)
+void matd_put(matd_t *m, unsigned int row, unsigned int col, TYPE value)
 {
     assert(m != NULL);
 
@@ -130,9 +128,7 @@ void matd_put(matd_t *m, int row, int col, TYPE value)
         return;
     }
 
-    assert(row >= 0);
     assert(row < m->nrows);
-    assert(col >= 0);
     assert(col < m->ncols);
 
     MATD_EL(m, row, col) = value;
@@ -167,12 +163,12 @@ matd_t *matd_copy(const matd_t *m)
     return x;
 }
 
-matd_t *matd_select(const matd_t * a, int r0, int r1, int c0, int c1)
+matd_t *matd_select(const matd_t * a, unsigned int r0, int r1, unsigned int c0, int c1)
 {
     assert(a != NULL);
 
-    assert(r0 >= 0 && r0 < a->nrows);
-    assert(c0 >= 0 && c0 < a->ncols);
+    assert(r0 < a->nrows);
+    assert(c0 < a->ncols);
 
     int nrows = r1 - r0 + 1;
     int ncols = c1 - c0 + 1;
@@ -195,8 +191,8 @@ void matd_print(const matd_t *m, const char *fmt)
         printf(fmt, MATD_EL(m, 0, 0));
         printf("\n");
     } else {
-        for (int i = 0; i < m->nrows; i++) {
-            for (int j = 0; j < m->ncols; j++) {
+        for (unsigned int i = 0; i < m->nrows; i++) {
+            for (unsigned int j = 0; j < m->ncols; j++) {
                 printf(fmt, MATD_EL(m, i, j));
             }
             printf("\n");
@@ -213,8 +209,8 @@ void matd_print_transpose(const matd_t *m, const char *fmt)
         printf(fmt, MATD_EL(m, 0, 0));
         printf("\n");
     } else {
-        for (int j = 0; j < m->ncols; j++) {
-            for (int i = 0; i < m->nrows; i++) {
+        for (unsigned int j = 0; j < m->ncols; j++) {
+            for (unsigned int i = 0; i < m->nrows; i++) {
                 printf(fmt, MATD_EL(m, i, j));
             }
             printf("\n");
@@ -245,10 +241,10 @@ matd_t *matd_multiply(const matd_t *a, const matd_t *b)
     assert(a->ncols == b->nrows);
     matd_t *m = matd_create(a->nrows, b->ncols);
 
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (unsigned int i = 0; i < m->nrows; i++) {
+        for (unsigned int j = 0; j < m->ncols; j++) {
             TYPE acc = 0;
-            for (int k = 0; k < a->ncols; k++) {
+            for (unsigned int k = 0; k < a->ncols; k++) {
                 acc += MATD_EL(a, i, k) * MATD_EL(b, k, j);
             }
             MATD_EL(m, i, j) = acc;
@@ -267,8 +263,8 @@ matd_t *matd_scale(const matd_t *a, double s)
 
     matd_t *m = matd_create(a->nrows, a->ncols);
 
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (unsigned int i = 0; i < m->nrows; i++) {
+        for (unsigned int j = 0; j < m->ncols; j++) {
             MATD_EL(m, i, j) = s * MATD_EL(a, i, j);
         }
     }
@@ -285,8 +281,8 @@ void matd_scale_inplace(matd_t *a, double s)
         return;
     }
 
-    for (int i = 0; i < a->nrows; i++) {
-        for (int j = 0; j < a->ncols; j++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
+        for (unsigned int j = 0; j < a->ncols; j++) {
             MATD_EL(a, i, j) *= s;
         }
     }
@@ -304,8 +300,8 @@ matd_t *matd_add(const matd_t *a, const matd_t *b)
 
     matd_t *m = matd_create(a->nrows, a->ncols);
 
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (unsigned int i = 0; i < m->nrows; i++) {
+        for (unsigned int j = 0; j < m->ncols; j++) {
             MATD_EL(m, i, j) = MATD_EL(a, i, j) + MATD_EL(b, i, j);
         }
     }
@@ -325,8 +321,8 @@ void matd_add_inplace(matd_t *a, const matd_t *b)
         return;
     }
 
-    for (int i = 0; i < a->nrows; i++) {
-        for (int j = 0; j < a->ncols; j++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
+        for (unsigned int j = 0; j < a->ncols; j++) {
             MATD_EL(a, i, j) += MATD_EL(b, i, j);
         }
     }
@@ -345,8 +341,8 @@ matd_t *matd_subtract(const matd_t *a, const matd_t *b)
 
     matd_t *m = matd_create(a->nrows, a->ncols);
 
-    for (int i = 0; i < m->nrows; i++) {
-        for (int j = 0; j < m->ncols; j++) {
+    for (unsigned int i = 0; i < m->nrows; i++) {
+        for (unsigned int j = 0; j < m->ncols; j++) {
             MATD_EL(m, i, j) = MATD_EL(a, i, j) - MATD_EL(b, i, j);
         }
     }
@@ -366,8 +362,8 @@ void matd_subtract_inplace(matd_t *a, const matd_t *b)
         return;
     }
 
-    for (int i = 0; i < a->nrows; i++) {
-        for (int j = 0; j < a->ncols; j++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
+        for (unsigned int j = 0; j < a->ncols; j++) {
             MATD_EL(a, i, j) -= MATD_EL(b, i, j);
         }
     }
@@ -383,8 +379,8 @@ matd_t *matd_transpose(const matd_t *a)
 
     matd_t *m = matd_create(a->ncols, a->nrows);
 
-    for (int i = 0; i < a->nrows; i++) {
-        for (int j = 0; j < a->ncols; j++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
+        for (unsigned int j = 0; j < a->ncols; j++) {
             MATD_EL(m, j, i) = MATD_EL(a, i, j);
         }
     }
@@ -402,7 +398,7 @@ double matd_det_general(const matd_t *a)
     // The determinants of the L and U matrices are the products of
     // their respective diagonal elements
     double detL = 1; double detU = 1;
-    for (int i = 0; i < a->nrows; i++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
         detL *= matd_get(L, i, i);
         detU *= matd_get(U, i, i);
     }
@@ -880,6 +876,8 @@ double matd_vec_dist_n(const matd_t *a, const matd_t *b, int n)
     int lenb = b->nrows*b->ncols;
 
     assert(n <= lena && n <= lenb);
+    (void)lena;
+    (void)lenb;
 
     double mag = 0.0;
     for (int i = 0; i < n; i++)
@@ -914,6 +912,7 @@ double matd_vec_dot_product(const matd_t *a, const matd_t *b)
     int adim = a->ncols*a->nrows;
     int bdim = b->ncols*b->nrows;
     assert(adim == bdim);
+    (void)bdim;
 
     double acc = 0;
     for (int i = 0; i < adim; i++) {
@@ -962,8 +961,8 @@ TYPE matd_err_inf(const matd_t *a, const matd_t *b)
 
     TYPE maxf = 0;
 
-    for (int i = 0; i < a->nrows; i++) {
-        for (int j = 0; j < a->ncols; j++) {
+    for (unsigned int i = 0; i < a->nrows; i++) {
+        for (unsigned int j = 0; j < a->ncols; j++) {
             TYPE av = MATD_EL(a, i, j);
             TYPE bv = MATD_EL(b, i, j);
 
@@ -1007,7 +1006,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     // RS: cumulative right-handed transformations.
     matd_t *RS = matd_identity(A->ncols);
 
-    for (int hhidx = 0; hhidx < A->nrows; hhidx++)  {
+    for (unsigned int hhidx = 0; hhidx < A->nrows; hhidx++)  {
 
         if (hhidx < A->ncols) {
             // We construct the normal of the reflection plane: let u
@@ -1067,7 +1066,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             // LS = matd_op("F*M", LS, Q);
             // Implementation: take each row of LS, compute dot product with n,
             // subtract n (scaled by dot product) from it.
-            for (int i = 0; i < LS->nrows; i++) {
+            for (unsigned int i = 0; i < LS->nrows; i++) {
                 double dot = 0;
                 for (int j = 0; j < vlen; j++)
                     dot += MATD_EL(LS, i, hhidx+j) * v[j];
@@ -1076,7 +1075,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             }
 
             //  B = matd_op("M*F", Q, B); // should be Q', but Q is symmetric.
-            for (int i = 0; i < B->ncols; i++) {
+            for (unsigned int i = 0; i < B->ncols; i++) {
                 double dot = 0;
                 for (int j = 0; j < vlen; j++)
                     dot += MATD_EL(B, hhidx+j, i) * v[j];
@@ -1125,7 +1124,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             //       MATD_EL(Q, i+1+hhidx, j+1+hhidx) -= 2*v[i]*v[j];
 
             //  RS = matd_op("F*M", RS, Q);
-            for (int i = 0; i < RS->nrows; i++) {
+            for (unsigned int i = 0; i < RS->nrows; i++) {
                 double dot = 0;
                 for (int j = 0; j < vlen; j++)
                     dot += MATD_EL(RS, i, hhidx+1+j) * v[j];
@@ -1134,7 +1133,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             }
 
             //   B = matd_op("F*M", B, Q); // should be Q', but Q is symmetric.
-            for (int i = 0; i < B->nrows; i++) {
+            for (unsigned int i = 0; i < B->nrows; i++) {
                 double dot = 0;
                 for (int j = 0; j < vlen; j++)
                     dot += MATD_EL(B, i, hhidx+1+j) * v[j];
@@ -1163,11 +1162,11 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 
     // for each of the first B->ncols rows, which index has the
     // maximum absolute value? (used by method 1)
-    int *maxrowidx = (int *)malloc(sizeof(int)*B->ncols);
-    int lastmaxi, lastmaxj;
+    unsigned int *maxrowidx = (unsigned int *)malloc(sizeof(int)*B->ncols);
+    unsigned int lastmaxi, lastmaxj;
 
     if (find_max_method == 1) {
-        for (int i = 2; i < B->ncols; i++)
+        for (unsigned int i = 2; i < B->ncols; i++)
             maxrowidx[i] = max_idx(B, i, B->ncols);
 
         // note that we started the array at 2. That's because by setting
@@ -1200,7 +1199,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             // modified. Update maxrowidx accordingly.
 
             // now, EVERY row also had columns lastmaxi and lastmaxj modified.
-            for (int rowi = 0; rowi < B->ncols; rowi++) {
+            for (unsigned int rowi = 0; rowi < B->ncols; rowi++) {
 
                 // the magnitude of the largest off-diagonal element
                 // in this row.
@@ -1273,8 +1272,8 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             maxv = -1;
 
             // only search top "square" portion
-            for (int i = 0; i < B->ncols; i++) {
-                for (int j = 0; j < B->ncols; j++) {
+            for (unsigned int i = 0; i < B->ncols; i++) {
+                for (unsigned int j = 0; j < B->ncols; j++) {
                     if (i == j)
                         continue;
 
@@ -1339,7 +1338,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 */
 
             //  LS = matd_op("F*M", LS, QL);
-            for (int i = 0; i < LS->nrows; i++) {
+            for (unsigned int i = 0; i < LS->nrows; i++) {
                 double vi = MATD_EL(LS, i, maxi);
                 double vj = MATD_EL(LS, i, maxj);
 
@@ -1348,7 +1347,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             }
 
             //  RS = matd_op("F*M", RS, QR); // remember we'll transpose RS.
-            for (int i = 0; i < RS->nrows; i++) {
+            for (unsigned int i = 0; i < RS->nrows; i++) {
                 double vi = MATD_EL(RS, i, maxi);
                 double vj = MATD_EL(RS, i, maxj);
 
@@ -1358,7 +1357,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 
             // B = matd_op("M'*F*M", QL, B, QR);
             // The QL matrix mixes rows of B.
-            for (int i = 0; i < B->ncols; i++) {
+            for (unsigned int i = 0; i < B->ncols; i++) {
                 double vi = MATD_EL(B, maxi, i);
                 double vj = MATD_EL(B, maxj, i);
 
@@ -1367,7 +1366,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             }
 
             // The QR matrix mixes columns of B.
-            for (int i = 0; i < B->nrows; i++) {
+            for (unsigned int i = 0; i < B->nrows; i++) {
                 double vi = MATD_EL(B, i, maxi);
                 double vj = MATD_EL(B, i, maxj);
 
@@ -1390,7 +1389,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     // U/LS.
     int *idxs = (int *)malloc(sizeof(int)*A->ncols);
     double *vals = (double *)malloc(sizeof(double)*A->ncols);
-    for (int i = 0; i < A->ncols; i++) {
+    for (unsigned int i = 0; i < A->ncols; i++) {
         idxs[i] = i;
         vals[i] = MATD_EL(B, i, i);
     }
@@ -1400,7 +1399,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     do {
         changed = 0;
 
-        for (int i = 0; i + 1 < A->ncols; i++) {
+        for (unsigned int i = 0; i + 1 < A->ncols; i++) {
             if (fabs(vals[i+1]) > fabs(vals[i])) {
                 int tmpi = idxs[i];
                 idxs[i] = idxs[i+1];
@@ -1418,7 +1417,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     matd_t *LP = matd_identity(A->nrows);
     matd_t *RP = matd_identity(A->ncols);
 
-    for (int i = 0; i < A->ncols; i++) {
+    for (unsigned int i = 0; i < A->ncols; i++) {
         MATD_EL(LP, idxs[i], idxs[i]) = 0; // undo the identity above
         MATD_EL(RP, idxs[i], idxs[i]) = 0;
 
@@ -1446,8 +1445,8 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 
     // make B exactly diagonal
 
-    for (int i = 0; i < B->nrows; i++) {
-        for (int j = 0; j < B->ncols; j++) {
+    for (unsigned int i = 0; i < B->nrows; i++) {
+        for (unsigned int j = 0; j < B->ncols; j++) {
             if (i != j)
                 MATD_EL(B, i, j) = 0;
         }
@@ -1524,11 +1523,11 @@ matd_plu_t *matd_plu(const matd_t *a)
 
     matd_plu_t *mlu = (matd_plu_t *)calloc(1, sizeof(matd_plu_t));
 
-    for (int i = 0; i < a->nrows; i++)
+    for (unsigned int i = 0; i < a->nrows; i++)
         piv[i] = i;
 
-    for (int j = 0; j < a->ncols; j++) {
-        for (int i = 0; i < a->nrows; i++) {
+    for (unsigned int j = 0; j < a->ncols; j++) {
+        for (unsigned int i = 0; i < a->nrows; i++) {
             int kmax = i < j ? i : j; // min(i,j)
 
             // compute dot product of row i with column j (up through element kmax)
@@ -1540,9 +1539,9 @@ matd_plu_t *matd_plu(const matd_t *a)
         }
 
         // find pivot and exchange if necessary.
-        int p = j;
+        unsigned int p = j;
         if (1) {
-            for (int i = j+1; i < lu->nrows; i++) {
+            for (unsigned int i = j+1; i < lu->nrows; i++) {
                 if (fabs(MATD_EL(lu,i,j)) > fabs(MATD_EL(lu, p, j))) {
                     p = i;
                 }
@@ -1581,7 +1580,7 @@ matd_plu_t *matd_plu(const matd_t *a)
 
         if (j < lu->ncols && j < lu->nrows && LUjj != 0) {
             LUjj = 1.0 / LUjj;
-            for (int i = j+1; i < lu->nrows; i++)
+            for (unsigned int i = j+1; i < lu->nrows; i++)
                 MATD_EL(lu, i, j) *= LUjj;
         }
     }
@@ -1607,7 +1606,7 @@ double matd_plu_det(const matd_plu_t *mlu)
     double det = mlu->pivsign;
 
     if (lu->nrows == lu->ncols) {
-        for (int i = 0; i < lu->ncols; i++)
+        for (unsigned int i = 0; i < lu->ncols; i++)
             det *= MATD_EL(lu, i, i);
     }
 
@@ -1619,7 +1618,7 @@ matd_t *matd_plu_p(const matd_plu_t *mlu)
     matd_t *lu = mlu->lu;
     matd_t *P = matd_create(lu->nrows, lu->nrows);
 
-    for (int i = 0; i < lu->nrows; i++) {
+    for (unsigned int i = 0; i < lu->nrows; i++) {
         MATD_EL(P, mlu->piv[i], i) = 1;
     }
 
@@ -1631,10 +1630,10 @@ matd_t *matd_plu_l(const matd_plu_t *mlu)
     matd_t *lu = mlu->lu;
 
     matd_t *L = matd_create(lu->nrows, lu->ncols);
-    for (int i = 0; i < lu->nrows; i++) {
+    for (unsigned int i = 0; i < lu->nrows; i++) {
         MATD_EL(L, i, i) = 1;
 
-        for (int j = 0; j < i; j++) {
+        for (unsigned int j = 0; j < i; j++) {
             MATD_EL(L, i, j) = MATD_EL(lu, i, j);
         }
     }
@@ -1647,8 +1646,8 @@ matd_t *matd_plu_u(const matd_plu_t *mlu)
     matd_t *lu = mlu->lu;
 
     matd_t *U = matd_create(lu->ncols, lu->ncols);
-    for (int i = 0; i < lu->ncols; i++) {
-        for (int j = 0; j < lu->ncols; j++) {
+    for (unsigned int i = 0; i < lu->ncols; i++) {
+        for (unsigned int j = 0; j < lu->ncols; j++) {
             if (i <= j)
                 MATD_EL(U, i, j) = MATD_EL(lu, i, j);
         }
@@ -1666,14 +1665,14 @@ matd_t *matd_plu_solve(const matd_plu_t *mlu, const matd_t *b)
     matd_t *x = matd_copy(b);
 
     // permute right hand side
-    for (int i = 0; i < mlu->lu->nrows; i++)
+    for (unsigned int i = 0; i < mlu->lu->nrows; i++)
         memcpy(&MATD_EL(x, i, 0), &MATD_EL(b, mlu->piv[i], 0), sizeof(TYPE) * b->ncols);
 
     // solve Ly = b
-    for (int k = 0; k < mlu->lu->nrows; k++) {
-        for (int i = k+1; i < mlu->lu->nrows; i++) {
+    for (unsigned int k = 0; k < mlu->lu->nrows; k++) {
+        for (unsigned int i = k+1; i < mlu->lu->nrows; i++) {
             double LUik = -MATD_EL(mlu->lu, i, k);
-            for (int t = 0; t < b->ncols; t++)
+            for (unsigned int t = 0; t < b->ncols; t++)
                 MATD_EL(x, i, t) += MATD_EL(x, k, t) * LUik;
         }
     }
@@ -1681,12 +1680,12 @@ matd_t *matd_plu_solve(const matd_plu_t *mlu, const matd_t *b)
     // solve Ux = y
     for (int k = mlu->lu->ncols-1; k >= 0; k--) {
         double LUkk = 1.0 / MATD_EL(mlu->lu, k, k);
-        for (int t = 0; t < b->ncols; t++)
+        for (unsigned int t = 0; t < b->ncols; t++)
             MATD_EL(x, k, t) *= LUkk;
 
         for (int i = 0; i < k; i++) {
             double LUik = -MATD_EL(mlu->lu, i, k);
-            for (int t = 0; t < b->ncols; t++)
+            for (unsigned int t = 0; t < b->ncols; t++)
                 MATD_EL(x, i, t) += MATD_EL(x, k, t) *LUik;
         }
     }
@@ -1914,7 +1913,7 @@ void matd_ltransposetriangle_solve(matd_t *u, const TYPE *b, TYPE *x)
     for (int i = 0; i < n; i++) {
         x[i] /= MATD_EL(u, i, i);
 
-        for (int j = i+1; j < u->ncols; j++) {
+        for (unsigned int j = i+1; j < u->ncols; j++) {
             x[j] -= x[i] * MATD_EL(u, i, j);
         }
     }
@@ -1944,7 +1943,7 @@ void matd_utriangle_solve(matd_t *u, const TYPE *b, TYPE *x)
 
         double diag = MATD_EL(u, i, i);
 
-        for (int j = i+1; j < u->ncols; j++)
+        for (unsigned int j = i+1; j < u->ncols; j++)
             bi -= MATD_EL(u, i, j)*x[j];
 
         x[i] = bi / diag;
@@ -1961,17 +1960,17 @@ matd_t *matd_chol_solve(const matd_chol_t *chol, const matd_t *b)
 
     // solve Ly = b ==> (U')y = b
 
-    for (int i = 0; i < u->nrows; i++) {
-        for (int j = 0; j < i; j++) {
+    for (unsigned int i = 0; i < u->nrows; i++) {
+        for (unsigned int j = 0; j < i; j++) {
             // b[i] -= L[i,j]*x[j]... replicated across columns of b
             //   ==> i.e., ==>
             // b[i,k] -= L[i,j]*x[j,k]
-            for (int k = 0; k < b->ncols; k++) {
+            for (unsigned int k = 0; k < b->ncols; k++) {
                 MATD_EL(x, i, k) -= MATD_EL(u, j, i)*MATD_EL(x, j, k);
             }
         }
         // x[i] = b[i] / L[i,i]
-        for (int k = 0; k < b->ncols; k++) {
+        for (unsigned int k = 0; k < b->ncols; k++) {
             MATD_EL(x, i, k) /= MATD_EL(u, i, i);
         }
     }
@@ -1979,12 +1978,12 @@ matd_t *matd_chol_solve(const matd_chol_t *chol, const matd_t *b)
     // solve Ux = y
     for (int k = u->ncols-1; k >= 0; k--) {
         double LUkk = 1.0 / MATD_EL(u, k, k);
-        for (int t = 0; t < b->ncols; t++)
+        for (unsigned int t = 0; t < b->ncols; t++)
             MATD_EL(x, k, t) *= LUkk;
 
         for (int i = 0; i < k; i++) {
             double LUik = -MATD_EL(u, i, k);
-            for (int t = 0; t < b->ncols; t++)
+            for (unsigned int t = 0; t < b->ncols; t++)
                 MATD_EL(x, i, t) += MATD_EL(x, k, t) *LUik;
         }
     }
@@ -2020,8 +2019,8 @@ matd_t *matd_chol_inverse(matd_t *a)
 double matd_max(matd_t *m)
 {
     double d = -DBL_MAX;
-    for(int x=0; x<m->nrows; x++) {
-        for(int y=0; y<m->ncols; y++) {
+    for(unsigned int x=0; x<m->nrows; x++) {
+        for(unsigned int y=0; y<m->ncols; y++) {
             if(MATD_EL(m, x, y) > d)
                 d = MATD_EL(m, x, y);
         }
