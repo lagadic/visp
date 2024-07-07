@@ -44,11 +44,12 @@ namespace
 {
 void vpSAT(int &c)
 {
+  const int val_255 = 255;
   if (c < 0) {
     c = 0;
   }
-  else {
-    const unsigned int val_255 = 255;
+  else if (c > val_255) {
+
     c = val_255;
   }
 }
@@ -73,13 +74,13 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
   unsigned char *d;
   int w, h;
   int r, g, b, cr, cg, cb, y1, y2;
-  const unsigned int val_2 = 2;
-  const unsigned int val_88 = 88;
-  const unsigned int val_128 = 128;
-  const unsigned int val_183 = 183;
-  const unsigned int val_256 = 256;
-  const unsigned int val_359 = 359;
-  const unsigned int val_454 = 454;
+  const int val_2 = 2;
+  const int val_88 = 88;
+  const int val_128 = 128;
+  const int val_183 = 183;
+  const int val_256 = 256;
+  const int val_359 = 359;
+  const int val_454 = 454;
 
   h = static_cast<int>(height);
   w = static_cast<int>(width);
@@ -142,13 +143,13 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
   unsigned char *d;
   int h, w;
   int r, g, b, cr, cg, cb, y1, y2;
-  const unsigned int val_2 = 2;
-  const unsigned int val_88 = 88;
-  const unsigned int val_128 = 128;
-  const unsigned int val_183 = 183;
-  const unsigned int val_256 = 256;
-  const unsigned int val_359 = 359;
-  const unsigned int val_454 = 454;
+  const int val_2 = 2;
+  const int val_88 = 88;
+  const int val_128 = 128;
+  const int val_183 = 183;
+  const int val_256 = 256;
+  const int val_359 = 359;
+  const int val_454 = 454;
 
   h = static_cast<int>(height);
   w = static_cast<int>(width);

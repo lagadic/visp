@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  # Function to get the most recent tag of a remote repository without having to clone it, excluding tag with 'pr' as in Pre Release
+  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
+
 jobs:
   build-ubuntu-dep-src:
     runs-on: ${{ matrix.os }}
@@ -59,7 +63,10 @@ jobs:
       run: |
         pwd
         echo $GITHUB_WORKSPACE
-        git clone --depth 1 https://github.com/xianyi/OpenBLAS.git ${HOME}/OpenBLAS
+        GIT_ADDRESS=https://github.com/xianyi/OpenBLAS.git
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/OpenBLAS
         cd ${HOME}/OpenBLAS
         mkdir install
         make -j$(nproc)
@@ -74,7 +81,10 @@ jobs:
         pwd
         echo "GIT_CLONE_PROTECTION_ACTIVE=false" >> $GITHUB_ENV
         export GIT_CLONE_PROTECTION_ACTIVE=false
-        git clone --recursive --depth 1 --branch v9.3.0 https://github.com/Kitware/VTK.git ${HOME}/VTK
+        GIT_ADDRESS="https://github.com/Kitware/VTK.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --recursive --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
         cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \
@@ -86,7 +96,10 @@ jobs:
     - name: Build OpenCV from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/opencv/opencv.git ${HOME}/opencv
+        GIT_ADDRESS="https://github.com/opencv/opencv.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/opencv
         cd ${HOME}/opencv
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -97,7 +110,10 @@ jobs:
     - name: Build librealsense2 from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/IntelRealSense/librealsense.git ${HOME}/librealsense
+        GIT_ADDRESS="https://github.com/IntelRealSense/librealsense.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -108,7 +124,10 @@ jobs:
     - name: Build PCL from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/PointCloudLibrary/pcl.git ${HOME}/pcl
+        GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install

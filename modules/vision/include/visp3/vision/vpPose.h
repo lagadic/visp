@@ -117,7 +117,7 @@ public:
 
 public:
   // Typedef a function that checks if a pose is valid.
-  typedef bool (*funcCheckValidityPose)(const vpHomogeneousMatrix &);
+  typedef bool (*FuncCheckValidityPose)(const vpHomogeneousMatrix &);
 
   /*!
    * Default constructor.
@@ -183,7 +183,7 @@ public:
    *   has the smallest residual.
    * - vpPose::RANSAC: Robust Ransac aproach (doesn't need an initialization)
    */
-  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, funcCheckValidityPose func = nullptr);
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, FuncCheckValidityPose func = nullptr);
 
   /*!
    * @brief Method that first computes the pose \b cMo using the linear approaches of Dementhon and Lagrange
@@ -326,7 +326,7 @@ public:
    * The number of threads used can then be set with setNbParallelRansacThreads().
    * Filter flag can be used  with setRansacFilterFlag().
    */
-  bool poseRansac(vpHomogeneousMatrix &cMo, funcCheckValidityPose func = nullptr);
+  bool poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func = nullptr);
 
   /*!
    * Compute the pose using virtual visual servoing approach and
@@ -646,7 +646,7 @@ public:
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
-                        funcCheckValidityPose func = nullptr);
+                        FuncCheckValidityPose func = nullptr);
 
 #ifdef VISP_HAVE_HOMOGRAPHY
   /*!
@@ -833,7 +833,7 @@ private:
      */
     vpRansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_, const int ransacMaxTrials_,
       double ransacThreshold_, unsigned int initial_seed_, bool checkDegeneratePoints_,
-      const std::vector<vpPoint> &listOfUniquePoints_, funcCheckValidityPose func_)
+      const std::vector<vpPoint> &listOfUniquePoints_, FuncCheckValidityPose func_)
       : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
       m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0), m_ransacMaxTrials(ransacMaxTrials_),
       m_ransacNbInlierConsensus(ransacNbInlierConsensus_), m_ransacThreshold(ransacThreshold_),
@@ -870,7 +870,7 @@ private:
     bool m_checkDegeneratePoints; //!< Flag to check for degenerate points
     vpHomogeneousMatrix m_cMo; //!< Estimated pose
     bool m_foundSolution; //!< Solution found
-    funcCheckValidityPose m_func; //!< Pointer to ransac function
+    FuncCheckValidityPose m_func; //!< Pointer to ransac function
     std::vector<vpPoint> m_listOfUniquePoints; //!< List of unique points
     unsigned int m_nbInliers; //!< Number of inliers
     int m_ransacMaxTrials; //!< Ransac max trial number

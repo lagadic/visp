@@ -510,8 +510,9 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char thre
 {
   if (useLUT) {
     // Construct the LUT
-    unsigned char lut[256];
-    for (unsigned int i = 0; i < 256; ++i) {
+    const unsigned int sizeLut = 256;
+    unsigned char lut[sizeLut];
+    for (unsigned int i = 0; i < sizeLut; ++i) {
       lut[i] = i < threshold1 ? value1 : (i > threshold2 ? value3 : value2);
     }
 
@@ -876,7 +877,8 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
   vpImage<Type> Ibuf;
   Ibuf.resize(1, width);
 
-  for (unsigned int i = 0; i < (height / 2); ++i) {
+  const unsigned int halfHeight = height / 2;
+  for (unsigned int i = 0; i < halfHeight; ++i) {
     memcpy(Ibuf.bitmap, I.bitmap + (i * width), width * sizeof(Type));
 
     memcpy(I.bitmap + (i * width), I.bitmap + ((height - 1 - i) * width), width * sizeof(Type));
@@ -960,7 +962,8 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
   vpRGBa p32 = getPixelClamped(I, u + 1, v + 2);
   vpRGBa p33 = getPixelClamped(I, u + 2, v + 2);
 
-  for (int c = 0; c < 3; ++c) {
+  const int nbChannels = 3;
+  for (int c = 0; c < nbChannels; ++c) {
     float col0 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p00)[c]),
                               static_cast<float>(reinterpret_cast<unsigned char *>(&p01)[c]),
                               static_cast<float>(reinterpret_cast<unsigned char *>(&p02)[c]),
@@ -1022,7 +1025,8 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
   int u3 = u1;
   int v3 = v2;
 
-  for (int c = 0; c < 3; ++c) {
+  const int nbChannels = 3;
+  for (int c = 0; c < nbChannels; ++c) {
     float col0 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v0][u0])[c]),
                       static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v1][u1])[c]), xFrac);
     float col1 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v2][u2])[c]),
@@ -1092,7 +1096,8 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
 #endif
 )
 {
-  if ((I.getWidth() < 2) || (I.getHeight() < 2) || (Ires.getWidth() < 2) || (Ires.getHeight() < 2)) {
+  const unsigned int minWidth = 2, minHeight = 2;
+  if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
     return;
   }
@@ -1105,17 +1110,14 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
   const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
   const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
   const float half = 0.5f;
-
+  const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
 #pragma omp parallel for schedule(dynamic)
 #endif
-  /*
-  // int ires_height = static_cast<int>(Ires.getHeight());
-  */
-  for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
+  for (int i = 0; i < ires_height; ++i) {
     const float v = ((i + half) * scaleY) - half;
     const float v0 = std::floor(v);
     const float yFrac = v - v0;
@@ -1149,7 +1151,9 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
 #endif
 )
 {
-  if ((I.getWidth() < 2) || (I.getHeight() < 2) || (Ires.getWidth() < 2) || (Ires.getHeight() < 2)) {
+  const unsigned int minWidth = 2, minHeight = 2;
+
+  if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
     return;
   }
@@ -1164,17 +1168,14 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
-
+    const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    /*
-    // int ires_height = static_cast<int>(Ires.getHeight());
-    */
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
+    for (int i = 0; i < ires_height; ++i) {
       float v = ((i + half) * scaleY) - half;
       float yFrac = v - static_cast<int>(v);
 
@@ -1203,7 +1204,9 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 #endif
 )
 {
-  if ((I.getWidth() < 2) || (I.getHeight() < 2) || (Ires.getWidth() < 2) || (Ires.getHeight() < 2)) {
+  const unsigned int minWidth = 2, minHeight = 2;
+
+  if ((I.getWidth() < minWidth) || (I.getHeight() < minHeight) || (Ires.getWidth() < minWidth) || (Ires.getHeight() < minHeight)) {
     std::cerr << "Input or output image is too small!" << std::endl;
     return;
   }
@@ -1218,18 +1221,15 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
-
+    const int ires_height = static_cast<int>(Ires.getHeight());
 #if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    /*
-    // int ires_height = static_cast<int>(Ires.getHeight());
-    */
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
-      float v = (i + half) * scaleY - half;
+    for (int i = 0; i < ires_height; ++i) {
+      float v = ((i + half) * scaleY) - half;
       float yFrac = v - static_cast<int>(v);
 
       unsigned int ires_width = static_cast<unsigned int>(Ires.getWidth());

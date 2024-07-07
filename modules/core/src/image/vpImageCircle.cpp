@@ -577,11 +577,14 @@ void computeIntersTopRightBottom(const float &u_c, const float &v_c, const float
   float theta_u_max_bottom = crossing_theta_u_max.first;
   float u_umin_bottom = crossing_theta_u_min.second;
   float u_umax_bottom = crossing_theta_u_max.second;
+  bool crossOnceTopHor = (u_umin_top <= umax_roi) && (u_umax_top > umax_roi);
+  bool dontCrossVert = (v_vmin <= vmin_roi) && (v_vmax >= vmax_roi);
+  bool crossOnceBotHor = (u_umin_bottom <= umax_roi) && (u_umax_bottom > umax_roi);
   if ((u_umax_top <= umax_roi) && (u_umax_bottom <= umax_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case intersection top + right + bottom twice
     delta_theta = (2.f * M_PI_FLOAT) - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
   }
-  else if ((u_umin_top <= umax_roi) && (u_umax_top > umax_roi) && (v_vmin <= vmin_roi) && (u_umin_bottom <= umax_roi) && (u_umax_bottom > umax_roi) && (v_vmax >= vmax_roi)) {
+  else if (crossOnceTopHor && crossOnceBotHor  && dontCrossVert) {
     // case intersection top and bottom
     delta_theta = (theta_u_max_top - theta_u_max_bottom);
   }

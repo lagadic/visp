@@ -1,10 +1,10 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER_UID=1001
 ENV TZ=Europe/Paris
 
-# Update aptitude with default packages
+## Update aptitude with default packages
 RUN apt-get update \
     && apt-get install -y \
       build-essential \
@@ -40,7 +40,7 @@ RUN apt-get update \
 # Update aptitude with recommended ViSP 3rd parties
 RUN apt-get update \
     && apt-get install -y \
-      libdc1394-22-dev \
+      libdc1394-dev \
       libeigen3-dev \
       liblapack-dev \
       libopencv-dev \
@@ -56,11 +56,11 @@ RUN apt-get update \
       libcoin-dev \
       libdmtx-dev \
       libgsl-dev \
-      libjpeg-dev \
+      libjpeg-turbo8-dev \
+      libpng-dev \
       libogre-1.9-dev \
       libois-dev \
       libpcl-dev \
-      libpng-dev \
     && apt-get clean
 
 # Set Locale
@@ -85,9 +85,6 @@ WORKDIR /home/$USERNAME
 # Some apps don't show controls without this
 ENV QT_X11_NO_MITSHM 1
 
-# Create visp workspace
-ENV VISP_WS /home/$USERNAME/visp-ws
-
 # Install visp-images
 RUN mkdir -p ${HOME}/visp-ws \
     && cd ${HOME}/visp-ws \
@@ -96,11 +93,11 @@ RUN mkdir -p ${HOME}/visp-ws \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
 
 # Get visp
-RUN cd ${VISP_WS} \
+RUN cd ${HOME}/visp-ws \
     && git clone https://github.com/lagadic/visp
 
 # Build visp
-RUN cd ${VISP_WS} \
+RUN cd ${HOME}/visp-ws \
     && mkdir visp-build \
     && cd visp-build \
     && cmake ../visp \

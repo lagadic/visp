@@ -643,7 +643,7 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doub
   return 0;
 }
 
-bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+bool lmderMostInnerLoop(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
           double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, unsigned int maxfev,
           double *diag, int nprint, int *info, unsigned int *nfev, int *ipvt,
           double *qtf, double *wa1, double *wa2, double *wa3, double *wa4, const double &gnorm, int &iter, double &delta, double &par, double &pnorm,
@@ -810,11 +810,14 @@ bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     }
 
     if (delta <= (xtol * xnorm)) {
-      *info = 2;
+      const int flagInfo = 2;
+      *info = flagInfo;
     }
 
-    if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0) && (*info == 2)) {
-      *info = 3;
+    const int info2 = 2;
+    if ((std::fabs(actred) <= ftol) && (prered <= ftol) && ((tol5 * ratio) <= 1.0) && (*info == info2)) {
+      const int flagInfo = 3;
+      *info = flagInfo;
     }
 
     if (*info != 0) {
@@ -839,19 +842,23 @@ bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
      */
 
     if (*nfev >= maxfev) {
-      *info = 5;
+      const int flagInfo = 5;
+      *info = flagInfo;
     }
 
     if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && ((tol5 * ratio) <= 1.0)) {
-      *info = 6;
+      const int flagInfo = 6;
+      *info = flagInfo;
     }
 
     if (delta <= (epsmch * xnorm)) {
-      *info = 7;
+      const int flagInfo = 7;
+      *info = flagInfo;
     }
 
     if (gnorm <= epsmch) {
-      *info = 8;
+      const int flagInfo = 8;
+      *info = flagInfo;
     }
 
     if (*info != 0) {
@@ -874,7 +881,7 @@ bool lmderMostInnerLoop(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   return false;
 }
 
-int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+int lmder(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
           double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, double gtol, unsigned int maxfev,
           double *diag, int mode, const double factor, int nprint, int *info, unsigned int *nfev, int *njev, int *ipvt,
           double *qtf, double *wa1, double *wa2, double *wa3, double *wa4)
@@ -934,7 +941,8 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
     return count;
   }
 
-  if (mode == 2) {
+  const int mode2 = 2;
+  if (mode == mode2) {
     for (j = 0; j < n; ++j) {
       if (diag[j] <= 0.0) {
         /*
@@ -991,6 +999,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
   par = 0.0;
   iter = 1;
+  const int iflag2 = 2;
 
   /*
    *  debut de la boucle la plus externe.
@@ -1001,7 +1010,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
      *  calcul de la matrice jacobienne.
      */
 
-    iflag = 2;
+    iflag = iflag2;
 
     (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
@@ -1062,7 +1071,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
      */
 
     if (iter == 1) {
-      if (mode != 2) {
+      if (mode != mode2) {
         for (j = 0; j < n; ++j) {
           diag[j] = wa2[j];
           if (std::fabs(wa2[j]) <= std::numeric_limits<double>::epsilon()) {
@@ -1142,7 +1151,8 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
      */
 
     if (gnorm <= gtol) {
-      *info = 4;
+      const int info4 = 4;
+      *info = info4;
     }
 
     if (*info != 0) {
@@ -1166,7 +1176,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
      * remise a l'echelle si necessaire.
      */
 
-    if (mode != 2) {
+    if (mode != mode2) {
       for (j = 0; j < n; ++j) {
         diag[j] = vpMath::maximum(diag[j], wa2[j]);
       }
@@ -1183,7 +1193,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
   return 0;
 }
 
-int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+int lmder1(ComputeFunctionAndJacobian ptr_fcn, int m, int n,
            double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info, int *ipvt, int lwa, double *wa)
 {
   const double factor = 100.0;
@@ -1194,26 +1204,28 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac,
   *info = 0;
 
   /* verification des parametres en entree qui causent des erreurs */
-
-  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) || (lwa < ((5 * n) + m))) {
-    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0), (lwa < ((5 * n) + m)));
+  const int lwaThresh = ((5 * n) + m);
+  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) || (lwa < lwaThresh)) {
+    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0), (lwa < lwaThresh));
     return (-1);
   }
 
   /* appel a lmder  */
-
-  maxfev = static_cast<unsigned int>(100 * (n + 1));
+  const int factor100 = 100;
+  maxfev = static_cast<unsigned int>(factor100 * (n + 1));
   ftol = tol;
   xtol = tol;
   gtol = 0.0;
   mode = 1;
   nprint = 0;
 
+  const int factor2 = 2, factor3 = 3, factor4 = 4, factor5 = 5;
   lmder(ptr_fcn, m, n, x, fvec, fjac, ldfjac, ftol, xtol, gtol, maxfev, wa, mode, factor, nprint, info, &nfev, &njev,
-        ipvt, &wa[n], &wa[2 * n], &wa[3 * n], &wa[4 * n], &wa[5 * n]);
+        ipvt, &wa[n], &wa[factor2 * n], &wa[factor3 * n], &wa[factor4 * n], &wa[factor5 * n]);
 
-  if (*info == 8) {
-    *info = 4;
+  const int info8 = 8, info4 = 4;
+  if (*info == info8) {
+    *info = info4;
   }
 
   return 0;

@@ -450,13 +450,14 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
                                 unsigned int thickness, bool closed = true)
 {
   if (I.display != nullptr) {
+    const size_t vip_size = vip.size();
     if (closed) {
-      for (unsigned int i = 0; i < vip.size(); ++i) {
+      for (unsigned int i = 0; i < vip_size; ++i) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
       }
     }
     else {
-      for (unsigned int i = 1; i < vip.size(); ++i) {
+      for (unsigned int i = 1; i < vip_size; ++i) {
         (I.display)->displayLine(vip[i - 1], vip[i], color, thickness);
       }
     }
@@ -571,8 +572,9 @@ template <class Type> void vp_display_display_roi(const vpImage<Type> &I, const 
   double roiwidth = floor(roi.getWidth());
   double iheight = static_cast<double>(I.getHeight());
   double iwidth = static_cast<double>(I.getWidth());
-
-  if (top < 0 || top > iheight || left < 0 || left > iwidth || top + roiheight > iheight || left + roiwidth > iwidth) {
+  bool vertNOK = (top < 0) || (top > iheight) || ((top + roiheight) > iheight);
+  bool horNOK = (left < 0) || (left > iwidth) || ((left + roiwidth) > iwidth);
+  if (vertNOK || horNOK) {
     throw(vpException(vpException::dimensionError, "Region of interest outside of the image"));
   }
 

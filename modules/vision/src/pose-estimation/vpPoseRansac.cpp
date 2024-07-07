@@ -68,16 +68,17 @@ struct CompareObjectPointDegenerate
     const unsigned int index_0 = 0;
     const unsigned int index_1 = 1;
     const unsigned int index_2 = 2;
+    const double val3 = 3.;
     bool rc = false;
     const double dist1 =
       (point1.get_oX() * point1.get_oX()) + (point1.get_oY() * point1.get_oY()) + (point1.get_oZ() * point1.get_oZ());
     const double dist2 =
       (point2.get_oX() * point2.get_oX()) + (point2.get_oY() * point2.get_oY()) + (point2.get_oZ() * point2.get_oZ());
 
-    if ((dist1 - dist2) < (-3 * EPS * EPS)) {
+    if ((dist1 - dist2) < (-val3 * EPS * EPS)) {
       return true;
     }
-    if ((dist1 - dist2) > (3 * EPS * EPS)) {
+    if ((dist1 - dist2) > (val3 * EPS * EPS)) {
       return false;
     }
 
@@ -114,10 +115,11 @@ struct CompareImagePointDegenerate
     bool rc = false;
     const double dist1 = (point1.get_x() * point1.get_x()) + (point1.get_y() * point1.get_y());
     const double dist2 = (point2.get_x() * point2.get_x()) + (point2.get_y() * point2.get_y());
-    if ((dist1 - dist2) < (-2 * EPS * EPS)) {
+    const double val2 = 2.;
+    if ((dist1 - dist2) < (-val2 * EPS * EPS)) {
       return true;
     }
-    if ((dist1 - dist2) > (2 * EPS * EPS)) {
+    if ((dist1 - dist2) > (val2 * EPS * EPS)) {
       return false;
     }
 
@@ -191,43 +193,46 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
     std::vector<bool> usedPt(size, false);
 
     vpPose poseMin;
-    for (unsigned int i = 0; i < nbMinRandom;) {
+    unsigned int i = 0;
+    bool stop_loop = false;
+    while ((i < nbMinRandom) && (stop_loop == false)) {
       if (static_cast<size_t>(std::count(usedPt.begin(), usedPt.end(), true)) == usedPt.size()) {
-        // All points was picked once, break otherwise we stay in an infinite loop
-        break;
+        // All points were picked once, break otherwise we stay in an infinite loop
+        stop_loop = true;
       }
+      if (!stop_loop) {
+        // Pick a point randomly
+        unsigned int r_ = m_uniRand.uniform(0, size);
 
-      // Pick a point randomly
-      unsigned int r_ = m_uniRand.uniform(0, size);
-
-      while (usedPt[r_]) {
-        // If already picked, pick another point randomly
-        r_ = m_uniRand.uniform(0, size);
-      }
-      // Mark this point as already picked
-      usedPt[r_] = true;
-      vpPoint pt = m_listOfUniquePoints[r_];
-
-      bool degenerate = false;
-      if (m_checkDegeneratePoints) {
-        if (std::find_if(poseMin.listOfPoints.begin(), poseMin.listOfPoints.end(), FindDegeneratePoint(pt)) !=
-            poseMin.listOfPoints.end()) {
-          degenerate = true;
+        while (usedPt[r_]) {
+          // If already picked, pick another point randomly
+          r_ = m_uniRand.uniform(0, size);
         }
-      }
+        // Mark this point as already picked
+        usedPt[r_] = true;
+        vpPoint pt = m_listOfUniquePoints[r_];
 
-      if (!degenerate) {
-        poseMin.addPoint(pt);
-        cur_randoms.push_back(r_);
-        // Increment the number of points picked
-        ++i;
+        bool degenerate = false;
+        if (m_checkDegeneratePoints) {
+          if (std::find_if(poseMin.listOfPoints.begin(), poseMin.listOfPoints.end(), FindDegeneratePoint(pt)) !=
+              poseMin.listOfPoints.end()) {
+            degenerate = true;
+          }
+        }
+
+        if (!degenerate) {
+          poseMin.addPoint(pt);
+          cur_randoms.push_back(r_);
+          // Increment the number of points picked
+          ++i;
+        }
       }
     }
 
     bool stop_for_loop = false;
     if (poseMin.npt < nbMinRandom) {
       ++nbTrials;
-      stop_for_loop = true;;
+      stop_for_loop = true;
     }
 
     if (!stop_for_loop) {
@@ -323,7 +328,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
   return foundSolution;
 }
 
-bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
+bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 {
   // Check only for adding / removing problem
   // Do not take into account problem with element modification here
@@ -572,7 +577,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials, bool useParallelRansac, unsigned int nthreads,
-                       bool (*func)(const vpHomogeneousMatrix &))
+                       FuncCheckValidityPose func)
 {
   vpPose pose;
 

@@ -38,7 +38,8 @@ ViSP 3.x.x (Version in development)
     . New tutorials in tutorial/segmentation/color folder to show how to use HSV color segmentation to
       extract the corresponding point cloud
     . New scene renderer based on Panda3D. See inheritance diagram for vpPanda3DBaseRenderer class and corresponding
-      tutorial.
+      tutorial
+    . New docker image for Ubuntu 24.04 in docker folder
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials

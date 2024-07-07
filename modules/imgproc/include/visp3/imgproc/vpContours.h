@@ -144,7 +144,7 @@ public:
   {
     vpDirection direction;
     int directionSize = LAST_DIRECTION;
-    direction.m_direction = vpDirectionType((static_cast<int>(m_direction) + 1) % directionSize);
+    direction.m_direction = static_cast<vpDirectionType>((static_cast<int>(m_direction) + 1) % directionSize);
 
     return direction;
   }
@@ -158,7 +158,7 @@ public:
     vpDirection direction;
     int directionSize = static_cast<int>(LAST_DIRECTION);
     int idx = VISP_NAMESPACE_ADDRESSING vpMath::modulo(static_cast<int>(m_direction) - 1, directionSize);
-    direction.m_direction = vpDirectionType(idx);
+    direction.m_direction = static_cast<vpDirectionType>(idx);
 
     return direction;
   }

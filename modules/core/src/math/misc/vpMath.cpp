@@ -640,7 +640,7 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   \sa enu2ecef(), ned2ecef()
 */
 std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
-                                                                             vpHomogeneousMatrix(*toECEF)(double lonDeg_, double latDeg_, double radius_))
+                                                                             LongLattToHomogeneous toECEF)
 {
   std::vector<vpHomogeneousMatrix> ecef_M_local_vec;
   ecef_M_local_vec.reserve(lonlatVec.size());

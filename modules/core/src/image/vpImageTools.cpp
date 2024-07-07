@@ -895,11 +895,12 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
                          const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<unsigned char> &Iundist)
 {
   Iundist.resize(I.getHeight(), I.getWidth());
+  const int I_height = static_cast<int>(I.getHeight());
 
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-  for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); ++i_) {
+  for (int i_ = 0; i_ < I_height; ++i_) {
     const unsigned int i = static_cast<unsigned int>(i_);
     unsigned int i_width = I.getWidth();
     for (unsigned int j = 0; j < i_width; ++j) {
@@ -911,7 +912,7 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
       float dv = mapDv[i][j];
 
       if ((0 <= u_round) && (0 <= v_round) && (u_round < (static_cast<int>(I.getWidth()) - 1)) &&
-          (v_round < (static_cast<int>(I.getHeight()) - 1))) {
+          (v_round < (I_height - 1))) {
         // process interpolation
         float col0 = lerp(I[v_round][u_round], I[v_round][u_round + 1], du);
         float col1 = lerp(I[v_round + 1][u_round], I[v_round + 1][u_round + 1], du);
@@ -940,11 +941,11 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
                          const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist)
 {
   Iundist.resize(I.getHeight(), I.getWidth());
-
+  const int I_height = static_cast<int>(I.getHeight());
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-  for (int i = 0; i < static_cast<int>(I.getHeight()); ++i) {
+  for (int i = 0; i < I_height; ++i) {
 #if defined(VISP_HAVE_SIMDLIB)
     SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
@@ -960,7 +961,7 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
       float dv = mapDv[i_][j];
 
       if ((0 <= u_round) && (0 <= v_round) && (u_round < (static_cast<int>(I.getWidth()) - 1))
-          && (v_round < (static_cast<int>(I.getHeight()) - 1))) {
+          && (v_round < (I_height - 1))) {
         // process interpolation
         float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
         float col1 = lerp(I[v_round + 1][u_round].R, I[v_round + 1][u_round + 1].R, du);

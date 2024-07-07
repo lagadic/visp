@@ -175,14 +175,26 @@ public:
 
   /**
    * \brief Function that computes either the equivalent of an addition or the equivalent
-   * of a substraction in the state space or in the measurement space.
-   * The first argument is the vector to which we must add/substract something
-   * and the second argument is the thing to be added/substracted. The return is the
+   * of a subtraction in the state space or in the measurement space.
+   * The first argument is the vector to which we must add/subtract something
+   * and the second argument is the thing to be added/subtracted. The return is the
    * result of this operation.
    */
   typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpAddSubFunction;
 
   /**
+<<<<<<< HEAD
+=======
+   * \brief Residual function, which computes either the equivalent of the subtraction in the
+   * state space or the equivalent of the subtraction in the measurement space.
+   * The first argument is the vector to which we must subtract something
+   * and the second argument is the thing to be subtracted. The return is the
+   * result of this "subtraction".
+   */
+  typedef std::function<vpColVector(const vpColVector &, const vpColVector &)> vpAddFunction;
+
+  /**
+>>>>>>> master
    * \brief Construct a new vpUnscentedKalman object.
    *
    * \param[in] Q The covariance introduced by performing the prediction step.
@@ -237,7 +249,7 @@ public:
   }
 
   /**
-   * \brief Set the measurement residual function to use when computing a substraction
+   * \brief Set the measurement residual function to use when computing a subtraction
    * in the measurement space.
    *
    * \param measResFunc The residual function to use.
@@ -270,7 +282,7 @@ public:
   }
 
   /**
-   * \brief Set the state residual function to use when computing a substraction
+   * \brief Set the state residual function to use when computing a subtraction
    * in the state space.
    *
    * \param stateResFunc The residual function to use.
@@ -384,15 +396,15 @@ public:
   }
 
   /**
-   * \brief Simple function to compute a residual, which just does \f$ \textbf{res} = \textbf{a} - \textbf{toSubstract} \f$
+   * \brief Simple function to compute a residual, which just does \f$ \textbf{res} = \textbf{a} - \textbf{toSubtract} \f$
    *
-   * \param[in] a Vector to which we must substract something.
-   * \param[in] toSubstract The something we must substract to \b a .
-   * \return vpColVector \f$ \textbf{res} = \textbf{a} - \textbf{toSubstract} \f$
+   * \param[in] a Vector to which we must subtract something.
+   * \param[in] toSubtract The something we must subtract to \b a .
+   * \return vpColVector \f$ \textbf{res} = \textbf{a} - \textbf{toSubtract} \f$
    */
-  inline static vpColVector simpleResidual(const vpColVector &a, const vpColVector &toSubstract)
+  inline static vpColVector simpleResidual(const vpColVector &a, const vpColVector &toSubtract)
   {
-    vpColVector res = a - toSubstract;
+    vpColVector res = a - toSubtract;
     return res;
   }
 
@@ -439,10 +451,10 @@ private:
   vpCommandOnlyFunction m_b; /*!< Function that permits to compute the effect of the commands on the prior, without knowledge of the state.*/
   vpCommandStateFunction m_bx; /*!< Function that permits to compute the effect of the commands on the prior, with knowledge of the state.*/
   vpMeanFunction m_measMeanFunc; /*!< Function to compute a weighted mean in the measurement space.*/
-  vpAddSubFunction m_measResFunc; /*!< Function to compute a substraction in the measurement space.*/
+  vpAddSubFunction m_measResFunc; /*!< Function to compute a subtraction in the measurement space.*/
   vpAddSubFunction m_stateAddFunction; /*!< Function to compute an addition in the state space.*/
   vpMeanFunction m_stateMeanFunc; /*!< Function to compute a weighted mean in the state space.*/
-  vpAddSubFunction m_stateResFunc; /*!< Function to compute a substraction in the state space.*/
+  vpAddSubFunction m_stateResFunc; /*!< Function to compute a subtraction in the state space.*/
 
   /**
    * \brief Structure that stores the results of the unscented transform.

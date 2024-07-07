@@ -123,7 +123,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
 {
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
-  int src_depth_size = static_cast<int>(src_depth.getSize());
+  const int src_depth_size = static_cast<int>(src_depth.getSize());
 
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
@@ -144,7 +144,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
     }
   }
 #else
-  for (int i = 0; i < static_cast<int>(src_depth.getSize()); ++i) {
+  for (int i = 0; i < src_depth_size; ++i) {
     ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 #endif
