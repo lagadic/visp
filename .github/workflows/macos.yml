@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12, macos-13]
+        os: [macos-13, macos-latest]
 
     steps:
     - name: Checkout repository
@@ -33,8 +33,8 @@ jobs:
     - name: Print OS information
       run: system_profiler SPSoftwareDataType
 
-    - name: Install dependencies on macos-12
-      if: matrix.os == 'macos-12'
+    - name: Install dependencies on macos-latest
+      if: matrix.os == 'macos-latest'
       run: |
         brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
