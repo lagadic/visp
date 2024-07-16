@@ -64,7 +64,7 @@ pam_t *pam_create_from_file(const char *inpath)
             continue;
 
         size_t linelen = strlen(line);
-        for (int idx = 0; idx < linelen; idx++) {
+        for (size_t idx = 0; idx < linelen; idx++) {
             if (line[idx] == ' ') {
                 line[idx] = 0;
                 if (tok1) {
@@ -181,7 +181,7 @@ int pam_write_file(pam_t *pam, const char *outpath)
 
     fprintf(f, "P7\nWIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL %d\nTUPLTYPE %s\nENDHDR\n",
             pam->width, pam->height, pam->depth, pam->maxval, tupl);
-    int len = pam->width * pam->height * pam->depth;
+    size_t len = pam->width * pam->height * pam->depth;
     if (len != fwrite(pam->data, 1, len, f)) {
         fclose(f);
         return -2;

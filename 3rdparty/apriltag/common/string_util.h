@@ -68,7 +68,7 @@ int str_diff_idx(const char * a, const char * b);
  * contain the delimiter. The original string will remain unchanged.
  * If str is composed of all delimiters, an empty array will be returned.
  *
- * It is the caller's responsibilty to free the returned zarray, as well as
+ * It is the caller's responsibility to free the returned zarray, as well as
  * the strings contained within it, e.g.:
  *
  *   zarray_t *za = str_split("this is a haystack", " ");
@@ -184,7 +184,7 @@ bool str_matches_any(const char *haystack, const char **needles, int num_needles
  *
  * Note: startidx must be >= endidx
  */
-char *str_substring(const char *str, size_t startidx, long endidx);
+char *str_substring(const char *str, size_t startidx, size_t endidx);
 
 /**
  * Retrieves the zero-based index of the beginning of the supplied substring

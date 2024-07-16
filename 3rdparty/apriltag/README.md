@@ -17,12 +17,12 @@ If you have CMake installed or it is not difficult to install, then do:
 
     $ cmake .
     $ sudo make install
-    
+
 Otherwise, we have a handwritten makefile you can use (be warned it will do slightly different things):
 
     $ make
     $ sudo make install
-    
+
 To install to a different directory than /usr/local:
 
     $ PREFIX=/some/path sudo make install
@@ -47,7 +47,7 @@ The default parameters are the recommended starting point.
 
     td->quad_decimate = 2.0;
     td->quad_sigma = 0.0;
-    td->refine_edges = 1;
+    td->refine_edges = true;
     td->decode_sharpening = 0.25;
 
 Increase the image decimation if faster processing is required; the
@@ -114,10 +114,10 @@ We have added methods to estimate the 3d pose of the AprilTag given camera param
     // Then call estimate_tag_pose.
     apriltag_pose_t pose;
     double err = estimate_tag_pose(&info, &pose);
-    
+
     // Do something with pose.
     ...
-    
+
 You can also call <code>estimate_tag_pose_orthogonal_iteration</code> which allows the user to specify the number of iterations used and also returns both possible solutions for the tag pose along with their errors.
 
 
@@ -153,11 +153,11 @@ a deep copy. Simply create an image_u8_t header for the cv::Mat data buffer:
         .stride = img.cols,
         .buf = img.data
     };
-    
+
 Wrappers
 ========
 Third-party wrappers of the apriltag code for other languages.
- 
+
 [Python](https://github.com/duckietown/apriltags3-py)
 
 [Matlab](https://github.com/alddiaz/MATLAB_AprilTag3)
