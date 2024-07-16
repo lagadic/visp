@@ -218,11 +218,12 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
-    (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x041000) && \
+    (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x040A00) && \
     (defined(__APPLE__) && defined(__MACH__))
   // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
   // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
   // installed with brew. It seems working when OpenCV is build from source
+  std::cout << "-- Add SIFT detector" << std::endl;
   detectorNames.push_back("PyramidSIFT");
   detectorNames.push_back("SIFT");
 #endif
@@ -271,12 +272,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
 #if ((VISP_HAVE_OPENCV_VERSION == 0x040504) || (VISP_HAVE_OPENCV_VERSION == 0x040505) ||  \
      (VISP_HAVE_OPENCV_VERSION == 0x040600) || (VISP_HAVE_OPENCV_VERSION == 0x040700) || \
-     (VISP_HAVE_OPENCV_VERSION == 0x040900) || (VISP_HAVE_OPENCV_VERSION == 0x041000)) && \
+     (VISP_HAVE_OPENCV_VERSION == 0x040900) || (VISP_HAVE_OPENCV_VERSION == 0x040A00)) && \
     (defined(__APPLE__) && defined(__MACH__))
     // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
     // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
     // installed with brew. It seems working when OpenCV is build from source
     if (i == vpKeyPoint::DETECTOR_SIFT) {
+      std::cout << "-- Skip SIFT detector" << std::endl;
       continue;
     }
 #endif

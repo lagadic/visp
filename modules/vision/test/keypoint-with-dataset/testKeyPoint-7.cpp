@@ -305,6 +305,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
   // Test with binary descriptor
   {
+    std::cout << "Detect ORB keypoints" << std::endl;
     std::string keypointName = "ORB";
     keyPoints.setDetector(keypointName);
     keyPoints.setExtractor(keypointName);
@@ -324,6 +325,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     filename = vpIoTools::createFilePath(opath, "bin_with_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
+    std::cout << "Save keypoints in binary with image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, true, true);
 
     // Test if save is ok
@@ -335,18 +337,20 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
     // Test if read is ok
     vpKeyPoint read_keypoint1;
-
+    std::cout << "Read keypoints from file: " << filename << std::endl;
     read_keypoint1.loadLearningData(filename, true);
 
     std::vector<cv::KeyPoint> trainKeyPoints_read;
     read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
     cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved "
                                                  "in binary with train images saved !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
@@ -357,6 +361,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     filename = vpIoTools::createFilePath(opath, "bin_without_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
+    std::cout << "Save keypoints in binary without image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, true, false);
 
     // Test if save is ok
@@ -368,27 +373,31 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
     // Test if read is ok
     vpKeyPoint read_keypoint2;
+    std::cout << "Read keypoints from file: " << filename << std::endl;
     read_keypoint2.loadLearningData(filename, true);
     trainKeyPoints_read.clear();
     read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
     trainDescriptors_read = read_keypoint2.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
                                                  "binary without train images !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
                                                  "binary without train images !");
     }
 
-#if defined(VISP_HAVE_PUGYXML)
+#if defined(VISP_HAVE_PUGIXML)
     // Save in xml with training images
     filename = vpIoTools::createFilePath(opath, "xml_with_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_xml_with_img.xml");
+    std::cout << "Save keypoints in xml with image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, false, true);
 
     // Test if save is ok
@@ -400,16 +409,19 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
     // Test if read is ok
     vpKeyPoint read_keypoint3;
+    std::cout << "Read keypoints from file: " << filename << std::endl;
     read_keypoint3.loadLearningData(filename, false);
     trainKeyPoints_read.clear();
     read_keypoint3.getTrainKeyPoints(trainKeyPoints_read);
     trainDescriptors_read = read_keypoint3.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
                                                  "xml with train images saved !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
@@ -420,6 +432,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     filename = vpIoTools::createFilePath(opath, "xml_without_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_xml_without_img.xml");
+    std::cout << "Save keypoints in xml without image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, false, false);
 
     // Test if save is ok
@@ -433,14 +446,17 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     vpKeyPoint read_keypoint4;
     read_keypoint4.loadLearningData(filename, false);
     trainKeyPoints_read.clear();
+    std::cout << "Read keypoints from file: " << filename << std::endl;
     read_keypoint4.getTrainKeyPoints(trainKeyPoints_read);
     trainDescriptors_read = read_keypoint4.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
                                                  "xml without train images saved !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
@@ -457,19 +473,22 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
   {
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
     (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
-    (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x041000) && \
+    (VISP_HAVE_OPENCV_VERSION != 0x040900) && (VISP_HAVE_OPENCV_VERSION != 0x040A00) && \
     (defined(__APPLE__) && defined(__MACH__))
     // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
     // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
     // installed with brew. It seems working when OpenCV is build from source
     std::string keypointName = "SIFT";
+    std::cout << "Use " << keypointName << " keypoints" << std::endl;
     keyPoints.setDetector(keypointName);
     keyPoints.setExtractor(keypointName);
 
+    std::cout << "Detect keypoints" << std::endl;
     keyPoints.buildReference(I);
 
     std::vector<cv::KeyPoint> trainKeyPoints;
     keyPoints.getTrainKeyPoints(trainKeyPoints);
+    std::cout << "Get descriptors" << std::endl;
     cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
     if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
       throw vpException(vpException::fatalError, "Problem when detecting keypoints or when "
@@ -480,6 +499,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     filename = vpIoTools::createFilePath(opath, "bin_with_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
+    std::cout << "Save keypoints in binary with image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, true, true);
 
     // Test if save is ok
@@ -491,16 +511,19 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
     // Test if read is ok
     vpKeyPoint read_keypoint1;
+    std::cout << "Load keypoints from: " << filename << std::endl;
     read_keypoint1.loadLearningData(filename, true);
     std::vector<cv::KeyPoint> trainKeyPoints_read;
     read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
     cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
                                                  "binary with train images saved !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
@@ -511,6 +534,7 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     filename = vpIoTools::createFilePath(opath, "bin_without_img");
     vpIoTools::makeDirectory(filename);
     filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
+    std::cout << "Save keypoints in binary without image in: " << filename << std::endl;
     keyPoints.saveLearningData(filename, true, false);
 
     // Test if save is ok
@@ -522,23 +546,26 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
 
     // Test if read is ok
     vpKeyPoint read_keypoint2;
+    std::cout << "Load keypoints from: " << filename << std::endl;
     read_keypoint2.loadLearningData(filename, true);
     trainKeyPoints_read.clear();
     read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
     trainDescriptors_read = read_keypoint2.getTrainDescriptors();
 
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
       throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
                                                  "binary without train images saved !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
       throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
                                                  "learning file saved in "
                                                  "binary without train images saved !");
     }
 
-#if defined(VISP_HAVE_PUGYXML)
+#if defined(VISP_HAVE_PUGIXML)
     // Save in xml with training images
     filename = vpIoTools::createFilePath(opath, "xml_with_img");
     vpIoTools::makeDirectory(filename);
@@ -607,37 +634,41 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     vpKeyPoint keypoint_reset;
 
     keypointName = "ORB";
+    std::cout << "Use " << keypointName << " as keypoints" << std::endl;
     keypoint_reset.setDetector(keypointName);
     keypoint_reset.setExtractor(keypointName);
 
     keypoint_reset.buildReference(I);
+    std::cout << keypointName << " keypoints are detected" << std::endl;
 
     // reset
     keypoint_reset.reset();
 
     keypointName = "SIFT";
+    std::cout << "Use " << keypointName << " as keypoints" << std::endl;
     keypoint_reset.setDetector(keypointName);
     keypoint_reset.setExtractor(keypointName);
 
     keypoint_reset.buildReference(I);
+    std::cout << keypointName << " keypoints are detected" << std::endl;
 
     std::vector<cv::KeyPoint> trainKeyPoints_reset;
     keypoint_reset.getTrainKeyPoints(trainKeyPoints_reset);
+    std::cout << "Get descriptors" << std::endl;
     cv::Mat trainDescriptors_reset = keypoint_reset.getTrainDescriptors();
 
-    // If reset is ok, we should get the same keypoints and the same
-    // descriptors
+    // If reset is ok, we should get the same keypoints and the same descriptors
+    std::cout << "Compare keypoints" << std::endl;
     if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_reset)) {
       throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainKeyPoints !");
     }
 
+    std::cout << "Compare descriptors" << std::endl;
     if (!compareDescriptors(trainDescriptors, trainDescriptors_reset)) {
       throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainDescriptors !");
     }
 
-    std::cout << "vpKeyPoint::reset() is ok with trainKeyPoints and "
-      "trainDescriptors !"
-      << std::endl;
+    std::cout << "vpKeyPoint::reset() is ok with trainKeyPoints and trainDescriptors !" << std::endl;
 #endif // OpenCV != 4.5.4 on macOS
   }
 #endif
