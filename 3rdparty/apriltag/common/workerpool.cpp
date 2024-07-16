@@ -26,7 +26,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 */
 #include <errno.h>
 
+// To avoid "__USE_GNU" redefined 29 | #define __USE_GNU | In file included from /usr/include/errno.h
+#ifndef __USE_GNU
 #define __USE_GNU
+#endif
 #include <pthread.h>
 #include <sched.h>
 #include <assert.h>
@@ -45,184 +48,187 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "math_util.h"
 #include "string_util.h"
 
-struct workerpool {
-    int nthreads;
-    zarray_t *tasks;
-    int taskspos;
+struct workerpool
+{
+  int nthreads;
+  zarray_t *tasks;
+  int taskspos;
 
-    pthread_t *threads;
-    int *status;
+  pthread_t *threads;
+  int *status;
 
-    pthread_mutex_t mutex;
-    pthread_cond_t startcond;   // used to signal the availability of work
-    bool start_predicate;       // predicate that prevents spurious wakeups on startcond
-    pthread_cond_t endcond;     // used to signal completion of all work
+  pthread_mutex_t mutex;
+  pthread_cond_t startcond;   // used to signal the availability of work
+  bool start_predicate;       // predicate that prevents spurious wakeups on startcond
+  pthread_cond_t endcond;     // used to signal completion of all work
 
-    int end_count; // how many threads are done?
+  int end_count; // how many threads are done?
 };
 
 struct task
 {
-    void (*f)(void *p);
-    void *p;
+  void (*f)(void *p);
+  void *p;
 };
 
 void *worker_thread(void *p)
 {
-    workerpool_t *wp = (workerpool_t*) p;
+  workerpool_t *wp = (workerpool_t *)p;
 
-    while (1) {
-        struct task *task;
+  while (1) {
+    struct task *task;
 
-        pthread_mutex_lock(&wp->mutex);
-        while (wp->taskspos == zarray_size(wp->tasks) || !wp->start_predicate) {
-            wp->end_count++;
-            pthread_cond_broadcast(&wp->endcond);
-            pthread_cond_wait(&wp->startcond, &wp->mutex);
-        }
-
-        zarray_get_volatile(wp->tasks, wp->taskspos, &task);
-        wp->taskspos++;
-        pthread_mutex_unlock(&wp->mutex);
-        sched_yield();
-
-        // we've been asked to exit.
-        if (task->f == NULL)
-            return NULL;
-
-        task->f(task->p);
+    pthread_mutex_lock(&wp->mutex);
+    while (wp->taskspos == zarray_size(wp->tasks) || !wp->start_predicate) {
+      wp->end_count++;
+      pthread_cond_broadcast(&wp->endcond);
+      pthread_cond_wait(&wp->startcond, &wp->mutex);
     }
 
-    return NULL;
+    zarray_get_volatile(wp->tasks, wp->taskspos, &task);
+    wp->taskspos++;
+    pthread_mutex_unlock(&wp->mutex);
+    sched_yield();
+
+    // we've been asked to exit.
+    if (task->f == NULL)
+      return NULL;
+
+    task->f(task->p);
+  }
+
+  return NULL;
 }
 
 workerpool_t *workerpool_create(int nthreads)
 {
-    assert(nthreads > 0);
+  assert(nthreads > 0);
 
-    workerpool_t *wp = (workerpool_t *)calloc(1, sizeof(workerpool_t));
-    wp->nthreads = nthreads;
-    wp->tasks = zarray_create(sizeof(struct task));
-    wp->start_predicate = false;
+  workerpool_t *wp = (workerpool_t *)calloc(1, sizeof(workerpool_t));
+  wp->nthreads = nthreads;
+  wp->tasks = zarray_create(sizeof(struct task));
+  wp->start_predicate = false;
 
-    if (nthreads > 1) {
-        wp->threads = (pthread_t *)calloc(wp->nthreads, sizeof(pthread_t));
+  if (nthreads > 1) {
+    wp->threads = (pthread_t *)calloc(wp->nthreads, sizeof(pthread_t));
 
-        pthread_mutex_init(&wp->mutex, NULL);
-        pthread_cond_init(&wp->startcond, NULL);
-        pthread_cond_init(&wp->endcond, NULL);
+    pthread_mutex_init(&wp->mutex, NULL);
+    pthread_cond_init(&wp->startcond, NULL);
+    pthread_cond_init(&wp->endcond, NULL);
 
-        for (int i = 0; i < nthreads; i++) {
-            int res = pthread_create(&wp->threads[i], NULL, worker_thread, wp);
-            if (res != 0) {
-                perror("pthread_create");
-                // errno already set to EAGAIN by pthread_create() failure
-                return NULL;
-            }
-        }
-
-        // Wait for the worker threads to be ready
-        pthread_mutex_lock(&wp->mutex);
-        while (wp->end_count < wp->nthreads) {
-            pthread_cond_wait(&wp->endcond, &wp->mutex);
-        }
-        pthread_mutex_unlock(&wp->mutex);
+    for (int i = 0; i < nthreads; i++) {
+      int res = pthread_create(&wp->threads[i], NULL, worker_thread, wp);
+      if (res != 0) {
+        perror("pthread_create");
+        // errno already set to EAGAIN by pthread_create() failure
+        return NULL;
+      }
     }
 
-    return wp;
+    // Wait for the worker threads to be ready
+    pthread_mutex_lock(&wp->mutex);
+    while (wp->end_count < wp->nthreads) {
+      pthread_cond_wait(&wp->endcond, &wp->mutex);
+    }
+    pthread_mutex_unlock(&wp->mutex);
+  }
+
+  return wp;
 }
 
 void workerpool_destroy(workerpool_t *wp)
 {
-    if (wp == NULL)
-        return;
+  if (wp == NULL)
+    return;
 
-    // force all worker threads to exit.
-    if (wp->nthreads > 1) {
-        for (int i = 0; i < wp->nthreads; i++)
-            workerpool_add_task(wp, NULL, NULL);
+// force all worker threads to exit.
+  if (wp->nthreads > 1) {
+    for (int i = 0; i < wp->nthreads; i++)
+      workerpool_add_task(wp, NULL, NULL);
 
-        pthread_mutex_lock(&wp->mutex);
-        wp->start_predicate = true;
-        pthread_cond_broadcast(&wp->startcond);
-        pthread_mutex_unlock(&wp->mutex);
+    pthread_mutex_lock(&wp->mutex);
+    wp->start_predicate = true;
+    pthread_cond_broadcast(&wp->startcond);
+    pthread_mutex_unlock(&wp->mutex);
 
-        for (int i = 0; i < wp->nthreads; i++)
-            pthread_join(wp->threads[i], NULL);
+    for (int i = 0; i < wp->nthreads; i++)
+      pthread_join(wp->threads[i], NULL);
 
-        pthread_mutex_destroy(&wp->mutex);
-        pthread_cond_destroy(&wp->startcond);
-        pthread_cond_destroy(&wp->endcond);
-        free(wp->threads);
-    }
+    pthread_mutex_destroy(&wp->mutex);
+    pthread_cond_destroy(&wp->startcond);
+    pthread_cond_destroy(&wp->endcond);
+    free(wp->threads);
+  }
 
-    zarray_destroy(wp->tasks);
-    free(wp);
+  zarray_destroy(wp->tasks);
+  free(wp);
 }
 
 int workerpool_get_nthreads(workerpool_t *wp)
 {
-    return wp->nthreads;
+  return wp->nthreads;
 }
 
 void workerpool_add_task(workerpool_t *wp, void (*f)(void *p), void *p)
 {
-    struct task t;
-    t.f = f;
-    t.p = p;
+  struct task t;
+  t.f = f;
+  t.p = p;
 
-    if (wp->nthreads > 1) {
-        pthread_mutex_lock(&wp->mutex);
-        zarray_add(wp->tasks, &t);
-        pthread_mutex_unlock(&wp->mutex);
-    } else {
-        zarray_add(wp->tasks, &t);
-    }
+  if (wp->nthreads > 1) {
+    pthread_mutex_lock(&wp->mutex);
+    zarray_add(wp->tasks, &t);
+    pthread_mutex_unlock(&wp->mutex);
+  }
+  else {
+    zarray_add(wp->tasks, &t);
+  }
 }
 
 void workerpool_run_single(workerpool_t *wp)
 {
-    for (int i = 0; i < zarray_size(wp->tasks); i++) {
-        struct task *task;
-        zarray_get_volatile(wp->tasks, i, &task);
-        task->f(task->p);
-    }
+  for (int i = 0; i < zarray_size(wp->tasks); i++) {
+    struct task *task;
+    zarray_get_volatile(wp->tasks, i, &task);
+    task->f(task->p);
+  }
 
-    zarray_clear(wp->tasks);
+  zarray_clear(wp->tasks);
 }
 
 // runs all added tasks, waits for them to complete.
 void workerpool_run(workerpool_t *wp)
 {
-    if (wp->nthreads > 1) {
-        pthread_mutex_lock(&wp->mutex);
-        wp->end_count = 0;
-        wp->start_predicate = true;
-        pthread_cond_broadcast(&wp->startcond);
+  if (wp->nthreads > 1) {
+    pthread_mutex_lock(&wp->mutex);
+    wp->end_count = 0;
+    wp->start_predicate = true;
+    pthread_cond_broadcast(&wp->startcond);
 
-        while (wp->end_count < wp->nthreads) {
+    while (wp->end_count < wp->nthreads) {
 //            printf("caught %d\n", wp->end_count);
-            pthread_cond_wait(&wp->endcond, &wp->mutex);
-        }
-
-        wp->taskspos = 0;
-        wp->start_predicate = false;
-        pthread_mutex_unlock(&wp->mutex);
-
-        zarray_clear(wp->tasks);
-
-    } else {
-        workerpool_run_single(wp);
+      pthread_cond_wait(&wp->endcond, &wp->mutex);
     }
+
+    wp->taskspos = 0;
+    wp->start_predicate = false;
+    pthread_mutex_unlock(&wp->mutex);
+
+    zarray_clear(wp->tasks);
+
+  }
+  else {
+    workerpool_run_single(wp);
+  }
 }
 
 int workerpool_get_nprocs()
 {
 #ifdef _WIN32
-    SYSTEM_INFO sysinfo;
-    GetSystemInfo(&sysinfo);
-    return sysinfo.dwNumberOfProcessors;
+  SYSTEM_INFO sysinfo;
+  GetSystemInfo(&sysinfo);
+  return sysinfo.dwNumberOfProcessors;
 #else
-    return sysconf (_SC_NPROCESSORS_ONLN);
+  return sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 }
