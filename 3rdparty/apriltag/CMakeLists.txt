@@ -11,9 +11,6 @@ file(GLOB lib_srcs *.cpp common/*.cpp)
 file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
 vp_list_filterout(lib_srcs common/unionfind.cpp) # has no symbols
-vp_list_filterout(lib_srcs common/pjpeg.cpp)     # useless
-vp_list_filterout(lib_srcs common/getopt.cpp)    # useless
-vp_list_filterout(lib_hdrs common/getopt.h)      # useless
 
 if(NOT WITH_APRILTAG_BIG_FAMILY)
   vp_list_filterout(lib_srcs tagCircle49h12.cpp)

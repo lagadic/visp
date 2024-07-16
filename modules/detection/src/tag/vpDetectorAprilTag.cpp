@@ -811,7 +811,7 @@ public:
   void setRefineEdges(bool refineEdges)
   {
     if (m_td) {
-      m_td->refine_edges = refineEdges ? 1 : 0;
+      m_td->refine_edges = (refineEdges ? true : false);
     }
   }
 
@@ -1195,7 +1195,7 @@ void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode)
   </blockquote>
   Default is 1.
 
-  \param refineEdges : If true, set refine_edges to 1.
+  \param refineEdges : If true, set refine edges parameter.
 */
 void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges) { m_impl->setRefineEdges(refineEdges); }
 

@@ -230,27 +230,6 @@ inline static void zarray_truncate(zarray_t *za, int sz)
 }
 
 /**
- * Copies the memory array used internally by zarray to store its owned
- * elements to the address pointed by 'buffer'. It is the caller's responsibility
- * to allocate zarray_size()*el_sz bytes for the copy to be stored and
- * to free the memory when no longer needed. The memory allocated at 'buffer'
- * and the internal zarray storage must not overlap. 'buffer_bytes' should be
- * the size of the 'buffer' memory space, in bytes, and must be at least
- * zarray_size()*el_sz.
- *
- * Returns the number of bytes copied into 'buffer'.
- */
-static inline size_t zarray_copy_data(const zarray_t *za, void *buffer, size_t buffer_bytes)
-{
-  assert(za != NULL);
-  assert(buffer != NULL);
-  assert(buffer_bytes >= za->el_sz * za->size);
-  memcpy(buffer, za->data, za->el_sz * za->size);
-  (void)buffer_bytes; // To avoid a warning on iOS
-  return za->el_sz * za->size;
-}
-
-/**
  * Removes the entry at index 'idx'.
  * If shuffle is true, the last element in the array will be placed in
  * the newly-open space; if false, the zarray is compacted.
@@ -460,23 +439,26 @@ static inline int zarray_index_of(const zarray_t *za, const void *p)
 }
 
 /**
- * Add all elements from 'source' into 'dest'. el_size must be the same
- * for both lists
+ * Add elements from start up to and excluding end from 'source' into 'dest'.
+ * el_sz must be the same for both lists
  **/
-static inline void zarray_add_all(zarray_t *dest, const zarray_t *source)
+static inline void zarray_add_range(zarray_t *dest, const zarray_t *source, int start, int end)
 {
   assert(dest->el_sz == source->el_sz);
-
-  // Don't allocate on stack because el_sz could be larger than ~8 MB
-  // stack size
-  char *tmp = (char *)calloc(1, dest->el_sz);
-
-  for (int i = 0; i < zarray_size(source); i++) {
-    zarray_get(source, i, tmp);
-    zarray_add(dest, tmp);
+  assert(dest != NULL);
+  assert(source != NULL);
+  assert(start >= 0);
+  assert(end <= source->size);
+  if (start == end) {
+    return;
   }
+  assert(start < end);
 
-  free(tmp);
+  int count = end - start;
+  zarray_ensure_capacity(dest, dest->size + count);
+
+  memcpy(&dest->data[dest->size*dest->el_sz], &source->data[source->el_sz*start], dest->el_sz*count);
+  dest->size += count;
 }
 
 #ifdef __cplusplus
