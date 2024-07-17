@@ -24,14 +24,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Print system information
-      run: |
-        sysctl -a | grep machdep.cpu
-        sysctl -a | grep logical
-
-    - name: Print OS information
-      run: system_profiler SPSoftwareDataType
-
     - name: Install dependencies on macos-latest
       if: matrix.os == 'macos-latest'
       run: |
