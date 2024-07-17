@@ -77,7 +77,7 @@ jobs:
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DVISP_BUILD_DEPRECATED_FUNCTIONS=OFF
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Configure CMake
@@ -85,7 +85,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DVISP_BUILD_DEPRECATED_FUNCTIONS=OFF
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DENABLE_VISP_NAMESPACE=ON -DENABLE_EXPLICIT_KEYWORD=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Determine number of processor on Ubuntu
