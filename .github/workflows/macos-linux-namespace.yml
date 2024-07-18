@@ -34,27 +34,6 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install -y libjpeg-dev libpng-dev libopencv-dev libpcl-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libdc1394-dev nlohmann-json3-dev
 
-    - name: Install dependencies on macos-13
-      # On macos-13 we need to do a specific action
-      # ==> Pouring python@3.12--3.12.1_1.ventura.bottle.tar.gz
-      # Error: The `brew link` step did not complete successfully
-      # The formula built, but is not symlinked into /usr/local
-      # Could not symlink bin/2to3-3.12
-      # Target /usr/local/bin/2to3-3.12
-      # already exists. You may want to remove it:
-      #   rm '/usr/local/bin/2to3-3.12'
-      #
-      # To force the link and overwrite all conflicting files:
-      #   brew link --overwrite python@3.12
-      #
-      # Fix proposed in https://github.com/actions/runner-images/issues/6817
-      if: matrix.os == 'macos-13'
-      run: |
-        brew update
-        brew upgrade || true
-        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar nlohmann-json
-        brew install opencv
-
     - name: Clone visp-images
       env:
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -63,10 +42,6 @@ jobs:
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
-
-    - name: Clone visp_sample
-      run: |
-        git clone --depth 1 https://github.com/lagadic/visp_sample ${HOME}/visp_sample
 
     # Openblas location is exported explicitly because openblas is keg-only,
     # which means it was not symlinked into /usr/local/.
