@@ -2415,6 +2415,11 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PANDA3D \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \
+                         VISP_HAVE_PCL_COMMON \
+                         VISP_HAVE_PCL_FILTERS \
+                         VISP_HAVE_PCL_IO \
+                         VISP_HAVE_PCL_SEGMENTATION \
+                         VISP_HAVE_PCL_VISUALIZATION \
                          VISP_HAVE_PIONEER \
                          VISP_HAVE_PNG \
                          VISP_HAVE_POLOLU \
