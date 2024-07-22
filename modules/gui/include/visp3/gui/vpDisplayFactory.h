@@ -101,7 +101,7 @@ vpDisplay *allocateDisplay()
  * \warning The user must free the memory when the display is not used anymore.
  */
 template<typename T>
-vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = -1, const std::string title = "",
+vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = -1, const std::string &title = "",
                            const vpDisplay::vpScaleType &scaleType = vpDisplay::SCALE_DEFAULT)
 {
 #if defined(VISP_HAVE_DISPLAY)
@@ -178,7 +178,7 @@ std::shared_ptr<vpDisplay> createDisplay()
  */
 template<typename T>
 std::shared_ptr<vpDisplay> createDisplay(vpImage<T> &I, const int winx = -1, const int winy = -1,
-                                         const std::string title = "", const vpDisplay::vpScaleType &scaleType = vpDisplay::SCALE_DEFAULT)
+                                         const std::string &title = "", const vpDisplay::vpScaleType &scaleType = vpDisplay::SCALE_DEFAULT)
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11
