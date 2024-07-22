@@ -184,8 +184,8 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 
             matd_destroy(Ainv);
         } else {
-          double data_b[] = {1, 0, 0, 0, 0, 0, 0, 0, 0};
-          matd_t *b = matd_create_data(9, 1, data_b);
+
+            matd_t *b = matd_create_data(9, 1, (double[]) { 1, 0, 0, 0, 0, 0, 0, 0, 0 });
             matd_t *Ainv = NULL;
 
             if (0) {
@@ -317,10 +317,9 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         // "proper", but probably increases the reprojection error. An
         // iterative alignment step would be superior.
 
-        double data_[] = { R00, R01, R02,
-                           R10, R11, R12,
-                           R20, R21, R22 };
-        matd_t *R = matd_create_data(3, 3, data_);
+        matd_t *R = matd_create_data(3, 3, (double[]) { R00, R01, R02,
+                                                       R10, R11, R12,
+                                                       R20, R21, R22 });
 
         matd_svd_t svd = matd_svd(R);
         matd_destroy(R);
@@ -344,11 +343,10 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         matd_destroy(R);
     }
 
-    double data_[] = { R00, R01, R02, TX,
-                       R10, R11, R12, TY,
-                       R20, R21, R22, TZ,
-                       0, 0, 0, 1 };
-    return matd_create_data(4, 4, data_);
+    return matd_create_data(4, 4, (double[]) { R00, R01, R02, TX,
+                                               R10, R11, R12, TY,
+                                               R20, R21, R22, TZ,
+                                                0, 0, 0, 1 });
 }
 
 // Similar to above
@@ -359,7 +357,7 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 // [ 0  0  C  D ]
 // [ 0  0 -1  0 ]
 
-matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B, double C, double D)
+matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B)
 {
     // Note that every variable that we compute is proportional to the scale factor of H.
     double R20 = -MATD_EL(H, 2, 0);
@@ -399,11 +397,11 @@ matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, 
     double R22 = R00*R11 - R10*R01;
 
     // TODO XXX: Improve rotation matrix by applying polar decomposition.
-    double data_[] = { R00, R01, R02, TX,
-                       R10, R11, R12, TY,
-                       R20, R21, R22, TZ,
-                       0, 0, 0, 1 };
-    return matd_create_data(4, 4, data_);
+
+    return matd_create_data(4, 4, (double[]) { R00, R01, R02, TX,
+        R10, R11, R12, TY,
+        R20, R21, R22, TZ,
+        0, 0, 0, 1 });
 }
 
 // Only uses the upper 3x3 matrix.

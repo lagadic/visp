@@ -1,8 +1,8 @@
 project(${APRILTAG_LIBRARY})
 
 set(APRILTAG_MAJOR_VERSION 3 PARENT_SCOPE)
-set(APRILTAG_MINOR_VERSION 1 PARENT_SCOPE)
-set(APRILTAG_PATCH_VERSION 1 PARENT_SCOPE)
+set(APRILTAG_MINOR_VERSION 4 PARENT_SCOPE)
+set(APRILTAG_PATCH_VERSION 2 PARENT_SCOPE)
 
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -58,7 +58,6 @@ if(MSVC)
     vp_set_source_file_compile_flag(common/pam.cpp /wd4018)
     vp_set_source_file_compile_flag(common/string_util.cpp /wd4018 /wd4267 /wd4996)
     vp_set_source_file_compile_flag(tag16h5.cpp /wd4996)
-    vp_set_source_file_compile_flag(tag25h7.cpp /wd4996)
     vp_set_source_file_compile_flag(tag25h9.cpp /wd4996)
     vp_set_source_file_compile_flag(tag36h10.cpp /wd4996)
     vp_set_source_file_compile_flag(tag36h11.cpp /wd4996)

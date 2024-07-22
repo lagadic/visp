@@ -40,18 +40,17 @@ either expressed or implied, of the Regents of The University of Michigan.
 // supports ppm, pnm, pgm
 
 typedef struct pnm pnm_t;
-struct pnm
-{
-    int width, height;
-    int format;
-    int max; // 1 = binary, 255 = one byte, 65535 = two bytes
+struct pnm {
+  int width, height;
+  int format;
+  int max; // 1 = binary, 255 = one byte, 65535 = two bytes
 
-    uint32_t buflen;
-    uint8_t *buf; // if max=65535, in big endian
-};
+  uint32_t buflen;
+  uint8_t* buf; // if max=65535, in big endian
+  };
 
-pnm_t *pnm_create_from_file(const char *path);
-void pnm_destroy(pnm_t *pnm);
+pnm_t* pnm_create_from_file(const char* path);
+void pnm_destroy(pnm_t* pnm);
 
 #ifdef __cplusplus
 //}

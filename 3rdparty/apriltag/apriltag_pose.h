@@ -4,17 +4,18 @@
 //extern "C" {
 #endif
 
+
 #include "apriltag.h"
 #include "common/matd.h"
 
 typedef struct {
-    apriltag_detection_t* det;
-    double tagsize; // In meters.
-    double fx; // In pixels.
-    double fy; // In pixels.
-    double cx; // In pixels.
-    double cy; // In pixels.
-} apriltag_detection_info_t;
+  apriltag_detection_t* det;
+  double tagsize; // In meters.
+  double fx; // In pixels.
+  double fy; // In pixels.
+  double cx; // In pixels.
+  double cy; // In pixels.
+  } apriltag_detection_info_t;
 
 /**
  * This struct holds the transformation from the camera optical frame to
@@ -22,17 +23,17 @@ typedef struct {
  * the camera frame.
  */
 typedef struct {
-    matd_t* R; // Rotation matrix 3x3 of doubles.
-    matd_t* t; // Translation matrix 3x1 of doubles.
-} apriltag_pose_t;
+  matd_t* R; // Rotation matrix 3x3 of doubles.
+  matd_t* t; // Translation matrix 3x1 of doubles.
+  } apriltag_pose_t;
 
 /**
  * Estimate pose of the tag using the homography method described in [1].
  * @outparam pose
  */
 void estimate_pose_for_tag_homography(
-        apriltag_detection_info_t* info,
-        apriltag_pose_t* pose);
+  apriltag_detection_info_t* info,
+  apriltag_pose_t* pose);
 
 /**
  * Estimate pose of the tag. This returns one or two possible poses for the
@@ -57,18 +58,18 @@ void estimate_pose_for_tag_homography(
  * @outparam err1, pose1, err2, pose2
  */
 void estimate_tag_pose_orthogonal_iteration(
-        apriltag_detection_info_t* info,
-        double* err1,
-        apriltag_pose_t* pose1,
-        double* err2,
-        apriltag_pose_t* pose2,
-        int nIters);
+  apriltag_detection_info_t* info,
+  double* err1,
+  apriltag_pose_t* pose1,
+  double* err2,
+  apriltag_pose_t* pose2,
+  int nIters);
 
 /**
  * Estimate tag pose.
  * This method is an easier to use interface to estimate_tag_pose_orthogonal_iteration.
  *
- * @outparam pose 
+ * @outparam pose
  * @return Object-space error of returned pose.
  */
 double estimate_tag_pose(apriltag_detection_info_t* info, apriltag_pose_t* pose);
@@ -78,3 +79,4 @@ void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1,
 #ifdef __cplusplus
 //}
 #endif
+

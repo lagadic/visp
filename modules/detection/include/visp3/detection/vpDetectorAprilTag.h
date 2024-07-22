@@ -224,26 +224,21 @@ BEGIN_VISP_NAMESPACE
  * Other examples are also provided in tutorial-apriltag-detector.cpp and
  * tutorial-apriltag-detector-live.cpp
 */
-class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
-{
+class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase {
 public:
-  enum vpAprilTagFamily
-  {
+  enum vpAprilTagFamily {
     TAG_36h11,         ///< AprilTag 36h11 pattern (recommended)
     TAG_36h10,         ///< DEPRECATED
-    TAG_36ARTOOLKIT,   ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
     TAG_25h9,          ///< AprilTag 25h9 pattern
-    TAG_25h7,          ///< DEPRECATED AND POOR DETECTION PERFORMANCE
     TAG_16h5,          ///< AprilTag 16h5 pattern
     TAG_CIRCLE21h7,    ///< AprilTag Circle21h7 pattern
     TAG_CIRCLE49h12,   ///< AprilTag Circle49h12 pattern
     TAG_CUSTOM48h12,   ///< AprilTag Custom48h12 pattern
     TAG_STANDARD41h12, ///< AprilTag Standard41h12 pattern
     TAG_STANDARD52h13  ///< AprilTag Standard52h13 pattern
-  };
+    };
 
-  enum vpPoseEstimationMethod
-  {
+  enum vpPoseEstimationMethod {
     HOMOGRAPHY,                     /*!< Pose from homography */
     HOMOGRAPHY_VIRTUAL_VS,          /*!< Non linear virtual visual servoing approach
                                       initialized by the homography approach */
@@ -255,32 +250,32 @@ public:
                                       initialized by the approach that gives the
                                       lowest residual */
     HOMOGRAPHY_ORTHOGONAL_ITERATION /*!< Pose from homography followed by a refinement by Orthogonal Iteration */
-  };
+    };
 
-  vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
-                     const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
-  vpDetectorAprilTag(const vpDetectorAprilTag &o);
-  vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
+  vpDetectorAprilTag(const vpAprilTagFamily& tagFamily = TAG_36h11,
+                     const vpPoseEstimationMethod& poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
+  vpDetectorAprilTag(const vpDetectorAprilTag& o);
+  vpDetectorAprilTag& operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag() VP_OVERRIDE;
-  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
+  bool detect(const vpImage<unsigned char>& I) VP_OVERRIDE;
 
 
-  bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
-              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = nullptr,
-              std::vector<double> *projErrors = nullptr, std::vector<double> *projErrors2 = nullptr);
+  bool detect(const vpImage<unsigned char>& I, double tagSize, const vpCameraParameters& cam,
+              std::vector<vpHomogeneousMatrix>& cMo_vec, std::vector<vpHomogeneousMatrix>* cMo_vec2 = nullptr,
+              std::vector<double>* projErrors = nullptr, std::vector<double>* projErrors2 = nullptr);
 
-  void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
-                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness = 1) const;
-  void displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
-                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness = 1) const;
+  void displayFrames(const vpImage<unsigned char>& I, const std::vector<vpHomogeneousMatrix>& cMo_vec,
+                     const vpCameraParameters& cam, double size, const vpColor& color, unsigned int thickness = 1) const;
+  void displayFrames(const vpImage<vpRGBa>& I, const std::vector<vpHomogeneousMatrix>& cMo_vec,
+                     const vpCameraParameters& cam, double size, const vpColor& color, unsigned int thickness = 1) const;
 
-  void displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
-                   const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
-  void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
-                   const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
+  void displayTags(const vpImage<unsigned char>& I, const std::vector<std::vector<vpImagePoint> >& tagsCorners,
+                   const vpColor& color = vpColor::none, unsigned int thickness = 1) const;
+  void displayTags(const vpImage<vpRGBa>& I, const std::vector<std::vector<vpImagePoint> >& tagsCorners,
+                   const vpColor& color = vpColor::none, unsigned int thickness = 1) const;
 
-  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-               vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters& cam, vpHomogeneousMatrix& cMo,
+               vpHomogeneousMatrix* cMo2 = nullptr, double* projError = nullptr, double* projError2 = nullptr);
 
   /*!
    * Return the pose estimation method.
@@ -289,13 +284,13 @@ public:
 
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
   std::vector<int> getTagsId() const;
-  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
-                                                     const std::map<int, double> &tagsSize) const;
+  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int>& tagsId,
+                                                     const std::map<int, double>& tagsSize) const;
 
   void setAprilTagDecodeSharpening(double decodeSharpening);
-  void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
+  void setAprilTagFamily(const vpAprilTagFamily& tagFamily);
   void setAprilTagNbThreads(int nThreads);
-  void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
+  void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod& poseEstimationMethod);
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
@@ -304,18 +299,16 @@ public:
 
   /*! Allow to enable the display of overlay tag information in the windows
    * (vpDisplay) associated to the input image. */
-  inline void setDisplayTag(bool display, const vpColor &color = vpColor::none, unsigned int thickness = 2)
-  {
+  inline void setDisplayTag(bool display, const vpColor& color = vpColor::none, unsigned int thickness = 2) {
     m_displayTag = display;
     m_displayTagColor = color;
     m_displayTagThickness = thickness;
-  }
+    }
 
-  inline friend VISP_EXPORT void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
-  {
+  inline friend VISP_EXPORT void swap(vpDetectorAprilTag& o1, vpDetectorAprilTag& o2) {
     using std::swap;
     swap(o1.m_impl, o2.m_impl);
-  }
+    }
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 
@@ -341,97 +334,87 @@ private:
 
   // PIMPL idiom
   class Impl;
-  Impl *m_impl;
-};
+  Impl* m_impl;
+  };
 
-inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPoseEstimationMethod &method)
-{
+inline std::ostream& operator<<(std::ostream& os, const vpDetectorAprilTag::vpPoseEstimationMethod& method) {
   switch (method) {
-  case vpDetectorAprilTag::HOMOGRAPHY:
-    os << "HOMOGRAPHY";
-    break;
+    case vpDetectorAprilTag::HOMOGRAPHY:
+      os << "HOMOGRAPHY";
+      break;
 
-  case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
-    os << "HOMOGRAPHY_VIRTUAL_VS";
-    break;
+    case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
+      os << "HOMOGRAPHY_VIRTUAL_VS";
+      break;
 
-  case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
-    os << "DEMENTHON_VIRTUAL_VS";
-    break;
+    case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
+      os << "DEMENTHON_VIRTUAL_VS";
+      break;
 
-  case vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS:
-    os << "LAGRANGE_VIRTUAL_VS";
-    break;
+    case vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS:
+      os << "LAGRANGE_VIRTUAL_VS";
+      break;
 
-  case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
-    os << "BEST_RESIDUAL_VIRTUAL_VS";
-    break;
+    case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
+      os << "BEST_RESIDUAL_VIRTUAL_VS";
+      break;
 
-  case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
-    os << "HOMOGRAPHY_ORTHOGONAL_ITERATION";
-    break;
+    case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
+      os << "HOMOGRAPHY_ORTHOGONAL_ITERATION";
+      break;
 
-  default:
-    os << "ERROR_UNKNOWN_POSE_METHOD!";
-    break;
-  }
+    default:
+      os << "ERROR_UNKNOWN_POSE_METHOD!";
+      break;
+    }
 
   return os;
-}
+  }
 
-inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAprilTagFamily &tagFamily)
-{
+inline std::ostream& operator<<(std::ostream& os, const vpDetectorAprilTag::vpAprilTagFamily& tagFamily) {
   switch (tagFamily) {
-  case vpDetectorAprilTag::TAG_36h11:
-    os << "36h11";
-    break;
+    case vpDetectorAprilTag::TAG_36h11:
+      os << "36h11";
+      break;
 
-  case vpDetectorAprilTag::TAG_36h10:
-    os << "36h10";
-    break;
+    case vpDetectorAprilTag::TAG_36h10:
+      os << "36h10";
+      break;
 
-  case vpDetectorAprilTag::TAG_36ARTOOLKIT:
-    os << "36artoolkit";
-    break;
+    case vpDetectorAprilTag::TAG_25h9:
+      os << "25h9";
+      break;
 
-  case vpDetectorAprilTag::TAG_25h9:
-    os << "25h9";
-    break;
+    case vpDetectorAprilTag::TAG_16h5:
+      os << "16h5";
+      break;
 
-  case vpDetectorAprilTag::TAG_25h7:
-    os << "25h7";
-    break;
+    case vpDetectorAprilTag::TAG_CIRCLE21h7:
+      os << "CIRCLE21h7";
+      break;
 
-  case vpDetectorAprilTag::TAG_16h5:
-    os << "16h5";
-    break;
+    case vpDetectorAprilTag::TAG_CIRCLE49h12:
+      os << "CIRCLE49h12";
+      break;
 
-  case vpDetectorAprilTag::TAG_CIRCLE21h7:
-    os << "CIRCLE21h7";
-    break;
+    case vpDetectorAprilTag::TAG_CUSTOM48h12:
+      os << "CUSTOM48h12";
+      break;
 
-  case vpDetectorAprilTag::TAG_CIRCLE49h12:
-    os << "CIRCLE49h12";
-    break;
+    case vpDetectorAprilTag::TAG_STANDARD52h13:
+      os << "STANDARD52h13";
+      break;
 
-  case vpDetectorAprilTag::TAG_CUSTOM48h12:
-    os << "CUSTOM48h12";
-    break;
+    case vpDetectorAprilTag::TAG_STANDARD41h12:
+      os << "STANDARD41h12";
+      break;
 
-  case vpDetectorAprilTag::TAG_STANDARD52h13:
-    os << "STANDARD52h13";
-    break;
-
-  case vpDetectorAprilTag::TAG_STANDARD41h12:
-    os << "STANDARD41h12";
-    break;
-
-  default:
-    break;
-  }
+    default:
+      break;
+    }
 
   return os;
-}
+  }
 
 END_VISP_NAMESPACE
 

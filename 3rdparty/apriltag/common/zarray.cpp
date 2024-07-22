@@ -30,26 +30,24 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #include "zarray.h"
 
-int zstrcmp(const void * a_pp, const void * b_pp)
-{
-    assert(a_pp != NULL);
-    assert(b_pp != NULL);
+int zstrcmp(const void* a_pp, const void* b_pp) {
+  assert(a_pp != NULL);
+  assert(b_pp != NULL);
 
-    char * a = *(char**)a_pp;
-    char * b = *(char**)b_pp;
+  char* a = *(char**)a_pp;
+  char* b = *(char**)b_pp;
 
-    return strcmp(a,b);
-}
+  return strcmp(a, b);
+  }
 
-void zarray_vmap(zarray_t *za, void (*f)(void *))
-{
-    assert(za != NULL);
-    assert(f != NULL);
-    assert(za->el_sz == sizeof(void*));
+void zarray_vmap(zarray_t* za, void (*f)(void*)) {
+  assert(za != NULL);
+  assert(f != NULL);
+  assert(za->el_sz == sizeof(void*));
 
-    for (int idx = 0; idx < za->size; idx++) {
-        void *pp = &za->data[idx*za->el_sz];
-        void *p = *(void**) pp;
-        f(p);
+  for (int idx = 0; idx < za->size; idx++) {
+    void* pp = &za->data[idx * za->el_sz];
+    void* p = *(void**)pp;
+    f(p);
     }
-}
+  }

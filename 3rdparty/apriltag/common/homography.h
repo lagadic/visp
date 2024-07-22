@@ -120,26 +120,25 @@ either expressed or implied, of the Regents of The University of Michigan.
      * and cy positive, and s=1.
      **/
 
-// correspondences is a list of float[4]s, consisting of the points x
-// and y concatenated. We will compute a homography such that y = Hx
-// Specifically, float [] { a, b, c, d } where x = [a b], y = [c d].
+     // correspondences is a list of float[4]s, consisting of the points x
+     // and y concatenated. We will compute a homography such that y = Hx
+     // Specifically, float [] { a, b, c, d } where x = [a b], y = [c d].
 
 
 #define HOMOGRAPHY_COMPUTE_FLAG_INVERSE 1
 #define HOMOGRAPHY_COMPUTE_FLAG_SVD 0
 
-matd_t *homography_compute(zarray_t *correspondences, int flags);
+matd_t* homography_compute(zarray_t* correspondences, int flags);
 
 //void homography_project(const matd_t *H, double x, double y, double *ox, double *oy);
-static inline void homography_project(const matd_t *H, double x, double y, double *ox, double *oy)
-{
-    double xx = MATD_EL(H, 0, 0)*x + MATD_EL(H, 0, 1)*y + MATD_EL(H, 0, 2);
-    double yy = MATD_EL(H, 1, 0)*x + MATD_EL(H, 1, 1)*y + MATD_EL(H, 1, 2);
-    double zz = MATD_EL(H, 2, 0)*x + MATD_EL(H, 2, 1)*y + MATD_EL(H, 2, 2);
+static inline void homography_project(const matd_t* H, double x, double y, double* ox, double* oy) {
+  double xx = MATD_EL(H, 0, 0) * x + MATD_EL(H, 0, 1) * y + MATD_EL(H, 0, 2);
+  double yy = MATD_EL(H, 1, 0) * x + MATD_EL(H, 1, 1) * y + MATD_EL(H, 1, 2);
+  double zz = MATD_EL(H, 2, 0) * x + MATD_EL(H, 2, 1) * y + MATD_EL(H, 2, 2);
 
-    *ox = xx / zz;
-    *oy = yy / zz;
-}
+  *ox = xx / zz;
+  *oy = yy / zz;
+  }
 
 // assuming that the projection matrix is:
 // [ fx 0  cx 0 ]
@@ -166,7 +165,7 @@ static inline void homography_project(const matd_t *H, double x, double y, doubl
 // R20 = H20
 // R21 = H21
 // TZ  = H22
-matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, double cy);
+matd_t* homography_to_pose(const matd_t* H, double fx, double fy, double cx, double cy);
 
 // Similar to above
 // Recover the model view matrix assuming that the projection matrix is:
@@ -176,7 +175,7 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 // [ 0  0  C  D ]
 // [ 0  0 -1  0 ]
 
-matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B, double C, double D);
+matd_t* homography_to_model_view(const matd_t* H, double F, double G, double A, double B);
 
 #ifdef __cplusplus
 //}

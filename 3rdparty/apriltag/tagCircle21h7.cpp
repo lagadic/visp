@@ -67,69 +67,67 @@ static uint64_t codedata[38] = {
    0x000000000008a8acUL,
    0x0000000000015b39UL,
    0x00000000001ec1e3UL,
-};
-apriltag_family_t *tagCircle21h7_create()
-{
-   apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
-   tf->name = strdup("tagCircle21h7");
-   tf->h = 7;
-   tf->ncodes = 38;
-   tf->codes = codedata;
-   tf->nbits = 21;
-   tf->bit_x = (uint32_t *)calloc(21, sizeof(uint32_t));
-   tf->bit_y = (uint32_t *)calloc(21, sizeof(uint32_t));
-   tf->bit_x[0] = 1;
-   tf->bit_y[0] = -2;
-   tf->bit_x[1] = 2;
-   tf->bit_y[1] = -2;
-   tf->bit_x[2] = 3;
-   tf->bit_y[2] = -2;
-   tf->bit_x[3] = 1;
-   tf->bit_y[3] = 1;
-   tf->bit_x[4] = 2;
-   tf->bit_y[4] = 1;
-   tf->bit_x[5] = 6;
-   tf->bit_y[5] = 1;
-   tf->bit_x[6] = 6;
-   tf->bit_y[6] = 2;
-   tf->bit_x[7] = 6;
-   tf->bit_y[7] = 3;
-   tf->bit_x[8] = 3;
-   tf->bit_y[8] = 1;
-   tf->bit_x[9] = 3;
-   tf->bit_y[9] = 2;
-   tf->bit_x[10] = 3;
-   tf->bit_y[10] = 6;
-   tf->bit_x[11] = 2;
-   tf->bit_y[11] = 6;
-   tf->bit_x[12] = 1;
-   tf->bit_y[12] = 6;
-   tf->bit_x[13] = 3;
-   tf->bit_y[13] = 3;
-   tf->bit_x[14] = 2;
-   tf->bit_y[14] = 3;
-   tf->bit_x[15] = -2;
-   tf->bit_y[15] = 3;
-   tf->bit_x[16] = -2;
-   tf->bit_y[16] = 2;
-   tf->bit_x[17] = -2;
-   tf->bit_y[17] = 1;
-   tf->bit_x[18] = 1;
-   tf->bit_y[18] = 3;
-   tf->bit_x[19] = 1;
-   tf->bit_y[19] = 2;
-   tf->bit_x[20] = 2;
-   tf->bit_y[20] = 2;
-   tf->width_at_border = 5;
-   tf->total_width = 9;
-   tf->reversed_border = true;
-   return tf;
-}
+  };
+apriltag_family_t* tagCircle21h7_create() {
+  apriltag_family_t* tf = (apriltag_family_t*)calloc(1, sizeof(apriltag_family_t));
+  tf->name = strdup("tagCircle21h7");
+  tf->h = 7;
+  tf->ncodes = 38;
+  tf->codes = codedata;
+  tf->nbits = 21;
+  tf->bit_x = (uint32_t*)calloc(21, sizeof(uint32_t));
+  tf->bit_y = (uint32_t*)calloc(21, sizeof(uint32_t));
+  tf->bit_x[0] = 1;
+  tf->bit_y[0] = -2;
+  tf->bit_x[1] = 2;
+  tf->bit_y[1] = -2;
+  tf->bit_x[2] = 3;
+  tf->bit_y[2] = -2;
+  tf->bit_x[3] = 1;
+  tf->bit_y[3] = 1;
+  tf->bit_x[4] = 2;
+  tf->bit_y[4] = 1;
+  tf->bit_x[5] = 6;
+  tf->bit_y[5] = 1;
+  tf->bit_x[6] = 6;
+  tf->bit_y[6] = 2;
+  tf->bit_x[7] = 6;
+  tf->bit_y[7] = 3;
+  tf->bit_x[8] = 3;
+  tf->bit_y[8] = 1;
+  tf->bit_x[9] = 3;
+  tf->bit_y[9] = 2;
+  tf->bit_x[10] = 3;
+  tf->bit_y[10] = 6;
+  tf->bit_x[11] = 2;
+  tf->bit_y[11] = 6;
+  tf->bit_x[12] = 1;
+  tf->bit_y[12] = 6;
+  tf->bit_x[13] = 3;
+  tf->bit_y[13] = 3;
+  tf->bit_x[14] = 2;
+  tf->bit_y[14] = 3;
+  tf->bit_x[15] = -2;
+  tf->bit_y[15] = 3;
+  tf->bit_x[16] = -2;
+  tf->bit_y[16] = 2;
+  tf->bit_x[17] = -2;
+  tf->bit_y[17] = 1;
+  tf->bit_x[18] = 1;
+  tf->bit_y[18] = 3;
+  tf->bit_x[19] = 1;
+  tf->bit_y[19] = 2;
+  tf->bit_x[20] = 2;
+  tf->bit_y[20] = 2;
+  tf->width_at_border = 5;
+  tf->total_width = 9;
+  tf->reversed_border = true;
+  return tf;
+  }
 
-void tagCircle21h7_destroy(apriltag_family_t *tf)
-{
-   free(tf->bit_x);
-   free(tf->bit_y);
-   free(tf->name);
-   free(tf);
-}
+void tagCircle21h7_destroy(apriltag_family_t* tf) {
+  free(tf->bit_x);
+  free(tf->bit_y);
+  free(tf->name);
+  free(tf);
+  }

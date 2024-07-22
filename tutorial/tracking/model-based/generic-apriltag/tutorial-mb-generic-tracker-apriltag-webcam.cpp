@@ -24,8 +24,7 @@ typedef enum { state_detection, state_tracking, state_quit } state_t;
 
 // Creates a cube.cao file in your current directory
 // cubeEdgeSize : size of cube edges in meters
-void createCaoFile(double cubeEdgeSize)
-{
+void createCaoFile(double cubeEdgeSize) {
   std::ofstream fileStream;
   fileStream.open("cube.cao", std::ofstream::out | std::ofstream::trunc);
   fileStream << "V1\n";
@@ -56,12 +55,11 @@ void createCaoFile(double cubeEdgeSize)
   fileStream << "# 3D circles\n";
   fileStream << "0                  # Number of circles\n";
   fileStream.close();
-}
+  }
 
 #if defined(VISP_HAVE_APRILTAG)
-state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector, double tagSize,
-  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
-{
+state_t detectAprilTag(const vpImage<unsigned char>& I, vpDetectorAprilTag& detector, double tagSize,
+                       const vpCameraParameters& cam, vpHomogeneousMatrix& cMo) {
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
   // Detection
@@ -70,32 +68,31 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   // Display camera pose
   for (size_t i = 0; i < cMo_vec.size(); i++) {
     vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
-  }
+    }
 
   vpDisplay::displayText(I, 40, 20, "State: waiting tag detection", vpColor::red);
 
   if (ret && detector.getNbObjects() > 0) { // if tag detected, we pick the first one
     cMo = cMo_vec[0];
     return state_tracking;
-}
+    }
 
   return state_detection;
-}
+  }
 #endif // #if defined(VISP_HAVE_APRILTAG)
 
-state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, double projection_error_threshold,
-  vpHomogeneousMatrix &cMo)
-{
+state_t track(const vpImage<unsigned char>& I, vpMbGenericTracker& tracker, double projection_error_threshold,
+              vpHomogeneousMatrix& cMo) {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
 
   // Track the object
   try {
     tracker.track(I);
-  }
+    }
   catch (...) {
     return state_detection;
-  }
+    }
 
   tracker.getPose(cMo);
 
@@ -103,23 +100,22 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
   double projection_error = tracker.computeCurrentProjectionError(I, cMo, cam);
   if (projection_error > projection_error_threshold) {
     return state_detection;
-  }
+    }
 
   // Display
   tracker.display(I, cMo, cam, vpColor::red, 2);
   vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
   vpDisplay::displayText(I, 40, 20, "State: tracking in progress", vpColor::red);
   {
-    std::stringstream ss;
-    ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt();
-    vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
+  std::stringstream ss;
+  ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt();
+  vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
   }
 
   return state_tracking;
-}
+  }
 
-int main(int argc, const char **argv)
-{
+int main(int argc, const char** argv) {
   //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&  defined(VISP_HAVE_MODULE_MBT)
   //! [Macro defined]
@@ -146,53 +142,52 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       opt_tag_size = atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       opt_quad_decimate = (float)atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       opt_nthreads = atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       opt_intrinsic_file = std::string(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
-    }
+      }
     else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
       opt_cube_size = atof(argv[i + 1]);
 #ifdef VISP_HAVE_OPENCV
-    }
+      }
     else if (std::string(argv[i]) == "--texture") {
       opt_use_texture = true;
 #endif
-    }
+      }
     else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
       opt_projection_error_threshold = atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
         " [--quad_decimate <decimation>] [--nthreads <nb>]"
         " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
-        " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
-        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
+        " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_25h9, 3: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
       std::cout << " [--texture] [--projection_error <30 - 100>] [--help]" << std::endl;
       return EXIT_SUCCESS;
+      }
     }
-  }
 
   createCaoFile(opt_cube_size);
 
@@ -203,7 +198,7 @@ int main(int argc, const char **argv)
   if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
     parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
     camIsInit = true;
-  }
+    }
 #endif
 
   try {
@@ -224,14 +219,14 @@ int main(int argc, const char **argv)
     if (!cap.isOpened()) {            // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
-    }
+      }
     cv::Mat frame;
     cap >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
     if (!camIsInit) {
       cam.initPersProjWithoutDistortion(600, 600, I.getWidth() / 2., I.getHeight() / 2.);
-    }
+      }
 
     std::cout << "Cube size: " << opt_cube_size << std::endl;
     std::cout << "AprilTag size: " << opt_tag_size << std::endl;
@@ -251,7 +246,7 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    vpDisplay *d = nullptr;
+    vpDisplay* d = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       d = new vpDisplayX(I);
@@ -260,7 +255,7 @@ int main(int argc, const char **argv)
 #elif defined(HAVE_OPENCV_HIGHGUI)
       d = new vpDisplayOpenCV(I);
 #endif
-    }
+      }
 
     // Initialize AprilTag detector
     vpDetectorAprilTag detector(opt_tag_family);
@@ -299,7 +294,7 @@ int main(int argc, const char **argv)
       klt_settings.setPyramidLevels(3);
       tracker.setKltOpencv(klt_settings);
       tracker.setKltMaskBorder(5);
-    }
+      }
 #endif
 
     // camera calibration params
@@ -333,27 +328,27 @@ int main(int argc, const char **argv)
           //! [Init]
           tracker.initFromPose(I, cMo);
           //! [Init]
+          }
         }
-      }
 
       if (state == state_tracking) {
         state = track(I, tracker, opt_projection_error_threshold, cMo);
-      }
+        }
 
       vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
       if (vpDisplay::getClick(I, false)) { // exit
         state = state_quit;
-      }
+        }
 
       vpDisplay::flush(I);
-    }
+      }
 
     if (!display_off)
       delete d;
-  }
-  catch (const vpException &e) {
+    }
+  catch (const vpException& e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+    }
 
   return EXIT_SUCCESS;
 #else
@@ -368,4 +363,4 @@ int main(int argc, const char **argv)
   std::cout << "Install missing 3rd parties, configure and build ViSP to run this tutorial" << std::endl;
 #endif
   return EXIT_SUCCESS;
-}
+  }

@@ -51,73 +51,71 @@ either expressed or implied, of the Regents of The University of Michigan.
 ////////////////////////////////////////////////////////////////////
 // Lines
 
-typedef struct
-{
-    // Internal representation: a point that the line goes through (p) and
-    // the direction of the line (u).
-    double p[2];
-    double u[2]; // always a unit vector
-} g2d_line_t;
+typedef struct {
+  // Internal representation: a point that the line goes through (p) and
+  // the direction of the line (u).
+  double p[2];
+  double u[2]; // always a unit vector
+  } g2d_line_t;
 
 // initialize a line object.
-void g2d_line_init_from_points(g2d_line_t *line, const double p0[2], const double p1[2]);
+void g2d_line_init_from_points(g2d_line_t* line, const double p0[2], const double p1[2]);
 
 // The line defines a one-dimensional coordinate system whose origin
 // is p. Where is q? (If q is not on the line, the point nearest q is
 // returned.
-double g2d_line_get_coordinate(const g2d_line_t *line, const double q[2]);
+double g2d_line_get_coordinate(const g2d_line_t* line, const double q[2]);
 
 // Intersect two lines. The intersection, if it exists, is written to
 // p (if not NULL), and 1 is returned. Else, zero is returned.
-int g2d_line_intersect_line(const g2d_line_t *linea, const g2d_line_t *lineb, double *p);
+int g2d_line_intersect_line(const g2d_line_t* linea, const g2d_line_t* lineb, double* p);
 
 ////////////////////////////////////////////////////////////////////
 // Line Segments. line.p is always one endpoint; p1 is the other
 // endpoint.
-typedef struct
-{
-    g2d_line_t line;
-    double p1[2];
-} g2d_line_segment_t;
+typedef struct {
+  g2d_line_t line;
+  double p1[2];
+  } g2d_line_segment_t;
 
-void g2d_line_segment_init_from_points(g2d_line_segment_t *seg, const double p0[2], const double p1[2]);
+void g2d_line_segment_init_from_points(g2d_line_segment_t* seg, const double p0[2], const double p1[2]);
 
 // Intersect two segments. The intersection, if it exists, is written
 // to p (if not NULL), and 1 is returned. Else, zero is returned.
-int g2d_line_segment_intersect_segment(const g2d_line_segment_t *sega, const g2d_line_segment_t *segb, double *p);
+int g2d_line_segment_intersect_segment(const g2d_line_segment_t* sega, const g2d_line_segment_t* segb, double* p);
 
-void g2d_line_segment_closest_point(const g2d_line_segment_t *seg, const double *q, double *p);
-double g2d_line_segment_closest_point_distance(const g2d_line_segment_t *seg, const double *q);
+void g2d_line_segment_closest_point(const g2d_line_segment_t* seg, const double* q, double* p);
+double g2d_line_segment_closest_point_distance(const g2d_line_segment_t* seg, const double* q);
 
 ////////////////////////////////////////////////////////////////////
 // Polygons
 
-zarray_t *g2d_polygon_create_data(double v[][2], int sz);
+zarray_t* g2d_polygon_create_data(double v[][2], int sz);
 
-zarray_t *g2d_polygon_create_zeros(int sz);
+zarray_t* g2d_polygon_create_zeros(int sz);
 
-zarray_t *g2d_polygon_create_empty();
+zarray_t* g2d_polygon_create_empty();
 
-void g2d_polygon_add(zarray_t *poly, double v[2]);
+void g2d_polygon_add(zarray_t* poly, double v[2]);
 
 // Takes a polygon in either CW or CCW and modifies it (if necessary)
 // to be CCW.
-void g2d_polygon_make_ccw(zarray_t *poly);
+void g2d_polygon_make_ccw(zarray_t* poly);
 
 // Return 1 if point q lies within poly.
-int g2d_polygon_contains_point(const zarray_t *poly, double q[2]);
+int g2d_polygon_contains_point(const zarray_t* poly, double q[2]);
 
 // Do the edges of the polygons cross? (Does not test for containment).
-int g2d_polygon_intersects_polygon(const zarray_t *polya, const zarray_t *polyb);
+int g2d_polygon_intersects_polygon(const zarray_t* polya, const zarray_t* polyb);
 
 // Does polya completely contain polyb?
-int g2d_polygon_contains_polygon(const zarray_t *polya, const zarray_t *polyb);
+int g2d_polygon_contains_polygon(const zarray_t* polya, const zarray_t* polyb);
 
 // Is there some point which is in both polya and polyb?
-int g2d_polygon_overlaps_polygon(const zarray_t *polya, const zarray_t *polyb);
+int g2d_polygon_overlaps_polygon(const zarray_t* polya, const zarray_t* polyb);
 
 // returns the number of points written to x. see comments.
-int g2d_polygon_rasterize(const zarray_t *poly, double y, double *x);
+int g2d_polygon_rasterize(const zarray_t* poly, double y, double* x);
 
 #ifdef __cplusplus
 //}

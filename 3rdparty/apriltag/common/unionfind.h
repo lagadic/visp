@@ -83,7 +83,7 @@ static inline uint32_t unionfind_get_representative(unionfind_t *uf, uint32_t id
 static inline uint32_t unionfind_get_representative(unionfind_t *uf, uint32_t id)
 {
     uint32_t root = uf->parent[id];
-    // uninitialized node, so set to self
+    // unititialized node, so set to self
     if (root == 0xffffffff) {
         uf->parent[id] = id;
         return id;

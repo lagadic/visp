@@ -9,12 +9,11 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
-int main(int argc, const char **argv)
-{
+int main(int argc, const char** argv) {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
-//! [Macro defined]
+  //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE
@@ -36,42 +35,42 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
       poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[i + 1]));
-    }
+      }
     else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       input_filename = std::string(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = static_cast<float>(atof(argv[i + 1]));
-    }
+      }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = atoi(argv[i + 1]);
-    }
+      }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
-    }
+      }
 #endif
     else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
-    }
+      }
     else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
       color_id = atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
       thickness = static_cast<unsigned int>(atoi(argv[i + 1]));
-    }
+      }
     else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[i + 1]));
-    }
+      }
     else if (std::string(argv[i]) == "--z_aligned") {
       z_aligned = true;
-    }
+      }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--input <input file>] [--tag_size <tag_size in m>]"
@@ -80,16 +79,16 @@ int main(int argc, const char **argv)
         " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
         " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
         " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
-        " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
-        " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
+        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), "
+        " 2: TAG_25h9, 3: TAG_16h5, 4: TAG_CIRCLE21h7, 5: TAG_CIRCLE49h12,"
+        " 6: TAG_CUSTOM48h12, 7: TAG_STANDARD41h12, 8: TAG_STANDARD52h13) (default: 0)]"
         " [--display_tag] [--color <color_id (0, 1, ...)>]"
         " [--thickness <thickness>] [--z_aligned]"
         " [--help]"
         << std::endl;
       return EXIT_SUCCESS;
+      }
     }
-  }
 
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
@@ -97,7 +96,7 @@ int main(int argc, const char **argv)
   vpXmlParserCamera parser;
   if (!intrinsic_file.empty() && !camera_name.empty()) {
     parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-  }
+    }
 #endif
 
   std::cout << cam << std::endl;
@@ -163,15 +162,15 @@ int main(int argc, const char **argv)
         ss.str("");
         ss << "Tag id: " << tag_id;
         vpDisplay::displayText(I, static_cast<int>(bbox.getTop() - 10), static_cast<int>(bbox.getLeft()), ss.str(), vpColor::red);
-      }
+        }
       //! [Get tag id]
       for (size_t j = 0; j < p.size(); j++) {
         vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
         std::ostringstream number;
         number << j;
         vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(), vpColor::blue);
+        }
       }
-    }
 
     vpDisplay::displayText(I, 20, 20, "Click to display tag poses", vpColor::red);
     vpDisplay::flush(I);
@@ -182,7 +181,7 @@ int main(int argc, const char **argv)
     //! [Display camera pose for each tag]
     for (size_t i = 0; i < cMo_vec.size(); i++) {
       vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
-    }
+      }
     //! [Display camera pose for each tag]
 
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
@@ -210,14 +209,14 @@ int main(int argc, const char **argv)
     vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I_color);
     vpDisplay::getClick(I_color);
-  }
-  catch (const vpException &e) {
+    }
+  catch (const vpException& e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+    }
 
 #else
   (void)argc;
   (void)argv;
 #endif
   return EXIT_SUCCESS;
-}
+  }

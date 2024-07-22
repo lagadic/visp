@@ -13,9 +13,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/vision/vpPose.h>
 
-int main(int argc, const char **argv)
-{
-//! [Macro defined]
+int main(int argc, const char** argv) {
+  //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
   //! [Macro defined]
 #ifdef ENABLE_VISP_NAMESPACE
@@ -42,34 +41,34 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
       poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
-    }
+      }
     else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
-    }
+      }
     else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
       color_id = atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
       thickness = (unsigned int)atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    }
+      }
     else if (std::string(argv[i]) == "--z_aligned") {
       align_frame = true;
-    }
+      }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--tag_size <tag_size in m> (default: 0.053)]"
@@ -78,17 +77,17 @@ int main(int argc, const char **argv)
         " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
         " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
         " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
-        " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
-        " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
+        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), "
+        " 2: TAG_25h9, 3: TAG_16h5, 4: TAG_CIRCLE21h7, 5: TAG_CIRCLE49h12,"
+        " 6: TAG_CUSTOM48h12, 7: TAG_STANDARD41h12, 8: TAG_STANDARD52h13) (default: 0)]"
         " [--display_tag] [--z_aligned]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off] [--color <color id>] [--thickness <line thickness>]";
 #endif
       std::cout << " [--help]" << std::endl;
       return EXIT_SUCCESS;
+      }
     }
-  }
 
   try {
     //! [Construct grabber]
@@ -110,7 +109,7 @@ int main(int argc, const char **argv)
     std::cout << "I_color: " << I_color.getWidth() << " " << I_color.getHeight() << std::endl;
     std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.getHeight() << std::endl;
 
-    g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap));
+    g.acquire(reinterpret_cast<unsigned char*>(I_color.bitmap), reinterpret_cast<unsigned char*>(I_depth_raw.bitmap));
 
     std::cout << "Read camera parameters from Structure core device" << std::endl;
     vpCameraParameters cam;
@@ -127,9 +126,9 @@ int main(int argc, const char **argv)
     vpImage<float> depthMap;
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    vpDisplay *d1 = nullptr;
-    vpDisplay *d2 = nullptr;
-    vpDisplay *d3 = nullptr;
+    vpDisplay* d1 = nullptr;
+    vpDisplay* d2 = nullptr;
+    vpDisplay* d3 = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       d1 = new vpDisplayX(I_color, 100, 30, "Pose from Homography");
@@ -144,7 +143,7 @@ int main(int argc, const char **argv)
       d2 = new vpDisplayOpenCV(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
       d3 = new vpDisplayOpenCV(I_depth, 100, I_color.getHeight() + 70, "Depth");
 #endif
-    }
+      }
 
     //! [Create AprilTag detector]
     vpDetectorAprilTag detector(tagFamily);
@@ -162,8 +161,8 @@ int main(int argc, const char **argv)
       double t = vpTime::measureTimeMs();
 
       //! [Acquisition]
-      g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                reinterpret_cast<unsigned char *>(I_depth_raw.bitmap));
+      g.acquire(reinterpret_cast<unsigned char*>(I_color.bitmap),
+                reinterpret_cast<unsigned char*>(I_depth_raw.bitmap));
       //! [Acquisition]
 
       I_color2 = I_color;
@@ -179,12 +178,12 @@ int main(int argc, const char **argv)
           if (!vpMath::isNaN(I_depth_raw[i][j])) {
             float Z = I_depth_raw[i][j] * 0.001; // Transform depth to meters.
             depthMap[i][j] = Z;
-          }
+            }
           else {
             depthMap[i][j] = 0;
+            }
           }
         }
-      }
 
       vpDisplay::display(I_color);
       vpDisplay::display(I_color2);
@@ -196,7 +195,7 @@ int main(int argc, const char **argv)
       // Display camera pose for each tag
       for (size_t i = 0; i < cMo_vec.size(); i++) {
         vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
-      }
+        }
 
       //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
@@ -211,18 +210,18 @@ int main(int argc, const char **argv)
                                                     &confidence_index)) {
           if (confidence_index > 0.5) {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::none, 3);
-          }
+            }
           else if (confidence_index > 0.25) {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::orange, 3);
-          }
+            }
           else {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::red, 3);
-          }
+            }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
           vpDisplay::displayText(I_color2, 35 + i * 15, 20, ss.str(), vpColor::red);
+          }
         }
-      }
       //! [Pose from depth map]
 
       vpDisplay::displayText(I_color, 20, 20, "Pose from homography + VVS", vpColor::red);
@@ -241,7 +240,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I_color);
       vpDisplay::flush(I_color2);
       vpDisplay::flush(I_depth);
-    }
+      }
 
     std::cout << "Benchmark loop processing time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
@@ -252,12 +251,12 @@ int main(int argc, const char **argv)
       delete d1;
       delete d2;
       delete d3;
-    }
+      }
 
-  }
-  catch (const vpException &e) {
+    }
+  catch (const vpException& e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-  }
+    }
 
   return EXIT_SUCCESS;
 #else
@@ -270,4 +269,4 @@ int main(int argc, const char **argv)
 #endif
 #endif
   return EXIT_SUCCESS;
-}
+  }
