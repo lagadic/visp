@@ -521,7 +521,7 @@ int main(const int argc, const char *argv[])
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
-  const long seed = 4224; // Seed for the random generator
+  const long seedMeasurements = 42; // Seed for the measurements random generator
   const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, -0.05, 0., 1.})
@@ -577,7 +577,7 @@ int main(const int argc, const char *argv[])
 
   //! [Init_functions]
   vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
-  vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaLikelihood, sigmaMeasurements, seed);
+  vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaLikelihood, sigmaMeasurements, seedMeasurements);
   using std::placeholders::_1;
   using std::placeholders::_2;
   vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihoodParticle, &markerMeas, _1, _2);
