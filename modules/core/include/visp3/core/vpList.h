@@ -45,9 +45,8 @@
 
 #include <stdio.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 BEGIN_VISP_NAMESPACE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
   \class vpListElement
   \brief Each element of a list
