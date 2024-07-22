@@ -270,7 +270,7 @@ int main(const int argc, const char *argv[])
 #else
 int main()
 {
-  std::cout << "vpUnscentedKalman is only available if you compile ViSP in C++11 standard or higher." << std::endl;
+  std::cout << "This example is only available if you compile ViSP in C++11 standard or higher." << std::endl;
   return 0;
 }
 #endif
