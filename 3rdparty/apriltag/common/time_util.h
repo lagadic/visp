@@ -31,10 +31,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdint.h>
 //#include <time.h>
 
-#ifdef _WIN32
-#include <windows.h>
-typedef long long suseconds_t;
-#endif
+//#ifdef _WIN32
+//#include <windows.h>
+//typedef long long suseconds_t;
+//#endif
 
 #ifdef _MSC_VER
 
