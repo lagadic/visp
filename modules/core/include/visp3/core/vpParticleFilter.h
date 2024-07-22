@@ -240,7 +240,7 @@ public:
    *
    * \param bx The command function to use.
    *
-   * \warning It will deactive the process function.
+   * \warning It will deactivate the process function.
    */
   inline void setCommandStateFunction(const vpCommandStateFunction &bx)
   {
