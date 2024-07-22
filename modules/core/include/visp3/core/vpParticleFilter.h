@@ -406,14 +406,14 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   }
 #endif
   // Generating the random generators
-  unsigned int sizeState = stdev.size();
+  unsigned int sizeState = static_cast<unsigned int>(stdev.size());
   m_noiseGenerators.resize(m_nbMaxThreads);
   unsigned long long seedForGenerator;
   if (seed > 0) {
     seedForGenerator = seed;
   }
   else {
-    seedForGenerator = vpTime::measureTimeMicros();
+    seedForGenerator = static_cast<unsigned long long>(vpTime::measureTimeMicros());
   }
 
   // Sampler for the simpleImportanceResampling method
@@ -543,7 +543,7 @@ bool vpParticleFilter<MeasurementsType>::simpleResamplingCheck(const unsigned in
 template <typename MeasurementsType>
 typename vpParticleFilter<MeasurementsType>::vpParticlesWithWeights vpParticleFilter<MeasurementsType>::simpleImportanceResampling(const std::vector<vpColVector> &particles, const std::vector<double> &weights)
 {
-  unsigned int nbParticles = particles.size();
+  unsigned int nbParticles = static_cast<unsigned int>(particles.size());
   double x = 0.;
   double sumWeights = 0.;
   std::vector<int> idx(nbParticles);

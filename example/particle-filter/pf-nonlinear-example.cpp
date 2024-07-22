@@ -193,7 +193,7 @@ public:
    */
   double likelihoodParticle(const vpColVector &x, const vpColVector &meas)
   {
-    unsigned int nbMarkers = m_markers.size();
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
     double likelihood = 0.;
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(x[0], x[1], x[2]);
@@ -224,7 +224,7 @@ public:
    */
   vpColVector state_to_measurement(const vpColVector &x)
   {
-    unsigned int nbMarkers = m_markers.size();
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(x[0], x[1], x[2]);
@@ -249,7 +249,7 @@ public:
    */
   vpColVector measureGT(const vpColVector &wX)
   {
-    unsigned int nbMarkers = m_markers.size();
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(wX[0], wX[1], wX[2]);
@@ -526,7 +526,7 @@ int main(const int argc, const char *argv[])
                                            , vpColVector({0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, -0.05, 0., 1.})
                                            , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
-  const unsigned int nbMarkers = markers.size();
+  const unsigned int nbMarkers = static_cast<const unsigned int>(markers.size());
   std::vector<vpPoint> markersAsVpPoint;
   for (unsigned int i = 0; i < nbMarkers; ++i) {
     vpColVector marker = markers[i];
