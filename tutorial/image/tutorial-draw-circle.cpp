@@ -16,7 +16,7 @@ int main()
   try {
     {
 #if defined(VISP_HAVE_DISPLAY)
-      vpDisplay *d = vpDisplayFactory::displayFactory(I, vpDisplay::SCALE_AUTO);
+      vpDisplay *d = vpDisplayFactory::allocateDisplay(I, vpDisplay::SCALE_AUTO);
 #else
       std::cout << "No gui available to display gray level image..." << std::endl;
 #endif
@@ -64,7 +64,7 @@ int main()
       //! [Circle draw color]
 
 #if defined(VISP_HAVE_DISPLAY)
-      vpDisplay *d = vpDisplayFactory::displayFactory(I_rgb, vpDisplay::SCALE_AUTO);
+      vpDisplay *d = vpDisplayFactory::allocateDisplay(I_rgb, vpDisplay::SCALE_AUTO);
 #else
       std::cout << "No gui available to display color image..." << std::endl;
 #endif
