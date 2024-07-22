@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *****************************************************************************/
+ */
 
  /*!
    \example saveRealSenseData.cpp
@@ -40,7 +38,8 @@
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS) \
-  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML) \
+  && ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
 
 #include <condition_variable>
 #include <fstream>
@@ -1023,6 +1022,8 @@ int main()
 
 #if !defined(VISP_HAVE_PUGIXML)
   std::cout << "pugixml built-in 3rdparty is requested." << std::endl;
+#elif !((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
+  std::cout << "At least c++14 standard is requested." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

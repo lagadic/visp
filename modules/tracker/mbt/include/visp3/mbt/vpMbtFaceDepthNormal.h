@@ -54,18 +54,24 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthNormal
 {
 public:
+  /*!
+   * How to compute the centroid of a face using depth feature.
+   */
   enum vpFaceCentroidType
   {
     GEOMETRIC_CENTROID, ///< Compute the geometric centroid
     MEAN_CENTROID       ///< Compute the mean centroid
   };
 
+  /*!
+   * How to estimate the normal of a face using depth feature.
+   */
   enum vpFeatureEstimationType
   {
-    ROBUST_FEATURE_ESTIMATION = 0,
-    ROBUST_SVD_PLANE_ESTIMATION = 1,
+    ROBUST_FEATURE_ESTIMATION = 0, //!< Robust scheme to estimate the normal of the plane
+    ROBUST_SVD_PLANE_ESTIMATION = 1, //!< Use SVD and robust scheme to estimate the normal of the plane
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
-    PCL_PLANE_ESTIMATION = 2
+    PCL_PLANE_ESTIMATION = 2 //!< Use PCL to estimate the normal of the plane
 #endif
   };
 

@@ -10,7 +10,8 @@
 #include <visp3/visual_features/vpFeaturePoint3D.h>
 #include <visp3/vs/vpServo.h>
 
-int main(int argc, const char** argv) {
+int main(int argc, const char **argv)
+{
 #if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_V4L2)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
@@ -32,39 +33,39 @@ int main(int argc, const char** argv) {
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = std::atoi(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
 #if defined(VISP_HAVE_DISPLAY)
-      }
+    }
     else if (std::string(argv[i]) == "--display-on") {
       display_on = true;
-      }
+    }
     else if (std::string(argv[i]) == "--save-image") {
       save_image = true;
 #endif
-      }
+    }
     else if (std::string(argv[i]) == "--serial-off") {
       serial_off = true;
-      }
+    }
     else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-      }
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--input <camera input>] [--tag-size <tag size in m>]"
@@ -77,23 +78,23 @@ int main(int argc, const char** argv) {
 #endif
       std::cout << " [--serial-off] [--help]" << std::endl;
       return EXIT_SUCCESS;
-      }
     }
+  }
 
-  // Me Auriga led ring
-  // if serial com ok: led 1 green
-  // if exception: led 1 red
-  // if tag detected: led 2 green, else led 2 red
-  // if motor left: led 3 blue
-  // if motor right: led 4 blue
+// Me Auriga led ring
+// if serial com ok: led 1 green
+// if exception: led 1 red
+// if tag detected: led 2 green, else led 2 red
+// if motor left: led 3 blue
+// if motor right: led 4 blue
 
-  vpSerial* serial = nullptr;
+  vpSerial *serial = nullptr;
   if (!serial_off) {
     serial = new vpSerial("/dev/ttyAMA0", 115200);
 
     serial->write("LED_RING=0,0,0,0\n");  // Switch off all led
     serial->write("LED_RING=1,0,10,0\n"); // Switch on led 1 to green: serial ok
-    }
+  }
 
   try {
     vpImage<unsigned char> I;
@@ -105,12 +106,12 @@ int main(int argc, const char** argv) {
     g.setScale(1);
     g.acquire(I);
 
-    vpDisplay* d = nullptr;
+    vpDisplay *d = nullptr;
     vpImage<vpRGBa> O;
 #ifdef VISP_HAVE_DISPLAY
     if (display_on) {
-      d = vpDisplayFactory::displayFactory(I);
-      }
+      d = vpDisplayFactory::allocateDisplay(I);
+    }
 #endif
 
     vpCameraParameters cam;
@@ -120,7 +121,7 @@ int main(int argc, const char** argv) {
     vpXmlParserCamera parser;
     if (!intrinsic_file.empty() && !camera_name.empty()) {
       parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-      }
+    }
 #endif
 
     std::cout << "cam:\n" << cam << std::endl;
@@ -194,9 +195,9 @@ int main(int argc, const char** argv) {
       time_vec.push_back(t);
 
       {
-      std::stringstream ss;
-      ss << "Detection time: " << t << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+        std::stringstream ss;
+        ss << "Detection time: " << t << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
       }
 
       if (detector.getNbObjects() == 1) {
@@ -207,7 +208,7 @@ int main(int argc, const char** argv) {
 
         if (!serial_off) {
           serial->write("LED_RING=2,0,10,0\n"); // Switch on led 2 to green: tag detected
-          }
+        }
 
         X = cMo_vec[0][0][3];
         Y = cMo_vec[0][1][3];
@@ -235,7 +236,7 @@ int main(int argc, const char** argv) {
         if (!serial_off) {
           //          serial->write("LED_RING=3,0,0,10\n"); // Switch on led 3 to blue: motor left servoed
           //          serial->write("LED_RING=4,0,0,10\n"); // Switch on led 4 to blue: motor right servoed
-          }
+        }
         std::stringstream ss;
         double rpm_left = motor_left * 30. / M_PI;
         double rpm_right = motor_right * 30. / M_PI;
@@ -243,8 +244,8 @@ int main(int argc, const char** argv) {
         std::cout << "Send: " << ss.str() << std::endl;
         if (!serial_off) {
           serial->write(ss.str());
-          }
         }
+      }
       else {
         // stop the robot
         if (!serial_off) {
@@ -252,23 +253,23 @@ int main(int argc, const char** argv) {
           //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
           //          serial->write("LED_RING=4,0,0,0\n");  // Switch on led 4 to blue: motor right not servoed
           serial->write("MOTOR_RPM=0,-0\n"); // Stop the robot
-          }
         }
+      }
 
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I);
       if (display_on && save_image) {
         vpDisplay::getImage(I, O);
         vpImageIo::write(O, "image.png");
-        }
+      }
       if (vpDisplay::getClick(I, false)) {
         break;
-        }
       }
+    }
 
     if (!serial_off) {
       serial->write("LED_RING=0,0,0,0\n"); // Switch off all led
-      }
+    }
 
     std::cout << "Benchmark computation time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
@@ -277,17 +278,17 @@ int main(int argc, const char** argv) {
 
     if (display_on) {
       delete d;
-      }
+    }
     if (!serial_off) {
       delete serial;
-      }
     }
-  catch (const vpException& e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
     if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
-      }
     }
+  }
 
   return EXIT_SUCCESS;
 #else
@@ -302,4 +303,4 @@ int main(int argc, const char** argv) {
   std::cout << "Install missing 3rd parties, configure and build ViSP to run this tutorial" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

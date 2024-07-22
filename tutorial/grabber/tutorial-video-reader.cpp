@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     std::cout << "Video dimension: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_DISPLAY
-    vpDisplay *d = vpDisplayFactory::displayFactory(I);
+    vpDisplay *d = vpDisplayFactory::allocateDisplay(I);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
