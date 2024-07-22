@@ -165,7 +165,8 @@
     "core": "cpp",
     "dense": "cpp",
     "stdvector": "cpp",
-    "numericaldiff": "cpp"
+    "numericaldiff": "cpp",
+    "source_location": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,
