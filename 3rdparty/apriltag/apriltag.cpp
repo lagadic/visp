@@ -1317,11 +1317,10 @@ zarray_t* apriltag_detector_detect(apriltag_detector_t* td, image_u8_t* im_orig)
 
       for (int j = 0; j < 4; j++) {
         int k = (j + 1) & 3;
+        uint8_t data_[] = { (uint8_t)rgb[0], (uint8_t)rgb[1], (uint8_t)rgb[2] };
         image_u8x3_draw_line(out,
                              det->p[j][0], det->p[j][1], det->p[k][0], det->p[k][1],
-                             (uint8_t[]) {
-          (uint8_t)rgb[0], (uint8_t)rgb[1], (uint8_t)rgb[2]
-          });
+                             data_);
         }
       }
 
