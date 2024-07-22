@@ -40,6 +40,7 @@ ViSP 3.x.x (Version in development)
     . New scene renderer based on Panda3D. See inheritance diagram for vpPanda3DBaseRenderer class and corresponding
       tutorial
     . New docker image for Ubuntu 24.04 in docker folder
+    . Upgrade apriltag 3rdparty to 3.4.2 version
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
