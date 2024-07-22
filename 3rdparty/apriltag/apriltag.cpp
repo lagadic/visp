@@ -458,7 +458,8 @@ static matd_t* homography_compute2(double c[4][4]) {
       }
     A[col * 9 + 8] = (A[col * 9 + 8] - sum) / A[col * 9 + col];
     }
-  return matd_create_data(3, 3, (double[]) { A[8], A[17], A[26], A[35], A[44], A[53], A[62], A[71], 1 });
+  double data_[] = { A[8], A[17], A[26], A[35], A[44], A[53], A[62], A[71], 1 };
+  return matd_create_data(3, 3, data_);
   }
 
 // returns non-zero if an error occurs (i.e., H has no inverse)

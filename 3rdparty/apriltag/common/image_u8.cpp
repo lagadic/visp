@@ -43,7 +43,7 @@ image_u8_t* image_u8_create_stride(unsigned int width, unsigned int height, unsi
   uint8_t* buf = (uint8_t*)calloc((size_t)(height) * (size_t)(stride), sizeof(uint8_t));
 
   // const initializer
-  image_u8_t tmp = { .width = (int32_t)width, .height = (int32_t)height, .stride = (int32_t)stride, .buf = buf };
+  image_u8_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
 
   image_u8_t* im = (image_u8_t*)calloc(1, sizeof(image_u8_t));
   memcpy(im, &tmp, sizeof(image_u8_t));
@@ -68,7 +68,7 @@ image_u8_t* image_u8_copy(const image_u8_t* in) {
   memcpy(buf, in->buf, (size_t)(in->height) * (size_t)(in->stride) * sizeof(uint8_t));
 
   // const initializer
-  image_u8_t tmp = { .width = in->width, .height = in->height, .stride = in->stride, .buf = buf };
+  image_u8_t tmp = { in->width, in->height, in->stride, buf };
 
   image_u8_t* copy = (image_u8_t*)calloc(1, sizeof(image_u8_t));
   memcpy(copy, &tmp, sizeof(image_u8_t));

@@ -277,11 +277,10 @@ matd_t* fix_pose_ambiguities(matd_t** v, matd_t** p, matd_t* t, matd_t* R, int n
 
   matd_t* R_t_2 = matd_crossproduct(R_t_3, R_t_1);
 
-  matd_t* R_t = matd_create_data(3, 3, (double[]) {
-    MATD_EL(R_t_1, 0, 0), MATD_EL(R_t_1, 0, 1), MATD_EL(R_t_1, 0, 2),
-      MATD_EL(R_t_2, 0, 0), MATD_EL(R_t_2, 0, 1), MATD_EL(R_t_2, 0, 2),
-      MATD_EL(R_t_3, 0, 0), MATD_EL(R_t_3, 0, 1), MATD_EL(R_t_3, 0, 2)
-    });
+  double data_[] = { MATD_EL(R_t_1, 0, 0), MATD_EL(R_t_1, 0, 1), MATD_EL(R_t_1, 0, 2),
+                     MATD_EL(R_t_2, 0, 0), MATD_EL(R_t_2, 0, 1), MATD_EL(R_t_2, 0, 2),
+                     MATD_EL(R_t_3, 0, 0), MATD_EL(R_t_3, 0, 1), MATD_EL(R_t_3, 0, 2) };
+  matd_t* R_t = matd_create_data(3, 3, data_);
   matd_destroy(R_t_1);
   matd_destroy(R_t_2);
   matd_destroy(R_t_3);
@@ -296,21 +295,19 @@ matd_t* fix_pose_ambiguities(matd_t** v, matd_t** p, matd_t* t, matd_t* R, int n
     r32 = 0;
     hypotenuse = 1;
     }
-  matd_t* R_z = matd_create_data(3, 3, (double[]) {
-    r31 / hypotenuse, -r32 / hypotenuse, 0,
-      r32 / hypotenuse, r31 / hypotenuse, 0,
-      0, 0, 1
-    });
+  double data_R_z[] = { r31 / hypotenuse, -r32 / hypotenuse, 0,
+                       r32 / hypotenuse, r31 / hypotenuse, 0,
+                       0, 0, 1 };
+  matd_t* R_z = matd_create_data(3, 3, data_R_z);
 
   // 3. Calculate parameters of Eos
   matd_t* R_trans = matd_multiply(R_1_prime, R_z);
   double sin_gamma = -MATD_EL(R_trans, 0, 1);
   double cos_gamma = MATD_EL(R_trans, 1, 1);
-  matd_t* R_gamma = matd_create_data(3, 3, (double[]) {
-    cos_gamma, -sin_gamma, 0,
-      sin_gamma, cos_gamma, 0,
-      0, 0, 1
-    });
+  double data_R_gamma[] = { cos_gamma, -sin_gamma, 0,
+                           sin_gamma, cos_gamma, 0,
+                           0, 0, 1 };
+  matd_t* R_gamma = matd_create_data(3, 3, data_R_gamma);
 
   double sin_beta = -MATD_EL(R_trans, 2, 0);
   double cos_beta = MATD_EL(R_trans, 2, 2);
@@ -332,16 +329,15 @@ matd_t* fix_pose_ambiguities(matd_t** v, matd_t** p, matd_t* t, matd_t* R, int n
   matd_t* G = matd_op("(M-M)^-1", I3, avg_F_trans);
   matd_scale_inplace(G, 1.0 / n_points);
 
-  matd_t* M1 = matd_create_data(3, 3, (double[]) {
-    0, 0, 2,
-      0, 0, 0,
-      -2, 0, 0
-    });
-  matd_t* M2 = matd_create_data(3, 3, (double[]) {
-    -1, 0, 0,
-      0, 1, 0,
-      0, 0, -1
-    });
+  double data_M1[] = { 0, 0, 2,
+                       0, 0, 0,
+                      -2, 0, 0 };
+  matd_t* M1 = matd_create_data(3, 3, data_M1);
+
+  double data_M2[] = { -1, 0, 0,
+                        0, 1, 0,
+                        0, 0, -1 };
+  matd_t* M2 = matd_create_data(3, 3, data_M2);
 
   matd_t* b0 = matd_create(3, 1);
   matd_t* b1 = matd_create(3, 1);
@@ -412,7 +408,8 @@ matd_t* fix_pose_ambiguities(matd_t** v, matd_t** p, matd_t* t, matd_t* R, int n
 
   double roots[4];
   int n_roots;
-  solve_poly_approx((double[]) { p0, p1, p2, p3, p4 }, 4, roots, & n_roots);
+  double data_points[] = { p0, p1, p2, p3, p4 };
+  solve_poly_approx(data_points, 4, roots, &n_roots);
 
   double minima[4];
   int n_minima = 0;
@@ -507,16 +504,19 @@ void estimate_tag_pose_orthogonal_iteration(
   apriltag_pose_t* solution2,
   int nIters) {
   double scale = info->tagsize / 2.0;
+  double data_p0[] = { -scale, scale, 0 };
+  double data_p1[] = { scale, scale, 0 };
+  double data_p2[] = { scale, -scale, 0 };
+  double data_p3[] = { -scale, -scale, 0 };
   matd_t* p[4] = {
-      matd_create_data(3, 1, (double[]) { -scale, scale, 0 }),
-      matd_create_data(3, 1, (double[]) { scale, scale, 0 }),
-      matd_create_data(3, 1, (double[]) { scale, -scale, 0 }),
-      matd_create_data(3, 1, (double[]) { -scale, -scale, 0 }) };
+      matd_create_data(3, 1, data_p0),
+      matd_create_data(3, 1, data_p1),
+      matd_create_data(3, 1, data_p2),
+      matd_create_data(3, 1, data_p3) };
   matd_t* v[4];
   for (int i = 0; i < 4; i++) {
-    v[i] = matd_create_data(3, 1, (double[]) {
-      (info->det->p[i][0] - info->cx) / info->fx, (info->det->p[i][1] - info->cy) / info->fy, 1
-      });
+    double data_v[] = { (info->det->p[i][0] - info->cx) / info->fx, (info->det->p[i][1] - info->cy) / info->fy, 1 };
+    v[i] = matd_create_data(3, 1, data_v);
     }
 
   estimate_pose_for_tag_homography(info, solution1);
