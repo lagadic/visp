@@ -159,7 +159,7 @@ public:
    * \param[in] cMw The pose of the world frame with regard to the camera frame.
    * \param[in] wRo The rotation matrix expressing the rotation between the world frame and object frame.
    * \param[in] markers The position of the markers in the object frame.
-   * \param[in] sigmaDistane Standard deviation of the Gaussian function used for the computation of the likelihood.
+   * \param[in] sigmaDistance Standard deviation of the Gaussian function used for the computation of the likelihood.
    * An error greater than 3 times this standard deviation will lead to a likelihood equal to 0.
    * \param[in] noise_stdev The standard deviation for the noise generator
    * \param[in] seed The seed for the noise generator
@@ -442,7 +442,7 @@ private:
     std::cout << "  " << softName << " [--nb-steps-main <uint>] [--nb-steps-warmup <uint>]" << std::endl;
     std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
     std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-Z <double>] [--ampli-max-omega <double>]" << std::endl;
-    std::cout << "  [-d, --no-display][-h]" << std::endl;
+    std::cout << "  [-d, --no-display] [-h]" << std::endl;
   }
 
   void printDetails()
@@ -496,9 +496,9 @@ private:
     std::cout << "    Deactivate display." << std::endl;
     std::cout << "    Default: display is ";
 #ifdef VISP_HAVE_DISPLAY
-    std::cout << "ON";
+    std::cout << "ON" << std::endl;
 #else
-    std::cout << "OFF";
+    std::cout << "OFF" << std::endl;
 #endif
     std::cout << std::endl;
     std::cout << "  -h, --help" << std::endl;
@@ -521,7 +521,7 @@ int main(const int argc, const char *argv[])
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
-  const long seed = 42; // Seed for the random generator
+  const long seed = 4224; // Seed for the random generator
   const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, -0.05, 0., 1.})
@@ -756,25 +756,25 @@ int main(const int argc, const char *argv[])
     std::cin.get();
   }
 
-//! [Delete_displays]
+  //! [Delete_displays]
 #ifdef VISP_HAVE_DISPLAY
   // Delete the plot if it was allocated
   if (plot != nullptr) {
     delete plot;
   }
 #endif
-//! [Delete_displays]
+  //! [Delete_displays]
 
   if (meanErrorFilter > meanErrorNoise) {
-    return -1;
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  std::cout << "vpUnscentedKalman is only available if you compile ViSP in C++11 standard or higher." << std::endl;
-  return 0;
+  std::cout << "This example is only available if you compile ViSP in C++11 standard or higher." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif
