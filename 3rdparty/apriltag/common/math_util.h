@@ -27,7 +27,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #pragma once
 
-#define _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -35,6 +35,14 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #ifdef __cplusplus
 //extern "C" {
+#endif
+
+#ifndef M_2_PI
+# define M_2_PI       6.2831853071795862319959  /* 2*pi */
+#endif
+
+#ifndef M_PI
+# define M_PI 3.141592653589793238462643383279502884196
 #endif
 
 #define to_radians(x) ( (x) * (M_PI / 180.0 ))

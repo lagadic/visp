@@ -30,9 +30,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+
 #include "apriltag.h"
 
-#define _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES
 #include <math.h>
 #include <assert.h>
 #include <stdint.h>
@@ -53,6 +56,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "apriltag_math.h"
 
 #include "common/postscript_utils.h"
+
+#ifndef M_PI
+# define M_PI 3.141592653589793238462643383279502884196
+#endif
 
 #ifdef _WIN32
 static inline void srandom(unsigned int seed) {
