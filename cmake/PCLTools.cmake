@@ -313,6 +313,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(HDF5_C_LIBRARY_crypto)
   mark_as_advanced(HDF5_C_LIBRARY_curl)
   mark_as_advanced(HDF5_C_LIBRARY_pthread)
+  mark_as_advanced(HDF5_DIR)
 
   mark_as_advanced(ICU_INCLUDE_DIR)            # Requested on macOS with pcl 1.12.1
 
@@ -339,6 +340,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(Qt6OpenGL_DIR Qt6WidgetsTools_DIR Qt6Widgets_DIR)
   mark_as_advanced(Qt6DBusTools_DIR Qt6DBus_DIR Qt6Network_DIR Qt6QmlCompilerPlusPrivate_DIR)
   mark_as_advanced(Qt6QmlIntegration_DIR Qt6QmlModels_DIR Qt6QmlTools_DIR Qt6Qml_DIR Qt6Quick_DIR Qt6Sql_DIR)
+  mark_as_advanced(Qt6QmlBuiltins_DIR Qt6QuickTools_DIR)
   mark_as_advanced(Qt6_DIR)
   mark_as_advanced(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH)
   mark_as_advanced(QT_ADDITIONAL_PACKAGES_PREFIX_PATH)
@@ -381,6 +383,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(VTK_DIR)                             # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(TBB_DIR)
+  mark_as_advanced(Tiff_DIR)
 
   mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
   mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows

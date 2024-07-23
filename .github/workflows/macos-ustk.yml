@@ -67,10 +67,9 @@ jobs:
       run: |
         export LDFLAGS="-L/usr/local/opt/openblas/lib"
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
-        export Qt5_DIR="$(brew --prefix qt5)/lib/cmake/Qt5"
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DVISP_CONTRIB_MODULES_PATH=${HOME}/ustk/modules -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DVISP_CONTRIB_MODULES_PATH=${HOME}/ustk/modules
         cat ViSP-third-party.txt
 
     - name: Compile

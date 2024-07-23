@@ -266,7 +266,8 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
       assert(arr_depth_data.shape.size() == 3); // H x W x C
       assert(arr_depth_data.shape[2] == 1); // Single channel
 
-      unsigned int height = arr_depth_data.shape[0], width = arr_depth_data.shape[1];
+      unsigned int height = static_cast<unsigned int>(arr_depth_data.shape[0]);
+      unsigned int width = static_cast<unsigned int>(arr_depth_data.shape[1]);
       const bool copyData = true;
       I_depth_raw = vpImage<uint16_t>(depth_data_ptr, height, width, copyData);
     }
