@@ -188,10 +188,10 @@ void vpLuminancePCA::save(const std::string &basisFilename, const std::string &m
 vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int border)
 {
   vpMatrix matrix;
-  for (unsigned i = 0; i < images.size(); ++i) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(images.size()); ++i) {
     const vpImage<unsigned char> &I = images[i];
     if (i == 0) {
-      matrix.resize(images.size(), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
+      matrix.resize(static_cast<unsigned int>(images.size()), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
     }
     if ((I.getHeight() - 2 * border) * (I.getWidth() - 2 * border) != matrix.getCols()) {
       throw vpException(vpException::badValue, "Not all images have the same dimensions when learning pca");
@@ -211,10 +211,10 @@ vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles,
 {
   vpMatrix matrix;
   vpImage<unsigned char> I;
-  for (unsigned i = 0; i < imageFiles.size(); ++i) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(imageFiles.size()); ++i) {
     vpImageIo::read(I, imageFiles[i]);
     if (i == 0) {
-      matrix.resize(imageFiles.size(), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
+      matrix.resize(static_cast<unsigned int>(imageFiles.size()), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
     }
     if ((I.getHeight() - 2 * border) * (I.getWidth() - 2 * border) != matrix.getCols()) {
       throw vpException(vpException::badValue, "Not all images have the same dimensions when learning pca");

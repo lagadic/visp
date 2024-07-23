@@ -1387,12 +1387,12 @@ TEST_CASE("RGB to HSV conversion", "[image_conversion]")
       vpImageConvert::RGBToHSV(reinterpret_cast<unsigned char *>(&rgb_truth_continuous.front()),
                                 reinterpret_cast<unsigned char *>(&hue.front()),
                                 reinterpret_cast<unsigned char *>(&saturation.front()),
-                                reinterpret_cast<unsigned char *>(&value.front()), size, h_full);
+                                reinterpret_cast<unsigned char *>(&value.front()), static_cast<unsigned int>(size), h_full);
       CHECK(test_hsv(hue, saturation, value, rgb_truth, hsv_truth, 3, size, 1.));
 
       std::cout << "Test hsv (unsigned char) -> rgb conversion with h full scale: " << (h_full ? "yes" : "no") << std::endl;
       std::vector< unsigned char> rgb_continuous(rgb_truth_continuous.size() * 3);
-      vpImageConvert::HSVToRGB(&hue.front(), &saturation.front(), &value.front(), &rgb_continuous.front(), size, h_full);
+      vpImageConvert::HSVToRGB(&hue.front(), &saturation.front(), &value.front(), &rgb_continuous.front(), static_cast<unsigned int>(size), h_full);
       CHECK(test_rgb(rgb_continuous, rgb_truth, hsv_truth, 3, size, 5.));
     }
     SECTION("RGBa -> HSV (unsigned char) -> RGBa")
@@ -1404,12 +1404,12 @@ TEST_CASE("RGB to HSV conversion", "[image_conversion]")
       vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(&rgba_truth_continuous.front()),
                                 reinterpret_cast<unsigned char *>(&hue.front()),
                                 reinterpret_cast<unsigned char *>(&saturation.front()),
-                                reinterpret_cast<unsigned char *>(&value.front()), size, h_full);
+                                reinterpret_cast<unsigned char *>(&value.front()), static_cast<unsigned int>(size), h_full);
       CHECK(test_hsv(hue, saturation, value, rgb_truth, hsv_truth, 4, size, 1.));
 
       std::cout << "Test hsv (unsigned char) -> rgba conversion with h full scale: " << (h_full ? "yes" : "no") << std::endl;
       std::vector< unsigned char> rgba_continuous(rgb_truth_continuous.size() * 4);
-      vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), &rgba_continuous.front(), size, h_full);
+      vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), &rgba_continuous.front(), static_cast<unsigned int>(size), h_full);
       CHECK(test_rgb(rgba_continuous, rgb_truth, hsv_truth, 4, size, 5.));
     }
     if (h_full) {
@@ -1422,12 +1422,12 @@ TEST_CASE("RGB to HSV conversion", "[image_conversion]")
         vpImageConvert::RGBToHSV(reinterpret_cast<unsigned char *>(&rgb_truth_continuous.front()),
                                   reinterpret_cast<double *>(&hue.front()),
                                   reinterpret_cast<double *>(&saturation.front()),
-                                  reinterpret_cast<double *>(&value.front()), size);
+                                  reinterpret_cast<double *>(&value.front()), static_cast<unsigned int>(size));
         CHECK(test_hsv(hue, saturation, value, rgb_truth, hsv_truth, 3, size, 255.));
 
         std::cout << "Test hsv (double) -> rgb conversion" << std::endl;
         std::vector< unsigned char> rgb_continuous(rgb_truth_continuous.size());
-        vpImageConvert::HSVToRGB(&hue.front(), &saturation.front(), &value.front(), &rgb_continuous.front(), size);
+        vpImageConvert::HSVToRGB(&hue.front(), &saturation.front(), &value.front(), &rgb_continuous.front(), static_cast<unsigned int>(size));
         CHECK(test_rgb(rgb_continuous, rgb_truth, hsv_truth, 3, size));
       }
     }
@@ -1442,12 +1442,12 @@ TEST_CASE("RGB to HSV conversion", "[image_conversion]")
         vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(&rgba_truth_continuous.front()),
                                   reinterpret_cast<double *>(&hue.front()),
                                   reinterpret_cast<double *>(&saturation.front()),
-                                  reinterpret_cast<double *>(&value.front()), size);
+                                  reinterpret_cast<double *>(&value.front()), static_cast<unsigned int>(size));
         CHECK(test_hsv(hue, saturation, value, rgb_truth, hsv_truth, 4, size, 255.));
 
         std::cout << "Test hsv (double) -> rgba conversion" << std::endl;
         std::vector< unsigned char> rgba_continuous(rgb_truth_continuous.size()*4);
-        vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), &rgba_continuous.front(), size);
+        vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), &rgba_continuous.front(), static_cast<unsigned int>(size));
         CHECK(test_rgb(rgba_continuous, rgb_truth, hsv_truth, 4, size));
       }
     }
