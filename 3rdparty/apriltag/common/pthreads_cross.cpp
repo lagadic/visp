@@ -22,7 +22,8 @@ SOFTWARE.
 
 #include "common/pthreads_cross.h"
 
-#ifdef _WIN32
+//#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 
 typedef struct {
     SRWLOCK lock;
@@ -246,11 +247,11 @@ unsigned int pcthread_get_num_procs()
     return sysinfo.dwNumberOfProcessors;
 }
 
-#else
-
-#include <unistd.h>
-unsigned int pcthread_get_num_procs()
-{
-    return (unsigned int)sysconf(_SC_NPROCESSORS_ONLN);
-}
+//#else
+//
+//#include <unistd.h>
+//unsigned int pcthread_get_num_procs()
+//{
+//    return (unsigned int)sysconf(_SC_NPROCESSORS_ONLN);
+//}
 #endif

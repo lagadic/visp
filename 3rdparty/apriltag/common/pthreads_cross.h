@@ -23,7 +23,8 @@ SOFTWARE.
 #ifndef __CPTHREAD_H__
 #define __CPTHREAD_H__
 
-#ifdef _WIN32
+//#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 #include <stdbool.h>
 #include <windows.h>
 #else
@@ -32,7 +33,8 @@ SOFTWARE.
 #endif
 #include <time.h>
 
-#ifdef _WIN32
+//#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 
 typedef CRITICAL_SECTION pthread_mutex_t;
 typedef void pthread_mutexattr_t;
@@ -43,7 +45,7 @@ typedef HANDLE pthread_t;
 typedef CONDITION_VARIABLE pthread_cond_t;
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 int pthread_create(pthread_t *thread, pthread_attr_t *attr, void *(*start_routine)(void *), void *arg);
 int pthread_join(pthread_t thread, void **value_ptr);
@@ -63,20 +65,20 @@ int pthread_cond_broadcast(pthread_cond_t *cond);
 
 int sched_yield(void);
 #ifdef __cplusplus
-}
+//}
 #endif
 #endif
 
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 unsigned int pcthread_get_num_procs();
 
 void ms_to_timespec(struct timespec *ts, unsigned int ms);
 unsigned int timespec_to_ms(const struct timespec *abstime);
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif /* __CPTHREAD_H__ */
