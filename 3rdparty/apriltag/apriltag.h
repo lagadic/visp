@@ -272,6 +272,8 @@ void apriltag_detection_copy(apriltag_detection_t* src, apriltag_detection_t* ds
 // copy the array AND the detections within it.
 zarray_t* apriltag_detections_copy(zarray_t* detections);
 
+apriltag_detector_t *apriltag_detector_copy(apriltag_detector_t *td);
+
 // Renders the apriltag.
 // Caller is responsible for calling image_u8_destroy on the image
 image_u8_t *apriltag_to_image(apriltag_family_t *fam, uint32_t idx);

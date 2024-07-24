@@ -1464,6 +1464,32 @@ zarray_t* apriltag_detections_copy(zarray_t* detections)
     return detections_copy;
 }
 
+apriltag_detector_t *apriltag_detector_copy(apriltag_detector_t *td)
+{
+    apriltag_detector_t *td_copy = apriltag_detector_create();
+
+    td_copy->nthreads = td->nthreads;
+    td_copy->quad_decimate = td->quad_decimate;
+    td_copy->quad_sigma = td->quad_sigma;
+
+    td_copy->qtp.max_nmaxima = td->qtp.max_nmaxima ;
+    td_copy->qtp.min_cluster_pixels = td->qtp.min_cluster_pixels;
+
+    td_copy->qtp.max_line_fit_mse = td->qtp.max_line_fit_mse;
+    td_copy->qtp.cos_critical_rad = td->qtp.cos_critical_rad;
+    td_copy->qtp.deglitch = td->qtp.deglitch;
+    td_copy->qtp.min_white_black_diff = td->qtp.min_white_black_diff;
+
+    //td->tag_families = zarray_create(sizeof(apriltag_family_t *));
+    //td->tp = timeprofile_create();
+
+    td_copy->refine_edges = td->refine_edges;
+    td_copy->decode_sharpening = td->decode_sharpening;
+    td_copy->debug = td->debug;
+
+    return td_copy;
+}
+
 image_u8_t *apriltag_to_image(apriltag_family_t *fam, uint32_t idx)
 {
     assert(fam != NULL);

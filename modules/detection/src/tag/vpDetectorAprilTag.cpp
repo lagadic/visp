@@ -29,8 +29,7 @@
  *
  * Description:
  * Base class for AprilTag detection.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
@@ -201,7 +200,7 @@ public:
     }
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
-      m_td = apriltag_detector_create();
+      m_td = apriltag_detector_copy(o.m_td);
       apriltag_detector_add_family(m_td, m_tf);
     }
 
