@@ -729,6 +729,9 @@ void vpMbtFaceDepthNormal::computeDesiredFeaturesRobustFeatures(const std::vecto
   centroid_point[0] /= den;
   centroid_point[1] /= den;
   centroid_point[2] /= den;
+  std::cout << "Centroid = " << centroid_point.t() << std::endl;
+  std::cout << "Desired features = " << desired_features.t() << std::endl;
+
 
   computeNormalVisibility(-desired_features[0], -desired_features[1], -desired_features[2], centroid_point,
                           desired_normal);
@@ -1038,6 +1041,17 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
   }
 }
 
+bool vpMbtFaceDepthNormal::planeIsDegenerate(const vpHomogeneousMatrix &cMo)
+{
+  m_planeCamera = m_planeObject;
+  m_planeCamera.changeFrame(cMo);
+  const vpTranslationVector t = cMo.getTranslationVector();
+  // const double D = -(t[0] * m_planeCamera.getA() + t[1] * m_planeCamera.getB() + t[2] * m_planeCamera.getC());
+  const double D = m_planeCamera.getD();
+  std::cout << "D = " << D << std::endl;
+  return fabs(D) < 5e-2;
+}
+
 void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features)
 {
   L.resize(3, 6, false, false);
@@ -1057,6 +1071,7 @@ void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &c
   features[0] = -ux / D;
   features[1] = -uy / D;
   features[2] = -uz / D;
+  std::cout << "Current features = " << features.t() << std::endl;
 
   // L_A
   L[0][0] = ux * ux / D2;

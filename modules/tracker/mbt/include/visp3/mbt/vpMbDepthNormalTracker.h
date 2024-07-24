@@ -120,6 +120,7 @@ public:
 #endif
   virtual void track(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
 
+
 protected:
   //! Method to estimate the desired features
   vpMbtFaceDepthNormal::vpFeatureEstimationType m_depthNormalFeatureEstimationMethod;

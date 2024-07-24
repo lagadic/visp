@@ -133,6 +133,8 @@ public:
   void computeVisibility();
   void computeVisibilityDisplay();
 
+  bool planeIsDegenerate(const vpHomogeneousMatrix &cMo);
+
   void computeNormalVisibility(double nx, double ny, double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
