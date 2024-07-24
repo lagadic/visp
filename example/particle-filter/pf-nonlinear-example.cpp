@@ -524,7 +524,7 @@ int main(const int argc, const char *argv[])
                                            , vpColVector({0.05, 0.05, 0., 1.})
                                            , vpColVector({0.05, -0.05, 0., 1.})
                                            , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
-  const unsigned int nbMarkers = static_cast<const unsigned int>(markers.size());
+  unsigned int nbMarkers = static_cast<unsigned int>(markers.size());
   std::vector<vpPoint> markersAsVpPoint;
   for (unsigned int i = 0; i < nbMarkers; ++i) {
     vpColVector marker = markers[i];
