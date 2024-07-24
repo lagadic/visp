@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /** \example pf-nonlinear-example.cpp
  * Example on how to use a Particle Filter (PF) on a complex non-linear use-case.
@@ -38,24 +36,24 @@
  * fixed to the ceiling.
  *
  * The state vector of the PF is:
- *  \f{eqnarray*}{
-        \textbf{x}[0] &=& {}^WX_x \\
-        \textbf{x}[1] &=& {}^WX_y \\
-        \textbf{x}[2] &=& {}^WX_z \\
-        \textbf{x}[3] &=& \omega \Delta t
-   \f}
-
-   The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
-   Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
-   The measurement vector can be written as:
-   \f{eqnarray*}{
-        \textbf{z}[2i] &=& u_i \\
-        \textbf{z}[2i+1] &=& v_i
-   \f}
-
+ * \f{eqnarray*}{
+ *      \textbf{x}[0] &=& {}^WX_x \\
+ *      \textbf{x}[1] &=& {}^WX_y \\
+ *      \textbf{x}[2] &=& {}^WX_z \\
+ *      \textbf{x}[3] &=& \omega \Delta t
+ * \f}
+ *
+ * The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
+ * Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+ * The measurement vector can be written as:
+ * \f{eqnarray*}{
+ *      \textbf{z}[2i] &=& u_i \\
+ *      \textbf{z}[2i+1] &=& v_i
+ * \f}
+ *
  * Some noise is added to the measurement vector to simulate measurements which are
  * not perfect.
-*/
+ */
 
 // ViSP includes
 #include <visp3/core/vpConfig.h>
@@ -690,8 +688,6 @@ int main(const int argc, const char *argv[])
     // Compute the pose using the noisy markers
     vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
     vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
-    double wXnoisy = wMo_noisy[0][3];
-    double wYnoisy = wMo_noisy[1][3];
     //! [Noisy_pose]
 
   //! [Update_displays]
@@ -705,6 +701,8 @@ int main(const int argc, const char *argv[])
       plot->plot(0, 1, Xest[0], Xest[1]);
 
       // Plot the noisy pose
+      double wXnoisy = wMo_noisy[0][3];
+      double wYnoisy = wMo_noisy[1][3];
       plot->plot(0, 2, wXnoisy, wYnoisy);
       //! [Update_plot]
 
