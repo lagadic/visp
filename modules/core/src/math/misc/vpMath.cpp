@@ -29,8 +29,7 @@
  *
  * Description:
  * Simple mathematical function not available in the C math library (math.h).
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMath.cpp
@@ -229,12 +228,12 @@ bool vpMath::isNumber(const std::string &str)
   \param cosx : Value of cos(x).
   \param x : Value of x.
 
-  \return \f$ (1-cosx)/x^2 \f$
+  \return \f$ (1-cos(x))/x^2 \f$
 */
 double vpMath::mcosc(double cosx, double x)
 {
   if (fabs(x) < ang_min_mc) {
-    return 0.5;
+    return 0.5 - x * x / 24.0;
   }
   else {
     return ((1.0 - cosx) / x / x);
@@ -242,7 +241,7 @@ double vpMath::mcosc(double cosx, double x)
 }
 
 /*!
-  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
+  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sin(x) / x \f$.
 
   \param sinx : value of sin(x).
   \param x  : Value of x.
@@ -252,7 +251,7 @@ double vpMath::mcosc(double cosx, double x)
 double vpMath::msinc(double sinx, double x)
 {
   if (fabs(x) < ang_min_mc) {
-    return (1. / 6.0);
+    return (1. / 6.0 - x * x / 120.0);
   }
   else {
     return ((1.0 - (sinx / x)) / x / x);
@@ -269,7 +268,7 @@ double vpMath::msinc(double sinx, double x)
 double vpMath::sinc(double x)
 {
   if (fabs(x) < ang_min_sinc) {
-    return 1.0;
+    return 1.0 - x * x / 6.0;
   }
   else {
     return sin(x) / x;
@@ -286,7 +285,7 @@ double vpMath::sinc(double x)
 double vpMath::sinc(double sinx, double x)
 {
   if (fabs(x) < ang_min_sinc) {
-    return 1.0;
+    return 1.0 - x * x / 6.0;
   }
   else {
     return (sinx / x);
