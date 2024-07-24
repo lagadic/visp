@@ -1,8 +1,9 @@
 #pragma once
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
+
 
 #include "apriltag.h"
 #include "common/matd.h"
@@ -76,5 +77,6 @@ double estimate_tag_pose(apriltag_detection_info_t* info, apriltag_pose_t* pose)
 void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2);
 
 #ifdef __cplusplus
-//}
+}
 #endif
+

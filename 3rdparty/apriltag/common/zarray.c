@@ -25,52 +25,31 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#pragma once
+#include <string.h>
+#include <assert.h>
 
-#include <stdio.h>
+#include "zarray.h"
 
-typedef struct zmaxheap zmaxheap_t;
+int zstrcmp(const void * a_pp, const void * b_pp)
+{
+    assert(a_pp != NULL);
+    assert(b_pp != NULL);
 
-typedef struct zmaxheap_iterator zmaxheap_iterator_t;
-struct zmaxheap_iterator {
-    zmaxheap_t *heap;
-    int in, out;
-};
+    char * a = *(void**)a_pp;
+    char * b = *(void**)b_pp;
 
-zmaxheap_t *zmaxheap_create(size_t el_sz);
+    return strcmp(a,b);
+}
 
-void zmaxheap_vmap(zmaxheap_t *heap, void (*f)(void *));
+void zarray_vmap(zarray_t *za, void (*f)(void*))
+{
+    assert(za != NULL);
+    assert(f != NULL);
+    assert(za->el_sz == sizeof(void*));
 
-void zmaxheap_destroy(zmaxheap_t *heap);
-
-void zmaxheap_add(zmaxheap_t *heap, void *p, float v);
-
-int zmaxheap_size(zmaxheap_t *heap);
-
-// returns 0 if the heap is empty, so you can do
-// while (zmaxheap_remove_max(...)) { }
-int zmaxheap_remove_max(zmaxheap_t *heap, void *p, float *v);
-
-////////////////////////////////////////////
-// This is a peculiar iterator intended to support very specific (and
-// unusual) applications, and the heap is not necessarily in a valid
-// state until zmaxheap_iterator_finish is called.  Consequently, do
-// not call any other methods on the heap while iterating through.
-
-// you must provide your own storage for the iterator, and pass in a
-// pointer.
-void zmaxheap_iterator_init(zmaxheap_t *heap, zmaxheap_iterator_t *it);
-
-// Traverses the heap in top-down/left-right order. makes a copy of
-// the content into memory (p) that you provide.
-int zmaxheap_iterator_next(zmaxheap_iterator_t *it, void *p, float *v);
-
-// will set p to be a pointer to the heap's internal copy of the dfata.
-int zmaxheap_iterator_next_volatile(zmaxheap_iterator_t *it, void *p, float *v);
-
-// remove the current element.
-void zmaxheap_iterator_remove(zmaxheap_iterator_t *it);
-
-// call after all iterator operations are done. After calling this,
-// the iterator should no longer be used, but the heap methods can be.
-void zmaxheap_iterator_finish(zmaxheap_iterator_t *it);
+    for (int idx = 0; idx < za->size; idx++) {
+        void *pp = &za->data[idx*za->el_sz];
+        void *p = *(void**) pp;
+        f(p);
+    }
+}
