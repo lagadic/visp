@@ -44,7 +44,7 @@ set(tutorial_cpp)
 list(APPEND tutorial_cpp tutorial-pf.cpp)
 
 foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp} vpTutoSegmentation.h vpTutoSegmentation.cpp vpCommonData.h)
+  visp_add_target(${cpp} vpTutoMeanSquareFitting.h vpTutoMeanSquareFitting.cpp vpTutoSegmentation.h vpTutoSegmentation.cpp vpCommonData.h)
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()

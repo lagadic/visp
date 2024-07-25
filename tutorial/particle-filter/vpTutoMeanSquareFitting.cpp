@@ -30,32 +30,51 @@
  *
 *****************************************************************************/
 
-#include "vpTutoSegmentation.h"
-
-#ifdef ENABLE_VISP_NAMESPACE
-using namespace VISP_NAMESPACE_NAME;
-#endif
+#include "vpTutoMeanSquareFitting.h"
 
 namespace tutorial
 {
-void performSegmentationHSV(vpCommonData &data)
+#ifdef ENABLE_VISP_NAMESPACE
+using VISP_NAMESPACE_NAME;
+#endif
+
+vpTutoMeanSquareFitting::vpTutoMeanSquareFitting()
+  : m_a(0.f)
+  , m_b(0.f)
+  , m_c(0.f)
+{ }
+
+float vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
 {
-  const unsigned int height = data.m_I_orig.getHeight(), width = data.m_I_orig.getWidth();
-  vpImage<unsigned char> H(height, width);
-  vpImage<unsigned char> S(height, width);
-  vpImage<unsigned char> V(height, width);
-  vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(data.m_I_orig.bitmap),
-                                reinterpret_cast<unsigned char *>(H.bitmap),
-                                reinterpret_cast<unsigned char *>(S.bitmap),
-                                reinterpret_cast<unsigned char *>(V.bitmap), data.m_I_orig.getSize());
+  unsigned int nbPts = pts.size();
+  vpMatrix A(nbPts, 3, 1.); // The matrix that contains the u^2, u and 1s
+  vpMatrix X(3, 1); // The matrix we want to estimate, that contains the a, b and c coefficients.
+  vpMatrix b(nbPts, 1); // The matrix that contains the v values
 
-  vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
-                        reinterpret_cast<unsigned char *>(S.bitmap),
-                        reinterpret_cast<unsigned char *>(V.bitmap),
-                        data.m_hsv_values,
-                        data.m_mask.bitmap,
-                        data.m_mask.getSize());
+  // Fill the matrices that form the system we want to solve
+  for (unsigned int i = 0; i < nbPts; ++i) {
+    float u = pts[i].get_u();
+    float v = pts[i].get_v();
+    A[i][0] = u *u;
+    A[i][1] = u;
+    A[i][2] = 1.f;
+    b[i][0] = v;
+  }
 
-  vpImageTools::inMask(data.m_I_orig, data.m_mask, data.m_I_segmented);
+  // Compute the parabolla coefficients using the least-mean-square method.
+  X = A.pseudoInverse() * b;
+  m_a = X[0][0];
+  m_b = X[1][0];
+  m_c = X[2][0];
+
+  // Compute the mean absolute error
+  float meanError = 0.f;
+  for (unsigned int i = 0; i < nbPts; ++i) {
+    float u = pts[i].get_u();
+    float v = pts[i].get_v();
+    meanError += std::abs(v - ((m_a * u * u) + (m_b * u) + m_c));
+  }
+  meanError /= static_cast<float>(nbPts);
+  return meanError;
 }
 }

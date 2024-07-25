@@ -33,9 +33,11 @@
 //! \example tutorial-pf.cpp
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpTime.h>
 
 #include "vpCommonData.h"
+#include "vpTutoMeanSquareFitting.h"
 #include "vpTutoSegmentation.h"
 
 int main(const int argc, const char *argv[])
@@ -49,18 +51,40 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
 
+  const bool storeEdgePointsList = true;
+  vpCannyEdgeDetection edgeDetector(data.m_cannyGfKernelSize, data.m_cannyGfStdev, data.m_cannyGradAperture, data.m_cannyLt,
+                                    data.m_cannyUpperT, data.m_cannyLtr, data.m_cannyUpperTr, data.m_cannyGradType, storeEdgePointsList);
+  tutorial::vpTutoMeanSquareFitting lmsFitter;
   const double period = 33.; // 33ms period, i.e. 30Hz
+  const unsigned int vertOffset = 20;
+  const unsigned int horOffset = 20;
+  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 3 * vertOffset;
+  const unsigned int legendLmsHor = horOffset;
   while (!data.m_grabber.end()) {
     double t0 = vpTime::measureTimeMs();
     data.m_grabber.acquire(data.m_I_orig);
     tutorial::performSegmentationHSV(data);
 #ifdef VISP_HAVE_DISPLAY
+    // Initial display of the images
     vpDisplay::display(data.m_I_orig);
     vpDisplay::display(data.m_I_segmented);
+    vpDisplay::display(data.m_Icanny);
 #endif
+    // Computing the edge-map from the mask
+    data.m_Icanny = edgeDetector.detect(data.m_mask);
+    std::vector<vpImagePoint> edgePoints = edgeDetector.getEdgePointsList();
+
+    /// Fit using least-square
+    float lmsError = lmsFitter.fit(edgePoints);
+    std::cout << "Average error using least-mean square method: " << lmsError << " pixels" << std::endl;
+    lmsFitter.display(data.m_Icanny, vpColor::blue, legendLmsVert, legendLmsHor);
+
+    ///TODO: PF
 #ifdef VISP_HAVE_DISPLAY
+    // Display the images with overlayed info
     vpDisplay::flush(data.m_I_orig);
     vpDisplay::flush(data.m_I_segmented);
+    vpDisplay::flush(data.m_Icanny);
 #endif
     vpTime::wait(t0, period);
   }

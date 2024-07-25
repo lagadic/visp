@@ -36,6 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
@@ -51,13 +52,25 @@ typedef struct vpCommonData
   VISP_NAMESPACE_ADDRESSING vpColVector m_hsv_values; /*!< Vector that contains the lower and upper limits of the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_orig; /*!< The color image read from the file.*/
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_segmented; /*!< The segmented color image resulting from HSV segmentation.*/
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_mask; /*!< A binary mask where 255 means that a pixel belongs to the HSV range delimited by the HSV thresholds.*/
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_Icanny; /*!< The edge-map resulting from the mask.*/
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayOrig;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySegmented;
+  std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayCanny;
 #else
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayOrig;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
+  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayCanny;
 #endif
+  int m_cannyGfKernelSize;
+  float m_cannyGfStdev;
+  unsigned int m_cannyGradAperture;
+  float m_cannyLt;
+  float m_cannyUpperT;
+  float m_cannyLtr;
+  float m_cannyUpperTr;
+  VISP_NAMESPACE_ADDRESSING vpImageFilter::vpCannyFilteringAndGradientType m_cannyGradType;
 
   vpCommonData()
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
@@ -65,7 +78,16 @@ typedef struct vpCommonData
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
+    , m_displayCanny(nullptr)
 #endif
+    , m_cannyGfKernelSize(5)
+    , m_cannyGfStdev(1.f)
+    , m_cannyGradAperture(3)
+    , m_cannyLt(-1.f)
+    , m_cannyUpperT(-1.f)
+    , m_cannyLtr(0.6f)
+    , m_cannyUpperTr(0.8f)
+    , m_cannyGradType(VISP_NAMESPACE_ADDRESSING vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
   { }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
@@ -79,7 +101,12 @@ typedef struct vpCommonData
       delete m_displaySegmented;
       m_displaySegmented = nullptr;
     }
-  }
+
+    if (m_displayCanny != nullptr) {
+      delete m_displayCanny;
+      m_displayCanny = nullptr;
+    }
+}
 #endif
 
   inline void printHelp(const char *softName)
@@ -148,16 +175,20 @@ typedef struct vpCommonData
       std::cout << e.getStringMessage() << std::endl;
       return EXIT_FAILURE;
     }
-    m_I_segmented = m_I_orig; // Resize the segmented image to match the original image
+    m_I_segmented.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the segmented image to match the original image
+    m_mask.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the binary mask that indicates which pixels are in the allowed HSV range.
+    m_Icanny.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the edge-map.
 
     // Init the displays
     const int horOffset = 20, vertOffset = 20;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
-    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 3 * horOffset, vertOffset, "Segmented image");
+    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
+    m_displayCanny = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_Icanny, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Edge-map");
 #else
-    // m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
-    // m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 3 * horOffset, vertOffset, "Segmented image");
+    m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
+    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
+    m_displayCanny = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_Icanny, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Edge-map");
 #endif
     return SOFTWARE_CONTINUE;
   }
