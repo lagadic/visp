@@ -60,7 +60,7 @@ namespace vpDisplayFactory
  * \return A newly allocated vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  */
-vpDisplay *allocateDisplay()
+inline vpDisplay *allocateDisplay()
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11
@@ -136,8 +136,7 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
  * \return A smart pointer pointing to a vpDisplay specialization initialized with \b I
  * if a GUI library is available or nullptr otherwise.
  */
-template<typename T>
-std::shared_ptr<vpDisplay> createDisplay()
+inline std::shared_ptr<vpDisplay> createDisplay()
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11
