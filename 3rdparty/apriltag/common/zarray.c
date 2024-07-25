@@ -25,62 +25,31 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#pragma once
+#include <string.h>
+#include <assert.h>
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <time.h>
+#include "zarray.h"
 
-#ifdef _WIN32
-#include <windows.h>
-typedef long long suseconds_t;
-#endif
-
-//#ifdef _MSC_VER
-#if defined(_MSC_VER) || defined(__MINGW32__)
-
-inline int gettimeofday(struct timeval* tp, void* tzp)
+int zstrcmp(const void * a_pp, const void * b_pp)
 {
-  (void)tzp;
+    assert(a_pp != NULL);
+    assert(b_pp != NULL);
 
-  unsigned long t;
-  t = time(NULL);
-  tp->tv_sec = t / 1000;
-  tp->tv_usec = t % 1000;
-  return 0;
+    char * a = *(void**)a_pp;
+    char * b = *(void**)b_pp;
+
+    return strcmp(a,b);
 }
-#else
-#include <sys/time.h>
-#include <unistd.h>
-#endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void zarray_vmap(zarray_t *za, void (*f)(void*))
+{
+    assert(za != NULL);
+    assert(f != NULL);
+    assert(za->el_sz == sizeof(void*));
 
-typedef struct timeutil_rest timeutil_rest_t;
-timeutil_rest_t *timeutil_rest_create();
-void timeutil_rest_destroy(timeutil_rest_t * rest);
-
-int64_t utime_now(); // blacklist-ignore
-int64_t utime_get_seconds(int64_t v);
-int64_t utime_get_useconds(int64_t v);
-void    utime_to_timeval(int64_t v, struct timeval *tv);
-void    utime_to_timespec(int64_t v, struct timespec *ts);
-
-int32_t  timeutil_usleep(int64_t useconds);
-uint32_t timeutil_sleep(unsigned int seconds);
-int32_t  timeutil_sleep_hz(timeutil_rest_t *rest, double hz);
-
-void timeutil_timer_reset(timeutil_rest_t *rest);
-void timeutil_timer_start(timeutil_rest_t *rest);
-void timeutil_timer_stop(timeutil_rest_t *rest);
-bool timeutil_timer_timeout(timeutil_rest_t *rest, double timeout_s);
-
-int64_t time_util_hhmmss_ss_to_utime(double time);
-
-int64_t timeutil_ms_to_us(int32_t ms);
-
-#ifdef __cplusplus
+    for (int idx = 0; idx < za->size; idx++) {
+        void *pp = &za->data[idx*za->el_sz];
+        void *p = *(void**) pp;
+        f(p);
+    }
 }
-#endif
