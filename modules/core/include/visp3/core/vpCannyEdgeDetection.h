@@ -81,11 +81,13 @@ public:
    * upper threshold.
    * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
    * operation.
+   * \param[in] storeEdgePoints : If true, the list of edge-points will be available using \b vpCannyEdgeDetection::getEdgePointsList .
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
                        const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
-                       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING);
+                       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+                       const bool &storeEdgePoints = false);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -248,13 +250,40 @@ public:
    * \warning The mask must be reset manually by the user (either for another mask
    * or set to \b nullptr ) before computing the edge-map of another image.
    *
-   * @param p_mask If different of \b nullptr , a mask of booleans where \b true
+   * \param p_mask If different of \b nullptr , a mask of booleans where \b true
    * indicates that a pixel must be considered and \b false that the pixel should
    * be ignored.
    */
   inline void setMask(const vpImage<bool> *p_mask)
   {
     mp_mask = p_mask;
+  }
+
+  /**
+   * \brief If set to true, the list of the detected edge-points will be available
+   * calling the method \b vpCannyEdgeDetection::getEdgePointsList .
+   *
+   * \param[in] storeEdgePoints The new desired status.
+   */
+  inline void setStoreEdgePoints(const bool &storeEdgePoints)
+  {
+    m_storeListEdgePoints = storeEdgePoints;
+  }
+  //@}
+
+  /** @name  Getters */
+  //@{
+  /**
+   * \brief Get the list of edge-points that have been detected.
+   *
+   * \return std::vector<vpImagePoint> The edge-points list.
+   */
+  inline std::vector<vpImagePoint> getEdgePointsList() const
+  {
+    if (!m_storeListEdgePoints) {
+      throw(vpException(vpException::fatalError, "Asking for the edge-points list while not asking to store it"));
+    }
+    return m_edgePointsList;
   }
   //@}
 private:
@@ -295,9 +324,11 @@ private:
                                     must be lower than the upper threshold \b m_upperThreshold.*/
 
   // // Edge tracking attributes
+  bool m_storeListEdgePoints; /*!< If true, the vector \b m_edgePointsList will contain the list of the edge points resulting from the whole algorithm.*/
   std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
                                                 and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
   vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
+  std::vector<vpImagePoint> m_edgePointsList; /*!< List of the edge points that belong to the final edge map.*/
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
 
   /** @name Constructors and initialization */
