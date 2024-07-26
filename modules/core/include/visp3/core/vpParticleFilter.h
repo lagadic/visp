@@ -644,7 +644,7 @@ void vpParticleFilter<MeasurementsType>::predictMultithread(const double &dt, co
 
 template <typename MeasurementsType>
 double threadLikelihood(const typename vpParticleFilter<MeasurementsType>::vpLikelihoodFunction &likelihood, const std::vector<vpColVector> &v_particles,
-                        const vpColVector &z, std::vector<double> &w, const int &istart, const int &ipoints)
+                        const MeasurementsType &z, std::vector<double> &w, const int &istart, const int &ipoints)
 {
   double sum(0.0);
   for (int i = istart; i< istart + ipoints; ++i) {
