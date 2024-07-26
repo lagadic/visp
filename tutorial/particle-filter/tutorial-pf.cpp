@@ -52,6 +52,7 @@
 using VISP_NAMESPACE_NAME;
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
 namespace tutorial
 {
 //! [Evaluation_functions]
@@ -127,12 +128,20 @@ template<typename T>
 void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &color,
              const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
 {
+#if defined(VISP_HAVE_DISPLAY)
   unsigned int width = I.getWidth();
   for (unsigned int u = 0; u < width; ++u) {
     float v = tutorial::model(u, coeffs[0], coeffs[1], coeffs[2]);
     vpDisplay::displayPoint(I, v, u, color, 1);
     vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
   }
+#else
+  (void)coeffs;
+  (void)I;
+  (void)color;
+  (void)vertPosLegend;
+  (void)horPosLegend;
+#endif
 }
 //! [Display_function]
 
@@ -362,9 +371,17 @@ int main(const int argc, const char *argv[])
     vpDisplay::flush(data.m_I_orig);
     vpDisplay::flush(data.m_I_segmented);
     vpDisplay::flush(data.m_Icanny);
+    run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
 #endif
     ++nbIter;
-    run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
   }
   return 0;
 }
+#else
+int main()
+{
+  std::cerr << "ViSP must be compiled with C++ standard >= C++11 to use this tutorial." << std::endl;
+  std::cerr << "ViSP must also have a 3rd party enabling display features, such as X11 or OpenCV." << std::endl;
+  return EXIT_FAILURE;
+}
+#endif

@@ -105,12 +105,14 @@ public:
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
                const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
   {
+#ifdef VISP_HAVE_DISPLAY
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
       int v = static_cast<int>(m_a * static_cast<float>(u * u) + m_b * static_cast<float>(u)  + m_c);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
     }
+#endif
   }
 
   /**

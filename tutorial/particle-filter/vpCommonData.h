@@ -55,11 +55,11 @@ typedef struct vpCommonData
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_segmented; /*!< The segmented color image resulting from HSV segmentation.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_mask; /*!< A binary mask where 255 means that a pixel belongs to the HSV range delimited by the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_Icanny; /*!< The edge-map resulting from the mask.*/
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayOrig;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySegmented;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayCanny;
-#else
+#elif defined(VISP_HAVE_DISPLAY)
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayOrig;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayCanny;
@@ -89,7 +89,7 @@ typedef struct vpCommonData
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
     , m_stepbystep(true)
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
     , m_displayCanny(nullptr)
@@ -115,7 +115,7 @@ typedef struct vpCommonData
     , m_pfNbThreads(-1)
   { }
 
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
   ~vpCommonData()
   {
     if (m_displayOrig != nullptr) {
@@ -210,7 +210,7 @@ typedef struct vpCommonData
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
     m_displayCanny = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_Icanny, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Edge-map");
-#else
+#elif defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
     m_displayCanny = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_Icanny, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Edge-map");
@@ -218,6 +218,7 @@ typedef struct vpCommonData
     return SOFTWARE_CONTINUE;
   }
 
+#ifdef VISP_HAVE_DISPLAY
   template<typename T>
   void displayLegend(const vpImage<T> &I)
   {
@@ -244,6 +245,7 @@ typedef struct vpCommonData
     }
     return true;
   }
+#endif
 }vpCommonData;
 }
 #endif
