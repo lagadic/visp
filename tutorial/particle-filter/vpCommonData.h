@@ -50,6 +50,7 @@ typedef struct vpCommonData
   VISP_NAMESPACE_ADDRESSING vpVideoReader m_grabber; /*!< Video grabber from stored files.*/
   std::string m_hsvFilename; /*!< Filename of the YAML file that contains the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpColVector m_hsv_values; /*!< Vector that contains the lower and upper limits of the HSV thresholds.*/
+  bool m_stepbystep; /*!< If true, the frames are treated in a step by step mode, otherwise the frames are treated as a video.*/
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_orig; /*!< The color image read from the file.*/
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_segmented; /*!< The segmented color image resulting from HSV segmentation.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_mask; /*!< A binary mask where 255 means that a pixel belongs to the HSV range delimited by the HSV thresholds.*/
@@ -76,9 +77,18 @@ typedef struct vpCommonData
   float m_ransacThresh; /*!< The threshold that indicates if a point fit the model or not.*/
   float m_ransacRatioInliers; /*!< Ratio of points that the model explain.*/
 
+  double m_pfMaxDistanceForLikelihood; /*!< Maximum tolerated distance for the likelihood evaluation.*/
+  unsigned int m_pfN; /*!< Number of particles for the particle filter.*/
+  double m_pfRatioAmpliMaxA; /*!< The ratio of the initial guess the maximum amplitude of noise on the a coefficient of the parabolla v = a u^2 + b u + c*/
+  double m_pfRatioAmpliMaxB; /*!< The ratio of the initial guess the maximum amplitude of noise on the b coefficient of the parabolla v = a u^2 + b u + c*/
+  double m_pfRatioAmpliMaxC; /*!< The ratio of the initial guess the maximum amplitude of noise on the v coefficient of the parabolla v = a u^2 + b u + c*/
+  long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
+  int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
+
   vpCommonData()
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
+    , m_stepbystep(true)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
@@ -96,6 +106,13 @@ typedef struct vpCommonData
     , m_ransacK(10000)
     , m_ransacThresh(1600.)
     , m_ransacRatioInliers(0.5f)
+    , m_pfMaxDistanceForLikelihood(40)
+    , m_pfN(300)
+    , m_pfRatioAmpliMaxA(0.25)
+    , m_pfRatioAmpliMaxB(0.25)
+    , m_pfRatioAmpliMaxC(0.25)
+    , m_pfSeed(4221)
+    , m_pfNbThreads(-1)
   { }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
@@ -199,6 +216,33 @@ typedef struct vpCommonData
     m_displayCanny = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_Icanny, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Edge-map");
 #endif
     return SOFTWARE_CONTINUE;
+  }
+
+  template<typename T>
+  void displayLegend(const vpImage<T> &I)
+  {
+    vpImagePoint ip(20, 20);
+    vpImagePoint offset(20, 0);
+    if (m_stepbystep) {
+      vpDisplay::displayText(I, ip, std::string("Left click to switch to next image"), vpColor::red);
+    }
+    vpDisplay::displayText(I, ip + offset, std::string("Middle click to switch to ") + (m_stepbystep ? std::string("video mode") : std::string("step-by-step mode")), vpColor::red);
+    vpDisplay::displayText(I, ip + offset + offset, std::string("Right click to quit"), vpColor::red);
+  }
+
+  template<typename T>
+  bool manageClicks(const vpImage<T> &I, bool &stepbystep)
+  {
+    vpImagePoint ip;
+    vpMouseButton::vpMouseButtonType button;
+    vpDisplay::getClick(I, ip, button, stepbystep);
+    if (button == vpMouseButton::vpMouseButtonType::button3) {
+      return false;
+    }
+    if (button == vpMouseButton::vpMouseButtonType::button2) {
+      stepbystep = stepbystep ^ true;
+    }
+    return true;
   }
 }vpCommonData;
 }

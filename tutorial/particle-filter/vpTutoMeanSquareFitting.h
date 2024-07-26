@@ -130,6 +130,19 @@ public:
     return *this;
   }
 
+  /**
+   * \brief Get the coefficients of the parabolla model.
+   *
+   * \return vpColVector coeffs[0] = a coeffs[1] = b coeffs[2] = c
+   */
+  inline vpColVector getCoeffs() const
+  {
+    vpColVector coeffs(3);
+    coeffs[0] = m_a;
+    coeffs[1] = m_b;
+    coeffs[2] = m_c;
+    return coeffs;
+  }
 protected:
   float m_a; /*!< Coefficient that multiplies u^2.*/
   float m_b; /*!< Coefficient that multiplies u.*/
