@@ -336,7 +336,7 @@ struct SoftwareArguments
   double m_ampliMaxZ; //!< Amplitude max of the noise for the state component corresponding to the Z coordinate.
   double m_ampliMaxOmega; //!< Amplitude max of the noise for the state component corresponding to the pulsation.
   long m_seedPF; //!< Seed for the random generators of the PF.
-  unsigned int m_nbThreads; //!< Number of thread to use in the Particle Filter.
+  int m_nbThreads; //!< Number of thread to use in the Particle Filter.
 
   SoftwareArguments()
     : m_useDisplay(true)
@@ -562,7 +562,7 @@ int main(const int argc, const char *argv[])
   const double ampliMaxOmega = args.m_ampliMaxOmega;
   const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxOmega/3. }; // Standard deviation for each state component
   const long seedPF = args.m_seedPF; // Seed for the random generators of the PF
-  const unsigned int nbThread = args.m_nbThreads;
+  const int nbThread = args.m_nbThreads;
   //! [Constants_for_the_PF]
 
   //! [Initial_estimates]
