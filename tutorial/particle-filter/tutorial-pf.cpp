@@ -38,6 +38,7 @@
 
 #include "vpCommonData.h"
 #include "vpTutoMeanSquareFitting.h"
+#include "vpTutoRANSACFitting.h"
 #include "vpTutoSegmentation.h"
 
 int main(const int argc, const char *argv[])
@@ -55,13 +56,16 @@ int main(const int argc, const char *argv[])
   vpCannyEdgeDetection edgeDetector(data.m_cannyGfKernelSize, data.m_cannyGfStdev, data.m_cannyGradAperture, data.m_cannyLt,
                                     data.m_cannyUpperT, data.m_cannyLtr, data.m_cannyUpperTr, data.m_cannyGradType, storeEdgePointsList);
   tutorial::vpTutoMeanSquareFitting lmsFitter;
-  const double period = 33.; // 33ms period, i.e. 30Hz
+  tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers);
   const unsigned int vertOffset = 20;
   const unsigned int horOffset = 20;
-  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 3 * vertOffset;
+  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 4 * vertOffset;
   const unsigned int legendLmsHor = horOffset;
+  const unsigned int legendRansacVert = data.m_I_orig.getHeight() - 3 * vertOffset;
+  const unsigned int legendRansacHor = horOffset;
+  unsigned int nbIter = 0;
   while (!data.m_grabber.end()) {
-    double t0 = vpTime::measureTimeMs();
+    std::cout << "Iter " << nbIter << std::endl;
     data.m_grabber.acquire(data.m_I_orig);
     tutorial::performSegmentationHSV(data);
 #ifdef VISP_HAVE_DISPLAY
@@ -75,9 +79,24 @@ int main(const int argc, const char *argv[])
     std::vector<vpImagePoint> edgePoints = edgeDetector.getEdgePointsList();
 
     /// Fit using least-square
-    float lmsError = lmsFitter.fit(edgePoints);
-    std::cout << "Average error using least-mean square method: " << lmsError << " pixels" << std::endl;
-    lmsFitter.display(data.m_Icanny, vpColor::blue, legendLmsVert, legendLmsHor);
+    double tLms = vpTime::measureTimeMs();
+    lmsFitter.fit(edgePoints);
+    double dtLms = vpTime::measureTimeMs() - tLms;
+    float lmsError = lmsFitter.evaluateRobust(edgePoints);
+    std::cout << "  [Least-Mean Square method] " << std::endl;
+    std::cout << "    Mean square error = " << lmsError << " pixels" << std::endl;
+    std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
+    lmsFitter.display<unsigned char>(data.m_Icanny, vpColor::blue, legendLmsVert, legendLmsHor);
+
+    /// Fit using RANSAC
+    double tRansac = vpTime::measureTimeMs();
+    ransacFitter.fit(edgePoints);
+    double dtRansac = vpTime::measureTimeMs() - tRansac;
+    float ransacError = ransacFitter.evaluateRobust(edgePoints);
+    std::cout << "  [RANSAC method] " << std::endl;
+    std::cout << "    Mean square error = " << ransacError << " pixels" << std::endl;
+    std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
+    ransacFitter.display<unsigned char>(data.m_Icanny, vpColor::red, legendRansacVert, legendRansacHor);
 
     ///TODO: PF
 #ifdef VISP_HAVE_DISPLAY
@@ -86,7 +105,7 @@ int main(const int argc, const char *argv[])
     vpDisplay::flush(data.m_I_segmented);
     vpDisplay::flush(data.m_Icanny);
 #endif
-    vpTime::wait(t0, period);
+    ++nbIter;
   }
   return 0;
 }

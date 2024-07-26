@@ -30,31 +30,38 @@
  *
 *****************************************************************************/
 
-#ifndef VP_TUTO_MEAN_SQUARE_FITTING_H
-#define VP_TUTO_MEAN_SQUARE_FITTING_H
+#ifndef VP_TUTO_RANSAC_FITTING_H
+#define VP_TUTO_RANSAC_FITTING_H
+
+#include <vector>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpRobust.h>
+#include <visp3/core/vpUniRand.h>
+
+#include "vpTutoMeanSquareFitting.h"
 
 namespace tutorial
 {
-/**
- * \brief Estimates the coefficients of a parabolla v = a u^2 + b u + c
- * using the least-mean-square method.
- */
-class vpTutoMeanSquareFitting
+class vpTutoRANSACFitting
 {
 public:
-  vpTutoMeanSquareFitting();
+  /**
+   * \brief Construct a new vpTutoRANSACFittingobject .
+   *
+   * \param[in] n The number of points to use to build the model.
+   * \param[in] k The number of iterations.
+   * \param[in] thresh The threshold that indicates if a point fit the model or not.
+   * \param[in] ratioInliers The ratio of points that the model explain, i.e. the ratio of inliers in the set of points.
+   */
+  vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers);
 
   /**
-   * \brief Estimate the parabolla coefficients that fits the best
-   * the input points \b pts.
+   * \brief Fit a parabolla model using the RANSAC algorithm.
    *
-   * \param[in] pts The input points for which we want to fit a parabolla model.
+   * \param[in] pts The points to which a parabolla model must be fit.
    */
   void fit(const std::vector<vpImagePoint> &pts);
 
@@ -65,7 +72,10 @@ public:
    * \param[in] pts The input points.
    * \return float The mean square error.
    */
-  float evaluate(const std::vector<vpImagePoint> &pts);
+  inline float evaluate(const std::vector<vpImagePoint> &pts)
+  {
+    return m_bestModel.evaluate(pts);
+  }
 
   /**
    * \brief Compute the mean-square error between the parabolla model and
@@ -75,7 +85,10 @@ public:
    * \param[in] pts The input points.
    * \return float The mean square error.
    */
-  float evaluateRobust(const std::vector<vpImagePoint> &pts);
+  inline float evaluateRobust(const std::vector<vpImagePoint> &pts)
+  {
+    return m_bestModel.evaluateRobust(pts);
+  }
 
   /**
    * \brief Compute the square error between the parabolla model and
@@ -84,7 +97,10 @@ public:
    * \param[in] pt The input point.
    * \return float The square error.
    */
-  float evaluate(const vpImagePoint &pt);
+  inline float evaluate(const vpImagePoint &pt)
+  {
+    return m_bestModel.evaluate(pt);
+  }
 
   /**
    * \brief Compute v-coordinate that corresponds to the parabolla model.
@@ -92,7 +108,10 @@ public:
    * \param[in] u The u-coordinate of the input point.
    * \return float The corresponding v-coordinate.
    */
-  float model(const float &u);
+  inline float model(const float &u)
+  {
+    return m_bestModel.model(u);
+  }
 
   /**
    * \brief Display the fitted parabolla on the image.
@@ -107,35 +126,19 @@ public:
   {
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
-      int v = static_cast<int>(m_a * static_cast<float>(u * u) + m_b * static_cast<float>(u)  + m_c);
+      float v = m_bestModel.model(u);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
-      VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
+      VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "RANSAC model", color);
     }
   }
 
-  /**
-   * \brief Permits to reinitialize the least-mean square fitter.
-   */
-  inline void reinit()
-  {
-    m_isFitted = false;
-  }
-
-  inline vpTutoMeanSquareFitting &operator=(const vpTutoMeanSquareFitting &other)
-  {
-    m_a = other.m_a;
-    m_b = other.m_b;
-    m_c = other.m_c;
-    m_isFitted = other.m_isFitted;
-    return *this;
-  }
-
-protected:
-  float m_a; /*!< Coefficient that multiplies u^2.*/
-  float m_b; /*!< Coefficient that multiplies u.*/
-  float m_c; /*!< Offset*/
-  bool m_isFitted; /*!< Set to true if the fit method has been called.*/
+private:
+  vpTutoMeanSquareFitting m_bestModel; /*!< Object that fits a parabolla from a vector of vpImagePoint .*/
+  float m_bestError; /*!!< The mean square error of the best model.*/
+  unsigned int m_n; /*!< The number of points to use to build the model.*/
+  unsigned int m_k; /*!< The number of iterations.*/
+  float m_thresh; /*!< The threshold that indicates if a point fit the model or not.*/
+  float m_ratioInliers; /*!< The ratio of points that the model explain, i.e. the ratio of inliers in the set of points.*/
 };
 }
-
 #endif

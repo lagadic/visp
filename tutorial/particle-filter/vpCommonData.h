@@ -63,14 +63,18 @@ typedef struct vpCommonData
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayCanny;
 #endif
-  int m_cannyGfKernelSize;
-  float m_cannyGfStdev;
-  unsigned int m_cannyGradAperture;
-  float m_cannyLt;
-  float m_cannyUpperT;
-  float m_cannyLtr;
-  float m_cannyUpperTr;
-  VISP_NAMESPACE_ADDRESSING vpImageFilter::vpCannyFilteringAndGradientType m_cannyGradType;
+  int m_cannyGfKernelSize; /*!< The kernel size of the Gaussian filter.*/
+  float m_cannyGfStdev; /*!< The standard deviation of the Gaussian filter.*/
+  unsigned int m_cannyGradAperture; /*!< The kernel size for the computation of the gradient.*/
+  float m_cannyLt; /*!< The lower threshold for the Canny edge-detection. Negative value to compute it automatically.*/
+  float m_cannyUpperT; /*!< The upper threshold for the Canny edge-detection. Negative value to compute it automatically.*/
+  float m_cannyLtr; /*!< The ratio for the automatic computation of the lower threshold.*/
+  float m_cannyUpperTr; /*!< The ratio for the automatic computation of the upper threshold.*/
+  VISP_NAMESPACE_ADDRESSING vpImageFilter::vpCannyFilteringAndGradientType m_cannyGradType; /*!< The type of gradient filter.*/
+  unsigned int m_ransacN; /*!< The number of points to use to build the model.*/
+  unsigned int m_ransacK; /*!< The number of iterations.*/
+  float m_ransacThresh; /*!< The threshold that indicates if a point fit the model or not.*/
+  float m_ransacRatioInliers; /*!< Ratio of points that the model explain.*/
 
   vpCommonData()
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
@@ -88,6 +92,10 @@ typedef struct vpCommonData
     , m_cannyLtr(0.6f)
     , m_cannyUpperTr(0.8f)
     , m_cannyGradType(VISP_NAMESPACE_ADDRESSING vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+    , m_ransacN(10)
+    , m_ransacK(10000)
+    , m_ransacThresh(1600.)
+    , m_ransacRatioInliers(0.5f)
   { }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
@@ -106,7 +114,7 @@ typedef struct vpCommonData
       delete m_displayCanny;
       m_displayCanny = nullptr;
     }
-}
+  }
 #endif
 
   inline void printHelp(const char *softName)

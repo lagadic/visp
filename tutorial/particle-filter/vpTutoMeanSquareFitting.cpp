@@ -42,9 +42,10 @@ vpTutoMeanSquareFitting::vpTutoMeanSquareFitting()
   : m_a(0.f)
   , m_b(0.f)
   , m_c(0.f)
+  , m_isFitted(false)
 { }
 
-float vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
+void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
   vpMatrix A(nbPts, 3, 1.); // The matrix that contains the u^2, u and 1s
@@ -66,15 +67,66 @@ float vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
   m_a = X[0][0];
   m_b = X[1][0];
   m_c = X[2][0];
+  m_isFitted = true;
+}
+
+float vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
+{
+  if (!m_isFitted) {
+    throw(vpException(vpException::notInitialized, "fit() has not been called."));
+  }
+  unsigned int nbPts = pts.size();
 
   // Compute the mean absolute error
   float meanError = 0.f;
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float u = pts[i].get_u();
-    float v = pts[i].get_v();
-    meanError += std::abs(v - ((m_a * u * u) + (m_b * u) + m_c));
+    float squareError = evaluate(pts[i]);
+    meanError += squareError;
   }
   meanError /= static_cast<float>(nbPts);
   return meanError;
+}
+
+float vpTutoMeanSquareFitting::evaluateRobust(const std::vector<vpImagePoint> &pts)
+{
+  if (!m_isFitted) {
+    throw(vpException(vpException::notInitialized, "fit() has not been called."));
+  }
+  unsigned int nbPts = pts.size();
+  vpColVector residuals(nbPts);
+  vpColVector weights(nbPts, 1.);
+  // Compute the residuals
+  for (unsigned int i = 0; i < nbPts; ++i) {
+    float squareError = evaluate(pts[i]);
+    residuals[i] = squareError;
+  }
+  vpRobust robust;
+  robust.MEstimator(vpRobust::TUKEY, residuals, weights);
+  float sumWeights = weights.sum();
+  float numerator = (weights.hadamard(residuals)).sum();
+  float meanError = numerator / sumWeights;
+  return meanError;
+}
+
+float vpTutoMeanSquareFitting::evaluate(const vpImagePoint &pt)
+{
+  if (!m_isFitted) {
+    throw(vpException(vpException::notInitialized, "fit() has not been called."));
+  }
+  float u = pt.get_u();
+  float v = pt.get_v();
+  float v_model = model(u);
+  float error = v - v_model;
+  float squareError = error * error;
+  return squareError;
+}
+
+float vpTutoMeanSquareFitting::model(const float &u)
+{
+  if (!m_isFitted) {
+    throw(vpException(vpException::notInitialized, "fit() has not been called."));
+  }
+  float v = (m_a * u * u) + (m_b * u) + m_c;
+  return v;
 }
 }
