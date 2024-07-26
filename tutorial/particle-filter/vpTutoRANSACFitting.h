@@ -59,14 +59,14 @@ public:
   vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers);
 
   /**
-   * \brief Fit a parabolla model using the RANSAC algorithm.
+   * \brief Fit a parabola model using the RANSAC algorithm.
    *
-   * \param[in] pts The points to which a parabolla model must be fit.
+   * \param[in] pts The points to which a parabola model must be fit.
    */
   void fit(const std::vector<vpImagePoint> &pts);
 
   /**
-   * \brief Compute the mean-square error between the parabolla model and
+   * \brief Compute the mean-square error between the parabola model and
    * the input points \b pts.
    *
    * \param[in] pts The input points.
@@ -78,7 +78,7 @@ public:
   }
 
   /**
-   * \brief Compute the mean-square error between the parabolla model and
+   * \brief Compute the mean-square error between the parabola model and
    * the input points \b pts. An M-estimator is used to reject outliers
    * when computing the mean square error.
    *
@@ -91,7 +91,7 @@ public:
   }
 
   /**
-   * \brief Compute the square error between the parabolla model and
+   * \brief Compute the square error between the parabola model and
    * the input point \b pt.
    *
    * \param[in] pt The input point.
@@ -103,7 +103,7 @@ public:
   }
 
   /**
-   * \brief Compute v-coordinate that corresponds to the parabolla model.
+   * \brief Compute v-coordinate that corresponds to the parabola model.
    *
    * \param[in] u The u-coordinate of the input point.
    * \return float The corresponding v-coordinate.
@@ -114,11 +114,11 @@ public:
   }
 
   /**
-   * \brief Display the fitted parabolla on the image.
+   * \brief Display the fitted parabola on the image.
    *
    * \tparam T Either unsigned char or vpRGBa.
-   * \param[in] I The image on which we want to display the parabolla model.
-   * \param[in] color The color we want to use to display the parabolla.
+   * \param[in] I The image on which we want to display the parabola model.
+   * \param[in] color The color we want to use to display the parabola.
    */
   template<typename T>
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
@@ -135,7 +135,7 @@ public:
   }
 
 private:
-  vpTutoMeanSquareFitting m_bestModel; /*!< Object that fits a parabolla from a vector of vpImagePoint .*/
+  vpTutoMeanSquareFitting m_bestModel; /*!< Object that fits a parabola from a vector of vpImagePoint .*/
   float m_bestError; /*!!< The mean square error of the best model.*/
   unsigned int m_n; /*!< The number of points to use to build the model.*/
   unsigned int m_k; /*!< The number of iterations.*/

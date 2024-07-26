@@ -39,9 +39,7 @@ using VISP_NAMESPACE_NAME;
 #endif
 
 vpTutoMeanSquareFitting::vpTutoMeanSquareFitting()
-  : m_a(0.f)
-  , m_b(0.f)
-  , m_c(0.f)
+  : m_model()
   , m_isFitted(false)
 { }
 
@@ -62,11 +60,9 @@ void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
     b[i][0] = v;
   }
 
-  // Compute the parabolla coefficients using the least-mean-square method.
+  // Compute the parabola coefficients using the least-mean-square method.
   X = A.pseudoInverse() * b;
-  m_a = X[0][0];
-  m_b = X[1][0];
-  m_c = X[2][0];
+  m_model = vpTutoParabolaModel(X[0][0], X[1][0], X[2][0]);
   m_isFitted = true;
 }
 
@@ -126,7 +122,7 @@ float vpTutoMeanSquareFitting::model(const float &u)
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
   }
-  float v = (m_a * u * u) + (m_b * u) + m_c;
+  float v = m_model.eval(u);
   return v;
 }
 }

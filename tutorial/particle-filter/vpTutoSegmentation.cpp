@@ -38,7 +38,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 namespace tutorial
 {
-void performSegmentationHSV(vpCommonData &data)
+void performSegmentationHSV(vpTutoCommonData &data)
 {
   const unsigned int height = data.m_I_orig.getHeight(), width = data.m_I_orig.getWidth();
   vpImage<unsigned char> H(height, width);

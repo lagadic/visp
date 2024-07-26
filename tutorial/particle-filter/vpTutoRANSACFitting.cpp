@@ -55,9 +55,9 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
   unsigned int nbPts = pts.size();
   unsigned int minNbInliers = std::floor(m_ratioInliers * static_cast<float>(nbPts));
   bool hasFirstModel = false;
-  std::vector<vpImagePoint> maybeInliers(m_n); // Candidate points to create a new parabolla model
+  std::vector<vpImagePoint> maybeInliers(m_n); // Candidate points to create a new parabola model
   while (nbIter < m_k) {
-    std::vector<vpImagePoint> randomizedInput = vpUniRand::shuffleVector<vpImagePoint>(pts); // Candidate points to create a new parabolla model
+    std::vector<vpImagePoint> randomizedInput = vpUniRand::shuffleVector<vpImagePoint>(pts); // Candidate points to create a new parabola model
     for (unsigned int i = 0; i < m_n; ++i) {
       maybeInliers[i] = randomizedInput[i];
     }

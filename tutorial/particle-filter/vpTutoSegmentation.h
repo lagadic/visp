@@ -37,10 +37,10 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 
-#include "vpCommonData.h"
+#include "vpTutoCommonData.h"
 
 namespace tutorial
 {
-void performSegmentationHSV(vpCommonData &data);
+void performSegmentationHSV(vpTutoCommonData &data);
 }
 #endif

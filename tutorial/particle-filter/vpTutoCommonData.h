@@ -43,7 +43,7 @@
 
 namespace tutorial
 {
-typedef struct vpCommonData
+typedef struct vpTutoCommonData
 {
   static const int SOFTWARE_CONTINUE = 4221;
   std::string m_seqFilename; /*!< Sequence filenames, such as I%04d.png*/
@@ -79,13 +79,13 @@ typedef struct vpCommonData
 
   double m_pfMaxDistanceForLikelihood; /*!< Maximum tolerated distance for the likelihood evaluation.*/
   unsigned int m_pfN; /*!< Number of particles for the particle filter.*/
-  double m_pfRatioAmpliMaxA; /*!< The ratio of the initial guess the maximum amplitude of noise on the a coefficient of the parabolla v = a u^2 + b u + c*/
-  double m_pfRatioAmpliMaxB; /*!< The ratio of the initial guess the maximum amplitude of noise on the b coefficient of the parabolla v = a u^2 + b u + c*/
-  double m_pfRatioAmpliMaxC; /*!< The ratio of the initial guess the maximum amplitude of noise on the v coefficient of the parabolla v = a u^2 + b u + c*/
+  double m_pfRatioAmpliMaxA; /*!< The ratio of the initial guess the maximum amplitude of noise on the a coefficient of the parabola v = a u^2 + b u + c*/
+  double m_pfRatioAmpliMaxB; /*!< The ratio of the initial guess the maximum amplitude of noise on the b coefficient of the parabola v = a u^2 + b u + c*/
+  double m_pfRatioAmpliMaxC; /*!< The ratio of the initial guess the maximum amplitude of noise on the v coefficient of the parabola v = a u^2 + b u + c*/
   long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
   int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
 
-  vpCommonData()
+  vpTutoCommonData()
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
     , m_stepbystep(true)
@@ -116,7 +116,7 @@ typedef struct vpCommonData
   { }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
-  ~vpCommonData()
+  ~vpTutoCommonData()
   {
     if (m_displayOrig != nullptr) {
       delete m_displayOrig;
@@ -246,6 +246,6 @@ typedef struct vpCommonData
     return true;
   }
 #endif
-}vpCommonData;
+}vpTutoCommonData;
 }
 #endif

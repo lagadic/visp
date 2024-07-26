@@ -43,8 +43,9 @@
 #include <visp3/core/vpParticleFilter.h>
 //! [Include_PF]
 
-#include "vpCommonData.h"
+#include "vpTutoCommonData.h"
 #include "vpTutoMeanSquareFitting.h"
+#include "vpTutoParabolaModel.h"
 #include "vpTutoRANSACFitting.h"
 #include "vpTutoSegmentation.h"
 
@@ -57,36 +58,24 @@ namespace tutorial
 {
 //! [Evaluation_functions]
 /**
- * \brief Compute v-coordinate that corresponds to the parabolla model.
- *
- * \param[in] u The u-coordinate of the input point.
- * \return float The corresponding v-coordinate.
- */
-float model(const float &u, const float &a, const float &b, const float &c)
-{
-  float v = (a * u * u) + (b * u) + c;
-  return v;
-}
-
-/**
- * \brief Compute the square error between the parabolla model and
+ * \brief Compute the square error between the parabola model and
  * the input point \b pt.
  *
  * \param[in] pt The input point.
  * \return float The square error.
  */
-float evaluate(const vpImagePoint &pt, const float &a, const float &b, const float &c)
+float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
 {
   float u = pt.get_u();
   float v = pt.get_v();
-  float v_model = model(u, a, b, c);
+  float v_model = model.eval(u);
   float error = v - v_model;
   float squareError = error * error;
   return squareError;
 }
 
 /**
- * \brief Compute the mean-square error between the parabolla model and
+ * \brief Compute the mean-square error between the parabola model and
  * the input points \b pts. An M-estimator is used to reject outliers
  * when computing the mean square error.
  *
@@ -98,12 +87,10 @@ float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> 
   unsigned int nbPts = pts.size();
   vpColVector residuals(nbPts);
   vpColVector weights(nbPts, 1.);
-  float a = coeffs[0];
-  float b = coeffs[1];
-  float c = coeffs[2];
+  vpTutoParabolaModel model(coeffs);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i], a, b, c);
+    float squareError = evaluate(pts[i], model);
     residuals[i] = squareError;
   }
   vpRobust robust;
@@ -117,12 +104,12 @@ float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> 
 
 //! [Display_function]
 /**
-   * \brief Display the fitted parabolla on the image.
+   * \brief Display the fitted parabola on the image.
    *
    * \tparam T Either unsigned char or vpRGBa.
-   * \param[in] coeffs The coefficients of the parabolla, such as coeffs[0] = a coeffs[1] = b coeffs[2] = c
-   * \param[in] I The image on which we want to display the parabolla model.
-   * \param[in] color The color we want to use to display the parabolla.
+   * \param[in] coeffs The coefficients of the parabola, such as coeffs[0] = a coeffs[1] = b coeffs[2] = c
+   * \param[in] I The image on which we want to display the parabola model.
+   * \param[in] color The color we want to use to display the parabola.
    */
 template<typename T>
 void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &color,
@@ -130,8 +117,9 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
 {
 #if defined(VISP_HAVE_DISPLAY)
   unsigned int width = I.getWidth();
+  vpTutoParabolaModel model(coeffs);
   for (unsigned int u = 0; u < width; ++u) {
-    float v = tutorial::model(u, coeffs[0], coeffs[1], coeffs[2]);
+    float v = model.eval(u);
     vpDisplay::displayPoint(I, v, u, color, 1);
     vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
   }
@@ -224,7 +212,7 @@ public:
    * between the projection of the markers corresponding to the particle position
    * and the measurements of the markers in the image.
    *
-   * \param[in] coeffs The particle, which represent the parabolla coefficients.
+   * \param[in] coeffs The particle, which represent the parabola coefficients.
    * \param[in] meas The measurement vector.
    * \return double The likelihood of the particle.
    */
@@ -233,8 +221,9 @@ public:
     double likelihood = 0.;
     double sumError = 0.;
     unsigned int nbPoints = meas.size();
+    vpTutoParabolaModel model(coeffs);
     for (unsigned int i = 0; i < nbPoints; ++i) {
-      double squareError = tutorial::evaluate(meas[i], coeffs[0], coeffs[1], coeffs[2]);
+      double squareError = tutorial::evaluate(meas[i], model);
       sumError += squareError;
     }
     likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbPoints)) * m_constantDenominator;
@@ -253,9 +242,9 @@ private:
 
 int main(const int argc, const char *argv[])
 {
-  tutorial::vpCommonData data;
+  tutorial::vpTutoCommonData data;
   int returnCode = data.init(argc, argv);
-  if (returnCode != tutorial::vpCommonData::SOFTWARE_CONTINUE) {
+  if (returnCode != tutorial::vpTutoCommonData::SOFTWARE_CONTINUE) {
     return returnCode;
   }
 

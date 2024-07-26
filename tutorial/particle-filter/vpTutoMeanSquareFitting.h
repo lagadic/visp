@@ -39,10 +39,12 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRobust.h>
 
+#include "vpTutoParabolaModel.h"
+
 namespace tutorial
 {
 /**
- * \brief Estimates the coefficients of a parabolla v = a u^2 + b u + c
+ * \brief Estimates the coefficients of a parabola v = a u^2 + b u + c
  * using the least-mean-square method.
  */
 class vpTutoMeanSquareFitting
@@ -51,15 +53,15 @@ public:
   vpTutoMeanSquareFitting();
 
   /**
-   * \brief Estimate the parabolla coefficients that fits the best
+   * \brief Estimate the parabola coefficients that fits the best
    * the input points \b pts.
    *
-   * \param[in] pts The input points for which we want to fit a parabolla model.
+   * \param[in] pts The input points for which we want to fit a parabola model.
    */
   void fit(const std::vector<vpImagePoint> &pts);
 
   /**
-   * \brief Compute the mean-square error between the parabolla model and
+   * \brief Compute the mean-square error between the parabola model and
    * the input points \b pts.
    *
    * \param[in] pts The input points.
@@ -68,7 +70,7 @@ public:
   float evaluate(const std::vector<vpImagePoint> &pts);
 
   /**
-   * \brief Compute the mean-square error between the parabolla model and
+   * \brief Compute the mean-square error between the parabola model and
    * the input points \b pts. An M-estimator is used to reject outliers
    * when computing the mean square error.
    *
@@ -78,7 +80,7 @@ public:
   float evaluateRobust(const std::vector<vpImagePoint> &pts);
 
   /**
-   * \brief Compute the square error between the parabolla model and
+   * \brief Compute the square error between the parabola model and
    * the input point \b pt.
    *
    * \param[in] pt The input point.
@@ -87,7 +89,7 @@ public:
   float evaluate(const vpImagePoint &pt);
 
   /**
-   * \brief Compute v-coordinate that corresponds to the parabolla model.
+   * \brief Compute v-coordinate that corresponds to the parabola model.
    *
    * \param[in] u The u-coordinate of the input point.
    * \return float The corresponding v-coordinate.
@@ -95,11 +97,11 @@ public:
   float model(const float &u);
 
   /**
-   * \brief Display the fitted parabolla on the image.
+   * \brief Display the fitted parabola on the image.
    *
    * \tparam T Either unsigned char or vpRGBa.
-   * \param[in] I The image on which we want to display the parabolla model.
-   * \param[in] color The color we want to use to display the parabolla.
+   * \param[in] I The image on which we want to display the parabola model.
+   * \param[in] color The color we want to use to display the parabola.
    */
   template<typename T>
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
@@ -108,7 +110,7 @@ public:
 #ifdef VISP_HAVE_DISPLAY
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
-      int v = static_cast<int>(m_a * static_cast<float>(u * u) + m_b * static_cast<float>(u)  + m_c);
+      int v = model(u);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
     }
@@ -125,30 +127,22 @@ public:
 
   inline vpTutoMeanSquareFitting &operator=(const vpTutoMeanSquareFitting &other)
   {
-    m_a = other.m_a;
-    m_b = other.m_b;
-    m_c = other.m_c;
+    m_model = other.m_model;
     m_isFitted = other.m_isFitted;
     return *this;
   }
 
   /**
-   * \brief Get the coefficients of the parabolla model.
+   * \brief Get the coefficients of the parabola model.
    *
-   * \return vpColVector coeffs[0] = a coeffs[1] = b coeffs[2] = c
+   * \return vpColVector The coefficients of the parabola, as described in \b vpTutoParabolaModel::toVpColVector()
    */
   inline vpColVector getCoeffs() const
   {
-    vpColVector coeffs(3);
-    coeffs[0] = m_a;
-    coeffs[1] = m_b;
-    coeffs[2] = m_c;
-    return coeffs;
+    return m_model.toVpColVector();
   }
 protected:
-  float m_a; /*!< Coefficient that multiplies u^2.*/
-  float m_b; /*!< Coefficient that multiplies u.*/
-  float m_c; /*!< Offset*/
+  vpTutoParabolaModel m_model; /*!< The model of the curve we try to fit.*/
   bool m_isFitted; /*!< Set to true if the fit method has been called.*/
 };
 }
