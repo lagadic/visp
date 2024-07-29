@@ -1,14 +1,11 @@
 #include <memory>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageDraw.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 namespace
 {
 // https://en.cppreference.com/w/cpp/io/c/fprintf
@@ -22,23 +19,12 @@ std::string toString(const std::string &name, int val)
 
   return str;
 }
-
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique_compat(Args&&... args)
-{
-#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
-  return std::make_unique<T>(args...);
-#else
-  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-#endif
-}
 }
 #endif
 
 int main(int argc, char *argv[])
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
+#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -114,14 +100,8 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> I(height, width);
   vpImage<vpRGBa> I_display(height, width);
 
-  std::unique_ptr<vpDisplay> display;
-#if defined(VISP_HAVE_X11)
-  display = make_unique_compat<vpDisplayX>(I_display, 100, 100, "Model-based tracker");
-#elif defined(VISP_HAVE_GDI)
-  display = make_unique_compat<vpDisplayGDI>(I_display, 100, 100, "Model-based tracker");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  display = make_unique_compat<vpDisplayOpenCV>(I_display, 100, 100, "Model-based tracker");
-#endif
+  std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+  display->init(I_display, 100, 100, "Model-based tracker");
 
   visp::cnpy::NpyArray arr_nb_data = npz_data["nb_data"];
   int nb_data = *arr_nb_data.data<int>();
