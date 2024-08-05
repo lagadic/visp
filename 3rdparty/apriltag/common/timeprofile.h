@@ -28,7 +28,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #pragma once
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 #include <stdio.h>
@@ -116,5 +116,5 @@ static inline uint64_t timeprofile_total_utime(timeprofile_t *tp)
 }
 
 #ifdef __cplusplus
-//}
+}
 #endif

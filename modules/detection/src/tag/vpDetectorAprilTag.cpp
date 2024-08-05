@@ -29,13 +29,15 @@
  *
  * Description:
  * Base class for AprilTag detection.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
 #include <map>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <apriltag.h>
 #include <apriltag_pose.h>
 #include <common/homography.h>
@@ -46,17 +48,20 @@
 #include <tag36h11.h>
 #include <tagCircle21h7.h>
 #include <tagStandard41h12.h>
-#include <visp3/detection/vpDetectorAprilTag.h>
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
 #include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
+#ifdef __cplusplus
+}
+#endif
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/vision/vpPose.h>
 
 BEGIN_VISP_NAMESPACE
@@ -195,7 +200,7 @@ public:
     }
 
     if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
-      m_td = apriltag_detector_create();
+      m_td = apriltag_detector_copy(o.m_td);
       apriltag_detector_add_family(m_td, m_tf);
     }
 

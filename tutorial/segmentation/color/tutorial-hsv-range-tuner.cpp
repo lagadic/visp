@@ -187,7 +187,8 @@ int main(int argc, const char *argv[])
 
   cv::namedWindow(window_detection_name);
 
-  vpArray2D<int> hsv_values(hsv_values_trackbar, hsv_values_trackbar.size()), hsv_values_prev;
+  vpArray2D<int> hsv_values(hsv_values_trackbar, hsv_values_trackbar.size(), 1);
+  vpArray2D<int> hsv_values_prev;
   if (vpArray2D<int>::loadYAML(opt_hsv_filename, hsv_values)) {
     std::cout << "Load hsv values from " << opt_hsv_filename << " previous tuning " << std::endl;
     std::cout << hsv_values.t() << std::endl;
@@ -287,7 +288,7 @@ int main(int argc, const char *argv[])
         vpIoTools::makeDirectory(parent);
       }
 
-      vpArray2D<int> hsv_values_new(hsv_values_trackbar, hsv_values_trackbar.size());
+      vpArray2D<int> hsv_values_new(hsv_values_trackbar, hsv_values_trackbar.size(), 1);
       if (hsv_values_new != hsv_values_prev) {
         if (vpIoTools::checkFilename(opt_hsv_filename)) {
           std::string hsv_filename_backup(opt_hsv_filename + std::string(".previous"));

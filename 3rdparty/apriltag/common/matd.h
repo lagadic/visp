@@ -32,7 +32,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h>
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 /**
@@ -45,8 +45,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 typedef struct
 {
     unsigned int nrows, ncols;
-//    double data[];
-    double *data;
+    double data[];
+//    double *data;
 } matd_t;
 
 #define MATD_ALLOC(name, nrows, ncols) double name ## _storage [nrows*ncols]; matd_t name = { .nrows = nrows, .ncols = ncols, .data = &name ## _storage };
@@ -442,5 +442,5 @@ void matd_utriangle_solve(matd_t *u, const double *b, double *x);
 double matd_max(matd_t *m);
 
 #ifdef __cplusplus
-//}
+}
 #endif
