@@ -52,6 +52,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
   m_bestError = std::numeric_limits<float>::max();
   unsigned int nbIter = 0;
   m_bestModel.reinit();
+  unsigned int bestNbInliers = 0;
   unsigned int nbPts = pts.size();
   unsigned int minNbInliers = std::floor(m_ratioInliers * static_cast<float>(nbPts));
   bool hasFirstModel = false;
@@ -71,6 +72,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
         confirmedInliers.push_back(pts[i]);
       }
     }
+    unsigned int candidateNbInliers = confirmedInliers.size();
     if (confirmedInliers.size() > minNbInliers) {
       // We have a good model
       // Fitting all the confirmed inliers into a refined model
@@ -79,8 +81,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
       // Testing if it is better than our best model
       float refinedError = refinedModel.evaluate(confirmedInliers);
       if (hasFirstModel) {
-        float bestError = m_bestModel.evaluate(confirmedInliers);
-        if (refinedError < bestError) {
+        if ((refinedError < m_bestError) && (candidateNbInliers > bestNbInliers)) {
           m_bestError = refinedError;
           m_bestModel = refinedModel;
         }
@@ -88,6 +89,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
       else {
         m_bestError = refinedError;
         m_bestModel = refinedModel;
+        bestNbInliers = candidateNbInliers;
         hasFirstModel = true;
       }
     }
