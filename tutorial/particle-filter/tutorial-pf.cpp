@@ -102,6 +102,28 @@ float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> 
 }
 //! [Evaluation_functions]
 
+//! [Init_from_file]
+std::vector<vpImagePoint> readInitPointsFromFile(const std::string &listPointsFile)
+{
+  std::vector<vpImagePoint> initPoints;
+  std::ifstream myfile(listPointsFile);
+  std::string line;
+  if (myfile.is_open()) {
+    while (std::getline(myfile, line)) {
+      std::size_t nbCharICoord = line.find_first_of(' ');
+      std::string iAsString = line.substr(0, nbCharICoord);
+      std::string jAsString = line.substr(nbCharICoord + 1);
+      float i = std::atof(iAsString.c_str());
+      float j = std::atof(jAsString.c_str());
+      vpImagePoint ip(i, j);
+      initPoints.push_back(ip);
+    }
+    myfile.close();
+  }
+  return initPoints;
+}
+//! [Init_from_file]
+
 //! [Display_function]
 /**
    * \brief Display the fitted parabola on the image.
@@ -136,6 +158,7 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
 //! [Initialization_function]
 vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
 {
+  const std::string listPointsFile("list_init_points.txt");
 #ifdef VISP_HAVE_DISPLAY
   std::vector<vpImagePoint> initPoints;
   const unsigned int minNbPts = 3;
@@ -148,22 +171,12 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
   const vpColor colorCross = vpColor::red;
   vpImagePoint ipClick;
   vpMouseButton::vpMouseButtonType button;
-  while (notEnoughPoints) {
+
+  bool useFile = false;
+  if (vpIoTools::checkFilename(listPointsFile)) {
     /// Initial display of the images
     vpDisplay::display(I);
-
-    /// Display the how-to
-    vpDisplay::displayText(I, ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", colorLegend);
-    vpDisplay::displayText(I, ipLegend + legendOffset, "A middle click reinitialize the list of init points.", colorLegend);
-    vpDisplay::displayText(I, ipLegend + legendOffset + legendOffset, "If not enough points have been selected, a right click has no effect.", colorLegend);
-
-    /// Display the already selected points
-    const unsigned int sizeCross = 10;
-    const unsigned int thicknessCross = 2;
-    unsigned int nbInitPoints = initPoints.size();
-    for (unsigned int i = 0; i < nbInitPoints; ++i) {
-      vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
-    }
+    vpDisplay::displayText(I, ipLegend, "Left click to manually select the init points, right click to the points from the file \"" + listPointsFile + "\"", colorLegend);
 
     /// Update the display
     vpDisplay::flush(I);
@@ -174,26 +187,80 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
     /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
     switch (button) {
     case vpMouseButton::vpMouseButtonType::button1:
-      initPoints.push_back(ipClick);
-      break;
-    case vpMouseButton::vpMouseButtonType::button2:
-      initPoints.clear();
+      useFile = false;
       break;
     case vpMouseButton::vpMouseButtonType::button3:
-      (initPoints.size() >= minNbPts ? notEnoughPoints = false : notEnoughPoints = true);
+      useFile = true;
       break;
     default:
       break;
     }
   }
-   /// Display info about the initialization
+
+  if (useFile) {
+    initPoints = tutorial::readInitPointsFromFile(listPointsFile);
+  }
+  else {
+    while (notEnoughPoints) {
+      /// Initial display of the images
+      vpDisplay::display(I);
+
+      /// Display the how-to
+      vpDisplay::displayText(I, ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", colorLegend);
+      vpDisplay::displayText(I, ipLegend + legendOffset, "A middle click reinitialize the list of init points.", colorLegend);
+      vpDisplay::displayText(I, ipLegend + legendOffset + legendOffset, "If not enough points have been selected, a right click has no effect.", colorLegend);
+
+      /// Display the already selected points
+      const unsigned int sizeCross = 10;
+      const unsigned int thicknessCross = 2;
+      unsigned int nbInitPoints = initPoints.size();
+      for (unsigned int i = 0; i < nbInitPoints; ++i) {
+        vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
+      }
+
+      /// Update the display
+      vpDisplay::flush(I);
+
+      /// Get the user input
+      vpDisplay::getClick(I, ipClick, button, true);
+
+      /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
+      switch (button) {
+      case vpMouseButton::vpMouseButtonType::button1:
+        initPoints.push_back(ipClick);
+        break;
+      case vpMouseButton::vpMouseButtonType::button2:
+        initPoints.clear();
+        break;
+      case vpMouseButton::vpMouseButtonType::button3:
+        (initPoints.size() >= minNbPts ? notEnoughPoints = false : notEnoughPoints = true);
+        break;
+      default:
+        break;
+      }
+    }
+  }
+  /// Display info about the initialization
   vpDisplay::display(I);
   vpDisplay::displayText(I, ipLegend, "Here are the points selected for the initialization.", colorLegend);
   unsigned int nbInitPoints = initPoints.size();
   for (unsigned int i = 0; i < nbInitPoints; ++i) {
-    vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
+    const vpImagePoint &ip = initPoints[i];
+    vpDisplay::displayCross(I, ip, sizeCross, colorCross, thicknessCross);
   }
+  /// Save the init points if they were not read from a file
+  if (!useFile) {
+    std::ofstream ofs_initPoints(listPointsFile);
+    for (unsigned int i = 0; i < nbInitPoints; ++i) {
+      const vpImagePoint &ip = initPoints[i];
+      ofs_initPoints << ip.get_i() << " " << ip.get_j() << std::endl;
+    }
+    ofs_initPoints.close();
+  }
+  vpDisplay::displayText(I, ipLegend + legendOffset, "A click to continue.", colorLegend);
   vpDisplay::flush(I);
+  const bool waitForClick = true;
+  vpDisplay::getClick(I, waitForClick);
 
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   lmsFitter.fit(initPoints);
@@ -201,7 +268,17 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
   std::cout << "Initial coefficients = " << X0.t() << std::endl;
   return X0;
 #else
-  throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
+  if (vpIoTools::checkFilename(listPointsFile)) {
+    std::vector<vpImagePoint> initPoints = tutorial::readInitPointsFromFile(listPointsFile);
+    tutorial::vpTutoMeanSquareFitting lmsFitter;
+    lmsFitter.fit(initPoints);
+    vpColVector X0 = lmsFitter.getCoeffs();
+    std::cout << "Initial coefficients = " << X0.t() << std::endl;
+    return X0;
+  }
+  else {
+    throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
+  }
 #endif
 }
 //! [Initialization_function]
@@ -260,7 +337,7 @@ private:
   double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
 };
 //! [Likelihood_functor]
-}
+  }
 
 int main(const int argc, const char *argv[])
 {
