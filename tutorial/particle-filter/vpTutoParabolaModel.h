@@ -35,6 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMatrix.h>
 
 /*!
  * \brief Model of a parabola v = a u^2 + b u + c
@@ -63,6 +64,17 @@ public:
     : m_a(coeffs[0])
     , m_b(coeffs[1])
     , m_c(coeffs[2])
+  { }
+
+  /**
+   * \brief Construct a new vpTutoParabolaModel object
+   *
+   * \param coeffs a:=coeffs[0][0] b:=coeffs[1][0] c:=coeffs[2][0]
+   */
+  inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs)
+    : m_a(coeffs[0][0])
+    , m_b(coeffs[1][0])
+    , m_c(coeffs[2][0])
   { }
 
   /**
@@ -98,6 +110,33 @@ public:
     m_c = other.m_c;
     return *this;
   }
+
+  /**
+   * @brief Fill the matrices that form the linear system A X = b
+   * where A contains the different powers of the u-coordinates,
+   * X contains the model coefficients and b contains the
+   * v-coordinates.
+   *
+   * \param[in] pts The points to use to interpolate the coefficients of the parabola.
+   * \param[out] A The matrix that contains the different powers of the u-coordinates.
+   * \param[out] b The matrix that contains the v-coordinates.
+   * \return Fill
+   */
+  static void fillSystem(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
+  {
+    unsigned int nbPts = pts.size();
+    A.resize(nbPts, 3, 1.);
+    b.resize(nbPts, 1);
+    for (unsigned int i = 0; i < nbPts; ++i) {
+      float u = pts[i].get_u();
+      float v = pts[i].get_v();
+      A[i][0] = u *u;
+      A[i][1] = u;
+      A[i][2] = 1.f;
+      b[i][0] = v;
+    }
+  }
+
 private:
   float m_a; /*!< Coefficient applied to u^2*/
   float m_b; /*!< Coefficient applied to u*/

@@ -45,24 +45,16 @@ vpTutoMeanSquareFitting::vpTutoMeanSquareFitting()
 
 void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
 {
-  unsigned int nbPts = pts.size();
-  vpMatrix A(nbPts, 3, 1.); // The matrix that contains the u^2, u and 1s
-  vpMatrix X(3, 1); // The matrix we want to estimate, that contains the a, b and c coefficients.
-  vpMatrix b(nbPts, 1); // The matrix that contains the v values
+  vpMatrix A; // The matrix that contains the u^2, u and 1s
+  vpMatrix X; // The matrix we want to estimate, that contains the a, b and c coefficients.
+  vpMatrix b; // The matrix that contains the v values
 
   // Fill the matrices that form the system we want to solve
-  for (unsigned int i = 0; i < nbPts; ++i) {
-    float u = pts[i].get_u();
-    float v = pts[i].get_v();
-    A[i][0] = u *u;
-    A[i][1] = u;
-    A[i][2] = 1.f;
-    b[i][0] = v;
-  }
+  vpTutoParabolaModel::fillSystem(pts, A, b);
 
   // Compute the parabola coefficients using the least-mean-square method.
   X = A.pseudoInverse() * b;
-  m_model = vpTutoParabolaModel(X[0][0], X[1][0], X[2][0]);
+  m_model = vpTutoParabolaModel(X);
   m_isFitted = true;
 }
 
