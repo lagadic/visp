@@ -32,30 +32,79 @@
 
 #include "vpTutoSegmentation.h"
 
-#ifdef ENABLE_VISP_NAMESPACE
-using namespace VISP_NAMESPACE_NAME;
-#endif
-
 namespace tutorial
 {
 void performSegmentationHSV(vpTutoCommonData &data)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const unsigned int height = data.m_I_orig.getHeight(), width = data.m_I_orig.getWidth();
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
   vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(data.m_I_orig.bitmap),
-                                reinterpret_cast<unsigned char *>(H.bitmap),
-                                reinterpret_cast<unsigned char *>(S.bitmap),
-                                reinterpret_cast<unsigned char *>(V.bitmap), data.m_I_orig.getSize());
+                            H.bitmap,
+                            S.bitmap,
+                            V.bitmap,
+                            data.m_I_orig.getSize());
 
-  vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
-                        reinterpret_cast<unsigned char *>(S.bitmap),
-                        reinterpret_cast<unsigned char *>(V.bitmap),
+  vpImageTools::inRange(H.bitmap,
+                        S.bitmap,
+                        V.bitmap,
                         data.m_hsv_values,
                         data.m_mask.bitmap,
                         data.m_mask.getSize());
 
   vpImageTools::inMask(data.m_I_orig, data.m_mask, data.m_I_segmented);
+}
+
+std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCommonData &data)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  const int height = data.m_mask.getHeight();
+  const int width = data.m_mask.getWidth();
+  data.m_Iskeleton.resize(height, width, 0);
+  std::vector<vpImagePoint> points;
+  // Edge thinning along the horizontal direction
+  for (int y = 0; y < height; ++y) {
+    int left = -1;
+    for (int x = 0; x < width - 1; ++x) {
+      if ((data.m_mask[y][x] > 0) && (data.m_mask[y][x + 1] > 0)) {
+        if (left < 0) {
+          left = x;
+        }
+      }
+      else if (left >= 0) {
+        int cx = static_cast<int>(((left + x) - 1) * 0.5f);
+        points.push_back(vpImagePoint(y, cx));
+        data.m_Iskeleton[y][cx] = 255;
+        left = -1;
+      }
+    }
+  }
+
+  // Edge thinning along the vertical direction
+  for (int x = 0; x < width; ++x) {
+    int top = -1;
+    for (int y = 0; y < height - 1; ++y) {
+      if ((data.m_mask[y][x] > 0) && (data.m_mask[y + 1][x] > 0)) {
+        if (top < 0) {
+          top = y;
+        }
+      }
+      else if (top >= 0) {
+        int cy = static_cast<int>(((top + y) - 1) * 0.5f);
+        if (data.m_Iskeleton[cy][x] == 0) {
+          points.push_back(vpImagePoint(cy, x));
+          data.m_Iskeleton[cy][x] = 255;
+        }
+        top = -1;
+      }
+    }
+  }
+  return points;
 }
 }

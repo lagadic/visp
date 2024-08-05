@@ -73,7 +73,8 @@ public:
    */
   inline float eval(const float &u) const
   {
-    return (m_a * u * u) + (m_b * u) + m_c;
+    float v = (m_a * u * u) + (m_b * u) + m_c;
+    return v;
   }
 
   /**

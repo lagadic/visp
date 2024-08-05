@@ -35,6 +35,8 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpImageMorphology.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpImageTools.h>
 
 #include "vpTutoCommonData.h"
@@ -42,5 +44,7 @@
 namespace tutorial
 {
 void performSegmentationHSV(vpTutoCommonData &data);
+
+std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCommonData &data);
 }
 #endif

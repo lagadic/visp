@@ -143,6 +143,9 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
   const vpColor colorLegend = vpColor::red;
   const vpImagePoint ipLegend(20, 20);
   const vpImagePoint legendOffset(20, 0);
+  const unsigned int sizeCross = 10;
+  const unsigned int thicknessCross = 2;
+  const vpColor colorCross = vpColor::red;
   vpImagePoint ipClick;
   vpMouseButton::vpMouseButtonType button;
   while (notEnoughPoints) {
@@ -154,10 +157,21 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
     vpDisplay::displayText(I, ipLegend + legendOffset, "A middle click reinitialize the list of init points.", colorLegend);
     vpDisplay::displayText(I, ipLegend + legendOffset + legendOffset, "If not enough points have been selected, a right click has no effect.", colorLegend);
 
-    // Get the user input
+    /// Display the already selected points
+    const unsigned int sizeCross = 10;
+    const unsigned int thicknessCross = 2;
+    unsigned int nbInitPoints = initPoints.size();
+    for (unsigned int i = 0; i < nbInitPoints; ++i) {
+      vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
+    }
+
+    /// Update the display
+    vpDisplay::flush(I);
+
+    /// Get the user input
     vpDisplay::getClick(I, ipClick, button, true);
 
-    // Either add the clicked point to the list of initial points or stop the loop if enough points are available
+    /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
     switch (button) {
     case vpMouseButton::vpMouseButtonType::button1:
       initPoints.push_back(ipClick);
@@ -171,8 +185,16 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
     default:
       break;
     }
-    vpDisplay::flush(I);
   }
+   /// Display info about the initialization
+  vpDisplay::display(I);
+  vpDisplay::displayText(I, ipLegend, "Here are the points selected for the initialization.", colorLegend);
+  unsigned int nbInitPoints = initPoints.size();
+  for (unsigned int i = 0; i < nbInitPoints; ++i) {
+    vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
+  }
+  vpDisplay::flush(I);
+
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   lmsFitter.fit(initPoints);
   vpColVector X0 = lmsFitter.getCoeffs();
@@ -247,10 +269,6 @@ int main(const int argc, const char *argv[])
   if (returnCode != tutorial::vpTutoCommonData::SOFTWARE_CONTINUE) {
     return returnCode;
   }
-
-  const bool storeEdgePointsList = true;
-  vpCannyEdgeDetection edgeDetector(data.m_cannyGfKernelSize, data.m_cannyGfStdev, data.m_cannyGradAperture, data.m_cannyLt,
-                                    data.m_cannyUpperT, data.m_cannyLtr, data.m_cannyUpperTr, data.m_cannyGradType, storeEdgePointsList);
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers);
   const unsigned int vertOffset = 20;
@@ -305,15 +323,16 @@ int main(const int argc, const char *argv[])
     std::cout << "Iter " << nbIter << std::endl;
     data.m_grabber.acquire(data.m_I_orig);
     tutorial::performSegmentationHSV(data);
+
+    /// Extracting the skeleton of the mask
+    std::vector<vpImagePoint> edgePoints = tutorial::extractSkeletton(data);
+
 #ifdef VISP_HAVE_DISPLAY
     /// Initial display of the images
     vpDisplay::display(data.m_I_orig);
     vpDisplay::display(data.m_I_segmented);
-    vpDisplay::display(data.m_Icanny);
+    vpDisplay::display(data.m_Iskeleton);
 #endif
-    /// Computing the edge-map from the mask
-    data.m_Icanny = edgeDetector.detect(data.m_mask);
-    std::vector<vpImagePoint> edgePoints = edgeDetector.getEdgePointsList();
 
     /// Fit using least-square
     double tLms = vpTime::measureTimeMs();
@@ -321,9 +340,9 @@ int main(const int argc, const char *argv[])
     double dtLms = vpTime::measureTimeMs() - tLms;
     float lmsError = lmsFitter.evaluateRobust(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
-    std::cout << "    Mean square error = " << lmsError << " pixels" << std::endl;
+    std::cout << "    Mean square error = " << lmsError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
-    lmsFitter.display<unsigned char>(data.m_Icanny, vpColor::blue, legendLmsVert, legendLmsHor);
+    lmsFitter.display<unsigned char>(data.m_Iskeleton, vpColor::blue, legendLmsVert, legendLmsHor);
 
     /// Fit using RANSAC
     double tRansac = vpTime::measureTimeMs();
@@ -331,9 +350,9 @@ int main(const int argc, const char *argv[])
     double dtRansac = vpTime::measureTimeMs() - tRansac;
     float ransacError = ransacFitter.evaluateRobust(edgePoints);
     std::cout << "  [RANSAC method] " << std::endl;
-    std::cout << "    Mean square error = " << ransacError << " pixels" << std::endl;
+    std::cout << "    Mean square error = " << ransacError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
-    ransacFitter.display<unsigned char>(data.m_Icanny, vpColor::red, legendRansacVert, legendRansacHor);
+    ransacFitter.display<unsigned char>(data.m_Iskeleton, vpColor::red, legendRansacVert, legendRansacHor);
 
     /// Use the UKF to filter the measurement
     double tPF = vpTime::measureTimeMicros();
@@ -349,9 +368,9 @@ int main(const int argc, const char *argv[])
     //! [Evaluate_performances]
     float pfError = tutorial::evaluateRobust(Xest, edgePoints);
     //! [Evaluate_performances]
-    tutorial::display(Xest, data.m_Icanny, vpColor::gray, legendPFVert, legendPFHor);
+    tutorial::display(Xest, data.m_Iskeleton, vpColor::gray, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;
-    std::cout << "    Mean square error = " << pfError << " pixels" << std::endl;
+    std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -359,7 +378,7 @@ int main(const int argc, const char *argv[])
     data.displayLegend(data.m_I_orig);
     vpDisplay::flush(data.m_I_orig);
     vpDisplay::flush(data.m_I_segmented);
-    vpDisplay::flush(data.m_Icanny);
+    vpDisplay::flush(data.m_Iskeleton);
     run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
 #endif
     ++nbIter;
