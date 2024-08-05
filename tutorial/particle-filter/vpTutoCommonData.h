@@ -46,6 +46,9 @@ namespace tutorial
 typedef struct vpTutoCommonData
 {
   static const int SOFTWARE_CONTINUE = 4221;
+  const VISP_NAMESPACE_ADDRESSING vpColor m_colorLegend = VISP_NAMESPACE_ADDRESSING vpColor::red;
+  const VISP_NAMESPACE_ADDRESSING vpImagePoint m_ipLegend = VISP_NAMESPACE_ADDRESSING vpImagePoint(20, 20);
+  const VISP_NAMESPACE_ADDRESSING vpImagePoint m_legendOffset = VISP_NAMESPACE_ADDRESSING vpImagePoint(20, 0);
   std::string m_seqFilename; /*!< Sequence filenames, such as I%04d.png*/
   VISP_NAMESPACE_ADDRESSING vpVideoReader m_grabber; /*!< Video grabber from stored files.*/
   std::string m_hsvFilename; /*!< Filename of the YAML file that contains the HSV thresholds.*/

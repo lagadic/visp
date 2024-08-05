@@ -103,6 +103,14 @@ float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> 
 //! [Evaluation_functions]
 
 //! [Init_from_file]
+/**
+ * \brief Read the initialization points from a file.
+ *
+ * \param[in] listPointsFile The name of the file containing the list
+ * of initialization points.
+ * \return std::vector<vpImagePoint> The vector of image points to use to initialize
+ * the Particle Filter using a Least Mean Square minimization.
+ */
 std::vector<vpImagePoint> readInitPointsFromFile(const std::string &listPointsFile)
 {
   std::vector<vpImagePoint> initPoints;
@@ -156,33 +164,39 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
 //! [Display_function]
 
 //! [Initialization_function]
-vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
+/**
+ * \brief Compute the initial guess of the state for the Particle Filter
+ * using Least-Mean-Square minimization.
+ *
+ * \param[in] data The data used in the tutorial.
+ * \return vpColVector The vector containing the coefficients, used as initial guess,
+ * of the parabola.
+ */
+vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
 {
   const std::string listPointsFile("list_init_points.txt");
 #ifdef VISP_HAVE_DISPLAY
-  std::vector<vpImagePoint> initPoints;
   const unsigned int minNbPts = 3;
-  bool notEnoughPoints = true;
-  const vpColor colorLegend = vpColor::red;
-  const vpImagePoint ipLegend(20, 20);
-  const vpImagePoint legendOffset(20, 0);
   const unsigned int sizeCross = 10;
   const unsigned int thicknessCross = 2;
   const vpColor colorCross = vpColor::red;
+  const bool waitForClick = true;
+  std::vector<vpImagePoint> initPoints;
+  bool notEnoughPoints = true;
   vpImagePoint ipClick;
   vpMouseButton::vpMouseButtonType button;
 
   bool useFile = false;
   if (vpIoTools::checkFilename(listPointsFile)) {
     /// Initial display of the images
-    vpDisplay::display(I);
-    vpDisplay::displayText(I, ipLegend, "Left click to manually select the init points, right click to the points from the file \"" + listPointsFile + "\"", colorLegend);
+    vpDisplay::display(data.m_I_orig);
+    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to manually select the init points, right click to the points from the file \"" + listPointsFile + "\"", data.m_colorLegend);
 
     /// Update the display
-    vpDisplay::flush(I);
+    vpDisplay::flush(data.m_I_orig);
 
     /// Get the user input
-    vpDisplay::getClick(I, ipClick, button, true);
+    vpDisplay::getClick(data.m_I_orig, ipClick, button, waitForClick);
 
     /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
     switch (button) {
@@ -198,31 +212,30 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
   }
 
   if (useFile) {
+    /// Read the initialization points from a file.
     initPoints = tutorial::readInitPointsFromFile(listPointsFile);
   }
   else {
     while (notEnoughPoints) {
       /// Initial display of the images
-      vpDisplay::display(I);
+      vpDisplay::display(data.m_I_orig);
 
       /// Display the how-to
-      vpDisplay::displayText(I, ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", colorLegend);
-      vpDisplay::displayText(I, ipLegend + legendOffset, "A middle click reinitialize the list of init points.", colorLegend);
-      vpDisplay::displayText(I, ipLegend + legendOffset + legendOffset, "If not enough points have been selected, a right click has no effect.", colorLegend);
+      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
+      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
+      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
 
       /// Display the already selected points
-      const unsigned int sizeCross = 10;
-      const unsigned int thicknessCross = 2;
       unsigned int nbInitPoints = initPoints.size();
       for (unsigned int i = 0; i < nbInitPoints; ++i) {
-        vpDisplay::displayCross(I, initPoints[i], sizeCross, colorCross, thicknessCross);
+        vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
       }
 
       /// Update the display
-      vpDisplay::flush(I);
+      vpDisplay::flush(data.m_I_orig);
 
       /// Get the user input
-      vpDisplay::getClick(I, ipClick, button, true);
+      vpDisplay::getClick(data.m_I_orig, ipClick, button, true);
 
       /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
       switch (button) {
@@ -241,12 +254,12 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
     }
   }
   /// Display info about the initialization
-  vpDisplay::display(I);
-  vpDisplay::displayText(I, ipLegend, "Here are the points selected for the initialization.", colorLegend);
+  vpDisplay::display(data.m_I_orig);
+  vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Here are the points selected for the initialization.", data.m_colorLegend);
   unsigned int nbInitPoints = initPoints.size();
   for (unsigned int i = 0; i < nbInitPoints; ++i) {
     const vpImagePoint &ip = initPoints[i];
-    vpDisplay::displayCross(I, ip, sizeCross, colorCross, thicknessCross);
+    vpDisplay::displayCross(data.m_I_orig, ip, sizeCross, colorCross, thicknessCross);
   }
   /// Save the init points if they were not read from a file
   if (!useFile) {
@@ -257,11 +270,11 @@ vpColVector computeInitialGuess(const vpImage<vpRGBa> &I)
     }
     ofs_initPoints.close();
   }
-  vpDisplay::displayText(I, ipLegend + legendOffset, "A click to continue.", colorLegend);
-  vpDisplay::flush(I);
-  const bool waitForClick = true;
-  vpDisplay::getClick(I, waitForClick);
+  vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
+  vpDisplay::flush(data.m_I_orig);
+  vpDisplay::getClick(data.m_I_orig, waitForClick);
 
+  /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   lmsFitter.fit(initPoints);
   vpColVector X0 = lmsFitter.getCoeffs();
@@ -337,7 +350,7 @@ private:
   double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
 };
 //! [Likelihood_functor]
-  }
+}
 
 int main(const int argc, const char *argv[])
 {
@@ -348,8 +361,8 @@ int main(const int argc, const char *argv[])
   }
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers);
-  const unsigned int vertOffset = 20;
-  const unsigned int horOffset = 20;
+  const unsigned int vertOffset = data.m_legendOffset.get_i();
+  const unsigned int horOffset = data.m_ipLegend.get_j();
   const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 4 * vertOffset;
   const unsigned int legendLmsHor = horOffset;
   const unsigned int legendRansacVert = data.m_I_orig.getHeight() - 3 * vertOffset;
@@ -359,7 +372,7 @@ int main(const int argc, const char *argv[])
 
   // Initialize the attributes of the PF
   //! [Initial_estimates]
-  vpColVector X0 = tutorial::computeInitialGuess(data.m_I_orig);
+  vpColVector X0 = tutorial::computeInitialGuess(data);
   //! [Initial_estimates]
 
   //! [Constants_for_the_PF]
@@ -459,6 +472,18 @@ int main(const int argc, const char *argv[])
     run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
 #endif
     ++nbIter;
+  }
+
+  if (data.m_grabber.end() && (!data.m_stepbystep)) {
+    /// Initial display of the images
+    vpDisplay::display(data.m_I_orig);
+    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "End of sequence reached. Click to exit.", data.m_colorLegend);
+
+    /// Update the display
+    vpDisplay::flush(data.m_I_orig);
+
+    /// Get the user input
+    vpDisplay::getClick(data.m_I_orig, true);
   }
   return 0;
 }
