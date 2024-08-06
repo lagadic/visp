@@ -82,6 +82,29 @@ float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
  * \param[in] pts The input points.
  * \return float The mean square error.
  */
+float evaluate(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
+{
+  unsigned int nbPts = pts.size();
+  vpColVector residuals(nbPts);
+  vpColVector weights(nbPts, 1.);
+  vpTutoParabolaModel model(coeffs);
+  // Compute the residuals
+  for (unsigned int i = 0; i < nbPts; ++i) {
+    float squareError = evaluate(pts[i], model);
+    residuals[i] = squareError;
+  }
+  float meanError = residuals.sum() / static_cast<double>(nbPts);
+  return meanError;
+}
+
+/**
+ * \brief Compute the mean-square error between the parabola model and
+ * the input points \b pts. An M-estimator is used to reject outliers
+ * when computing the mean square error.
+ *
+ * \param[in] pts The input points.
+ * \return float The mean square error.
+ */
 float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
@@ -428,7 +451,7 @@ int main(const int argc, const char *argv[])
     double tLms = vpTime::measureTimeMs();
     lmsFitter.fit(edgePoints);
     double dtLms = vpTime::measureTimeMs() - tLms;
-    float lmsError = lmsFitter.evaluateRobust(edgePoints);
+    float lmsError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
     std::cout << "    Mean square error = " << lmsError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
@@ -438,25 +461,25 @@ int main(const int argc, const char *argv[])
     double tRansac = vpTime::measureTimeMs();
     ransacFitter.fit(edgePoints);
     double dtRansac = vpTime::measureTimeMs() - tRansac;
-    float ransacError = ransacFitter.evaluateRobust(edgePoints);
+    float ransacError = ransacFitter.evaluate(edgePoints);
     std::cout << "  [RANSAC method] " << std::endl;
     std::cout << "    Mean square error = " << ransacError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
     ransacFitter.display<unsigned char>(data.m_Iskeleton, vpColor::red, legendRansacVert, legendRansacHor);
 
     /// Use the UKF to filter the measurement
-    double tPF = vpTime::measureTimeMicros();
+    double tPF = vpTime::measureTimeMs();
     //! [Perform_filtering]
     filter.filter(edgePoints, period);
     //! [Perform_filtering]
-    double dtPF = vpTime::measureTimeMicros() - tPF;
+    double dtPF = vpTime::measureTimeMs() - tPF;
 
     //! [Get_filtered_state]
     vpColVector Xest = filter.computeFilteredState();
     //! [Get_filtered_state]
 
     //! [Evaluate_performances]
-    float pfError = tutorial::evaluateRobust(Xest, edgePoints);
+    float pfError = tutorial::evaluate(Xest, edgePoints);
     //! [Evaluate_performances]
     tutorial::display(Xest, data.m_Iskeleton, vpColor::gray, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;
