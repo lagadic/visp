@@ -69,6 +69,7 @@ public:
 
   GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_buffer; }
 
+
 protected:
   virtual void setupScene() VP_OVERRIDE;
 

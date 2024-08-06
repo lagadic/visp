@@ -561,6 +561,31 @@ public:
     }
   }
 
+  /**
+   * @brief Apply a filter at a given image location
+   *
+   * @tparam FilterType Image and filter types: double or float
+   * @param I The input image
+   * @param row the row coordinate where the filter should be applied
+   * @param col the column coordinate where the filter shoud be applied
+   * @param M the filter
+   */
+  template <typename FilterType>
+  static FilterType filter(const vpImage<FilterType> &I, const vpArray2D<FilterType> &M, unsigned int row, unsigned int col)
+  {
+    const unsigned int size_y = M.getRows(), size_x = M.getCols();
+    const unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
+    FilterType corr = 0;
+
+    for (unsigned int a = 0; a < size_y; ++a) {
+      for (unsigned int b = 0; b < size_x; ++b) {
+        FilterType val = static_cast<FilterType>(I[row - half_size_y + a][col - half_size_x + b]); // Correlation
+        corr += M[a][b] * val;
+      }
+    }
+    return corr;
+  }
+
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template <typename FilterType>
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;

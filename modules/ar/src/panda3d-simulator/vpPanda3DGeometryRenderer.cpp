@@ -81,6 +81,8 @@ void main()
     oNormal = normalize(p3d_Normal);
     oNormal.yz = oNormal.zy;
     oNormal.y = -oNormal.y;
+    // vec3 on = vec3(oNormal.z, -oNormal.x, -oNormal.y);
+    // oNormal = on;
     vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
     distToCamera = -cs_position.z;
 }
@@ -153,12 +155,12 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   WindowProperties win_prop;
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
   // Don't open a window - force it to be an offscreen buffer.
-  int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable;
+  int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable | GraphicsPipe::BF_refuse_parasite;
   GraphicsOutput *windowOutput = m_window->get_graphics_output();
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsPipe *pipe = windowOutput->get_pipe();
 
-  m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), -100, fbp, win_prop, flags,
+  m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), m_renderOrder, fbp, win_prop, flags,
                                             windowOutput->get_gsg(), windowOutput);
 
   if (m_normalDepthBuffer == nullptr) {
@@ -172,7 +174,7 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
   m_normalDepthTexture->set_format(Texture::F_rgba32);
-  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);
+  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_normalDepthBuffer->make_display_region();
@@ -185,6 +187,7 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth) const
 {
+
   normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
@@ -220,7 +223,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
   float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
   data = data + rowIncrement * (normals.getHeight() - 1);
   rowIncrement = -rowIncrement;
-
   for (unsigned int i = 0; i < normals.getHeight(); ++i) {
     vpRGBf *normalRow = normals[i];
     for (unsigned int j = 0; j < normals.getWidth(); ++j) {

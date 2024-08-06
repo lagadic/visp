@@ -72,6 +72,9 @@ public:
    */
   void initFramework() VP_OVERRIDE;
 
+  void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window) VP_OVERRIDE;
+  void initFromParent(const vpPanda3DBaseRenderer &renderer) VP_OVERRIDE;
+
   /**
    * @brief Set the pose of the camera, using the ViSP convention. This change is propagated to all subrenderers
    *
@@ -134,7 +137,7 @@ public:
    */
   void addNodeToScene(const NodePath &object) VP_OVERRIDE;
 
-  void setRenderParameters(const vpPanda3DRenderParameters &params) VP_OVERRIDE;
+  virtual void setRenderParameters(const vpPanda3DRenderParameters &params) VP_OVERRIDE;
 
   void addLight(const vpPanda3DLight &light) VP_OVERRIDE;
 
@@ -146,6 +149,9 @@ public:
    * @param renderer the renderer to add
    */
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
+
+  void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer) vp_override;
+
 
   /**
    * @brief Retrieve the first subrenderer with the specified template type.
@@ -185,12 +191,24 @@ public:
     return nullptr;
   }
 
+  void beforeFrameRendered() vp_override
+  {
+    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+      renderer->beforeFrameRendered();
+    }
+  }
+  void afterFrameRendered() vp_override
+  {
+    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+      renderer->afterFrameRendered();
+    }
+  }
+
 protected:
   void setupScene() VP_OVERRIDE { }
 
   void setupCamera() VP_OVERRIDE { }
 
-private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;
 };
 END_VISP_NAMESPACE

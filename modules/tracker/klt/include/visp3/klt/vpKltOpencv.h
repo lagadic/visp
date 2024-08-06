@@ -119,7 +119,7 @@ public:
    * \param color : Color used to display the features.
    * \param thickness : Thickness of the drawings.
    */
-  void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::red, unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::red, unsigned int thickness = 1) const;
   /*!
    * Display features list.
    *

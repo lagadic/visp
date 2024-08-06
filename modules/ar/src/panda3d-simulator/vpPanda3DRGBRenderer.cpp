@@ -274,7 +274,6 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
   //m_backgroundTexture = TexturePool::load_texture("/home/sfelton/IMG_20230221_165330430.jpg");
   unsigned char *data = (unsigned char *)m_backgroundTexture->modify_ram_image();
 
-  std::cout << m_backgroundTexture->get_x_size() << ", " << m_backgroundTexture->get_y_size()  << std::endl;
   for (unsigned int i = 0; i < background.getHeight(); ++i) {
     const vpRGBa *srcRow = background[background.getHeight() - (i + 1)];
     unsigned char *destRow = data + i * background.getWidth() * 4;

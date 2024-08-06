@@ -48,7 +48,16 @@ void vpPanda3DRendererSet::initFramework()
   // load_prc_file_data("", "load-display p3tinydisplay");
   // load_prc_file_data("", "color-bits 32 32 32");
   load_prc_file_data("", "gl-version 3 2");
-
+  // load_prc_file_data("", "auto-flip 1");
+  // load_prc_file_data("", "sync-video 0");
+  // load_prc_file_data("", "multisamples 1\n"
+  //           // "background-color 0.0 0.0 0.0 0.0\n"
+  //           // "load-file-type p3assimp\n"
+  //           // "transform-cache 0\n"
+  //           // "state-cache 0\n"
+  //           // "audio-library-name null\n"
+  //           "model-cache-dir\n"
+  //           "notify-level-glgsg spam");
 
 
   if (m_framework.use_count() > 0) {
@@ -71,6 +80,22 @@ void vpPanda3DRendererSet::initFramework()
   m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
     renderer->initFromParent(m_framework, m_window);
+  }
+}
+
+void vpPanda3DRendererSet::initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window)
+{
+  vpPanda3DBaseRenderer::initFromParent(framework, window);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+    renderer->initFromParent(m_framework, m_window);
+  }
+}
+
+void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
+{
+  vpPanda3DBaseRenderer::initFromParent(renderer);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &r: m_subRenderers) {
+    r->initFromParent(*this);
   }
 }
 
@@ -167,10 +192,6 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
     ++it;
   }
   m_subRenderers.insert(it, renderer);
-  for (const auto &r: m_subRenderers) {
-    std::cout << r->getName() << " ";
-  }
-  std::cout << std::endl;
 
   renderer->setRenderParameters(m_renderParameters);
   if (m_framework != nullptr) {
@@ -179,10 +200,19 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
   }
 }
 
-END_VISP_NAMESPACE
+void vpPanda3DRendererSet::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer)
+{
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (subRenderer.get() != &sourceBuffer) {
+      subRenderer->enableSharedDepthBuffer(sourceBuffer);
+    }
+  }
+}
+
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols
 void dummy_vpPanda3DRendererSet() { };
 
+>>>>>>> upstream/master
 #endif

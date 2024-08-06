@@ -171,7 +171,7 @@ void main() {
       sum_v += pix * kernel_v[i];
     }
 
-    vec2 orientationAndValid = sum_h * sum_h + sum_v *  sum_v > 0 ? vec2(atan(sum_v/sum_h), 1.f) : vec2(0.f, 0.f);
+    vec2 orientationAndValid = sum_h * sum_h + sum_v *  sum_v > 0 ? vec2(-atan(sum_v/sum_h), 1.f) : vec2(0.f, 0.f);
     p3d_FragData = vec4(sum_h, sum_v, orientationAndValid.x, orientationAndValid.y);
   } else {
     p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);

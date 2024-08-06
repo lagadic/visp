@@ -98,8 +98,10 @@ public:
 
 
 protected:
+
   void setupScene() VP_OVERRIDE;
   void setupRenderTarget() VP_OVERRIDE;
+
   virtual std::string makeFragmentShader(bool hasTexture, bool specular);
 
 private:

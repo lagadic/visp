@@ -14,6 +14,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 
 #include <visp3/io/vpParseArgv.h>
+
 #include <visp3/io/vpImageIo.h>
 
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
@@ -102,12 +103,13 @@ int main(int argc, const char **argv)
   bool showLightContrib = false;
   bool showCanny = false;
   char *modelPathCstr = nullptr;
-  char *backgroundPathCstr = nullptr;
 
+  char *backgroundPathCstr = nullptr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
     {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
      "Path to the model to load."},
+
     {"-background", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&backgroundPathCstr,
      "Path to the background image to load for the rgb renderer."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
@@ -130,6 +132,16 @@ int main(int argc, const char **argv)
     return (false);
   }
 
+  if (PStatClient::is_connected()) {
+    PStatClient::disconnect();
+  }
+
+  std::string host = ""; // Empty = default config var value
+  int port = -1; // -1 = default config var value
+  if (!PStatClient::connect(host, port)) {
+    std::cout << "Could not connect to PStat server." << std::endl;
+  }
+
   std::string modelPath;
   if (modelPathCstr) {
     modelPath = modelPathCstr;
@@ -137,6 +149,7 @@ int main(int argc, const char **argv)
   else {
     modelPath = "data/suzanne.bam";
   }
+
   std::string backgroundPath;
   if (backgroundPathCstr) {
     backgroundPath = backgroundPathCstr;
@@ -144,7 +157,8 @@ int main(int argc, const char **argv)
   const std::string objectName = "object";
 
   //! [Renderer set]
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
+  double factor = 0.5;
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(600 * factor, 600 * factor, 320 * factor, 240 * factor), int(480 * factor), int(640 * factor), 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
   renderer.setVerticalSyncEnabled(false);
@@ -160,8 +174,7 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
   std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
-  std::shared_ptr<vpPanda3DGaussianBlur> blurFilter = std::make_shared<vpPanda3DGaussianBlur>("blur", grayscaleFilter, false);
-  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", blurFilter, true, 10.f);
+  std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", grayscaleFilter, true, 10.f);
   //! [Subrenderers init]
 
   //! [Adding subrenderers]
@@ -173,7 +186,6 @@ int main(int argc, const char **argv)
   }
   if (showCanny) {
     renderer.addSubRenderer(grayscaleFilter);
-    renderer.addSubRenderer(blurFilter);
     renderer.addSubRenderer(cannyFilter);
   }
   std::cout << "Initializing Panda3D rendering framework" << std::endl;
@@ -193,6 +205,12 @@ int main(int argc, const char **argv)
   vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0f), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
 
+  //! [Scene configuration]
+
+  rgbRenderer->printStructure();
+
+  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
+
   if (!backgroundPath.empty()) {
     vpImage<vpRGBa> background;
     vpImageIo::read(background, backgroundPath);
@@ -203,9 +221,9 @@ int main(int argc, const char **argv)
 
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
+
   //! [Scene configuration]
 
-  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   std::cout << "Creating display and data images" << std::endl;
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
@@ -252,7 +270,7 @@ int main(int argc, const char **argv)
   while (!end) {
     float nearV = 0, farV = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
-    rgbRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV);
+    rgbRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV, true);
     renderParams.setClippingDistance(nearV, farV);
     renderer.setRenderParameters(renderParams);
     //std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;

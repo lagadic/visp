@@ -84,6 +84,7 @@ public:
 
   GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_normalDepthBuffer; }
 
+
 protected:
   void setupScene() VP_OVERRIDE;
   void setupRenderTarget() VP_OVERRIDE;

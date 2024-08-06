@@ -71,17 +71,14 @@ public:
    * Will also perform the renderer setup (scene, camera and render targets)
    */
   virtual void initFramework();
-
-  /**
-   * @brief
-   *
-   * @param framework
-   * @param window
-   */
-  void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window);
+  virtual void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window);
+  virtual void initFromParent(const vpPanda3DBaseRenderer &renderer);
 
 
+  virtual void beforeFrameRendered() { }
   virtual void renderFrame();
+  virtual void afterFrameRendered() { }
+
 
   /**
    * @brief Get the name of the renderer
@@ -89,6 +86,8 @@ public:
    * @return const std::string&
    */
   const std::string &getName() const { return m_name; }
+
+  void setName(const std::string &name) { m_name = name; }
 
   /**
    * @brief Get the scene root
@@ -101,31 +100,7 @@ public:
    *
    * @param params the new rendering parameters
    */
-  virtual void setRenderParameters(const vpPanda3DRenderParameters &params)
-  {
-    unsigned int previousH = m_renderParameters.getImageHeight(), previousW = m_renderParameters.getImageWidth();
-    bool resize = previousH != params.getImageHeight() || previousW != params.getImageWidth();
-
-    m_renderParameters = params;
-
-    if (resize) {
-      for (GraphicsOutput *buffer: m_buffers) {
-        //buffer->get_type().is_derived_from()
-        GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
-        if (buf == nullptr) {
-          throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
-        }
-        else {
-          buf->set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
-        }
-      }
-    }
-
-    // If renderer is already initialized, modify camera properties
-    if (m_camera != nullptr) {
-      m_renderParameters.setupPandaCamera(m_camera);
-    }
-  }
+  virtual void setRenderParameters(const vpPanda3DRenderParameters &params);
 
   /**
    * @brief Returns true if this renderer process 3D data and its scene root can be interacted with.
@@ -142,6 +117,15 @@ public:
    * @return int
    */
   int getRenderOrder() const { return m_renderOrder; }
+
+  void setRenderOrder(int order)
+  {
+    int previousOrder = m_renderOrder;
+    m_renderOrder = order;
+    for (GraphicsOutput *buffer: m_buffers) {
+      buffer->set_sort(buffer->get_sort() + (order - previousOrder));
+    }
+  }
 
   /**
    * @brief Set the camera's pose.
@@ -206,8 +190,10 @@ public:
    * @param name name of the node that should be used to compute near and far values.
    * @param near resulting near clipping plane distance
    * @param far resulting far clipping plane distance
+   * @param fast Whether to use the axis align bounding box to compute the clipping planes.
+   * This is faster than reprojecting the full geometry in the camera frame
    */
-  void computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far);
+  void computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far, bool fast);
 
   /**
    * @brief Load a 3D object. To load an .obj file, Panda3D must be compiled with assimp support.
@@ -250,7 +236,12 @@ public:
 
   virtual GraphicsOutput *getMainOutputBuffer() { return nullptr; }
 
+  virtual void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer);
+
+
+
 protected:
+
 
   /**
    * @brief Initialize the scene for this specific renderer.
@@ -278,7 +269,7 @@ protected:
 
 
 protected:
-  const std::string m_name; //! name of the renderer
+  std::string m_name; //! name of the renderer
   int m_renderOrder; //! Rendering priority for this renderer and its buffers. A lower value will be rendered first. Should be used when calling make_output in setupRenderTarget()
   std::shared_ptr<PandaFramework> m_framework; //! Pointer to the active panda framework
   std::shared_ptr<WindowFramework> m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.

@@ -146,13 +146,13 @@ public:
    * Display moving edges in image I.
    * @param I : Input image.
    */
-  void display(const vpImage<unsigned char> &I);
+  void display(const vpImage<unsigned char> &I) const;
 
   /*!
    * Display moving edges in image I.
    * @param I : Input image.
    */
-  void display(const vpImage<vpRGBa> &I);
+  void display(const vpImage<vpRGBa> &I) const;
 
   /*!
    * Get the angle of tangent at site.
@@ -238,6 +238,19 @@ public:
   void track(const vpImage<unsigned char> &I, const vpMe *me, const bool &test_contrast = true);
 
   /*!
+   * Similar to the \ref track function, but stores the best numCandidates hypotheses in \ref outputHypotheses.
+   * The best matching hypotheses (if it is not suppressed) is assigned to *this* and is stored as the first element of \ref outputHypotheses.
+   * The hypotheses are sorted from best to worst match in the vector.
+   * A match may be in the vector but mark as suppressed. If this is undesired, you should filter them afterwards.
+   *
+   * \throws if \ref numCandidates is superior to me.getRange() * 2 + 1
+   *
+   * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
+   */
+  void trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
+                              std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates);
+
+  /*!
    * Set the angle of tangent at site.
    *
    * \param a : new value of alpha
@@ -306,9 +319,27 @@ public:
    */
   inline double getContrastThreshold() const { return m_contrastThreshold; }
 
+
   /*!
-   * Copy operator.
+   * Get the final computed likelihood threshold value, depending on the likelihood threshold type and ME settings.
+   *
+   * \return value of the contrast threshold of the site.
    */
+  inline double computeFinalThreshold(const vpMe &me) const
+  {
+    const double threshold = getContrastThreshold();
+    if (me.getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD) {
+      return 2.0 * threshold;
+    }
+    else {
+      const double n_d = me.getMaskSize();
+      return threshold / (100.0 * n_d * trunc(n_d / 2.0));
+    }
+  }
+
+ /*!
+  * Copy operator.
+  */
   vpMeSite &operator=(const vpMeSite &m);
 
   /*!
