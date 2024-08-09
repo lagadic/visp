@@ -18,7 +18,7 @@
   libdc1394,
   libdmtx,
   libglvnd,
-  libjpeg,  # this is libjpeg-turbo
+  libjpeg, # this is libjpeg-turbo
   libpng,
   librealsense,
   libxml2,
@@ -43,12 +43,12 @@ stdenv.mkDerivation (finalAttrs: {
   version = "3.6.0";
 
   /*
-  src = fetchFromGitHub {
-    owner = "lagadic";
-    repo = "visp";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-m5Tmr+cZab7eSjmbXb8HpJpFHb0UYFTyimY+CkfBIAo=";
-  };
+    src = fetchFromGitHub {
+      owner = "lagadic";
+      repo = "visp";
+      rev = "v${finalAttrs.version}";
+      hash = "sha256-m5Tmr+cZab7eSjmbXb8HpJpFHb0UYFTyimY+CkfBIAo=";
+    };
   */
   src = nix-gitignore.gitignoreSource [ ./.nixignore ] ./.;
 
