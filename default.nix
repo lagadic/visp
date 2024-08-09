@@ -10,6 +10,7 @@
 {
   cmake,
   coin3d,
+  darwin,
   doxygen,
   eigen,
   #fetchFromGitHub,
@@ -29,7 +30,7 @@
   openblas,
   opencv,
   pkg-config,
-  python3,
+  python3Packages,
   stdenv,
   texliveSmall,
   v4l-utils,
@@ -42,14 +43,6 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "visp";
   version = "3.6.0";
 
-  /*
-    src = fetchFromGitHub {
-      owner = "lagadic";
-      repo = "visp";
-      rev = "v${finalAttrs.version}";
-      hash = "sha256-m5Tmr+cZab7eSjmbXb8HpJpFHb0UYFTyimY+CkfBIAo=";
-    };
-  */
   src = nix-gitignore.gitignoreSource [ ./.nixignore ] ./.;
 
   nativeBuildInputs = [
@@ -59,35 +52,40 @@ stdenv.mkDerivation (finalAttrs: {
     texliveSmall
   ];
 
-  doCheck = true;
+  buildInputs =
+    [
+      eigen
+      lapack
+      libdc1394
+      libdmtx
+      libglvnd
+      libjpeg
+      libpng
+      librealsense
+      libX11
+      libxml2
+      nlohmann_json
+      #ogre
+      openblas
+      opencv
+      python3Packages.numpy
+      xorg.libpthreadstubs
+      zbar
+      zlib
+    ]
+    ++ lib.optionals stdenv.isLinux [
+      coin3d
+      v4l-utils
+    ]
+    ++ lib.optionals stdenv.isDarwin [ darwin.IOKit ];
 
-  buildInputs = [
-    coin3d
-    eigen
-    lapack
-    libdc1394
-    libdmtx
-    libglvnd
-    libjpeg
-    libpng
-    librealsense
-    libX11
-    libxml2
-    nlohmann_json
-    #ogre
-    openblas
-    opencv
-    (python3.withPackages (p: [ p.numpy ]))
-    v4l-utils
-    xorg.libpthreadstubs
-    zbar
-    zlib
-  ];
+  doCheck = true;
 
   meta = {
     description = "Open Source Visual Servoing Platform";
     homepage = "https://visp.inria.fr";
+    changelog = "https://github.com/lagadic/visp/blob/v${finalAttrs.version}/ChangeLog.txt";
     license = lib.licenses.gpl2Plus;
-    maintainers = [ lib.maintainers.nim65s ];
+    maintainers = with lib.maintainers; [ nim65s ];
   };
 })
