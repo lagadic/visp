@@ -136,6 +136,11 @@ if (file_pose.is_open()) {
 }
 ```
 
+Camera poses can also be read from npz file format:
+- pass the `--npz` flag to indicate the input pose file is stored in npz file format
+- the script will read data from `vec_poses` array name
+- array should contains `{tx, ty, tz, tu.x, tu.y, tu.z}` information (`nb_poses x 6`)
+
 Script example (use the help option `-h` to display the available parameters):
 
 ```console
