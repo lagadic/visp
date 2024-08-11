@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     }
     else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-o") && i+1 < argc) {
       npz_filename = argv[i+1];
+      i++;
     }
     else if (std::string(argv[i]) == "--color" || std::string(argv[i]) == "-c") {
       color_mode = true;
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--alpha" || std::string(argv[i]) == "-a") {
       save_alpha = true;
     }
-    else if (std::string(argv[i]) == "--print-cMo" && i+1 < argc) {
+    else if (std::string(argv[i]) == "--print-cMo") {
       print_cMo = true;
     }
     else {
