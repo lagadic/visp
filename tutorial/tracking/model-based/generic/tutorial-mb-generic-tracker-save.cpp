@@ -47,9 +47,9 @@ int main(int argc, char **argv)
     if (std::string(argv[i]) == "--cv-backend") {
       opencv_backend = true;
     }
-    else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-o") && i+1 < argc) {
+    else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-o") && (i+1 < argc)) {
       npz_filename = argv[i+1];
-      i++;
+      ++i;
     }
     else if (std::string(argv[i]) == "--color" || std::string(argv[i]) == "-c") {
       color_mode = true;
