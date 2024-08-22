@@ -928,7 +928,8 @@ def main():
             plt.close()
     else:
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
+        #ax = fig.gca(projection='3d') # doesn't work on macOS Sonoma 14.6.1
+        ax = fig.add_subplot(projection='3d')
         ax.set_aspect("auto")
 
         for i in range(0, inverse_camera_poses.shape[0], 4*pose_step):
