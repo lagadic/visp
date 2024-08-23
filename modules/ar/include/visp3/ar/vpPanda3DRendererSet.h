@@ -150,7 +150,7 @@ public:
    */
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 
-  void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer) vp_override;
+  void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer) VP_OVERRIDE;
 
 
   /**
@@ -191,13 +191,13 @@ public:
     return nullptr;
   }
 
-  void beforeFrameRendered() vp_override
+  void beforeFrameRendered() VP_OVERRIDE
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->beforeFrameRendered();
     }
   }
-  void afterFrameRendered() vp_override
+  void afterFrameRendered() VP_OVERRIDE
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->afterFrameRendered();

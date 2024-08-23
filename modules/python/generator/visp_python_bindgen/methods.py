@@ -211,6 +211,9 @@ def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapp
     is_const = t.ptr_to.const
   else:
     type_name = ''
+
+
+
   if GeneratorConfig.is_forbidden_default_argument_type(type_name):
     return False
 
