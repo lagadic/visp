@@ -521,7 +521,7 @@ def data_for_cylinder_along_z(center_x,center_y,radius,height_z):
 
     return x_grid,y_grid,z_grid
 
-def parse_load_recursive_model(input_str):
+def parse_load_recursive_model(input_str, debug_print):
     filename = ""
     t_vec = None
     tu_vec = None
@@ -537,7 +537,8 @@ def parse_load_recursive_model(input_str):
             ty = float(m.group(2))
             tz = float(m.group(3))
             t_vec = [tx, ty, tz]
-            # print(f"tx={tx} ; ty={ty} ; tz={tz}")
+            if debug_print:
+                print(f"tx={tx} ; ty={ty} ; tz={tz}")
 
         pattern_unit = '(.rad|.deg)?'
         pattern_tu_val = '([-+]?\d*\.*\d+)'
@@ -545,14 +546,17 @@ def parse_load_recursive_model(input_str):
         m = re.search('tu=\[{}; {}; {}\]'.format(pattern_tu, pattern_tu, pattern_tu), input_str)
         if m:
             groups = m.groups()
-            # print(f"groups:\n{groups}")
+            if debug_print:
+                print(f"groups:\n{groups}")
             tu_vec = []
             for idx in range(3):
                 idx_tu_val = idx*3 + 1
                 idx_tu_unit = idx*3 + 2
-                tu_val = groups[idx_tu_val] if groups[idx_tu_unit] is None else (groups[idx_tu_val] if "rad" in groups[idx_tu_unit] else math.radians(float(groups[idx_tu_val])))
+                tu_val = groups[idx_tu_val] if groups[idx_tu_unit] is None else \
+                    (groups[idx_tu_val] if "rad" in groups[idx_tu_unit] else math.radians(float(groups[idx_tu_val])))
                 tu_vec.append(float(tu_val))
-            # print(f"tu_vec={tu_vec}")
+            if debug_print:
+                print(f"tu_vec={tu_vec}")
 
     oTo = np.eye(4)
     if tu_vec is not None:
@@ -587,7 +591,7 @@ def parse_cao_model(filename, od_T_o, debug_print):
                         raise ValueError("CAO model should have at the beginning the version number (either V0 or V1).")
                 elif state == 1:
                     if line.startswith("load("):
-                        recursive_filename, oTo_local = parse_load_recursive_model(line)
+                        recursive_filename, oTo_local = parse_load_recursive_model(line, debug_print)
                         print(f"oTo_local:\n{oTo_local}")
 
                         path = Path(filename)
@@ -781,7 +785,7 @@ def center_viewport(ax, x_lim, y_lim, z_lim, print_lim=False):
 
 def main():
     parser = argparse.ArgumentParser(description='Plot camera trajectory from poses and CAO model files.')
-    parser.add_argument('-p', type=str, nargs=1, required=True, help='Path to poses file.')
+    parser.add_argument('-p', type=str, nargs=1, required=True, help='Path to poses file (4n x 4 if homogeneous or lines of "tx ty tz tux tuy tuz").')
     parser.add_argument('--theta-u', action='store_true', default=False,
                         help='If true, camera poses are expressed using [tx ty tz tux tuy tuz] formalism, otherwise in homogeneous form.')
     parser.add_argument('--npz', action='store_true', default=False,
@@ -792,7 +796,6 @@ def main():
     parser.add_argument('--save-dir',  default='images', type=str, help='If --save flag is set, the folder where to save the plot images.')
     parser.add_argument('--save-pattern',  default='image_{:06d}.png', type=str, help='Image filename pattern when saving.')
     parser.add_argument('--save-dpi',  default=300, type=int, help='Image dpi when saving.')
-    parser.add_argument('--step', type=int, help='Step number between each camera poses when drawing.')
     parser.add_argument('--axes-label-size', type=int, default=20, help='Axes label size.')
     parser.add_argument('--xtick-label-size', type=int, default=14, help='X-tick label size.')
     parser.add_argument('--ytick-label-size', type=int, default=14, help='Y-tick label size.')
