@@ -56,10 +56,10 @@ int main(int argc, char *argv[])
       npz_filename = argv[i+1];
       ++i;
     }
-    else if (std::string(argv[i]) == "--print-cMo" && (i+1 < argc)) {
+    else if (std::string(argv[i]) == "--print-cMo") {
       print_cMo = true;
     }
-    else if (std::string(argv[i]) == "--dump" && (i+1 < argc)) {
+    else if (std::string(argv[i]) == "--dump") {
       dump_infos = true;
     }
     else {
