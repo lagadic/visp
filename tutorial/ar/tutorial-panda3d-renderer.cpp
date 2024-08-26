@@ -157,12 +157,13 @@ int main(int argc, const char **argv)
   const std::string objectName = "object";
 
   //! [Renderer set]
-  double factor = 0.5;
+  double factor = 1.0;
   vpPanda3DRenderParameters renderParams(vpCameraParameters(600 * factor, 600 * factor, 320 * factor, 240 * factor), int(480 * factor), int(640 * factor), 0.01, 10.0);
+  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
   renderer.setVerticalSyncEnabled(false);
-  renderer.setAbortOnPandaError(true);
+  renderer.setAbortOnPandaError(false);
   if (debug) {
     renderer.enableDebugLog();
   }
@@ -173,7 +174,7 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
-  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, true);
   std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", grayscaleFilter, true, 10.f);
   //! [Subrenderers init]
 
@@ -192,6 +193,7 @@ int main(int argc, const char **argv)
   renderer.initFramework();
   //! [Adding subrenderers]
 
+
   //! [Scene configuration]
   NodePath object = renderer.loadObject(objectName, modelPath);
   renderer.addNodeToScene(object);
@@ -204,12 +206,8 @@ int main(int argc, const char **argv)
 
   vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0f), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
-
   //! [Scene configuration]
 
-  rgbRenderer->printStructure();
-
-  unsigned h = renderParams.getImageHeight(), w = renderParams.getImageWidth();
 
   if (!backgroundPath.empty()) {
     vpImage<vpRGBa> background;
@@ -219,9 +217,7 @@ int main(int argc, const char **argv)
 
   rgbRenderer->printStructure();
 
-  std::cout << "Setting camera pose" << std::endl;
-  renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.3, 0.0, 0.0, 0.0));
-
+  renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -5.0, 0.0, 0.0, 0.0));
   //! [Scene configuration]
 
   std::cout << "Creating display and data images" << std::endl;
@@ -249,35 +245,39 @@ int main(int argc, const char **argv)
 #elif defined(VISP_HAVE_D3D9)
   using DisplayCls = vpDisplayD3D;
 #endif
-
-  DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in world space");
-  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, h + 80, "normals in camera space");
-  DisplayCls dDepth(depthDisplayImage, w + 80, 0, "depth");
-  DisplayCls dColor(colorImage, w + 80, h + 80, "color");
+  unsigned int padding = 80;
+  DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in object space");
+  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, h + padding, "normals in camera space");
+  DisplayCls dDepth(depthDisplayImage, w + padding, 0, "depth");
+  DisplayCls dColor(colorImage, w + padding, h + padding, "color");
 
   DisplayCls dImageDiff;
   if (showLightContrib) {
-    dImageDiff.init(lightDifference, w * 2 + 80, 0, "Specular/reflectance contribution");
+    dImageDiff.init(lightDifference, w * 2 + padding, 0, "Specular/reflectance contribution");
   }
   DisplayCls dCanny;
   if (showCanny) {
-    dCanny.init(cannyImage, w * 2 + 80, h + 80, "Canny");
+    dCanny.init(cannyImage, w * 2 + padding, h + padding, "Canny");
   }
   renderer.renderFrame();
   bool end = false;
   bool firstFrame = true;
   std::vector<double> renderTime, fetchTime, displayTime;
   while (!end) {
-    float nearV = 0, farV = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
-    rgbRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV, true);
+    //! [Updating render parameters]
+    float nearV = 0, farV = 0;
+    geometryRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV, true);
     renderParams.setClippingDistance(nearV, farV);
     renderer.setRenderParameters(renderParams);
-    //std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
+    //! [Updating render parameters]
 
     const double beforeRender = vpTime::measureTimeMs();
+    //! [Render frame]
     renderer.renderFrame();
+    //! [Render frame]
     const double beforeFetch = vpTime::measureTimeMs();
+    //! [Fetch render]
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>(rgbRenderer->getName())->getRender(colorImage);
@@ -287,8 +287,9 @@ int main(int argc, const char **argv)
     if (showCanny) {
       renderer.getRenderer<vpPanda3DCanny>()->getRender(cannyRawData);
     }
-
+    //! [Fetch render]
     const double beforeConvert = vpTime::measureTimeMs();
+    //! [Display]
     displayNormals(normalsImage, normalDisplayImage);
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
     displayDepth(depthImage, depthDisplayImage, nearV, farV);
@@ -301,6 +302,7 @@ int main(int argc, const char **argv)
 
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
+    //! [Display]
 
     if (stepByStep) {
       vpDisplay::displayText(colorImage, 50, 15, "Next frame: space", vpColor::red);
@@ -324,10 +326,12 @@ int main(int argc, const char **argv)
       }
     }
     const double afterAll = vpTime::measureTimeMs();
+    //! [Move object]
     const double delta = (afterAll - beforeRender) / 1000.0;
     const vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
     const vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
     renderer.setNodePose(objectName, wTo * oToo);
+    //! [Move object]
   }
   if (renderTime.size() > 0) {
     std::cout << "Render time: " << vpMath::getMean(renderTime) << "ms +- " << vpMath::getStdev(renderTime) << "ms" << std::endl;

@@ -39,15 +39,16 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
 {
   m_renderParameters = renderParameters;
   load_prc_file_data("", "textures-power-2 none");
+  load_prc_file_data("", "gl-version 3 2");
+  load_prc_file_data("", "no-singular-invert");
 }
 
 
 void vpPanda3DRendererSet::initFramework()
 {
-
   // load_prc_file_data("", "load-display p3tinydisplay");
   // load_prc_file_data("", "color-bits 32 32 32");
-  load_prc_file_data("", "gl-version 3 2");
+
   // load_prc_file_data("", "auto-flip 1");
   // load_prc_file_data("", "sync-video 0");
   // load_prc_file_data("", "multisamples 1\n"
@@ -94,7 +95,7 @@ void vpPanda3DRendererSet::initFromParent(std::shared_ptr<PandaFramework> framew
 void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
 {
   vpPanda3DBaseRenderer::initFromParent(renderer);
-  for (std::shared_ptr<vpPanda3DBaseRenderer> &r: m_subRenderers) {
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
     r->initFromParent(*this);
   }
 }
