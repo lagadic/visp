@@ -38,19 +38,20 @@ int main(int argc, char *argv[])
     if (std::string(argv[i]) == "--cv-backend") {
       opencv_backend = true;
     }
-    else if ((std::string(argv[i]) == "--read" || std::string(argv[i]) == "-i") && i+1 < argc) {
+    else if ((std::string(argv[i]) == "--read" || std::string(argv[i]) == "-i") && (i+1 < argc)) {
       npz_filename = argv[i+1];
+      ++i;
     }
-    else if (std::string(argv[i]) == "--print-cMo" && i+1 < argc) {
+    else if (std::string(argv[i]) == "--print-cMo") {
       print_cMo = true;
     }
-    else if (std::string(argv[i]) == "--dump" && i+1 < argc) {
+    else if (std::string(argv[i]) == "--dump") {
       dump_infos = true;
     }
     else {
       std::cout << "Options:" << std::endl;
       std::cout << "  --cv-backend   use OpenCV if available for in-memory PNG decoding" << std::endl;
-      std::cout << "  --read / -i    input filename" << std::endl;
+      std::cout << "  --read / -i    input filename in npz format" << std::endl;
       std::cout << "  --print-cMo    print cMo" << std::endl;
       std::cout << "  --dump         print all the data name in the file" << std::endl;
       return EXIT_SUCCESS;
