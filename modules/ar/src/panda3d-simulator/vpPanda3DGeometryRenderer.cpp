@@ -51,14 +51,13 @@ out float distToCamera;
 
 void main()
 {
-    //gl_Position = ftransform();
 
-    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-    // View space is Z-up right handed, flip z and y
-    oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-    // oNormal.yz = oNormal.zy;
-    // oNormal.y = -oNormal.y;
-    vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
+  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
+  // View space is Z-up right handed, flip z and y
+  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
+  // oNormal.yz = oNormal.zy;
+  // oNormal.y = -oNormal.y;
+  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
   distToCamera = -cs_position.z;
 }
 )shader";
@@ -104,8 +103,7 @@ void main()
   vec3 n = normalize(oNormal);
   //if (!gl_FrontFacing)
       //n = -n;
-  p3d_FragData = vec4(n, distToCamera);
-
+  p3d_FragData.bgra = vec4(n, distToCamera);
 }
 )shader";
 
@@ -174,7 +172,7 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
   m_normalDepthTexture->set_format(Texture::F_rgba32);
-  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram, GraphicsOutput::RenderTexturePlane::RTP_color);
+  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_normalDepthBuffer->make_display_region();
@@ -226,9 +224,9 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
   for (unsigned int i = 0; i < normals.getHeight(); ++i) {
     vpRGBf *normalRow = normals[i];
     for (unsigned int j = 0; j < normals.getWidth(); ++j) {
-      normalRow[j].B = (data[j * 4]);
+      normalRow[j].R = (data[j * 4]);
       normalRow[j].G = (data[j * 4 + 1]);
-      normalRow[j].R = (data[j * 4 + 2]);
+      normalRow[j].B = (data[j * 4 + 2]);
     }
     data += rowIncrement;
   }

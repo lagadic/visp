@@ -163,7 +163,7 @@ int main(int argc, const char **argv)
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
   renderer.setVerticalSyncEnabled(false);
-  renderer.setAbortOnPandaError(false);
+  renderer.setAbortOnPandaError(true);
   if (debug) {
     renderer.enableDebugLog();
   }
@@ -174,7 +174,7 @@ int main(int argc, const char **argv)
   std::shared_ptr<vpPanda3DGeometryRenderer> cameraRenderer = std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS);
   std::shared_ptr<vpPanda3DRGBRenderer> rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>();
   std::shared_ptr<vpPanda3DRGBRenderer> rgbDiffuseRenderer = std::make_shared<vpPanda3DRGBRenderer>(false);
-  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, true);
+  std::shared_ptr<vpPanda3DLuminanceFilter> grayscaleFilter = std::make_shared<vpPanda3DLuminanceFilter>("toGrayscale", rgbRenderer, false);
   std::shared_ptr<vpPanda3DCanny> cannyFilter = std::make_shared<vpPanda3DCanny>("canny", grayscaleFilter, true, 10.f);
   //! [Subrenderers init]
 

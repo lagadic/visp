@@ -71,12 +71,18 @@ public:
    * Will also perform the renderer setup (scene, camera and render targets)
    */
   virtual void initFramework();
-  virtual void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window);
+  virtual void initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window);
   virtual void initFromParent(const vpPanda3DBaseRenderer &renderer);
 
   virtual void beforeFrameRendered() { }
   virtual void renderFrame();
-  virtual void afterFrameRendered() { }
+  virtual void afterFrameRendered()
+  {
+    GraphicsOutput *mainBuffer = getMainOutputBuffer();
+    if (mainBuffer != nullptr) {
+      m_framework->get_graphics_engine()->extract_texture_data(mainBuffer->get_texture(), mainBuffer->get_gsg());
+    }
+  }
 
   /**
    * @brief Get the name of the renderer
@@ -270,7 +276,7 @@ protected:
   std::string m_name; //! name of the renderer
   int m_renderOrder; //! Rendering priority for this renderer and its buffers. A lower value will be rendered first. Should be used when calling make_output in setupRenderTarget()
   std::shared_ptr<PandaFramework> m_framework; //! Pointer to the active panda framework
-  std::shared_ptr<WindowFramework> m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.
+  PointerTo<WindowFramework> m_window; //! Pointer to owning window, which can create buffers etc. It is not necessarily visible.
   vpPanda3DRenderParameters m_renderParameters; //! Rendering parameters
   NodePath m_renderRoot; //! Node containing all the objects and the camera for this renderer
   PointerTo<Camera> m_camera;

@@ -65,14 +65,15 @@ void vpPanda3DRendererSet::initFramework()
     throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
   }
   m_framework = std::shared_ptr<PandaFramework>(new PandaFramework());
+
   m_framework->open_framework();
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, flags));
+  m_window = m_framework->open_window(winProps, flags);
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, 0));
+    m_window = m_framework->open_window(winProps, 0);
   }
   if (m_window == nullptr) {
     throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
@@ -84,7 +85,7 @@ void vpPanda3DRendererSet::initFramework()
   }
 }
 
-void vpPanda3DRendererSet::initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window)
+void vpPanda3DRendererSet::initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window)
 {
   vpPanda3DBaseRenderer::initFromParent(framework, window);
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
@@ -96,7 +97,7 @@ void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
 {
   vpPanda3DBaseRenderer::initFromParent(renderer);
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    r->initFromParent(*this);
+    renderer->initFromParent(*this);
   }
 }
 

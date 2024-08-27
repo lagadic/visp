@@ -71,7 +71,7 @@ public:
    * Thus, if a renderer B depends on A for its render, and if B.getRenderOrder() > A.getRenderOrder() it can rely on A being initialized when B.initFromParent is called (along with the setupCamera, setupRenderTarget).
    */
   void initFramework() VP_OVERRIDE;
-  void initFromParent(std::shared_ptr<PandaFramework> framework, std::shared_ptr<WindowFramework> window) VP_OVERRIDE;
+  void initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window) VP_OVERRIDE;
   void initFromParent(const vpPanda3DBaseRenderer &renderer) VP_OVERRIDE;
 
   /**
@@ -198,9 +198,19 @@ public:
   }
   void afterFrameRendered() VP_OVERRIDE
   {
+    double t1 = vpTime::measureTimeMs();
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->afterFrameRendered();
     }
+    std::cout << "Render to texture took: " << vpTime::measureTimeMs() - t1 << std::endl;
+    // std::vector<Texture *> textures;
+    // for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+    //   textures.push_back(renderer->getMainOutputBuffer()->get_texture());
+    // }
+
+    // for (unsigned int i = 0; i < textures.size(); ++i) {
+    //   m_framework->get_graphics_engine()->extract_texture_data(textures[i], m_window->get_graphics_output()->get_gsg());
+    // }
   }
 
 protected:

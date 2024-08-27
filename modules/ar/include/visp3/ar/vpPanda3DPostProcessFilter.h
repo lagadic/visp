@@ -62,12 +62,25 @@ public:
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
   }
 
+  ~vpPanda3DPostProcessFilter()
+  {
+    // delete m_texture;
+    // delete m_buffer;
+  }
+
   bool isRendering3DScene() const VP_OVERRIDE
   {
     return false;
   }
 
   GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_buffer; }
+
+  void afterFrameRendered() VP_OVERRIDE
+  {
+    if (m_isOutput) {
+      vpPanda3DBaseRenderer::afterFrameRendered();
+    }
+  }
 
 
 protected:

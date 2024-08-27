@@ -195,6 +195,7 @@ void main()
 
     p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (baseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
   }
+  p3d_FragData.bgra = p3d_FragData;
 }
 )shader";
 
@@ -298,13 +299,15 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 
   for (unsigned int i = 0; i < I.getHeight(); ++i) {
     vpRGBa *colorRow = I[i];
-    for (unsigned int j = 0; j < I.getWidth(); ++j) {
-      // BGRA order in panda3d
-      colorRow[j].B = data[j * 4];
-      colorRow[j].G = data[j * 4 + 1];
-      colorRow[j].R = data[j * 4 + 2];
-      colorRow[j].A = data[j * 4 + 3];
-    }
+
+    memcpy((unsigned char *)(colorRow), data, sizeof(unsigned char) * 4 * I.getWidth());
+    // for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    //   // BGRA order in panda3d
+    //   colorRow[j].R = data[j * 4];
+    //   colorRow[j].G = data[j * 4 + 1];
+    //   colorRow[j].B = data[j * 4 + 2];
+    //   colorRow[j].A = data[j * 4 + 3];
+    // }
     data += rowIncrement;
   }
 }
@@ -348,7 +351,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   m_colorTexture = new Texture();
   fbp.setup_color_texture(m_colorTexture);
   //m_colorTexture->set_format(Texture::Format::F_srgb_alpha);
-  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);
+  m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture);
   m_colorBuffer->set_clear_color(LColor(0.f));
   m_colorBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_colorBuffer->make_display_region();
