@@ -58,35 +58,6 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-void log(std::ostream &os, const std::string &funName, const std::string &text, const unsigned int &level = 0)
-{
-  os << "[vpUKFp::" << funName << "] ";
-  for (unsigned int i = 0; i < level; ++i) {
-    os << "\t";
-  }
-  os << text << std::endl << std::flush;
-}
-
-void log(std::ostream &os, const std::string &funName, const std::string &arrayName, const vpArray2D<double> &array, const unsigned int &level = 0)
-{
-  os << "[vpUKFp::" << funName << "] ";
-  for (unsigned int i = 0; i < level; ++i) {
-    os << "\t";
-  }
-  os << arrayName << ":=" << std::endl;
-  for (unsigned int r = 0; r < array.getRows(); ++r) {
-    for (unsigned int i = 0; i < level; ++i) {
-      os << "\t";
-    }
-    os << "[";
-    for (unsigned int c = 0; c < array.getCols() - 1; ++c) {
-      os << std::setprecision(3) << std::scientific << array[r][c] << "\t; ";
-    }
-    os << array[r][array.getCols() - 1] << "]\n";
-  }
-  os << std::flush;
-}
-
 //! [Process_function]
 /**
  * \brief Process function that makes evolve the state model {\f$ {}^WX_x \f$, \f$ {}^WX_y \f$, \f$ {}^WX_z \f$, \f$ C = \omega \Delta t \f$}
@@ -148,11 +119,12 @@ public:
    * \param[in] phi The phase of the motion.
    * \param[in] wZ The y-coordinate of the object in the world frame.
    */
-  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ)
+  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ, const double &stdevRng)
     : m_R(R)
     , m_w(w)
     , m_phi(phi)
     , m_wZ(wZ)
+    , m_rng(stdevRng, 0.)
   { }
 
   /**
@@ -161,11 +133,12 @@ public:
    * \param[in] t The current time.
    * \return vpColVector The new position of the object in the world frame, expressed as homogeneous coordinates.
    */
-  vpColVector move(const double &t) const
+  vpColVector move(const double &t)
   {
     vpColVector wX(4, 1.);
-    wX[0] = m_R * std::cos(m_w * t + m_phi);
-    wX[1] = m_R * std::sin(m_w * t + m_phi);
+    double tNoisy = (m_w + m_rng())* t + m_phi;
+    wX[0] = m_R * std::cos(tNoisy);
+    wX[1] = m_R * std::sin(tNoisy);
     wX[2] = m_wZ;
     return wX;
   }
@@ -175,6 +148,7 @@ private:
   double m_w; // Pulsation of the motion.
   double m_phi; // Phase of the motion.
   const double m_wZ; // The z-coordinate of the object in the world frame.
+  vpGaussRand m_rng;
 };
 //! [Object_simulator]
 
@@ -303,26 +277,21 @@ public:
    */
   double likelihood(const vpColVector &coeffs, const vpColVector &meas)
   {
-    // log(std::cout, "likelihood", "Begin ...");
     double likelihood = 0.;
     unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
+    double sumError = 0.;
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(coeffs[0], coeffs[1], coeffs[2]);
     wMo.build(wTo, m_wRo);
-    std::vector<vpImagePoint> ip;
-    for (unsigned int id = 0; id < nbMarkers; ++id) {
-      vpImagePoint marker(meas[2*id + 1], meas[2*id]);
-      ip.push_back(marker);
+    for (unsigned int i = 0; i < nbMarkers; ++i) {
+      vpColVector cX = m_cMw * wMo * m_markers[i];
+      double u = 0., v = 0.;
+      vpMeterPixelConversion::convertPoint(m_cam, cX[0] / cX[2], cX[1] / cX[2], u, v);
+      sumError += std::sqrt(std::pow(u - meas[2 * i], 2) + std::pow(v - meas[2 * i + 1], 2));
     }
-    vpHomogeneousMatrix cMo_meas = computePose(m_markersAsVpPoint, ip, m_cam);
-    vpHomogeneousMatrix cMo_state = m_cMw * wMo;
-    vpHomogeneousMatrix cstateMcmeas = cMo_state * cMo_meas.inverse();
-    vpTranslationVector cTc = cstateMcmeas.getTranslationVector();
-    double error = cTc.frobeniusNorm();
-    likelihood = std::exp(m_constantExpDenominator * error) * m_constantDenominator;
+    likelihood = std::exp(m_constantExpDenominator * sumError / nbMarkers) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
-    // log(std::cout, "likelihood", std::string("Likelihood = ") + std::to_string(likelihood));
     return likelihood;
   }
   //! [Likelihood_function]
@@ -412,22 +381,21 @@ int main(/*const int argc, const char *argv[]*/)
   P0[2][2] = 5.;
 
   vpColVector X0(4); // The initial guess for the state
-  X0[0] = radius * std::cos(phi); // wX = radius m
-  X0[1] = radius * std::sin(phi); // wY = 0m
-  X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
-  X0[3] = 0.99 * w * dt; // Wrong estimation of the pulsation: error of 25%
+  X0[0] = 0.95 * radius * std::cos(phi); // Wrong estimation of the position along the X-axis = 5% of error
+  X0[1] = 0.95 * radius * std::sin(phi); // Wrong estimation of the position along the Y-axis = 5% of error
+  X0[2] = 0.95 * wZ; // Wrong estimation of the position along the Z-axis: error of 5%
+  X0[3] = 0.95 * w * dt; // Wrong estimation of the pulsation: error of 25%
   //! [Initial_estimates]
 
   //! [Constants_for_the_PF]
-  const double maxDistanceForLikelihood = 0.15; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
+  const double maxDistanceForLikelihood = 30; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
   const double sigmaLikelihood = maxDistanceForLikelihood / 3.; // The standard deviation of likelihood function.
   const unsigned int nbParticles = 300; // Number of particles to use
-  const double ampliMaxX = 0.01 * X0[0], ampliMaxY = 0.01 * X0[1], ampliMaxZ = 0.01 * X0[2];
-  const double ampliMaxW = 0.01 * X0[3];
+  const double ampliMaxX = 0.05 * X0[0], ampliMaxY = 0.05 * X0[1], ampliMaxZ = 0.05 * X0[2];
+  const double ampliMaxW = 0.05 * X0[3];
   const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxW / 3. }; // Standard deviation for each state component
-  const unsigned long pfSeed = 4224;
+  const unsigned long pfSeed = 4221;
   unsigned long seedPF; // Seed for the random generators of the PF
-  const float period = 33.3; // 33.3ms i.e. 30Hz
   if (pfSeed < 0) {
     seedPF = vpTime::measureTimeMicros();
   }
@@ -461,8 +429,8 @@ int main(/*const int argc, const char *argv[]*/)
 
   //! [Init_PF]
   // Initialize the PF
-  vpParticleFilter<vpColVector> filter(nbParticles, stdevsPF, seedPF, nbThread);
-  filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+  vpParticleFilter<vpColVector> pfFilter(nbParticles, stdevsPF, seedPF, nbThread);
+  pfFilter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
   //! [Init_PF]
 
   //! [Init_plot]
@@ -509,26 +477,24 @@ int main(/*const int argc, const char *argv[]*/)
 
   //! [Init_simu]
   // Initialize the simulation
-  vpObjectSimulator object(radius, w, phi, wZ);
+  vpObjectSimulator object(radius, w, phi, wZ, ampliMaxW / 3.);
   vpColVector object_pos(4, 0.);
   object_pos[3] = 1.;
   //! [Init_simu]
 
   //! [Simu_loop]
-  // log(std::cout, "main", "Begin main loop...");
   for (unsigned int i = 0; i < nbIter; ++i) {
     double t = dt * static_cast<double>(i);
+    std::cout << "[Timestep" << i << ", t = " << t << "]" << std::endl;
     //! [Update obj pose]
     // Update object pose
     object_pos = object.move(t);
     //! [Update obj pose]
-    // log(std::cout, "main", "obj_pose", object_pos.t(), 1);
 
     //! [Update_measurement]
     // Perform the measurement
     vpColVector z = markerMeas.measureWithNoise(object_pos);
     //! [Update_measurement]
-    // log(std::cout, "main", "z", z.t(), 1);
 
     //! [Perform_filtering]
     // Use the UKF to filter the measurement
@@ -537,15 +503,9 @@ int main(/*const int argc, const char *argv[]*/)
     double dtUKF = vpTime::measureTimeMs() - tUKF;
     /// Use the PF to filter the measurement
     double tPF = vpTime::measureTimeMs();
-    filter.filter(z, period);
+    pfFilter.filter(z, dt);
     double dtPF = vpTime::measureTimeMs() - tPF;
     //! [Perform_filtering]
-    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
-    // std::cout << "    Mean square error = " << ukfError << " pixels^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
-    std::cout << "  [Particle Filter method] " << std::endl;
-    // std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
 
     //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
@@ -574,9 +534,8 @@ int main(/*const int argc, const char *argv[]*/)
     plot.plot(0, 1, XestUKF[0], XestUKF[1]);
 
     // Plot the PF filtered state
-    vpColVector XestPF = filter.computeFilteredState();
+    vpColVector XestPF = pfFilter.computeFilteredState();
     plot.plot(0, 2, XestPF[0], XestPF[1]);
-    // log(std::cout, "main", "XestPF", XestPF.t(), 1);
 
     // Plot the noisy pose
     plot.plot(0, 3, wXnoisy, wYnoisy);
@@ -593,12 +552,18 @@ int main(/*const int argc, const char *argv[]*/)
     vpColVector error_PF = cX_PF - cX_GT;
     vpColVector error_UKF = cX_UKF - cX_GT;
 
+    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
+    std::cout << "    Mean square error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
+    std::cout << "  [Particle Filter method] " << std::endl;
+    std::cout << "    Mean square error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
+
     // Plot the UKF filtered state error
     plotError.plot(0, 0, t, error_UKF.frobeniusNorm());
 
     // Plot the PF filtered state error
     plotError.plot(0, 1, t, error_PF.frobeniusNorm());
-    // log(std::cout, "main", "XestPF", XestPF.t(), 1);
 
     // Plot the noisy error
     plotError.plot(0, 2, t, (cMo_noisy.getTranslationVector() - vpTranslationVector(cX_GT.extract(0, 3))).frobeniusNorm());
@@ -610,7 +575,6 @@ int main(/*const int argc, const char *argv[]*/)
     vpColVector zGT = markerMeas.measureGT(object_pos);
     vpColVector zFiltUkf = markerMeas.state_to_measurement(XestUKF);
     vpColVector zFiltPF = markerMeas.state_to_measurement(XestPF);
-    // log(std::cout, "main", "zFiltPF", zFiltPF.t(), 1);
     for (unsigned int id = 0; id < nbMarkers; ++id) {
       vpImagePoint markerProjGT(zGT[2*id + 1], zGT[2*id]);
       vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
