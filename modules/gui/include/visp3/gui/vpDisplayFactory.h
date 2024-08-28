@@ -128,12 +128,10 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
- * \brief Return a smart pointer vpDisplay specialization initialized with \b I
+ * \brief Return a smart pointer vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  *
- * \tparam T : Any type that an image can handle and that can be displayed.
- *
- * \return A smart pointer pointing to a vpDisplay specialization initialized with \b I
+ * \return A smart pointer pointing to a vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  */
 inline std::shared_ptr<vpDisplay> createDisplay()
