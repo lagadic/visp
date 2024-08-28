@@ -198,19 +198,9 @@ public:
   }
   void afterFrameRendered() VP_OVERRIDE
   {
-    double t1 = vpTime::measureTimeMs();
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->afterFrameRendered();
     }
-    std::cout << "Render to texture took: " << vpTime::measureTimeMs() - t1 << std::endl;
-    // std::vector<Texture *> textures;
-    // for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-    //   textures.push_back(renderer->getMainOutputBuffer()->get_texture());
-    // }
-
-    // for (unsigned int i = 0; i < textures.size(); ++i) {
-    //   m_framework->get_graphics_engine()->extract_texture_data(textures[i], m_window->get_graphics_output()->get_gsg());
-    // }
   }
 
 protected:

@@ -59,7 +59,7 @@ void main()
 }
 )shader";
 
-const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_WORLD = R"shader(
+const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_OBJECT = R"shader(
 
 #version 330
 in vec3 p3d_Normal;
@@ -113,7 +113,7 @@ void vpPanda3DGeometryRenderer::setupScene()
   PT(Shader) shader;
   if (m_renderType == OBJECT_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                      SHADER_VERT_NORMAL_AND_DEPTH_WORLD,
+                                      SHADER_VERT_NORMAL_AND_DEPTH_OBJECT,
                                       SHADER_FRAG_NORMAL_AND_DEPTH);
   }
   else if (m_renderType == CAMERA_NORMALS) {

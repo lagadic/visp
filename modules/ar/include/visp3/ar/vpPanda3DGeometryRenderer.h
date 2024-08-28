@@ -94,7 +94,7 @@ private:
   Texture *m_normalDepthTexture;
   GraphicsOutput *m_normalDepthBuffer;
 
-  static const char *SHADER_VERT_NORMAL_AND_DEPTH_WORLD;
+  static const char *SHADER_VERT_NORMAL_AND_DEPTH_OBJECT;
   static const char *SHADER_VERT_NORMAL_AND_DEPTH_CAMERA;
   static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
 
