@@ -1,342 +1,292 @@
-/****************************************************************************
+/** \example tutorial-pf.cpp
+ * Tutorial on how to use the Particle Filter (PF) on a complex non-linear use-case.
+ * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
+ * The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
+ * The scene is observed by a pinhole camera whose coordinate frame has the origin C and which is
+ * fixed to the ceiling.
  *
- * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * The state vector of the PF is:
+ * \f[
+ * \begin{array}{lcl}
+ *   \textbf{x}[0] &=& {}^WX_x \\
+ *   \textbf{x}[1] &=& {}^WX_y \\
+ *   \textbf{x}[2] &=& {}^WX_z \\
+ *   \textbf{x}[3] &=& \omega \Delta t
+ * \end{array}
+ * \f]
  *
- * This software is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
+ * The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
+ * Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+ * The measurement vector can be written as:
+ * \f[
+ *   \begin{array}{lcl}
+ *       \textbf{z}[2i] &=& u_i \\
+ *       \textbf{z}[2i+1] &=& v_i
+ *   \end{array}
+ * \f]
  *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact Inria about acquiring a ViSP Professional
- * Edition License.
- *
- * See https://visp.inria.fr for more information.
- *
- * This software was developed at:
- * Inria Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- *
- * If you have questions regarding the use of this file, please contact
- * Inria at visp@inria.fr
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ * Some noise is added to the measurement vector to simulate measurements which are
+ * not perfect.
+*/
 
-//! \example tutorial-pf.cpp
-
+// ViSP includes
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpCannyEdgeDetection.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMouseButton.h>
-#include <visp3/core/vpTime.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpGaussRand.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+//! [Display_includes]
+#ifdef VISP_HAVE_DISPLAY
+#include <visp3/gui/vpPlot.h>
+#include <visp3/gui/vpDisplayFactory.h>
+#endif
+//! [Display_includes]
+#include <visp3/vision/vpPose.h>
 
+//! [UKF_includes]
+#include <visp3/core/vpUKSigmaDrawerMerwe.h>
+#include <visp3/core/vpUnscentedKalman.h>
+//! [UKF_includes]
 
-//! [Include_PF]
+//! [PF_includes]
 #include <visp3/core/vpParticleFilter.h>
-//! [Include_PF]
-
-#include "vpTutoCommonData.h"
-#include "vpTutoMeanSquareFitting.h"
-#include "vpTutoParabolaModel.h"
-#include "vpTutoRANSACFitting.h"
-#include "vpTutoSegmentation.h"
+//! [PF_includes]
 
 #ifdef ENABLE_VISP_NAMESPACE
-using VISP_NAMESPACE_NAME;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
-namespace tutorial
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+void log(std::ostream &os, const std::string &funName, const std::string &text, const unsigned int &level = 0)
 {
-//! [Evaluation_functions]
-/**
- * \brief Compute the square error between the parabola model and
- * the input point \b pt.
- *
- * \param[in] pt The input point.
- * \return float The square error.
- */
-float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
-{
-  float u = pt.get_u();
-  float v = pt.get_v();
-  float v_model = model.eval(u);
-  float error = v - v_model;
-  float squareError = error * error;
-  return squareError;
-}
-
-/**
- * \brief Compute the mean-square error between the parabola model and
- * the input points \b pts. An M-estimator is used to reject outliers
- * when computing the mean square error.
- *
- * \param[in] pts The input points.
- * \return float The mean square error.
- */
-float evaluate(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
-{
-  unsigned int nbPts = pts.size();
-  vpColVector residuals(nbPts);
-  vpColVector weights(nbPts, 1.);
-  vpTutoParabolaModel model(coeffs);
-  // Compute the residuals
-  for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i], model);
-    residuals[i] = squareError;
+  os << "[vpUKFp::" << funName << "] ";
+  for (unsigned int i = 0; i < level; ++i) {
+    os << "\t";
   }
-  float meanError = residuals.sum() / static_cast<double>(nbPts);
-  return meanError;
+  os << text << std::endl << std::flush;
 }
 
-/**
- * \brief Compute the mean-square error between the parabola model and
- * the input points \b pts. An M-estimator is used to reject outliers
- * when computing the mean square error.
- *
- * \param[in] pts The input points.
- * \return float The mean square error.
- */
-float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
+void log(std::ostream &os, const std::string &funName, const std::string &arrayName, const vpArray2D<double> &array, const unsigned int &level = 0)
 {
-  unsigned int nbPts = pts.size();
-  vpColVector residuals(nbPts);
-  vpColVector weights(nbPts, 1.);
-  vpTutoParabolaModel model(coeffs);
-  // Compute the residuals
-  for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i], model);
-    residuals[i] = squareError;
+  os << "[vpUKFp::" << funName << "] ";
+  for (unsigned int i = 0; i < level; ++i) {
+    os << "\t";
   }
-  vpRobust robust;
-  robust.MEstimator(vpRobust::TUKEY, residuals, weights);
-  float sumWeights = weights.sum();
-  float numerator = (weights.hadamard(residuals)).sum();
-  float meanError = numerator / sumWeights;
-  return meanError;
-}
-//! [Evaluation_functions]
-
-//! [Init_from_file]
-/**
- * \brief Read the initialization points from a file.
- *
- * \param[in] listPointsFile The name of the file containing the list
- * of initialization points.
- * \return std::vector<vpImagePoint> The vector of image points to use to initialize
- * the Particle Filter using a Least Mean Square minimization.
- */
-std::vector<vpImagePoint> readInitPointsFromFile(const std::string &listPointsFile)
-{
-  std::vector<vpImagePoint> initPoints;
-  std::ifstream myfile(listPointsFile);
-  std::string line;
-  if (myfile.is_open()) {
-    while (std::getline(myfile, line)) {
-      std::size_t nbCharICoord = line.find_first_of(' ');
-      std::string iAsString = line.substr(0, nbCharICoord);
-      std::string jAsString = line.substr(nbCharICoord + 1);
-      float i = std::atof(iAsString.c_str());
-      float j = std::atof(jAsString.c_str());
-      vpImagePoint ip(i, j);
-      initPoints.push_back(ip);
+  os << arrayName << ":=" << std::endl;
+  for (unsigned int r = 0; r < array.getRows(); ++r) {
+    for (unsigned int i = 0; i < level; ++i) {
+      os << "\t";
     }
-    myfile.close();
-  }
-  return initPoints;
-}
-//! [Init_from_file]
-
-//! [Display_function]
-/**
-   * \brief Display the fitted parabola on the image.
-   *
-   * \tparam T Either unsigned char or vpRGBa.
-   * \param[in] coeffs The coefficients of the parabola, such as coeffs[0] = a coeffs[1] = b coeffs[2] = c
-   * \param[in] I The image on which we want to display the parabola model.
-   * \param[in] color The color we want to use to display the parabola.
-   */
-template<typename T>
-void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &color,
-             const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
-{
-#if defined(VISP_HAVE_DISPLAY)
-  unsigned int width = I.getWidth();
-  vpTutoParabolaModel model(coeffs);
-  for (unsigned int u = 0; u < width; ++u) {
-    float v = model.eval(u);
-    vpDisplay::displayPoint(I, v, u, color, 1);
-    vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
-  }
-#else
-  (void)coeffs;
-  (void)I;
-  (void)color;
-  (void)vertPosLegend;
-  (void)horPosLegend;
-#endif
-}
-//! [Display_function]
-
-//! [Initialization_function]
-/**
- * \brief Compute the initial guess of the state for the Particle Filter
- * using Least-Mean-Square minimization.
- *
- * \param[in] data The data used in the tutorial.
- * \return vpColVector The vector containing the coefficients, used as initial guess,
- * of the parabola.
- */
-vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
-{
-  const std::string listPointsFile("list_init_points.txt");
-#ifdef VISP_HAVE_DISPLAY
-  const unsigned int minNbPts = 3;
-  const unsigned int sizeCross = 10;
-  const unsigned int thicknessCross = 2;
-  const vpColor colorCross = vpColor::red;
-  const bool waitForClick = true;
-  std::vector<vpImagePoint> initPoints;
-  bool notEnoughPoints = true;
-  vpImagePoint ipClick;
-  vpMouseButton::vpMouseButtonType button;
-
-  bool useFile = false;
-  if (vpIoTools::checkFilename(listPointsFile)) {
-    /// Initial display of the images
-    vpDisplay::display(data.m_I_orig);
-    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to manually select the init points, right click to the points from the file \"" + listPointsFile + "\"", data.m_colorLegend);
-
-    /// Update the display
-    vpDisplay::flush(data.m_I_orig);
-
-    /// Get the user input
-    vpDisplay::getClick(data.m_I_orig, ipClick, button, waitForClick);
-
-    /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
-    switch (button) {
-    case vpMouseButton::vpMouseButtonType::button1:
-      useFile = false;
-      break;
-    case vpMouseButton::vpMouseButtonType::button3:
-      useFile = true;
-      break;
-    default:
-      break;
+    os << "[";
+    for (unsigned int c = 0; c < array.getCols() - 1; ++c) {
+      os << std::setprecision(3) << std::scientific << array[r][c] << "\t; ";
     }
+    os << array[r][array.getCols() - 1] << "]\n";
   }
-
-  if (useFile) {
-    /// Read the initialization points from a file.
-    initPoints = tutorial::readInitPointsFromFile(listPointsFile);
-  }
-  else {
-    while (notEnoughPoints) {
-      /// Initial display of the images
-      vpDisplay::display(data.m_I_orig);
-
-      /// Display the how-to
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
-
-      /// Display the already selected points
-      unsigned int nbInitPoints = initPoints.size();
-      for (unsigned int i = 0; i < nbInitPoints; ++i) {
-        vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
-      }
-
-      /// Update the display
-      vpDisplay::flush(data.m_I_orig);
-
-      /// Get the user input
-      vpDisplay::getClick(data.m_I_orig, ipClick, button, true);
-
-      /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
-      switch (button) {
-      case vpMouseButton::vpMouseButtonType::button1:
-        initPoints.push_back(ipClick);
-        break;
-      case vpMouseButton::vpMouseButtonType::button2:
-        initPoints.clear();
-        break;
-      case vpMouseButton::vpMouseButtonType::button3:
-        (initPoints.size() >= minNbPts ? notEnoughPoints = false : notEnoughPoints = true);
-        break;
-      default:
-        break;
-      }
-    }
-  }
-  /// Display info about the initialization
-  vpDisplay::display(data.m_I_orig);
-  vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Here are the points selected for the initialization.", data.m_colorLegend);
-  unsigned int nbInitPoints = initPoints.size();
-  for (unsigned int i = 0; i < nbInitPoints; ++i) {
-    const vpImagePoint &ip = initPoints[i];
-    vpDisplay::displayCross(data.m_I_orig, ip, sizeCross, colorCross, thicknessCross);
-  }
-  /// Save the init points if they were not read from a file
-  if (!useFile) {
-    std::ofstream ofs_initPoints(listPointsFile);
-    for (unsigned int i = 0; i < nbInitPoints; ++i) {
-      const vpImagePoint &ip = initPoints[i];
-      ofs_initPoints << ip.get_i() << " " << ip.get_j() << std::endl;
-    }
-    ofs_initPoints.close();
-  }
-  vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
-  vpDisplay::flush(data.m_I_orig);
-  vpDisplay::getClick(data.m_I_orig, waitForClick);
-
-  /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
-  tutorial::vpTutoMeanSquareFitting lmsFitter;
-  lmsFitter.fit(initPoints);
-  vpColVector X0 = lmsFitter.getCoeffs();
-  std::cout << "Initial coefficients = " << X0.t() << std::endl;
-  return X0;
-#else
-  if (vpIoTools::checkFilename(listPointsFile)) {
-    std::vector<vpImagePoint> initPoints = tutorial::readInitPointsFromFile(listPointsFile);
-    tutorial::vpTutoMeanSquareFitting lmsFitter;
-    lmsFitter.fit(initPoints);
-    vpColVector X0 = lmsFitter.getCoeffs();
-    std::cout << "Initial coefficients = " << X0.t() << std::endl;
-    return X0;
-  }
-  else {
-    throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
-  }
-#endif
+  os << std::flush;
 }
-//! [Initialization_function]
 
 //! [Process_function]
-vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
+/**
+ * \brief Process function that makes evolve the state model {\f$ {}^WX_x \f$, \f$ {}^WX_y \f$, \f$ {}^WX_z \f$, \f$ C = \omega \Delta t \f$}
+ * over time.
+ *
+ * \param[in] x The state vector
+ * \return vpColVector The state vector at the next iteration.
+ */
+vpColVector fx(const vpColVector &x, const double & /*dt*/)
 {
-  vpColVector updatedCoeffs = coeffs; // We use a constant position model
-  return updatedCoeffs;
+  vpColVector x_kPlus1(4);
+  x_kPlus1[0] = x[0] * std::cos(x[3]) - x[1] * std::sin(x[3]); // wX
+  x_kPlus1[1] = x[0] * std::sin(x[3]) + x[1] * std::cos(x[3]); // wY
+  x_kPlus1[2] = x[2]; // wZ
+  x_kPlus1[3] = x[3]; // omega * dt
+  return x_kPlus1;
 }
 //! [Process_function]
 
-//! [Likelihood_functor]
-class vpLikelihoodFunctor
+//! [Pose_for_display]
+/**
+ * \brief Compute the pose from the 3D coordinates of the markers and their coordinates in pixels
+ * in the image.
+ *
+ * \param[in] point The 3D coordinates of the markers in the object frame.
+ * \param[in] ip The pixel coordinates of the markers in the image.
+ * \param[in] cam The camera parameters used to acquire the image.
+ * \return vpHomogeneousMatrix The pose of the object in the camera frame.
+ */
+vpHomogeneousMatrix computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip, const vpCameraParameters &cam)
+{
+  vpPose pose;
+  double x = 0, y = 0;
+  for (unsigned int i = 0; i < point.size(); i++) {
+    vpPixelMeterConversion::convertPoint(cam, ip[i], x, y);
+    point[i].set_x(x);
+    point[i].set_y(y);
+    pose.addPoint(point[i]);
+  }
+
+  vpHomogeneousMatrix cMo;
+  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+  return cMo;
+}
+//! [Pose_for_display]
+
+//! [Object_simulator]
+/**
+ * \brief Class that simulates the moving object.
+ */
+class vpObjectSimulator
 {
 public:
-  vpLikelihoodFunctor(const double &stdev) : m_stdev(stdev)
+  /**
+   * \brief Construct a new vpObjectSimulator object.
+   *
+   * \param[in] R The radius of the revolution around the world frame origin.
+   * \param[in] w The pulsation of the motion.
+   * \param[in] phi The phase of the motion.
+   * \param[in] wZ The y-coordinate of the object in the world frame.
+   */
+  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ)
+    : m_R(R)
+    , m_w(w)
+    , m_phi(phi)
+    , m_wZ(wZ)
+  { }
+
+  /**
+   * \brief Move the object to its new position, expressed in the world frame.
+   *
+   * \param[in] t The current time.
+   * \return vpColVector The new position of the object in the world frame, expressed as homogeneous coordinates.
+   */
+  vpColVector move(const double &t) const
   {
-    double sigmaDistanceSquared = stdev * stdev;
+    vpColVector wX(4, 1.);
+    wX[0] = m_R * std::cos(m_w * t + m_phi);
+    wX[1] = m_R * std::sin(m_w * t + m_phi);
+    wX[2] = m_wZ;
+    return wX;
+  }
+
+private:
+  double m_R; // Radius of the revolution around the world frame origin.
+  double m_w; // Pulsation of the motion.
+  double m_phi; // Phase of the motion.
+  const double m_wZ; // The z-coordinate of the object in the world frame.
+};
+//! [Object_simulator]
+
+//! [Markers_class]
+/**
+ * \brief Class that permits to convert the 3D position of the object into measurements.
+ */
+class vpMarkersMeasurements
+{
+public:
+  /**
+   * \brief Construct a new vpMarkersMeasurements object.
+   *
+   * \param[in] cam The camera parameters.
+   * \param[in] cMw The pose of the world frame with regard to the camera frame.
+   * \param[in] wRo The rotation matrix expressing the rotation between the world frame and object frame.
+   * \param[in] markers The position of the markers in the object frame.
+   * \param[in] noise_stdev The standard deviation for the noise generator
+   * \param[in] seed The seed for the noise generator
+   * \param[in] likelihood_stdev The standard deviation for the likelihood computation. A particle that is
+   * 3. * likelihood_stdev further than the measurements will have a weight of 0.
+   */
+  vpMarkersMeasurements(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMw, const vpRotationMatrix &wRo,
+                        const std::vector<vpColVector> &markers, const double &noise_stdev, const long &seed,
+                        const double &likelihood_stdev)
+    : m_cam(cam)
+    , m_cMw(cMw)
+    , m_wRo(wRo)
+    , m_markers(markers)
+    , m_rng(noise_stdev, 0., seed)
+  {
+    double sigmaDistanceSquared = likelihood_stdev * likelihood_stdev;
     m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
     m_constantExpDenominator = -1. / (2. * sigmaDistanceSquared);
+
+    const unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
+    for (unsigned int i = 0; i < nbMarkers; ++i) {
+      vpColVector marker = markers[i];
+      m_markersAsVpPoint.push_back(vpPoint(marker[0], marker[1], marker[2]));
+    }
   }
+
+  //! [Measurement_function]
+  /**
+   * \brief Convert the prior of the UKF into the measurement space.
+   *
+   * \param[in] x The prior.
+   * \return vpColVector The prior expressed in the measurement space.
+   */
+  vpColVector state_to_measurement(const vpColVector &x)
+  {
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
+    vpColVector meas(2*nbMarkers);
+    vpHomogeneousMatrix wMo;
+    vpTranslationVector wTo(x[0], x[1], x[2]);
+    wMo.build(wTo, m_wRo);
+    for (unsigned int i = 0; i < nbMarkers; ++i) {
+      vpColVector cX = m_cMw * wMo * m_markers[i];
+      double u = 0., v = 0.;
+      vpMeterPixelConversion::convertPoint(m_cam, cX[0] / cX[2], cX[1] / cX[2], u, v);
+      meas[2*i] = u;
+      meas[2*i + 1] = v;
+    }
+    return meas;
+  }
+  //! [Measurement_function]
+
+  //! [GT_measurements]
+  /**
+   * \brief Perfect measurement of the projection of the markers in the image when the object
+   * is located at \b wX.
+   *
+   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
+   * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
+   */
+  vpColVector measureGT(const vpColVector &wX)
+  {
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
+    vpColVector meas(2*nbMarkers);
+    vpHomogeneousMatrix wMo;
+    vpTranslationVector wTo(wX[0], wX[1], wX[2]);
+    wMo.build(wTo, m_wRo);
+    for (unsigned int i = 0; i < nbMarkers; ++i) {
+      vpColVector cX = m_cMw * wMo * m_markers[i];
+      double u = 0., v = 0.;
+      vpMeterPixelConversion::convertPoint(m_cam, cX[0] / cX[2], cX[1] / cX[2], u, v);
+      meas[2*i] = u;
+      meas[2*i + 1] = v;
+    }
+    return meas;
+  }
+  //! [GT_measurements]
+
+  //! [Noisy_measurements]
+  /**
+   * \brief Noisy measurement of the projection of the markers in the image when the object
+   * is located at \b wX.
+   *
+   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
+   * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
+   */
+  vpColVector measureWithNoise(const vpColVector &wX)
+  {
+    vpColVector measurementsGT = measureGT(wX);
+    vpColVector measurementsNoisy = measurementsGT;
+    unsigned int sizeMeasurement = measurementsGT.size();
+    for (unsigned int i = 0; i < sizeMeasurement; ++i) {
+      measurementsNoisy[i] += m_rng();
+    }
+    return measurementsNoisy;
+  }
+  //! [Noisy_measurements]
 
   //! [Likelihood_function]
   /**
@@ -351,170 +301,354 @@ public:
    * \param[in] meas The measurement vector.
    * \return double The likelihood of the particle.
    */
-  double likelihood(const vpColVector &coeffs, const std::vector<vpImagePoint> &meas)
+  double likelihood(const vpColVector &coeffs, const vpColVector &meas)
   {
+    // log(std::cout, "likelihood", "Begin ...");
     double likelihood = 0.;
-    double sumError = 0.;
-    unsigned int nbPoints = meas.size();
-    vpTutoParabolaModel model(coeffs);
-    for (unsigned int i = 0; i < nbPoints; ++i) {
-      double squareError = tutorial::evaluate(meas[i], model);
-      sumError += squareError;
+    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
+    vpHomogeneousMatrix wMo;
+    vpTranslationVector wTo(coeffs[0], coeffs[1], coeffs[2]);
+    wMo.build(wTo, m_wRo);
+    std::vector<vpImagePoint> ip;
+    for (unsigned int id = 0; id < nbMarkers; ++id) {
+      vpImagePoint marker(meas[2*id + 1], meas[2*id]);
+      ip.push_back(marker);
     }
-    likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbPoints)) * m_constantDenominator;
+    vpHomogeneousMatrix cMo_meas = computePose(m_markersAsVpPoint, ip, m_cam);
+    vpHomogeneousMatrix cMo_state = m_cMw * wMo;
+    vpHomogeneousMatrix cstateMcmeas = cMo_state * cMo_meas.inverse();
+    vpTranslationVector cTc = cstateMcmeas.getTranslationVector();
+    double error = cTc.frobeniusNorm();
+    likelihood = std::exp(m_constantExpDenominator * error) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
+    // log(std::cout, "likelihood", std::string("Likelihood = ") + std::to_string(likelihood));
     return likelihood;
   }
   //! [Likelihood_function]
 private:
-  double m_stdev;
+  vpCameraParameters m_cam; // The camera parameters
+  vpHomogeneousMatrix m_cMw; // The pose of the world frame with regard to the camera frame.
+  vpRotationMatrix m_wRo; // The rotation matrix that expresses the rotation between the world frame and object frame.
+  std::vector<vpColVector> m_markers; // The position of the markers in the object frame.
+  std::vector<vpPoint> m_markersAsVpPoint; // The position of the markers in the object frame, expressed as vpPoint.
+  vpGaussRand m_rng; // Noise simulator for the measurements
   double m_constantDenominator; // Denominator of the Gaussian function used for the likelihood computation.
   double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
 };
-//! [Likelihood_functor]
-}
+//! [Markers_class]
 
-int main(const int argc, const char *argv[])
+int main(/*const int argc, const char *argv[]*/)
 {
-  tutorial::vpTutoCommonData data;
-  int returnCode = data.init(argc, argv);
-  if (returnCode != tutorial::vpTutoCommonData::SOFTWARE_CONTINUE) {
-    return returnCode;
+  //! [Constants_for_simulation]
+  const unsigned int nbIter = 200; // Number of time steps for the simulation
+  const double dt = 0.001; // Period of 0.1s
+  const double sigmaMeasurements = 2.; // Standard deviation of the measurements: 2 pixels
+  const double radius = 0.25; // Radius of revolution of 0.25m
+  const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
+  const double phi = 2; // Phase of the motion of revolution
+  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
+                                           , vpColVector({0.05, 0.05, 0., 1.})
+                                           , vpColVector({0.05, -0.05, 0., 1.})
+                                           , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
+  const unsigned int nbMarkers = static_cast<unsigned int>(markers.size());
+  std::vector<vpPoint> markersAsVpPoint;
+  for (unsigned int i = 0; i < nbMarkers; ++i) {
+    vpColVector marker = markers[i];
+    markersAsVpPoint.push_back(vpPoint(marker[0], marker[1], marker[2]));
   }
-  tutorial::vpTutoMeanSquareFitting lmsFitter;
-  tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers);
-  const unsigned int vertOffset = data.m_legendOffset.get_i();
-  const unsigned int horOffset = data.m_ipLegend.get_j();
-  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 4 * vertOffset;
-  const unsigned int legendLmsHor = horOffset;
-  const unsigned int legendRansacVert = data.m_I_orig.getHeight() - 3 * vertOffset;
-  const unsigned int legendRansacHor = horOffset;
-  const unsigned int legendPFVert = data.m_I_orig.getHeight() - 2 * vertOffset, legendPFHor = horOffset;
-  unsigned int nbIter = 0;
 
-  // Initialize the attributes of the PF
+  const long seed = 42; // Seed for the random generator
+  vpHomogeneousMatrix cMw; // Pose of the world frame with regard to the camera frame
+  cMw[0][0] = 1.; cMw[0][1] = 0.; cMw[0][2] = 0.; cMw[0][3] = 0.2;
+  cMw[1][0] = 0.; cMw[1][1] = -1.; cMw[1][2] = 0.; cMw[1][3] = 0.3;
+  cMw[2][0] = 0.; cMw[2][1] = 0.; cMw[2][2] = -1.; cMw[2][3] = 1.;
+
+  vpHomogeneousMatrix wMo; // Pose of the object frame with regard to the world frame
+  wMo[0][0] = 1.; wMo[0][1] = 0.; wMo[0][2] = 0.; wMo[0][3] = radius;
+  wMo[1][0] = 0.; wMo[1][1] = 1.; wMo[1][2] = 0.; wMo[1][3] = 0;
+  wMo[2][0] = 0.; wMo[2][1] = 0.; wMo[2][2] = 1.; wMo[2][3] = 0.2;
+  vpRotationMatrix wRo; // Rotation between the object frame and world frame
+  wMo.extract(wRo);
+  const double wZ = wMo[2][3];
+  //! [Constants_for_simulation]
+
+  //! [Camera_for_measurements]
+  // Create a camera parameter container
+  // Camera initialization with a perspective projection without distortion model
+  double px = 600; double py = 600; double u0 = 320; double v0 = 240;
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(px, py, u0, v0);
+  //! [Camera_for_measurements]
+
+  // Initialize the attributes of the UKF
+  //! [Sigma_points_drawer]
+  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.001, 2., -1);
+  //! [Sigma_points_drawer]
+
+  //! [Covariance_measurements]
+  vpMatrix R1landmark(2, 2, 0.); // The covariance of the noise introduced by the measurement with 1 landmark
+  R1landmark[0][0] = sigmaMeasurements*sigmaMeasurements;
+  R1landmark[1][1] = sigmaMeasurements*sigmaMeasurements;
+  vpMatrix R(2*nbMarkers, 2 * nbMarkers);
+  for (unsigned int i = 0; i < nbMarkers; ++i) {
+    R.insert(R1landmark, 2*i, 2*i);
+  }
+  //! [Covariance_measurements]
+
+  //! [Covariance_process]
+  const double processVariance = 0.000025; // Variance of the process of (0.005cm)^2
+  vpMatrix Q; // The covariance of the process
+  Q.eye(4);
+  Q = Q * processVariance;
+  //! [Covariance_process]
+
   //! [Initial_estimates]
-  vpColVector X0 = tutorial::computeInitialGuess(data);
+  vpMatrix P0(4, 4); //  The initial guess of the process covariance
+  P0.eye(4);
+  P0[0][0] = 1.;
+  P0[1][1] = 1.;
+  P0[2][2] = 1.;
+  P0[2][2] = 5.;
+
+  vpColVector X0(4); // The initial guess for the state
+  X0[0] = radius * std::cos(phi); // wX = radius m
+  X0[1] = radius * std::sin(phi); // wY = 0m
+  X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
+  X0[3] = 0.99 * w * dt; // Wrong estimation of the pulsation: error of 25%
   //! [Initial_estimates]
 
   //! [Constants_for_the_PF]
-  const double maxDistanceForLikelihood = data.m_pfMaxDistanceForLikelihood; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
+  const double maxDistanceForLikelihood = 0.15; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
   const double sigmaLikelihood = maxDistanceForLikelihood / 3.; // The standard deviation of likelihood function.
-  const unsigned int nbParticles = data.m_pfN; // Number of particles to use
-  const double ampliMaxA = data.m_pfRatioAmpliMaxA * X0[0], ampliMaxB = data.m_pfRatioAmpliMaxB * X0[1], ampliMaxC = data.m_pfRatioAmpliMaxC * X0[2];
-  const std::vector<double> stdevsPF = { ampliMaxA/3., ampliMaxB/3., ampliMaxC/3. }; // Standard deviation for each state component
+  const unsigned int nbParticles = 300; // Number of particles to use
+  const double ampliMaxX = 0.01 * X0[0], ampliMaxY = 0.01 * X0[1], ampliMaxZ = 0.01 * X0[2];
+  const double ampliMaxW = 0.01 * X0[3];
+  const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxW / 3. }; // Standard deviation for each state component
+  const unsigned long pfSeed = 4224;
   unsigned long seedPF; // Seed for the random generators of the PF
   const float period = 33.3; // 33.3ms i.e. 30Hz
-  if (data.m_pfSeed < 0) {
+  if (pfSeed < 0) {
     seedPF = vpTime::measureTimeMicros();
   }
   else {
-    seedPF = data.m_pfSeed;
+    seedPF = pfSeed;
   }
-  const int nbThread = data.m_pfNbThreads;
+  const int nbThread = -1;
   //! [Constants_for_the_PF]
 
-  //! [Init_functions]
-  vpParticleFilter<vpColVector>::vpProcessFunction processFunc = tutorial::fx;
-  tutorial::vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood);
+  //! [Init_functions_ukf]
+  vpUnscentedKalman::vpProcessFunction f = fx;
+  vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaMeasurements, seed, sigmaLikelihood);
   using std::placeholders::_1;
+  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpMarkersMeasurements::state_to_measurement, &markerMeas, _1);
+  //! [Init_functions_ukf]
+
+  //! [Init_UKF]
+  // Initialize the UKF
+  vpUnscentedKalman ukf(Q, R, drawer, f, h);
+  ukf.init(X0, P0);
+  //! [Init_UKF]
+
+  //! [Init_functions_pf]
+  vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+  // using std::placeholders::_1;
   using std::placeholders::_2;
-  vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&tutorial::vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
-  vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
-  vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
-  //! [Init_functions]
+  vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihood, &markerMeas, _1, _2);
+  vpParticleFilter<vpColVector>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<vpColVector>::simpleResamplingCheck;
+  vpParticleFilter<vpColVector>::vpResamplingFunction resamplingFunc = vpParticleFilter<vpColVector>::simpleImportanceResampling;
+  //! [Init_functions_pf]
 
   //! [Init_PF]
   // Initialize the PF
-  vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThread);
+  vpParticleFilter<vpColVector> filter(nbParticles, stdevsPF, seedPF, nbThread);
   filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
   //! [Init_PF]
 
-  bool run = true;
-  while (!data.m_grabber.end() && run) {
-    std::cout << "Iter " << nbIter << std::endl;
-    data.m_grabber.acquire(data.m_I_orig);
-    tutorial::performSegmentationHSV(data);
-
-    /// Extracting the skeleton of the mask
-    std::vector<vpImagePoint> edgePoints = tutorial::extractSkeletton(data);
-
+  //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
-    /// Initial display of the images
-    vpDisplay::display(data.m_I_orig);
-    vpDisplay::display(data.m_I_segmented);
-    vpDisplay::display(data.m_Iskeleton);
+  // Initialize the plot
+  vpPlot plot(1);
+  plot.initGraph(0, 4);
+  plot.setTitle(0, "Position of the robot wX");
+  plot.setUnitX(0, "Position along x(m)");
+  plot.setUnitY(0, "Position along y (m)");
+  plot.setLegend(0, 0, "GT");
+  plot.setLegend(0, 1, "UKF");
+  plot.setLegend(0, 2, "PF");
+  plot.setLegend(0, 3, "Measure");
+  plot.initRange(0, -1.25 * radius, 1.25 * radius, -1.25 * radius, 1.25 * radius);
+  plot.setColor(0, 0, vpColor::red);
+  plot.setColor(0, 1, vpColor::blue);
+  plot.setColor(0, 2, vpColor::purple);
+  plot.setColor(0, 3, vpColor::black);
+
+  vpPlot plotError(1, 350, 700, 700, 700, "Error w.r.t. GT");
+  plotError.initGraph(0, 3);
+  plotError.setUnitX(0, "Time (s)");
+  plotError.setUnitY(0, "Error (m)");
+  plotError.setLegend(0, 0, "UKF");
+  plotError.setLegend(0, 1, "PF");
+  plotError.setLegend(0, 2, "Measure");
+  plotError.initRange(0, 0, nbIter * dt, 0, radius / 2.);
+  plotError.setColor(0, 0, vpColor::blue);
+  plotError.setColor(0, 1, vpColor::purple);
+  plotError.setColor(0, 2, vpColor::black);
 #endif
+  //! [Init_plot]
 
-    /// Fit using least-square
-    double tLms = vpTime::measureTimeMs();
-    lmsFitter.fit(edgePoints);
-    double dtLms = vpTime::measureTimeMs() - tLms;
-    float lmsError = lmsFitter.evaluate(edgePoints);
-    std::cout << "  [Least-Mean Square method] " << std::endl;
-    std::cout << "    Mean square error = " << lmsError << " pixels^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
-    lmsFitter.display<unsigned char>(data.m_Iskeleton, vpColor::blue, legendLmsVert, legendLmsHor);
+  //! [Init_renderer]
+  // Initialize the display
+  // Depending on the detected third party libraries, we instantiate here the
+  // first video device which is available
+#ifdef VISP_HAVE_DISPLAY
+  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
+  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
+#endif
+  //! [Init_renderer]
 
-    /// Fit using RANSAC
-    double tRansac = vpTime::measureTimeMs();
-    ransacFitter.fit(edgePoints);
-    double dtRansac = vpTime::measureTimeMs() - tRansac;
-    float ransacError = ransacFitter.evaluate(edgePoints);
-    std::cout << "  [RANSAC method] " << std::endl;
-    std::cout << "    Mean square error = " << ransacError << " pixels^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
-    ransacFitter.display<unsigned char>(data.m_Iskeleton, vpColor::red, legendRansacVert, legendRansacHor);
+  //! [Init_simu]
+  // Initialize the simulation
+  vpObjectSimulator object(radius, w, phi, wZ);
+  vpColVector object_pos(4, 0.);
+  object_pos[3] = 1.;
+  //! [Init_simu]
 
-    /// Use the UKF to filter the measurement
+  //! [Simu_loop]
+  // log(std::cout, "main", "Begin main loop...");
+  for (unsigned int i = 0; i < nbIter; ++i) {
+    double t = dt * static_cast<double>(i);
+    //! [Update obj pose]
+    // Update object pose
+    object_pos = object.move(t);
+    //! [Update obj pose]
+    // log(std::cout, "main", "obj_pose", object_pos.t(), 1);
+
+    //! [Update_measurement]
+    // Perform the measurement
+    vpColVector z = markerMeas.measureWithNoise(object_pos);
+    //! [Update_measurement]
+    // log(std::cout, "main", "z", z.t(), 1);
+
+    //! [Perform_filtering]
+    // Use the UKF to filter the measurement
+    double tUKF = vpTime::measureTimeMs();
+    ukf.filter(z, dt);
+    double dtUKF = vpTime::measureTimeMs() - tUKF;
+    /// Use the PF to filter the measurement
     double tPF = vpTime::measureTimeMs();
-    //! [Perform_filtering]
-    filter.filter(edgePoints, period);
-    //! [Perform_filtering]
+    filter.filter(z, period);
     double dtPF = vpTime::measureTimeMs() - tPF;
-
-    //! [Get_filtered_state]
-    vpColVector Xest = filter.computeFilteredState();
-    //! [Get_filtered_state]
-
-    //! [Evaluate_performances]
-    float pfError = tutorial::evaluate(Xest, edgePoints);
-    //! [Evaluate_performances]
-    tutorial::display(Xest, data.m_Iskeleton, vpColor::gray, legendPFVert, legendPFHor);
+    //! [Perform_filtering]
+    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
+    // std::cout << "    Mean square error = " << ukfError << " pixels^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
     std::cout << "  [Particle Filter method] " << std::endl;
-    std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
+    // std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
 
+    //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
-    // Display the images with overlayed info
-    data.displayLegend(data.m_I_orig);
-    vpDisplay::flush(data.m_I_orig);
-    vpDisplay::flush(data.m_I_segmented);
-    vpDisplay::flush(data.m_Iskeleton);
-    run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
+    //! [Noisy_pose]
+    // Prepare the pose computation:
+    // the image points corresponding to the noisy markers are needed
+    std::vector<vpImagePoint> ip;
+    for (unsigned int id = 0; id < nbMarkers; ++id) {
+      vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
+      ip.push_back(markerProjNoisy);
+    }
+
+    // Compute the pose using the noisy markers
+    vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
+    vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
+    double wXnoisy = wMo_noisy[0][3];
+    double wYnoisy = wMo_noisy[1][3];
+    //! [Noisy_pose]
+
+    //! [Update_plot]
+    // Plot the ground truth
+    plot.plot(0, 0, object_pos[0], object_pos[1]);
+
+    // Plot the UKF filtered state
+    vpColVector XestUKF = ukf.getXest();
+    plot.plot(0, 1, XestUKF[0], XestUKF[1]);
+
+    // Plot the PF filtered state
+    vpColVector XestPF = filter.computeFilteredState();
+    plot.plot(0, 2, XestPF[0], XestPF[1]);
+    // log(std::cout, "main", "XestPF", XestPF.t(), 1);
+
+    // Plot the noisy pose
+    plot.plot(0, 3, wXnoisy, wYnoisy);
+
+    vpColVector cX_GT = cMw * object_pos;
+    vpColVector wX_UKF(4, 1.);
+    vpColVector wX_PF(4, 1.);
+    for (unsigned int i = 0; i < 3; ++i) {
+      wX_PF[i] = XestPF[i];
+      wX_UKF[i] = XestUKF[i];
+    }
+    vpColVector cX_PF = cMw * wX_PF;
+    vpColVector cX_UKF = cMw * wX_UKF;
+    vpColVector error_PF = cX_PF - cX_GT;
+    vpColVector error_UKF = cX_UKF - cX_GT;
+
+    // Plot the UKF filtered state error
+    plotError.plot(0, 0, t, error_UKF.frobeniusNorm());
+
+    // Plot the PF filtered state error
+    plotError.plot(0, 1, t, error_PF.frobeniusNorm());
+    // log(std::cout, "main", "XestPF", XestPF.t(), 1);
+
+    // Plot the noisy error
+    plotError.plot(0, 2, t, (cMo_noisy.getTranslationVector() - vpTranslationVector(cX_GT.extract(0, 3))).frobeniusNorm());
+    //! [Update_plot]
+
+    //! [Update_renderer]
+    // Display the projection of the markers
+    vpDisplay::display(Idisp);
+    vpColVector zGT = markerMeas.measureGT(object_pos);
+    vpColVector zFiltUkf = markerMeas.state_to_measurement(XestUKF);
+    vpColVector zFiltPF = markerMeas.state_to_measurement(XestPF);
+    // log(std::cout, "main", "zFiltPF", zFiltPF.t(), 1);
+    for (unsigned int id = 0; id < nbMarkers; ++id) {
+      vpImagePoint markerProjGT(zGT[2*id + 1], zGT[2*id]);
+      vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
+
+      vpImagePoint markerProjFiltUKF(zFiltUkf[2*id + 1], zFiltUkf[2*id]);
+      vpDisplay::displayCross(Idisp, markerProjFiltUKF, 5, vpColor::blue);
+
+      vpImagePoint markerProjFiltPF(zFiltPF[2*id + 1], zFiltPF[2*id]);
+      vpDisplay::displayCross(Idisp, markerProjFiltPF, 5, vpColor::purple);
+
+      vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
+      vpDisplay::displayCross(Idisp, markerProjNoisy, 5, vpColor::black);
+    }
+
+    vpImagePoint ipText(20, 20);
+    vpDisplay::displayText(Idisp, ipText, std::string("GT"), vpColor::red);
+    ipText.set_i(ipText.get_i() + 20);
+    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by UKF"), vpColor::blue);
+    ipText.set_i(ipText.get_i() + 20);
+    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by PF"), vpColor::purple);
+    ipText.set_i(ipText.get_i() + 20);
+    vpDisplay::displayText(Idisp, ipText, std::string("Measured"), vpColor::black);
+    vpDisplay::flush(Idisp);
+    vpTime::wait(40);
+    //! [Update_renderer]
 #endif
-    ++nbIter;
+    //! [Update_displays]
   }
+  //! [Simu_loop]
+  std::cout << "Press Enter to quit..." << std::endl;
+  std::cin.get();
 
-  if (data.m_grabber.end() && (!data.m_stepbystep)) {
-    /// Initial display of the images
-    vpDisplay::display(data.m_I_orig);
-    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "End of sequence reached. Click to exit.", data.m_colorLegend);
-
-    /// Update the display
-    vpDisplay::flush(data.m_I_orig);
-
-    /// Get the user input
-    vpDisplay::getClick(data.m_I_orig, true);
-  }
   return 0;
 }
 #else
 int main()
 {
-  std::cerr << "ViSP must be compiled with C++ standard >= C++11 to use this tutorial." << std::endl;
-  std::cerr << "ViSP must also have a 3rd party enabling display features, such as X11 or OpenCV." << std::endl;
-  return EXIT_FAILURE;
+  std::cout << "This example is only available if you compile ViSP in C++11 standard or higher." << std::endl;
+  return 0;
 }
 #endif
