@@ -72,12 +72,8 @@ out float distToCamera;
 
 void main()
 {
-    //gl_Position = ftransform();
     gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-    oNormal.xzy = p3d_Normal;
-    oNormal.y = -oNormal.y;
-    // vec3 on = vec3(oNormal.z, -oNormal.x, -oNormal.y);
-    // oNormal = on;
+    oNormal = vec3(p3d_Normal.y, -p3d_Normal.z, p3d_Normal.x);
     vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
     distToCamera = -cs_position.z;
 }
@@ -91,11 +87,9 @@ in float distToCamera;
 
 out vec4 p3d_FragData;
 
-
 void main()
 {
-  vec3 n = normalize(oNormal);
-  p3d_FragData.bgra = vec4(n, distToCamera);
+  p3d_FragData.bgra = vec4(normalize(oNormal), distToCamera);
 }
 )shader";
 
@@ -164,7 +158,7 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
   m_normalDepthTexture->set_format(Texture::F_rgba32);
-  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_texture, GraphicsOutput::RenderTexturePlane::RTP_color);
+  m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_bind_or_copy, GraphicsOutput::RenderTexturePlane::RTP_color);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_normalDepthBuffer->make_display_region();
