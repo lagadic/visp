@@ -34,6 +34,7 @@
 
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
+
 BEGIN_VISP_NAMESPACE
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
 #version 330
@@ -73,7 +74,7 @@ out float distToCamera;
 void main()
 {
     gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-    oNormal = vec3(p3d_Normal.y, -p3d_Normal.z, p3d_Normal.x);
+    oNormal = vec3(p3d_Normal.x, -p3d_Normal.z, p3d_Normal.y);
     vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
     distToCamera = -cs_position.z;
 }
@@ -187,14 +188,49 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     vpRGBf *normalRow = normals[i];
     float *depthRow = depth[i];
     for (unsigned int j = 0; j < normals.getWidth(); ++j) {
-      normalRow[j].B = (data[j * 4]);
+      normalRow[j].R = (data[j * 4]);
       normalRow[j].G = (data[j * 4 + 1]);
-      normalRow[j].R = (data[j * 4 + 2]);
+      normalRow[j].B = (data[j * 4 + 2]);
       depthRow[j] = (data[j * 4 + 3]);
     }
     data += rowIncrement;
   }
 }
+
+
+void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth, const vpRect &bb, unsigned int h, unsigned w) const
+{
+  normals.resize(h, w);
+  // memset(normals.bitmap, 0, normals.getSize() * sizeof(vpRGBf));
+  depth.resize(normals.getHeight(), normals.getWidth(), 0.f);
+  // memset(depth.bitmap, 0, normals.getSize());
+
+  const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
+  const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
+  const unsigned bottom = static_cast<unsigned int>(std::min(static_cast<double>(h), bb.getBottom()));
+  const unsigned right = static_cast<unsigned int>(std::min(static_cast<double>(w), bb.getRight()));
+  const unsigned numComponents = m_normalDepthTexture->get_num_components();
+  const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+  // Panda3D stores data upside down
+  data += rowIncrement * (m_renderParameters.getImageHeight() - 1);
+  if (numComponents != 4) {
+    throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
+  }
+  for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
+    const float *const rowData = data - i * rowIncrement;
+    vpRGBf *normalRow = normals[top + i];
+    float *depthRow = depth[top + i];
+#pragma omp simd
+    for (unsigned int j = 0; j < m_renderParameters.getImageWidth(); ++j) {
+      normalRow[left + j].R = (rowData[j * 4]);
+      normalRow[left + j].G = (rowData[j * 4 + 1]);
+      normalRow[left + j].B = (rowData[j * 4 + 2]);
+      depthRow[left + j] = (rowData[j * 4 + 3]);
+    }
+  }
+}
+
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 {

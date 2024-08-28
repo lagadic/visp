@@ -36,6 +36,7 @@
 #if defined(VISP_HAVE_PANDA3D)
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpRect.h>
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 
 BEGIN_VISP_NAMESPACE
@@ -70,6 +71,8 @@ public:
    * @param depth Image used to store depth
    */
   void getRender(vpImage<vpRGBf> &colorData, vpImage<float> &depth) const;
+
+  void getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth, const vpRect &bb, unsigned int h, unsigned w) const;
 
   /**
    * @brief Get render results into ViSP readable structures. This version only retrieves the normal data
