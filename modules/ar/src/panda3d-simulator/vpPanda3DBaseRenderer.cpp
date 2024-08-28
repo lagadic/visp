@@ -204,17 +204,37 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   }
   if (!fast) {
     LPoint3 minP, maxP;
+    double t1 = vpTime::measureTimeMs();
+    object.calc_tight_bounds(minP, maxP);
+    const BoundingBox box(minP, maxP);
+    float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
+    const vpHomogeneousMatrix wTcam = getCameraPose();
+    const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
+    const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
+    for (unsigned int i = 0; i < 8; ++i) {
+      const LPoint3 p = box.get_point(i);
+      const vpColVector pv = vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
+      vpColVector cpV = camTobj * pv;
+      cpV /= cpV[3];
+      float Z = cpV[2];
+      if (Z > maxZ) {
+        maxZ = Z;
+      }
+      if (Z < minZ) {
+        minZ = Z;
+      }
+    }
 
-    object.calc_tight_bounds(minP, maxP, m_cameraPath);
-    nearV = vpMath::maximum<float>(0.f, minP.get_y());
-    farV = vpMath::maximum<float>(nearV, maxP.get_y());
+    nearV = minZ;
+    farV = maxZ;
+
   }
   else {
     const BoundingVolume *volume = object.node()->get_bounds();
     if (volume->get_type() == BoundingSphere::get_class_type()) {
       const BoundingSphere *sphere = (const BoundingSphere *)volume;
       const LPoint3 center = sphere->get_center();
-      const float distCenter = (center -m_cameraPath.get_pos()).length();
+      const float distCenter = (center - m_cameraPath.get_pos()).length();
       nearV = vpMath::maximum<float>(0.f, distCenter - sphere->get_radius());
       farV = vpMath::maximum<float>(nearV, distCenter + sphere->get_radius());
     }
