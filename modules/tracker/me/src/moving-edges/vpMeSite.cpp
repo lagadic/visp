@@ -39,6 +39,7 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <stdlib.h>
+#include <map>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
