@@ -46,21 +46,6 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
 
 void vpPanda3DRendererSet::initFramework()
 {
-  // load_prc_file_data("", "load-display p3tinydisplay");
-  // load_prc_file_data("", "color-bits 32 32 32");
-
-  // load_prc_file_data("", "auto-flip 1");
-  // load_prc_file_data("", "sync-video 0");
-  // load_prc_file_data("", "multisamples 1\n"
-  //           // "background-color 0.0 0.0 0.0 0.0\n"
-  //           // "load-file-type p3assimp\n"
-  //           // "transform-cache 0\n"
-  //           // "state-cache 0\n"
-  //           // "audio-library-name null\n"
-  //           "model-cache-dir\n"
-  //           "notify-level-glgsg spam");
-
-
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
   }
