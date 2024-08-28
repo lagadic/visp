@@ -53,10 +53,7 @@ void main()
 {
 
   gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-  // View space is Z-up right handed, flip z and y
   oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-  // oNormal.yz = oNormal.zy;
-  // oNormal.y = -oNormal.y;
   vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
   distToCamera = -cs_position.z;
 }
@@ -77,8 +74,7 @@ void main()
 {
     //gl_Position = ftransform();
     gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-    oNormal = normalize(p3d_Normal);
-    oNormal.yz = oNormal.zy;
+    oNormal.xzy = p3d_Normal;
     oNormal.y = -oNormal.y;
     // vec3 on = vec3(oNormal.z, -oNormal.x, -oNormal.y);
     // oNormal = on;
@@ -92,8 +88,6 @@ const char *vpPanda3DGeometryRenderer::SHADER_FRAG_NORMAL_AND_DEPTH = R"shader(
 
 in vec3 oNormal;
 in float distToCamera;
-out vec4 p3d_FragColor;
-out vec4 fragColor;
 
 out vec4 p3d_FragData;
 
@@ -101,8 +95,6 @@ out vec4 p3d_FragData;
 void main()
 {
   vec3 n = normalize(oNormal);
-  //if (!gl_FrontFacing)
-      //n = -n;
   p3d_FragData.bgra = vec4(n, distToCamera);
 }
 )shader";
