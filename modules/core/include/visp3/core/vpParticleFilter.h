@@ -404,6 +404,7 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   else {
     m_nbMaxThreads = nbThreads;
   }
+  omp_set_num_threads(m_nbMaxThreads);
 #endif
   // Generating the random generators
   unsigned int sizeState = static_cast<unsigned int>(stdev.size());
