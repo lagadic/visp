@@ -410,7 +410,7 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 
       query.m_convlt = convolution_;
       const double contrast = convolution_ / m_convlt;
-      candidates.insert({ fabs(1.0 - contrast), vpMeSiteHypothesis(&query, likelihood, contrast) });
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(fabs(1.0 - contrast), vpMeSiteHypothesis(&query, likelihood, contrast)));
     }
   }
   else { // test on likelihood only
@@ -420,7 +420,7 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
       const double convolution_ = query.convolution(I, &me);
       const double likelihood = fabs(2 * convolution_);
       query.m_convlt = convolution_;
-      candidates.insert({ -likelihood, vpMeSiteHypothesis(&query, likelihood, 0.0) });
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(-likelihood, vpMeSiteHypothesis(&query, likelihood, 0.0)));
     }
   }
   // Take first numCandidates hypotheses: map is sorted according to the likelihood/contrast difference so we can just
@@ -437,14 +437,14 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 
       if (likelihood > threshold) {
         if (contrast <= contrast_min || contrast >= contrast_max) {
-          outputHypotheses[i].m_state = vpMeSiteState::CONTRAST;
+          outputHypotheses[i].m_state = CONTRAST;
         }
         else {
-          outputHypotheses[i].m_state = vpMeSiteState::NO_SUPPRESSION;
+          outputHypotheses[i].m_state = NO_SUPPRESSION;
         }
       }
       else {
-        outputHypotheses[i].m_state = vpMeSiteState::THRESHOLD;
+        outputHypotheses[i].m_state = THRESHOLD;
       }
     }
   }
@@ -453,10 +453,10 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
       outputHypotheses[i] = *(it->second.site);
       const double likelihood = it->second.likelihood;
       if (likelihood > threshold) {
-        outputHypotheses[i].m_state = vpMeSiteState::NO_SUPPRESSION;
+        outputHypotheses[i].m_state = NO_SUPPRESSION;
       }
       else {
-        outputHypotheses[i].m_state = vpMeSiteState::THRESHOLD;
+        outputHypotheses[i].m_state = THRESHOLD;
       }
     }
   }
