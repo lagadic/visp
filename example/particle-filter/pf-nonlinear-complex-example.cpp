@@ -351,7 +351,7 @@ public:
     double dx = m_x - chi[0];
     double dy = m_y - chi[1];
     meas[0] = std::sqrt(dx * dx + dy * dy);
-    meas[1] = normalizeAngle(std::atan2(dy, dx) - chi[2]);
+    meas[1] = normalizeAngle(std::atan2(dy, dx));
     return meas;
   }
 
@@ -367,7 +367,7 @@ public:
     double dx = m_x - pos[0];
     double dy = m_y - pos[1];
     double range = std::sqrt(dx * dx + dy * dy);
-    double orientation = normalizeAngle(std::atan2(dy, dx) - pos[2]);
+    double orientation = normalizeAngle(std::atan2(dy, dx));
     vpColVector measurements(2);
     measurements[0] = range;
     measurements[1] = orientation;
@@ -391,19 +391,25 @@ public:
     return measurementsNoisy;
   }
 
-  /**
-   * \brief Compute the likelihood of a particle  (value between 0. and 1.)
-   * knowing the measurements.
-   *
-   * \param[in] particle The particle state.
-   * \param[in] meas The measurements.
-   * \return double The likelihood of a particle  (value between 0. and 1.)
-   */
+  void computePositionFromMeasurements(const vpColVector &meas, double &x, double &y)
+  {
+    double alpha = meas[1];
+    x = m_x - meas[0] * std::cos(alpha);
+    y = m_y - meas[0] * std::sin(alpha);
+  }
+
+    /**
+     * \brief Compute the likelihood of a particle  (value between 0. and 1.)
+     * knowing the measurements.
+     *
+     * \param[in] particle The particle state.
+     * \param[in] meas The measurements.
+     * \return double The likelihood of a particle  (value between 0. and 1.)
+     */
   double likelihood(const vpColVector &particle, const vpColVector &meas)
   {
-    double alpha = normalizeAngle(meas[1] + particle[2]);
-    double xMeas = m_x + meas[0] * std::cos(alpha);
-    double yMeas = m_y + meas[0] * std::sin(alpha);
+    double xMeas = 0., yMeas = 0.;
+    computePositionFromMeasurements(meas, xMeas, yMeas);
     double dx = xMeas - particle[0];
     double dy = yMeas - particle[1];
     double dist = std::sqrt(dx * dx + dy * dy);
@@ -432,11 +438,18 @@ public:
   /**
   * \brief Construct a new vpLandmarksGrid object.
   *
-  * @param landmarks The list of landmarks forming the grid.
+  * \param[in] landmarks The list of landmarks forming the grid.
+  * \param[in] distMaxAllowed Maximum distance allowed for the likelihood computation.
   */
-  vpLandmarksGrid(const std::vector<vpLandmarkMeasurements> &landmarks)
+  vpLandmarksGrid(const std::vector<vpLandmarkMeasurements> &landmarks, const double &distMaxAllowed)
     : m_landmarks(landmarks)
-  { }
+    , m_nbLandmarks(landmarks.size())
+  {
+    double sigmaDistance = distMaxAllowed / 3.;
+    double sigmaDistanceSquared = sigmaDistance * sigmaDistance;
+    m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
+    m_constantExpDenominator = -1. / (2. * sigmaDistanceSquared);
+  }
 
   /**
    * \brief Convert a particle of the Particle Filter into the measurement space.
@@ -446,9 +459,8 @@ public:
    */
   vpColVector state_to_measurement(const vpColVector &chi)
   {
-    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
-    vpColVector measurements(2*nbLandmarks);
-    for (unsigned int i = 0; i < nbLandmarks; ++i) {
+    vpColVector measurements(2*m_nbLandmarks);
+    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].state_to_measurement(chi);
       measurements[2*i] = landmarkMeas[0];
       measurements[(2*i) + 1] = landmarkMeas[1];
@@ -466,9 +478,8 @@ public:
    */
   vpColVector measureGT(const vpColVector &pos)
   {
-    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
-    vpColVector measurements(2*nbLandmarks);
-    for (unsigned int i = 0; i < nbLandmarks; ++i) {
+    vpColVector measurements(2*m_nbLandmarks);
+    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureGT(pos);
       measurements[2*i] = landmarkMeas[0];
       measurements[(2*i) + 1] = landmarkMeas[1];
@@ -486,14 +497,28 @@ public:
    */
   vpColVector measureWithNoise(const vpColVector &pos)
   {
-    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
-    vpColVector measurements(2*nbLandmarks);
-    for (unsigned int i = 0; i < nbLandmarks; ++i) {
+    vpColVector measurements(2*m_nbLandmarks);
+    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
       vpColVector landmarkMeas = m_landmarks[i].measureWithNoise(pos);
       measurements[2*i] = landmarkMeas[0];
       measurements[(2*i) + 1] = landmarkMeas[1];
     }
     return measurements;
+  }
+
+  void computePositionFromMeasurements(const vpColVector &meas, double &x, double &y)
+  {
+    x = 0.;
+    y = 0.;
+    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
+      vpColVector landmarkMeas({ meas[2*i], meas[(2*i) + 1] });
+      double xLand = 0., yLand = 0.;
+      m_landmarks[i].computePositionFromMeasurements(landmarkMeas, xLand, yLand);
+      x += xLand;
+      y += yLand;
+    }
+    x /= static_cast<double>(m_nbLandmarks);
+    y /= static_cast<double>(m_nbLandmarks);
   }
 
   /**
@@ -506,19 +531,31 @@ public:
    */
   double likelihood(const vpColVector &particle, const vpColVector &meas)
   {
-    unsigned int nbLandmarks = static_cast<unsigned int>(m_landmarks.size());
     double meanLikelihood = 0.;
-    for (unsigned int i = 0; i < nbLandmarks; ++i) {
+    double meanX = 0., meanY = 0.;
+    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
       vpColVector landmarkMeas({ meas[2*i], meas[(2*i) + 1] });
-      double likelihood = m_landmarks[i].likelihood(particle, landmarkMeas);
-      meanLikelihood += likelihood;
+      double x = 0., y = 0.;
+      m_landmarks[i].computePositionFromMeasurements(landmarkMeas, x, y);
+      meanX += x;
+      meanY += y;
     }
-    meanLikelihood /= static_cast<double>(nbLandmarks);
-    return meanLikelihood;
+    meanX /= static_cast<double>(m_nbLandmarks);
+    meanY /= static_cast<double>(m_nbLandmarks);
+    double dx = meanX - particle[0];
+    double dy = meanY - particle[1];
+    double dist = std::sqrt(dx * dx + dy * dy);
+    double likelihood = std::exp(m_constantExpDenominator * dist) * m_constantDenominator;
+    likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
+    likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
+    return likelihood;
   }
 
 private:
   std::vector<vpLandmarkMeasurements> m_landmarks; /*!< The list of landmarks forming the grid.*/
+  const unsigned int m_nbLandmarks; /*!< Number of landmarks that the grid is made of.*/
+  double m_constantDenominator; // Denominator of the Gaussian function used in the likelihood computation.
+  double m_constantExpDenominator; // Denominator of the exponential in the Gaussian function used in the likelihood computation.
 };
 
 struct SoftwareArguments
@@ -540,10 +577,10 @@ struct SoftwareArguments
     : m_useDisplay(true)
     , m_nbStepsWarmUp(200)
     , m_N(500)
-    , m_maxDistanceForLikelihood(1.)
-    , m_ampliMaxX(5)
-    , m_ampliMaxY(5)
-    , m_ampliMaxTheta(0.2)
+    , m_maxDistanceForLikelihood(0.5)
+    , m_ampliMaxX(0.25)
+    , m_ampliMaxY(0.25)
+    , m_ampliMaxTheta(0.1)
     , m_seedPF(4224)
     , m_nbThreads(1)
   { }
@@ -720,7 +757,7 @@ int main(const int argc, const char *argv[])
   X0[2] = 0.3; // robot orientation = 0.3 rad
 
   vpParticleFilter<vpColVector>::vpProcessFunction f = fx;
-  vpLandmarksGrid grid(landmarks);
+  vpLandmarksGrid grid(landmarks, args.m_maxDistanceForLikelihood);
   vpBicycleModel robot(wheelbase);
   using std::placeholders::_1;
   using std::placeholders::_2;
@@ -739,12 +776,16 @@ int main(const int argc, const char *argv[])
   if (args.m_useDisplay) {
   // Initialize the plot
     plot = new vpPlot(1);
-    plot->initGraph(0, 2);
+    plot->initGraph(0, 3);
     plot->setTitle(0, "Position of the robot");
     plot->setUnitX(0, "Position along x(m)");
     plot->setUnitY(0, "Position along y (m)");
     plot->setLegend(0, 0, "GT");
     plot->setLegend(0, 1, "Filtered");
+    plot->setLegend(0, 2, "Measure");
+    plot->setColor(0, 0, vpColor::red);
+    plot->setColor(0, 1, vpColor::blue);
+    plot->setColor(0, 2, vpColor::black);
   }
 #endif
 
@@ -784,15 +825,21 @@ int main(const int argc, const char *argv[])
       //! [Get_filtered_state]
 
       //! [Errors_computation]
-      vpColVector errorFilter = grid.state_to_measurement(filter.computeFilteredState()) - grid.measureGT(robot_pos);
-      meanErrorFilter += errorFilter.frobeniusNorm();
-      vpColVector errorNoise = z - grid.measureGT(robot_pos);
-      meanErrorNoise += errorNoise.frobeniusNorm();
+      double dxFilter = Xest[0] - robot_pos[0];
+      double dyFilter = Xest[1] - robot_pos[1];
+      double errorFilter = std::sqrt(dxFilter * dxFilter + dyFilter * dyFilter);
+      meanErrorFilter += errorFilter;
+      double xMeas = 0., yMeas = 0.;
+      grid.computePositionFromMeasurements(z, xMeas, yMeas);
+      double dxMeas = xMeas - robot_pos[0];
+      double dyMeas = yMeas - robot_pos[1];
+      meanErrorNoise += std::sqrt(dxMeas * dxMeas + dyMeas * dyMeas);
 
 #ifdef VISP_HAVE_DISPLAY
       if (args.m_useDisplay) {
         // Plot the filtered state
         plot->plot(0, 1, Xest[0], Xest[1]);
+        plot->plot(0, 2, xMeas, yMeas);
       }
 #endif
     }
@@ -805,6 +852,13 @@ int main(const int argc, const char *argv[])
 #endif
   }
 
+  averageFilteringTime = averageFilteringTime / (static_cast<double>(nbCmds + args.m_nbStepsWarmUp));
+  meanErrorFilter = meanErrorFilter / (static_cast<double>(nbCmds));
+  meanErrorNoise = meanErrorNoise / (static_cast<double>(nbCmds));
+  std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
+  std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
+  std::cout << "Mean filtering time = " << averageFilteringTime << "us" << std::endl;
+
   if (args.m_useDisplay) {
     std::cout << "Press Enter to quit..." << std::endl;
     std::cin.get();
@@ -816,17 +870,13 @@ int main(const int argc, const char *argv[])
   }
 #endif
 
-  averageFilteringTime = averageFilteringTime / (static_cast<double>(nbCmds + args.m_nbStepsWarmUp));
-  meanErrorFilter = meanErrorFilter / (static_cast<double>(nbCmds));
-  meanErrorNoise = meanErrorNoise / (static_cast<double>(nbCmds));
-  std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
-  std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
-  std::cout << "Mean filtering time = " << averageFilteringTime << "us" << std::endl;
-
-  vpColVector finalError = grid.state_to_measurement(filter.computeFilteredState()) - grid.measureGT(robot_pos);
   const double maxError = 0.3;
-  if (finalError.frobeniusNorm() > maxError) {
-    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+  if (meanErrorFilter > meanErrorNoise) {
+    std::cerr << "Error: noisy measurements error = " << meanErrorNoise << ", filter error = " << meanErrorFilter << std::endl;
+    return -1;
+  }
+  else if (meanErrorFilter > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", average error = " << meanErrorFilter << std::endl;
     return -1;
   }
   return 0;
