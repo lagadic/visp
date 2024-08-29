@@ -496,7 +496,7 @@ private:
     std::cout << "SYNOPSIS" << std::endl;
     std::cout << "  " << softName << " [--nb-steps-main <uint>] [--nb-steps-warmup <uint>]" << std::endl;
     std::cout << "  [--dt <double>] [--stdev-range <double>] [--stdev-elev-angle <double>] [--stdev-aircraft-vel <double>]" << std::endl;
-    std::cout << "  [--gt-X0 <double>] [--gt-X0 <double>] [--gt-Y0 <double>] [--gt-vX0 <double>] [--gt-vY0 <double>]" << std::endl;
+    std::cout << "  [--gt-X0 <double>] [--gt-Y0 <double>] [--gt-vX0 <double>] [--gt-vY0 <double>]" << std::endl;
     std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
     std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-vX <double>] [--ampli-max-vY <double>]" << std::endl;
     std::cout << "  [-d, --no-display] [-h]" << std::endl;
@@ -792,11 +792,13 @@ int main(const int argc, const char *argv[])
   }
 #endif
 
-  vpColVector X_GT({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
-  vpColVector finalError = filter.computeFilteredState() - X_GT;
-  const double maxError = 2.5;
-  if (finalError.frobeniusNorm() > maxError) {
-    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+  const double maxError = 150.;
+  if (meanErrorFilter > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", mean error = " << meanErrorFilter << std::endl;
+    return -1;
+  }
+  else if (meanErrorFilter >= meanErrorNoise) {
+    std::cerr << "Error: mean error without filter = " << meanErrorNoise << ", mean error with filter = " << meanErrorFilter << std::endl;
     return -1;
   }
 
