@@ -40,7 +40,7 @@
 #include <limits> // numeric_limits
 #include <stdlib.h>
 #include <map>
-#include <tuple>
+
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
@@ -373,13 +373,23 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
 
+  struct vpMeSiteHypothesis
+  {
+    vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
+    { }
+
+    vpMeSite *site;
+    double likelihood;
+    double contrast;
+
+  };
 
   // Insert into a map, where the key is the sorting criterion (negative likelihood or contrast diff)
   // and the key is the ME site + its computed likelihood and contrast.
   // After computation: iterating on the map is guaranteed to be done with the keys being sorted according to the criterion.
   // Multimap allows to have multiple values (sites) with the same key (likelihood/contrast diff)
   // Only the candidates that are above the threshold are kept
-  std::multimap<double, std::tuple<vpMeSite *, double, double>> candidates;
+  std::multimap<double, vpMeSiteHypothesis> candidates;
 
   const double contrast_max = 1 + me.getMu2();
   const double contrast_min = 1 - me.getMu1();
@@ -399,7 +409,7 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 
       query.m_convlt = convolution_;
       const double contrast = convolution_ / m_convlt;
-      candidates.insert({ fabs(1.0 - contrast), {&query, likelihood, contrast} });
+      candidates.insert({ fabs(1.0 - contrast), vpMeSiteHypothesis(&query, likelihood, contrast) });
     }
   }
   else { // test on likelihood only
@@ -409,19 +419,20 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
       const double convolution_ = query.convolution(I, &me);
       const double likelihood = fabs(2 * convolution_);
       query.m_convlt = convolution_;
-      candidates.insert({ -likelihood, {&query, likelihood, 0.0} });
+      candidates.insert({ -likelihood, vpMeSiteHypothesis(&query, likelihood, 0.0) });
     }
   }
   // Take first numCandidates hypotheses: map is sorted according to the likelihood/contrast difference so we can just
   // iterate from the start
   outputHypotheses.resize(numCandidates);
-  std::multimap<double, std::tuple<vpMeSite *, double, double>>::iterator it = candidates.begin();
+
+  std::multimap<double, vpMeSiteHypothesis>::iterator it = candidates.begin();
   if (test_contrast) {
     for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
-      outputHypotheses[i] = *(std::get<0>(it->second));
+      outputHypotheses[i] = *(it->second.site);
       outputHypotheses[i].m_normGradient = vpMath::sqr(outputHypotheses[i].m_convlt);
-      const double likelihood = std::get<1>(it->second);
-      const double contrast = std::get<2>(it->second);
+      const double likelihood = it->second.likelihood;
+      const double contrast = it->second.contrast;
 
       if (likelihood > threshold) {
         if (contrast <= contrast_min || contrast >= contrast_max) {
@@ -438,8 +449,8 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
   }
   else {
     for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
-      outputHypotheses[i] = *(std::get<0>(it->second));
-      const double likelihood = std::get<1>(it->second);
+      outputHypotheses[i] = *(it->second.site);
+      const double likelihood = it->second.likelihood;
       if (likelihood > threshold) {
         outputHypotheses[i].m_state = vpMeSiteState::NO_SUPPRESSION;
       }
