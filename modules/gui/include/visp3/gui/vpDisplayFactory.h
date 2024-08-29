@@ -202,8 +202,96 @@ std::shared_ptr<vpDisplay> createDisplay(vpImage<T> &I, const int winx = -1, con
   return std::shared_ptr<vpDisplay>(nullptr);
 #endif
 }
+namespace impl
+{
+
+struct GridSettings
+{
+  unsigned int rows;
+  unsigned int cols;
+  unsigned int startY;
+  unsigned int startX;
+  unsigned int paddingX;
+  unsigned int paddingY;
+};
+
+void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
+unsigned int currRow, unsigned int currCol,
+unsigned int currentPixelX, unsigned int currentPixelY,
+unsigned int maxRowHeightPixel)
+{
+  if (currRow != settings.rows -1  && currCol != settings.cols - 1) {
+    throw vpException(vpException::dimensionError, "Too few images for the grid size");
+  }
+
+}
+
+template <typename T, typename... Args>
+void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res,
+const GridSettings &settings,
+unsigned int currRow, unsigned int currCol,
+unsigned int currentPixelX, unsigned int currentPixelY,
+const unsigned int maxRowHeightPixel,
+const std::string &name, vpImage<T> &I, Args&... args)
+{
+  if (currRow >= settings.rows) {
+    throw vpException(vpException::dimensionError, "Too many images for the grid size");
+  }
+  if (currCol == settings.cols) {
+    makeDisplayGridHelper(res, settings, currRow + 1, 0, settings.startX, currentPixelY + maxRowHeightPixel  + settings.paddingY, 0, name, I, args...);
+  }
+  else {
+    std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay(I, currentPixelX, currentPixelY, name);
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
+    res.push_back(display);
+    makeDisplayGridHelper(res, settings, currRow, currCol + 1, currentPixelX + I.getWidth() + settings.paddingX, currentPixelY, std::max(maxRowHeightPixel, I.getHeight()), args...);
+  }
+}
+
+}
+
+/**
+ * \brief Create a grid of displays, given a set of images.
+ * All the displays will be initialized in the correct location with the content of the associated image and name.
+ * All the images should have been initialized before with the correct resolution.
+ * The display creation and image association will follow a row major order.
+ *
+ * \tparam Args A sequence of display name (const std::string&) and ViSP image.
+ * The name should always come before the image. The image can be vpImage<unsigned char> or vpImage<vpRGBa>
+ * \param rows Number of rows in the grid
+ * \param cols Number of columns in the grid
+ * \param startX the starting left position of the grid
+ * \param startY the starting top localization of the grid
+ * \param paddingX Horizontal padding between windows
+ * \param paddingY Vertical padding between windows
+ * \param args the name => image => name sequence
+ * \return std::vector<std::shared_ptr<vpDisplay>> The allocated displays.
+ *
+ * \throws if the grid dimensions and number of images do not match
+ *
+ */
+template <typename... Args>
+std::vector<std::shared_ptr<vpDisplay>> makeDisplayGrid(unsigned int rows, unsigned int cols,
+unsigned int startX, unsigned int startY,
+unsigned int paddingX, unsigned int paddingY,
+Args&... args)
+{
+  std::vector<std::shared_ptr<vpDisplay>> res;
+  impl::GridSettings settings;
+  settings.rows = rows;
+  settings.cols = cols;
+  settings.paddingX = paddingX;
+  settings.paddingY = paddingY;
+  settings.startX = startX;
+  settings.startY = startY;
+  makeDisplayGridHelper(res, settings, 0, 0, settings.startX, settings.startY, 0, args...);
+  return res;
+}
+
 #endif
 
 }
+
 END_VISP_NAMESPACE
 #endif
