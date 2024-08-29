@@ -122,7 +122,9 @@ To test this script:
 
 This Python script allows displaying camera poses along with the object of interest.
 
-Camera poses can be saved in `4x4` homogeneous matrix form or in `1x6` pose vector form (`[tx, ty, tz, tux, tuy, tuz]`), C++ example code using the homogeneous matrix format:
+Camera poses can be saved in `4x4` homogeneous matrix form or in `1x6` pose vector form (`[tx, ty, tz, tux, tuy, tuz]`).
+
+C++ example code using the `4x4` homogeneous matrix format:
 
 ```cpp
 std::ofstream file_pose("poses.txt", std::ios_base::app);
@@ -136,6 +138,11 @@ if (file_pose.is_open()) {
 }
 ```
 
+Camera poses can also be read from npz file format:
+- pass the `--npz` flag to indicate the input pose file is stored in npz file format
+- the script will read data from `vec_poses` array name
+- array should contains `{tx, ty, tz, tu.x, tu.y, tu.z}` information (`nb_poses x 6`)
+
 Script example (use the help option `-h` to display the available parameters):
 
 ```console
@@ -146,9 +153,76 @@ Following video shows the camera poses outputed by the ViSP model-based tracker 
 
 [![Cube+cylinder tracking using ViSP MBT](https://user-images.githubusercontent.com/8035162/180662930-605b2c42-bbb5-4bd6-9fe6-b2a1af3a04e7.png)](https://user-images.githubusercontent.com/8035162/180662750-02fccaff-74bd-411c-8258-06910edc6fde.mp4 "Cube+cylinder tracking using ViSP MBT")
 
+- Full tracking pipeline using teabox example:
+  1. Save teabox poses in npz format
+      ```console
+      % cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+      % ./tutorial-mb-generic-tracker-full \
+            --video model/teabox/teabox.mp4 \
+            --model model/teabox/teabox.cao \
+            --tracker 2 \
+            --save-results teabox_tracking_results.npz
+      ```
+  2. Visualize camera trajectories
+      ```console
+      % cd $VISP_WS/visp/script
+      % python3 -m venv venv
+      % source venv/bin/activate
+      % python3 -m pip install matplotlib
+      % python3 PlotCameraTrajectory.py \
+            -p ../../visp-build/tutorial/tracking/model-based/generic/teabox_tracking_results.npz \
+            --npz \
+            -m ../../visp-build/tutorial/tracking/model-based/generic/model/teabox/teabox.cao
+      ```
+
+- Full tracking pipeline using cube example:
+  1. Save cube poses in npz format
+      ```console
+      % cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+      % ./tutorial-mb-generic-tracker-full \
+            --video $VISP_WS/visp-images/mbt/cube/image%04d.png \
+            --model $VISP_WS/visp-images/mbt/cube.cao \
+            --tracker 2 \
+            --save-results cube_tracking_results.npz
+      ```
+  2. Visualize camera trajectories
+      ```console
+      % cd $VISP_WS/visp/script
+      % python3 -m venv venv
+      % source venv/bin/activate
+      % python3 -m pip install matplotlib
+      % python3 PlotCameraTrajectory.py \
+            -p ../../visp-build/tutorial/tracking/model-based/generic/cube_tracking_results.npz \
+            --npz \
+            -m $VISP_WS/visp-images/mbt/cube.cao
+      ```
+
+- Full tracking pipeline using cube & cylinder example:
+  1. Save cube & cylinder poses in npz format
+      ```console
+      % cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+      % ./tutorial-mb-generic-tracker-full \
+            --video $VISP_WS/visp-images/mbt/cube/image%04d.png \
+            --model $VISP_WS/visp-images/mbt/cube_and_cylinder.cao \
+            --tracker 2 \
+            --save-results cube_and_cylinder_tracking_results.npz
+      ```
+  2. Visualize camera trajectories
+      ```console
+      % cd $VISP_WS/visp/script
+      % python3 -m venv venv
+      % source venv/bin/activate
+      % python3 -m pip install matplotlib
+      % python3 PlotCameraTrajectory.py \
+            -p ../../visp-build/tutorial/tracking/model-based/generic/cube_and_cylinder_tracking_results.npz \
+            --npz \
+            -m $VISP_WS/visp-images/mbt/cube_and_cylinder.cao
+      ```
+
 ## PlotRGBIrDepthData.py
 
-This Python script allows displaying RGB/Infrared/Depth/Pointcloud data saved using the example/device/framegrabber/saveRealSenseData.cpp sample.
+This Python script allows displaying RGB/Infrared/Depth/Pointcloud data saved using the
+`example/device/framegrabber/saveRealSenseData.cpp` sample.
 It contains sample code to learn how to manipulate NumPy NPZ format, such as multi-dimensional array and display them with Matplotlib.
 
 Simply run the following command with the correct folder path:
