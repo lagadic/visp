@@ -317,7 +317,7 @@ struct SoftwareArguments
   static const int SOFTWARE_CONTINUE = 42;
   bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
   unsigned int m_nbStepsWarmUp; //!< Number of steps for the warmup phase.
-  unsigned int m_nbSteps; //!< ?umber of steps for the main loop.
+  unsigned int m_nbSteps; //!< Number of steps for the main loop.
   // --- PF parameters---
   unsigned int m_N; //!< The number of particles.
   double m_maxDistanceForLikelihood; //!< The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
