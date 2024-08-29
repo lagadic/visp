@@ -119,13 +119,17 @@ vpColVector fx(const vpColVector &chi, const double &dt)
  * \brief Compute the X and Y coordinates from the measurements.
  *
  * \param z z[0] = range z[1] = elevation angle.
+ * \param xRadar The X-axis coordinate that corresponds to the position of the radar on the ground.
+ * \param yRadar The Y-axis coordinate that correspond to the height at which is located the radar with regard to the ground level.
  * \param x The X-axis coordinate that corresponds to the measurements.
  * \param y The Y-axis coordinate that correspond to the measurements.
  */
-void computeCoordinatesFromMeasurement(const vpColVector &z, double &x, double &y)
+void computeCoordinatesFromMeasurement(const vpColVector &z, const double &xRadar, const double &yRadar, double &x, double &y)
 {
-  x = z[0] * std::cos(z[1]);
-  y = z[0] * std::sin(z[1]);
+  double dx = z[0] * std::cos(z[1]);
+  double dy = z[0] * std::sin(z[1]);
+  x = dx + xRadar;
+  y = dy + yRadar;
 }
 
 /**
@@ -161,13 +165,15 @@ double computeStateError(const vpColVector &state, const vpColVector &gt_X)
  * \brief Compute the error between a measurement vector and a ground-truth vector.
  *
  * \param[in] z z[0] = range z[1] = elevation angle.
+ * \param xRadar The X-axis coordinate that corresponds to the position of the radar on the ground.
+ * \param yRadar The Y-axis coordinate that correspond to the height at which is located the radar with regard to the ground level.
  * \param[in] gt_X gt_X[0] = X, gt_X[1] = Y
  * \return double The error.
  */
-double computeMeasurementsError(const vpColVector &z, const vpColVector &gt_X)
+double computeMeasurementsError(const vpColVector &z, const double &xRadar, const double &yRadar, const vpColVector &gt_X)
 {
   double xMeas = 0., yMeas = 0.;
-  computeCoordinatesFromMeasurement(z, xMeas, yMeas);
+  computeCoordinatesFromMeasurement(z, xRadar, yRadar, xMeas, yMeas);
   double error = computeError(xMeas, yMeas, gt_X[0], gt_X[1]);
   return error;
 }
@@ -270,7 +276,7 @@ public:
     double xParticle = particle[0];
     double yParticle = particle[2];
     double xMeas = 0., yMeas = 0.;
-    computeCoordinatesFromMeasurement(meas, xMeas, yMeas);
+    computeCoordinatesFromMeasurement(meas, m_x, m_y, xMeas, yMeas);
     double dist = computeError(xParticle, yParticle, xMeas, yMeas);
     double likelihood = std::exp(m_constantExpDenominator * dist) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
@@ -341,6 +347,8 @@ struct SoftwareArguments
   double m_sigmaRange; // Standard deviation of the range measurement, expressed in meters.
   double m_sigmaElevAngle; // Standard deviation of the elevation angle measurent, expressed in radians.
   double m_stdevAircraftVelocity; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
+  double m_radar_X; // Radar position along the X-axis, in meters
+  double m_radar_Y; // Radar position along the Y-axis, in meters
   double m_gt_X_init; // Ground truth initial position along the X-axis, in meters
   double m_gt_Y_init; // Ground truth initial position along the Y-axis, in meters
   double m_gt_vX_init; // Ground truth initial velocity along the X-axis, in meters
@@ -363,6 +371,8 @@ struct SoftwareArguments
     , m_sigmaRange(5)
     , m_sigmaElevAngle(vpMath::rad(0.5))
     , m_stdevAircraftVelocity(0.2)
+    , m_radar_X(0.)
+    , m_radar_Y(0.)
     , m_gt_X_init(-500.)
     , m_gt_Y_init(1000.)
     , m_gt_vX_init(10.)
@@ -404,6 +414,14 @@ struct SoftwareArguments
       }
       else if ((arg == "--stdev-aircraft-vel") && ((i+1) < argc)) {
         m_stdevAircraftVelocity = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--radar-X") && ((i+1) < argc)) {
+        m_radar_X = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--radar-Y") && ((i+1) < argc)) {
+        m_radar_Y = std::atof(argv[i + 1]);
         ++i;
       }
       else if ((arg == "--gt-X0") && ((i+1) < argc)) {
@@ -496,6 +514,7 @@ private:
     std::cout << "SYNOPSIS" << std::endl;
     std::cout << "  " << softName << " [--nb-steps-main <uint>] [--nb-steps-warmup <uint>]" << std::endl;
     std::cout << "  [--dt <double>] [--stdev-range <double>] [--stdev-elev-angle <double>] [--stdev-aircraft-vel <double>]" << std::endl;
+    std::cout << "  [--radar-X <double>] [--radar-Y <double>]" << std::endl;
     std::cout << "  [--gt-X0 <double>] [--gt-Y0 <double>] [--gt-vX0 <double>] [--gt-vY0 <double>]" << std::endl;
     std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
     std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-vX <double>] [--ampli-max-vY <double>]" << std::endl;
@@ -529,6 +548,16 @@ private:
     std::cout << "  --stdev-aircraft-vel" << std::endl;
     std::cout << "    Standard deviation of the aircraft velocity, in m/s." << std::endl;
     std::cout << "    Default: " << m_stdevAircraftVelocity << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --radar-X" << std::endl;
+    std::cout << "    Position along the X-axis of the radar, in meters." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_radar_X << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --radar-Y" << std::endl;
+    std::cout << "    Position along the Y-axis of the radar, in meters." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_radar_Y << std::endl;
     std::cout << std::endl;
     std::cout << "  --gt-X0" << std::endl;
     std::cout << "    Initial position along the X-axis of the aircraft, in meters." << std::endl;
@@ -608,15 +637,6 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
 
-  const double dt = 3.; // Period of 3s
-  const double sigmaRange = 5; // Standard deviation of the range measurement: 5m
-  const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
-  const double stdevAircraftVelocity = 0.2; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
-  const double gt_X_init = -500.; // Ground truth initial position along the X-axis, in meters
-  const double gt_Y_init = 1000.; // Ground truth initial position along the Y-axis, in meters
-  const double gt_vX_init = 100.; // Ground truth initial velocity along the X-axis, in meters
-  const double gt_vY_init = 5.; // Ground truth initial velocity along the Y-axis, in meters
-
   // Initialize the attributes of the PF
   std::vector<double> stdevsPF = { args.m_ampliMaxX /3., args.m_ampliMaxVx /3., args.m_ampliMaxY /3. , args.m_ampliMaxVy /3. };
   int seedPF = args.m_seedPF;
@@ -624,13 +644,13 @@ int main(const int argc, const char *argv[])
   int nbThreads = args.m_nbThreads;
 
   vpColVector X0(4);
-  X0[0] = 0.9 * gt_X_init; // x, i.e. 10% of error with regard to ground truth
-  X0[1] = 0.9 * gt_vX_init; // dx/dt, i.e. 10% of error with regard to ground truth
-  X0[2] = 0.9 * gt_Y_init; // y, i.e. 10% of error with regard to ground truth
-  X0[3] = 0.9 * gt_vY_init; // dy/dt, i.e. 10% of error with regard to ground truth
+  X0[0] = 0.9 * args.m_gt_X_init; // x, i.e. 10% of error with regard to ground truth
+  X0[1] = 0.9 * args.m_gt_vX_init; // dx/dt, i.e. 10% of error with regard to ground truth
+  X0[2] = 0.9 * args.m_gt_Y_init; // y, i.e. 10% of error with regard to ground truth
+  X0[3] = 0.9 * args.m_gt_vY_init; // dy/dt, i.e. 10% of error with regard to ground truth
 
   vpParticleFilter<vpColVector>::vpProcessFunction f = fx;
-  vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle, args.m_maxDistanceForLikelihood);
+  vpRadarStation radar(args.m_radar_X, args.m_radar_Y, args.m_sigmaRange, args.m_sigmaElevAngle, args.m_maxDistanceForLikelihood);
   using std::placeholders::_1;
   using std::placeholders::_2;
   vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpRadarStation::likelihood, &radar, _1, _2);
@@ -694,12 +714,12 @@ int main(const int argc, const char *argv[])
 
   // Initialize the simulation
   vpColVector ac_pos(2);
-  ac_pos[0] = gt_X_init;
-  ac_pos[1] = gt_Y_init;
+  ac_pos[0] = args.m_gt_X_init;
+  ac_pos[1] = args.m_gt_Y_init;
   vpColVector ac_vel(2);
-  ac_vel[0] = gt_vX_init;
-  ac_vel[1] = gt_vY_init;
-  vpACSimulator ac(ac_pos, ac_vel, stdevAircraftVelocity);
+  ac_vel[0] = args.m_gt_vX_init;
+  ac_vel[1] = args.m_gt_vY_init;
+  vpACSimulator ac(ac_pos, ac_vel, args.m_stdevAircraftVelocity);
   vpColVector gt_Xprec = ac_pos;
   vpColVector gt_Vprec = ac_vel;
   double averageFilteringTime = 0.;
@@ -710,30 +730,30 @@ int main(const int argc, const char *argv[])
   const unsigned int nbStepsWarmUp = args.m_nbStepsWarmUp;
   for (unsigned int i = 0; i < nbStepsWarmUp; ++i) {
     // Update object pose
-    vpColVector gt_X = ac.update(dt);
+    vpColVector gt_X = ac.update(args.m_dt);
 
     // Perform the measurement
     vpColVector z = radar.measureWithNoise(gt_X);
 
     // Use the UKF to filter the measurement
     double t0 = vpTime::measureTimeMicros();
-    filter.filter(z, dt);
+    filter.filter(z, args.m_dt);
     averageFilteringTime += vpTime::measureTimeMicros() - t0;
     gt_Xprec = gt_X;
 
     // Save the noisy position
-    computeCoordinatesFromMeasurement(z, xNoise_prec, yNoise_prec);
+    computeCoordinatesFromMeasurement(z, args.m_radar_X, args.m_radar_Y, xNoise_prec, yNoise_prec);
   }
 
   for (unsigned int i = 0; i < args.m_nbSteps; ++i) {
     // Perform the measurement
-    vpColVector gt_X = ac.update(dt);
-    vpColVector gt_V = (gt_X - gt_Xprec) / dt;
+    vpColVector gt_X = ac.update(args.m_dt);
+    vpColVector gt_V = (gt_X - gt_Xprec) / args.m_dt;
     vpColVector z = radar.measureWithNoise(gt_X);
 
     // Use the PF to filter the measurement
     double t0 = vpTime::measureTimeMicros();
-    filter.filter(z, dt);
+    filter.filter(z, args.m_dt);
     averageFilteringTime += vpTime::measureTimeMicros() - t0;
 
     vpColVector Xest = filter.computeFilteredState();
@@ -741,8 +761,8 @@ int main(const int argc, const char *argv[])
     double normErrorFilter = computeStateError(Xest, gt_X);
     meanErrorFilter += normErrorFilter;
     double xNoise = 0., yNoise = 0.;
-    computeCoordinatesFromMeasurement(z, xNoise, yNoise);
-    double normErrorNoise = computeMeasurementsError(z, gt_X);
+    computeCoordinatesFromMeasurement(z, args.m_radar_X, args.m_radar_Y, xNoise, yNoise);
+    double normErrorNoise = computeMeasurementsError(z, args.m_radar_X, args.m_radar_Y, gt_X);
     meanErrorNoise += normErrorNoise;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -752,7 +772,7 @@ int main(const int argc, const char *argv[])
       plot->plot(0, 1, i, Xest[0]);
       plot->plot(0, 2, i, xNoise);
 
-      double vxNoise = (xNoise - xNoise_prec) / dt;
+      double vxNoise = (xNoise - xNoise_prec) / args.m_dt;
       plot->plot(1, 0, i, gt_V[0]);
       plot->plot(1, 1, i, Xest[1]);
       plot->plot(1, 2, i, vxNoise);
@@ -761,7 +781,7 @@ int main(const int argc, const char *argv[])
       plot->plot(2, 1, i, Xest[2]);
       plot->plot(2, 2, i, yNoise);
 
-      double vyNoise = (yNoise - yNoise_prec) / dt;
+      double vyNoise = (yNoise - yNoise_prec) / args.m_dt;
       plot->plot(3, 0, i, gt_V[1]);
       plot->plot(3, 1, i, Xest[3]);
       plot->plot(3, 2, i, vyNoise);
