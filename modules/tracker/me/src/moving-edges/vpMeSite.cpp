@@ -48,6 +48,18 @@
 BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+struct vpMeSiteHypothesis
+{
+  vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
+  { }
+
+  vpMeSite *site;
+  double likelihood;
+  double contrast;
+
+};
+
 static bool horsImage(int i, int j, int half, int rows, int cols)
 {
   int half_1 = half + 1;
@@ -372,17 +384,6 @@ std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
   }
 
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
-
-  struct vpMeSiteHypothesis
-  {
-    vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
-    { }
-
-    vpMeSite *site;
-    double likelihood;
-    double contrast;
-
-  };
 
   // Insert into a map, where the key is the sorting criterion (negative likelihood or contrast diff)
   // and the key is the ME site + its computed likelihood and contrast.
