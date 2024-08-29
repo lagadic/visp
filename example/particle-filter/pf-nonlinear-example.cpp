@@ -29,297 +29,306 @@
  */
 
 /** \example pf-nonlinear-example.cpp
- * Example on how to use a Particle Filter (PF) on a complex non-linear use-case.
- * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
- * The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
- * The scene is observed by a pinhole camera whose coordinate frame has the origin C and which is
- * fixed to the ceiling.
+ * Example of a simple non-linear use-case of the Particle Filter (PF).
  *
- * The state vector of the PF is:
- * \f{eqnarray*}{
- *      \textbf{x}[0] &=& {}^WX_x \\
- *      \textbf{x}[1] &=& {}^WX_y \\
- *      \textbf{x}[2] &=& {}^WX_z \\
- *      \textbf{x}[3] &=& \omega \Delta t
- * \f}
+ * The system we are interested in is an aircraft flying in the sky and
+ * observed by a radar station. Its velocity is not completely constant: a Gaussian
+ * noise is added to the velocity to simulate the effect of wind on the motion of the
+ * aircraft.
  *
- * The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
- * Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
- * The measurement vector can be written as:
- * \f{eqnarray*}{
- *      \textbf{z}[2i] &=& u_i \\
- *      \textbf{z}[2i+1] &=& v_i
- * \f}
+ * We consider the plan perpendicular to the ground and passing by both the radar
+ * station and the aircraft. The x-axis corresponds to the position on the ground
+ * and the y-axis to the altitude.
  *
- * Some noise is added to the measurement vector to simulate measurements which are
+ * The state vector of the PF corresponds to a constant velocity model and can be written as:
+ *  \f[
+      \begin{array}{lcl}
+        \textbf{x}[0] &=& x \\
+        \textbf{x}[1] &=& \dot{x} \\
+        \textbf{x}[1] &=& y \\
+        \textbf{x}[2] &=& \dot{y}
+     \end{array}
+    \f]
+
+   The measurement \f$ \textbf{z} \f$ corresponds to the distance and angle between the ground and the aircraft
+   observed by the radar station. Be \f$ p_x \f$ and \f$ p_y \f$ the position of the radar station
+   along the x and y axis, the measurement vector can be written as:
+   \f[
+      \begin{array}{lcl}
+        \textbf{z}[0] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
+        \textbf{z}[1] &=& \tan^{-1}{\frac{y - p_y}{x - p_x}}
+     \end{array}
+   \f]
+
+ * Some noise is added to the measurement vector to simulate a sensor which is
  * not perfect.
- */
+ *
+ * The mean of several angles must be computed during the inference of the Particle Filter. The definition we chose to use
+   is the following:
+
+   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
+
+   As the Particle Filter inference uses a weighted mean, the actual implementation of the weighted mean
+   of several angles is the following:
+
+   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
+
+   where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
+
+   Additionnally, the addition and subtraction of angles must be carefully done, as the result
+   must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
+   the interval \f$[- \pi ; \pi ]\f$ .
+*/
 
 // ViSP includes
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpGaussRand.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-//! [Display_includes]
 #ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
-#include <visp3/gui/vpDisplayFactory.h>
 #endif
-//! [Display_includes]
-#include <visp3/vision/vpPose.h>
 
-//! [PF_includes]
+// PF includes
 #include <visp3/core/vpParticleFilter.h>
-//! [PF_includes]
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-//! [Process_function]
+namespace
+{
 /**
- * \brief Process function that makes evolve the state model {\f$ {}^WX_x \f$, \f$ {}^WX_y \f$, \f$ {}^WX_z \f$, \f$ C = \omega \Delta t \f$}
- * over time.
+ * \brief The process function, that updates the prior.
  *
- * \param[in] x The state vector
- * \return vpColVector The state vector at the next iteration.
+ * \param[in] chi A sigma point.
+ * \param[in] dt The period.
+ * \return vpColVector The sigma points projected in the future.
  */
-vpColVector fx(const vpColVector &x, const double & /*dt*/)
+vpColVector fx(const vpColVector &chi, const double &dt)
 {
-  vpColVector x_kPlus1(4);
-  x_kPlus1[0] = x[0] * std::cos(x[3]) - x[1] * std::sin(x[3]); // wX
-  x_kPlus1[1] = x[0] * std::sin(x[3]) + x[1] * std::cos(x[3]); // wY
-  x_kPlus1[2] = x[2]; // wZ
-  x_kPlus1[3] = x[3]; // omega * dt
-  return x_kPlus1;
+  vpColVector point(4);
+  point[0] = chi[1] * dt + chi[0];
+  point[1] = chi[1];
+  point[2] = chi[3] * dt + chi[2];
+  point[3] = chi[3];
+  return point;
 }
-//! [Process_function]
 
-//! [Object_simulator]
 /**
- * \brief Class that simulates the moving object.
+ * \brief Compute the X and Y coordinates from the measurements.
+ *
+ * \param z z[0] = range z[1] = elevation angle.
+ * \param x The X-axis coordinate that corresponds to the measurements.
+ * \param y The Y-axis coordinate that correspond to the measurements.
  */
-class vpObjectSimulator
+void computeCoordinatesFromMeasurement(const vpColVector &z, double &x, double &y)
+{
+  x = z[0] * std::cos(z[1]);
+  y = z[0] * std::sin(z[1]);
+}
+
+/**
+ * \brief Compute the Eucledian norm of the error between point 0 and point 1.
+ * \param x0 The X-axis coordinate of point 0.
+ * \param y0 The Y-axis coordinate of point 0.
+ * \param x1 The X-axis coordinate of point 1.
+ * \param y1 The Y-axis coordinate of point 1.
+ * \return \f[||e|| = \sqrt{(x0 - x1)^2 + (y0 - y1)^2}\f]
+ */
+double computeError(const double &x0, const double &y0, const double &x1, const double &y1)
+{
+  double dx = x0 - x1;
+  double dy = y0 - y1;
+  double error = std::sqrt(dx * dx + dy * dy);
+  return error;
+}
+
+/**
+ * \brief Compute the error between a state vector and a ground-truth vector.
+ *
+ * \param[in] state state[0] = X, state[1] = vX, state[2] = Y, state[3] = vY
+ * \param[in] gt_X gt_X[0] = X, gt_X[1] = Y
+ * \return double The error.
+ */
+double computeStateError(const vpColVector &state, const vpColVector &gt_X)
+{
+  double error = computeError(state[0], state[2], gt_X[0], gt_X[1]);
+  return error;
+}
+
+/**
+ * \brief Compute the error between a measurement vector and a ground-truth vector.
+ *
+ * \param[in] z z[0] = range z[1] = elevation angle.
+ * \param[in] gt_X gt_X[0] = X, gt_X[1] = Y
+ * \return double The error.
+ */
+double computeMeasurementsError(const vpColVector &z, const vpColVector &gt_X)
+{
+  double xMeas = 0., yMeas = 0.;
+  computeCoordinatesFromMeasurement(z, xMeas, yMeas);
+  double error = computeError(xMeas, yMeas, gt_X[0], gt_X[1]);
+  return error;
+}
+}
+
+/**
+ * \brief Class that permits to convert the position of the aircraft into
+ * range and elevation angle measurements.
+ */
+class vpRadarStation
 {
 public:
   /**
-   * \brief Construct a new vpObjectSimulator object.
+   * \brief Construct a new vpRadarStation object.
    *
-   * \param[in] R The radius of the revolution around the world frame origin.
-   * \param[in] w The pulsation of the motion.
-   * \param[in] phi The phase of the motion.
-   * \param[in] wZ The y-coordinate of the object in the world frame.
+   * \param[in] x The position on the ground of the radar.
+   * \param[in] y The altitude of the radar.
+   * \param[in] range_std The standard deviation of the range measurements.
+   * \param[in] elev_angle_std The standard deviation of the elevation angle measurements.
+   * \param[in] distMaxAllowed Maximum distance allowed for the likelihood computation.
    */
-  vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ)
-    : m_R(R)
-    , m_w(w)
-    , m_phi(phi)
-    , m_wZ(wZ)
-  { }
-
-  /**
-   * \brief Move the object to its new position, expressed in the world frame.
-   *
-   * \param[in] t The current time.
-   * \return vpColVector The new position of the object in the world frame, expressed as homogeneous coordinates.
-   */
-  vpColVector move(const double &t)
+  vpRadarStation(const double &x, const double &y, const double &range_std, const double &elev_angle_std,
+                 const double &distMaxAllowed)
+    : m_x(x)
+    , m_y(y)
+    , m_rngRange(range_std, 0., 4224)
+    , m_rngElevAngle(elev_angle_std, 0., 2112)
   {
-    vpColVector wX(4, 1.);
-    wX[0] = m_R * std::cos(m_w * t + m_phi);
-    wX[1] = m_R * std::sin(m_w * t + m_phi);
-    wX[2] = m_wZ;
-    return wX;
-  }
-
-private:
-  double m_R; // Radius of the revolution around the world frame origin.
-  double m_w; // Pulsation of the motion.
-  double m_phi; // Phase of the motion.
-  const double m_wZ; // The z-coordinate of the object in the world frame.
-};
-//! [Object_simulator]
-
-//! [Markers_class]
-/**
- * \brief Class that permits to convert the 3D position of the object into measurements.
- */
-class vpMarkersMeasurements
-{
-public:
-  /**
-   * \brief Construct a new vpMarkersMeasurements object.
-   *
-   * \param[in] cam The camera parameters.
-   * \param[in] cMw The pose of the world frame with regard to the camera frame.
-   * \param[in] wRo The rotation matrix expressing the rotation between the world frame and object frame.
-   * \param[in] markers The position of the markers in the object frame.
-   * \param[in] sigmaDistance Standard deviation of the Gaussian function used for the computation of the likelihood.
-   * An error greater than 3 times this standard deviation will lead to a likelihood equal to 0.
-   * \param[in] noise_stdev The standard deviation for the noise generator
-   * \param[in] seed The seed for the noise generator
-   */
-  vpMarkersMeasurements(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMw, const vpRotationMatrix &wRo,
-                        const std::vector<vpColVector> &markers, const double &sigmaDistance,
-                        const double &noise_stdev, const long &seed)
-    : m_cam(cam)
-    , m_cMw(cMw)
-    , m_wRo(wRo)
-    , m_markers(markers)
-    , m_rng(noise_stdev, 0., seed)
-  {
+    double sigmaDistance = distMaxAllowed / 3.;
     double sigmaDistanceSquared = sigmaDistance * sigmaDistance;
     m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
     m_constantExpDenominator = -1. / (2. * sigmaDistanceSquared);
   }
 
-  //! [Likelihood_function]
   /**
-   * \brief Compute the likelihood of a particle compared to the measurements.
-   * The likelihood equals zero if the particle is completely different of
-   * the measurements and equals one if it matches completely.
-   * The chosen likelihood is a Gaussian function that penalizes the mean distance
-   * between the projection of the markers corresponding to the particle position
-   * and the measurements of the markers in the image.
+   * \brief Convert a particle of the Particle Filter into the measurement space.
    *
-   * \param[in] x The particle.
-   * \param[in] meas The measurement vector. meas[2i] = u_i meas[2i + 1] = v_i .
-   * \return double The likelihood of the particle.
+   * \param chi The prior.
+   * \return vpColVector The prior expressed in the measurement space.
    */
-  double likelihoodParticle(const vpColVector &x, const vpColVector &meas)
+  vpColVector state_to_measurement(const vpColVector &chi)
   {
-    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
-    double likelihood = 0.;
-    vpHomogeneousMatrix wMo;
-    vpTranslationVector wTo(x[0], x[1], x[2]);
-    wMo.build(wTo, m_wRo);
-    const unsigned int sizePt2D = 2;
-    const unsigned int idX = 0, idY = 1, idZ = 2;
-    double sumError = 0.;
-    for (unsigned int i = 0; i < nbMarkers; ++i) {
-      vpColVector cX = m_cMw * wMo * m_markers[i];
-      vpImagePoint projParticle;
-      vpMeterPixelConversion::convertPoint(m_cam, cX[idX] / cX[idZ], cX[idY] / cX[idZ], projParticle);
-      vpImagePoint measPt(meas[sizePt2D * i + 1], meas[sizePt2D * i]);
-      double error = vpImagePoint::sqrDistance(projParticle, measPt);
-      sumError += error;
-    }
-    likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbMarkers)) * m_constantDenominator;
+    vpColVector meas(2);
+    double dx = chi[0] - m_x;
+    double dy = chi[2] - m_y;
+    meas[0] = std::sqrt(dx * dx + dy * dy);
+    meas[1] = std::atan2(dy, dx);
+    return meas;
+  }
+
+  /**
+   * \brief Perfect measurement of the range and elevation angle that
+   * correspond to pos.
+   *
+   * \param pos The actual position of the aircraft (pos[0]: projection of the position
+   * on the ground, pos[1]: altitude).
+   * \return vpColVector [0] the range [1] the elevation angle.
+   */
+  vpColVector measureGT(const vpColVector &pos)
+  {
+    double dx = pos[0] - m_x;
+    double dy = pos[1] - m_y;
+    double range = std::sqrt(dx * dx + dy * dy);
+    double elevAngle = std::atan2(dy, dx);
+    vpColVector measurements(2);
+    measurements[0] = range;
+    measurements[1] = elevAngle;
+    return measurements;
+  }
+
+  /**
+   * \brief Noisy measurement of the range and elevation angle that
+   * correspond to pos.
+   *
+   * \param pos The actual position of the aircraft (pos[0]: projection of the position
+   * on the ground, pos[1]: altitude).
+   * \return vpColVector [0] the range [1] the elevation angle.
+   */
+  vpColVector measureWithNoise(const vpColVector &pos)
+  {
+    vpColVector measurementsGT = measureGT(pos);
+    vpColVector measurementsNoisy = measurementsGT;
+    measurementsNoisy[0] += m_rngRange();
+    measurementsNoisy[1] += m_rngElevAngle();
+    return measurementsNoisy;
+  }
+
+  /**
+   * \brief Compute the likelihood of a particle  (value between 0. and 1.)
+   * knowing the measurements.
+   * The likelihood function is based on a Gaussian function that penalizes
+   * a particle that is "far" from the position corresponding to the measurements.
+   *
+   * \param[in] particle The particle state.
+   * \param[in] meas The measurements.
+   * \return double The likelihood of a particle  (value between 0. and 1.)
+   */
+  double likelihood(const vpColVector &particle, const vpColVector &meas)
+  {
+    double xParticle = particle[0];
+    double yParticle = particle[2];
+    double xMeas = 0., yMeas = 0.;
+    computeCoordinatesFromMeasurement(meas, xMeas, yMeas);
+    double dist = computeError(xParticle, yParticle, xMeas, yMeas);
+    double likelihood = std::exp(m_constantExpDenominator * dist) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
     return likelihood;
   }
-  //! [Likelihood_function]
-
-  /**
-   * \brief Convert the state of the PF into the measurement space.
-   *
-   * \param[in] x The state of the PF.
-   * \return vpColVector The state expressed in the measurement space.
-   */
-  vpColVector state_to_measurement(const vpColVector &x)
-  {
-    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
-    vpColVector meas(2*nbMarkers);
-    vpHomogeneousMatrix wMo;
-    vpTranslationVector wTo(x[0], x[1], x[2]);
-    wMo.build(wTo, m_wRo);
-    for (unsigned int i = 0; i < nbMarkers; ++i) {
-      vpColVector cX = m_cMw * wMo * m_markers[i];
-      double u = 0., v = 0.;
-      vpMeterPixelConversion::convertPoint(m_cam, cX[0] / cX[2], cX[1] / cX[2], u, v);
-      meas[2*i] = u;
-      meas[2*i + 1] = v;
-    }
-    return meas;
-  }
-
-  //! [GT_measurements]
-  /**
-   * \brief Perfect measurement of the projection of the markers in the image when the object
-   * is located at \b wX.
-   *
-   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
-   * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
-   */
-  vpColVector measureGT(const vpColVector &wX)
-  {
-    unsigned int nbMarkers = static_cast<unsigned int>(m_markers.size());
-    vpColVector meas(2*nbMarkers);
-    vpHomogeneousMatrix wMo;
-    vpTranslationVector wTo(wX[0], wX[1], wX[2]);
-    wMo.build(wTo, m_wRo);
-    for (unsigned int i = 0; i < nbMarkers; ++i) {
-      vpColVector cX = m_cMw * wMo * m_markers[i];
-      double u = 0., v = 0.;
-      vpMeterPixelConversion::convertPoint(m_cam, cX[0] / cX[2], cX[1] / cX[2], u, v);
-      meas[2*i] = u;
-      meas[2*i + 1] = v;
-    }
-    return meas;
-  }
-  //! [GT_measurements]
-
-  //! [Noisy_measurements]
-  /**
-   * \brief Noisy measurement of the projection of the markers in the image when the object
-   * is located at \b wX.
-   *
-   * \param[in] wX The actual position of the robot (wX[0]: x, wX[1]: y, wX[2] = z).
-   * \return vpColVector [2*i] u_i [2*i + 1] v_i where i is the index of the marker.
-   */
-  vpColVector measureWithNoise(const vpColVector &wX)
-  {
-    vpColVector measurementsGT = measureGT(wX);
-    vpColVector measurementsNoisy = measurementsGT;
-    unsigned int sizeMeasurement = measurementsGT.size();
-    for (unsigned int i = 0; i < sizeMeasurement; ++i) {
-      measurementsNoisy[i] += m_rng();
-    }
-    return measurementsNoisy;
-  }
-  //! [Noisy_measurements]
 
 private:
-  vpCameraParameters m_cam; // The camera parameters
-  vpHomogeneousMatrix m_cMw; // The pose of the world frame with regard to the camera frame.
-  vpRotationMatrix m_wRo; // The rotation matrix that expresses the rotation between the world frame and object frame.
-  std::vector<vpColVector> m_markers; // The position of the markers in the object frame.
-  double m_constantDenominator; // Denominator of the Gaussian function used for the likelihood computation.
-  double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
-  vpGaussRand m_rng; // Noise simulator for the measurements
+  double m_x; // The position on the ground of the radar
+  double m_y; // The altitude of the radar
+  vpGaussRand m_rngRange; // Noise simulator for the range measurement
+  vpGaussRand m_rngElevAngle; // Noise simulator for the elevation angle measurement
+  double m_constantDenominator; // Denominator of the Gaussian function used in the likelihood computation.
+  double m_constantExpDenominator; // Denominator of the exponential in the Gaussian function used in the likelihood computation.
 };
-//! [Markers_class]
 
-//! [Pose_for_display]
 /**
- * \brief Compute the pose from the 3D coordinates of the markers and their coordinates in pixels
- * in the image.
- *
- * \param[in] point The 3D coordinates of the markers in the object frame.
- * \param[in] ip The pixel coordinates of the markers in the image.
- * \param[in] cam The camera parameters used to acquire the image.
- * \return vpHomogeneousMatrix The pose of the object in the camera frame.
+ * \brief Class to simulate a flying aircraft.
  */
-vpHomogeneousMatrix computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip, const vpCameraParameters &cam)
+class vpACSimulator
 {
-  vpPose pose;
-  double x = 0, y = 0;
-  for (unsigned int i = 0; i < point.size(); i++) {
-    vpPixelMeterConversion::convertPoint(cam, ip[i], x, y);
-    point[i].set_x(x);
-    point[i].set_y(y);
-    pose.addPoint(point[i]);
+public:
+  /**
+   * \brief Construct a new vpACSimulator object.
+   *
+   * \param[in] X0 Initial position of the aircraft.
+   * \param[in] vel Velocity of the aircraft.
+   * \param[in] vel_std Standard deviation of the variation of the velocity.
+   */
+  vpACSimulator(const vpColVector &X0, const vpColVector &vel, const double &vel_std)
+    : m_pos(X0)
+    , m_vel(vel)
+    , m_rngVel(vel_std, 0.)
+  {
+
   }
 
-  vpHomogeneousMatrix cMo;
-  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-  return cMo;
-}
-//! [Pose_for_display]
+  /**
+   * \brief Compute the new position of the aircraft after dt seconds have passed
+   * since the last update.
+   *
+   * \param[in] dt Period since the last update.
+   * \return vpColVector The new position of the aircraft.
+   */
+  vpColVector update(const double &dt)
+  {
+    vpColVector dx = m_vel * dt;
+    dx[0] += m_rngVel() * dt;
+    dx[1] += m_rngVel() * dt;
+    m_pos += dx;
+    return m_pos;
+  }
+
+private:
+  vpColVector m_pos; // Position of the simulated aircraft
+  vpColVector m_vel; // Velocity of the simulated aircraft
+  vpGaussRand m_rngVel; // Random generator for slight variations of the velocity of the aircraft
+};
 
 struct SoftwareArguments
 {
@@ -327,14 +336,22 @@ struct SoftwareArguments
   static const int SOFTWARE_CONTINUE = 42;
   bool m_useDisplay; //!< If true, activate the plot and the renderer if VISP_HAVE_DISPLAY is defined.
   unsigned int m_nbStepsWarmUp; //!< Number of steps for the warmup phase.
-  unsigned int m_nbSteps; //!< ?umber of steps for the main loop.
+  unsigned int m_nbSteps; //!< Number of steps for the main loop.
+  double m_dt; // Period, expressed in seconds
+  double m_sigmaRange; // Standard deviation of the range measurement, expressed in meters.
+  double m_sigmaElevAngle; // Standard deviation of the elevation angle measurent, expressed in radians.
+  double m_stdevAircraftVelocity; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
+  double m_gt_X_init; // Ground truth initial position along the X-axis, in meters
+  double m_gt_Y_init; // Ground truth initial position along the Y-axis, in meters
+  double m_gt_vX_init; // Ground truth initial velocity along the X-axis, in meters
+  double m_gt_vY_init; // Ground truth initial velocity along the Y-axis, in meters
   // --- PF parameters---
   unsigned int m_N; //!< The number of particles.
   double m_maxDistanceForLikelihood; //!< The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
   double m_ampliMaxX; //!< Amplitude max of the noise for the state component corresponding to the X coordinate.
   double m_ampliMaxY; //!< Amplitude max of the noise for the state component corresponding to the Y coordinate.
-  double m_ampliMaxZ; //!< Amplitude max of the noise for the state component corresponding to the Z coordinate.
-  double m_ampliMaxOmega; //!< Amplitude max of the noise for the state component corresponding to the pulsation.
+  double m_ampliMaxVx; //!< Amplitude max of the noise for the state component corresponding to the velocity along the X-axis.
+  double m_ampliMaxVy; //!< Amplitude max of the noise for the state component corresponding to the velocity along the Y-axis.
   long m_seedPF; //!< Seed for the random generators of the PF.
   int m_nbThreads; //!< Number of thread to use in the Particle Filter.
 
@@ -342,12 +359,20 @@ struct SoftwareArguments
     : m_useDisplay(true)
     , m_nbStepsWarmUp(200)
     , m_nbSteps(300)
+    , m_dt(3.)
+    , m_sigmaRange(5)
+    , m_sigmaElevAngle(vpMath::rad(0.5))
+    , m_stdevAircraftVelocity(0.2)
+    , m_gt_X_init(-500.)
+    , m_gt_Y_init(1000.)
+    , m_gt_vX_init(10.)
+    , m_gt_vY_init(5.)
     , m_N(500)
-    , m_maxDistanceForLikelihood(10.)
-    , m_ampliMaxX(0.02)
-    , m_ampliMaxY(0.02)
-    , m_ampliMaxZ(0.01)
-    , m_ampliMaxOmega(0.02)
+    , m_maxDistanceForLikelihood(50.)
+    , m_ampliMaxX(20.)
+    , m_ampliMaxY(200.)
+    , m_ampliMaxVx(1.)
+    , m_ampliMaxVy(0.5)
     , m_seedPF(4224)
     , m_nbThreads(1)
   { }
@@ -363,6 +388,38 @@ struct SoftwareArguments
       }
       else if ((arg == "--nb-steps-warmup") && ((i+1) < argc)) {
         m_nbStepsWarmUp = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--dt") && ((i+1) < argc)) {
+        m_dt = std::atoi(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--stdev-range") && ((i+1) < argc)) {
+        m_sigmaRange = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--stdev-elev-angle") && ((i+1) < argc)) {
+        m_sigmaElevAngle = vpMath::rad(std::atof(argv[i + 1]));
+        ++i;
+      }
+      else if ((arg == "--stdev-aircraft-vel") && ((i+1) < argc)) {
+        m_stdevAircraftVelocity = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--gt-X0") && ((i+1) < argc)) {
+        m_gt_X_init = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--gt-Y0") && ((i+1) < argc)) {
+        m_gt_Y_init = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--gt-vX0") && ((i+1) < argc)) {
+        m_gt_vX_init = std::atof(argv[i + 1]);
+        ++i;
+      }
+      else if ((arg == "--gt-vY0") && ((i+1) < argc)) {
+        m_gt_vY_init = std::atof(argv[i + 1]);
         ++i;
       }
       else if ((arg == "--max-distance-likelihood") && ((i+1) < argc)) {
@@ -389,12 +446,12 @@ struct SoftwareArguments
         m_ampliMaxY = std::atof(argv[i + 1]);
         ++i;
       }
-      else if ((arg == "--ampli-max-Z") && ((i+1) < argc)) {
-        m_ampliMaxZ = std::atof(argv[i + 1]);
+      else if ((arg == "--ampli-max-vX") && ((i+1) < argc)) {
+        m_ampliMaxVx = std::atof(argv[i + 1]);
         ++i;
       }
-      else if ((arg == "--ampli-max-omega") && ((i+1) < argc)) {
-        m_ampliMaxOmega = std::atof(argv[i + 1]);
+      else if ((arg == "--ampli-max-vY") && ((i+1) < argc)) {
+        m_ampliMaxVy = std::atof(argv[i + 1]);
         ++i;
       }
       else if (arg == "-d") {
@@ -438,8 +495,10 @@ private:
   {
     std::cout << "SYNOPSIS" << std::endl;
     std::cout << "  " << softName << " [--nb-steps-main <uint>] [--nb-steps-warmup <uint>]" << std::endl;
+    std::cout << "  [--dt <double>] [--stdev-range <double>] [--stdev-elev-angle <double>] [--stdev-aircraft-vel <double>]" << std::endl;
+    std::cout << "  [--gt-X0 <double>] [--gt-X0 <double>] [--gt-Y0 <double>] [--gt-vX0 <double>] [--gt-vY0 <double>]" << std::endl;
     std::cout << "  [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>]" << std::endl;
-    std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-Z <double>] [--ampli-max-omega <double>]" << std::endl;
+    std::cout << "  [--ampli-max-X <double>] [--ampli-max-Y <double>] [--ampli-max-vX <double>] [--ampli-max-vY <double>]" << std::endl;
     std::cout << "  [-d, --no-display] [-h]" << std::endl;
   }
 
@@ -454,6 +513,42 @@ private:
     std::cout << "  --nb-steps-warmup" << std::endl;
     std::cout << "    Number of steps in the warmup loop." << std::endl;
     std::cout << "    Default: " << m_nbStepsWarmUp << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --dt" << std::endl;
+    std::cout << "    Timestep of the simulation, in seconds." << std::endl;
+    std::cout << "    Default: " << m_dt << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --stdev-range" << std::endl;
+    std::cout << "    Standard deviation of the range measurements, in meters." << std::endl;
+    std::cout << "    Default: " << m_sigmaRange << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --stdev-elev-angle" << std::endl;
+    std::cout << "    Standard deviation of the elevation angle measurements, in degrees." << std::endl;
+    std::cout << "    Default: " << vpMath::deg(m_sigmaElevAngle) << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --stdev-aircraft-vel" << std::endl;
+    std::cout << "    Standard deviation of the aircraft velocity, in m/s." << std::endl;
+    std::cout << "    Default: " << m_stdevAircraftVelocity << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --gt-X0" << std::endl;
+    std::cout << "    Initial position along the X-axis of the aircraft, in meters." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_gt_X_init << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --gt-Y0" << std::endl;
+    std::cout << "    Initial position along the Y-axis of the aircraft, in meters." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_gt_Y_init << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --gt-vX0" << std::endl;
+    std::cout << "    Initial velocity along the X-axis of the aircraft, in m/s." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_gt_vX_init << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --gt-vY0" << std::endl;
+    std::cout << "    Initial velocity along the Y-axis of the aircraft, in m/s." << std::endl;
+    std::cout << "    Be careful, because singularities happen if the aircraft flies above the radar." << std::endl;
+    std::cout << "    Default: " << m_gt_vY_init << std::endl;
     std::cout << std::endl;
     std::cout << "  --max-distance-likelihood" << std::endl;
     std::cout << "    Maximum mean distance of the projection of the markers corresponding" << std::endl;
@@ -482,13 +577,13 @@ private:
     std::cout << "    Maximum amplitude of the noise added to a particle along the Y-axis." << std::endl;
     std::cout << "    Default: " << m_ampliMaxY << std::endl;
     std::cout << std::endl;
-    std::cout << "  --ampli-max-Z" << std::endl;
-    std::cout << "    Maximum amplitude of the noise added to a particle along the Z-axis." << std::endl;
-    std::cout << "    Default: " << m_ampliMaxZ << std::endl;
+    std::cout << "  --ampli-max-vX" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle to the velocity along the X-axis component." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxVx << std::endl;
     std::cout << std::endl;
-    std::cout << "  --ampli-max-omega" << std::endl;
-    std::cout << "    Maximum amplitude of the noise added to a particle affecting the pulsation of the motion." << std::endl;
-    std::cout << "    Default: " << m_ampliMaxOmega << std::endl;
+    std::cout << "  --ampli-max-vY" << std::endl;
+    std::cout << "    Maximum amplitude of the noise added to a particle to the velocity along the Y-axis component." << std::endl;
+    std::cout << "    Default: " << m_ampliMaxVy << std::endl;
     std::cout << std::endl;
     std::cout << "  -d, --no-display" << std::endl;
     std::cout << "    Deactivate display." << std::endl;
@@ -513,240 +608,177 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
 
-  //! [Constants_for_simulation]
-  const double dt = 0.001; // Period of 0.1s
-  const double sigmaMeasurements = 2.; // Standard deviation of the measurements: 2 pixels
-  const double radius = 0.25; // Radius of revolution of 0.25m
-  const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
-  const double phi = 2; // Phase of the motion of revolution
-  const long seedMeasurements = 42; // Seed for the measurements random generator
-  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, -0.05, 0., 1.})
-                                           , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
-  const unsigned int nbMarkers = static_cast<unsigned int>(markers.size());
-  std::vector<vpPoint> markersAsVpPoint;
-  for (unsigned int i = 0; i < nbMarkers; ++i) {
-    vpColVector marker = markers[i];
-    markersAsVpPoint.push_back(vpPoint(marker[0], marker[1], marker[2]));
-  }
-
-  vpHomogeneousMatrix cMw; // Pose of the world frame with regard to the camera frame
-  cMw[0][0] = 1.; cMw[0][1] = 0.; cMw[0][2] = 0.; cMw[0][3] = 0.2;
-  cMw[1][0] = 0.; cMw[1][1] = -1.; cMw[1][2] = 0.; cMw[1][3] = 0.3;
-  cMw[2][0] = 0.; cMw[2][1] = 0.; cMw[2][2] = -1.; cMw[2][3] = 1.;
-
-  vpHomogeneousMatrix wMo; // Pose of the object frame with regard to the world frame
-  wMo[0][0] = 1.; wMo[0][1] = 0.; wMo[0][2] = 0.; wMo[0][3] = radius;
-  wMo[1][0] = 0.; wMo[1][1] = 1.; wMo[1][2] = 0.; wMo[1][3] = 0;
-  wMo[2][0] = 0.; wMo[2][1] = 0.; wMo[2][2] = 1.; wMo[2][3] = 0.2;
-  vpRotationMatrix wRo; // Rotation between the object frame and world frame
-  wMo.extract(wRo);
-  const double wZ = wMo[2][3];
-  //! [Constants_for_simulation]
-
-  //! [Camera_for_measurements]
-  // Create a camera parameter container
-  // Camera initialization with a perspective projection without distortion model
-  const double px = 600., py = 600., u0 = 320., v0 = 240.;
-  vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(px, py, u0, v0);
-  //! [Camera_for_measurements]
+  const double dt = 3.; // Period of 3s
+  const double sigmaRange = 5; // Standard deviation of the range measurement: 5m
+  const double sigmaElevAngle = vpMath::rad(0.5); // Standard deviation of the elevation angle measurent: 0.5deg
+  const double stdevAircraftVelocity = 0.2; // Standard deviation of the velocity of the simulated aircraft, to make it deviate a bit from the constant velocity model
+  const double gt_X_init = -500.; // Ground truth initial position along the X-axis, in meters
+  const double gt_Y_init = 1000.; // Ground truth initial position along the Y-axis, in meters
+  const double gt_vX_init = 100.; // Ground truth initial velocity along the X-axis, in meters
+  const double gt_vY_init = 5.; // Ground truth initial velocity along the Y-axis, in meters
 
   // Initialize the attributes of the PF
-  //! [Constants_for_the_PF]
-  const double maxDistanceForLikelihood = args.m_maxDistanceForLikelihood; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
-  const double sigmaLikelihood = maxDistanceForLikelihood / 3.; // The standard deviation of likelihood function.
-  const unsigned int nbParticles = args.m_N; // Number of particles to use
-  const double ampliMaxX = args.m_ampliMaxX, ampliMaxY = args.m_ampliMaxY, ampliMaxZ = args.m_ampliMaxZ;
-  const double ampliMaxOmega = args.m_ampliMaxOmega;
-  const std::vector<double> stdevsPF = { ampliMaxX/3., ampliMaxY/3., ampliMaxZ/3., ampliMaxOmega/3. }; // Standard deviation for each state component
-  const long seedPF = args.m_seedPF; // Seed for the random generators of the PF
-  const int nbThread = args.m_nbThreads;
-  //! [Constants_for_the_PF]
+  std::vector<double> stdevsPF = { args.m_ampliMaxX /3., args.m_ampliMaxVx /3., args.m_ampliMaxY /3. , args.m_ampliMaxVy /3. };
+  int seedPF = args.m_seedPF;
+  unsigned int nbParticles = args.m_N;
+  int nbThreads = args.m_nbThreads;
 
-  //! [Initial_estimates]
-  vpColVector X0(4U); // The initial guess for the state
-  X0[0] = radius; // wX = radius m
-  X0[1] = 0.; // wY = 0m
-  X0[2] = 0.95 * wZ; // Wrong estimation of the position along the z-axis: error of 5%
-  X0[3] = 0.95 * w * dt; // Wrong estimation of the pulsation: error of 5%
-  //! [Initial_estimates]
+  vpColVector X0(4);
+  X0[0] = 0.9 * gt_X_init; // x, i.e. 10% of error with regard to ground truth
+  X0[1] = 0.9 * gt_vX_init; // dx/dt, i.e. 10% of error with regard to ground truth
+  X0[2] = 0.9 * gt_Y_init; // y, i.e. 10% of error with regard to ground truth
+  X0[3] = 0.9 * gt_vY_init; // dy/dt, i.e. 10% of error with regard to ground truth
 
-  //! [Init_functions]
-  vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
-  vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaLikelihood, sigmaMeasurements, seedMeasurements);
+  vpParticleFilter<vpColVector>::vpProcessFunction f = fx;
+  vpRadarStation radar(0., 0., sigmaRange, sigmaElevAngle, args.m_maxDistanceForLikelihood);
   using std::placeholders::_1;
   using std::placeholders::_2;
-  vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihoodParticle, &markerMeas, _1, _2);
+  vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpRadarStation::likelihood, &radar, _1, _2);
   vpParticleFilter<vpColVector>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<vpColVector>::simpleResamplingCheck;
   vpParticleFilter<vpColVector>::vpResamplingFunction resamplingFunc = vpParticleFilter<vpColVector>::simpleImportanceResampling;
-  //! [Init_functions]
 
-  //! [Init_PF]
   // Initialize the PF
-  vpParticleFilter<vpColVector> filter(nbParticles, stdevsPF, seedPF, nbThread);
-  filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
-  //! [Init_PF]
+  vpParticleFilter<vpColVector> filter(nbParticles, stdevsPF, seedPF, nbThreads);
+  filter.init(X0, f, likelihoodFunc, checkResamplingFunc, resamplingFunc);
 
-  //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
-  // Initialize the plot
   vpPlot *plot = nullptr;
   if (args.m_useDisplay) {
-    plot = new vpPlot(1);
+  // Initialize the plot
+    plot = new vpPlot(4);
     plot->initGraph(0, 3);
-    plot->setTitle(0, "Position of the robot wX");
-    plot->setUnitX(0, "Position along x(m)");
-    plot->setUnitY(0, "Position along y (m)");
+    plot->setTitle(0, "Position along X-axis");
+    plot->setUnitX(0, "Time (s)");
+    plot->setUnitY(0, "Position (m)");
     plot->setLegend(0, 0, "GT");
     plot->setLegend(0, 1, "Filtered");
     plot->setLegend(0, 2, "Measure");
-    plot->initRange(0, -1.25 * radius, 1.25 * radius, -1.25 * radius, 1.25 * radius);
     plot->setColor(0, 0, vpColor::red);
     plot->setColor(0, 1, vpColor::blue);
     plot->setColor(0, 2, vpColor::black);
+
+    plot->initGraph(1, 3);
+    plot->setTitle(1, "Velocity along X-axis");
+    plot->setUnitX(1, "Time (s)");
+    plot->setUnitY(1, "Velocity (m/s)");
+    plot->setLegend(1, 0, "GT");
+    plot->setLegend(1, 1, "Filtered");
+    plot->setLegend(1, 2, "Measure");
+    plot->setColor(1, 0, vpColor::red);
+    plot->setColor(1, 1, vpColor::blue);
+    plot->setColor(1, 2, vpColor::black);
+
+    plot->initGraph(2, 3);
+    plot->setTitle(2, "Position along Y-axis");
+    plot->setUnitX(2, "Time (s)");
+    plot->setUnitY(2, "Position (m)");
+    plot->setLegend(2, 0, "GT");
+    plot->setLegend(2, 1, "Filtered");
+    plot->setLegend(2, 2, "Measure");
+    plot->setColor(2, 0, vpColor::red);
+    plot->setColor(2, 1, vpColor::blue);
+    plot->setColor(2, 2, vpColor::black);
+
+    plot->initGraph(3, 3);
+    plot->setTitle(3, "Velocity along Y-axis");
+    plot->setUnitX(3, "Time (s)");
+    plot->setUnitY(3, "Velocity (m/s)");
+    plot->setLegend(3, 0, "GT");
+    plot->setLegend(3, 1, "Filtered");
+    plot->setLegend(3, 2, "Measure");
+    plot->setColor(3, 0, vpColor::red);
+    plot->setColor(3, 1, vpColor::blue);
+    plot->setColor(3, 2, vpColor::black);
   }
 #endif
-  //! [Init_plot]
 
-  //! [Init_renderer]
-  // Initialize the display
-  // Depending on the detected third party libraries, we instantiate here the
-  // first video device which is available
-#ifdef VISP_HAVE_DISPLAY
-  std::shared_ptr<vpDisplay> d;
-  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(static_cast<unsigned char>(255)));
-  if (args.m_useDisplay) {
-    d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
-  }
-#endif
-  //! [Init_renderer]
-
-  //! [Init_simu]
   // Initialize the simulation
-  vpObjectSimulator object(radius, w, phi, wZ);
-  vpColVector object_pos(4U, 0.);
-  object_pos[3] = 1.;
-  //! [Init_simu]
-
+  vpColVector ac_pos(2);
+  ac_pos[0] = gt_X_init;
+  ac_pos[1] = gt_Y_init;
+  vpColVector ac_vel(2);
+  ac_vel[0] = gt_vX_init;
+  ac_vel[1] = gt_vY_init;
+  vpACSimulator ac(ac_pos, ac_vel, stdevAircraftVelocity);
+  vpColVector gt_Xprec = ac_pos;
+  vpColVector gt_Vprec = ac_vel;
   double averageFilteringTime = 0.;
+  double meanErrorFilter = 0., meanErrorNoise = 0.;
+  double xNoise_prec = 0., yNoise_prec = 0.;
 
-  //! [Warmup_loop]
+  // Warmup loop
   const unsigned int nbStepsWarmUp = args.m_nbStepsWarmUp;
   for (unsigned int i = 0; i < nbStepsWarmUp; ++i) {
     // Update object pose
-    object_pos = object.move(dt * static_cast<double>(i));
+    vpColVector gt_X = ac.update(dt);
 
     // Perform the measurement
-    vpColVector z = markerMeas.measureWithNoise(object_pos);
+    vpColVector z = radar.measureWithNoise(gt_X);
 
     // Use the UKF to filter the measurement
     double t0 = vpTime::measureTimeMicros();
     filter.filter(z, dt);
     averageFilteringTime += vpTime::measureTimeMicros() - t0;
+    gt_Xprec = gt_X;
+
+    // Save the noisy position
+    computeCoordinatesFromMeasurement(z, xNoise_prec, yNoise_prec);
   }
-  //! [Warmup_loop]
 
-  //! [Simu_loop]
-  const unsigned int nbSteps = args.m_nbSteps;
-  const double invNbSteps = 1. / static_cast<double>(nbSteps);
-  double meanErrorFilter = 0.;
-  double meanErrorNoise = 0.;
-
-  for (unsigned int i = 0; i < nbSteps; ++i) {
-    //! [Update obj pose]
-    // Update object pose
-    object_pos = object.move(dt * static_cast<double>(i));
-    //! [Update obj pose]
-
-    //! [Update_measurement]
+  for (unsigned int i = 0; i < args.m_nbSteps; ++i) {
     // Perform the measurement
-    vpColVector z = markerMeas.measureWithNoise(object_pos);
-    //! [Update_measurement]
+    vpColVector gt_X = ac.update(dt);
+    vpColVector gt_V = (gt_X - gt_Xprec) / dt;
+    vpColVector z = radar.measureWithNoise(gt_X);
 
+    // Use the PF to filter the measurement
     double t0 = vpTime::measureTimeMicros();
-    //! [Perform_filtering]
-    // Use the UKF to filter the measurement
     filter.filter(z, dt);
-    //! [Perform_filtering]
     averageFilteringTime += vpTime::measureTimeMicros() - t0;
 
-    //! [Get_filtered_state]
     vpColVector Xest = filter.computeFilteredState();
-    //! [Get_filtered_state]
+    vpColVector gtState = vpColVector({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
+    double normErrorFilter = computeStateError(Xest, gt_X);
+    meanErrorFilter += normErrorFilter;
+    double xNoise = 0., yNoise = 0.;
+    computeCoordinatesFromMeasurement(z, xNoise, yNoise);
+    double normErrorNoise = computeMeasurementsError(z, gt_X);
+    meanErrorNoise += normErrorNoise;
 
-    //! [Noisy_pose]
-    // Prepare the pose computation:
-    // the image points corresponding to the noisy markers are needed
-    std::vector<vpImagePoint> ip;
-    for (unsigned int id = 0; id < nbMarkers; ++id) {
-      vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
-      ip.push_back(markerProjNoisy);
-    }
-
-    // Compute the pose using the noisy markers
-    vpHomogeneousMatrix cMo_noisy = computePose(markersAsVpPoint, ip, cam);
-    vpHomogeneousMatrix wMo_noisy = cMw.inverse() * cMo_noisy;
-    //! [Noisy_pose]
-
-  //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
     if (args.m_useDisplay) {
-      //! [Update_plot]
-      // Plot the ground truth
-      plot->plot(0, 0, object_pos[0], object_pos[1]);
+    // Plot the ground truth, measurement and filtered state
+      plot->plot(0, 0, i, gt_X[0]);
+      plot->plot(0, 1, i, Xest[0]);
+      plot->plot(0, 2, i, xNoise);
 
-      // Plot the filtered state
-      plot->plot(0, 1, Xest[0], Xest[1]);
+      double vxNoise = (xNoise - xNoise_prec) / dt;
+      plot->plot(1, 0, i, gt_V[0]);
+      plot->plot(1, 1, i, Xest[1]);
+      plot->plot(1, 2, i, vxNoise);
 
-      // Plot the noisy pose
-      double wXnoisy = wMo_noisy[0][3];
-      double wYnoisy = wMo_noisy[1][3];
-      plot->plot(0, 2, wXnoisy, wYnoisy);
-      //! [Update_plot]
+      plot->plot(2, 0, i, gt_X[1]);
+      plot->plot(2, 1, i, Xest[2]);
+      plot->plot(2, 2, i, yNoise);
 
-      //! [Update_renderer]
-      // Display the projection of the markers
-      vpDisplay::display(Idisp);
-      vpColVector zGT = markerMeas.measureGT(object_pos);
-      vpColVector zFilt = markerMeas.state_to_measurement(Xest);
-      for (unsigned int id = 0; id < nbMarkers; ++id) {
-        vpImagePoint markerProjGT(zGT[2*id + 1], zGT[2*id]);
-        vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
-
-        vpImagePoint markerProjFilt(zFilt[2*id + 1], zFilt[2*id]);
-        vpDisplay::displayCross(Idisp, markerProjFilt, 5, vpColor::blue);
-
-        vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
-        vpDisplay::displayCross(Idisp, markerProjNoisy, 5, vpColor::black);
-      }
-
-      vpImagePoint ipText(20, 20);
-      vpDisplay::displayText(Idisp, ipText, std::string("GT"), vpColor::red);
-      ipText.set_i(ipText.get_i() + 20);
-      vpDisplay::displayText(Idisp, ipText, std::string("Filtered"), vpColor::blue);
-      ipText.set_i(ipText.get_i() + 20);
-      vpDisplay::displayText(Idisp, ipText, std::string("Measured"), vpColor::black);
-      vpDisplay::flush(Idisp);
-      vpTime::wait(40);
-      //! [Update_renderer]
+      double vyNoise = (yNoise - yNoise_prec) / dt;
+      plot->plot(3, 0, i, gt_V[1]);
+      plot->plot(3, 1, i, Xest[3]);
+      plot->plot(3, 2, i, vyNoise);
     }
 #endif
-    //! [Update_displays]
 
-    //! [Compute_error]
-    double error = std::sqrt(std::pow(Xest[0] - object_pos[0], 2) + std::pow(Xest[1] - object_pos[1], 2) + std::pow(Xest[2] - object_pos[2], 2));
-    meanErrorFilter += invNbSteps * error;
-    error = std::sqrt(std::pow(wMo_noisy[0][3] - object_pos[0], 2) + std::pow(wMo_noisy[1][3] - object_pos[1], 2) + std::pow(wMo_noisy[2][3] - object_pos[2], 2));
-    meanErrorNoise += invNbSteps * error;
-    //! [Compute_error]
+    gt_Xprec = gt_X;
+    gt_Vprec = gt_V;
+    xNoise_prec = xNoise;
+    yNoise_prec = yNoise;
   }
-  //! [Simu_loop]
 
-  averageFilteringTime = averageFilteringTime / (static_cast<double>(nbSteps) + static_cast<double>(nbStepsWarmUp));
-  std::cout << "Mean error filter = " << meanErrorFilter << std::endl;
-  std::cout << "Mean error noise = " << meanErrorNoise << std::endl;
+  meanErrorFilter /= static_cast<double>(args.m_nbSteps);
+  meanErrorNoise /= static_cast<double>(args.m_nbSteps);
+  averageFilteringTime = averageFilteringTime / (static_cast<double>(args.m_nbSteps) + static_cast<double>(nbStepsWarmUp));
+  std::cout << "Mean error filter = " << meanErrorFilter << "m" << std::endl;
+  std::cout << "Mean error noise = " << meanErrorNoise << "m" << std::endl;
   std::cout << "Mean filtering time = " << averageFilteringTime << "us" << std::endl;
 
   if (args.m_useDisplay) {
@@ -754,25 +786,26 @@ int main(const int argc, const char *argv[])
     std::cin.get();
   }
 
-  //! [Delete_displays]
 #ifdef VISP_HAVE_DISPLAY
-  // Delete the plot if it was allocated
-  if (plot != nullptr) {
+  if (args.m_useDisplay) {
     delete plot;
   }
 #endif
-  //! [Delete_displays]
 
-  if (meanErrorFilter > meanErrorNoise) {
-    return EXIT_FAILURE;
+  vpColVector X_GT({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
+  vpColVector finalError = filter.computeFilteredState() - X_GT;
+  const double maxError = 2.5;
+  if (finalError.frobeniusNorm() > maxError) {
+    std::cerr << "Error: max tolerated error = " << maxError << ", final error = " << finalError.frobeniusNorm() << std::endl;
+    return -1;
   }
 
-  return EXIT_SUCCESS;
+  return 0;
 }
 #else
 int main()
 {
   std::cout << "This example is only available if you compile ViSP in C++11 standard or higher." << std::endl;
-  return EXIT_SUCCESS;
+  return 0;
 }
 #endif
