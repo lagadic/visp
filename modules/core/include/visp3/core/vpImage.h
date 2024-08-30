@@ -314,7 +314,11 @@ public:
   vpImage<Type> operator-(const vpImage<Type> &B) const;
 
   //! Copy operator
-  vpImage<Type> &operator=(vpImage<Type> other);
+  vpImage<Type> &operator=(const vpImage<Type> &other);
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+//! move constructor
+  vpImage<Type> &operator=(vpImage<Type> &&other);
+#endif
 
   vpImage<Type> &operator=(const Type &v);
   bool operator==(const vpImage<Type> &I) const;
