@@ -118,9 +118,10 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       {"b", 2.0},
       {"c", "a string"},
       {"d", true},
-      {"e", {
-        {"a", 5}
-      }}
+      {"flag", true},
+      {"flagDefaultTrue", true},
+      {"e", {{"a", 5} }
+    }
     };
     saveJson(j, jsonPath);
 
@@ -129,6 +130,10 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     std::string c = "";
     bool d = false;
     int ea = 4;
+    bool flag = false;
+    bool flagInitialValue = flag;
+
+    bool invertedFlag = true;
     WHEN("Declaring a parser with all parameters required")
     {
       vpJsonArgumentParser parser("A program", "--config", "/");
@@ -136,7 +141,9 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         .addArgument("b", b, true)
         .addArgument("c", c, true)
         .addArgument("d", d, true)
-        .addArgument("e/a", ea, true);
+        .addArgument("e/a", ea, true)
+        .addFlag("flag", flag)
+        .addFlag("flagDefaultTrue", invertedFlag);
 
       THEN("Calling the parser without any argument fails")
       {
@@ -162,7 +169,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
         REQUIRE(ea == j["e"]["a"]);
-
+        REQUIRE(flag != flagInitialValue);
+        REQUIRE(invertedFlag != true);
       }
       THEN("Calling the parser by specifying the json argument but leaving the file path empty throws an error")
       {
@@ -177,26 +185,30 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       {
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
-          modifyJson([&jsonElem](json &j) { j.erase(jsonElem.key()); });
-          const char *argv[] = {
-            "program",
-            "--config",
-            jsonPath.c_str()
-          };
-          REQUIRE_THROWS(parser.parse(argc, argv));
+          if (jsonElem.key().rfind("flag", 0) != 0) {
+            modifyJson([&jsonElem](json &j) { j.erase(jsonElem.key()); });
+            const char *argv[] = {
+              "program",
+              "--config",
+              jsonPath.c_str()
+            };
+            REQUIRE_THROWS(parser.parse(argc, argv));
+          }
         }
       }
       THEN("Calling the parser with only the json file but setting a random field to null throws an error")
       {
         const int argc = 3;
         for (const auto &jsonElem : j.items()) {
-          modifyJson([&jsonElem](json &j) { j[jsonElem.key()] = nullptr; });
-          const char *argv[] = {
-            "program",
-            "--config",
-            jsonPath.c_str()
-          };
-          REQUIRE_THROWS(parser.parse(argc, argv));
+          if (jsonElem.key().rfind("flag", 0) != 0) {
+            modifyJson([&jsonElem](json &j) { j[jsonElem.key()] = nullptr; });
+            const char *argv[] = {
+              "program",
+              "--config",
+              jsonPath.c_str()
+            };
+            REQUIRE_THROWS(parser.parse(argc, argv));
+          }
         }
       }
       THEN("Calling the parser with an invalid json file path throws an error")
@@ -223,7 +235,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
           "b", std::to_string(newb),
           "c", newc,
           "d", newdstr,
-          "e/a", std::to_string(newea)
+          "e/a", std::to_string(newea),
+          "flag"
         };
         int argc;
         std::vector<char *> argv;
@@ -234,6 +247,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(c == newc);
         REQUIRE(d == newd);
         REQUIRE(ea == newea);
+        REQUIRE(flag != flagInitialValue);
 
       }
       THEN("Calling the parser with JSON and command line argument works")
@@ -244,7 +258,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
           "program",
           "--config", jsonPath,
           "a", std::to_string(newa),
-          "b", std::to_string(newb)
+          "b", std::to_string(newb),
+          "flagDefaultTrue"
         };
         int argc;
         std::vector<char *> argv;
@@ -255,7 +270,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
         REQUIRE(ea == j["e"]["a"]);
-
+        REQUIRE(invertedFlag == false);
       }
       THEN("Calling the parser with a missing argument value throws an error")
       {

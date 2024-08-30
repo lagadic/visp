@@ -136,6 +136,13 @@ BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpJsonArgumentParser
 {
 public:
+
+  enum vpJsonArgumentType
+  {
+    WITH_FIELD = 0,
+    FLAG = 1
+  };
+
   /**
    * @brief Create a new argument parser, that can take into account both a JSON configuration file and command line arguments.
    *
@@ -181,7 +188,8 @@ public:
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+    argumentType[name] = WITH_FIELD;
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;
@@ -247,6 +255,16 @@ public:
   }
 
   /**
+   * @brief Add an argument that acts as a flag when specified on the command line. When this flag is specified, the boolean passed in argument will be inverted.
+   *
+   * @param name Name of the flag.
+   * @param parameter The boolean to modify when the flag is specified
+   * @param help The description of the argument.
+   * @return vpJsonArgumentParser& returns self, allowing argument definition chaining
+   */
+  vpJsonArgumentParser &addFlag(const std::string &name, bool &parameter, const std::string &help = "No description");
+
+  /**
    * @brief Parse the arguments.
    *
    * @param argc Number of arguments (including program name)
@@ -260,6 +278,7 @@ private:
   std::string jsonFileArgumentName; // Name of the argument  that points to the json file: ./program --config settings.json. Here jsonFileArgumentName == "--config"
   std::string nestSeparator; // JSON nesting delimiter character. Used to access JSON nested objects from a single string
   std::map<std::string, std::function<void(nlohmann::json &)>> parsers; // Functions that update the variables with the values contained in the JSON document (should be used after calling updaters)
+  std::map<std::string, vpJsonArgumentType> argumentType; // Update the base json document with command line arguments
   std::map<std::string, std::function<void(nlohmann::json &, const std::string &)>> updaters; // Update the base json document with command line arguments
   std::map<std::string, std::function<std::string()>> helpers; // Functions that output the usage and description of command line arguments: used when the help flag is given as argument
   nlohmann::json exampleJson; // Example JSON argument file: displayed when user calls for help
