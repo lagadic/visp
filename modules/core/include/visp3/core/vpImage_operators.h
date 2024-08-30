@@ -195,6 +195,7 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(const vpImage<Type
   npixels = other.npixels;
   hasOwnership = other.hasOwnership;
 
+
   return *this;
 }
 
@@ -205,8 +206,8 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> &&ot
 
   if (row != nullptr) {
     delete[] row;
-    row = other.row;
   }
+  row = other.row;
   if (bitmap != nullptr && hasOwnership) {
     delete[] bitmap;
   }
