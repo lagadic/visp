@@ -190,11 +190,6 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(const vpImage<Type
   if (other.display != nullptr) {
     display = other.display;
   }
-  height = other.height;
-  width = other.width;
-  npixels = other.npixels;
-  hasOwnership = other.hasOwnership;
-
 
   return *this;
 }
