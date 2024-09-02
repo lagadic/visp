@@ -1,32 +1,64 @@
-/** \example tutorial-pf.cpp
- * Tutorial on how to use the Particle Filter (PF) on a complex non-linear use-case.
- * The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
- * The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
- * The scene is observed by a pinhole camera whose coordinate frame has the origin C and which is
- * fixed to the ceiling.
+/*
  *
- * The state vector of the PF is:
- * \f[
- * \begin{array}{lcl}
- *   \textbf{x}[0] &=& {}^WX_x \\
- *   \textbf{x}[1] &=& {}^WX_y \\
- *   \textbf{x}[2] &=& {}^WX_z \\
- *   \textbf{x}[3] &=& \omega \Delta t
- * \end{array}
- * \f]
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
- * The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
- * Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
- * The measurement vector can be written as:
- * \f[
- *   \begin{array}{lcl}
- *       \textbf{z}[2i] &=& u_i \\
- *       \textbf{z}[2i+1] &=& v_i
- *   \end{array}
- * \f]
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
  *
- * Some noise is added to the measurement vector to simulate measurements which are
- * not perfect.
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*/
+
+/*! \example tutorial-pf.cpp
+  Tutorial on how to use the Particle Filter (PF) on a complex non-linear use-case.
+  The system is an object, whose coordinate frame origin is the point O, on which are sticked four markers.
+  The object revolves in a plane parallel to the ground around a fixed point W whose coordinate frame is the world frame.
+  The scene is observed by a pinhole camera whose coordinate frame has the origin C and which is
+  fixed to the ceiling.
+
+  The state vector of the PF is:
+  \f[
+  \begin{array}{lcl}
+    \textbf{x}[0] &=& {}^WX_x \\
+    \textbf{x}[1] &=& {}^WX_y \\
+    \textbf{x}[2] &=& {}^WX_z \\
+    \textbf{x}[3] &=& \omega \Delta t
+  \end{array}
+  \f]
+
+  The measurement \f$ \textbf{z} \f$ corresponds to the coordinates in pixels of the different markers.
+  Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+  The measurement vector can be written as:
+  \f[
+    \begin{array}{lcl}
+        \textbf{z}[2i] &=& u_i \\
+        \textbf{z}[2i+1] &=& v_i
+    \end{array}
+  \f]
+
+  Some noise is added to the measurement vector to simulate measurements which are
+  not perfect.
 */
 
 // ViSP includes
@@ -107,6 +139,7 @@ vpHomogeneousMatrix computePose(std::vector<vpPoint> &point, const std::vector<v
 //! [Object_simulator]
 /**
  * \brief Class that simulates the moving object.
+ * Random noise is added in order to make vary the velocity of the object.
  */
 class vpObjectSimulator
 {
@@ -118,6 +151,7 @@ public:
    * \param[in] w The pulsation of the motion.
    * \param[in] phi The phase of the motion.
    * \param[in] wZ The y-coordinate of the object in the world frame.
+   * \param[in] stdevRng The standard deviation of the noise generator that will make vary the velocity of the object.
    */
   vpObjectSimulator(const double &R, const double &w, const double &phi, const double &wZ, const double &stdevRng)
     : m_R(R)
@@ -144,11 +178,11 @@ public:
   }
 
 private:
-  double m_R; // Radius of the revolution around the world frame origin.
-  double m_w; // Pulsation of the motion.
-  double m_phi; // Phase of the motion.
-  const double m_wZ; // The z-coordinate of the object in the world frame.
-  vpGaussRand m_rng;
+  double m_R; //!< Radius of the revolution around the world frame origin.
+  double m_w; //!< Pulsation of the motion.
+  double m_phi; //!< Phase of the motion.
+  const double m_wZ; //!< The z-coordinate of the object in the world frame.
+  vpGaussRand m_rng; //!< Noise generator to make vary the velocity of the object.
 };
 //! [Object_simulator]
 
@@ -285,6 +319,9 @@ public:
     const unsigned int sizePt2D = 2;
     const unsigned int idX = 0, idY = 1, idZ = 2;
     double sumError = 0.;
+    // Compute the error between the projection of the markers that correspond
+    // to the particle position and the actual measurements of the markers
+    // projection
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       vpImagePoint projParticle;
@@ -293,6 +330,7 @@ public:
       double error = vpImagePoint::sqrDistance(projParticle, measPt);
       sumError += error;
     }
+    // Compute the likelihood from the mean error
     likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbMarkers)) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
@@ -505,7 +543,7 @@ int main(const int argc, const char *argv[])
 
   //! [Constants_for_simulation]
   const unsigned int nbIter = 200; // Number of time steps for the simulation
-  const double dt = 0.001; // Period of 0.1s
+  const double dt = 0.001; // Period of 0.001s
   const double sigmaMeasurements = 2.; // Standard deviation of the measurements: 2 pixels
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
