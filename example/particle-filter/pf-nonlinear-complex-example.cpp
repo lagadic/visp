@@ -28,50 +28,50 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/**
- * \example pf-nonlinear-complex-example.cpp
- * Example of a complex non-linear use-case of the Particle Filter (PF).
- * The system we are interested in is a 4-wheel robot, moving at a low velocity.
- * As such, it can be modeled using a bicycle model.
- *
- * The state vector of the PF is:
- * \f[
- * \begin{array}{lcl}
- *   \textbf{x}[0] &=& x \\
- *   \textbf{x}[1] &=& y \\
- *   \textbf{x}[2] &=& \theta
- * \end{array}
- * \f]
- * where \f$ \theta \f$ is the heading of the robot.
- *
- * The measurement \f$ \textbf{z} \f$ corresponds to the distance and relative orientation of the
- * robot with different landmarks. Be \f$ p_x^i \f$ and \f$ p_y^i \f$ the position of the \f$ i^{th} \f$ landmark
- * along the x and y axis, the measurement vector can be written as:
- * \f[
- *   \begin{array}{lcl}
- *      \textbf{z}[2i] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
- *      \textbf{z}[2i+1] &=& \tan^{-1}{\frac{p_y^i - y}{p_x^i - x}} - \theta
- *    \end{array}
- * \f]
- *
- * Some noise is added to the measurement vector to simulate measurements which are
- * not perfect.
- *
- * The mean of several angles must be computed in the Particle Fitler inference. The definition we chose to use
- * is the following:
- *
- * \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
- *
- * As the Particle Filter inference uses a weighted mean, the actual implementation of the weighted mean
- * of several angles is the following:
- *
- * \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
- *
- * where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
- *
- * Additionally, the addition and subtraction of angles must be carefully done, as the result
- * must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
- * the interval \f$[- \pi ; \pi ]\f$ .
+/*!
+  \example pf-nonlinear-complex-example.cpp
+  Example of a complex non-linear use-case of the Particle Filter (PF).
+  The system we are interested in is a 4-wheel robot, moving at a low velocity.
+  As such, it can be modeled using a bicycle model.
+
+  The state vector of the PF is:
+  \f[
+  \begin{array}{lcl}
+    \textbf{x}[0] &=& x \\
+    \textbf{x}[1] &=& y \\
+    \textbf{x}[2] &=& \theta
+  \end{array}
+  \f]
+  where \f$ \theta \f$ is the heading of the robot.
+
+  The measurement \f$ \textbf{z} \f$ corresponds to the distance and relative orientation of the
+  robot with different landmarks. Be \f$ p_x^i \f$ and \f$ p_y^i \f$ the position of the \f$ i^{th} \f$ landmark
+  along the x and y axis, the measurement vector can be written as:
+  \f[
+    \begin{array}{lcl}
+       \textbf{z}[2i] &=& \sqrt{(p_x^i - x)^2 + (p_y^i - y)^2} \\
+       \textbf{z}[2i+1] &=& \tan^{-1}{\frac{p_y^i - y}{p_x^i - x}} - \theta
+     \end{array}
+  \f]
+
+  Some noise is added to the measurement vector to simulate measurements which are
+  not perfect.
+
+  The mean of several angles must be computed in the Particle Fitler inference. The definition we chose to use
+  is the following:
+
+  \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
+
+  As the Particle Filter inference uses a weighted mean, the actual implementation of the weighted mean
+  of several angles is the following:
+
+  \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
+
+  where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
+
+  Additionally, the addition and subtraction of angles must be carefully done, as the result
+  must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
+  the interval \f$[- \pi ; \pi ]\f$ .
 */
 
 // ViSP includes
@@ -150,18 +150,6 @@ vpColVector stateMean(const std::vector<vpColVector> &states, const std::vector<
 }
 
 /**
- * \brief As the state model {x, y, \f$ \theta \f$} does not contain any velocity
- * information, it does not evolve without commands.
- *
- * \param[in] x The state vector
- * \return vpColVector The state vector unchanged.
- */
-vpColVector fx(const vpColVector &x, const double & /*dt*/)
-{
-  return x;
-}
-
-/**
  * \brief Compute the commands realising a turn at constant linear velocity.
  *
  * \param[in] v Constant linear velocity.
@@ -236,6 +224,79 @@ std::vector<vpColVector> generateCommands()
   return cmds;
 }
 }
+
+/**
+ * \brief As the state model {x, y, \f$ \theta \f$} does not contain any velocity
+ * information, it does not evolve without commands.
+ * Thus, we create a functor that will save the current command to use it in the
+ * process function to project a particle in time.
+ */
+class vpProcessFunctor
+{
+public:
+  /**
+   * \brief Construct a new vp Process Functor object
+   *
+   * \param[in] w The length of the wheelbase.
+   */
+  vpProcessFunctor(const double &w)
+    : m_w(w)
+  { }
+
+  /**
+  * \brief Models the effect of the command on the state model.
+  *
+  * \param[in] x The state model. x[0] = x ; x[1] = y ; x[2] = heading
+  * \param[in] dt The period.
+  * \return vpColVector The state model after applying the command.
+  */
+  vpColVector processFunction(const vpColVector &x, const double &dt)
+  {
+    double heading = x[2];
+    double vel = m_u[0];
+    double steeringAngle = m_u[1];
+    double distance = vel * dt;
+
+    if (std::abs(steeringAngle) > 0.001) {
+      // The robot is turning
+      double beta = (distance / m_w) * std::tan(steeringAngle);
+      double radius = m_w / std::tan(steeringAngle);
+      double sinh = std::sin(heading);
+      double sinhb = std::sin(heading + beta);
+      double cosh = std::cos(heading);
+      double coshb = std::cos(heading + beta);
+      vpColVector motion(3);
+      motion[0] = -radius * sinh + radius * sinhb;
+      motion[1] = radius * cosh - radius * coshb;
+      motion[2] = beta;
+      vpColVector newState = x + motion;
+      newState[2] = normalizeAngle(newState[2]);
+      return newState;
+    }
+    else {
+      // The robot is moving in straight line
+      vpColVector motion(3);
+      motion[0] = distance * std::cos(heading);
+      motion[1] = distance * std::sin(heading);
+      motion[2] = 0.;
+      vpColVector newState = x + motion;
+      return newState;
+    }
+  }
+
+  /**
+   * \brief Set the Commands object
+   *
+   * \param[in] u Set the commands of the current timestep.
+   */
+  void setCommands(const vpColVector &u)
+  {
+    m_u = u;
+  }
+private:
+  double m_w; /*!< The length of the wheelbase.*/
+  vpColVector m_u; /*!< The commands.*/
+};
 
 /**
  * \brief Class that approximates a 4-wheel robot using a bicycle model.
@@ -531,17 +592,8 @@ public:
    */
   double likelihood(const vpColVector &particle, const vpColVector &meas)
   {
-    double meanLikelihood = 0.;
     double meanX = 0., meanY = 0.;
-    for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
-      vpColVector landmarkMeas({ meas[2*i], meas[(2*i) + 1] });
-      double x = 0., y = 0.;
-      m_landmarks[i].computePositionFromMeasurements(landmarkMeas, x, y);
-      meanX += x;
-      meanY += y;
-    }
-    meanX /= static_cast<double>(m_nbLandmarks);
-    meanY /= static_cast<double>(m_nbLandmarks);
+    computePositionFromMeasurements(meas, meanX, meanY);
     double dx = meanX - particle[0];
     double dy = meanY - particle[1];
     double dist = std::sqrt(dx * dx + dy * dy);
@@ -756,11 +808,12 @@ int main(const int argc, const char *argv[])
   X0[1] = 6.; // y = 6m
   X0[2] = 0.3; // robot orientation = 0.3 rad
 
-  vpParticleFilter<vpColVector>::vpProcessFunction f = fx;
+  vpProcessFunctor processFtor(wheelbase);
   vpLandmarksGrid grid(landmarks, args.m_maxDistanceForLikelihood);
   vpBicycleModel robot(wheelbase);
   using std::placeholders::_1;
   using std::placeholders::_2;
+  vpParticleFilter<vpColVector>::vpProcessFunction f = std::bind(&vpProcessFunctor::processFunction, &processFtor, _1, _2);
   vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLandmarksGrid::likelihood, &grid, _1, _2);
   vpParticleFilter<vpColVector>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<vpColVector>::simpleResamplingCheck;
   vpParticleFilter<vpColVector>::vpResamplingFunction resamplingFunc = vpParticleFilter<vpColVector>::simpleImportanceResampling;
@@ -791,6 +844,7 @@ int main(const int argc, const char *argv[])
 
   // Initialize the simulation
   vpColVector robot_pos = X0;
+  vpColVector noMotionCommand(2, 0.);
 
   // Warm-up step
   double averageFilteringTime = 0.;
@@ -800,6 +854,8 @@ int main(const int argc, const char *argv[])
 
     double t0 = vpTime::measureTimeMicros();
     //! [Perform_filtering]
+    // Update the functor command
+    processFtor.setCommands(noMotionCommand);
     // Use the PF to filter the measurement
     filter.filter(z, dt);
     //! [Perform_filtering]
@@ -815,7 +871,9 @@ int main(const int argc, const char *argv[])
 
       double t0 = vpTime::measureTimeMicros();
       //! [Perform_filtering]
-      // Use the PF to filter the measurement
+      // Update the functor command
+      processFtor.setCommands(cmds[i]);
+        // Use the PF to filter the measurement
       filter.filter(z, dt);
       //! [Perform_filtering]
       averageFilteringTime += vpTime::measureTimeMicros() - t0;
