@@ -28,20 +28,20 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/** \example pf-nonlinear-example.cpp
- * Example of a simple non-linear use-case of the Particle Filter (PF).
- *
- * The system we are interested in is an aircraft flying in the sky and
- * observed by a radar station. Its velocity is not completely constant: a Gaussian
- * noise is added to the velocity to simulate the effect of wind on the motion of the
- * aircraft.
- *
- * We consider the plan perpendicular to the ground and passing by both the radar
- * station and the aircraft. The x-axis corresponds to the position on the ground
- * and the y-axis to the altitude.
- *
- * The state vector of the PF corresponds to a constant velocity model and can be written as:
- *  \f[
+/*! \example pf-nonlinear-example.cpp
+  Example of a simple non-linear use-case of the Particle Filter (PF).
+
+  The system we are interested in is an aircraft flying in the sky and
+  observed by a radar station. Its velocity is not completely constant: a Gaussian
+  noise is added to the velocity to simulate the effect of wind on the motion of the
+  aircraft.
+
+  We consider the plan perpendicular to the ground and passing by both the radar
+  station and the aircraft. The x-axis corresponds to the position on the ground
+  and the y-axis to the altitude.
+
+  The state vector of the PF corresponds to a constant velocity model and can be written as:
+   \f[
       \begin{array}{lcl}
         \textbf{x}[0] &=& x \\
         \textbf{x}[1] &=& \dot{x} \\
@@ -60,24 +60,8 @@
      \end{array}
    \f]
 
- * Some noise is added to the measurement vector to simulate a sensor which is
- * not perfect.
- *
- * The mean of several angles must be computed during the inference of the Particle Filter. The definition we chose to use
-   is the following:
-
-   \f$ mean(\boldsymbol{\theta}) = atan2 (\frac{\sum_{i=1}^n \sin{\theta_i}}{n}, \frac{\sum_{i=1}^n \cos{\theta_i}}{n})  \f$
-
-   As the Particle Filter inference uses a weighted mean, the actual implementation of the weighted mean
-   of several angles is the following:
-
-   \f$ mean_{weighted}(\boldsymbol{\theta}) = atan2 (\sum_{i=1}^n w_m^i \sin{\theta_i}, \sum_{i=1}^n w_m^i \cos{\theta_i})  \f$
-
-   where \f$ w_m^i \f$ is the weight associated to the \f$ i^{th} \f$ measurements for the weighted mean.
-
-   Additionnally, the addition and subtraction of angles must be carefully done, as the result
-   must stay in the interval \f$[- \pi ; \pi ]\f$ or \f$[0 ; 2 \pi ]\f$ . We decided to use
-   the interval \f$[- \pi ; \pi ]\f$ .
+  Some noise is added to the measurement vector to simulate a sensor which is
+  not perfect.
 */
 
 // ViSP includes
@@ -101,17 +85,17 @@ namespace
 /**
  * \brief The process function, that updates the prior.
  *
- * \param[in] chi A sigma point.
+ * \param[in] particle A particle of the PF.
  * \param[in] dt The period.
  * \return vpColVector The sigma points projected in the future.
  */
-vpColVector fx(const vpColVector &chi, const double &dt)
+vpColVector fx(const vpColVector &particle, const double &dt)
 {
   vpColVector point(4);
-  point[0] = chi[1] * dt + chi[0];
-  point[1] = chi[1];
-  point[2] = chi[3] * dt + chi[2];
-  point[3] = chi[3];
+  point[0] = particle[1] * dt + particle[0];
+  point[1] = particle[1];
+  point[2] = particle[3] * dt + particle[2];
+  point[3] = particle[3];
   return point;
 }
 
@@ -211,14 +195,14 @@ public:
   /**
    * \brief Convert a particle of the Particle Filter into the measurement space.
    *
-   * \param chi The prior.
+   * \param particle The prior.
    * \return vpColVector The prior expressed in the measurement space.
    */
-  vpColVector state_to_measurement(const vpColVector &chi)
+  vpColVector state_to_measurement(const vpColVector &particle)
   {
     vpColVector meas(2);
-    double dx = chi[0] - m_x;
-    double dy = chi[2] - m_y;
+    double dx = particle[0] - m_x;
+    double dy = particle[2] - m_y;
     meas[0] = std::sqrt(dx * dx + dy * dy);
     meas[1] = std::atan2(dy, dx);
     return meas;
@@ -580,8 +564,8 @@ private:
     std::cout << "    Default: " << m_gt_vY_init << std::endl;
     std::cout << std::endl;
     std::cout << "  --max-distance-likelihood" << std::endl;
-    std::cout << "    Maximum mean distance of the projection of the markers corresponding" << std::endl;
-    std::cout << "    to a particle with the measurements. Above this value, the likelihood of the particle is 0." << std::endl;
+    std::cout << "    Maximum tolerated distance between a particle and the measurements." << std::endl;
+    std::cout << "    Above this value, the likelihood of the particle is 0." << std::endl;
     std::cout << "    Default: " << m_maxDistanceForLikelihood << std::endl;
     std::cout << std::endl;
     std::cout << "  -N, --nb-particles" << std::endl;
@@ -756,10 +740,13 @@ int main(const int argc, const char *argv[])
     filter.filter(z, args.m_dt);
     averageFilteringTime += vpTime::measureTimeMicros() - t0;
 
+    // Compute the error between GT and filtered state for statistics at the end of the program
     vpColVector Xest = filter.computeFilteredState();
     vpColVector gtState = vpColVector({ gt_Xprec[0], gt_Vprec[0], gt_Xprec[1], gt_Vprec[1] });
     double normErrorFilter = computeStateError(Xest, gt_X);
     meanErrorFilter += normErrorFilter;
+
+    // Compute the error between GT and noisy measurements for statistics at the end of the program
     double xNoise = 0., yNoise = 0.;
     computeCoordinatesFromMeasurement(z, args.m_radar_X, args.m_radar_Y, xNoise, yNoise);
     double normErrorNoise = computeMeasurementsError(z, args.m_radar_X, args.m_radar_Y, gt_X);
@@ -794,6 +781,7 @@ int main(const int argc, const char *argv[])
     yNoise_prec = yNoise;
   }
 
+  // COmpute and display the error statistics and computation time
   meanErrorFilter /= static_cast<double>(args.m_nbSteps);
   meanErrorNoise /= static_cast<double>(args.m_nbSteps);
   averageFilteringTime = averageFilteringTime / (static_cast<double>(args.m_nbSteps) + static_cast<double>(nbStepsWarmUp));
@@ -812,6 +800,7 @@ int main(const int argc, const char *argv[])
   }
 #endif
 
+  // For the unit tests that uses this program
   const double maxError = 150.;
   if (meanErrorFilter > maxError) {
     std::cerr << "Error: max tolerated error = " << maxError << ", mean error = " << meanErrorFilter << std::endl;
