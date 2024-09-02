@@ -349,6 +349,7 @@ private:
 };
 //! [Markers_class]
 
+//! [CLI]
 struct SoftwareArguments
 {
   // --- Main loop parameters---
@@ -532,6 +533,7 @@ private:
     std::cout << std::endl;
   }
 };
+//! [CLI]
 
 int main(const int argc, const char *argv[])
 {
@@ -582,36 +584,7 @@ int main(const int argc, const char *argv[])
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
   //! [Camera_for_measurements]
 
-  // Initialize the attributes of the UKF
-  //! [Sigma_points_drawer]
-  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.001, 2., -1);
-  //! [Sigma_points_drawer]
-
-  //! [Covariance_measurements]
-  vpMatrix R1landmark(2, 2, 0.); // The covariance of the noise introduced by the measurement with 1 landmark
-  R1landmark[0][0] = sigmaMeasurements*sigmaMeasurements;
-  R1landmark[1][1] = sigmaMeasurements*sigmaMeasurements;
-  vpMatrix R(2*nbMarkers, 2 * nbMarkers);
-  for (unsigned int i = 0; i < nbMarkers; ++i) {
-    R.insert(R1landmark, 2*i, 2*i);
-  }
-  //! [Covariance_measurements]
-
-  //! [Covariance_process]
-  const double processVariance = 0.000025; // Variance of the process of (0.005cm)^2
-  vpMatrix Q; // The covariance of the process
-  Q.eye(4);
-  Q = Q * processVariance;
-  //! [Covariance_process]
-
   //! [Initial_estimates]
-  vpMatrix P0(4, 4); //  The initial guess of the process covariance
-  P0.eye(4);
-  P0[0][0] = 1.;
-  P0[1][1] = 1.;
-  P0[2][2] = 1.;
-  P0[2][2] = 5.;
-
   vpColVector X0(4); // The initial guess for the state
   X0[0] = 0.95 * radius * std::cos(phi); // Wrong estimation of the position along the X-axis = 5% of error
   X0[1] = 0.95 * radius * std::sin(phi); // Wrong estimation of the position along the Y-axis = 5% of error
@@ -636,22 +609,12 @@ int main(const int argc, const char *argv[])
   }
   //! [Constants_for_the_PF]
 
-  //! [Init_functions_ukf]
-  vpUnscentedKalman::vpProcessFunction f = fx;
+  // Object that converts the pose of the object into measurements
   vpMarkersMeasurements markerMeas(cam, cMw, wRo, markers, sigmaMeasurements, seed, sigmaLikelihood);
-  using std::placeholders::_1;
-  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpMarkersMeasurements::state_to_measurement, &markerMeas, _1);
-  //! [Init_functions_ukf]
-
-  //! [Init_UKF]
-  // Initialize the UKF
-  vpUnscentedKalman ukf(Q, R, drawer, f, h);
-  ukf.init(X0, P0);
-  //! [Init_UKF]
 
   //! [Init_functions_pf]
   vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
-  // using std::placeholders::_1;
+  using std::placeholders::_1;
   using std::placeholders::_2;
   vpParticleFilter<vpColVector>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpMarkersMeasurements::likelihood, &markerMeas, _1, _2);
   vpParticleFilter<vpColVector>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<vpColVector>::simpleResamplingCheck;
@@ -664,6 +627,43 @@ int main(const int argc, const char *argv[])
   pfFilter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
   //! [Init_PF]
 
+  //! [Init_UKF]
+  // Initialize the attributes of the UKF
+  // Sigma point drawer
+  std::shared_ptr<vpUKSigmaDrawerAbstract> drawer = std::make_shared<vpUKSigmaDrawerMerwe>(4, 0.001, 2., -1);
+
+  // Measurements covariance
+  vpMatrix R1landmark(2, 2, 0.); // The covariance of the noise introduced by the measurement with 1 landmark
+  R1landmark[0][0] = sigmaMeasurements*sigmaMeasurements;
+  R1landmark[1][1] = sigmaMeasurements*sigmaMeasurements;
+  vpMatrix R(2*nbMarkers, 2 * nbMarkers);
+  for (unsigned int i = 0; i < nbMarkers; ++i) {
+    R.insert(R1landmark, 2*i, 2*i);
+  }
+
+  // Process covariance
+  const double processVariance = 0.000025; // Variance of the process of (0.005cm)^2
+  vpMatrix Q; // The noise introduced during the prediction step
+  Q.eye(4);
+  Q = Q * processVariance;
+
+  // Process covariance initial guess
+  vpMatrix P0(4, 4);
+  P0.eye(4);
+  P0[0][0] = 1.;
+  P0[1][1] = 1.;
+  P0[2][2] = 1.;
+  P0[2][2] = 5.;
+
+  // Functions for the UKF
+  vpUnscentedKalman::vpProcessFunction f = fx;
+  vpUnscentedKalman::vpMeasurementFunction h = std::bind(&vpMarkersMeasurements::state_to_measurement, &markerMeas, _1);
+
+  // Initialize the UKF
+  vpUnscentedKalman ukf(Q, R, drawer, f, h);
+  ukf.init(X0, P0);
+  //! [Init_UKF]
+
   //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
   // Initialize the plot
@@ -673,25 +673,25 @@ int main(const int argc, const char *argv[])
   plot.setUnitX(0, "Position along x(m)");
   plot.setUnitY(0, "Position along y (m)");
   plot.setLegend(0, 0, "GT");
-  plot.setLegend(0, 1, "UKF");
-  plot.setLegend(0, 2, "PF");
+  plot.setLegend(0, 1, "PF");
+  plot.setLegend(0, 2, "UKF");
   plot.setLegend(0, 3, "Measure");
   plot.initRange(0, -1.25 * radius, 1.25 * radius, -1.25 * radius, 1.25 * radius);
   plot.setColor(0, 0, vpColor::red);
-  plot.setColor(0, 1, vpColor::blue);
-  plot.setColor(0, 2, vpColor::purple);
+  plot.setColor(0, 1, vpColor::purple);
+  plot.setColor(0, 2, vpColor::blue);
   plot.setColor(0, 3, vpColor::black);
 
   vpPlot plotError(1, 350, 700, 700, 700, "Error w.r.t. GT");
   plotError.initGraph(0, 3);
   plotError.setUnitX(0, "Time (s)");
   plotError.setUnitY(0, "Error (m)");
-  plotError.setLegend(0, 0, "UKF");
-  plotError.setLegend(0, 1, "PF");
+  plotError.setLegend(0, 0, "PF");
+  plotError.setLegend(0, 1, "UKF");
   plotError.setLegend(0, 2, "Measure");
   plotError.initRange(0, 0, nbIter * dt, 0, radius / 2.);
-  plotError.setColor(0, 0, vpColor::blue);
-  plotError.setColor(0, 1, vpColor::purple);
+  plotError.setColor(0, 0, vpColor::purple);
+  plotError.setColor(0, 1, vpColor::blue);
   plotError.setColor(0, 2, vpColor::black);
 #endif
   //! [Init_plot]
@@ -727,16 +727,19 @@ int main(const int argc, const char *argv[])
     vpColVector z = markerMeas.measureWithNoise(object_pos);
     //! [Update_measurement]
 
-    //! [Perform_filtering]
-    // Use the UKF to filter the measurement
-    double tUKF = vpTime::measureTimeMs();
-    ukf.filter(z, dt);
-    double dtUKF = vpTime::measureTimeMs() - tUKF;
+    //! [PF_filtering]
     /// Use the PF to filter the measurement
     double tPF = vpTime::measureTimeMs();
     pfFilter.filter(z, dt);
     double dtPF = vpTime::measureTimeMs() - tPF;
-    //! [Perform_filtering]
+    //! [PF_filtering]
+
+    //! [UKF_filtering]
+    // Use the UKF to filter the measurement for comparison
+    double tUKF = vpTime::measureTimeMs();
+    ukf.filter(z, dt);
+    double dtUKF = vpTime::measureTimeMs() - tUKF;
+    //! [UKF_filtering]
 
     //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
@@ -760,13 +763,14 @@ int main(const int argc, const char *argv[])
     // Plot the ground truth
     plot.plot(0, 0, object_pos[0], object_pos[1]);
 
-    // Plot the UKF filtered state
-    vpColVector XestUKF = ukf.getXest();
-    plot.plot(0, 1, XestUKF[0], XestUKF[1]);
-
     // Plot the PF filtered state
     vpColVector XestPF = pfFilter.computeFilteredState();
-    plot.plot(0, 2, XestPF[0], XestPF[1]);
+    plot.plot(0, 1, XestPF[0], XestPF[1]);
+
+
+    // Plot the UKF filtered state
+    vpColVector XestUKF = ukf.getXest();
+    plot.plot(0, 2, XestUKF[0], XestUKF[1]);
 
     // Plot the noisy pose
     plot.plot(0, 3, wXnoisy, wYnoisy);
@@ -783,18 +787,19 @@ int main(const int argc, const char *argv[])
     vpColVector error_PF = cX_PF - cX_GT;
     vpColVector error_UKF = cX_UKF - cX_GT;
 
-    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
-    std::cout << "    Mean square error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
     std::cout << "  [Particle Filter method] " << std::endl;
-    std::cout << "    Mean square error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Norm of the error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
     std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
 
-    // Plot the UKF filtered state error
-    plotError.plot(0, 0, t, error_UKF.frobeniusNorm());
+    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
+    std::cout << "    Norm of the error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
 
     // Plot the PF filtered state error
-    plotError.plot(0, 1, t, error_PF.frobeniusNorm());
+    plotError.plot(0, 0, t, error_PF.frobeniusNorm());
+
+    // Plot the UKF filtered state error
+    plotError.plot(0, 1, t, error_UKF.frobeniusNorm());
 
     // Plot the noisy error
     plotError.plot(0, 2, t, (cMo_noisy.getTranslationVector() - vpTranslationVector(cX_GT.extract(0, 3))).frobeniusNorm());
@@ -810,11 +815,11 @@ int main(const int argc, const char *argv[])
       vpImagePoint markerProjGT(zGT[2*id + 1], zGT[2*id]);
       vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
 
-      vpImagePoint markerProjFiltUKF(zFiltUkf[2*id + 1], zFiltUkf[2*id]);
-      vpDisplay::displayCross(Idisp, markerProjFiltUKF, 5, vpColor::blue);
-
       vpImagePoint markerProjFiltPF(zFiltPF[2*id + 1], zFiltPF[2*id]);
       vpDisplay::displayCross(Idisp, markerProjFiltPF, 5, vpColor::purple);
+
+      vpImagePoint markerProjFiltUKF(zFiltUkf[2*id + 1], zFiltUkf[2*id]);
+      vpDisplay::displayCross(Idisp, markerProjFiltUKF, 5, vpColor::blue);
 
       vpImagePoint markerProjNoisy(z[2*id + 1], z[2*id]);
       vpDisplay::displayCross(Idisp, markerProjNoisy, 5, vpColor::black);
@@ -823,9 +828,9 @@ int main(const int argc, const char *argv[])
     vpImagePoint ipText(20, 20);
     vpDisplay::displayText(Idisp, ipText, std::string("GT"), vpColor::red);
     ipText.set_i(ipText.get_i() + 20);
-    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by UKF"), vpColor::blue);
-    ipText.set_i(ipText.get_i() + 20);
     vpDisplay::displayText(Idisp, ipText, std::string("Filtered by PF"), vpColor::purple);
+    ipText.set_i(ipText.get_i() + 20);
+    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by UKF"), vpColor::blue);
     ipText.set_i(ipText.get_i() + 20);
     vpDisplay::displayText(Idisp, ipText, std::string("Measured"), vpColor::black);
     vpDisplay::flush(Idisp);
