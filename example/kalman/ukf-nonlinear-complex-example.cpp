@@ -352,7 +352,8 @@ public:
   }
 
   /**
-   * \brief Models the effect of the command on the state model.
+   * \brief Move the robot according to its current position and
+   * the commands.
    *
    * \param[in] u The commands. u[0] = velocity ; u[1] = steeringAngle .
    * \param[in] x The state model. x[0] = x ; x[1] = y ; x[2] = heading
@@ -412,7 +413,7 @@ public:
    * \brief Perfect measurement of the range and relative orientation of the robot
    * located at pos.
    *
-   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading).
    * \return vpColVector [0] the range [1] the relative orientation of the robot.
    */
   vpColVector measureGT(const vpColVector &pos)
@@ -489,7 +490,7 @@ public:
    * \brief Perfect measurement from each landmark of the range and relative orientation of the robot
    * located at pos.
    *
-   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading).
    * \return vpColVector n x ([0] the range [1] the relative orientation of the robot), where
    * n is the number of landmarks.
    */

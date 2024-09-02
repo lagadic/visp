@@ -220,9 +220,48 @@ std::vector<vpColVector> generateCommands()
   for (unsigned int i = 0; i < 150; ++i) {
     cmds.push_back(cmds[cmds.size() -1]);
   }
-
   return cmds;
 }
+}
+
+/**
+   * \brief Models the effect of the command on the state model.
+   *
+   * \param[in] u The commands. u[0] = velocity ; u[1] = steeringAngle .
+   * \param[in] x The state model. x[0] = x ; x[1] = y ; x[2] = heading
+   * \param[in] dt The period.
+   * \param[in] w The length of the wheelbase.
+   * \return vpColVector The state model after applying the command.
+   */
+vpColVector computeMotionFromCommand(const vpColVector &u, const vpColVector &x, const double &dt, const double &w)
+{
+  double heading = x[2];
+  double vel = u[0];
+  double steeringAngle = u[1];
+  double distance = vel * dt;
+
+  if (std::abs(steeringAngle) > 0.001) {
+    // The robot is turning
+    double beta = (distance / w) * std::tan(steeringAngle);
+    double radius = w / std::tan(steeringAngle);
+    double sinh = std::sin(heading);
+    double sinhb = std::sin(heading + beta);
+    double cosh = std::cos(heading);
+    double coshb = std::cos(heading + beta);
+    vpColVector motion(3);
+    motion[0] = -radius * sinh + radius * sinhb;
+    motion[1] = radius * cosh - radius * coshb;
+    motion[2] = beta;
+    return motion;
+  }
+  else {
+    // The robot is moving in straight line
+    vpColVector motion(3);
+    motion[0] = distance * std::cos(heading);
+    motion[1] = distance * std::sin(heading);
+    motion[2] = 0.;
+    return motion;
+  }
 }
 
 /**
@@ -252,36 +291,10 @@ public:
   */
   vpColVector processFunction(const vpColVector &x, const double &dt)
   {
-    double heading = x[2];
-    double vel = m_u[0];
-    double steeringAngle = m_u[1];
-    double distance = vel * dt;
-
-    if (std::abs(steeringAngle) > 0.001) {
-      // The robot is turning
-      double beta = (distance / m_w) * std::tan(steeringAngle);
-      double radius = m_w / std::tan(steeringAngle);
-      double sinh = std::sin(heading);
-      double sinhb = std::sin(heading + beta);
-      double cosh = std::cos(heading);
-      double coshb = std::cos(heading + beta);
-      vpColVector motion(3);
-      motion[0] = -radius * sinh + radius * sinhb;
-      motion[1] = radius * cosh - radius * coshb;
-      motion[2] = beta;
-      vpColVector newState = x + motion;
-      newState[2] = normalizeAngle(newState[2]);
-      return newState;
-    }
-    else {
-      // The robot is moving in straight line
-      vpColVector motion(3);
-      motion[0] = distance * std::cos(heading);
-      motion[1] = distance * std::sin(heading);
-      motion[2] = 0.;
-      vpColVector newState = x + motion;
-      return newState;
-    }
+    vpColVector motion = computeMotionFromCommand(m_u, x, dt, m_w);
+    vpColVector newState = x + motion;
+    newState[2] = normalizeAngle(newState[2]);
+    return newState;
   }
 
   /**
@@ -323,37 +336,12 @@ public:
    */
   vpColVector computeMotion(const vpColVector &u, const vpColVector &x, const double &dt)
   {
-    double heading = x[2];
-    double vel = u[0];
-    double steeringAngle = u[1];
-    double distance = vel * dt;
-
-    if (std::abs(steeringAngle) > 0.001) {
-      // The robot is turning
-      double beta = (distance / m_w) * std::tan(steeringAngle);
-      double radius = m_w / std::tan(steeringAngle);
-      double sinh = std::sin(heading);
-      double sinhb = std::sin(heading + beta);
-      double cosh = std::cos(heading);
-      double coshb = std::cos(heading + beta);
-      vpColVector motion(3);
-      motion[0] = -radius * sinh + radius * sinhb;
-      motion[1] = radius * cosh - radius * coshb;
-      motion[2] = beta;
-      return motion;
-    }
-    else {
-      // The robot is moving in straight line
-      vpColVector motion(3);
-      motion[0] = distance * std::cos(heading);
-      motion[1] = distance * std::sin(heading);
-      motion[2] = 0.;
-      return motion;
-    }
+    return computeMotionFromCommand(u, x, dt, m_w);
   }
 
   /**
-   * \brief Models the effect of the command on the state model.
+   * \brief Move the robot according to its current position and
+   * the commands.
    *
    * \param[in] u The commands. u[0] = velocity ; u[1] = steeringAngle .
    * \param[in] x The state model. x[0] = x ; x[1] = y ; x[2] = heading
@@ -381,36 +369,29 @@ public:
   /**
    * \brief Construct a new vpLandmarkMeasurements object.
    *
-   * \param[in] x The position along the x-axis of the landmark.
-   * \param[in] y The position along the y-axis of the landmark.
+   * \param[in] x The position along the X-axis of the landmark.
+   * \param[in] y The position along the Y-axis of the landmark.
    * \param[in] range_std The standard deviation of the range measurements.
    * \param[in] rel_angle_std The standard deviation of the relative angle measurements.
-   * \param[in] distMaxAllowed Maximum distance allowed for the likelihood computation.
    */
-  vpLandmarkMeasurements(const double &x, const double &y, const double &range_std, const double &rel_angle_std
-                        , const double &distMaxAllowed)
+  vpLandmarkMeasurements(const double &x, const double &y, const double &range_std, const double &rel_angle_std)
     : m_x(x)
     , m_y(y)
     , m_rngRange(range_std, 0., 4224)
     , m_rngRelativeAngle(rel_angle_std, 0., 2112)
-  {
-    double sigmaDistance = distMaxAllowed / 3.;
-    double sigmaDistanceSquared = sigmaDistance * sigmaDistance;
-    m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
-    m_constantExpDenominator = -1. / (2. * sigmaDistanceSquared);
-  }
+  { }
 
   /**
    * \brief Convert a particle of the Particle Filter into the measurement space.
    *
-   * \param[in] chi The prior.
+   * \param[in] particle The prior.
    * \return vpColVector The prior expressed in the measurement space.
    */
-  vpColVector state_to_measurement(const vpColVector &chi)
+  vpColVector state_to_measurement(const vpColVector &particle)
   {
     vpColVector meas(2);
-    double dx = m_x - chi[0];
-    double dy = m_y - chi[1];
+    double dx = m_x - particle[0];
+    double dy = m_y - particle[1];
     meas[0] = std::sqrt(dx * dx + dy * dy);
     meas[1] = normalizeAngle(std::atan2(dy, dx));
     return meas;
@@ -420,7 +401,7 @@ public:
    * \brief Perfect measurement of the range and relative orientation of the robot
    * located at pos.
    *
-   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading).
    * \return vpColVector [0] the range [1] the relative orientation of the robot.
    */
   vpColVector measureGT(const vpColVector &pos)
@@ -452,6 +433,13 @@ public:
     return measurementsNoisy;
   }
 
+  /**
+   * \brief Compute the position that corresponds to a measurement.
+   *
+   * \param[in] meas The measurement vector.
+   * \param[out] x The X-coordinate that corresponds to the measurement.
+   * \param[out] y The Y-coordinate that corresponds to the measurement.
+   */
   void computePositionFromMeasurements(const vpColVector &meas, double &x, double &y)
   {
     double alpha = meas[1];
@@ -459,34 +447,11 @@ public:
     y = m_y - meas[0] * std::sin(alpha);
   }
 
-    /**
-     * \brief Compute the likelihood of a particle  (value between 0. and 1.)
-     * knowing the measurements.
-     *
-     * \param[in] particle The particle state.
-     * \param[in] meas The measurements.
-     * \return double The likelihood of a particle  (value between 0. and 1.)
-     */
-  double likelihood(const vpColVector &particle, const vpColVector &meas)
-  {
-    double xMeas = 0., yMeas = 0.;
-    computePositionFromMeasurements(meas, xMeas, yMeas);
-    double dx = xMeas - particle[0];
-    double dy = yMeas - particle[1];
-    double dist = std::sqrt(dx * dx + dy * dy);
-    double likelihood = std::exp(m_constantExpDenominator * dist) * m_constantDenominator;
-    likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
-    likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
-    return likelihood;
-  }
-
 private:
-  double m_x; // The position along the x-axis of the landmark
-  double m_y; // The position along the y-axis of the landmark
-  vpGaussRand m_rngRange; // Noise simulator for the range measurement
-  vpGaussRand m_rngRelativeAngle; // Noise simulator for the relative angle measurement
-  double m_constantDenominator; // Denominator of the Gaussian function used in the likelihood computation.
-  double m_constantExpDenominator; // Denominator of the exponential in the Gaussian function used in the likelihood computation.
+  double m_x; //!< The position along the X-axis of the landmark
+  double m_y; //!< The position along the Y-axis of the landmark
+  vpGaussRand m_rngRange; //!< Noise simulator for the range measurement
+  vpGaussRand m_rngRelativeAngle; //!< Noise simulator for the relative angle measurement
 };
 
 /**
@@ -515,14 +480,14 @@ public:
   /**
    * \brief Convert a particle of the Particle Filter into the measurement space.
    *
-   * \param[in] chi The prior.
+   * \param[in] particle The prior.
    * \return vpColVector The prior expressed in the measurement space.
    */
-  vpColVector state_to_measurement(const vpColVector &chi)
+  vpColVector state_to_measurement(const vpColVector &particle)
   {
     vpColVector measurements(2*m_nbLandmarks);
     for (unsigned int i = 0; i < m_nbLandmarks; ++i) {
-      vpColVector landmarkMeas = m_landmarks[i].state_to_measurement(chi);
+      vpColVector landmarkMeas = m_landmarks[i].state_to_measurement(particle);
       measurements[2*i] = landmarkMeas[0];
       measurements[(2*i) + 1] = landmarkMeas[1];
     }
@@ -533,7 +498,7 @@ public:
    * \brief Perfect measurement from each landmark of the range and relative orientation of the robot
    * located at pos.
    *
-   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading.
+   * \param[in] pos The actual position of the robot (pos[0]: x, pos[1]: y, pos[2] = heading).
    * \return vpColVector n x ([0] the range [1] the relative orientation of the robot), where
    * n is the number of landmarks.
    */
@@ -567,6 +532,15 @@ public:
     return measurements;
   }
 
+  /**
+   * \brief Compute the position that corresponds to a measurement.
+   * As the measurements can be noisy, we take the average position
+   * computed for each landmark individually.
+   *
+   * \param[in] meas The measurement vector.
+   * \param[out] x The X-coordinate that corresponds to the measurement.
+   * \param[out] y The Y-coordinate that corresponds to the measurement.
+   */
   void computePositionFromMeasurements(const vpColVector &meas, double &x, double &y)
   {
     x = 0.;
@@ -585,6 +559,9 @@ public:
   /**
    * \brief Compute the likelihood of a particle  (value between 0. and 1.)
    * knowing the measurements.
+   * The likelihood is computed using a Gaussian function that penalizes
+   * a particle whose position is "far" from the average position
+   * computed from the landmarks measurement.
    *
    * \param[in] particle The particle state.
    * \param[in] meas The measurements.
@@ -729,8 +706,8 @@ private:
     std::cout << "    Default: " << m_nbStepsWarmUp << std::endl;
     std::cout << std::endl;
     std::cout << "  --max-distance-likelihood" << std::endl;
-    std::cout << "    Maximum mean distance of the projection of the markers corresponding" << std::endl;
-    std::cout << "    to a particle with the measurements. Above this value, the likelihood of the particle is 0." << std::endl;
+    std::cout << "    Maximum distance between a particle and the average position computed from the measurements." << std::endl;
+    std::cout << "    Above this value, the likelihood of the particle is 0." << std::endl;
     std::cout << "    Default: " << m_maxDistanceForLikelihood << std::endl;
     std::cout << std::endl;
     std::cout << "  -N, --nb-particles" << std::endl;
@@ -787,13 +764,13 @@ int main(const int argc, const char *argv[])
   const double sigmaRange = 0.3; // Standard deviation of the range measurement: 0.3m
   const double sigmaBearing = vpMath::rad(0.5); // Standard deviation of the bearing angle: 0.5deg
   const double wheelbase = 0.5; // Wheelbase of 0.5m
-  const std::vector<vpLandmarkMeasurements> landmarks = { vpLandmarkMeasurements(5, 10, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(10, 5, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(15, 15, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(20, 5, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(0, 30, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(50, 30, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood)
-                                                        , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing, args.m_maxDistanceForLikelihood) }; // Vector of landmarks constituting the grid
+  const std::vector<vpLandmarkMeasurements> landmarks = { vpLandmarkMeasurements(5, 10, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(10, 5, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(15, 15, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(20, 5, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(0, 30, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(50, 30, sigmaRange, sigmaBearing)
+                                                        , vpLandmarkMeasurements(40, 10, sigmaRange, sigmaBearing) }; // Vector of landmarks constituting the grid
   std::vector<vpColVector> cmds = generateCommands();
   const unsigned int nbCmds = static_cast<unsigned int>(cmds.size());
 
@@ -883,10 +860,15 @@ int main(const int argc, const char *argv[])
       //! [Get_filtered_state]
 
       //! [Errors_computation]
+      // Compute the error between the filtered state and the Ground Truth
+      // to have statistics at the end of the program
       double dxFilter = Xest[0] - robot_pos[0];
       double dyFilter = Xest[1] - robot_pos[1];
       double errorFilter = std::sqrt(dxFilter * dxFilter + dyFilter * dyFilter);
       meanErrorFilter += errorFilter;
+
+      // Compute the error between the noisy measurements and the Ground Truth
+      // to have statistics at the end of the program
       double xMeas = 0., yMeas = 0.;
       grid.computePositionFromMeasurements(z, xMeas, yMeas);
       double dxMeas = xMeas - robot_pos[0];
@@ -910,6 +892,7 @@ int main(const int argc, const char *argv[])
 #endif
   }
 
+  // Display the statistics that were computed
   averageFilteringTime = averageFilteringTime / (static_cast<double>(nbCmds + args.m_nbStepsWarmUp));
   meanErrorFilter = meanErrorFilter / (static_cast<double>(nbCmds));
   meanErrorNoise = meanErrorNoise / (static_cast<double>(nbCmds));
@@ -928,7 +911,8 @@ int main(const int argc, const char *argv[])
   }
 #endif
 
-  const double maxError = 0.3;
+  // Check if the results are the one expected, when this program is used for the unit tests
+  const double maxError = 0.15;
   if (meanErrorFilter > meanErrorNoise) {
     std::cerr << "Error: noisy measurements error = " << meanErrorNoise << ", filter error = " << meanErrorFilter << std::endl;
     return -1;
