@@ -238,13 +238,13 @@ public:
   void track(const vpImage<unsigned char> &I, const vpMe *me, const bool &test_contrast = true);
 
   /*!
-   * Similar to the \ref track function, but stores the best numCandidates hypotheses in \ref outputHypotheses.
+   * Similar to the track() function, but stores the best numCandidates hypotheses in `outputHypotheses`.
    * The best matching hypotheses (if it is not suppressed) is assigned to *this* and is stored as the first
-   * element of \ref outputHypotheses.
+   * element of `outputHypotheses`.
    * The hypotheses are sorted from best to worst match in the vector.
    * A match may be in the vector but mark as suppressed. If this is undesired, you should filter them afterwards.
    *
-   * \throws if \ref numCandidates is superior to me.getRange() * 2 + 1
+   * \throws If `numCandidates` is superior to me.getRange() * 2 + 1.
    *
    * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
    */

@@ -205,7 +205,6 @@ int main(int argc, const char **argv)
 
   vpPanda3DDirectionalLight dlight("Directional", vpRGBf(2.0f), vpColVector({ 1.0, 1.0, 0.0 }));
   renderer.addLight(dlight);
-  //! [Scene configuration]
 
   if (!backgroundPath.empty()) {
     vpImage<vpRGBa> background;

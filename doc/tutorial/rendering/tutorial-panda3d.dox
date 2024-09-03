@@ -138,7 +138,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 - Now to build ViSP with Panda3D support when `.dmg` file `Panda3D-1.11.0-py3.9.dmg` is installed, you can just
   run cmake as usual. Note that PCL is not compatible with Panda3D, that's why we disable here PCL usage
-  (see \ref tutorial-panda3d-issue-macOS).
+  (see \ref tutorial-panda3d-issue-segfault-macOS).
     \code{.sh}
     $ cd $VISP_WS/visp-build
     $ cmake ../visp -DUSE_PCL=OFF
@@ -182,7 +182,6 @@ A panda3D renderer should be instanciated with a vpPanda3DRenderParameters objec
 
 The creation of the renderer set can be found below
 \snippet tutorial-panda3d-renderer.cpp Renderer set
-
 
 To actually render color, normals, etc., we need to define subrenderers:
 \snippet tutorial-panda3d-renderer.cpp Subrenderers init
@@ -252,67 +251,90 @@ The full code of tutorial-panda3d-renderer.cpp is given below.
 \endhtmlonly
 
 \section tutorial-panda3d-issue Known issues
-\subsection tutorial-panda3d-issue-macOS Known issue on macOS
+\subsection tutorial-panda3d-issue-library-macOS Library not loaded: libpanda.1.11.dylib
 
-- Segfault: `:framework(error): Unable to create window`
-  ```
-  % ./tutorial-panda3d-renderer
-  Initializing Panda3D rendering framework
-  Known pipe types:
-    CocoaGLGraphicsPipe
-  (all display modules loaded.)
-  :framework(error): Unable to create window.
-  zsh: segmentation fault  ./tutorial-panda3d-renderer
-  ```
-  This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building ViSP with Panda3D support:
-  ```
-  $ cd visp-build
-  $ make
-  ...
-  [100%] Building CXX object tutorial/ar/CMakeFiles/tutorial-panda3d-renderer.dir/tutorial-panda3d-renderer.cpp.o
-  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
-  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:40:9: warning: 'HAVE_PNG' macro redefined [-Wmacro-redefined]
-  #define HAVE_PNG 1
+This error occurs on macOS.
+
+```
+% cd $VISP_WS/visp-build/tutorial/ar/
+% ./tutorial-panda3d-renderer
+dyld[1795]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
+  Referenced from: <0D61FFE0-73FA-3053-8D8D-8912BFF16E36> /Users/fspindle/soft/visp/visp_ws/test-pr/visp-SamFlt/visp-build/tutorial/ar/tutorial-panda3d-renderer
+  Reason: tried: '/Users/fspindle/soft/visp/visp_ws/test-pr/visp-SamFlt/visp-build/tutorial/ar/../lib/libpanda.1.11.dylib' (no such file)
+zsh: abort      ./tutorial-panda3d-renderer
+```
+
+It occurs when you didn't follow carefully the instructions mentionned in \ref tutorial-panda3d-install-macos section.
+
+A quick fix is to add the path to the library in `DYLD_LIBRARY_PATH` env var:
+```
+$ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
+```
+
+\subsection tutorial-panda3d-issue-segfault-macOS Segfault: :framework(error): Unable to create window
+
+This error occurs on macOS.
+
+```
+% cd $VISP_WS/visp-build/tutorial/ar/
+% ./tutorial-panda3d-renderer
+Initializing Panda3D rendering framework
+Known pipe types:
+  CocoaGLGraphicsPipe
+(all display modules loaded.)
+:framework(error): Unable to create window.
+zsh: segmentation fault  ./tutorial-panda3d-renderer
+```
+This issue is probably due to `EIGEN_MAX_ALIGN_BYTES` and `HAVE_PNG` macro redefinition that occurs when building ViSP with Panda3D support:
+```
+$ cd visp-build
+$ make
+...
+[100%] Building CXX object tutorial/ar/CMakeFiles/tutorial-panda3d-renderer.dir/tutorial-panda3d-renderer.cpp.o
+In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
+$VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:40:9: warning: 'HAVE_PNG' macro redefined [-Wmacro-redefined]
+#define HAVE_PNG 1
+        ^
+/opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:53:9: note: previous definition is here
+#define HAVE_PNG
+    ^
+In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
+$VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:64:9: warning: 'HAVE_ZLIB' macro redefined [-Wmacro-redefined]
+#define HAVE_ZLIB 1
+        ^
+/opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:55:9: note: previous definition is here
+#define HAVE_ZLIB
+        ^
+In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
+In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
+In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
+$VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:432:9: warning: 'EIGEN_MAX_ALIGN_BYTES' macro redefined [-Wmacro-redefined]
+#define EIGEN_MAX_ALIGN_BYTES MEMORY_HOOK_ALIGNMENT
+        ^
+/opt/homebrew/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h:175:11: note: previous definition is here
+  #define EIGEN_MAX_ALIGN_BYTES EIGEN_IDEAL_MAX_ALIGN_BYTES
           ^
-  /opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:53:9: note: previous definition is here
-  #define HAVE_PNG
-      ^
-  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:22:
-  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtool_config.h:64:9: warning: 'HAVE_ZLIB' macro redefined [-Wmacro-redefined]
-  #define HAVE_ZLIB 1
-          ^
-  /opt/homebrew/include/pcl-1.14/pcl/pcl_config.h:55:9: note: previous definition is here
-  #define HAVE_ZLIB
-          ^
-  In file included from $VISP_WS/visp/tutorial/ar/tutorial-panda3d-renderer.cpp:17:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DRGBRenderer.h:39:
-  In file included from $VISP_WS/visp/modules/ar/include/visp3/ar/vpPanda3DBaseRenderer.h:42:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandaFramework.h:17:
-  In file included from $VISP_WS/3rdparty/panda3d/panda3d/built/include/pandabase.h:21:
-  $VISP_WS/3rdparty/panda3d/panda3d/built/include/dtoolbase.h:432:9: warning: 'EIGEN_MAX_ALIGN_BYTES' macro redefined [-Wmacro-redefined]
-  #define EIGEN_MAX_ALIGN_BYTES MEMORY_HOOK_ALIGNMENT
-          ^
-  /opt/homebrew/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h:175:11: note: previous definition is here
-    #define EIGEN_MAX_ALIGN_BYTES EIGEN_IDEAL_MAX_ALIGN_BYTES
-            ^
-  3 warnings generated.
-  [100%] Linking CXX executable tutorial-panda3d-renderer
-  [100%] Built target tutorial-panda3d-renderer
-  ```
-  The work around consists in disabling `PCL` usage during ViSP configuration
-  ```
-  $ cd $VISP_WS/visp-build
-  $ cmake ../visp -DUSE_PCL=OFF
-  $ make -j$(sysctl -n hw.logicalcpu)
-  ```
+3 warnings generated.
+[100%] Linking CXX executable tutorial-panda3d-renderer
+[100%] Built target tutorial-panda3d-renderer
+```
+The work around consists in disabling `PCL` usage during ViSP configuration
+```
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DUSE_PCL=OFF
+$ make -j$(sysctl -n hw.logicalcpu)
+```
+
 */
