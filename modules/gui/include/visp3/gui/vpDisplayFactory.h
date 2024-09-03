@@ -199,9 +199,9 @@ std::shared_ptr<vpDisplay> createDisplay(vpImage<T> &I, const int winx = -1, con
   return std::shared_ptr<vpDisplay>(nullptr);
 #endif
 }
+
 namespace impl
 {
-
 struct GridSettings
 {
   unsigned int rows;
@@ -220,7 +220,6 @@ unsigned int maxRowHeightPixel)
   if (currRow != settings.rows -1  && currCol != settings.cols - 1) {
     throw vpException(vpException::dimensionError, "Too few images for the grid size");
   }
-
 }
 
 template <typename T, typename... Args>
@@ -245,7 +244,6 @@ const std::string &name, vpImage<T> &I, Args&... args)
     makeDisplayGridHelper(res, settings, currRow, currCol + 1, currentPixelX + I.getWidth() + settings.paddingX, currentPixelY, std::max(maxRowHeightPixel, I.getHeight()), args...);
   }
 }
-
 }
 
 /**
@@ -258,14 +256,14 @@ const std::string &name, vpImage<T> &I, Args&... args)
  * The name should always come before the image. The image can be vpImage<unsigned char> or vpImage<vpRGBa>
  * \param rows Number of rows in the grid
  * \param cols Number of columns in the grid
- * \param startX the starting left position of the grid
- * \param startY the starting top localization of the grid
+ * \param startX The starting left position of the grid
+ * \param startY The starting top localization of the grid
  * \param paddingX Horizontal padding between windows
  * \param paddingY Vertical padding between windows
- * \param args the name => image => name sequence
+ * \param args The name => image => name sequence
  * \return std::vector<std::shared_ptr<vpDisplay>> The allocated displays.
  *
- * \throws if the grid dimensions and number of images do not match
+ * \throws If the grid dimensions and number of images do not match
  *
  */
 template <typename... Args>
@@ -285,9 +283,7 @@ Args&... args)
   makeDisplayGridHelper(res, settings, 0, 0, settings.startX, settings.startY, 0, args...);
   return res;
 }
-
 #endif
-
 }
 
 END_VISP_NAMESPACE

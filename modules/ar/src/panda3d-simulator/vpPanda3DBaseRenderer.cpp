@@ -48,9 +48,6 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
 });
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
-
-
-
 void vpPanda3DBaseRenderer::initFramework()
 {
   if (m_framework.use_count() > 0) {
@@ -92,7 +89,6 @@ void vpPanda3DBaseRenderer::initFromParent(const vpPanda3DBaseRenderer &renderer
 {
   initFromParent(renderer.m_framework, renderer.m_window);
 }
-
 
 void vpPanda3DBaseRenderer::setupScene()
 {
@@ -185,7 +181,6 @@ vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(const std::string &name)
 
 vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(NodePath &object)
 {
-
   const LPoint3 pos = object.get_pos();
   const LQuaternion quat = object.get_quat();
   const vpTranslationVector t(pos[0], pos[1], pos[2]);
@@ -227,7 +222,6 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
 
     nearV = minZ;
     farV = maxZ;
-
   }
   else {
     const BoundingVolume *volume = object.node()->get_bounds();
@@ -283,7 +277,6 @@ NodePath vpPanda3DBaseRenderer::loadObject(const std::string &nodeName, const st
   NodePath model = m_window->load_model(m_framework->get_models(), modelPath);
   for (int i = 0; i < model.get_num_children(); ++i) {
     model.get_child(i).clear_transform();
-
   }
 
   model.detach_node();

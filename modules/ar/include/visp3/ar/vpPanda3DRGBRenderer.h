@@ -78,7 +78,6 @@ public:
    */
   vpPanda3DRGBRenderer(bool showSpeculars) : vpPanda3DBaseRenderer(showSpeculars ? "RGB" : "RGB-diffuse"), m_showSpeculars(showSpeculars) { }
 
-
   /**
    * @brief Store the render resulting from calling renderFrame() into a vpImage.
    *
@@ -96,9 +95,7 @@ public:
 
   bool isShowingSpeculars() const { return m_showSpeculars; }
 
-
 protected:
-
   void setupScene() VP_OVERRIDE;
   void setupRenderTarget() VP_OVERRIDE;
 
@@ -114,7 +111,6 @@ private:
   NodePath m_backgroundImage;
   DisplayRegion *m_display2d;
   Texture *m_backgroundTexture;
-
 };
 
 END_VISP_NAMESPACE

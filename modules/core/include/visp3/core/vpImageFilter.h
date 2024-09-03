@@ -566,8 +566,8 @@ public:
    *
    * @tparam FilterType Image and filter types: double or float
    * @param I The input image
-   * @param row the row coordinate where the filter should be applied
-   * @param col the column coordinate where the filter shoud be applied
+   * @param row The row coordinate where the filter should be applied
+   * @param col The column coordinate where the filter should be applied
    * @param M the filter
    */
   template <typename FilterType>

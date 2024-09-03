@@ -239,7 +239,8 @@ public:
 
   /*!
    * Similar to the \ref track function, but stores the best numCandidates hypotheses in \ref outputHypotheses.
-   * The best matching hypotheses (if it is not suppressed) is assigned to *this* and is stored as the first element of \ref outputHypotheses.
+   * The best matching hypotheses (if it is not suppressed) is assigned to *this* and is stored as the first
+   * element of \ref outputHypotheses.
    * The hypotheses are sorted from best to worst match in the vector.
    * A match may be in the vector but mark as suppressed. If this is undesired, you should filter them afterwards.
    *

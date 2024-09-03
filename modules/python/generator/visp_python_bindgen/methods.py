@@ -212,8 +212,6 @@ def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapp
   else:
     type_name = ''
 
-
-
   if GeneratorConfig.is_forbidden_default_argument_type(type_name):
     return False
 
@@ -344,8 +342,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     else:
       pybind_options = [method_doc.documentation] + pybind_options
 
-
-
   # If a function has refs to immutable params, we need to return them.
   # Also true if user has specified input cpp params as output python params
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
@@ -363,7 +359,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
       return type.replace('(*)', f'(*{name})', 1)
     else:
       return type + ' ' + name
-
 
   params_with_names = [to_argument_name(t, name) for t, name in zip(input_param_types, input_param_names)]
 

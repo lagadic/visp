@@ -57,7 +57,6 @@ struct vpMeSiteHypothesis
   vpMeSite *site;
   double likelihood;
   double contrast;
-
 };
 
 static bool horsImage(int i, int j, int half, int rows, int cols)

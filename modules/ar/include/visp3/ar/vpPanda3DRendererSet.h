@@ -151,7 +151,6 @@ public:
 
   void enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer) VP_OVERRIDE;
 
-
   /**
    * @brief Retrieve the first subrenderer with the specified template type.
    *
@@ -169,6 +168,7 @@ public:
     }
     return nullptr;
   }
+
   /**
    * @brief Retrieve the subrenderer with the specified template type and the given name.
    *
@@ -196,6 +196,7 @@ public:
       renderer->beforeFrameRendered();
     }
   }
+
   void afterFrameRendered() VP_OVERRIDE
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {

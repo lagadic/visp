@@ -34,7 +34,6 @@
 
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
-
 BEGIN_VISP_NAMESPACE
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
 #version 330
@@ -69,7 +68,6 @@ uniform mat4 p3d_ModelViewMatrix;
 uniform mat4 p3d_ModelViewProjectionMatrix;
 out vec3 oNormal;
 out float distToCamera;
-
 
 void main()
 {
@@ -114,13 +112,13 @@ void vpPanda3DGeometryRenderer::setupScene()
   PT(Shader) shader;
   if (m_renderType == OBJECT_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                      SHADER_VERT_NORMAL_AND_DEPTH_OBJECT,
-                                      SHADER_FRAG_NORMAL_AND_DEPTH);
+                          SHADER_VERT_NORMAL_AND_DEPTH_OBJECT,
+                          SHADER_FRAG_NORMAL_AND_DEPTH);
   }
   else if (m_renderType == CAMERA_NORMALS) {
     shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                      SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
-                                      SHADER_FRAG_NORMAL_AND_DEPTH);
+                          SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
+                          SHADER_FRAG_NORMAL_AND_DEPTH);
   }
   m_renderRoot.set_shader(shader);
 }
@@ -172,7 +170,6 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth) const
 {
-
   normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   if (m_normalDepthTexture->get_component_type() != Texture::T_float) {
@@ -196,7 +193,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     data += rowIncrement;
   }
 }
-
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth, const vpRect &bb, unsigned int h, unsigned w) const
 {
@@ -230,7 +226,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
     }
   }
 }
-
 
 void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
 {

@@ -43,7 +43,6 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
   load_prc_file_data("", "no-singular-invert");
 }
 
-
 void vpPanda3DRendererSet::initFramework()
 {
   if (m_framework.use_count() > 0) {
@@ -85,7 +84,6 @@ void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
     renderer->initFromParent(*this);
   }
 }
-
 
 void vpPanda3DRendererSet::setCameraPose(const vpHomogeneousMatrix &wTc)
 {
@@ -195,7 +193,6 @@ void vpPanda3DRendererSet::enableSharedDepthBuffer(vpPanda3DBaseRenderer &source
     }
   }
 }
-
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols

@@ -55,6 +55,7 @@ nlohmann::json convertCommandLineArgument(const std::string &arg)
   nlohmann::json j = nlohmann::json::parse(arg);
   return j;
 }
+
 /**
  * @brief Specialization of command line parsing for strings: a shell may eat the quotes, which would be necessary for JSON parsing to work.
  * This function thus directly converts the string to a JSON representation: no parsing is performed.
@@ -170,7 +171,6 @@ public:
    */
   std::string help() const;
 
-
   /**
    * @brief Add an argument that can be provided by the user, either via command line or through the json file.
    *
@@ -189,7 +189,7 @@ public:
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
     argumentType[name] = WITH_FIELD;
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;
@@ -255,7 +255,8 @@ public:
   }
 
   /**
-   * @brief Add an argument that acts as a flag when specified on the command line. When this flag is specified, the boolean passed in argument will be inverted.
+   * @brief Add an argument that acts as a flag when specified on the command line.
+   * When this flag is specified, the boolean passed in argument will be inverted.
    *
    * @param name Name of the flag.
    * @param parameter The boolean to modify when the flag is specified
@@ -271,7 +272,6 @@ public:
    * @param argv Arguments
    */
   void parse(int argc, const char *argv[]);
-
 
 private:
   std::string description; // Program description

@@ -316,7 +316,7 @@ public:
   //! Copy operator
   vpImage<Type> &operator=(const vpImage<Type> &other);
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-//! move constructor
+  //! move constructor
   vpImage<Type> &operator=(vpImage<Type> &&other);
 #endif
 

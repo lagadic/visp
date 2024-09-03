@@ -82,7 +82,6 @@ public:
     }
   }
 
-
 protected:
   virtual void setupScene() VP_OVERRIDE;
 
@@ -94,7 +93,6 @@ protected:
 
   void getRenderBasic(vpImage<unsigned char> &I) const;
   void getRenderBasic(vpImage<vpRGBf> &I) const;
-
 
   virtual FrameBufferProperties getBufferProperties() const = 0;
 
