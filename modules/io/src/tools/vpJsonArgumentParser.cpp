@@ -97,7 +97,7 @@ std::string vpJsonArgumentParser::help() const
 vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, bool &parameter, const std::string &help)
 {
   argumentType[name] = FLAG;
-  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
+  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
     size_t pos = 0;
     nlohmann::json *f = &j;
     std::string token;
@@ -127,13 +127,13 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
 
   parsers[name] = [&parameter, getter, name](nlohmann::json &j) {
     const nlohmann::json *field = getter(j, false);
-    const bool fieldHasNoValue = field == nullptr || (field != nullptr && field->is_null());
-    if (!fieldHasNoValue && field->type() == json::value_t::boolean && (*field) == true) {
+    const bool fieldHasNoValue = ((field == nullptr) || (field != nullptr && field->is_null()));
+    if (!fieldHasNoValue && (field->type() == json::value_t::boolean && (*field) == true)) {
       parameter = !parameter;
     }
     };
 
-  updaters[name] = [getter, parameter](nlohmann::json &j, const std::string &) {
+  updaters[name] = [getter](nlohmann::json &j, const std::string &) {
     nlohmann::json *field = getter(j, true);
     *field = true;
     };
