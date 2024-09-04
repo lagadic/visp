@@ -80,9 +80,14 @@ typedef struct vpTutoCommonData
   long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
   int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
 
-  double m_a; //!< To generate simulated data.
-  double m_b; //!< To generate simulated data.
-  double m_c; //!< To generate simulated data.
+  double m_a; //!< To generate 2nd-degree polynomial simulated data.
+  double m_b; //!< To generate 2nd-degree polynomial simulated data.
+  double m_c; //!< To generate 2nd-degree polynomial simulated data.
+  double m_a3; //!< To generate 3nd-degree polynomial simulated data.
+  double m_b3; //!< To generate 3nd-degree polynomial simulated data.
+  double m_c3; //!< To generate 3nd-degree polynomial simulated data.
+  double m_d3; //!< To generate 3nd-degree polynomial simulated data.
+  unsigned int m_degree; //!< Degree for the polynomials.
 
   /**
    * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
@@ -97,6 +102,36 @@ typedef struct vpTutoCommonData
     m_b = (y1 - y0)/(-0.5*(x1 * x1/x0) + x1 -0.5 * x0);
     m_a = -m_b / (2. * x0);
     m_c = y0 - 0.5 * m_b * x0;
+  }
+
+  /**
+   * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
+   *
+   * \param[in] x0 Horizontal coordinate of the inflexion point.
+   * \param[in] y0 Vertical coordinate of the inflexion point.
+   * \param[in] x1 Horizontal coordinate of another point of the curve.
+   * \param[in] y1 Vertical coordinate of another point of the curve.
+   */
+  void computeABCD(const double &x0, const double &y0, const double &x1, const double &y1)
+  {
+    double factorA = -2. / (3. * (x1 + x0));
+    double factorC = -1. * ((-2. * std::pow(x0, 2))/(x1 + x0) + 2 * x0);
+    m_b3 = (y1 - y0)/(factorA * (std::pow(x1, 3) - std::pow(x0, 3)) + (std::pow(x1, 2) - std::pow(x0, 2)) + (x1 - x0) * factorC);
+    m_a3 = factorA * m_b3;
+    m_c3 = factorC * m_b3;
+    m_d3 = y0-(m_a3 * std::pow(x0, 3) + m_b3 * std::pow(x0, 2) + m_c3 * x0);
+  }
+
+  double computeY(const double &x)
+  {
+    double y = 0.;
+    if (m_degree == 2) {
+      y = m_a * x * x + m_b * x + m_c;
+    }
+    else if (m_degree == 3) {
+      y = m_a3 * x * x * x + m_b3 * x * x + m_c3 * x + m_d3;
+    }
+    return y;
   }
 
   vpTutoCommonData()
@@ -119,8 +154,11 @@ typedef struct vpTutoCommonData
     , m_pfRatioAmpliMaxC(0.25)
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
+    , m_degree(2)
   {
-    computeABC(300., 20, 20., 400.);
+    double x0 = 300., y0 = 20., x1 = 20., y1 = 400.;
+    computeABC(x0, y0, x1, y1);
+    computeABCD(x0, y0, x1, y1);
   }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
@@ -148,6 +186,8 @@ typedef struct vpTutoCommonData
       << softName
       << " [--video <input video>]"
       << " [--hsv-thresholds <filename.yml>]"
+      << " [--degree {2, 3}]"
+      << " [--curve <x0 y0 x1 y1>]"
       << " [--help,-h]"
       << std::endl;
     std::cout << "\nOPTIONS " << std::endl
@@ -159,6 +199,14 @@ typedef struct vpTutoCommonData
       << "  --hsv-thresholds <filename.yaml>" << std::endl
       << "    Path to a yaml filename that contains H <min,max>, S <min,max>, V <min,max> threshold values." << std::endl
       << "    For an example, have a look to the file \"" << this->m_hsvFilename << "\"" << std::endl
+      << std::endl
+      << "  --degree {2, 3}" << std::endl
+      << "    Choose the degree of the polynomials to use." << std::endl
+      << "    Accepted values are 2 or 3, default = " << this->m_degree << std::endl
+      << std::endl
+      << "  --curve <x0 y0 x1 y1>" << std::endl
+      << "    For a 2nd degree polynomial, (x0, y0) is the inflexion point and (x1, y1) is a 2nd point of the curve." << std::endl
+      << "    For a 3rd degree polynomial, (x0, y0) and (x1, y1) are the inflexion points." << std::endl
       << std::endl
       << "  --help, -h" << std::endl
       << "    Display this helper message." << std::endl
@@ -173,7 +221,7 @@ typedef struct vpTutoCommonData
     VISP_NAMESPACE_ADDRESSING vpRGBa color(175, 175, 53);
     for (unsigned int u = 0; u < width; ++u) {
       double x = static_cast<double>(u);
-      double y = m_a * x * x + m_b * x + m_c;
+      double y = computeY(x);
       vpImagePoint pt(y, x);
       if (limits.isInside(pt)) {
         m_I_orig[static_cast<int>(y)][u] = color;
@@ -205,6 +253,11 @@ typedef struct vpTutoCommonData
         ++i;
         double y1 = std::atof(argv[i]);
         computeABC(x0, y0, x1, y1);
+        computeABCD(x0, y0, x1, y1);
+      }
+      else if (argname == std::string("--degree") && ((i + 1) < argc)) {
+        ++i;
+        m_degree = std::atoi(argv[i]);
       }
       else if ((argname == std::string("-h")) || (argname == std::string("--help"))) {
         printHelp(argv[0]);
@@ -228,6 +281,7 @@ typedef struct vpTutoCommonData
     }
 
     if (m_seqFilename.find("generate-simulated") != std::string::npos) {
+      std::cout << "Degree of the polynomial = " << m_degree << std::endl;
       generateSimulatedImage();
     }
     else {
@@ -287,6 +341,6 @@ typedef struct vpTutoCommonData
     return true;
   }
 #endif
-}vpTutoCommonData;
-}
+  }vpTutoCommonData;
+    }
 #endif
