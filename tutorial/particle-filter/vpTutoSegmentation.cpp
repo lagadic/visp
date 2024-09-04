@@ -77,9 +77,14 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCom
           left = x;
         }
       }
-      else if (left >= 0) {
-        int cx = static_cast<int>(((left + x) - 1) * 0.5f);
-        points.push_back(vpImagePoint(y, cx));
+      else if (data.m_mask[y][x] > 0) {
+        int cx = x; // Case 1 pix wide
+        if (left >= 0) {
+          // Case more than 1 pix wide
+          cx = static_cast<int>(((left + x) - 1) * 0.5f);
+        }
+        vpImagePoint pt(y, cx);
+        points.push_back(pt);
         data.m_Iskeleton[y][cx] = 255;
         left = -1;
       }
@@ -95,10 +100,14 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCom
           top = y;
         }
       }
-      else if (top >= 0) {
-        int cy = static_cast<int>(((top + y) - 1) * 0.5f);
+      else if (data.m_mask[y][x] > 0) {
+        int cy = y; // Case 1 pix wide
+        if (top >= 0) {
+          cy = static_cast<int>(((top + y) - 1) * 0.5f);  // Case more than 1 pix wide
+        }
         if (data.m_Iskeleton[cy][x] == 0) {
-          points.push_back(vpImagePoint(cy, x));
+          vpImagePoint pt(cy, x);
+          points.push_back(pt);
           data.m_Iskeleton[cy][x] = 255;
         }
         top = -1;
