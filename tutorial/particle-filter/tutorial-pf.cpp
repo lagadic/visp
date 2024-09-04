@@ -276,6 +276,13 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
       }
     }
   }
+
+  /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
+  tutorial::vpTutoMeanSquareFitting lmsFitter;
+  lmsFitter.fit(initPoints);
+  vpColVector X0 = lmsFitter.getCoeffs();
+  std::cout << "Initial coefficients = " << X0.t() << std::endl;
+
   /// Display info about the initialization
   vpDisplay::display(data.m_I_orig);
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Here are the points selected for the initialization.", data.m_colorLegend);
@@ -293,15 +300,11 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     }
     ofs_initPoints.close();
   }
+  lmsFitter.display(data.m_I_orig, vpColor::red, data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v(), data.m_ipLegend.get_u());
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
   vpDisplay::flush(data.m_I_orig);
   vpDisplay::getClick(data.m_I_orig, waitForClick);
 
-  /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
-  tutorial::vpTutoMeanSquareFitting lmsFitter;
-  lmsFitter.fit(initPoints);
-  vpColVector X0 = lmsFitter.getCoeffs();
-  std::cout << "Initial coefficients = " << X0.t() << std::endl;
   return X0;
 #else
   if (vpIoTools::checkFilename(listPointsFile)) {

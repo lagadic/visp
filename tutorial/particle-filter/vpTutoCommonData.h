@@ -80,6 +80,25 @@ typedef struct vpTutoCommonData
   long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
   int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
 
+  double m_a; //!< To generate simulated data.
+  double m_b; //!< To generate simulated data.
+  double m_c; //!< To generate simulated data.
+
+  /**
+   * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
+   *
+   * \param[in] x0 Horizontal coordinate of the inflexion point.
+   * \param[in] y0 Vertical coordinate of the inflexion point.
+   * \param[in] x1 Horizontal coordinate of another point of the curve.
+   * \param[in] y1 Vertical coordinate of another point of the curve.
+   */
+  void computeABC(const double &x0, const double &y0, const double &x1, const double &y1)
+  {
+    m_b = (y1 - y0)/(-0.5*(x1 * x1/x0) + x1 -0.5 * x0);
+    m_a = -m_b / (2. * x0);
+    m_c = y0 - 0.5 * m_b * x0;
+  }
+
   vpTutoCommonData()
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
@@ -100,7 +119,9 @@ typedef struct vpTutoCommonData
     , m_pfRatioAmpliMaxC(0.25)
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
-  { }
+  {
+    computeABC(300., 20, 20., 400.);
+  }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
   ~vpTutoCommonData()
@@ -132,6 +153,7 @@ typedef struct vpTutoCommonData
     std::cout << "\nOPTIONS " << std::endl
       << "  --video <input video>" << std::endl
       << "    Name of the input video filename." << std::endl
+      << "    If name is set to \"generate-simulated\" a simulated image is generated." << std::endl
       << "    Example: --video " << this->m_seqFilename << std::endl
       << std::endl
       << "  --hsv-thresholds <filename.yaml>" << std::endl
@@ -143,19 +165,46 @@ typedef struct vpTutoCommonData
       << std::endl;
   }
 
+  inline void generateSimulatedImage()
+  {
+    const unsigned int width = 600, height = 400;
+    m_I_orig.resize(height, width, vpRGBa(0));
+    VISP_NAMESPACE_ADDRESSING vpRect limits(VISP_NAMESPACE_ADDRESSING vpImagePoint(0., 0.), VISP_NAMESPACE_ADDRESSING vpImagePoint(height - 1, width - 1));
+    VISP_NAMESPACE_ADDRESSING vpRGBa color(175, 175, 53);
+    for (unsigned int u = 0; u < width; ++u) {
+      double x = static_cast<double>(u);
+      double y = m_a * x * x + m_b * x + m_c;
+      vpImagePoint pt(y, x);
+      if (limits.isInside(pt)) {
+        m_I_orig[static_cast<int>(y)][u] = color;
+      }
+    }
+  }
+
   inline int init(const int &argc, const char *argv[])
   {
     // Parse the input arguments
     int i = 1;
     while (i < argc) {
       std::string argname(argv[i]);
-      if (argname == std::string("--video")) {
+      if (argname == std::string("--video") && ((i + 1) < argc)) {
         ++i;
         m_seqFilename = std::string(argv[i]);
       }
-      else if (argname == std::string("--hsv-thresholds")) {
+      else if (argname == std::string("--hsv-thresholds") && ((i + 1) < argc)) {
         ++i;
         m_hsvFilename = std::string(argv[i]);
+      }
+      else if (argname == std::string("--curve") && ((i + 4) < argc)) {
+        ++i;
+        double x0 = std::atof(argv[i]);
+        ++i;
+        double y0 = std::atof(argv[i]);
+        ++i;
+        double x1 = std::atof(argv[i]);
+        ++i;
+        double y1 = std::atof(argv[i]);
+        computeABC(x0, y0, x1, y1);
       }
       else if ((argname == std::string("-h")) || (argname == std::string("--help"))) {
         printHelp(argv[0]);
@@ -178,14 +227,19 @@ typedef struct vpTutoCommonData
       return EXIT_FAILURE;
     }
 
-    // Open the sequence of images
-    try {
-      m_grabber.setFileName(m_seqFilename);
-      m_grabber.open(m_I_orig);
+    if (m_seqFilename.find("generate-simulated") != std::string::npos) {
+      generateSimulatedImage();
     }
-    catch (const vpException &e) {
-      std::cout << e.getStringMessage() << std::endl;
-      return EXIT_FAILURE;
+    else {
+    // Open the sequence of images
+      try {
+        m_grabber.setFileName(m_seqFilename);
+        m_grabber.open(m_I_orig);
+      }
+      catch (const vpException &e) {
+        std::cout << e.getStringMessage() << std::endl;
+        return EXIT_FAILURE;
+      }
     }
     m_I_segmented.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the segmented image to match the original image
     m_mask.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the binary mask that indicates which pixels are in the allowed HSV range.

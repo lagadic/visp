@@ -128,19 +128,19 @@ public:
     A.resize(nbPts, 3, 1.);
     b.resize(nbPts, 1);
     for (unsigned int i = 0; i < nbPts; ++i) {
-      float u = pts[i].get_u();
-      float v = pts[i].get_v();
+      double u = pts[i].get_u();
+      double v = pts[i].get_v();
       A[i][0] = u *u;
       A[i][1] = u;
-      A[i][2] = 1.f;
+      A[i][2] = 1.;
       b[i][0] = v;
     }
   }
 
 private:
-  float m_a; /*!< Coefficient applied to u^2*/
-  float m_b; /*!< Coefficient applied to u*/
-  float m_c; /*!< Offset*/
+  double m_a; /*!< Coefficient applied to u^2*/
+  double m_b; /*!< Coefficient applied to u*/
+  double m_c; /*!< Offset*/
 };
 
 #endif
