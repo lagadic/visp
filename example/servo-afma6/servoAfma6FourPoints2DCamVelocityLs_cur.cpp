@@ -37,47 +37,24 @@
 
 /*!
   \file servoAfma6FourPoints2DCamVelocityLs_cur.cpp
+  \example servoAfma6FourPoints2DCamVelocityLs_cur.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in the camera frame.  Visual features are the image coordinates of
   4 vpDot2 points. The interaction matrix is computed using the current visual
   features.
-
 */
 
-/*!
-  \example servoAfma6FourPoints2DCamVelocityLs_cur.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame.  Visual features are the image coordinates of 4 vpDot2
-  points. The interaction matrix is computed using the current visual
-  features.
-
-*/
-
-#include <stdlib.h>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
-#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/core/vpDisplay.h>
+#if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY)
+
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
-
-#include <visp3/blob/vpDot.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpTranslationVector.h>
+#include <visp3/gui/vpDisplayFactory.h>
+#include <visp3/sensor/vpRealSense2.h>
+#include <visp3/blob/vpDot2.h>
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -95,44 +72,32 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 /*!
-
   Compute the pose \e cMo from the 3D coordinates of the points \e point and
   their corresponding 2D coordinates \e dot. The pose is computed using a Lowe
   non linear method.
 
   \param point : 3D coordinates of the points.
-
   \param dot : 2D coordinates of the points.
-
-  \param ndot : Number of points or dots used for the pose estimation.
-
   \param cam : Intrinsic camera parameters.
-
   \param cMo : Homogeneous matrix in output describing the transformation
   between the camera and object frame.
-
   \param init : Indicates if the we have to estimate an initial pose with
   Lagrange or Dementhon methods.
-
 */
-void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo, bool init)
+void compute_pose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam,
+                  vpHomogeneousMatrix &cMo, bool init)
 {
   vpRotationMatrix cRo;
   vpPose pose;
   vpImagePoint cog;
-  for (int i = 0; i < ndot; i++) {
 
+  for (size_t i = 0; i < point.size(); ++i) {
     double x = 0, y = 0;
-
     cog = dot[i].getCog();
-    vpPixelMeterConversion::convertPoint(cam, cog, x,
-                                         y); // pixel to meter conversion
-    //     std::cout << "point cam: " << i << x << " " << y << std::endl;
-    point[i].set_x(x); // projection perspective          p
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y); // Pixel to meter conversion
+    point[i].set_x(x);                                    // Perspective projection
     point[i].set_y(y);
     pose.addPoint(point[i]);
-    //     std::cout << "point " << i << std::endl;
-    //     point[i].print();
   }
 
   if (init == true) {
@@ -153,13 +118,12 @@ int main()
   // - the 8 values of s - s*
   // - the 6 values of the pose cMo (tx,ty,tz, rx,ry,rz) with translation
   //   in meters and rotations in radians
-  std::string username;
+
   // Get the user login name
-  vpIoTools::getUserName(username);
+  std::string username = vpIoTools::getUserName();
 
   // Create a log filename to save velocities...
-  std::string logdirname;
-  logdirname = "/tmp/" + username;
+  std::string logdirname = "/tmp/" + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
@@ -173,36 +137,27 @@ int main()
       return EXIT_FAILURE;
     }
   }
-  std::string logfilename;
-  logfilename = logdirname + "/log.dat";
+  std::string logfilename = logdirname + "/log.dat";
 
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
   try {
-    vpServo task;
-
-    vpImage<unsigned char> I;
-    int i;
-
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 60);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 60);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 60);
     rs.open(config);
+
+    vpImage<unsigned char> I;
 
     // Warm up camera
     for (size_t i = 0; i < 10; ++i) {
       rs.acquire(I);
     }
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Current image");
-#endif
+
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, 100, 100, "Current image");
 
     vpDisplay::display(I);
     vpDisplay::flush(I);
@@ -217,19 +172,18 @@ int main()
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
-    vpDot2 dot[4];
-    vpImagePoint cog;
+    std::vector<vpDot2> dot(4);
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..." << std::endl;
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < dot.size(); ++i) {
       dot[i].initTracking(I);
-      cog = dot[i].getCog();
+      vpImagePoint cog = dot[i].getCog();
       vpDisplay::displayCross(I, cog, 10, vpColor::blue);
       vpDisplay::flush(I);
     }
 
-    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
     vpRobotAfma6 robot;
+    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
     // Load the end-effector to camera frame transformation obtained
     // using a camera intrinsic model with distortion
@@ -240,30 +194,30 @@ int main()
     robot.getCameraParameters(cam, I);
 
     // Sets the current position of the visual feature
-    vpFeaturePoint p[4];
-    for (i = 0; i < 4; i++)
+    std::vector<vpFeaturePoint> p(4);
+    for (size_t i = 0; i < p.size(); ++i) {
       vpFeatureBuilder::create(p[i], cam, dot[i]); // retrieve x,y  of the vpFeaturePoint structure
+    }
 
     // Set the position of the square target in a frame which origin is
     // centered in the middle of the square
-    vpPoint point[4];
+    std::vector<vpPoint> point(4);
     point[0].setWorldCoordinates(-L, -L, 0);
-    point[1].setWorldCoordinates(L, -L, 0);
-    point[2].setWorldCoordinates(L, L, 0);
-    point[3].setWorldCoordinates(-L, L, 0);
+    point[1].setWorldCoordinates(+L, -L, 0);
+    point[2].setWorldCoordinates(+L, +L, 0);
+    point[3].setWorldCoordinates(-L, +L, 0);
 
     // Initialise a desired pose to compute s*, the desired 2D point features
     vpHomogeneousMatrix cMo;
-    vpTranslationVector cto(0, 0, 0.5); // tz = 0.7 meter
-    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0),
-                     vpMath::rad(0)); // No rotations
-    vpRotationMatrix cRo(cro);        // Build the rotation matrix
-    cMo.build(cto, cRo);          // Build the homogeneous matrix
+    vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
+    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
+    vpRotationMatrix cRo(cro);          // Build the rotation matrix
+    cMo.build(cto, cRo);                // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
-    vpFeaturePoint pd[4];
+    std::vector<vpFeaturePoint> pd(4);
     // Compute the desired position of the features from the desired pose
-    for (int i = 0; i < 4; i++) {
+    for (size_t i = 0; i < pd.size(); ++i) {
       vpColVector cP, p;
       point[i].changeFrame(cMo, cP);
       point[i].projection(cP, p);
@@ -277,16 +231,17 @@ int main()
     // - we want an eye-in-hand control law
     // - robot is controlled in the camera frame
     // - Interaction matrix is computed with the current visual features
+    vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
 
     // We want to see a point on a point
-    std::cout << std::endl;
-    for (i = 0; i < 4; i++)
+    for (size_t i = 0; i < p.size(); ++i) {
       task.addFeature(p[i], pd[i]);
+    }
 
     // Set the proportional gain
-    task.setLambda(0.1);
+    task.setLambda(0.3);
 
     // Display task information
     task.print();
@@ -307,24 +262,19 @@ int main()
       vpDisplay::display(I);
 
       // For each point...
-      for (i = 0; i < 4; i++) {
+      for (size_t i = 0; i < dot.size(); ++i) {
         // Achieve the tracking of the dot in the image
         dot[i].track(I);
-        // Get the dot cog
-        cog = dot[i].getCog();
-        // Display a green cross at the center of gravity position in the
-        // image
-        vpDisplay::displayCross(I, cog, 10, vpColor::green);
       }
 
       // At first iteration, we initialise non linear pose estimation with a linear approach.
       // For the other iterations, non linear pose estimation is initialized with the pose estimated at previous iteration of the loop
-      compute_pose(point, dot, 4, cam, cMo, init_pose_from_linear_method);
+      compute_pose(point, dot, cam, cMo, init_pose_from_linear_method);
       if (init_pose_from_linear_method) {
         init_pose_from_linear_method = false;
       }
 
-      for (i = 0; i < 4; i++) {
+      for (size_t i = 0; i < dot.size(); ++i) {
         // Update the point feature from the dot location
         vpFeatureBuilder::create(p[i], cam, dot[i]);
         // Set the feature Z coordinate from the pose
@@ -334,12 +284,8 @@ int main()
         p[i].set_Z(cP[2]);
       }
 
-      // Printing on stdout concerning task information
-      // task.print() ;
-
-      vpColVector v;
       // Compute the visual servoing skew vector
-      v = task.computeControlLaw();
+      vpColVector v = task.computeControlLaw();
 
       // Display the current and desired feature points in the image display
       vpServoDisplay::display(task, cam, I);
