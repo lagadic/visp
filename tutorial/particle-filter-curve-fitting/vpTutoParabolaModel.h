@@ -56,7 +56,7 @@ public:
    * and coeffs[m_degree] is the coefficient applied to the highest degree input.
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpColVector &coeffs)
-    : m_degree(coeffs.size())
+    : m_degree(coeffs.size() - 1)
     , m_coeffs(coeffs)
   { }
 
@@ -67,7 +67,7 @@ public:
    * and coeffs[m_degree][0] is the coefficient applied to the highest degree input.
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs)
-    : m_degree(coeffs.getRows())
+    : m_degree(coeffs.getRows() - 1)
     , m_coeffs(coeffs.getCol(0))
   { }
 
@@ -117,17 +117,25 @@ public:
    */
   static void fillSystem(const unsigned int &degree, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
   {
-    unsigned int nbPts = pts.size();
-    A.resize(nbPts, degree + 1, 1.);
+    const unsigned int nbPts = pts.size();
+    const unsigned int nbCoeffs = degree + 1;
+    A.resize(nbPts, nbCoeffs, 1.);
     b.resize(nbPts, 1);
     for (unsigned int i = 0; i < nbPts; ++i) {
       double u = pts[i].get_u();
       double v = pts[i].get_v();
-      for (unsigned int j = 0; j < degree + 1; ++j) {
+      for (unsigned int j = 0; j < nbCoeffs; ++j) {
         A[i][j] = std::pow(u, j);
       }
       b[i][0] = v;
     }
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const vpTutoParabolaModel &model)
+  {
+    os << "Highest degree = " << model.m_degree << std::endl;
+    os << "Coeffs = [ " << model.m_coeffs.transpose() << " ]" << std::endl;
+    return os;
   }
 
 private:

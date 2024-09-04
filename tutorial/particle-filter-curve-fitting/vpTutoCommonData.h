@@ -43,6 +43,26 @@
 
 namespace tutorial
 {
+inline void log(std::ostream &os, const std::string &filename, const std::string &funName, const std::string &arrayName, const vpArray2D<double> &array, const unsigned int &level = 0)
+{
+  os << "[" << filename << "::" << funName << "] ";
+  for (unsigned int i = 0; i < level; ++i) {
+    os << "\t";
+  }
+  os << arrayName << ":=" << std::endl;
+  for (unsigned int r = 0; r < array.getRows(); ++r) {
+    for (unsigned int i = 0; i < level; ++i) {
+      os << "\t";
+    }
+    os << "[";
+    for (unsigned int c = 0; c < array.getCols() - 1; ++c) {
+      os << std::setprecision(3) << std::scientific << array[r][c] << "\t; ";
+    }
+    os << array[r][array.getCols() - 1] << "]\n";
+  }
+  os << std::flush;
+}
+
 typedef struct vpTutoCommonData
 {
   static const int SOFTWARE_CONTINUE = 4221;
@@ -74,9 +94,7 @@ typedef struct vpTutoCommonData
 
   double m_pfMaxDistanceForLikelihood; /*!< Maximum tolerated distance for the likelihood evaluation.*/
   unsigned int m_pfN; /*!< Number of particles for the particle filter.*/
-  double m_pfRatioAmpliMaxA; /*!< The ratio of the initial guess the maximum amplitude of noise on the a coefficient of the parabola v = a u^2 + b u + c*/
-  double m_pfRatioAmpliMaxB; /*!< The ratio of the initial guess the maximum amplitude of noise on the b coefficient of the parabola v = a u^2 + b u + c*/
-  double m_pfRatioAmpliMaxC; /*!< The ratio of the initial guess the maximum amplitude of noise on the v coefficient of the parabola v = a u^2 + b u + c*/
+  std::vector<double> m_pfRatiosAmpliMax; /*!< The ratio of the initial guess the maximum amplitude of noise on each coefficient of the parabola.*/
   long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
   int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
 
@@ -169,9 +187,7 @@ typedef struct vpTutoCommonData
     , m_ransacRatioInliers(0.5f)
     , m_pfMaxDistanceForLikelihood(40)
     , m_pfN(300)
-    , m_pfRatioAmpliMaxA(0.25)
-    , m_pfRatioAmpliMaxB(0.25)
-    , m_pfRatioAmpliMaxC(0.25)
+    , m_pfRatiosAmpliMax({ 0.25, 0.25, 0.25 })
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
     , m_degree(2)
@@ -279,6 +295,7 @@ typedef struct vpTutoCommonData
       else if (argname == std::string("--degree") && ((i + 1) < argc)) {
         ++i;
         m_degree = std::atoi(argv[i]);
+        m_pfRatiosAmpliMax.resize(m_degree, m_pfRatiosAmpliMax[0]);
       }
       else if ((argname == std::string("-h")) || (argname == std::string("--help"))) {
         printHelp(argv[0]);

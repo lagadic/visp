@@ -281,7 +281,9 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree);
   lmsFitter.fit(initPoints);
   vpColVector X0 = lmsFitter.getCoeffs();
-  std::cout << "Initial coefficients = " << X0.t() << std::endl;
+  std::cout << "---[Initial fit]---" << std::endl;
+  std::cout << lmsFitter.getModel();
+  std::cout << "---[Initial fit]---" << std::endl;
 
   /// Display info about the initialization
   vpDisplay::display(data.m_I_orig);
@@ -405,8 +407,11 @@ int main(const int argc, const char *argv[])
   const double maxDistanceForLikelihood = data.m_pfMaxDistanceForLikelihood; // The maximum allowed distance between a particle and the measurement, leading to a likelihood equal to 0..
   const double sigmaLikelihood = maxDistanceForLikelihood / 3.; // The standard deviation of likelihood function.
   const unsigned int nbParticles = data.m_pfN; // Number of particles to use
-  const double ampliMaxA = data.m_pfRatioAmpliMaxA * X0[0], ampliMaxB = data.m_pfRatioAmpliMaxB * X0[1], ampliMaxC = data.m_pfRatioAmpliMaxC * X0[2];
-  const std::vector<double> stdevsPF = { ampliMaxA/3., ampliMaxB/3., ampliMaxC/3. }; // Standard deviation for each state component
+  std::vector<double> stdevsPF; // Standard deviation for each state component
+  for (unsigned int i = 0; i < data.m_degree + 1; ++i) {
+    double ampliMax = data.m_pfRatiosAmpliMax[i] * X0[i];
+    stdevsPF.push_back(ampliMax / 3.);
+  }
   unsigned long seedPF; // Seed for the random generators of the PF
   const float period = 33.3; // 33.3ms i.e. 30Hz
   if (data.m_pfSeed < 0) {

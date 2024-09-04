@@ -141,6 +141,17 @@ public:
   {
     return m_model.toVpColVector();
   }
+
+  /**
+   * \brief Get the parabola model that is fitted.
+   *
+   * \return vpTutoParabolaModel The parabola model.
+   */
+  inline const vpTutoParabolaModel &getModel() const
+  {
+    return m_model;
+  }
+
 protected:
   unsigned int m_degree; /*!< The degree of the curve that is estimated*/
   vpTutoParabolaModel m_model; /*!< The model of the curve we try to fit.*/
