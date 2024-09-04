@@ -1,0 +1,425 @@
+/**
+  \page tutorial-pf Tutorial: Using Particle Filter to filter your data
+  \tableofcontents
+
+\section tuto-pf-intro Introduction
+
+The Particle Filters (PF) are a set of Monte Carlo algorithms that
+permit to approximate solutions for filtering problems even when
+the state-space and/or measurement space are non-linear.
+
+In this tutorial, we will use a PF on the same use-case than presented in \ref tutorial-ukf . The PF is used to
+filter the 3D position of a simulated object, which revolves in a plane parallel
+to the ground around a static point, which is the origin of the world frame \f$ {F}_W \f$. The coordinate frame
+attached to the object is denoted \f$ {F}_O \f$. The object is observed by a static camera whose coordinate
+frame is denoted \f$ {F}_C \f$. The object is supposed plane and having four markers sticked on its surface.
+
+The equations that describe the motion of the object in the world frame are the following:
+
+\f[
+  \begin{array}{lcl}
+  {}^W \textbf{X}_x &=& R cos(\omega t + \phi) \\
+  {}^W \textbf{X}_y &=& R sin(\omega t + \phi) \\
+  {}^W \textbf{X}_z &=& constant
+  \end{array}
+\f]
+
+where \f$ \omega \f$ and \f$ \phi \f$ are respectively the pulsation and the phase of the motion, while \f$ R \f$ is the
+radius of the revolution around the origin of the world frame.
+
+\htmlonly <style>div.image img[src="img-tutorial-ukf-illustration.jpg"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-ukf-illustration.jpg
+
+\subsection tuto-pf-intro-methods The maths beyond the Particle Filter
+
+The maths beyond the Particle Filter are explained in the documentation of the vpParticleFilter class.
+We will recall briefly the important steps of the PF.
+
+Be \f$ \textbf{x}_i \in \textit{S} \f$ a particle representing the internal state of the PF, with \f$ i \in \{0 \dots N - 1\} \f$
+and \f$ \textit{S} \f$ the state space.
+To each particle is associated a weight \f$ w_i \f$ that represents its likelihood knowing the measurements and is used
+to compute the filtered state \f$ \textbf{x}_{filtered} \in \textit{S} \f$.
+
+The first step of the PF is the prediction step. During this step, the particles of the PF are projected forward in time. Be
+\f$ f(\textbf{x}_i, \Delta t) : \textit{S} \times R \rightarrow \textit{S} \f$ the process function that project the forward in time.
+All the particles pass through the function , and some noise \f$ \epsilon \f$ is independently added to each of them to form the new
+particles:
+
+\f[
+  \textbf{x}_i(t + \Delta t) = f( \textbf{x}_i(t) , \Delta t ) + \epsilon
+\f]
+
+The second step of the PF is to update the weights \f$ w_i \f$ associated to each particle based on new measurements.
+The update is based on the likelihood of a particle based on the measurements \f$ \textbf{z} \in \textit{M} \f$, where
+\f$ \textit{M} \f$ is the measurement space. Be  \f$ l: \textit{S} \times \textit{M} \rightarrow [0; 1.] \f$ the likelihood function,
+we have:
+
+\f[
+  w_i = l(\textbf{x}_i, \textbf{z})
+\f]
+
+After an update, a check is performed to see if the PF is not degenerated (i.e. if the weigths of most particles became very low).
+If the PF became degenerated, the particles are resampled depending on a resampling scheme. Different kind of checks
+and of resampling algorithms exist in the litterature.
+
+Finally, we can compute the new state estimate \f$ \textbf{x}_{filtered} \f$ by performing a weighted mean of the particles
+\f$ \textbf{x}_i \f$. Be \f$ \textbf{w} = (w_0 \dots w_{N-1})^T \in R^N \f$, \f$ \textbf{x} = {\textbf{x}_0 \dots \textbf{x}_{N-1}} \in \textit{S}^N \f$
+and \f$ wm: R^N \times \textit{S}^N \rightarrow \textit{S} \f$ the weighted mean function of the state space
+\f$ \textit{S} \f$, we have:
+
+\f[
+  \textbf{x}_{filtered} = wm(\textbf{w}, \textbf{x})
+\f]
+
+\section tuto-pf-tutorial Explanations about the tutorial
+
+\subsection tuto-pf-tutorial-howtorun How to run the tutorial
+
+To run the tutorial, please run the following commands:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/particle-filter
+$ ./tutorial-pf
+```
+
+To see the arguments the program can take, please run:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/particle-filter
+$ ./tutorial-pf -h
+```
+
+You should see something similar to the following image:
+
+\htmlonly <style>div.image img[src="img-tutorial-pf-run.jpg"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-pf-run.jpg "Screenshot of the tutorial Graphical User Interface"
+
+Press `Return` to leave the program.
+
+\subsection tuto-pf-tutorial-explained Detailed explanations about the PF tutorial
+
+For this tutorial, we use the main program tutorial-pf.cpp .
+An Unscented Kalman Filter (UKF) is also implemented to compare the results of both methods.
+The internal state of both the PF and the UKF is
+the 3D position of the object expressed in the world frame, along with the pulsation \f$ \omega \f$ of the motion:
+
+\f[
+  \begin{array}{lcl}
+  \textbf{x}[0] &=& {}^WX_x \\
+  \textbf{x}[1] &=& {}^WX_y \\
+  \textbf{x}[2] &=& {}^WX_z \\
+  \textbf{x}[3] &=& \omega \Delta t
+  \end{array}
+\f]
+
+The measurement \f$ \textbf{z} \f$ corresponds to the perspective projection of the different markers in the image.
+Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+The measurement vector can be written as:
+
+\f[
+  \begin{array}{lcl}
+  \textbf{z}[2i] &=& u_i \\
+  \textbf{z}[2i+1] &=& v_i
+  \end{array}
+\f]
+
+Be \f$ \textbf{K}_{intr} \f$ the camera instrinsic parameters matrix defined by:
+
+\f$ \textbf{K}_{intr} = \begin{pmatrix}
+  p_x & 0   & u_0 \\
+  0   & p_y & v_0 \\
+  0   & 0   & 1
+  \end{pmatrix}
+\f$
+
+where \f$ (u_0, v_0, 1)^T \f$ are the coordinates of the principal point and \f$ p_x \f$ (resp. \f$ p_y \f$) is the ratio
+between the focal lens of the camera and the width (resp. height) of a pixel.
+
+Be \f$ \boldsymbol{\pi} \f$ the projection matrix  that is, in the case of a perspective
+projection model, given by:
+
+\f$ \boldsymbol{\pi} = \begin{pmatrix}
+  1 & 0 & 0 & 0 \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 1 & 0
+  \end{pmatrix}
+\f$
+
+The perspective projection \f$ \textbf{p} = (u, v, 1)^T \f$ of a point \f$ {}^W\textbf{X} = ({}^WX_x, {}^WX_y, {}^WX_z, 1)^T \f$
+is given by:
+
+\f$ \textbf{p} = \textbf{K}_{intr} \boldsymbol{\pi} {}^C\textbf{M}_W {}^W\textbf{X} \f$
+
+where \f$ {}^C\textbf{M}_W \f$ is the homogeneous matrix that expresses the pose of the world coordinate frame \f$ {F}_W \f$
+with regard to the camera frame \f$ {F}_C \f$.
+
+\subsubsection tuto-pf-tutorial-explained-includes Details on the includes
+
+To have a Graphical User Interface (GUI), we include the following files.
+
+\snippet tutorial-pf.cpp Display_includes
+
+To be able to use the PF, we use the following includes:
+
+\snippet tutorial-pf.cpp PF_includes
+
+To be able to use an UKF for comparison purpose, we use the following includes:
+
+\snippet tutorial-pf.cpp UKF_includes
+
+\subsubsection tuto-pf-tutorial-explained-plate Details on the class simulating a moving object
+
+To make simpler the main loop of the program, we decided to implement a class that will update the 3D position
+of the object, expressed in the world frame, in a dedicated class.
+
+\snippet tutorial-pf.cpp Object_simulator
+
+\subsubsection tuto-pf-tutorial-explained-fx Details on the process function
+
+As mentionned in \ref tuto-pf-intro-methods and \ref tuto-ukf-intro-methods, both the PF and the UKF rely on a process
+function which project forward in time their internal state.
+
+We want to express the internal state projected in the future \f$ \textbf{x}_{t + \Delta t} \f$ as a function of its
+previous state \f$ \textbf{x}_{t} \f$.
+
+As stated in the \ref tuto-pf-intro, the equations of motion of the object are the following:
+
+\f[
+  \begin{array}{lcl}
+  {}^W X_x(t) &=& R cos(\omega t + \phi) \\
+  {}^W X_y(t) &=& R sin(\omega t + \phi) \\
+  {}^W X_z(t) &=& constant
+  \end{array}
+\f]
+
+Thus, we have:
+
+\f[
+  \begin{array}{lclcl}
+  {}^WX_x( t + \Delta t) &=& R cos(\omega (t + \Delta t) + \phi) &=& R cos((\omega t + \phi) + \omega \Delta t )\\
+  {}^WX_y( t + \Delta t) &=& R sin(\omega (t + \Delta t) + \phi) &=& R sin((\omega t + \phi) + \omega \Delta t )\\
+  {}^WX_z( t + \Delta t) &=& constant
+  \end{array}
+\f]
+
+Which can be rewritten:
+\f[
+  \begin{array}{lclcl}
+  {}^WX_x( t + \Delta t) &=& R cos((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) \\
+  {}^WX_y( t + \Delta t) &=& R sin((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t)\\
+  {}^WX_z( t + \Delta t) &=& constant
+  \end{array}
+\f]
+
+And can be finally written as:
+\f[
+  \begin{array}{lclcl}
+  {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W X_x( t) cos(\omega \Delta t) - {}^W X_y(t) sin(\omega \Delta t) \\
+  {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W X_x( t) sin(\omega \Delta t) + {}^W X_y(t) cos(\omega \Delta t) \\
+  {}^WX_z( t + \Delta t) &=& constant
+  \end{array}
+\f]
+
+This motivates us to choose the following non-linear process function:
+
+\f[
+  \begin{array}{lclcl}
+  \textbf{x}[0]_{t + \Delta t} &=& {}^WX_x (t + \Delta t) &=& \textbf{x}[0]_{t} cos(\textbf{x}[3]_{t}) - \textbf{x}[1]_{t} sin(\textbf{x}[3]_{t}) \\
+  \textbf{x}[1]_{t + \Delta t} &=& {}^WX_y (t + \Delta t) &=& \textbf{x}[0]_{t} sin(\textbf{x}[3]_{t}) + \textbf{x}[1]_{t} cos(\textbf{x}[3]_{t}) \\
+  \textbf{x}[2]_{t + \Delta t} &=& {}^WX_z (t + \Delta t) &=& \textbf{x}[2]_{t} \\
+  \textbf{x}[3]_{t + \Delta t} &=& \omega \Delta t &=& \textbf{x}[3]_{t}
+  \end{array}
+\f]
+
+As the process function is pretty simple, a simple function called here `fx()` is enough:
+
+\snippet tutorial-pf.cpp Process_function
+
+\subsubsection tuto-pf-tutorial-explained-markers Details on the class simulating marker measurement
+
+The measurements of the projection of the markers in the image are handled by the following class:
+
+\snippet tutorial-pf.cpp Markers_class
+
+It takes as input the camera parameters <code>cam</code>, the homogeneous matrix expressing the pose of the world frame
+\f$ {F}_W \f$ with regard to the camera frame \f$ {F}_C \f$ <code>cMw</code>, the rotation matrix that
+expresses the rotation between the object frame and world frame <code>wRo</code> and the homogeneous coordinates of the
+markers expressed in the object frame <code>markers</code> to be able to convert the 3D position of the object in the
+world frame \f$ {}^W \textbf{X} \f$ into 3D positions of the markers in the camera frame \f$ {}^C \textbf{X}^i \f$, where
+\f$ i \f$ denotes the i\f$^{th}\f$ marker sticked on the object. The standard deviation of the noise <code>noise_stdev</code>
+and the seed value <code>seed</code> are here to initialized the Gaussian noise generator used to simulate noisy measurements.
+Additionally, the likelihood standard deviation \f$\sigma_l\f$ is given for the computation of the likelihood of a PF
+particle knowing the measurements.
+
+The method <code>state_to_measurement</code> is used to convert the internal state of the UKF into the measurement space
+(i.e. the projection in the image of the markers sticked on the object if the object is at this 3D position):
+
+\snippet tutorial-pf.cpp Measurement_function
+
+The method <code>measureGT</code> is used to convert the ground truth 3D position of the object into ground truth
+projections of the markers in the image:
+
+\snippet tutorial-pf.cpp GT_measurements
+
+The method <code>measureWithNoise</code> adds noise to the ground truth measurements in order to simulate a noisy
+measurement process:
+
+\snippet tutorial-pf.cpp Noisy_measurements
+
+The method <code>likelihood</code> computes the likelihood of a particle knowing the measurements. We decided to implement
+a Gaussian function that penalizes the mean distance between the projection of the markers corresponding to the particle
+position and the measurements of the markers in the image.
+
+\f[
+  w_i = l(\textbf{x}_i, \textbf{z}) := \frac{1}{\sqrt{2. * \Pi * \sigma_l^2}} exp^{- \frac{\overline{e}}{2 * \sigma_l^2}}
+\f]
+
+where \f$ \overline{e} = \frac{\sum_i e_i}{N}\f$ is the mean reprojection error of the markers.
+
+Here is the corresponding code:
+
+\snippet tutorial-pf.cpp Likelihood_function
+
+\subsubsection tuto-pf-tutorial-explained-pose Details on the computation of the pose from noisy measurements
+
+The method <code>computePose</code> compute the 3D pose of an object from the 3D coordinates along with their projection
+in the image. Here, we use it to convert the noisy measurements in a noisy 3D pose, in order to
+compare the 3D position estimated by the PF and by the UKF with regard to the 3D position we would have if we computed the pose directly
+from the noisy measurements.
+
+\snippet tutorial-pf.cpp Pose_for_display
+
+\subsubsection tuto-pf-tutorial-explained-constants Details on the constants of the main loop
+
+In the main loop of the program, we first declare some constants that will be used later on:
+
+\snippet tutorial-pf.cpp Constants_for_simulation
+
+Here is their meanings:
+- <code> dt </code> is the sampling period (the time spent between two acquisitions),
+- <code> sigmaMeasurements </code> is the standard deviation of the Gaussian noise added to the measurements,
+- <code> radius </code> is the radius of the revolution of the object around the world frame origin,
+- <code> w </code> is the pulsation of the motion of revolution,
+- <code> phi </code> is the phase of the motion of revolution,
+- <code> markers </code> is a vector containing the homogeneous coordinates expressed in the object frame of the markers,
+- <code> markersAsVpPoint </code> is a vector containing the 3D coordinates of the markers expressed in the object (to compute the noisy pose as explained previously),
+- <code> seed </code> is the seed for the Gaussian noise generator that adds noise to the projections of the markers in the image,
+- <code> cMw </code> is the homogeneous matrix expressing the pose of the world frame with regard to the camera frame,
+- <code> wMo </code> is the homogeneous matrix expressing the pose of the object frame with regard to the world frame,
+- <code> wRo </code> is the rotation matrix contained in <code> wMo </code>
+- <code> wZ </code> is the z-axis coordinate of the origin of the object frame expressed in the world frame.
+
+To convert the 3D position of the object into the projection of its markers in the image, we need camera parameters. We
+generate camera parameters for a simulated camera as follow:
+
+\snippet tutorial-pf.cpp Camera_for_measurements
+
+\subsubsection tuto-pf-tutorial-explained-initpf Details on the initialization of the PF
+
+To create the particle filter, we need:
+- the number of particles \f$ N \f$ we want to use,
+- the standard deviations of each of the components of the state \f$ \sigma_j , j \in \{0 \dots dim(\textit{S}) - 1\} \f$,
+- optionnally, the seed to use to create the random noise generators affected to each state components,
+- optionnally, the number of threads to use if OpenMP is available.
+
+These parameters can be set using the Command Line Interface (CLI) thanks to the following structure:
+
+\snippet tutorial-pf.cpp CLI
+
+They are thereafter used in the following section of code of the main function:
+
+\snippet tutorial-pf.cpp Constants_for_the_PF
+
+Then, to initialize the filters, we need:
+- a guess of the initial state \f$ \textbf{x}(t = 0) \f$,
+- a process function \f$ f \f$,
+- a likelihood function \f$ l \f$,
+- a function that returns true if the filter is degenerated and sampling is needed,
+- a function that performs the resampling,
+- optionnally, a function to perform the weighted mean \f$ wm \f$ if the addition operation cannot be readily performed
+in the state space \f$ \textit{S} \f$,
+- optionnally, a function to perform the addition operation in the state space \f$ \textit{S} \f$.
+
+The section of code corresponding to the declaration of these functions is the following:
+
+\snippet tutorial-pf.cpp Init_functions_pf
+
+When both the constants and the functions have been declared, it is possible to create the PF
+using the following code:
+
+\snippet tutorial-pf.cpp Init_PF
+
+\subsubsection tuto-pf-tutorial-explained-initukf Initialization of the UKF, used for comparison purpose
+
+We refer the user to \ref tuto-ukf-tutorial-explained-initukf  for more detailed explanations on the initialization
+of the UKF, as this tutorial uses the same use-case. The code corresponding to the creation and initialization
+of the UKF is the following:
+
+\snippet tutorial-pf.cpp Init_UKF
+
+\subsubsection tuto-pf-tutorial-explained-initgui Details on the initialization of the Graphical User Interface
+
+If ViSP has been compiled with any of the third-party graphical libraries, we first begin by initializing the
+plot that will display the object x and y coordinates expressed in the world frame. Then, we initialize a plot that will
+display the error norm between either one of the filtered positions or the noisy position and the Ground Truth position.
+The corresponding code is the following:
+
+\snippet tutorial-pf.cpp Init_plot
+
+Then, we initialize the simple renderer that displays what the camera sees:
+
+\snippet tutorial-pf.cpp Init_renderer
+
+\subsubsection tuto-pf-tutorial-explained-initloop Details on the initialization of the loop
+
+For the initialization of the loop, we initialize an instance of the vpObjectSimulator class that
+simulates the moving object. Then, we initialize the current ground-truth 3D position of the object expressed in the
+world frame, which is the frame in which the internal states of both the PF and the UKF are expressed, as a null homogeneous coordinates
+vector.
+
+\snippet tutorial-pf.cpp Init_simu
+
+\subsubsection tuto-pf-tutorial-explained-loop Details on the loop
+
+The main loop of the program is the following:
+
+\snippet tutorial-pf.cpp Simu_loop
+
+First, we update the ground-truth 3D position of the object based on the simulated time using the following line:
+
+\snippet tutorial-pf.cpp Update obj pose
+
+Then, we update the measurement by projecting the 3D position of the markers attached to the object in the image and add
+some noise to the projections using the following line:
+
+\snippet tutorial-pf.cpp Update_measurement
+
+Then, we use the Particle Filter to filter the noisy measurements:
+
+\snippet tutorial-pf.cpp PF_filtering
+
+Then, we use the Unscented Kalman Filter to filter the noisy measurements to compare the results:
+
+\snippet tutorial-pf.cpp UKF_filtering
+
+Finally, we update the plot and renderer:
+
+\snippet tutorial-pf.cpp Update_displays
+
+First, we compute the noisy pose using the noisy measurements of the markers, to be able to plot the
+noisy 3D position of the object:
+
+\snippet tutorial-pf.cpp Noisy_pose
+
+Then, we update the plot by plotting the new ground truth, filtered and noisy 3D positions:
+
+\snippet tutorial-pf.cpp Update_plot
+
+Finally, we update the renderer that displays the projection in the image of the markers:
+
+\snippet tutorial-pf.cpp Update_renderer
+
+The program stops once the `Return` key is pressed.
+*/

@@ -219,7 +219,7 @@ As stated in the \ref tuto-ukf-intro, the equations of motion of the object are 
 Thus, we have:
 
 \f[
-  \begin{array}{lcl}
+  \begin{array}{lclcl}
   {}^WX_x( t + \Delta t) &=& R cos(\omega (t + \Delta t) + \phi) &=& R cos((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_y( t + \Delta t) &=& R sin(\omega (t + \Delta t) + \phi) &=& R sin((\omega t + \phi) + \omega \Delta t )\\
   {}^WX_z( t + \Delta t) &=& constant
@@ -228,7 +228,7 @@ Thus, we have:
 
 Which can be rewritten:
 \f[
-  \begin{array}{lcl}
+  \begin{array}{lclcl}
   {}^WX_x( t + \Delta t) &=& R cos((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R sin((\omega t + \phi) + \omega \Delta t ) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t)\\
   {}^WX_z( t + \Delta t) &=& constant
@@ -237,7 +237,7 @@ Which can be rewritten:
 
 And can be finally written as:
 \f[
-  \begin{array}{lcl}
+  \begin{array}{lclcl}
   {}^WX_x( t + \Delta t) &=& R cos(\omega t + \phi) cos (\omega \Delta t ) - R sin(\omega t + \phi) sin(\omega \Delta t) &=& {}^W X_x( t) cos(\omega \Delta t) - {}^W X_y(t) sin(\omega \Delta t) \\
   {}^WX_y( t + \Delta t) &=& R cos(\omega t + \phi) sin (\omega \Delta t ) + R sin(\omega t + \phi) cos(\omega \Delta t) &=& {}^W X_x( t) sin(\omega \Delta t) + {}^W X_y(t) cos(\omega \Delta t) \\
   {}^WX_z( t + \Delta t) &=& constant
@@ -247,7 +247,7 @@ And can be finally written as:
 This motivates us to choose the following non-linear process function:
 
 \f[
-  \begin{array}{lcl}
+  \begin{array}{lclcl}
   \textbf{x}[0]_{t + \Delta t} &=& {}^WX_x (t + \Delta t) &=& \textbf{x}[0]_{t} cos(\textbf{x}[3]_{t}) - \textbf{x}[1]_{t} sin(\textbf{x}[3]_{t}) \\
   \textbf{x}[1]_{t + \Delta t} &=& {}^WX_y (t + \Delta t) &=& \textbf{x}[0]_{t} sin(\textbf{x}[3]_{t}) + \textbf{x}[1]_{t} cos(\textbf{x}[3]_{t}) \\
   \textbf{x}[2]_{t + \Delta t} &=& {}^WX_z (t + \Delta t) &=& \textbf{x}[2]_{t} \\
@@ -270,7 +270,7 @@ It takes as input the camera parameters <code>cam</code>, the homogeneous matrix
 expresses the rotation between the object frame and world frame <code>wRo</code> and the homogeneous coordinates of the
 markers expressed in the object frame <code>markers</code> to be able to convert the 3D position of the object in the
 world frame \f$ {}^W \textbf{X} \f$ into 3D positions of the markers in the camera frame \f$ {}^C \textbf{X}^i \f$, where
-\f$ i \f$ denotes the i\f$^th\f$ marker sticked on the object. The standard deviation of the noise <code>noise_stdev</code>
+\f$ i \f$ denotes the i\f$^{th}\f$ marker sticked on the object. The standard deviation of the noise <code>noise_stdev</code>
 and the seed value <code>seed</code> are here to initialized the Gaussian noise generator used to simulate noisy measurements.
 
 The method <code>state_to_measurement</code> is used to convert the internal state of the UKF into the measurement space
