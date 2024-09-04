@@ -124,6 +124,12 @@ typedef struct vpTutoCommonData
       m_coeffsGT[2] = m_b3;
       m_coeffsGT[3] = m_a3;
     }
+    else {
+      m_coeffsGT.resize(m_degree + 1, 20.);
+      for (unsigned int i = 1; i < m_degree + 1; ++i) {
+        m_coeffsGT[i] = std::pow(0.005, i) * i;
+      }
+    }
     std::cout << "GT coeffs = " << m_coeffsGT.transpose() << std::endl;
   }
 
@@ -168,6 +174,14 @@ typedef struct vpTutoCommonData
     }
     else if (m_degree == 3) {
       y = m_a3 * x * x * x + m_b3 * x * x + m_c3 * x + m_d3;
+    }
+    else if (m_degree > 3) {
+      for (unsigned int i = 0; i <= m_degree; ++i) {
+        y += m_coeffsGT[i] * std::pow(x, i);
+      }
+    }
+    else if (m_degree == 1) {
+      y = 0.5 * x + 20;
     }
     return y;
   }
@@ -261,7 +275,8 @@ typedef struct vpTutoCommonData
       double y = computeY(x);
       vpImagePoint pt(y, x);
       if (limits.isInside(pt)) {
-        m_I_orig[static_cast<int>(y)][u] = color;
+        int v = static_cast<int>(y);
+        m_I_orig[v][u] = color;
       }
     }
   }
@@ -319,9 +334,6 @@ typedef struct vpTutoCommonData
     }
 
     if (m_seqFilename.find("generate-simulated") != std::string::npos) {
-      if ((m_degree != 2) && (m_degree != 3)) {
-        throw(VISP_NAMESPACE_ADDRESSING vpException(VISP_NAMESPACE_ADDRESSING vpException::badValue, "When using simulated data, the degree is restricted to the set {2 , 3}"));
-      }
       m_useSimulated = true;
       std::cout << "Degree of the polynomial = " << m_degree << std::endl;
       setGTCoeffs();
