@@ -38,43 +38,37 @@
 #include <visp3/core/vpMatrix.h>
 
 /*!
- * \brief Model of a parabola v = a u^2 + b u + c
+ * \brief Model of a parabola \f[v = \sum_{i = 0}^N a_i u^i \f] where \f[N\f] is the
+ * degree of the polynomial.
  */
 class vpTutoParabolaModel
 {
 public:
-  inline vpTutoParabolaModel()
-    : m_a(0.f)
-    , m_b(0.f)
-    , m_c(0.f)
-  { }
-
-  inline vpTutoParabolaModel(const float &a, const float &b, const float &c)
-    : m_a(a)
-    , m_b(b)
-    , m_c(c)
+  inline vpTutoParabolaModel(const unsigned int &degree)
+    : m_degree(degree)
+    , m_coeffs(degree + 1, 0.)
   { }
 
   /**
    * \brief Construct a new vpTutoParabolaModel object
    *
-   * \param coeffs a:=coeffs[0] b:=coeffs[1] c:=coeffs[2]
+   * \param coeffs The coefficients of the polynomial, where coeffs[0] = offset
+   * and coeffs[m_degree] is the coefficient applied to the highest degree input.
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpColVector &coeffs)
-    : m_a(coeffs[0])
-    , m_b(coeffs[1])
-    , m_c(coeffs[2])
+    : m_degree(coeffs.size())
+    , m_coeffs(coeffs)
   { }
 
   /**
    * \brief Construct a new vpTutoParabolaModel object
    *
-   * \param coeffs a:=coeffs[0][0] b:=coeffs[1][0] c:=coeffs[2][0]
+   * \param coeffs The coefficients of the polynomial, where coeffs[0][0] = offset
+   * and coeffs[m_degree][0] is the coefficient applied to the highest degree input.
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs)
-    : m_a(coeffs[0][0])
-    , m_b(coeffs[1][0])
-    , m_c(coeffs[2][0])
+    : m_degree(coeffs.getRows())
+    , m_coeffs(coeffs.getCol(0))
   { }
 
   /**
@@ -85,7 +79,10 @@ public:
    */
   inline float eval(const float &u) const
   {
-    float v = (m_a * u * u) + (m_b * u) + m_c;
+    float v = 0.;
+    for (unsigned int i = 0; i <= m_degree; ++i) {
+      v += m_coeffs[i] * std::pow(u, i);
+    }
     return v;
   }
 
@@ -96,18 +93,13 @@ public:
    */
   inline vpColVector toVpColVector() const
   {
-    vpColVector coeffs(3);
-    coeffs[0] = m_a;
-    coeffs[1] = m_b;
-    coeffs[2] = m_c;
-    return coeffs;
+    return m_coeffs;
   }
 
   inline vpTutoParabolaModel &operator=(const vpTutoParabolaModel &other)
   {
-    m_a = other.m_a;
-    m_b = other.m_b;
-    m_c = other.m_c;
+    m_degree = other.m_degree;
+    m_coeffs = other.m_coeffs;
     return *this;
   }
 
@@ -117,30 +109,30 @@ public:
    * X contains the model coefficients and b contains the
    * v-coordinates.
    *
+   * \param[in] degree The highest degree of the polynomial.
    * \param[in] pts The points to use to interpolate the coefficients of the parabola.
    * \param[out] A The matrix that contains the different powers of the u-coordinates.
    * \param[out] b The matrix that contains the v-coordinates.
    * \return Fill
    */
-  static void fillSystem(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
+  static void fillSystem(const unsigned int &degree, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
   {
     unsigned int nbPts = pts.size();
-    A.resize(nbPts, 3, 1.);
+    A.resize(nbPts, degree + 1, 1.);
     b.resize(nbPts, 1);
     for (unsigned int i = 0; i < nbPts; ++i) {
       double u = pts[i].get_u();
       double v = pts[i].get_v();
-      A[i][0] = u *u;
-      A[i][1] = u;
-      A[i][2] = 1.;
+      for (unsigned int j = 0; j < degree + 1; ++j) {
+        A[i][j] = std::pow(u, j);
+      }
       b[i][0] = v;
     }
   }
 
 private:
-  double m_a; /*!< Coefficient applied to u^2*/
-  double m_b; /*!< Coefficient applied to u*/
-  double m_c; /*!< Offset*/
+  unsigned int m_degree; /*!< The highest degree of the polynomial.*/
+  vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 
 #endif

@@ -105,14 +105,19 @@ public:
    */
   template<typename T>
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
-               const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
+               const unsigned int &vertPosLegend, const unsigned int &horPosLegend, const std::string &legend = "")
   {
 #ifdef VISP_HAVE_DISPLAY
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
       int v = model(u);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
-      VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
+      if (legend.empty()) {
+        VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
+      }
+      else {
+        VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, legend, color);
+      }
     }
 #endif
   }

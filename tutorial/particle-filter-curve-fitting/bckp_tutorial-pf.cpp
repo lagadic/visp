@@ -276,7 +276,6 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
       }
     }
   }
-
   /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
   tutorial::vpTutoMeanSquareFitting lmsFitter;
   lmsFitter.fit(initPoints);
@@ -291,6 +290,7 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     const vpImagePoint &ip = initPoints[i];
     vpDisplay::displayCross(data.m_I_orig, ip, sizeCross, colorCross, thicknessCross);
   }
+  lmsFitter.display<vpRGBa>(data.m_I_orig, vpColor::green, (data.m_ipLegend + data.m_legendOffset * 2.).get_v(), data.m_ipLegend.get_u(), "Initial model");
   /// Save the init points if they were not read from a file
   if (!useFile) {
     std::ofstream ofs_initPoints(listPointsFile);
@@ -300,7 +300,6 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     }
     ofs_initPoints.close();
   }
-  lmsFitter.display(data.m_I_orig, vpColor::red, data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v(), data.m_ipLegend.get_u());
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
   vpDisplay::flush(data.m_I_orig);
   vpDisplay::getClick(data.m_I_orig, waitForClick);
