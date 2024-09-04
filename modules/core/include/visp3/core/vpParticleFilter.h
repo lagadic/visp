@@ -473,6 +473,9 @@ void vpParticleFilter<MeasurementsType>::init(const vpColVector &x0, const vpPro
             const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
             const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
 {
+  if (x0.size() != m_noiseGenerators[0].size()) {
+    throw(vpException(vpException::dimensionError, "X0 does not have the same size than the vector of stdevs used to build the object"));
+  }
   m_f = f;
   m_stateFilterFunc = filterFunc;
   m_likelihood = l;
@@ -492,6 +495,9 @@ void vpParticleFilter<MeasurementsType>::init(const vpColVector &x0, const vpCom
             const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
             const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
 {
+  if (x0.size() != m_noiseGenerators[0].size()) {
+    throw(vpException(vpException::dimensionError, "X0 does not have the same size than the vector of stdevs used to build the object"));
+  }
   m_bx = bx;
   m_stateFilterFunc = filterFunc;
   m_likelihood = l;
