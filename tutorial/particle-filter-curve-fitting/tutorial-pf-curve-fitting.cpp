@@ -199,7 +199,7 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
 {
   const std::string listPointsFile("list_init_points.txt");
 #ifdef VISP_HAVE_DISPLAY
-  const unsigned int minNbPts = 3;
+  const unsigned int minNbPts = data.m_degree + 1;
   const unsigned int sizeCross = 10;
   const unsigned int thicknessCross = 2;
   const vpColor colorCross = vpColor::red;
@@ -244,7 +244,7 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
       vpDisplay::display(data.m_I_orig);
 
       /// Display the how-to
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: 3), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
+      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: " + std::to_string(minNbPts) + "), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
       vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
       vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
 
