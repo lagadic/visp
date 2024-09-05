@@ -38,9 +38,11 @@ namespace tutorial
 using VISP_NAMESPACE_NAME;
 #endif
 
-vpTutoMeanSquareFitting::vpTutoMeanSquareFitting(const unsigned int &degree)
+vpTutoMeanSquareFitting::vpTutoMeanSquareFitting(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
   : m_degree(degree)
-  , m_model(degree)
+  , m_height(static_cast<double>(height))
+  , m_width(static_cast<double>(width))
+  , m_model(degree, height, width)
   , m_isFitted(false)
 { }
 
@@ -51,11 +53,11 @@ void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
   vpMatrix b; // The matrix that contains the v values
 
   // Fill the matrices that form the system we want to solve
-  vpTutoParabolaModel::fillSystem(m_degree, pts, A, b);
+  vpTutoParabolaModel::fillSystem(m_degree, m_height, m_width, pts, A, b);
 
   // Compute the parabola coefficients using the least-mean-square method.
   X = A.pseudoInverse() * b;
-  m_model = vpTutoParabolaModel(X);
+  m_model = vpTutoParabolaModel(X, m_height, m_width);
   m_isFitted = true;
 }
 

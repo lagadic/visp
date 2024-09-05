@@ -125,7 +125,8 @@ typedef struct vpTutoCommonData
       m_coeffsGT[3] = m_a3;
     }
     else {
-      m_coeffsGT.resize(m_degree + 1, 20.);
+      m_coeffsGT.resize(m_degree + 1);
+      m_coeffsGT[0] = 20.;
       for (unsigned int i = 1; i < m_degree + 1; ++i) {
         m_coeffsGT[i] = std::pow(0.005, i) * i;
       }

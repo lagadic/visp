@@ -56,8 +56,10 @@ public:
    * \param[in] thresh The threshold that indicates if a point fit the model or not.
    * \param[in] ratioInliers The ratio of points that the model explain, i.e. the ratio of inliers in the set of points.
    * \param[in] degree The degree of the curve that is estimated.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
    */
-  vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers, const unsigned int &degree);
+  vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers, const unsigned int &degree, const unsigned int &height, const unsigned int &width);
 
   /**
    * \brief Fit a parabola model using the RANSAC algorithm.
@@ -142,6 +144,8 @@ public:
 
 private:
   unsigned int m_degree; /*!< The degree of the curve that is estimated*/
+  double m_height; /*!< The height of the input image*/
+  double m_width; /*!< The width of the input image*/
   vpTutoMeanSquareFitting m_bestModel; /*!< Object that fits a parabola from a vector of vpImagePoint .*/
   float m_bestError; /*!!< The mean square error of the best model.*/
   unsigned int m_n; /*!< The number of points to use to build the model.*/

@@ -44,30 +44,40 @@
 class vpTutoParabolaModel
 {
 public:
-  inline vpTutoParabolaModel(const unsigned int &degree)
+  inline vpTutoParabolaModel(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
     : m_degree(degree)
+    , m_height(static_cast<double>(height))
+    , m_width(static_cast<double>(width))
     , m_coeffs(degree + 1, 0.)
   { }
 
   /**
    * \brief Construct a new vpTutoParabolaModel object
    *
-   * \param coeffs The coefficients of the polynomial, where coeffs[0] = offset
+   * \param[in] coeffs The coefficients of the polynomial, where coeffs[0] = offset
    * and coeffs[m_degree] is the coefficient applied to the highest degree input.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
    */
-  inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpColVector &coeffs)
+  inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpColVector &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.size() - 1)
+    , m_height(static_cast<double>(height))
+    , m_width(static_cast<double>(width))
     , m_coeffs(coeffs)
   { }
 
   /**
    * \brief Construct a new vpTutoParabolaModel object
    *
-   * \param coeffs The coefficients of the polynomial, where coeffs[0][0] = offset
+   * \param[in] coeffs The coefficients of the polynomial, where coeffs[0][0] = offset
    * and coeffs[m_degree][0] is the coefficient applied to the highest degree input.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
    */
-  inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs)
+  inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.getRows() - 1)
+    , m_height(static_cast<double>(height))
+    , m_width(static_cast<double>(width))
     , m_coeffs(coeffs.getCol(0))
   { }
 
@@ -77,12 +87,14 @@ public:
    * \param[in] u Input
    * \return float The corresponding v.
    */
-  inline float eval(const float &u) const
+  inline double eval(const double &u) const
   {
-    float v = 0.;
+    double normalizedU = u / m_width;
+    double v = 0.;
     for (unsigned int i = 0; i <= m_degree; ++i) {
-      v += m_coeffs[i] * std::pow(u, i);
+      v += m_coeffs[i] * std::pow(normalizedU, i);
     }
+    v *= m_height;
     return v;
   }
 
@@ -99,6 +111,8 @@ public:
   inline vpTutoParabolaModel &operator=(const vpTutoParabolaModel &other)
   {
     m_degree = other.m_degree;
+    m_height = other.m_height;
+    m_width = other.m_width;
     m_coeffs = other.m_coeffs;
     return *this;
   }
@@ -110,20 +124,26 @@ public:
    * v-coordinates.
    *
    * \param[in] degree The highest degree of the polynomial.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
    * \param[in] pts The points to use to interpolate the coefficients of the parabola.
    * \param[out] A The matrix that contains the different powers of the u-coordinates.
    * \param[out] b The matrix that contains the v-coordinates.
    * \return Fill
    */
-  static void fillSystem(const unsigned int &degree, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
+  static void fillSystem(const unsigned int &degree, const double &height, const double &width, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
   {
     const unsigned int nbPts = pts.size();
     const unsigned int nbCoeffs = degree + 1;
+    std::vector<vpImagePoint> normalizedPts;
+    for (const auto &pt: pts) {
+      normalizedPts.push_back(vpImagePoint(pt.get_i() / height, pt.get_j() / width));
+    }
     A.resize(nbPts, nbCoeffs, 1.);
     b.resize(nbPts, 1);
     for (unsigned int i = 0; i < nbPts; ++i) {
-      double u = pts[i].get_u();
-      double v = pts[i].get_v();
+      double u = normalizedPts[i].get_u();
+      double v = normalizedPts[i].get_v();
       for (unsigned int j = 0; j < nbCoeffs; ++j) {
         A[i][j] = std::pow(u, j);
       }
@@ -140,6 +160,8 @@ public:
 
 private:
   unsigned int m_degree; /*!< The highest degree of the polynomial.*/
+  double m_height; /*!< The height of the input image*/
+  double m_width; /*!< The width of the input image*/
   vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 

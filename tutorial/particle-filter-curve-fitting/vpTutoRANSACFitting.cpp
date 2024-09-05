@@ -38,9 +38,11 @@ namespace tutorial
 {
 
 vpTutoRANSACFitting::vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers,
-                                         const unsigned int &degree)
+                                         const unsigned int &degree, const unsigned int &height, const unsigned int &width)
   : m_degree(degree)
-  , m_bestModel(degree)
+  , m_height(static_cast<double>(height))
+  , m_width(static_cast<double>(width))
+  , m_bestModel(degree, height, width)
   , m_bestError(std::numeric_limits<float>::max())
   , m_n(n)
   , m_k(k)
@@ -65,7 +67,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
     for (unsigned int i = 0; i < m_n; ++i) {
       maybeInliers[i] = randomizedInput[i];
     }
-    vpTutoMeanSquareFitting maybeModel(m_degree); // Candidate model
+    vpTutoMeanSquareFitting maybeModel(m_degree, m_height, m_width); // Candidate model
     maybeModel.fit(maybeInliers); // Compute the candidate model
     std::vector<vpImagePoint> confirmedInliers; // Confirmed inliers corresponding to the candidate model
     // Evaluate all the points to see if they can match the candidate model
@@ -79,7 +81,7 @@ void vpTutoRANSACFitting::fit(const std::vector<vpImagePoint> &pts)
     if (confirmedInliers.size() > minNbInliers) {
       // We have a good model
       // Fitting all the confirmed inliers into a refined model
-      vpTutoMeanSquareFitting refinedModel(m_degree);
+      vpTutoMeanSquareFitting refinedModel(m_degree, m_height, m_width);
       refinedModel.fit(confirmedInliers);
       // Testing if it is better than our best model
       float refinedError = refinedModel.evaluate(confirmedInliers);

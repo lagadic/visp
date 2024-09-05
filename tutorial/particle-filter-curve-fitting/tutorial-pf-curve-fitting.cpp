@@ -79,18 +79,20 @@ float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
 
 /**
  * \brief Compute the mean-square error between the parabola model and
- * the input points \b pts. An M-estimator is used to reject outliers
- * when computing the mean square error.
+ * the input points \b pts.
  *
+ * \param[in] coeffs The coefficients of the polynomial.
+ * \param[in] height The height of the input image.
+ * \param[in] width The width of the input image.
  * \param[in] pts The input points.
  * \return float The mean square error.
  */
-float evaluate(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
+float evaluate(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
   vpColVector residuals(nbPts);
   vpColVector weights(nbPts, 1.);
-  vpTutoParabolaModel model(coeffs);
+  vpTutoParabolaModel model(coeffs, height, width);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
     float squareError = evaluate(pts[i], model);
@@ -105,15 +107,18 @@ float evaluate(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
  * the input points \b pts. An M-estimator is used to reject outliers
  * when computing the mean square error.
  *
+ * \param[in] coeffs The coefficients of the polynomial.
+ * \param[in] height The height of the input image.
+ * \param[in] width The width of the input image.
  * \param[in] pts The input points.
  * \return float The mean square error.
  */
-float evaluateRobust(const vpColVector &coeffs, const std::vector<vpImagePoint> &pts)
+float evaluateRobust(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
   vpColVector residuals(nbPts);
   vpColVector weights(nbPts, 1.);
-  vpTutoParabolaModel model(coeffs);
+  vpTutoParabolaModel model(coeffs, height, width);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
     float squareError = evaluate(pts[i], model);
@@ -173,7 +178,7 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
 {
 #if defined(VISP_HAVE_DISPLAY)
   unsigned int width = I.getWidth();
-  vpTutoParabolaModel model(coeffs);
+  vpTutoParabolaModel model(coeffs, I.getHeight(), I.getWidth());
   for (unsigned int u = 0; u < width; ++u) {
     float v = model.eval(u);
     vpDisplay::displayPoint(I, v, u, color, 1);
@@ -281,7 +286,7 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
   }
 
   /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
-  tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree);
+  tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   lmsFitter.fit(initPoints);
   vpColVector X0 = lmsFitter.getCoeffs();
   std::cout << "---[Initial fit]---" << std::endl;
@@ -314,7 +319,7 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
 #else
   if (vpIoTools::checkFilename(listPointsFile)) {
     std::vector<vpImagePoint> initPoints = tutorial::readInitPointsFromFile(listPointsFile);
-    tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree);
+    tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth();
     lmsFitter.fit(initPoints);
     vpColVector X0 = lmsFitter.getCoeffs();
     std::cout << "Initial coefficients = " << X0.t() << std::endl;
@@ -324,10 +329,10 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
   }
 #endif
-}
-//! [Initialization_function]
+  }
+  //! [Initialization_function]
 
-//! [Process_function]
+  //! [Process_function]
 vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
 {
   vpColVector updatedCoeffs = coeffs; // We use a constant position model
@@ -339,7 +344,16 @@ vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
 class vpLikelihoodFunctor
 {
 public:
-  vpLikelihoodFunctor(const double &stdev) : m_stdev(stdev)
+  /**
+   * @brief Construct a new vp Likelihood Functor object
+   *
+   * \param[in] stdev The standard deviation of the likelihood function.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
+   */
+  vpLikelihoodFunctor(const double &stdev, const unsigned int &height, const unsigned int &width)
+    : m_height(height)
+    , m_width(width)
   {
     double sigmaDistanceSquared = stdev * stdev;
     m_constantDenominator = 1. / std::sqrt(2. * M_PI * sigmaDistanceSquared);
@@ -363,7 +377,7 @@ public:
   {
     double likelihood = 0.;
     unsigned int nbPoints = meas.size();
-    vpTutoParabolaModel model(coeffs);
+    vpTutoParabolaModel model(coeffs, m_height, m_width);
     vpColVector residuals(nbPoints);
     for (unsigned int i = 0; i < nbPoints; ++i) {
       double squareError = tutorial::evaluate(meas[i], model);
@@ -380,9 +394,10 @@ public:
   }
   //! [Likelihood_function]
 private:
-  double m_stdev;
-  double m_constantDenominator; // Denominator of the Gaussian function used for the likelihood computation.
-  double m_constantExpDenominator; // Denominator of the exponential of the Gaussian function used for the likelihood computation.
+  double m_constantDenominator; //!< Denominator of the Gaussian function used for the likelihood computation.
+  double m_constantExpDenominator; //!< Denominator of the exponential of the Gaussian function used for the likelihood computation.
+  unsigned int m_height; //!< The height of the input image.
+  unsigned int m_width; //!< The width of the input image.
 };
 //! [Likelihood_functor]
 }
@@ -394,8 +409,8 @@ int main(const int argc, const char *argv[])
   if (returnCode != tutorial::vpTutoCommonData::SOFTWARE_CONTINUE) {
     return returnCode;
   }
-  tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree);
-  tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers, data.m_degree);
+  tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
+  tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers, data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   const unsigned int vertOffset = data.m_legendOffset.get_i();
   const unsigned int horOffset = data.m_ipLegend.get_j();
   const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 4 * vertOffset;
@@ -431,7 +446,7 @@ int main(const int argc, const char *argv[])
 
   //! [Init_functions]
   vpParticleFilter<vpColVector>::vpProcessFunction processFunc = tutorial::fx;
-  tutorial::vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood);
+  tutorial::vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   using std::placeholders::_1;
   using std::placeholders::_2;
   vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&tutorial::vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
@@ -518,7 +533,7 @@ int main(const int argc, const char *argv[])
     //! [Get_filtered_state]
 
     //! [Evaluate_performances]
-    float pfError = tutorial::evaluate(Xest, edgePoints);
+    float pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
     //! [Evaluate_performances]
     tutorial::display(Xest, data.m_Iskeleton, vpColor::red, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;

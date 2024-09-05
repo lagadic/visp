@@ -50,7 +50,14 @@ namespace tutorial
 class vpTutoMeanSquareFitting
 {
 public:
-  vpTutoMeanSquareFitting(const unsigned int &degree);
+  /**
+   * \brief Construct a new vp Tuto Mean Square Fitting object
+   *
+   * \param[in] degree The desired degree of the polynomial to fit.
+   * \param[in] height The height of the input image.
+   * \param[in] width The width of the input image.
+   */
+  vpTutoMeanSquareFitting(const unsigned int &degree, const unsigned int &height, const unsigned int &width);
 
   /**
    * \brief Estimate the parabola coefficients that fits the best
@@ -154,6 +161,8 @@ public:
 
 protected:
   unsigned int m_degree; /*!< The degree of the curve that is estimated*/
+  double m_height; /*!< The height of the input image*/
+  double m_width; /*!< The width of the input image*/
   vpTutoParabolaModel m_model; /*!< The model of the curve we try to fit.*/
   bool m_isFitted; /*!< Set to true if the fit method has been called.*/
 };
