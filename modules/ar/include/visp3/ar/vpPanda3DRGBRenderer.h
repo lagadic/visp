@@ -39,6 +39,8 @@
 #include <visp3/ar/vpPanda3DLight.h>
 #include <visp3/core/vpImage.h>
 
+#include "pointerTo.h"
+
 BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d_3d
@@ -78,6 +80,8 @@ public:
    */
   vpPanda3DRGBRenderer(bool showSpeculars) : vpPanda3DBaseRenderer(showSpeculars ? "RGB" : "RGB-diffuse"), m_showSpeculars(showSpeculars) { }
 
+  virtual ~vpPanda3DRGBRenderer() = default;
+
   /**
    * @brief Store the render resulting from calling renderFrame() into a vpImage.
    *
@@ -91,7 +95,7 @@ public:
 
   void setBackgroundImage(const vpImage<vpRGBa> &background);
 
-  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_colorBuffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return (GraphicsOutput *)m_colorBuffer; }
 
   bool isShowingSpeculars() const { return m_showSpeculars; }
 
@@ -103,14 +107,14 @@ protected:
 
 private:
   bool m_showSpeculars;
-  Texture *m_colorTexture;
-  GraphicsOutput *m_colorBuffer;
+  PointerTo<Texture> m_colorTexture;
+  PointerTo<GraphicsOutput> m_colorBuffer;
   static const char *COOK_TORRANCE_VERT;
   static const char *COOK_TORRANCE_FRAG;
 
   NodePath m_backgroundImage;
-  DisplayRegion *m_display2d;
-  Texture *m_backgroundTexture;
+  PointerTo<DisplayRegion> m_display2d;
+  PointerTo<Texture> m_backgroundTexture;
 };
 
 END_VISP_NAMESPACE
