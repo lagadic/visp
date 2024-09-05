@@ -103,7 +103,7 @@ public:
    *
    * \return coeffs a:=coeffs[0] b:=coeffs[1] c:=coeffs[2]
    */
-  inline vpColVector toVpColVector() const
+  inline VISP_NAMESPACE_ADDRESSING vpColVector toVpColVector() const
   {
     return m_coeffs;
   }
@@ -135,9 +135,9 @@ public:
   {
     const unsigned int nbPts = pts.size();
     const unsigned int nbCoeffs = degree + 1;
-    std::vector<vpImagePoint> normalizedPts;
+    std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> normalizedPts;
     for (const auto &pt: pts) {
-      normalizedPts.push_back(vpImagePoint(pt.get_i() / height, pt.get_j() / width));
+      normalizedPts.push_back(VISP_NAMESPACE_ADDRESSING vpImagePoint(pt.get_i() / height, pt.get_j() / width));
     }
     A.resize(nbPts, nbCoeffs, 1.);
     b.resize(nbPts, 1);
@@ -162,7 +162,7 @@ private:
   unsigned int m_degree; /*!< The highest degree of the polynomial.*/
   double m_height; /*!< The height of the input image*/
   double m_width; /*!< The width of the input image*/
-  vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
+  VISP_NAMESPACE_ADDRESSING vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 
 #endif

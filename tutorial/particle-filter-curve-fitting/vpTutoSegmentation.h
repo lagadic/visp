@@ -46,5 +46,7 @@ namespace tutorial
 void performSegmentationHSV(vpTutoCommonData &data);
 
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCommonData &data);
+
+std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > addSaltAndPepperNoise(vpTutoCommonData &data);
 }
 #endif

@@ -36,6 +36,9 @@
 
 namespace tutorial
 {
+#ifdef ENABLE_VISP_NAMESPACE
+using VISP_NAMESPACE_NAME;
+#endif
 
 vpTutoRANSACFitting::vpTutoRANSACFitting(const unsigned int &n, const unsigned int &k, const float &thresh, const float &ratioInliers,
                                          const unsigned int &degree, const unsigned int &height, const unsigned int &width)

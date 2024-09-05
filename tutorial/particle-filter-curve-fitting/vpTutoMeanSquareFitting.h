@@ -65,7 +65,7 @@ public:
    *
    * \param[in] pts The input points for which we want to fit a parabola model.
    */
-  void fit(const std::vector<vpImagePoint> &pts);
+  void fit(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
    * \brief Compute the mean-square error between the parabola model and
@@ -74,7 +74,7 @@ public:
    * \param[in] pts The input points.
    * \return float The mean square error.
    */
-  float evaluate(const std::vector<vpImagePoint> &pts);
+  float evaluate(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
    * \brief Compute the mean-square error between the parabola model and
@@ -84,7 +84,7 @@ public:
    * \param[in] pts The input points.
    * \return float The mean square error.
    */
-  float evaluateRobust(const std::vector<vpImagePoint> &pts);
+  float evaluateRobust(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
    * \brief Compute the square error between the parabola model and
@@ -93,7 +93,7 @@ public:
    * \param[in] pt The input point.
    * \return float The square error.
    */
-  float evaluate(const vpImagePoint &pt);
+  float evaluate(const VISP_NAMESPACE_ADDRESSING vpImagePoint &pt);
 
   /**
    * \brief Compute v-coordinate that corresponds to the parabola model.
@@ -144,7 +144,7 @@ public:
    *
    * \return vpColVector The coefficients of the parabola, as described in \b vpTutoParabolaModel::toVpColVector()
    */
-  inline vpColVector getCoeffs() const
+  inline VISP_NAMESPACE_ADDRESSING vpColVector getCoeffs() const
   {
     return m_model.toVpColVector();
   }
