@@ -359,14 +359,18 @@ public:
   double likelihood(const vpColVector &coeffs, const std::vector<vpImagePoint> &meas)
   {
     double likelihood = 0.;
-    double sumError = 0.;
     unsigned int nbPoints = meas.size();
     vpTutoParabolaModel model(coeffs);
+    vpColVector residuals(nbPoints);
     for (unsigned int i = 0; i < nbPoints; ++i) {
       double squareError = tutorial::evaluate(meas[i], model);
-      sumError += squareError;
+      residuals[i] = squareError;
     }
-    likelihood = std::exp(m_constantExpDenominator * sumError / static_cast<double>(nbPoints)) * m_constantDenominator;
+    vpRobust Mestimator;
+    vpColVector w(nbPoints, 1.);
+    Mestimator.MEstimator(vpRobust::TUKEY, residuals, w);
+    double sumError = w.hadamard(residuals).sum();
+    likelihood = std::exp(m_constantExpDenominator * sumError / w.sum()) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.
     return likelihood;
