@@ -74,30 +74,39 @@ typedef struct vpTutoCommonData
   std::string m_hsvFilename; /*!< Filename of the YAML file that contains the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpColVector m_hsv_values; /*!< Vector that contains the lower and upper limits of the HSV thresholds.*/
   bool m_stepbystep; /*!< If true, the frames are treated in a step by step mode, otherwise the frames are treated as a video.*/
+  double m_ratioSaltPepperNoise; /*!< Ratio of noise points to introduce in the addSaltAndPepperNoise function.*/
+
+  /// Images and displays parameters
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_orig; /*!< The color image read from the file.*/
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_segmented; /*!< The segmented color image resulting from HSV segmentation.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_mask; /*!< A binary mask where 255 means that a pixel belongs to the HSV range delimited by the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_Iskeleton; /*!< The image resulting from the skeletonization of the mask.*/
+  VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_IskeletonNoisy; /*!< The image resulting from the skeletonization of the mask, to which is added some salt and pepper noise.*/
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayOrig;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySegmented;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySkeleton;
+  std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayNoisy;
 #elif defined(VISP_HAVE_DISPLAY)
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayOrig;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySkeleton;
+  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayNoisy;
 #endif
+  /// Ransac parameters
   unsigned int m_ransacN; /*!< The number of points to use to build the model.*/
   unsigned int m_ransacK; /*!< The number of iterations.*/
   float m_ransacThresh; /*!< The threshold that indicates if a point fit the model or not.*/
   float m_ransacRatioInliers; /*!< Ratio of points that the model explain.*/
 
+  /// Particle filter parameters
   double m_pfMaxDistanceForLikelihood; /*!< Maximum tolerated distance for the likelihood evaluation.*/
   unsigned int m_pfN; /*!< Number of particles for the particle filter.*/
   std::vector<double> m_pfRatiosAmpliMax; /*!< The ratio of the initial guess the maximum amplitude of noise on each coefficient of the parabola.*/
   long m_pfSeed; /*!< The seed for the particle filter. A negative value will use the current timestamp.*/
   int m_pfNbThreads; /*!< Number of threads the Particle filter should use.*/
 
+  /// Simulation parameters
   double m_a; //!< To generate 2nd-degree polynomial simulated data.
   double m_b; //!< To generate 2nd-degree polynomial simulated data.
   double m_c; //!< To generate 2nd-degree polynomial simulated data.
@@ -191,10 +200,12 @@ typedef struct vpTutoCommonData
     : m_seqFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("data", "color_image_%04d.png"))
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
     , m_stepbystep(true)
+    , m_ratioSaltPepperNoise(0.15)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
     , m_displaySkeleton(nullptr)
+    , m_displayNoisy(nullptr)
 #endif
     , m_ransacN(10)
     , m_ransacK(10000)
@@ -228,6 +239,11 @@ typedef struct vpTutoCommonData
     if (m_displaySkeleton != nullptr) {
       delete m_displaySkeleton;
       m_displaySkeleton = nullptr;
+    }
+
+    if (m_displayNoisy != nullptr) {
+      delete m_displayNoisy;
+      m_displayNoisy = nullptr;
     }
   }
 #endif
@@ -360,6 +376,7 @@ typedef struct vpTutoCommonData
     m_I_segmented.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the segmented image to match the original image
     m_mask.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the binary mask that indicates which pixels are in the allowed HSV range.
     m_Iskeleton.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the edge-map.
+    m_IskeletonNoisy.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the edge-map.
 
     // Init the displays
     const int horOffset = 20, vertOffset = 20;
@@ -367,10 +384,12 @@ typedef struct vpTutoCommonData
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
     m_displaySkeleton = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_Iskeleton, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Skeletonized image");
+    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), "Noisy skeletonized image");
 #elif defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
     m_displaySkeleton = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_Iskeleton, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Skeletonized image");
+    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), "Noisy skeletonized image");
 #endif
     return SOFTWARE_CONTINUE;
   }

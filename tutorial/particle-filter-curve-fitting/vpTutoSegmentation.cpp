@@ -32,6 +32,8 @@
 
 #include "vpTutoSegmentation.h"
 
+#include <visp3/core/vpGaussRand.h>
+
 namespace tutorial
 {
 void performSegmentationHSV(vpTutoCommonData &data)
@@ -115,5 +117,37 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCom
     }
   }
   return points;
+}
+
+std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoint > &noisefreePts, vpTutoCommonData &data)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  const unsigned int nbNoiseFreePts = noisefreePts.size();
+  const unsigned int nbPtsToAdd = data.m_ratioSaltPepperNoise * nbNoiseFreePts;
+  const double width = data.m_Iskeleton.getWidth();
+  const double height = data.m_Iskeleton.getHeight();
+  data.m_IskeletonNoisy = data.m_Iskeleton;
+  vpGaussRand rngX(0.1666, 0.5, vpTime::measureTimeMicros());
+  vpGaussRand rngY(0.1666, 0.5, vpTime::measureTimeMicros() + 4224);
+  std::vector<vpImagePoint> noisyPts = noisefreePts;
+  for (unsigned int i = 0; i < nbPtsToAdd + 1; ++i) {
+    double uNormalized = rngX();
+    double vNormalized = rngY();
+    // Clamp to interval[0, 1[
+    uNormalized = std::max(uNormalized, 0.);
+    uNormalized = std::min(uNormalized, 0.99999);
+    vNormalized = std::max(vNormalized, 0.);
+    vNormalized = std::min(vNormalized, 0.99999);
+    // Scale to image size
+    double u = uNormalized * width;
+    double v = vNormalized * height;
+    // Create corresponding image point
+    vpImagePoint pt(v, u);
+    noisyPts.push_back(pt);
+    data.m_IskeletonNoisy[static_cast<int>(v)][static_cast<int>(u)] = 255;
+  }
+  return noisyPts;
 }
 }

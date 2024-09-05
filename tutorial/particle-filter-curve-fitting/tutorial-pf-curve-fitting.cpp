@@ -329,10 +329,10 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
   }
 #endif
-  }
-  //! [Initialization_function]
+}
+//! [Initialization_function]
 
-  //! [Process_function]
+//! [Process_function]
 vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
 {
   vpColVector updatedCoeffs = coeffs; // We use a constant position model
@@ -488,16 +488,20 @@ int main(const int argc, const char *argv[])
     /// Extracting the skeleton of the mask
     std::vector<vpImagePoint> edgePoints = tutorial::extractSkeletton(data);
 
+    /// Simulate sensor noise
+    std::vector<vpImagePoint> noisyEdgePoints = tutorial::addSaltAndPepperNoise(edgePoints, data);
+
 #ifdef VISP_HAVE_DISPLAY
     /// Initial display of the images
     vpDisplay::display(data.m_I_orig);
     vpDisplay::display(data.m_I_segmented);
     vpDisplay::display(data.m_Iskeleton);
+    vpDisplay::display(data.m_IskeletonNoisy);
 #endif
 
     /// Fit using least-square
     double tLms = vpTime::measureTimeMs();
-    lmsFitter.fit(edgePoints);
+    lmsFitter.fit(noisyEdgePoints);
     double dtLms = vpTime::measureTimeMs() - tLms;
     float lmsError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
@@ -507,10 +511,11 @@ int main(const int argc, const char *argv[])
     meanDtLMS += dtLms;
     meanMeanSquareErrorLMS += lmsError;
     lmsFitter.display<unsigned char>(data.m_Iskeleton, vpColor::blue, legendLmsVert, legendLmsHor);
+    lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::blue, legendLmsVert, legendLmsHor);
 
     /// Fit using RANSAC
     double tRansac = vpTime::measureTimeMs();
-    ransacFitter.fit(edgePoints);
+    ransacFitter.fit(noisyEdgePoints);
     double dtRansac = vpTime::measureTimeMs() - tRansac;
     float ransacError = ransacFitter.evaluate(edgePoints);
     std::cout << "  [RANSAC method] " << std::endl;
@@ -520,11 +525,12 @@ int main(const int argc, const char *argv[])
     meanDtRansac += dtRansac;
     meanMeanSquareErrorRansac += ransacError;
     ransacFitter.display<unsigned char>(data.m_Iskeleton, vpColor::gray, legendRansacVert, legendRansacHor);
+    ransacFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray, legendRansacVert, legendRansacHor);
 
     /// Use the UKF to filter the measurement
     double tPF = vpTime::measureTimeMs();
     //! [Perform_filtering]
-    filter.filter(edgePoints, period);
+    filter.filter(noisyEdgePoints, period);
     //! [Perform_filtering]
     double dtPF = vpTime::measureTimeMs() - tPF;
 
@@ -536,6 +542,7 @@ int main(const int argc, const char *argv[])
     float pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
     //! [Evaluate_performances]
     tutorial::display(Xest, data.m_Iskeleton, vpColor::red, legendPFVert, legendPFHor);
+    tutorial::display(Xest, data.m_IskeletonNoisy, vpColor::red, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;
     std::cout << "    Coeffs = [" << Xest.transpose() << " ]" << std::endl;
     std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
@@ -553,6 +560,7 @@ int main(const int argc, const char *argv[])
     vpDisplay::flush(data.m_I_orig);
     vpDisplay::flush(data.m_I_segmented);
     vpDisplay::flush(data.m_Iskeleton);
+    vpDisplay::flush(data.m_IskeletonNoisy);
     run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
 #endif
     ++nbIter;
