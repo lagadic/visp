@@ -323,6 +323,12 @@ typedef struct vpTutoCommonData
       ++i;
     }
 
+    if (m_ransacN < m_degree + 1) {
+      // The number of points to use in the RANSAC to determine the polynomial coefficients
+      // must be at least equal to m_degree + 1, otherwise the problem is under-constrained
+      m_ransacN = 2 * (m_degree + 1);
+    }
+
     // Load the HSV thresholds
     if (vpColVector::loadYAML(m_hsvFilename, m_hsv_values)) {
       std::cout << "Load HSV threshold values from " << m_hsvFilename << std::endl;
