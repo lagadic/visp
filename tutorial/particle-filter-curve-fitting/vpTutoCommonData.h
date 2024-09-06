@@ -75,6 +75,7 @@ typedef struct vpTutoCommonData
   VISP_NAMESPACE_ADDRESSING vpColVector m_hsv_values; /*!< Vector that contains the lower and upper limits of the HSV thresholds.*/
   bool m_stepbystep; /*!< If true, the frames are treated in a step by step mode, otherwise the frames are treated as a video.*/
   double m_ratioSaltPepperNoise; /*!< Ratio of noise points to introduce in the addSaltAndPepperNoise function.*/
+  unsigned int m_degree; //!< Degree for the polynomials.
 
   /// Images and displays parameters
   VISP_NAMESPACE_ADDRESSING vpImage<VISP_NAMESPACE_ADDRESSING vpRGBa> m_I_orig; /*!< The color image read from the file.*/
@@ -115,7 +116,6 @@ typedef struct vpTutoCommonData
   double m_c3; //!< To generate 3nd-degree polynomial simulated data.
   double m_d3; //!< To generate 3nd-degree polynomial simulated data.
   VISP_NAMESPACE_ADDRESSING vpColVector m_coeffsGT; //!< Ground truth coefficients when simulated data is used.
-  unsigned int m_degree; //!< Degree for the polynomials.
   bool m_useSimulated; //!< If true, use a generated polynomial curve instead of input images.
 
   void setGTCoeffs()
@@ -176,24 +176,50 @@ typedef struct vpTutoCommonData
     m_d3 = y0-(m_a3 * std::pow(x0, 3) + m_b3 * std::pow(x0, 2) + m_c3 * x0);
   }
 
-  double computeY(const double &x)
+  /**
+   * \brief Compute the v-coordinate of an image point based on the u-coordinate and the polynomial used
+   * for the simulation.
+   * \param[in] x The u-coordinate of the image point.
+   * \return The corresponding v-coordinate.
+   */
+  double computeV(const double &u)
   {
-    double y = 0.;
+    double v = 0.;
     if (m_degree == 2) {
-      y = m_a * x * x + m_b * x + m_c;
+      v = m_a * u * u + m_b * u + m_c;
     }
     else if (m_degree == 3) {
-      y = m_a3 * x * x * x + m_b3 * x * x + m_c3 * x + m_d3;
+      v = m_a3 * u * u * u + m_b3 * u * u + m_c3 * u + m_d3;
     }
     else if (m_degree > 3) {
       for (unsigned int i = 0; i <= m_degree; ++i) {
-        y += m_coeffsGT[i] * std::pow(x, i);
+        v += m_coeffsGT[i] * std::pow(u, i);
       }
     }
     else if (m_degree == 1) {
-      y = 0.5 * x + 20;
+      v = 0.5 * u + 20;
     }
-    return y;
+    return u;
+  }
+
+  /**
+   * \brief Generate a simulated image based on the polynomial the user chose to use.
+   */
+  inline void generateSimulatedImage()
+  {
+    const unsigned int width = 600, height = 400;
+    m_I_orig.resize(height, width, vpRGBa(0));
+    VISP_NAMESPACE_ADDRESSING vpRect limits(VISP_NAMESPACE_ADDRESSING vpImagePoint(0., 0.), VISP_NAMESPACE_ADDRESSING vpImagePoint(height - 1, width - 1));
+    VISP_NAMESPACE_ADDRESSING vpRGBa color(175, 175, 53);
+    for (unsigned int uInt = 0; uInt < width; ++uInt) {
+      double u = static_cast<double>(uInt);
+      double v = computeV(u);
+      vpImagePoint pt(v, u);
+      if (limits.isInside(pt)) {
+        int vInt = static_cast<int>(v);
+        m_I_orig[vInt][uInt] = color;
+      }
+    }
   }
 
   vpTutoCommonData()
@@ -201,6 +227,7 @@ typedef struct vpTutoCommonData
     , m_hsvFilename(VISP_NAMESPACE_ADDRESSING vpIoTools::createFilePath("calib", "hsv-thresholds.yml"))
     , m_stepbystep(true)
     , m_ratioSaltPepperNoise(0.15)
+    , m_degree(2)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
@@ -216,7 +243,6 @@ typedef struct vpTutoCommonData
     , m_pfRatiosAmpliMax({ 0.25, 0.25, 0.25 })
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
-    , m_degree(2)
     , m_useSimulated(false)
   {
     double x0 = 300., y0 = 20., x1 = 20., y1 = 400.;
@@ -248,17 +274,22 @@ typedef struct vpTutoCommonData
   }
 #endif
 
+  /**
+   * \brief Print the help about the program optional parameters.
+   *
+   * \param[in] softName The name of the program.
+   */
   inline void printHelp(const char *softName)
   {
     std::cout << "\nSYNOPSIS " << std::endl
       << softName
-      << " [--video <input video>]"
-      << " [--hsv-thresholds <filename.yml>]"
-      << " [--degree {2, 3}]"
-      << " [--curve <x0 y0 x1 y1>]"
+      << " [--video <input video>] [--hsv-thresholds <filename.yml>] [--noise <ratio>]" << std::endl
+      << " [--degree <uint>] [--curve <x0 y0 x1 y1>]" << std::endl
+      << " [--max-distance-likelihood <double>] [-N, --nb-particles <uint>] [--seed <int>] [--nb-threads <int>] [--state-noise-ratio <ratio>]" << std::endl
       << " [--help,-h]"
       << std::endl;
     std::cout << "\nOPTIONS " << std::endl
+      << " [General params]" << std::endl
       << "  --video <input video>" << std::endl
       << "    Name of the input video filename." << std::endl
       << "    If name is set to \"generate-simulated\" a simulated image is generated." << std::endl
@@ -268,51 +299,75 @@ typedef struct vpTutoCommonData
       << "    Path to a yaml filename that contains H <min,max>, S <min,max>, V <min,max> threshold values." << std::endl
       << "    For an example, have a look to the file \"" << this->m_hsvFilename << "\"" << std::endl
       << std::endl
-      << "  --degree {2, 3}" << std::endl
+      << "  --noise <ratio, [0; 1.[ >" << std::endl
+      << "    Ratio of noisy points added to the image resulting from the skeletonization of the segmented image, to simulate sensor noise." << std::endl
+      << "    Default = " << this->m_ratioSaltPepperNoise << std::endl
+      << std::endl
+      << "  --degree <uint>" << std::endl
       << "    Choose the degree of the polynomials to use." << std::endl
-      << "    Accepted values are 2 or 3, default = " << this->m_degree << std::endl
+      << "    Default = " << this->m_degree << std::endl
       << std::endl
       << "  --curve <x0 y0 x1 y1>" << std::endl
       << "    For a 2nd degree polynomial, (x0, y0) is the inflexion point and (x1, y1) is a 2nd point of the curve." << std::endl
       << "    For a 3rd degree polynomial, (x0, y0) and (x1, y1) are the inflexion points." << std::endl
       << std::endl
+      << std::endl
+      << " [PF params]" << std::endl
+      << "  --max-distance-likelihood" << std::endl
+      << "    Maximum mean square distance between a particle with the measurements." << std::endl
+      << "    Above this value, the likelihood of the particle is 0." << std::endl
+      << "    NOTE: M-estimation is used to make the likelihood function robust against outliers." << std::endl
+      << "    Default: " << m_pfMaxDistanceForLikelihood << std::endl
+      << std::endl
+      << "  -N, --nb-particles" << std::endl
+      << "    Number of particles of the Particle Filter." << std::endl
+      << "    Default: " << m_pfN << std::endl
+      << std::endl
+      << "  --seed" << std::endl
+      << "    Seed to initialize the Particle Filter." << std::endl
+      << "    Use a negative value makes to use the current timestamp instead." << std::endl
+      << "    Default: " << m_pfSeed << std::endl
+      << std::endl
+      << "  --nb-threads" << std::endl
+      << "    Set the number of threads to use in the Particle Filter (only if OpenMP is available)." << std::endl
+      << "    Use a negative value to use the maximum number of threads instead." << std::endl
+      << "    Default: " << m_pfNbThreads << std::endl
+      << std::endl
+      << "  --state-noise-ratio <ratio>" << std::endl
+      << "    Ratio of the initial guess of the curve coefficients to use as maximal amplitude of the noise added to the particles." << std::endl
+      << "    Default: " << m_pfRatiosAmpliMax[0] << std::endl
       << "  --help, -h" << std::endl
       << "    Display this helper message." << std::endl
       << std::endl;
   }
 
-  inline void generateSimulatedImage()
-  {
-    const unsigned int width = 600, height = 400;
-    m_I_orig.resize(height, width, vpRGBa(0));
-    VISP_NAMESPACE_ADDRESSING vpRect limits(VISP_NAMESPACE_ADDRESSING vpImagePoint(0., 0.), VISP_NAMESPACE_ADDRESSING vpImagePoint(height - 1, width - 1));
-    VISP_NAMESPACE_ADDRESSING vpRGBa color(175, 175, 53);
-    for (unsigned int u = 0; u < width; ++u) {
-      double x = static_cast<double>(u);
-      double y = computeY(x);
-      vpImagePoint pt(y, x);
-      if (limits.isInside(pt)) {
-        int v = static_cast<int>(y);
-        m_I_orig[v][u] = color;
-      }
-    }
-  }
-
+  /**
+   * \brief Initialize the program data from the command line arguments.
+   *
+   * \param[in] argc The number of optional parameters.
+   * \param[in] argv The values of the optional parameters.
+   * \return int Initialization status. EXIT_FAILURE if there was a problem, EXIT_SUCCESS if printing the program
+   * help was asked and SOFTWARE_CONTINUE if the initialization went well.
+   */
   inline int init(const int &argc, const char *argv[])
   {
     // Parse the input arguments
     int i = 1;
     while (i < argc) {
       std::string argname(argv[i]);
-      if (argname == std::string("--video") && ((i + 1) < argc)) {
+      if ((argname == std::string("--video")) && ((i + 1) < argc)) {
         ++i;
         m_seqFilename = std::string(argv[i]);
       }
-      else if (argname == std::string("--hsv-thresholds") && ((i + 1) < argc)) {
+      else if ((argname == std::string("--hsv-thresholds")) && ((i + 1) < argc)) {
         ++i;
         m_hsvFilename = std::string(argv[i]);
       }
-      else if (argname == std::string("--curve") && ((i + 4) < argc)) {
+      else if ((argname == "--noise") && ((i + 1) < argc)) {
+        ++i;
+        m_ratioSaltPepperNoise = std::atof(argv[i]);
+      }
+      else if ((argname == std::string("--curve")) && ((i + 4) < argc)) {
         ++i;
         double x0 = std::atof(argv[i]);
         ++i;
@@ -324,13 +379,33 @@ typedef struct vpTutoCommonData
         computeABC(x0, y0, x1, y1);
         computeABCD(x0, y0, x1, y1);
       }
-      else if (argname == std::string("--degree") && ((i + 1) < argc)) {
+      else if ((argname == std::string("--degree")) && ((i + 1) < argc)) {
         ++i;
         m_degree = std::atoi(argv[i]);
-        m_pfRatiosAmpliMax.resize(m_degree, m_pfRatiosAmpliMax[0]);
+      }
+      else if ((argname == "--max-distance-likelihood") && ((i+1) < argc)) {
+        ++i;
+        m_pfMaxDistanceForLikelihood = std::atof(argv[i]);
+      }
+      else if (((argname == "-N") || (argname == "--nb-particles")) && ((i+1) < argc)) {
+        ++i;
+        m_pfN = std::atoi(argv[i]);
+      }
+      else if ((argname == "--seed") && ((i+1) < argc)) {
+        ++i;
+        m_pfSeed = std::atoi(argv[i]);
+      }
+      else if ((argname == "--nb-threads") && ((i+1) < argc)) {
+        ++i;
+        m_pfNbThreads = std::atoi(argv[i]);
+      }
+      else if ((argname == "--state-noise-ratio") && ((i+1) < argc)) {
+        ++i;
+        m_pfRatiosAmpliMax[0] = std::atof(argv[i]);
       }
       else if ((argname == std::string("-h")) || (argname == std::string("--help"))) {
-        printHelp(argv[0]);
+        vpTutoCommonData helpPrinter;
+        helpPrinter.printHelp(argv[0]);
         return EXIT_SUCCESS;
       }
       else {
@@ -339,6 +414,9 @@ typedef struct vpTutoCommonData
       }
       ++i;
     }
+
+    // Ensure that the maximal amplitude vector is of correct size and values
+    m_pfRatiosAmpliMax.resize(m_degree, m_pfRatiosAmpliMax[0]);
 
     if (m_ransacN < m_degree + 1) {
       // The number of points to use in the RANSAC to determine the polynomial coefficients
