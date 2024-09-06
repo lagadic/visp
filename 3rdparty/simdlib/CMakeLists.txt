@@ -76,6 +76,7 @@ if(X86 OR X86_64)
         vp_check_compiler_flag(CXX "-Wno-reorder"                        HAVE_NO_REORDER_FLAG            "${VISP_SOURCE_DIR}/cmake/checks/cpu_warning.cpp")
         vp_check_compiler_flag(CXX "-Wno-strict-aliasing"                HAVE_NO_STRICT_ALIASING_FLAG    "${VISP_SOURCE_DIR}/cmake/checks/cpu_warning.cpp")
         vp_check_compiler_flag(CXX "-Wno-missing-field-initializers"     HAVE_NO_MISSING_FIELD_FLAG      "${VISP_SOURCE_DIR}/cmake/checks/cpu_warning.cpp")
+        vp_check_compiler_flag(CXX "-Wno-stringop-overflow"              HAVE_NO_STRINGOP_OVERFLOW_EQUAL_FLAG "${VISP_SOURCE_DIR}/cmake/checks/cpu_warning.cpp")
 
         if(HAVE_SSE2_FLAG)
             set(SSE2_FLAG "-msse -msse2")
@@ -136,7 +137,9 @@ if(X86 OR X86_64)
         if(HAVE_NO_MISSING_FIELD_FLAG)
             set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -Wno-missing-field-initializers")
         endif()
-
+        if(HAVE_NO_STRINGOP_OVERFLOW_EQUAL_FLAG)
+            set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -Wno-stringop-overflow")
+        endif()
         if(MSVC AND ((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
             # Clang under windows needs AVX flags
             set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} ${AVX_FLAG} ${AVX2_FLAG}")
