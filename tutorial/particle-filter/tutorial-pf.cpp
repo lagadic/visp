@@ -678,7 +678,7 @@ int main(const int argc, const char *argv[])
   plot.setLegend(0, 3, "Measure");
   plot.initRange(0, -1.25 * radius, 1.25 * radius, -1.25 * radius, 1.25 * radius);
   plot.setColor(0, 0, vpColor::red);
-  plot.setColor(0, 1, vpColor::purple);
+  plot.setColor(0, 1, vpColor::green);
   plot.setColor(0, 2, vpColor::blue);
   plot.setColor(0, 3, vpColor::black);
 
@@ -690,7 +690,7 @@ int main(const int argc, const char *argv[])
   plotError.setLegend(0, 1, "UKF");
   plotError.setLegend(0, 2, "Measure");
   plotError.initRange(0, 0, nbIter * dt, 0, radius / 2.);
-  plotError.setColor(0, 0, vpColor::purple);
+  plotError.setColor(0, 0, vpColor::green);
   plotError.setColor(0, 1, vpColor::blue);
   plotError.setColor(0, 2, vpColor::black);
 #endif
@@ -816,7 +816,7 @@ int main(const int argc, const char *argv[])
       vpDisplay::displayCross(Idisp, markerProjGT, 5, vpColor::red);
 
       vpImagePoint markerProjFiltPF(zFiltPF[2*id + 1], zFiltPF[2*id]);
-      vpDisplay::displayCross(Idisp, markerProjFiltPF, 5, vpColor::purple);
+      vpDisplay::displayCross(Idisp, markerProjFiltPF, 5, vpColor::green);
 
       vpImagePoint markerProjFiltUKF(zFiltUkf[2*id + 1], zFiltUkf[2*id]);
       vpDisplay::displayCross(Idisp, markerProjFiltUKF, 5, vpColor::blue);
@@ -828,7 +828,7 @@ int main(const int argc, const char *argv[])
     vpImagePoint ipText(20, 20);
     vpDisplay::displayText(Idisp, ipText, std::string("GT"), vpColor::red);
     ipText.set_i(ipText.get_i() + 20);
-    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by PF"), vpColor::purple);
+    vpDisplay::displayText(Idisp, ipText, std::string("Filtered by PF"), vpColor::green);
     ipText.set_i(ipText.get_i() + 20);
     vpDisplay::displayText(Idisp, ipText, std::string("Filtered by UKF"), vpColor::blue);
     ipText.set_i(ipText.get_i() + 20);
