@@ -36,6 +36,7 @@
 #if defined(VISP_HAVE_PANDA3D)
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpRect.h>
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 
 BEGIN_VISP_NAMESPACE
@@ -60,7 +61,7 @@ public:
   };
 
   vpPanda3DGeometryRenderer(vpRenderType renderType);
-  ~vpPanda3DGeometryRenderer() { }
+  ~vpPanda3DGeometryRenderer() = default;
 
   /**
    * @brief Get render results into ViSP readable structures
@@ -70,6 +71,8 @@ public:
    * @param depth Image used to store depth
    */
   void getRender(vpImage<vpRGBf> &colorData, vpImage<float> &depth) const;
+
+  void getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth, const vpRect &bb, unsigned int h, unsigned w) const;
 
   /**
    * @brief Get render results into ViSP readable structures. This version only retrieves the normal data
@@ -82,7 +85,8 @@ public:
    */
   void getRender(vpImage<float> &depth) const;
 
-  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_normalDepthBuffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return (GraphicsOutput *)m_normalDepthBuffer; }
+
 
 protected:
   void setupScene() VP_OVERRIDE;
@@ -90,10 +94,10 @@ protected:
 
 private:
   vpRenderType m_renderType;
-  Texture *m_normalDepthTexture;
-  GraphicsOutput *m_normalDepthBuffer;
+  PointerTo<Texture> m_normalDepthTexture;
+  PointerTo<GraphicsOutput> m_normalDepthBuffer;
 
-  static const char *SHADER_VERT_NORMAL_AND_DEPTH_WORLD;
+  static const char *SHADER_VERT_NORMAL_AND_DEPTH_OBJECT;
   static const char *SHADER_VERT_NORMAL_AND_DEPTH_CAMERA;
   static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
 
