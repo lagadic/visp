@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,26 +31,16 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in articular
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma6Point2DArtVelocity.cpp
+  \example servoAfma6Point2DArtVelocity.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in articular. The visual feature is the center of gravity of a
   point.
-
-*/
-
-/*!
-  \example servoAfma6Point2DArtVelocity.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in articular. The visual feature is the center of gravity of a point.
-
 */
 
 #include <fstream>

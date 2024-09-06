@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma6FourPoints2DCamVelocityLs_des.cpp
@@ -46,6 +44,7 @@
   features.
 */
 
+#include <iostream>
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY)

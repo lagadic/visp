@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +32,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *   compensate target motion by integrator
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma6FourPoints2DCamVelocityLs_cur_integrator.cpp
@@ -47,6 +45,7 @@
   features. Here we compensate target motion by using an integrator.
 */
 
+#include <iostream>
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY)

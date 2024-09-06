@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +31,8 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
-*****************************************************************************/
+ */
+
 /*!
   \example servoAfma6AprilTagIBVS.cpp
 
@@ -48,7 +47,6 @@
   The target is an AprilTag that is by default 12cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag_size command line option.
-
 */
 
 #include <iostream>

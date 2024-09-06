@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,29 +31,17 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma62DhalfCamVelocity.cpp
+  \example servoAfma62DhalfCamVelocity.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in the camera frame. Visual features are given thanks to four lines
   and are the x and y coordinates of the rectangle center, log(Z/Z*) the
   current depth relative to the desired depth and the thetau rotations.
-
-*/
-
-/*!
-  \example servoAfma62DhalfCamVelocity.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame. Visual features are given thanks to four lines and are
-  the x and y coordinates of the rectangle center, log(Z/Z*) the current depth
-  relative to the desired depth and the thetau rotations.
-
 */
 
 #include <cmath>  // std::fabs
