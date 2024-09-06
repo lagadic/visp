@@ -4,6 +4,8 @@
 
 \section tuto-pf-intro Introduction
 
+We suppose that you are already familiar with the tutorial-ukf .
+
 The Particle Filters (PF) are a set of Monte Carlo algorithms that
 permit to approximate solutions for filtering problems even when
 the state-space and/or measurement space are non-linear.
