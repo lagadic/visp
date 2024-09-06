@@ -39,6 +39,8 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <stdlib.h>
+#include <map>
+
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
@@ -46,6 +48,17 @@
 BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+struct vpMeSiteHypothesis
+{
+  vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
+  { }
+
+  vpMeSite *site;
+  double likelihood;
+  double contrast;
+};
+
 static bool horsImage(int i, int j, int half, int rows, int cols)
 {
   int half_1 = half + 1;
@@ -276,65 +289,47 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
   unsigned int range = me->getRange();
+  const unsigned int normalSides = 2;
+  const unsigned int numQueries = range * normalSides + 1;
 
   vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
 
   double contrast_max = 1 + me->getMu2();
   double contrast_min = 1 - me->getMu1();
 
-  // array in which likelihood ratios will be stored
-  double *likelihood = new double[(2 * range) + 1];
-  const unsigned int val_2 = 2;
+  double threshold = computeFinalThreshold(*me);
 
   if (test_contrast) {
     double diff = 1e6;
-    for (unsigned int n = 0; n < ((val_2 * range) + 1); ++n) {
-      //   convolution results
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      // convolution results
+
       double convolution_ = list_query_pixels[n].convolution(I, me);
-      double threshold = list_query_pixels[n].getContrastThreshold();
-
-      if (me->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD) {
-        threshold = 2.0 * threshold;
-      }
-      else {
-        double n_d = me->getMaskSize();
-        threshold = threshold / (100.0 * n_d * trunc(n_d / 2.0));
-      }
-
       // luminance ratio of reference pixel to potential correspondent pixel
       // the luminance must be similar, hence the ratio value should
       // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
-      likelihood[n] = fabs(convolution_ + m_convlt);
+      const double likelihood = fabs(convolution_ + m_convlt);
 
-      if (likelihood[n] > threshold) {
+      if (likelihood > threshold) {
         contrast = convolution_ / m_convlt;
         if ((contrast > contrast_min) && (contrast < contrast_max) && (fabs(1 - contrast) < diff)) {
           diff = fabs(1 - contrast);
           max_convolution = convolution_;
-          max = likelihood[n];
+          max = likelihood;
           max_rank = static_cast<int>(n);
         }
       }
     }
   }
   else { // test on contrast only
-    for (unsigned int n = 0; n < ((val_2 * range) + 1); ++n) {
-      double threshold = list_query_pixels[n].getContrastThreshold();
-
-      if (me->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD) {
-        threshold = 2.0 * threshold;
-      }
-      else {
-        double n_d = me->getMaskSize();
-        threshold = threshold / (100.0 * n_d * trunc(n_d / 2.0));
-      }
+    for (unsigned int n = 0; n < numQueries; ++n) {
 
       // convolution results
       double convolution_ = list_query_pixels[n].convolution(I, me);
-      likelihood[n] = fabs(val_2 * convolution_);
-      if ((likelihood[n] > max) && (likelihood[n] > threshold)) {
+      const double likelihood = fabs(2 * convolution_);
+      if ((likelihood > max) && (likelihood > threshold)) {
         max_convolution = convolution_;
-        max = likelihood[n];
+        max = likelihood;
         max_rank = static_cast<int>(n);
       }
     }
@@ -354,9 +349,6 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
     m_normGradient = vpMath::sqr(max_convolution);
 
     m_convlt = max_convolution;
-
-    delete[] list_query_pixels;
-    delete[] likelihood;
   }
   else // none of the query sites is better than the threshold
   {
@@ -373,16 +365,127 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
       m_state = THRESHOLD; // threshold suppression
     }
 
-    delete[] list_query_pixels;
-    delete[] likelihood; // modif portage
   }
+  delete[] list_query_pixels;
+}
+
+void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
+std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
+{
+
+  // range = +/- range of pixels within which the correspondent
+  // of the current pixel will be sought
+  unsigned int range = me.getRange();
+  const unsigned int numQueries = range * 2 + 1;
+
+  if (numCandidates > numQueries) {
+    throw vpException(vpException::badValue, "Error in vpMeSite::track: the number of retained hypotheses cannot superior to the number of queried sites.");
+  }
+
+  vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
+
+  // Insert into a map, where the key is the sorting criterion (negative likelihood or contrast diff)
+  // and the key is the ME site + its computed likelihood and contrast.
+  // After computation: iterating on the map is guaranteed to be done with the keys being sorted according to the criterion.
+  // Multimap allows to have multiple values (sites) with the same key (likelihood/contrast diff)
+  // Only the candidates that are above the threshold are kept
+  std::multimap<double, vpMeSiteHypothesis> candidates;
+
+  const double contrast_max = 1 + me.getMu2();
+  const double contrast_min = 1 - me.getMu1();
+
+  const double threshold = computeFinalThreshold(me);
+
+  // First step: compute likelihoods and contrasts for all queries
+  if (test_contrast) {
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      vpMeSite &query = list_query_pixels[n];
+      //   convolution results
+      const double convolution_ = query.convolution(I, &me);
+      // luminance ratio of reference pixel to potential correspondent pixel
+      // the luminance must be similar, hence the ratio value should
+      // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
+      const double likelihood = fabs(convolution_ + m_convlt);
+
+      query.m_convlt = convolution_;
+      const double contrast = convolution_ / m_convlt;
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(fabs(1.0 - contrast), vpMeSiteHypothesis(&query, likelihood, contrast)));
+    }
+  }
+  else { // test on likelihood only
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      // convolution results
+      vpMeSite &query = list_query_pixels[n];
+      const double convolution_ = query.convolution(I, &me);
+      const double likelihood = fabs(2 * convolution_);
+      query.m_convlt = convolution_;
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(-likelihood, vpMeSiteHypothesis(&query, likelihood, 0.0)));
+    }
+  }
+  // Take first numCandidates hypotheses: map is sorted according to the likelihood/contrast difference so we can just
+  // iterate from the start
+  outputHypotheses.resize(numCandidates);
+
+  std::multimap<double, vpMeSiteHypothesis>::iterator it = candidates.begin();
+  if (test_contrast) {
+    for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
+      outputHypotheses[i] = *(it->second.site);
+      outputHypotheses[i].m_normGradient = vpMath::sqr(outputHypotheses[i].m_convlt);
+      const double likelihood = it->second.likelihood;
+      const double contrast = it->second.contrast;
+
+      if (likelihood > threshold) {
+        if (contrast <= contrast_min || contrast >= contrast_max) {
+          outputHypotheses[i].m_state = CONTRAST;
+        }
+        else {
+          outputHypotheses[i].m_state = NO_SUPPRESSION;
+        }
+      }
+      else {
+        outputHypotheses[i].m_state = THRESHOLD;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
+      outputHypotheses[i] = *(it->second.site);
+      const double likelihood = it->second.likelihood;
+      if (likelihood > threshold) {
+        outputHypotheses[i].m_state = NO_SUPPRESSION;
+      }
+      else {
+        outputHypotheses[i].m_state = THRESHOLD;
+      }
+    }
+  }
+
+  const vpMeSite &bestMatch = outputHypotheses[0];
+
+
+  if (bestMatch.m_state != NO_SUPPRESSION) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+
+      vpDisplay::displayPoint(I, bestMatch.m_i, bestMatch.m_j, vpColor::red);
+    }
+    *this = outputHypotheses[0];
+  }
+  else {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+      vpDisplay::displayPoint(I, bestMatch.m_i, bestMatch.m_j, vpColor::green);
+    }
+    m_normGradient = 0;
+  }
+
+  delete[] list_query_pixels;
 }
 
 int vpMeSite::operator!=(const vpMeSite &m) { return ((m.m_i != m_i) || (m.m_j != m_j)); }
 
-void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
 
-void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
+void vpMeSite::display(const vpImage<unsigned char> &I) const { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
+
+void vpMeSite::display(const vpImage<vpRGBa> &I) const { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
 
 // Static functions
 

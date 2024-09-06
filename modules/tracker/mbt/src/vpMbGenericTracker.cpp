@@ -253,7 +253,7 @@ double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<vpRGBa> &
   const vpCameraParameters &_cam)
 {
   vpImage<unsigned char> I;
-  vpImageConvert::convert(I_color, I); // FS: Shoudn't we use here m_I that was converted in track() ?
+  vpImageConvert::convert(I_color, I); // FS: Shouldn't we use here m_I that was converted in track() ?
 
   return computeCurrentProjectionError(I, _cMo, _cam);
 }
