@@ -494,7 +494,6 @@ int main(const int argc, const char *argv[])
     /// Initial display of the images
     vpDisplay::display(data.m_I_orig);
     vpDisplay::display(data.m_I_segmented);
-    vpDisplay::display(data.m_Iskeleton);
     vpDisplay::display(data.m_IskeletonNoisy);
 #endif
 
@@ -509,7 +508,6 @@ int main(const int argc, const char *argv[])
     std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
     meanDtLMS += dtLms;
     meanMeanSquareErrorLMS += lmsError;
-    lmsFitter.display<unsigned char>(data.m_Iskeleton, vpColor::blue, legendLmsVert, legendLmsHor);
     lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::blue, legendLmsVert, legendLmsHor);
 
     /// Fit using RANSAC
@@ -523,7 +521,6 @@ int main(const int argc, const char *argv[])
     std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
     meanDtRansac += dtRansac;
     meanMeanSquareErrorRansac += ransacError;
-    ransacFitter.display<unsigned char>(data.m_Iskeleton, vpColor::gray, legendRansacVert, legendRansacHor);
     ransacFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray, legendRansacVert, legendRansacHor);
 
     /// Use the UKF to filter the measurement
@@ -540,7 +537,6 @@ int main(const int argc, const char *argv[])
     //! [Evaluate_performances]
     float pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
     //! [Evaluate_performances]
-    tutorial::display(Xest, data.m_Iskeleton, vpColor::red, legendPFVert, legendPFHor);
     tutorial::display(Xest, data.m_IskeletonNoisy, vpColor::red, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;
     std::cout << "    Coeffs = [" << Xest.transpose() << " ]" << std::endl;
@@ -558,7 +554,6 @@ int main(const int argc, const char *argv[])
     data.displayLegend(data.m_I_orig);
     vpDisplay::flush(data.m_I_orig);
     vpDisplay::flush(data.m_I_segmented);
-    vpDisplay::flush(data.m_Iskeleton);
     vpDisplay::flush(data.m_IskeletonNoisy);
     run = data.manageClicks(data.m_I_orig, data.m_stepbystep);
 #endif

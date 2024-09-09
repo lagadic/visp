@@ -86,12 +86,10 @@ typedef struct vpTutoCommonData
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayOrig;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySegmented;
-  std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySkeleton;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayNoisy;
 #elif defined(VISP_HAVE_DISPLAY)
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayOrig;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
-  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySkeleton;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayNoisy;
 #endif
   /// Ransac parameters
@@ -116,7 +114,6 @@ typedef struct vpTutoCommonData
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     , m_displayOrig(nullptr)
     , m_displaySegmented(nullptr)
-    , m_displaySkeleton(nullptr)
     , m_displayNoisy(nullptr)
 #endif
     , m_ransacN(10)
@@ -140,11 +137,6 @@ typedef struct vpTutoCommonData
     if (m_displaySegmented != nullptr) {
       delete m_displaySegmented;
       m_displaySegmented = nullptr;
-    }
-
-    if (m_displaySkeleton != nullptr) {
-      delete m_displaySkeleton;
-      m_displaySkeleton = nullptr;
     }
 
     if (m_displayNoisy != nullptr) {
@@ -315,16 +307,17 @@ typedef struct vpTutoCommonData
 
     // Init the displays
     const int horOffset = 20, vertOffset = 20;
+    std::string skeletonTitle("Skeletonized image (");
+    skeletonTitle += (m_ratioSaltPepperNoise == 0 ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
+    skeletonTitle += " noise)";
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
-    m_displaySkeleton = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_Iskeleton, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Skeletonized image");
-    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), "Noisy skeletonized image");
+    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), skeletonTitle);
 #elif defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
-    m_displaySkeleton = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_Iskeleton, horOffset, 2 * vertOffset + m_I_orig.getHeight(), "Skeletonized image");
-    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), "Noisy skeletonized image");
+    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), skeletonTitle);
 #endif
     return SOFTWARE_CONTINUE;
   }
