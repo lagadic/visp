@@ -82,7 +82,7 @@ public:
   { }
 
   /**
-   * @brief Compute v = a u^2 + b u + c
+   * @brief Compute \f[v = \sum_{i = 0}^N a_i u^i \f]
    *
    * \param[in] u Input
    * \return float The corresponding v.

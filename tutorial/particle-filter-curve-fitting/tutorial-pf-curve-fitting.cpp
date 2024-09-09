@@ -478,11 +478,10 @@ int main(const int argc, const char *argv[])
   unsigned int nbIter = 0;
   double  meanDtLMS = 0., meanDtRansac = 0., meanDtPF = 0.;
   double  meanMeanSquareErrorLMS = 0., meanMeanSquareErrorRansac = 0., meanMeanSquareErrorPF = 0.;
-  while ((!data.m_grabber.end() || data.m_useSimulated) && run) {
+  while (!data.m_grabber.end() && run) {
     std::cout << "Iter " << nbIter << std::endl;
-    if (!data.m_useSimulated) {
-      data.m_grabber.acquire(data.m_I_orig);
-    }
+    data.m_grabber.acquire(data.m_I_orig);
+
     tutorial::performSegmentationHSV(data);
 
     /// Extracting the skeleton of the mask
