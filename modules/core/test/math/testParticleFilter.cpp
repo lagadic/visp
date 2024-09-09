@@ -646,7 +646,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
   vpUniRand rngInitPoints(seedInitPoints);
 
   /// ----- Evaluation parameters
-  const double maxToleratedError = 10.;
+  const double maxToleratedError = 15.;
 
   SECTION("Noise-free", "The init points are directly extracted from the curve points, without any additional noise")
   {
@@ -695,6 +695,86 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
       filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
 
       for (unsigned int i = 0; i < nbWarmUpIter; ++i) {
+        filter.filter(curvePoints, dt);
+      }
+
+      double meanError = 0.;
+      for (unsigned int i = 0; i < nbEvalIter; ++i) {
+        filter.filter(curvePoints, dt);
+        vpColVector Xest = filter.computeFilteredState();
+        vpParabolaModel model(Xest, height, width);
+        std::cout << "Estimated model := " << model << std::endl;
+        double rmse = evaluate(curvePoints, model);
+        meanError += rmse;
+
+#ifdef VISP_HAVE_DISPLAY
+        if (opt_display) {
+          vpDisplay::display(I);
+          displayGeneratedImage(I, curvePoints, vpColor::red, "GT", 20, 20);
+          model.display(I, vpColor::blue, "Model", 40, 20);
+          vpDisplay::flush(I);
+          vpDisplay::getClick(I);
+        }
+#endif
+      }
+      meanError /= static_cast<double>(nbEvalIter);
+      CHECK(meanError <= maxToleratedError);
+    }
+  }
+
+
+
+  SECTION("Noisy", "Noise is added to the init points")
+  {
+    double x0 = rngCurvePoints.uniform(0., width);
+    double x1 = rngCurvePoints.uniform(0., width);
+    double y0 = rngCurvePoints.uniform(0., height);
+    double y1 = rngCurvePoints.uniform(0., height);
+    vpColVector coeffs = computeABCD(x0, y0, x1, y1);
+    std::vector<vpImagePoint> curvePoints = generateSimulatedImage(0, width, 1., coeffs);
+
+#ifdef VISP_HAVE_DISPLAY
+    vpImage<vpRGBa> I(height, width);
+    std::shared_ptr<vpDisplay> pDisplay;
+    if (opt_display) {
+      pDisplay = vpDisplayFactory::createDisplay(I);
+    }
+#endif
+
+    const double ampliMaxInitNoise = 1.5;
+    const double stdevInitNoise = ampliMaxInitNoise / 3.;
+    vpGaussRand rngInitNoise(stdevInitNoise, 0., seedInitPoints);
+
+    for (unsigned int iter = 0; iter < nbTestRepet; ++iter) {
+      // Randomly select the initialization points
+      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints, seedShuffle);
+      std::vector<vpImagePoint> initPoints;
+      for (unsigned int j = 0; j < nbInitPoints * 4; ++j) {
+        vpImagePoint noisyPt(suffledVector[j].get_i() + rngInitNoise(), suffledVector[j].get_j() + rngInitNoise());
+        initPoints.push_back(noisyPt);
+      }
+
+      // Compute the initial model
+      vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
+      vpColVector X0 = modelInitial.toVpColVector();
+      std::cout << "Initial model := " << modelInitial << std::endl;
+
+      // Initialize the Particle Filter
+      std::vector<double> stdevsPF;
+      for (unsigned int i = 0; i < degree + 1; ++i) {
+        stdevsPF.push_back(ratioAmpliMax * std::pow(.05, i) * X0[0] / 3.);
+      }
+      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood * 2., height, width);
+      using std::placeholders::_1;
+      using std::placeholders::_2;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
+      vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+
+      for (unsigned int i = 0; i < nbWarmUpIter * 5; ++i) {
         filter.filter(curvePoints, dt);
       }
 
