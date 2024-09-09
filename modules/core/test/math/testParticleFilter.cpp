@@ -434,7 +434,7 @@ private:
 };
 }
 
-TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFilter]")
+TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
   /// ----- Simulation parameters -----
   const double width = 600.; //!< The width of the simulated image
@@ -447,6 +447,7 @@ TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFi
   const unsigned int nbWarmUpIter = 10; //!< Number of iterations for the warmup loop
   const unsigned int nbEvalIter = 20; //!< Number of iterations for the evaluation loop
   const double dt = 0.040; //!< Simulated period of acquisition
+  const int32_t seedShuffle = 4221; //!< The seed to shuffle the curve points
 
   /// ----- PF parameters -----
   // The maximum amplitude for the likelihood compute.
@@ -463,7 +464,7 @@ TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFi
   /// ----- Evaluation parameters
   const double maxToleratedError = 10.;
 
-  SECTION("Noise-free initialization")
+  SECTION("Noise-free", "The init points are directly extracted from the curve points, without any additional noise")
   {
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
@@ -475,14 +476,14 @@ TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFi
 #ifdef VISP_HAVE_DISPLAY
     vpImage<vpRGBa> I(height, width);
     std::shared_ptr<vpDisplay> pDisplay;
-    // if (opt_display) {
-    //   pDisplay = vpDisplayFactory::createDisplay(I);
-    // }
+    if (opt_display) {
+      pDisplay = vpDisplayFactory::createDisplay(I);
+    }
 #endif
 
     for (unsigned int iter = 0; iter < nbTestRepet; ++iter) {
       // Randomly select the initialization points
-      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints);
+      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints, seedShuffle);
       std::vector<vpImagePoint> initPoints;
       for (unsigned int j = 0; j < nbInitPoints; ++j) {
         initPoints.push_back(suffledVector[j]);
@@ -523,13 +524,92 @@ TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFi
         meanError += rmse;
 
 #ifdef VISP_HAVE_DISPLAY
-        // if (opt_display) {
-        //   vpDisplay::display(I);
-        //   displayGeneratedImage(I, curvePoints, vpColor::red, "GT", 20, 20);
-        //   model.display(I, vpColor::blue, "Model", 40, 20);
-        //   vpDisplay::flush(I);
-        //   vpDisplay::getClick(I);
-        // }
+        if (opt_display) {
+          vpDisplay::display(I);
+          displayGeneratedImage(I, curvePoints, vpColor::red, "GT", 20, 20);
+          model.display(I, vpColor::blue, "Model", 40, 20);
+          vpDisplay::flush(I);
+          vpDisplay::getClick(I);
+        }
+#endif
+      }
+      meanError /= static_cast<double>(nbEvalIter);
+      CHECK(meanError <= maxToleratedError);
+    }
+  }
+
+  SECTION("Noisy", "Noise is added to the init points")
+  {
+    double x0 = rngCurvePoints.uniform(0., width);
+    double x1 = rngCurvePoints.uniform(0., width);
+    double y0 = rngCurvePoints.uniform(0., height);
+    double y1 = rngCurvePoints.uniform(0., height);
+    vpColVector coeffs = computeABC(x0, y0, x1, y1);
+    std::vector<vpImagePoint> curvePoints = generateSimulatedImage(0, width, 1., coeffs);
+
+#ifdef VISP_HAVE_DISPLAY
+    vpImage<vpRGBa> I(height, width);
+    std::shared_ptr<vpDisplay> pDisplay;
+    if (opt_display) {
+      pDisplay = vpDisplayFactory::createDisplay(I);
+    }
+#endif
+
+    const double ampliMaxInitNoise = 24.;
+    const double stdevInitNoise = ampliMaxInitNoise / 3.;
+    vpGaussRand rngInitNoise(stdevInitNoise, 0., seedInitPoints);
+
+    for (unsigned int iter = 0; iter < nbTestRepet; ++iter) {
+      // Randomly select the initialization points
+      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints, seedShuffle);
+      std::vector<vpImagePoint> initPoints;
+      for (unsigned int j = 0; j < nbInitPoints; ++j) {
+        vpImagePoint noisyPt(suffledVector[j].get_i() + rngInitNoise(), suffledVector[j].get_j() + rngInitNoise());
+        initPoints.push_back(noisyPt);
+      }
+      std::cout << "Init points := " << initPoints << std::endl;
+
+      // Compute the initial model
+      vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
+      vpColVector X0 = modelInitial.toVpColVector();
+      std::cout << "Initial model := " << modelInitial << std::endl;
+
+      // Initialize the Particle Filter
+      std::vector<double> stdevsPF;
+      for (unsigned int i = 0; i < degree + 1; ++i) {
+        stdevsPF.push_back(ratioAmpliMax * X0[0] / 3.);
+      }
+      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, height, width);
+      using std::placeholders::_1;
+      using std::placeholders::_2;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
+      vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+
+      for (unsigned int i = 0; i < nbWarmUpIter; ++i) {
+        filter.filter(curvePoints, dt);
+      }
+
+      double meanError = 0.;
+      for (unsigned int i = 0; i < nbEvalIter; ++i) {
+        filter.filter(curvePoints, dt);
+        vpColVector Xest = filter.computeFilteredState();
+        vpParabolaModel model(Xest, height, width);
+        std::cout << "Estimated model := " << model << std::endl;
+        double rmse = evaluate(curvePoints, model);
+        meanError += rmse;
+
+#ifdef VISP_HAVE_DISPLAY
+        if (opt_display) {
+          vpDisplay::display(I);
+          displayGeneratedImage(I, curvePoints, vpColor::red, "GT", 20, 20);
+          model.display(I, vpColor::blue, "Model", 40, 20);
+          vpDisplay::flush(I);
+          vpDisplay::getClick(I);
+        }
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
@@ -538,7 +618,7 @@ TEST_CASE("vpParticleFilter 2nd degree polynomial interpolation", "[vpParticleFi
   }
 }
 
-TEST_CASE("vpParticleFilter interpolate 3rd degree polynomial", "[vpParticleFilter]")
+TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
 /// ----- Simulation parameters -----
   const double width = 600.; //!< The width of the simulated image
@@ -551,6 +631,7 @@ TEST_CASE("vpParticleFilter interpolate 3rd degree polynomial", "[vpParticleFilt
   const unsigned int nbWarmUpIter = 10; //!< Number of iterations for the warmup loop
   const unsigned int nbEvalIter = 20; //!< Number of iterations for the evaluation loop
   const double dt = 0.040; //!< Simulated period of acquisition
+  const int32_t seedShuffle = 4221; //!< The seed to shuffle the curve points
 
   /// ----- PF parameters -----
   // The maximum amplitude for the likelihood compute.
@@ -567,7 +648,7 @@ TEST_CASE("vpParticleFilter interpolate 3rd degree polynomial", "[vpParticleFilt
   /// ----- Evaluation parameters
   const double maxToleratedError = 10.;
 
-  SECTION("Noise-free initialization")
+  SECTION("Noise-free", "The init points are directly extracted from the curve points, without any additional noise")
   {
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
@@ -586,7 +667,7 @@ TEST_CASE("vpParticleFilter interpolate 3rd degree polynomial", "[vpParticleFilt
 
     for (unsigned int iter = 0; iter < nbTestRepet; ++iter) {
       // Randomly select the initialization points
-      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints);
+      std::vector<vpImagePoint> suffledVector = vpUniRand::shuffleVector(curvePoints, seedShuffle);
       std::vector<vpImagePoint> initPoints;
       for (unsigned int j = 0; j < nbInitPoints; ++j) {
         initPoints.push_back(suffledVector[j]);
