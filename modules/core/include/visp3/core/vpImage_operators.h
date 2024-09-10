@@ -182,15 +182,50 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 /*!
   \brief Copy operator
 */
-template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
+template <class Type> vpImage<Type> &vpImage<Type>::operator=(const vpImage<Type> &other)
 {
-  swap(*this, other);
+
+  resize(other.height, other.width);
+  memcpy(static_cast<void *>(bitmap), static_cast<void *>(other.bitmap), other.npixels * sizeof(Type));
   if (other.display != nullptr) {
     display = other.display;
   }
 
   return *this;
 }
+
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+
+template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> &&other)
+{
+
+  if (row != nullptr) {
+    delete[] row;
+  }
+  row = other.row;
+  if (bitmap != nullptr && hasOwnership) {
+    delete[] bitmap;
+  }
+  bitmap = other.bitmap;
+  if (other.display != nullptr) {
+    display = other.display;
+  }
+  height = other.height;
+  width = other.width;
+  npixels = other.npixels;
+  hasOwnership = other.hasOwnership;
+
+  other.bitmap = nullptr;
+  other.display = nullptr;
+  other.npixels = 0;
+  other.width = 0;
+  other.height = 0;
+  other.row = nullptr;
+  other.hasOwnership = false;
+
+  return *this;
+}
+#endif
 
 /*!
   \brief = operator : Set all the element of the bitmap to a given  value \e

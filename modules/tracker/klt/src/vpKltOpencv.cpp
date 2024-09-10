@@ -166,7 +166,7 @@ void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) con
   id = m_points_id[(size_t)index];
 }
 
-void vpKltOpencv::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness) const
 {
   vpKltOpencv::display(I, m_points[1], m_points_id, color, thickness);
 }

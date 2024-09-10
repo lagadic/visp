@@ -209,7 +209,6 @@ public:
     PT(DirectionalLight) light = new DirectionalLight(m_name);
     light->set_color(LColor(m_color.R, m_color.G, m_color.B, 1));
     vpColVector dir = vpPanda3DBaseRenderer::vispVectorToPanda(m_direction);
-    std::cout << m_direction << ", " << dir << std::endl;
     light->set_direction(LVector3f(m_direction[0], m_direction[1], m_direction[2]));
     NodePath np = scene.attach_new_node(light);
     scene.set_light(np);
