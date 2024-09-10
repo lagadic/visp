@@ -49,3 +49,6 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
+
+visp_copy_dir(tutorial-pf-curve-fitting-all "${CMAKE_CURRENT_SOURCE_DIR}" data)
+visp_copy_dir(tutorial-pf-curve-fitting-all "${CMAKE_CURRENT_SOURCE_DIR}" calib)
