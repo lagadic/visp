@@ -76,15 +76,6 @@ public:
   double evaluate(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
-   * \brief Compute the Root Mean Square Error between the model and the given points,
-   * rejecting outliers using a robust method.
-   *
-   * \param[in] pts The Ground Truth points.
-   * \return double The Root Mean Square Error \f[ RMSE = \sqrt{\frac{\sum_{i = 0}^{N-1} e^2}{N}} \f]
-   */
-  double evaluateRobust(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
-
-  /**
    * \brief Compute the square error between the model and a Ground Truth point.
    *
    * \param[in] pt The Ground Truth point.

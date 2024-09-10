@@ -78,27 +78,6 @@ double vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
   return std::sqrt(meanSquareError);
 }
 
-double vpTutoMeanSquareFitting::evaluateRobust(const std::vector<vpImagePoint> &pts)
-{
-  if (!m_isFitted) {
-    throw(vpException(vpException::notInitialized, "fit() has not been called."));
-  }
-  unsigned int nbPts = pts.size();
-  vpColVector residuals(nbPts);
-  vpColVector weights(nbPts, 1.);
-  // Compute the residuals
-  for (unsigned int i = 0; i < nbPts; ++i) {
-    double squareError = evaluate(pts[i]);
-    residuals[i] = squareError;
-  }
-  vpRobust robust;
-  robust.MEstimator(vpRobust::TUKEY, residuals, weights);
-  double sumWeights = weights.sum();
-  double numerator = (weights.hadamard(residuals)).sum();
-  double meanSquareError = numerator / sumWeights;
-  return std::sqrt(meanSquareError);
-}
-
 double vpTutoMeanSquareFitting::evaluate(const vpImagePoint &pt)
 {
   if (!m_isFitted) {
