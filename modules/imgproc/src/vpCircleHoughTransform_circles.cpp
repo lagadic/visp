@@ -158,7 +158,7 @@ vpCircleHoughTransform::computeCircleCandidates()
     radiusActualValueList.clear();
     radiusActualValueList.resize(nbBins, 0.);
 
-    const unsigned int nbEdgePoints = m_edgePointsList.size();
+    const unsigned int nbEdgePoints = static_cast<unsigned int>(m_edgePointsList.size());
     for (unsigned int e = 0; e < nbEdgePoints; ++e) {
       const std::pair<unsigned int, unsigned int> &edgePoint = m_edgePointsList[e];
 

@@ -27,34 +27,18 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include <math.h>
-#include <float.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
-#include <string.h> // memcpy
 
 #ifdef __cplusplus
-//extern "C" {
-#endif
-
-#ifndef M_TWOPI
-# define M_TWOPI       6.2831853071795862319959  /* 2*pi */
-#endif
-
-#ifndef M_PI
-# define M_PI 3.141592653589793238462643383279502884196
+extern "C" {
 #endif
 
 #define to_radians(x) ( (x) * (M_PI / 180.0 ))
 #define to_degrees(x) ( (x) * (180.0 / M_PI ))
-
-#ifndef max
-#define max(A, B) (A < B ? B : A)
-#endif
-#ifndef min
-#define min(A, B) (A < B ? A : B)
-#endif
 
   /* DEPRECATE, threshold meaningless without context.
 static inline int dequals(double a, double b)
@@ -92,7 +76,7 @@ static inline double sgn(double v)
 // random number between [0, 1)
 static inline float randf()
 {
-    return (float)(rand() / (static_cast<float>(RAND_MAX) + 1.0f));
+    return (float)(rand() / (RAND_MAX + 1.0));
 }
 
 
@@ -115,7 +99,7 @@ static inline int irand(int bound)
 /** Map vin to [0, 2*PI) **/
 static inline double mod2pi_positive(double vin)
 {
-    return vin - M_TWOPI * floor(vin / M_TWOPI);
+    return vin - M_2_PI * floor(vin / M_2_PI);
 }
 
 /** Map vin to [-PI, PI) **/
@@ -149,7 +133,7 @@ static inline int mod_positive(int vin, int mod) {
 static inline int theta_to_int(double theta, int max)
 {
     theta = mod2pi_ref(M_PI, theta);
-    int v = (int) (theta / M_TWOPI * max);
+    int v = (int) (theta / M_2_PI * max);
 
     if (v == max)
         v = 0;
@@ -215,34 +199,6 @@ static inline int dblcmp (double d1, double d2)
         return  0;
 }
 
-static inline double double_pos_inf() {
-    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-double-precision-floating-point-values-for-ieee-754-arithmetic
-    union {double d; int64_t i;} u;
-    u.i = 0x7FF0000000000000;
-    return u.d;
-}
-
-static inline double double_neg_inf() {
-    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-double-precision-floating-point-values-for-ieee-754-arithmetic
-    union {double d; uint64_t i;} u;
-    u.i = 0xFFF0000000000000;
-    return u.d;
-}
-
-static inline float float_pos_inf() {
-    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-single-precision-floating-point-values-for-ieee-754-arithmetic
-    union {float f; int32_t i;} u;
-    u.i = 0x7F800000;
-    return u.f;
-}
-
-static inline float float_neg_inf() {
-    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-single-precision-floating-point-values-for-ieee-754-arithmetic
-    union {float f; uint32_t i;} u;
-    u.i = 0xFF800000;
-    return u.f;
-}
-
 #ifdef __cplusplus
-//}
+}
 #endif

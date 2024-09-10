@@ -35,7 +35,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "zarray.h"
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 
@@ -50,6 +50,24 @@ struct string_feeder
 
     int line, col;
 };
+
+/**
+ * Similar to sprintf(), except that it will malloc() enough space for the
+ * formatted string which it returns. It is the caller's responsibility to call
+ * free() on the returned string when it is no longer needed.
+ */
+char *sprintf_alloc(const char *fmt, ...)
+#ifndef _MSC_VER
+__attribute__ ((format (printf, 1, 2)))
+#endif
+;
+
+/**
+ * Similar to vsprintf(), except that it will malloc() enough space for the
+ * formatted string which it returns. It is the caller's responsibility to call
+ * free() on the returned string when it is no longer needed.
+ */
+char *vsprintf_alloc(const char *fmt, va_list args);
 
 /**
  * Concatenates 1 or more strings together and returns the result, which will be a
@@ -443,5 +461,5 @@ void string_feeder_require(string_feeder_t *sf, const char *str);
 char *str_expand_envs(const char *in);
 
 #ifdef __cplusplus
-//}
+}
 #endif

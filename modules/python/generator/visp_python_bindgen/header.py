@@ -362,11 +362,16 @@ class HeaderFile():
           method_name = get_name(method.name)
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
           py_arg_strs = get_py_args(method.parameters, owner_specs, header_env.mapping)
+
           param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
 
           py_arg_strs = add_method_doc_to_pyargs(method, py_arg_strs)
 
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
+          if 'simpleAdd' in ctor_str:
+            print(params_strs)
+            print(header_env.mapping)
+            raise RuntimeError
           add_to_method_dict('__init__', MethodBinding(ctor_str, is_static=False, is_lambda=False,
                                                        is_operator=False, is_constructor=True))
 

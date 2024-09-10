@@ -311,8 +311,7 @@ public:
     m_displayTagThickness = thickness;
   }
 
-  inline friend VISP_EXPORT void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
-  {
+  inline friend void swap(vpDetectorAprilTag& o1, vpDetectorAprilTag& o2) {
     using std::swap;
     swap(o1.m_impl, o2.m_impl);
   }

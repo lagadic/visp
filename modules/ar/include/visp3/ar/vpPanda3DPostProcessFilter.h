@@ -62,12 +62,21 @@ public:
     m_renderOrder = m_inputRenderer->getRenderOrder() + 1;
   }
 
+  virtual ~vpPanda3DPostProcessFilter() = default;
+
   bool isRendering3DScene() const VP_OVERRIDE
   {
     return false;
   }
 
-  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return m_buffer; }
+  GraphicsOutput *getMainOutputBuffer() VP_OVERRIDE { return (GraphicsOutput *)m_buffer; }
+
+  void afterFrameRendered() VP_OVERRIDE
+  {
+    if (m_isOutput) {
+      vpPanda3DBaseRenderer::afterFrameRendered();
+    }
+  }
 
 protected:
   virtual void setupScene() VP_OVERRIDE;
@@ -81,15 +90,14 @@ protected:
   void getRenderBasic(vpImage<unsigned char> &I) const;
   void getRenderBasic(vpImage<vpRGBf> &I) const;
 
-
   virtual FrameBufferProperties getBufferProperties() const = 0;
 
   std::shared_ptr<vpPanda3DBaseRenderer> m_inputRenderer;
   bool m_isOutput; //! Whether this filter is an output to be used and should be copied to ram
   std::string m_fragmentShader;
   PointerTo<Shader> m_shader;
-  Texture *m_texture;
-  GraphicsOutput *m_buffer;
+  PointerTo<Texture> m_texture;
+  PointerTo<GraphicsOutput> m_buffer;
 
   static const char *FILTER_VERTEX_SHADER;
 };

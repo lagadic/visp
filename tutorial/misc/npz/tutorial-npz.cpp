@@ -146,7 +146,7 @@ int main()
     if (it_img != npz_data.end()) {
       visp::cnpy::NpyArray arr_data_img = it_img->second;
       const bool copy_data = false;
-      vpImage<vpRGBa> img(arr_data_img.data<vpRGBa>(), arr_data_img.shape[0], arr_data_img.shape[1], copy_data);
+      vpImage<vpRGBa> img(arr_data_img.data<vpRGBa>(), static_cast<unsigned int>(arr_data_img.shape[0]), static_cast<unsigned int>(arr_data_img.shape[1]), copy_data);
       std::cout << "Img: " << img.getWidth() << "x" << img.getHeight() << std::endl;
 
       std::unique_ptr<vpDisplay> ptr_display;
@@ -190,7 +190,7 @@ int main()
 
     if (it_img != npz_data.end()) {
       visp::cnpy::NpyArray arr_data_img = it_img->second;
-      vpImage<vpRGBa> img(arr_data_img.shape[0], arr_data_img.shape[1]);
+      vpImage<vpRGBa> img(static_cast<unsigned int>(arr_data_img.shape[0]), static_cast<unsigned int>(arr_data_img.shape[1]));
       vpImageConvert::RGBToRGBa(arr_data_img.data<unsigned char>(), reinterpret_cast<unsigned char *>(img.bitmap),
         img.getSize());
 

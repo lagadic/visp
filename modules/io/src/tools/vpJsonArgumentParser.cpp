@@ -94,6 +94,63 @@ std::string vpJsonArgumentParser::help() const
   return ss.str();
 }
 
+vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, bool &parameter, const std::string &help)
+{
+  argumentType[name] = FLAG;
+  const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+    size_t pos = 0;
+    nlohmann::json *f = &j;
+    std::string token;
+    std::string name_copy = name;
+
+    while ((pos = name_copy.find(nestSeparator)) != std::string::npos) {
+      token = name_copy.substr(0, pos);
+
+      name_copy.erase(0, pos + nestSeparator.length());
+      if (create && !f->contains(token)) {
+        (*f)[token] = {};
+      }
+      else if (!f->contains(token)) {
+        return nullptr;
+      }
+      f = &(f->at(token));
+    }
+    if (create && !f->contains(name_copy)) {
+      (*f)[name_copy] = {};
+    }
+    else if (!f->contains(name_copy)) {
+      return nullptr;
+    }
+    f = &(f->at(name_copy));
+    return f;
+    };
+
+  parsers[name] = [&parameter, getter, name](nlohmann::json &j) {
+    const nlohmann::json *field = getter(j, false);
+    const bool fieldHasNoValue = ((field == nullptr) || (field != nullptr && field->is_null()));
+    if (!fieldHasNoValue && (field->type() == json::value_t::boolean && (*field) == true)) {
+      parameter = !parameter;
+    }
+    };
+
+  updaters[name] = [getter](nlohmann::json &j, const std::string &) {
+    nlohmann::json *field = getter(j, true);
+    *field = true;
+    };
+
+  helpers[name] = [help, parameter]() -> std::string {
+    std::stringstream ss;
+    nlohmann::json repr = parameter;
+    ss << help << std::endl << "Default: " << repr;
+    return ss.str();
+    };
+
+  nlohmann::json *exampleField = getter(exampleJson, true);
+  *exampleField = parameter;
+
+  return *this;
+}
+
 void vpJsonArgumentParser::parse(int argc, const char *argv[])
 {
   json j;
@@ -132,14 +189,19 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
       }
 
       if (parsers.find(arg) != parsers.end()) {
-        if (i < argc - 1) {
-          updaters[arg](j, std::string(argv[i + 1]));
-          ++i;
+        if (argumentType[arg] == WITH_FIELD) {
+          if (i < argc - 1) {
+            updaters[arg](j, std::string(argv[i + 1]));
+            ++i;
+          }
+          else {
+            std::stringstream ss;
+            ss << "Argument " << arg << " was passed but no value was provided" << std::endl;
+            throw vpException(vpException::ioError, ss.str());
+          }
         }
-        else {
-          std::stringstream ss;
-          ss << "Argument " << arg << " was passed but no value was provided" << std::endl;
-          throw vpException(vpException::ioError, ss.str());
+        else if (argumentType[arg] == FLAG) {
+          updaters[arg](j, std::string());
         }
       }
       else {

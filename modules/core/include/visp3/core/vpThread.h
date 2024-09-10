@@ -88,8 +88,9 @@ public:
   /*!
      Construct a thread object that represents a new joinable thread of
      execution. The new thread of execution calls \e fn passing \e args as
-     arguments. \param fn : A pointer to a function. \param args : Arguments
-     passed to the call to \e fn (if any).
+     arguments.
+     \param fn : A pointer to a function.
+     \param args : Arguments passed to the call to \e fn (if any).
    */
   vpThread(vpThread::Fn fn, vpThread::Args args = nullptr) : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
@@ -98,8 +99,9 @@ public:
 
   /*!
      Creates a thread object that represents a new joinable thread of
-     execution. \param fn : A pointer to a function. \param args : Arguments
-     passed to the call to \e fn (if any).
+     execution.
+     \param fn : A pointer to a function.
+     \param args : Arguments passed to the call to \e fn (if any).
    */
   void create(vpThread::Fn fn, vpThread::Args args = nullptr)
   {

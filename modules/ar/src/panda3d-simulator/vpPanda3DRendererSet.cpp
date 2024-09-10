@@ -39,30 +39,25 @@ vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &rend
 {
   m_renderParameters = renderParameters;
   load_prc_file_data("", "textures-power-2 none");
+  load_prc_file_data("", "gl-version 3 2");
+  load_prc_file_data("", "no-singular-invert");
 }
-
 
 void vpPanda3DRendererSet::initFramework()
 {
-
-  // load_prc_file_data("", "load-display p3tinydisplay");
-  // load_prc_file_data("", "color-bits 32 32 32");
-  load_prc_file_data("", "gl-version 3 2");
-
-
-
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
   }
   m_framework = std::shared_ptr<PandaFramework>(new PandaFramework());
+
   m_framework->open_framework();
   WindowProperties winProps;
   winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
   int flags = GraphicsPipe::BF_refuse_window;
-  m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, flags));
+  m_window = m_framework->open_window(winProps, flags);
   if (m_window == nullptr) {
     winProps.set_minimized(true);
-    m_window = std::shared_ptr<WindowFramework>(m_framework->open_window(winProps, 0));
+    m_window = m_framework->open_window(winProps, 0);
   }
   if (m_window == nullptr) {
     throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
@@ -74,6 +69,21 @@ void vpPanda3DRendererSet::initFramework()
   }
 }
 
+void vpPanda3DRendererSet::initFromParent(std::shared_ptr<PandaFramework> framework, PointerTo<WindowFramework> window)
+{
+  vpPanda3DBaseRenderer::initFromParent(framework, window);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+    renderer->initFromParent(m_framework, m_window);
+  }
+}
+
+void vpPanda3DRendererSet::initFromParent(const vpPanda3DBaseRenderer &renderer)
+{
+  vpPanda3DBaseRenderer::initFromParent(renderer);
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+    renderer->initFromParent(*this);
+  }
+}
 
 void vpPanda3DRendererSet::setCameraPose(const vpHomogeneousMatrix &wTc)
 {
@@ -167,10 +177,6 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
     ++it;
   }
   m_subRenderers.insert(it, renderer);
-  for (const auto &r: m_subRenderers) {
-    std::cout << r->getName() << " ";
-  }
-  std::cout << std::endl;
 
   renderer->setRenderParameters(m_renderParameters);
   if (m_framework != nullptr) {
@@ -179,7 +185,14 @@ void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer>
   }
 }
 
-END_VISP_NAMESPACE
+void vpPanda3DRendererSet::enableSharedDepthBuffer(vpPanda3DBaseRenderer &sourceBuffer)
+{
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &subRenderer: m_subRenderers) {
+    if (subRenderer.get() != &sourceBuffer) {
+      subRenderer->enableSharedDepthBuffer(sourceBuffer);
+    }
+  }
+}
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols
