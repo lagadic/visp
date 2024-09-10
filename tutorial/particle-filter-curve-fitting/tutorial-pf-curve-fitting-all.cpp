@@ -32,6 +32,11 @@
 
 //! \example tutorial-pf.cpp
 
+// System includes
+#include <algorithm>
+#include <vector>
+
+// ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpException.h>
@@ -100,67 +105,7 @@ double evaluate(const vpColVector &coeffs, const unsigned int &height, const uns
   double meanSquareError = residuals.sum() / static_cast<double>(nbPts);
   return std::sqrt(meanSquareError);
 }
-
-/**
- * \brief Compute the mean-square error between the parabola model and
- * the input points \b pts. An M-estimator is used to reject outliers
- * when computing the mean square error.
- *
- * \param[in] coeffs The coefficients of the polynomial.
- * \param[in] height The height of the input image.
- * \param[in] width The width of the input image.
- * \param[in] pts The input points.
- * \return float The mean square error.
- */
-double evaluateRobust(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
-{
-  unsigned int nbPts = pts.size();
-  vpColVector residuals(nbPts);
-  vpColVector weights(nbPts, 1.);
-  vpTutoParabolaModel model(coeffs, height, width);
-  // Compute the residuals
-  for (unsigned int i = 0; i < nbPts; ++i) {
-    double squareError = evaluate(pts[i], model);
-    residuals[i] = squareError;
-  }
-  vpRobust robust;
-  robust.MEstimator(vpRobust::TUKEY, residuals, weights);
-  double sumWeights = weights.sum();
-  double numerator = (weights.hadamard(residuals)).sum();
-  double meanSquareError = numerator / sumWeights;
-  return std::sqrt(meanSquareError);
-}
 //! [Evaluation_functions]
-
-//! [Init_from_file]
-/**
- * \brief Read the initialization points from a file.
- *
- * \param[in] listPointsFile The name of the file containing the list
- * of initialization points.
- * \return std::vector<vpImagePoint> The vector of image points to use to initialize
- * the Particle Filter using a Least Mean Square minimization.
- */
-std::vector<vpImagePoint> readInitPointsFromFile(const std::string &listPointsFile)
-{
-  std::vector<vpImagePoint> initPoints;
-  std::ifstream myfile(listPointsFile);
-  std::string line;
-  if (myfile.is_open()) {
-    while (std::getline(myfile, line)) {
-      std::size_t nbCharICoord = line.find_first_of(' ');
-      std::string iAsString = line.substr(0, nbCharICoord);
-      std::string jAsString = line.substr(nbCharICoord + 1);
-      float i = std::atof(iAsString.c_str());
-      float j = std::atof(jAsString.c_str());
-      vpImagePoint ip(i, j);
-      initPoints.push_back(ip);
-    }
-    myfile.close();
-  }
-  return initPoints;
-}
-//! [Init_from_file]
 
 //! [Display_function]
 /**
@@ -195,32 +140,92 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
 
 //! [Initialization_function]
 /**
- * \brief Compute the initial guess of the state for the Particle Filter
- * using Least-Mean-Square minimization.
+ * \brief Select automatically the init points from the segmented image.
  *
- * \param[in] data The data used in the tutorial.
- * \return vpColVector The vector containing the coefficients, used as initial guess,
- * of the parabola.
+ * \param[in] data The data common to the whole program.
+ * \return std::vector<vpImagePoint> The vector of image points to use to initialize
+ * the Particle Filter using a Least Mean Square minimization.
  */
-vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
+std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &data)
 {
-  const std::string listPointsFile("list_init_points.txt");
-#ifdef VISP_HAVE_DISPLAY
+  // Initialization-related variables
   const unsigned int minNbPts = data.m_degree + 1;
-  const unsigned int sizeCross = 10;
-  const unsigned int thicknessCross = 2;
-  const vpColor colorCross = vpColor::red;
-  const bool waitForClick = true;
+  const unsigned int nbPtsToUse = 10 * minNbPts;
   std::vector<vpImagePoint> initPoints;
-  bool notEnoughPoints = true;
+
+  /// Perform HSV segmentation
+  tutorial::performSegmentationHSV(data);
+
+  /// Extracting the skeleton of the mask
+  std::vector<vpImagePoint> edgePoints = tutorial::extractSkeleton(data);
+  unsigned int nbEdgePoints = edgePoints.size();
+
+  if (nbEdgePoints < nbPtsToUse) {
+    return edgePoints;
+  }
+
+  /// Uniformly extract init points
+  auto ptHasLowerU = [](const vpImagePoint &ptA, const vpImagePoint &ptB) {
+    return ptA.get_u() < ptB.get_u();
+    };
+  std::sort(edgePoints.begin(), edgePoints.end(), ptHasLowerU);
+
+  unsigned int idStart, idStop;
+  if (nbEdgePoints > nbPtsToUse + 20) {
+    // Avoid extreme points in case it's noise
+    idStart = 10;
+    idStop = edgePoints.size() - 10;
+  }
+  else {
+    idStart = 0;
+    idStop = edgePoints.size();
+  }
+
+  unsigned int sizeWindow = idStop - idStart + 1;
+  unsigned int step = sizeWindow / (nbPtsToUse - 1);
+  for (unsigned int id = idStart; id <= idStop; id += step) {
+    initPoints.push_back(edgePoints[id]);
+  }
+  return initPoints;
+}
+
+/**
+ * \brief Get the init points by user-interaction.
+ *
+ * \param[in] data The data common to the whole program.
+ * \return std::vector<vpImagePoint> The vector that contains the init points.
+ */
+std::vector<vpImagePoint> manualInitialization(const tutorial::vpTutoCommonData &data)
+{
+  // Interaction variables
+  const bool waitForClick = true;
   vpImagePoint ipClick;
   vpMouseButton::vpMouseButtonType button;
 
-  bool useFile = false;
-  if (vpIoTools::checkFilename(listPointsFile)) {
-    /// Initial display of the images
+  // Display variables
+  const unsigned int sizeCross = 10;
+  const unsigned int thicknessCross = 2;
+  const vpColor colorCross = vpColor::red;
+
+  // Initialization-related variables
+  const unsigned int minNbPts = data.m_degree + 1;
+  std::vector<vpImagePoint> initPoints;
+
+  bool notEnoughPoints = true;
+  while (notEnoughPoints) {
+      /// Initial display of the images
     vpDisplay::display(data.m_I_orig);
-    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to manually select the init points, right click to the points from the file \"" + listPointsFile + "\"", data.m_colorLegend);
+
+    /// Display the how-to
+    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: " + std::to_string(minNbPts) + "), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
+    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
+    vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
+
+    /// Display the already selected points
+    unsigned int nbInitPoints = initPoints.size();
+    for (unsigned int i = 0; i < nbInitPoints; ++i) {
+      vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
+    }
 
     /// Update the display
     vpDisplay::flush(data.m_I_orig);
@@ -231,58 +236,82 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
     switch (button) {
     case vpMouseButton::vpMouseButtonType::button1:
-      useFile = false;
+      initPoints.push_back(ipClick);
+      break;
+    case vpMouseButton::vpMouseButtonType::button2:
+      initPoints.clear();
       break;
     case vpMouseButton::vpMouseButtonType::button3:
-      useFile = true;
+      (initPoints.size() >= minNbPts ? notEnoughPoints = false : notEnoughPoints = true);
       break;
     default:
       break;
     }
   }
 
-  if (useFile) {
-    /// Read the initialization points from a file.
-    initPoints = tutorial::readInitPointsFromFile(listPointsFile);
+  return initPoints;
+}
+
+/**
+ * \brief Compute the initial guess of the state for the Particle Filter
+ * using Least-Mean-Square minimization.
+ *
+ * \param[in] data The data used in the tutorial.
+ * \return vpColVector The vector containing the coefficients, used as initial guess,
+ * of the parabola.
+ */
+vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
+{
+  // Vector that contains the init points
+  std::vector<vpImagePoint> initPoints;
+
+#ifdef VISP_HAVE_DISPLAY
+  // Interaction variables
+  const bool waitForClick = true;
+  vpImagePoint ipClick;
+  vpMouseButton::vpMouseButtonType button;
+
+  // Display variables
+  const unsigned int sizeCross = 10;
+  const unsigned int thicknessCross = 2;
+  const vpColor colorCross = vpColor::red;
+
+  bool automaticInit = false;
+
+  /// Initial display of the images
+  vpDisplay::display(data.m_I_orig);
+  vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to manually select the init points, right click to automatically initialize the PF", data.m_colorLegend);
+
+  /// Update the display
+  vpDisplay::flush(data.m_I_orig);
+
+  /// Get the user input
+  vpDisplay::getClick(data.m_I_orig, ipClick, button, waitForClick);
+
+  /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
+  switch (button) {
+  case vpMouseButton::vpMouseButtonType::button1:
+    automaticInit = false;
+    break;
+  case vpMouseButton::vpMouseButtonType::button3:
+    automaticInit = true;
+    break;
+  default:
+    break;
+  }
+
+  if (automaticInit) {
+    /// Get the init points from the segmented image from the segmented image.
+    initPoints = tutorial::automaticInitialization(data);
   }
   else {
-    while (notEnoughPoints) {
-      /// Initial display of the images
-      vpDisplay::display(data.m_I_orig);
-
-      /// Display the how-to
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: " + std::to_string(minNbPts) + "), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
-      vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
-
-      /// Display the already selected points
-      unsigned int nbInitPoints = initPoints.size();
-      for (unsigned int i = 0; i < nbInitPoints; ++i) {
-        vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
-      }
-
-      /// Update the display
-      vpDisplay::flush(data.m_I_orig);
-
-      /// Get the user input
-      vpDisplay::getClick(data.m_I_orig, ipClick, button, true);
-
-      /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
-      switch (button) {
-      case vpMouseButton::vpMouseButtonType::button1:
-        initPoints.push_back(ipClick);
-        break;
-      case vpMouseButton::vpMouseButtonType::button2:
-        initPoints.clear();
-        break;
-      case vpMouseButton::vpMouseButtonType::button3:
-        (initPoints.size() >= minNbPts ? notEnoughPoints = false : notEnoughPoints = true);
-        break;
-      default:
-        break;
-      }
-    }
+    initPoints = tutorial::manualInitialization(data);
   }
+
+#else
+  /// Get the init points from the segmented image from the segmented image.
+  initPoints = tutorial::automaticInitialization(data);
+#endif
 
   /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
@@ -300,34 +329,14 @@ vpColVector computeInitialGuess(const tutorial::vpTutoCommonData &data)
     const vpImagePoint &ip = initPoints[i];
     vpDisplay::displayCross(data.m_I_orig, ip, sizeCross, colorCross, thicknessCross);
   }
-  /// Save the init points if they were not read from a file
-  if (!useFile) {
-    std::ofstream ofs_initPoints(listPointsFile);
-    for (unsigned int i = 0; i < nbInitPoints; ++i) {
-      const vpImagePoint &ip = initPoints[i];
-      ofs_initPoints << ip.get_i() << " " << ip.get_j() << std::endl;
-    }
-    ofs_initPoints.close();
-  }
+
+  // Update display and wait for click
   lmsFitter.display(data.m_I_orig, vpColor::red, data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v(), data.m_ipLegend.get_u());
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
   vpDisplay::flush(data.m_I_orig);
   vpDisplay::getClick(data.m_I_orig, waitForClick);
 
   return X0;
-#else
-  if (vpIoTools::checkFilename(listPointsFile)) {
-    std::vector<vpImagePoint> initPoints = tutorial::readInitPointsFromFile(listPointsFile);
-    tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth();
-    lmsFitter.fit(initPoints);
-    vpColVector X0 = lmsFitter.getCoeffs();
-    std::cout << "Initial coefficients = " << X0.t() << std::endl;
-    return X0;
-  }
-  else {
-    throw(vpException(vpException::fatalError, "A display is required to select the initial points"));
-  }
-#endif
 }
 //! [Initialization_function]
 
@@ -512,7 +521,7 @@ int main(const int argc, const char *argv[])
 #ifdef VISP_HAVE_DISPLAY
   unsigned int plotHeight = 350, plotWidth = 350;
   int plotXpos = data.m_legendOffset.get_u();
-  int plotYpos = data.m_I_orig.getHeight() + 2. * data.m_legendOffset.get_v();
+  int plotYpos = data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v();
   vpPlot plot(1, plotHeight, plotWidth, plotXpos, plotYpos, "Root mean-square error");
   plot.initGraph(0, 2);
   plot.setLegend(0, 0, "LMS estimator");
@@ -573,7 +582,7 @@ int main(const int argc, const char *argv[])
     //! [Evaluate_performances]
     std::cout << "  [Particle Filter method] " << std::endl;
     std::cout << "    Coeffs = [" << Xest.transpose() << " ]" << std::endl;
-    std::cout << "    Root Mean Square Error = " << pfError << " pixels^2" << std::endl;
+    std::cout << "    Root Mean Square Error = " << pfError << " pixels" << std::endl;
     std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
     meanDtPF += dtPF;
     meanRootMeanSquareErrorPF += pfError;
@@ -601,11 +610,11 @@ int main(const int argc, const char *argv[])
   std::cout << std::endl << std::endl << "-----[Statistics summary]-----" << std::endl;
 
   std::cout << "  [LMS method] " << std::endl;
-  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorLMS / iterAsDouble << " pixels^2" << std::endl;
+  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorLMS / iterAsDouble << " pixels" << std::endl;
   std::cout << "    Average fitting duration = " << meanDtLMS / iterAsDouble << " ms" << std::endl;
 
   std::cout << "  [Particle Filter method] " << std::endl;
-  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorPF / iterAsDouble << " pixels^2" << std::endl;
+  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorPF / iterAsDouble << " pixels" << std::endl;
   std::cout << "    Average fitting duration = " << meanDtPF / iterAsDouble << " ms" << std::endl;
 
 #ifdef VISP_HAVE_DISPLAY

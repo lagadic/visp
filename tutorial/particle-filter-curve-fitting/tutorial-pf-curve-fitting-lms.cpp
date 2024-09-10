@@ -69,7 +69,7 @@ int main(const int argc, const char *argv[])
 #ifdef VISP_HAVE_DISPLAY
   unsigned int plotHeight = 350, plotWidth = 350;
   int plotXpos = data.m_legendOffset.get_u();
-  int plotYpos = data.m_I_orig.getHeight() + 2. * data.m_legendOffset.get_v();
+  int plotYpos = data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v();
   vpPlot plot(1, plotHeight, plotWidth, plotXpos, plotYpos, "Root mean-square error");
   plot.initGraph(0, 1);
   plot.setLegend(0, 0, "LMS estimator");
@@ -85,6 +85,7 @@ int main(const int argc, const char *argv[])
     std::cout << "Iter " << nbIter << std::endl;
     data.m_grabber.acquire(data.m_I_orig);
 
+    // Perform color segmentation
     tutorial::performSegmentationHSV(data);
 
     /// Extracting the skeleton of the mask
