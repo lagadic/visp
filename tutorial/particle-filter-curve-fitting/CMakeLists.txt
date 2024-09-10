@@ -41,7 +41,7 @@ find_package(VISP REQUIRED visp_core visp_gui)
 
 set(tutorial_cpp)
 
-list(APPEND tutorial_cpp tutorial-pf-curve-fitting-lms.cpp  tutorial-pf-curve-fitting-all.cpp)
+list(APPEND tutorial_cpp tutorial-pf-curve-fitting-lms.cpp tutorial-pf-curve-fitting-pf.cpp tutorial-pf-curve-fitting-all.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp} vpTutoCommonData.h vpTutoMeanSquareFitting.h vpTutoMeanSquareFitting.cpp vpTutoParabolaModel.h vpTutoSegmentation.h vpTutoSegmentation.cpp)
