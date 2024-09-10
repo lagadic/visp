@@ -183,17 +183,6 @@ public:
     }
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const vpParabolaModel &model)
-  {
-    os << "y = " << model.m_coeffs[0] << " + ";
-    unsigned int nbCoeffs = model.m_coeffs.size();
-    for (unsigned int i = 1; i < nbCoeffs - 1; ++i) {
-      os << model.m_coeffs[i] << " x^" << i << " + ";
-    }
-    os << model.m_coeffs[nbCoeffs - 1] << " x^" << nbCoeffs - 1;
-    return os;
-  }
-
 #ifdef VISP_HAVE_DISPLAY
   /**
    * \brief Display the fitted parabola on the image.
@@ -221,17 +210,6 @@ private:
   double m_width; /*!< The width of the input image*/
   vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
-
-std::ostream &operator<<(std::ostream &os, const std::vector<vpImagePoint> &pts)
-{
-  os << "vec(# = " << pts.size() << ") = [ ";
-  unsigned int nbPts = pts.size();
-  for (unsigned int i = 1; i < nbPts; ++i) {
-    os << "(" << pts[i] << ") ";
-  }
-  os << "]";
-  return os;
-}
 
 /**
  * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
@@ -381,6 +359,54 @@ vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
   return updatedCoeffs;
 }
 
+class vpAverageFunctor
+{
+public:
+  vpAverageFunctor(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
+    : m_degree(degree)
+    , m_height(height)
+    , m_width(width)
+  { }
+
+  vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
+  {
+    const unsigned int nbParticles = particles.size();
+    const double nbParticlesAsDOuble = static_cast<double>(nbParticles);
+    const double sumWeight = std::accumulate(weights.begin(), weights.end(), 0.);
+    const double nbPointsForAverage = 10. * nbParticlesAsDOuble;
+    std::vector<vpImagePoint> initPoints;
+    for (unsigned int i = 0; i < nbParticles; ++i) {
+      double nbPoints = std::floor(weights[i] * nbPointsForAverage / sumWeight);
+      if (nbPoints > 1.) {
+        vpParabolaModel curve(particles[i], m_height, m_width);
+        double widthAsDouble = static_cast<double>(m_width);
+        double step = widthAsDouble / (nbPoints - 1.);
+        for (double u = 0.; u < widthAsDouble; u += step) {
+          double v = curve.eval(u);
+          vpImagePoint pt(v, u);
+          initPoints.push_back(pt);
+        }
+      }
+      else if (nbPoints == 1.) {
+        vpParabolaModel curve(particles[i], m_height, m_width);
+        double u = static_cast<double>(m_width) / 2.;
+        double v = curve.eval(u);
+        vpImagePoint pt(v, u);
+        initPoints.push_back(pt);
+      }
+    }
+    vpMatrix A, X, b;
+    vpParabolaModel::fillSystem(m_degree, m_height, m_width, initPoints, A, b);
+    X = A.pseudoInverse() * b;
+    return vpParabolaModel(X, m_height, m_width).toVpColVector();
+  }
+
+private:
+  unsigned int m_degree; //!< The degree of the polynomial.
+  unsigned int m_height; //!< The height of the input image.
+  unsigned int m_width; //!< The width of the input image.
+};
+
 class vpLikelihoodFunctor
 {
 public:
@@ -461,11 +487,9 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
   vpUniRand rngCurvePoints(seedCurve);
   vpUniRand rngInitPoints(seedInitPoints);
 
-  /// ----- Evaluation parameters
-  const double maxToleratedError = 10.;
-
   SECTION("Noise-free", "The init points are directly extracted from the curve points, without any additional noise")
   {
+    const double maxToleratedError = 5.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
@@ -488,27 +512,28 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
       for (unsigned int j = 0; j < nbInitPoints; ++j) {
         initPoints.push_back(suffledVector[j]);
       }
-      std::cout << "Init points := " << initPoints << std::endl;
 
       // Compute the initial model
       vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
       vpColVector X0 = modelInitial.toVpColVector();
-      std::cout << "Initial model := " << modelInitial << std::endl;
 
       // Initialize the Particle Filter
       std::vector<double> stdevsPF;
       for (unsigned int i = 0; i < degree + 1; ++i) {
         stdevsPF.push_back(ratioAmpliMax * X0[0] / 3.);
       }
-      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpProcessFunction processFunc = fx;
       vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, height, width);
       using std::placeholders::_1;
       using std::placeholders::_2;
       vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpAverageFunctor averageCpter(degree, height, width);
+      using std::placeholders::_3;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpFilterFunction meanFunc = std::bind(&vpAverageFunctor::averagePolynomials, &averageCpter, _1, _2, _3);
       vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
-      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc, meanFunc);
 
       for (unsigned int i = 0; i < nbWarmUpIter; ++i) {
         filter.filter(curvePoints, dt);
@@ -519,7 +544,6 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
         filter.filter(curvePoints, dt);
         vpColVector Xest = filter.computeFilteredState();
         vpParabolaModel model(Xest, height, width);
-        std::cout << "Estimated model := " << model << std::endl;
         double rmse = evaluate(curvePoints, model);
         meanError += rmse;
 
@@ -534,12 +558,14 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
+      std::cout << "Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
 
   SECTION("Noisy", "Noise is added to the init points")
   {
+    const double maxToleratedError = 10.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
@@ -567,27 +593,28 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
         vpImagePoint noisyPt(suffledVector[j].get_i() + rngInitNoise(), suffledVector[j].get_j() + rngInitNoise());
         initPoints.push_back(noisyPt);
       }
-      std::cout << "Init points := " << initPoints << std::endl;
 
       // Compute the initial model
       vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
       vpColVector X0 = modelInitial.toVpColVector();
-      std::cout << "Initial model := " << modelInitial << std::endl;
 
       // Initialize the Particle Filter
       std::vector<double> stdevsPF;
       for (unsigned int i = 0; i < degree + 1; ++i) {
         stdevsPF.push_back(ratioAmpliMax * X0[0] / 3.);
       }
-      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpProcessFunction processFunc = fx;
       vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, height, width);
       using std::placeholders::_1;
       using std::placeholders::_2;
       vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpAverageFunctor averageCpter(degree, height, width);
+      using std::placeholders::_3;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpFilterFunction meanFunc = std::bind(&vpAverageFunctor::averagePolynomials, &averageCpter, _1, _2, _3);
       vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
-      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc, meanFunc);
 
       for (unsigned int i = 0; i < nbWarmUpIter; ++i) {
         filter.filter(curvePoints, dt);
@@ -598,7 +625,6 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
         filter.filter(curvePoints, dt);
         vpColVector Xest = filter.computeFilteredState();
         vpParabolaModel model(Xest, height, width);
-        std::cout << "Estimated model := " << model << std::endl;
         double rmse = evaluate(curvePoints, model);
         meanError += rmse;
 
@@ -613,6 +639,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
+      std::cout << "Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
@@ -645,11 +672,9 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
   vpUniRand rngCurvePoints(seedCurve);
   vpUniRand rngInitPoints(seedInitPoints);
 
-  /// ----- Evaluation parameters
-  const double maxToleratedError = 15.;
-
   SECTION("Noise-free", "The init points are directly extracted from the curve points, without any additional noise")
   {
+    const double maxToleratedError = 10.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
@@ -672,27 +697,28 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
       for (unsigned int j = 0; j < nbInitPoints; ++j) {
         initPoints.push_back(suffledVector[j]);
       }
-      std::cout << "Init points := " << initPoints << std::endl;
 
       // Compute the initial model
       vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
       vpColVector X0 = modelInitial.toVpColVector();
-      std::cout << "Initial model := " << modelInitial << std::endl;
 
       // Initialize the Particle Filter
       std::vector<double> stdevsPF;
       for (unsigned int i = 0; i < degree + 1; ++i) {
         stdevsPF.push_back(ratioAmpliMax * std::pow(0.1, i) * X0[0] / 3.);
       }
-      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpProcessFunction processFunc = fx;
       vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, height, width);
       using std::placeholders::_1;
       using std::placeholders::_2;
       vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpAverageFunctor averageCpter(degree, height, width);
+      using std::placeholders::_3;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpFilterFunction meanFunc = std::bind(&vpAverageFunctor::averagePolynomials, &averageCpter, _1, _2, _3);
       vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
-      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc, meanFunc);
 
       for (unsigned int i = 0; i < nbWarmUpIter; ++i) {
         filter.filter(curvePoints, dt);
@@ -703,7 +729,6 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
         filter.filter(curvePoints, dt);
         vpColVector Xest = filter.computeFilteredState();
         vpParabolaModel model(Xest, height, width);
-        std::cout << "Estimated model := " << model << std::endl;
         double rmse = evaluate(curvePoints, model);
         meanError += rmse;
 
@@ -718,6 +743,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
+      std::cout << "Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
@@ -726,6 +752,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 
   SECTION("Noisy", "Noise is added to the init points")
   {
+    const double maxToleratedError = 15.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
@@ -757,22 +784,24 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
       // Compute the initial model
       vpParabolaModel modelInitial = computeInitialGuess(initPoints, degree, height, width);
       vpColVector X0 = modelInitial.toVpColVector();
-      std::cout << "Initial model := " << modelInitial << std::endl;
 
       // Initialize the Particle Filter
       std::vector<double> stdevsPF;
       for (unsigned int i = 0; i < degree + 1; ++i) {
         stdevsPF.push_back(ratioAmpliMax * std::pow(.05, i) * X0[0] / 3.);
       }
-      vpParticleFilter<vpColVector>::vpProcessFunction processFunc = fx;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpProcessFunction processFunc = fx;
       vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood * 2., height, width);
       using std::placeholders::_1;
       using std::placeholders::_2;
       vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
       vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+      vpAverageFunctor averageCpter(degree, height, width);
+      using std::placeholders::_3;
+      vpParticleFilter<std::vector<vpImagePoint>>::vpFilterFunction meanFunc = std::bind(&vpAverageFunctor::averagePolynomials, &averageCpter, _1, _2, _3);
       vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThreads);
-      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+      filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc, meanFunc);
 
       for (unsigned int i = 0; i < nbWarmUpIter * 5; ++i) {
         filter.filter(curvePoints, dt);
@@ -783,7 +812,6 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
         filter.filter(curvePoints, dt);
         vpColVector Xest = filter.computeFilteredState();
         vpParabolaModel model(Xest, height, width);
-        std::cout << "Estimated model := " << model << std::endl;
         double rmse = evaluate(curvePoints, model);
         meanError += rmse;
 
@@ -798,6 +826,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 #endif
       }
       meanError /= static_cast<double>(nbEvalIter);
+      std::cout << "Mean(rmse) = " << meanError << std::endl;
       CHECK(meanError <= maxToleratedError);
     }
   }
