@@ -41,6 +41,7 @@
 
 #include "vpTutoCommonData.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 /**
@@ -67,4 +68,5 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoComm
  */
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > addSaltAndPepperNoise(const std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > &noisefreePts, vpTutoCommonData &data);
 }
+#endif
 #endif

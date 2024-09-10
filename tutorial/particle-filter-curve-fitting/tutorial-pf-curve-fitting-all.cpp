@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-//! \example tutorial-pf.cpp
+//! \example tutorial-pf-curve-fitting-all.cpp
 
 // System includes
 #include <algorithm>
@@ -61,6 +61,7 @@ using VISP_NAMESPACE_NAME;
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 //! [Evaluation_functions]
@@ -458,6 +459,7 @@ private:
 };
 //! [Likelihood_functor]
 }
+#endif
 
 int main(const int argc, const char *argv[])
 {

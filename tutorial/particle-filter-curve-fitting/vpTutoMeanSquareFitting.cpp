@@ -32,6 +32,7 @@
 
 #include "vpTutoMeanSquareFitting.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 #ifdef ENABLE_VISP_NAMESPACE
@@ -100,3 +101,4 @@ double vpTutoMeanSquareFitting::model(const float &u)
   return v;
 }
 }
+#endif

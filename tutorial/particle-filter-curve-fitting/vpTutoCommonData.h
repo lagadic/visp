@@ -41,6 +41,7 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 inline void log(std::ostream &os, const std::string &filename, const std::string &funName, const std::string &arrayName, const vpArray2D<double> &array, const unsigned int &level = 0)
@@ -337,4 +338,5 @@ typedef struct vpTutoCommonData
 #endif
 }vpTutoCommonData;
 }
+#endif
 #endif

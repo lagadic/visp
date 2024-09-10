@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-//! \example tutorial-pf.cpp
+//! \example tutorial-pf-curve-fitting-lms.cpp
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCannyEdgeDetection.h>

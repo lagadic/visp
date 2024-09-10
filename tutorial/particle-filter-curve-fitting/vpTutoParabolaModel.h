@@ -37,6 +37,9 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace tutorial
+{
 /*!
  * \brief Model of a parabola \f[v = \sum_{i = 0}^N a_i u^i \f] where \f[N\f] is the
  * degree of the polynomial.
@@ -164,5 +167,6 @@ private:
   double m_width; /*!< The width of the input image*/
   VISP_NAMESPACE_ADDRESSING vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
-
+}
+#endif
 #endif

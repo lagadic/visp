@@ -34,6 +34,7 @@
 
 #include <visp3/core/vpGaussRand.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 void performSegmentationHSV(vpTutoCommonData &data)
@@ -151,3 +152,4 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
   return noisyPts;
 }
 }
+#endif

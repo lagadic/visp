@@ -41,6 +41,7 @@
 
 #include "vpTutoParabolaModel.h"
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
 /**
@@ -157,5 +158,5 @@ protected:
   bool m_isFitted; /*!< Set to true if the fit method has been called.*/
 };
 }
-
+#endif
 #endif
