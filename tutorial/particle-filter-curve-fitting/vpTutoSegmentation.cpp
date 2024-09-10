@@ -61,7 +61,7 @@ void performSegmentationHSV(vpTutoCommonData &data)
   vpImageTools::inMask(data.m_I_orig, data.m_mask, data.m_I_segmented);
 }
 
-std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCommonData &data)
+std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoCommonData &data)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;

@@ -484,7 +484,7 @@ int main(const int argc, const char *argv[])
     tutorial::performSegmentationHSV(data);
 
     /// Extracting the skeleton of the mask
-    std::vector<vpImagePoint> edgePoints = tutorial::extractSkeletton(data);
+    std::vector<vpImagePoint> edgePoints = tutorial::extractSkeleton(data);
 
     /// Simulate sensor noise
     std::vector<vpImagePoint> noisyEdgePoints = tutorial::addSaltAndPepperNoise(edgePoints, data);

@@ -43,10 +43,28 @@
 
 namespace tutorial
 {
+/**
+ * \brief Perform a segmentation of the original image based on the HSV color encoding.
+ *
+ * \param[in] data Data common to the whole program.
+ */
 void performSegmentationHSV(vpTutoCommonData &data);
 
-std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeletton(vpTutoCommonData &data);
+/**
+ * \brief Extract the skeleton of the segmented image.
+ *
+ * \param[in] data Data common to the whole program.
+ * \return std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > List of the noise-free skeletonized image points.
+ */
+std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoCommonData &data);
 
+/**
+ * \brief Add salt and pepper noise to the skeletonized image.
+ *
+ * \param[in] noisefreePts List of the noise-free skeletonized image points.
+ * \param[in] data Data common to the whole program.
+ * \return std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > List of the noise-free points + additional noisy points.
+ */
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > addSaltAndPepperNoise(const std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > &noisefreePts, vpTutoCommonData &data);
 }
 #endif
