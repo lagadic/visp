@@ -47,10 +47,11 @@ vpTutoMeanSquareFitting::vpTutoMeanSquareFitting(const unsigned int &degree, con
   , m_isFitted(false)
 { }
 
+//! [Solve_LMS_system]
 void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
 {
-  vpMatrix A; // The matrix that contains the u^2, u and 1s
-  vpMatrix X; // The matrix we want to estimate, that contains the a, b and c coefficients.
+  vpMatrix A; // The matrix that contains the u^i
+  vpMatrix X; // The matrix we want to estimate, that contains the polynomial coefficients.
   vpMatrix b; // The matrix that contains the v values
 
   // Fill the matrices that form the system we want to solve
@@ -61,6 +62,7 @@ void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
   m_model = vpTutoParabolaModel(X, m_height, m_width);
   m_isFitted = true;
 }
+//! [Solve_LMS_system]
 
 double vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
 {

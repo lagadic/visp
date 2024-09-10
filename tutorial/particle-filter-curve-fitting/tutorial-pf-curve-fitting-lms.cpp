@@ -82,6 +82,7 @@ int main(const int argc, const char *argv[])
   double  meanDtLMS = 0.;
   double  meanRootMeanSquareErrorLMS = 0.;
   while (!data.m_grabber.end() && run) {
+    //! [Measurements_extraction]
     std::cout << "Iter " << nbIter << std::endl;
     data.m_grabber.acquire(data.m_I_orig);
 
@@ -93,6 +94,7 @@ int main(const int argc, const char *argv[])
 
     /// Simulate sensor noise
     std::vector<vpImagePoint> noisyEdgePoints = tutorial::addSaltAndPepperNoise(edgePoints, data);
+    //! [Measurements_extraction]
 
 #ifdef VISP_HAVE_DISPLAY
     /// Initial display of the images
@@ -103,7 +105,9 @@ int main(const int argc, const char *argv[])
 
     /// Fit using least-square
     double tLms = vpTime::measureTimeMs();
+    //! [LMS_interpolation]
     lmsFitter.fit(noisyEdgePoints);
+    //! [LMS_interpolation]
     double dtLms = vpTime::measureTimeMs() - tLms;
     float lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;

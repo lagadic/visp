@@ -154,10 +154,10 @@ std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &da
   const unsigned int nbPtsToUse = 10 * minNbPts;
   std::vector<vpImagePoint> initPoints;
 
-  /// Perform HSV segmentation
+  // Perform HSV segmentation
   tutorial::performSegmentationHSV(data);
 
-  /// Extracting the skeleton of the mask
+  // Extracting the skeleton of the mask
   std::vector<vpImagePoint> edgePoints = tutorial::extractSkeleton(data);
   unsigned int nbEdgePoints = edgePoints.size();
 
@@ -165,7 +165,7 @@ std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &da
     return edgePoints;
   }
 
-  /// Uniformly extract init points
+  // Uniformly extract init points
   auto ptHasLowerU = [](const vpImagePoint &ptA, const vpImagePoint &ptB) {
     return ptA.get_u() < ptB.get_u();
     };
@@ -178,10 +178,12 @@ std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &da
     idStop = edgePoints.size() - 10;
   }
   else {
+    // We need to take all the points because we don't have enough
     idStart = 0;
     idStop = edgePoints.size();
   }
 
+  // Sample uniformly the points starting from the left of the image to the right
   unsigned int sizeWindow = idStop - idStart + 1;
   unsigned int step = sizeWindow / (nbPtsToUse - 1);
   for (unsigned int id = idStart; id <= idStop; id += step) {
@@ -214,27 +216,27 @@ std::vector<vpImagePoint> manualInitialization(const tutorial::vpTutoCommonData 
 
   bool notEnoughPoints = true;
   while (notEnoughPoints) {
-      /// Initial display of the images
+    // Initial display of the images
     vpDisplay::display(data.m_I_orig);
 
-    /// Display the how-to
+    // Display the how-to
     vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to add init point (min.: " + std::to_string(minNbPts) + "), right click to estimate the initial coefficients of the Particle Filter.", data.m_colorLegend);
     vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A middle click reinitialize the list of init points.", data.m_colorLegend);
     vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
 
-    /// Display the already selected points
+    // Display the already selected points
     unsigned int nbInitPoints = initPoints.size();
     for (unsigned int i = 0; i < nbInitPoints; ++i) {
       vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
     }
 
-    /// Update the display
+    // Update the display
     vpDisplay::flush(data.m_I_orig);
 
-    /// Get the user input
+    // Get the user input
     vpDisplay::getClick(data.m_I_orig, ipClick, button, waitForClick);
 
-    /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
+    // Either add the clicked point to the list of initial points or stop the loop if enough points are available
     switch (button) {
     case vpMouseButton::vpMouseButtonType::button1:
       initPoints.push_back(ipClick);
@@ -279,17 +281,17 @@ vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
 
   bool automaticInit = false;
 
-  /// Initial display of the images
+  // Initial display of the images
   vpDisplay::display(data.m_I_orig);
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Left click to manually select the init points, right click to automatically initialize the PF", data.m_colorLegend);
 
-  /// Update the display
+  // Update the display
   vpDisplay::flush(data.m_I_orig);
 
-  /// Get the user input
+  // Get the user input
   vpDisplay::getClick(data.m_I_orig, ipClick, button, waitForClick);
 
-  /// Either add the clicked point to the list of initial points or stop the loop if enough points are available
+  // Either use the automatic initialization or the manual one depending on the user input
   switch (button) {
   case vpMouseButton::vpMouseButtonType::button1:
     automaticInit = false;
@@ -302,19 +304,20 @@ vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
   }
 
   if (automaticInit) {
-    /// Get the init points from the segmented image from the segmented image.
+    // Get automatically the init points from the segmented image
     initPoints = tutorial::automaticInitialization(data);
   }
   else {
+    // Get manually the init points from the original image
     initPoints = tutorial::manualInitialization(data);
   }
 
 #else
-  /// Get the init points from the segmented image from the segmented image.
+  // Get the init points from the segmented image
   initPoints = tutorial::automaticInitialization(data);
 #endif
 
-  /// Compute the coefficients of the parabola using Least-Mean-Square minimization.
+  // Compute the coefficients of the parabola using Least-Mean-Square minimization.
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   lmsFitter.fit(initPoints);
   vpColVector X0 = lmsFitter.getCoeffs();
@@ -322,7 +325,7 @@ vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
   std::cout << lmsFitter.getModel();
   std::cout << "---[Initial fit]---" << std::endl;
 
-  /// Display info about the initialization
+  // Display info about the initialization
   vpDisplay::display(data.m_I_orig);
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Here are the points selected for the initialization.", data.m_colorLegend);
   unsigned int nbInitPoints = initPoints.size();
@@ -359,18 +362,35 @@ public:
     , m_width(width)
   { }
 
+  /**
+   * \brief Compute the "weighted average" of polynomial models, by sampling control points and
+   * then performing Least-Mean Square minimization to best fit the control points.
+   *
+   * \param[in] particles The vector containing the particles of the PF.
+   * \param[in] weights Their associated weights
+   *
+   * \return vpColVector The coefficients of the polynomial model that best fits the control points.
+   */
   vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
   {
     const unsigned int nbParticles = particles.size();
     const double nbParticlesAsDOuble = static_cast<double>(nbParticles);
+    // Compute the sum of the weights to be able to determine the "importance" of a particle with regard to the whole set
     const double sumWeight = std::accumulate(weights.begin(), weights.end(), 0.);
+
+    // Defining the total number of control points we want to generate
     const double nbPointsForAverage = 10. * nbParticlesAsDOuble;
     std::vector<vpImagePoint> initPoints;
+
+    // Creating control points by each particle
     for (unsigned int i = 0; i < nbParticles; ++i) {
+      // The number of control points a particle can generate is proportional to the ratio of its weight w.r.t. the sum of the weights
       double nbPoints = std::floor(weights[i] * nbPointsForAverage / sumWeight);
       if (nbPoints > 1.) {
+        // The particle has a weight high enough to deserve more than one points
         vpTutoParabolaModel curve(particles[i], m_height, m_width);
         double widthAsDouble = static_cast<double>(m_width);
+        // Uniform sampling of the control points along the polynomial model
         double step = widthAsDouble / (nbPoints - 1.);
         for (double u = 0.; u < widthAsDouble; u += step) {
           double v = curve.eval(u);
@@ -379,6 +399,8 @@ public:
         }
       }
       else if (nbPoints == 1.) {
+        // The weight of the particle make it have only one control point
+        // We sample it at the middle of the image
         vpTutoParabolaModel curve(particles[i], m_height, m_width);
         double u = static_cast<double>(m_width) / 2.;
         double v = curve.eval(u);
@@ -386,6 +408,7 @@ public:
         initPoints.push_back(pt);
       }
     }
+    // We use Least-Mean Square minimization to compute the polynomial model that best fits all the control points
     vpTutoMeanSquareFitting lms(m_degree, m_height, m_width);
     lms.fit(initPoints);
     return lms.getCoeffs();
@@ -435,16 +458,24 @@ public:
   {
     double likelihood = 0.;
     unsigned int nbPoints = meas.size();
+
+    // Generate a model from the coefficients stored in the particle state
     vpTutoParabolaModel model(coeffs, m_height, m_width);
+
+    // Compute the residual between each measurement point and its equivalent in the model
     vpColVector residuals(nbPoints);
     for (unsigned int i = 0; i < nbPoints; ++i) {
       double squareError = tutorial::evaluate(meas[i], model);
       residuals[i] = squareError;
     }
+
+    // Use Tukey M-estimator to be robust against outliers
     vpRobust Mestimator;
     vpColVector w(nbPoints, 1.);
     Mestimator.MEstimator(vpRobust::TUKEY, residuals, w);
     double sumError = w.hadamard(residuals).sum();
+
+    // Compute the likelihood as a Gaussian function
     likelihood = std::exp(m_constantExpDenominator * sumError / w.sum()) * m_constantDenominator;
     likelihood = std::min(likelihood, 1.0); // Clamp to have likelihood <= 1.
     likelihood = std::max(likelihood, 0.); // Clamp to have likelihood >= 0.

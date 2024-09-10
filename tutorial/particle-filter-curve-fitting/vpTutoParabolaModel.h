@@ -134,16 +134,18 @@ public:
    * \param[out] b The matrix that contains the v-coordinates.
    * \return Fill
    */
+  //! [Fill_LMS_system]
   static void fillSystem(const unsigned int &degree, const double &height, const double &width, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
   {
     const unsigned int nbPts = pts.size();
     const unsigned int nbCoeffs = degree + 1;
     std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> normalizedPts;
+    // Normalization to avoid numerical instability
     for (const auto &pt: pts) {
       normalizedPts.push_back(VISP_NAMESPACE_ADDRESSING vpImagePoint(pt.get_i() / height, pt.get_j() / width));
     }
-    A.resize(nbPts, nbCoeffs, 1.);
-    b.resize(nbPts, 1);
+    A.resize(nbPts, nbCoeffs, 1.); // Contains the u^i
+    b.resize(nbPts, 1); // Contains the v coordinates
     for (unsigned int i = 0; i < nbPts; ++i) {
       double u = normalizedPts[i].get_u();
       double v = normalizedPts[i].get_v();
@@ -153,6 +155,7 @@ public:
       b[i][0] = v;
     }
   }
+  //! [Fill_LMS_system]
 
   friend std::ostream &operator<<(std::ostream &os, const vpTutoParabolaModel &model)
   {

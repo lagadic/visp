@@ -424,4 +424,7 @@ Finally, we update the renderer that displays the projection in the image of the
 \snippet tutorial-pf.cpp Update_renderer
 
 The program stops once the `Return` key is pressed.
+
+\section tuto-pf_next Next tutorial
+You are now ready to see the next \ref tutorial-pf-curve-fitting .
 */

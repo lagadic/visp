@@ -196,6 +196,7 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-spc <br> This tutorial shows you how to monitor if a signal is "in control" using Statistical Process Control methods.
 - \subpage tutorial-ukf <br> This tutorial shows you how to use an Unscented Kalman Filter to filter data when the model and/or measurements are non-linear.
 - \subpage tutorial-pf <br> This tutorial shows you how to use a Particle Filter to filter data when the model and/or measurements are non-linear.
+- \subpage tutorial-pf-curve-fitting <br> This tutorial shows you how to use a Particle Filter to model a wire using polynomial interpolation.
 - \subpage tutorial-npz <br> This tutorial shows you how to read / save arrays of data from / to NPZ file format, a binary format compatible with the NumPy library.
 */
 

@@ -434,7 +434,7 @@ Finally, we clean the allocated memory for the renderer:
 
 The program stops once the `Return` key is pressed.
 
-\section tracking_blob_next Next tutorial
+\section tuto-ukf_next Next tutorial
 You are now ready to see the next \ref tutorial-pf .
 
 */
