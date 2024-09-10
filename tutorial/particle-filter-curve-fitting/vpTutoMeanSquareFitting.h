@@ -68,41 +68,41 @@ public:
   void fit(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
-   * \brief Compute the mean-square error between the parabola model and
-   * the input points \b pts.
+   * \brief Compute the Root Mean Square Error between the model and the given points.
    *
-   * \param[in] pts The input points.
-   * \return float The mean square error.
+   * \param[in] pts The Ground Truth points.
+   * \return double The Root Mean Square Error \f[ RMSE = \sqrt{\frac{\sum_{i = 0}^{N-1} e^2}{N}} \f]
    */
-  float evaluate(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
+  double evaluate(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
-   * \brief Compute the mean-square error between the parabola model and
-   * the input points \b pts. An M-estimator is used to reject outliers
-   * when computing the mean square error.
+   * \brief Compute the Root Mean Square Error between the model and the given points,
+   * rejecting outliers using a robust method.
    *
-   * \param[in] pts The input points.
-   * \return float The mean square error.
+   * \param[in] pts The Ground Truth points.
+   * \return double The Root Mean Square Error \f[ RMSE = \sqrt{\frac{\sum_{i = 0}^{N-1} e^2}{N}} \f]
    */
-  float evaluateRobust(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
+  double evaluateRobust(const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts);
 
   /**
-   * \brief Compute the square error between the parabola model and
-   * the input point \b pt.
+   * \brief Compute the square error between the model and a Ground Truth point.
    *
-   * \param[in] pt The input point.
-   * \return float The square error.
+   * \param[in] pt The Ground Truth point.
+   * \return double The square error.
    */
-  float evaluate(const VISP_NAMESPACE_ADDRESSING vpImagePoint &pt);
+  double evaluate(const VISP_NAMESPACE_ADDRESSING vpImagePoint &pt);
 
   /**
-   * \brief Compute v-coordinate that corresponds to the parabola model.
+   * \brief Compute the v-coordinate that corresponds to the given u-coordinate
+   * based on the underlying polynomial model.
    *
-   * \param[in] u The u-coordinate of the input point.
-   * \return float The corresponding v-coordinate.
+   * \param[in] u The u-coordinate for which we want to know the v-coordinate computed using
+   * the underlying polynomial model.
+   * \return double The v-ccordinate that corresponds to the model.
    */
-  float model(const float &u);
+  double model(const float &u);
 
+#ifdef VISP_HAVE_DISPLAY
   /**
    * \brief Display the fitted parabola on the image.
    *
@@ -114,19 +114,18 @@ public:
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
                const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
   {
-#ifdef VISP_HAVE_DISPLAY
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
       int v = model(u);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
     }
-#endif
   }
+#endif
 
   /**
-   * \brief Permits to reinitialize the least-mean square fitter.
-   */
+  * \brief Permits to reinitialize the least-mean square fitter.
+  */
   inline void reinit()
   {
     m_isFitted = false;

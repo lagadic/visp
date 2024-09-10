@@ -61,7 +61,7 @@ void vpTutoMeanSquareFitting::fit(const std::vector<vpImagePoint> &pts)
   m_isFitted = true;
 }
 
-float vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
+double vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
 {
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
@@ -69,16 +69,16 @@ float vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
   unsigned int nbPts = pts.size();
 
   // Compute the mean absolute error
-  float meanError = 0.f;
+  double meanSquareError = 0.f;
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i]);
-    meanError += squareError;
+    double squareError = evaluate(pts[i]);
+    meanSquareError += squareError;
   }
-  meanError /= static_cast<float>(nbPts);
-  return meanError;
+  meanSquareError /= static_cast<double>(nbPts);
+  return std::sqrt(meanSquareError);
 }
 
-float vpTutoMeanSquareFitting::evaluateRobust(const std::vector<vpImagePoint> &pts)
+double vpTutoMeanSquareFitting::evaluateRobust(const std::vector<vpImagePoint> &pts)
 {
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
@@ -88,36 +88,36 @@ float vpTutoMeanSquareFitting::evaluateRobust(const std::vector<vpImagePoint> &p
   vpColVector weights(nbPts, 1.);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i]);
+    double squareError = evaluate(pts[i]);
     residuals[i] = squareError;
   }
   vpRobust robust;
   robust.MEstimator(vpRobust::TUKEY, residuals, weights);
-  float sumWeights = weights.sum();
-  float numerator = (weights.hadamard(residuals)).sum();
-  float meanError = numerator / sumWeights;
-  return meanError;
+  double sumWeights = weights.sum();
+  double numerator = (weights.hadamard(residuals)).sum();
+  double meanSquareError = numerator / sumWeights;
+  return std::sqrt(meanSquareError);
 }
 
-float vpTutoMeanSquareFitting::evaluate(const vpImagePoint &pt)
+double vpTutoMeanSquareFitting::evaluate(const vpImagePoint &pt)
 {
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
   }
-  float u = pt.get_u();
-  float v = pt.get_v();
-  float v_model = model(u);
-  float error = v - v_model;
-  float squareError = error * error;
+  double u = pt.get_u();
+  double v = pt.get_v();
+  double v_model = model(u);
+  double error = v - v_model;
+  double squareError = error * error;
   return squareError;
 }
 
-float vpTutoMeanSquareFitting::model(const float &u)
+double vpTutoMeanSquareFitting::model(const float &u)
 {
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
   }
-  float v = m_model.eval(u);
+  double v = m_model.eval(u);
   return v;
 }
 }

@@ -64,15 +64,15 @@ namespace tutorial
  * the input point \b pt.
  *
  * \param[in] pt The input point.
- * \return float The square error.
+ * \return double The square error.
  */
-float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
+double evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
 {
-  float u = pt.get_u();
-  float v = pt.get_v();
-  float v_model = model.eval(u);
-  float error = v - v_model;
-  float squareError = error * error;
+  double u = pt.get_u();
+  double v = pt.get_v();
+  double v_model = model.eval(u);
+  double error = v - v_model;
+  double squareError = error * error;
   return squareError;
 }
 
@@ -84,9 +84,9 @@ float evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
  * \param[in] height The height of the input image.
  * \param[in] width The width of the input image.
  * \param[in] pts The input points.
- * \return float The mean square error.
+ * \return double The root mean square error.
  */
-float evaluate(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
+double evaluate(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
   vpColVector residuals(nbPts);
@@ -94,11 +94,11 @@ float evaluate(const vpColVector &coeffs, const unsigned int &height, const unsi
   vpTutoParabolaModel model(coeffs, height, width);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i], model);
+    double squareError = evaluate(pts[i], model);
     residuals[i] = squareError;
   }
-  float meanError = residuals.sum() / static_cast<double>(nbPts);
-  return meanError;
+  double meanSquareError = residuals.sum() / static_cast<double>(nbPts);
+  return std::sqrt(meanSquareError);
 }
 
 /**
@@ -112,7 +112,7 @@ float evaluate(const vpColVector &coeffs, const unsigned int &height, const unsi
  * \param[in] pts The input points.
  * \return float The mean square error.
  */
-float evaluateRobust(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
+double evaluateRobust(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
 {
   unsigned int nbPts = pts.size();
   vpColVector residuals(nbPts);
@@ -120,15 +120,15 @@ float evaluateRobust(const vpColVector &coeffs, const unsigned int &height, cons
   vpTutoParabolaModel model(coeffs, height, width);
   // Compute the residuals
   for (unsigned int i = 0; i < nbPts; ++i) {
-    float squareError = evaluate(pts[i], model);
+    double squareError = evaluate(pts[i], model);
     residuals[i] = squareError;
   }
   vpRobust robust;
   robust.MEstimator(vpRobust::TUKEY, residuals, weights);
-  float sumWeights = weights.sum();
-  float numerator = (weights.hadamard(residuals)).sum();
-  float meanError = numerator / sumWeights;
-  return meanError;
+  double sumWeights = weights.sum();
+  double numerator = (weights.hadamard(residuals)).sum();
+  double meanSquareError = numerator / sumWeights;
+  return std::sqrt(meanSquareError);
 }
 //! [Evaluation_functions]
 
