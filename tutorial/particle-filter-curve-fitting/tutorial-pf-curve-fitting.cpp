@@ -339,8 +339,57 @@ vpColVector fx(const vpColVector &coeffs, const double &/*dt*/)
 }
 //! [Process_function]
 
+//! [Average_functor]
+class vpTutoAverageFunctor
+{
+public:
+  vpTutoAverageFunctor(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
+    : m_degree(degree)
+    , m_height(height)
+    , m_width(width)
+  { }
+
+  vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
+  {
+    const unsigned int nbParticles = particles.size();
+    const double nbParticlesAsDOuble = static_cast<double>(nbParticles);
+    const double sumWeight = std::accumulate(weights.begin(), weights.end(), 0.);
+    const double nbPointsForAverage = 10. * nbParticlesAsDOuble;
+    std::vector<vpImagePoint> initPoints;
+    for (unsigned int i = 0; i < nbParticles; ++i) {
+      double nbPoints = std::floor(weights[i] * nbPointsForAverage / sumWeight);
+      if (nbPoints > 1.) {
+        vpTutoParabolaModel curve(particles[i], m_height, m_width);
+        double widthAsDouble = static_cast<double>(m_width);
+        double step = widthAsDouble / (nbPoints - 1.);
+        for (double u = 0.; u < widthAsDouble; u += step) {
+          double v = curve.eval(u);
+          vpImagePoint pt(v, u);
+          initPoints.push_back(pt);
+        }
+      }
+      else if (nbPoints == 1.) {
+        vpTutoParabolaModel curve(particles[i], m_height, m_width);
+        double u = static_cast<double>(m_width) / 2.;
+        double v = curve.eval(u);
+        vpImagePoint pt(v, u);
+        initPoints.push_back(pt);
+      }
+    }
+    vpTutoMeanSquareFitting lms(m_degree, m_height, m_width);
+    lms.fit(initPoints);
+    return lms.getCoeffs();
+  }
+
+private:
+  unsigned int m_degree; //!< The degree of the polynomial.
+  unsigned int m_height; //!< The height of the input image.
+  unsigned int m_width; //!< The width of the input image.
+};
+//! [Average_functor]
+
 //! [Likelihood_functor]
-class vpLikelihoodFunctor
+class vpTutoLikelihoodFunctor
 {
 public:
   /**
@@ -350,7 +399,7 @@ public:
    * \param[in] height The height of the input image.
    * \param[in] width The width of the input image.
    */
-  vpLikelihoodFunctor(const double &stdev, const unsigned int &height, const unsigned int &width)
+  vpTutoLikelihoodFunctor(const double &stdev, const unsigned int &height, const unsigned int &width)
     : m_height(height)
     , m_width(width)
   {
