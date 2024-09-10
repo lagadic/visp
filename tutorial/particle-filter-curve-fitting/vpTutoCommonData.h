@@ -92,11 +92,6 @@ typedef struct vpTutoCommonData
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
   VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayNoisy;
 #endif
-  /// Ransac parameters
-  unsigned int m_ransacN; /*!< The number of points to use to build the model.*/
-  unsigned int m_ransacK; /*!< The number of iterations.*/
-  float m_ransacThresh; /*!< The threshold that indicates if a point fit the model or not.*/
-  float m_ransacRatioInliers; /*!< Ratio of points that the model explain.*/
 
   /// Particle filter parameters
   double m_pfMaxDistanceForLikelihood; /*!< Maximum tolerated distance for the likelihood evaluation.*/
@@ -116,10 +111,6 @@ typedef struct vpTutoCommonData
     , m_displaySegmented(nullptr)
     , m_displayNoisy(nullptr)
 #endif
-    , m_ransacN(10)
-    , m_ransacK(10000)
-    , m_ransacThresh(1600.)
-    , m_ransacRatioInliers(0.5f)
     , m_pfMaxDistanceForLikelihood(40)
     , m_pfN(300)
     , m_pfRatiosAmpliMax({ 0.25, 0.25, 0.25 })
@@ -273,12 +264,6 @@ typedef struct vpTutoCommonData
 
     // Ensure that the maximal amplitude vector is of correct size and values
     m_pfRatiosAmpliMax.resize(m_degree, m_pfRatiosAmpliMax[0]);
-
-    if (m_ransacN < m_degree + 1) {
-      // The number of points to use in the RANSAC to determine the polynomial coefficients
-      // must be at least equal to m_degree + 1, otherwise the problem is under-constrained
-      m_ransacN = 2 * (m_degree + 1);
-    }
 
     // Load the HSV thresholds
     if (vpColVector::loadYAML(m_hsvFilename, m_hsv_values)) {

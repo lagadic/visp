@@ -49,7 +49,6 @@
 #include "vpTutoCommonData.h"
 #include "vpTutoMeanSquareFitting.h"
 #include "vpTutoParabolaModel.h"
-#include "vpTutoRANSACFitting.h"
 #include "vpTutoSegmentation.h"
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -410,13 +409,10 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
-  tutorial::vpTutoRANSACFitting ransacFitter(data.m_ransacN, data.m_ransacK, data.m_ransacThresh, data.m_ransacRatioInliers, data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   const unsigned int vertOffset = data.m_legendOffset.get_i();
   const unsigned int horOffset = data.m_ipLegend.get_j();
-  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 4 * vertOffset;
+  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 3 * vertOffset;
   const unsigned int legendLmsHor = horOffset;
-  const unsigned int legendRansacVert = data.m_I_orig.getHeight() - 3 * vertOffset;
-  const unsigned int legendRansacHor = horOffset;
   const unsigned int legendPFVert = data.m_I_orig.getHeight() - 2 * vertOffset, legendPFHor = horOffset;
 
   // Initialize the attributes of the PF
@@ -445,39 +441,42 @@ int main(const int argc, const char *argv[])
   //! [Constants_for_the_PF]
 
   //! [Init_functions]
-  vpParticleFilter<vpColVector>::vpProcessFunction processFunc = tutorial::fx;
-  tutorial::vpLikelihoodFunctor likelihoodFtor(sigmaLikelihood, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
+  vpParticleFilter<std::vector<vpImagePoint>>::vpProcessFunction processFunc = tutorial::fx;
+  tutorial::vpTutoLikelihoodFunctor likelihoodFtor(sigmaLikelihood, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
   using std::placeholders::_1;
   using std::placeholders::_2;
-  vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&tutorial::vpLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
+  vpParticleFilter<std::vector<vpImagePoint>>::vpLikelihoodFunction likelihoodFunc = std::bind(&tutorial::vpTutoLikelihoodFunctor::likelihood, &likelihoodFtor, _1, _2);
   vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingConditionFunction checkResamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleResamplingCheck;
   vpParticleFilter<std::vector<vpImagePoint>>::vpResamplingFunction resamplingFunc = vpParticleFilter<std::vector<vpImagePoint>>::simpleImportanceResampling;
+  tutorial::vpTutoAverageFunctor averageCpter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
+  using std::placeholders::_3;
+  vpParticleFilter<std::vector<vpImagePoint>>::vpFilterFunction meanFunc = std::bind(&tutorial::vpTutoAverageFunctor::averagePolynomials, &averageCpter, _1, _2, _3);
   //! [Init_functions]
 
   //! [Init_PF]
   // Initialize the PF
   vpParticleFilter<std::vector<vpImagePoint>> filter(nbParticles, stdevsPF, seedPF, nbThread);
-  filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc);
+  filter.init(X0, processFunc, likelihoodFunc, checkResamplingFunc, resamplingFunc, meanFunc);
   //! [Init_PF]
 
   //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
-  vpPlot plot(1);
-  plot.initGraph(0, 3);
-  plot.setTitle(0, "Mean-square error");
+  unsigned int plotHeight = 350, plotWidth = 350;
+  int plotXpos = data.m_legendOffset.get_u();
+  int plotYpos = data.m_I_orig.getHeight() + 2. * data.m_legendOffset.get_v();
+  vpPlot plot(1, plotHeight, plotWidth, plotXpos, plotYpos, "Root mean-square error");
+  plot.initGraph(0, 2);
   plot.setLegend(0, 0, "LMS estimator");
-  plot.setColor(0, 0, vpColor::blue);
-  plot.setLegend(0, 1, "RANSAC estimator");
-  plot.setColor(0, 1, vpColor::gray);
-  plot.setLegend(0, 2, "PF estimator");
-  plot.setColor(0, 2, vpColor::red);
+  plot.setColor(0, 0, vpColor::gray);
+  plot.setLegend(0, 1, "PF estimator");
+  plot.setColor(0, 1, vpColor::red);
 #endif
 //! [Init_plot]
 
   bool run = true;
   unsigned int nbIter = 0;
-  double  meanDtLMS = 0., meanDtRansac = 0., meanDtPF = 0.;
-  double  meanMeanSquareErrorLMS = 0., meanMeanSquareErrorRansac = 0., meanMeanSquareErrorPF = 0.;
+  double  meanDtLMS = 0., meanDtPF = 0.;
+  double  meanRootMeanSquareErrorLMS = 0., meanRootMeanSquareErrorPF = 0.;
   while (!data.m_grabber.end() && run) {
     std::cout << "Iter " << nbIter << std::endl;
     data.m_grabber.acquire(data.m_I_orig);
@@ -501,29 +500,15 @@ int main(const int argc, const char *argv[])
     double tLms = vpTime::measureTimeMs();
     lmsFitter.fit(noisyEdgePoints);
     double dtLms = vpTime::measureTimeMs() - tLms;
-    float lmsError = lmsFitter.evaluate(edgePoints);
+    float lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
     std::cout << "    Coeffs = [" << lmsFitter.getCoeffs().transpose() << " ]" << std::endl;
-    std::cout << "    Mean square error = " << lmsError << " pixels^2" << std::endl;
+    std::cout << "    Root Mean Square Error = " << lmsRootMeanSquareError << " pixels" << std::endl;
     std::cout << "    Fitting duration = " << dtLms << " ms" << std::endl;
     meanDtLMS += dtLms;
-    meanMeanSquareErrorLMS += lmsError;
-    lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::blue, legendLmsVert, legendLmsHor);
+    meanRootMeanSquareErrorLMS += lmsRootMeanSquareError;
 
-    /// Fit using RANSAC
-    double tRansac = vpTime::measureTimeMs();
-    ransacFitter.fit(noisyEdgePoints);
-    double dtRansac = vpTime::measureTimeMs() - tRansac;
-    float ransacError = ransacFitter.evaluate(edgePoints);
-    std::cout << "  [RANSAC method] " << std::endl;
-    std::cout << "    Coeffs = [" << ransacFitter.getModel().getCoeffs().transpose() << " ]" << std::endl;
-    std::cout << "    Mean square error = " << ransacError << " pixels^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtRansac << " ms" << std::endl;
-    meanDtRansac += dtRansac;
-    meanMeanSquareErrorRansac += ransacError;
-    ransacFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray, legendRansacVert, legendRansacHor);
-
-    /// Use the UKF to filter the measurement
+    /// Use the PF to filter the measurement
     double tPF = vpTime::measureTimeMs();
     //! [Perform_filtering]
     filter.filter(noisyEdgePoints, period);
@@ -537,19 +522,21 @@ int main(const int argc, const char *argv[])
     //! [Evaluate_performances]
     float pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
     //! [Evaluate_performances]
-    tutorial::display(Xest, data.m_IskeletonNoisy, vpColor::red, legendPFVert, legendPFHor);
     std::cout << "  [Particle Filter method] " << std::endl;
     std::cout << "    Coeffs = [" << Xest.transpose() << " ]" << std::endl;
-    std::cout << "    Mean square error = " << pfError << " pixels^2" << std::endl;
+    std::cout << "    Root Mean Square Error = " << pfError << " pixels^2" << std::endl;
     std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
     meanDtPF += dtPF;
-    meanMeanSquareErrorPF += pfError;
+    meanRootMeanSquareErrorPF += pfError;
 
 #ifdef VISP_HAVE_DISPLAY
+    // Update image overlay
+    lmsFitter.display<unsigned char>(data.m_IskeletonNoisy, vpColor::gray, legendLmsVert, legendLmsHor);
+    tutorial::display(Xest, data.m_IskeletonNoisy, vpColor::red, legendPFVert, legendPFHor);
+
     // Update plot
-    plot.plot(0, 0, nbIter, lmsError);
-    plot.plot(0, 1, nbIter, ransacError);
-    plot.plot(0, 2, nbIter, pfError);
+    plot.plot(0, 0, nbIter, lmsRootMeanSquareError);
+    plot.plot(0, 1, nbIter, pfError);
     // Display the images with overlayed info
     data.displayLegend(data.m_I_orig);
     vpDisplay::flush(data.m_I_orig);
@@ -565,17 +552,14 @@ int main(const int argc, const char *argv[])
   std::cout << std::endl << std::endl << "-----[Statistics summary]-----" << std::endl;
 
   std::cout << "  [LMS method] " << std::endl;
-  std::cout << "    Average mean square error = " << meanMeanSquareErrorLMS / iterAsDouble << " pixels^2" << std::endl;
+  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorLMS / iterAsDouble << " pixels^2" << std::endl;
   std::cout << "    Average fitting duration = " << meanDtLMS / iterAsDouble << " ms" << std::endl;
 
-  std::cout << "  [RANSAC method] " << std::endl;
-  std::cout << "    Average mean square error = " << meanMeanSquareErrorRansac / iterAsDouble << " pixels^2" << std::endl;
-  std::cout << "    Average fitting duration = " << meanDtRansac / iterAsDouble << " ms" << std::endl;
-
   std::cout << "  [Particle Filter method] " << std::endl;
-  std::cout << "    Average mean square error = " << meanMeanSquareErrorPF / iterAsDouble << " pixels^2" << std::endl;
+  std::cout << "    Average Root Mean Square Error = " << meanRootMeanSquareErrorPF / iterAsDouble << " pixels^2" << std::endl;
   std::cout << "    Average fitting duration = " << meanDtPF / iterAsDouble << " ms" << std::endl;
 
+#ifdef VISP_HAVE_DISPLAY
   if (data.m_grabber.end() && (!data.m_stepbystep)) {
     /// Initial display of the images
     vpDisplay::display(data.m_I_orig);
@@ -587,6 +571,7 @@ int main(const int argc, const char *argv[])
     /// Get the user input
     vpDisplay::getClick(data.m_I_orig, true);
   }
+#endif
   return 0;
 }
 #else
