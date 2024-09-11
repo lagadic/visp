@@ -1,10 +1,10 @@
 /**
-  \page tutorial-pf-curve-fitting Tutorial: Using Particle Filter to model a wire using polynomial interpolation.
+  \page tutorial-pf-curve-fitting Tutorial: Using Particle Filter to model a wire using polynomial interpolation
   \tableofcontents
 
 \section tuto-pf-cf-intro Introduction
 
-We suppose that you are already familiar with the \ref tutorial-pf .
+We suppose that you are already familiar with the \ref tutorial-pf.
 
 The Particle Filters (PF) are a set of Monte Carlo algorithms that
 permit to approximate solutions for filtering problems even when
