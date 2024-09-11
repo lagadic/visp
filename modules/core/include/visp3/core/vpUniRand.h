@@ -148,13 +148,13 @@ public:
   inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector, const int32_t &seed = -1)
   {
     std::vector<T> shuffled = inputVector;
-#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (seed > 0) {
       std::srand(seed);
     }
     else {
-      std::srand(std::time(0))
-  }
+      std::srand(std::time(0));
+    }
     std::random_shuffle(shuffled.begin(), shuffled.end());
 #else
     if (seed < 0) {
@@ -165,7 +165,7 @@ public:
     }
 #endif
     return shuffled;
-}
+  }
 
 private:
   struct vpPcgStateSetSeq64t
