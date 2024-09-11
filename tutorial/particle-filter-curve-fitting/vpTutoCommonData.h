@@ -44,7 +44,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
-inline void log(std::ostream &os, const std::string &filename, const std::string &funName, const std::string &arrayName, const vpArray2D<double> &array, const unsigned int &level = 0)
+inline void log(std::ostream &os, const std::string &filename, const std::string &funName, const std::string &arrayName, const VISP_NAMESPACE_ADDRESSING vpArray2D<double> &array, const unsigned int &level = 0)
 {
   os << "[" << filename << "::" << funName << "] ";
   for (unsigned int i = 0; i < level; ++i) {
@@ -267,7 +267,7 @@ typedef struct vpTutoCommonData
     m_pfRatiosAmpliMax.resize(m_degree, m_pfRatiosAmpliMax[0]);
 
     // Load the HSV thresholds
-    if (vpColVector::loadYAML(m_hsvFilename, m_hsv_values)) {
+    if (VISP_NAMESPACE_ADDRESSING vpColVector::loadYAML(m_hsvFilename, m_hsv_values)) {
       std::cout << "Load HSV threshold values from " << m_hsvFilename << std::endl;
       std::cout << "HSV low/high values: " << m_hsv_values.t() << std::endl;
     }
@@ -281,7 +281,7 @@ typedef struct vpTutoCommonData
       m_grabber.setFileName(m_seqFilename);
       m_grabber.open(m_I_orig);
     }
-    catch (const vpException &e) {
+    catch (const VISP_NAMESPACE_ADDRESSING vpException &e) {
       std::cout << e.getStringMessage() << std::endl;
       return EXIT_FAILURE;
     }
@@ -310,27 +310,27 @@ typedef struct vpTutoCommonData
 
 #ifdef VISP_HAVE_DISPLAY
   template<typename T>
-  void displayLegend(const vpImage<T> &I)
+  void displayLegend(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I)
   {
-    vpImagePoint ip(20, 20);
-    vpImagePoint offset(20, 0);
+    VISP_NAMESPACE_ADDRESSING vpImagePoint ip(20, 20);
+    VISP_NAMESPACE_ADDRESSING vpImagePoint offset(20, 0);
     if (m_stepbystep) {
-      vpDisplay::displayText(I, ip, std::string("Left click to switch to next image"), vpColor::red);
+      VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, ip, std::string("Left click to switch to next image"), VISP_NAMESPACE_ADDRESSING vpColor::red);
     }
-    vpDisplay::displayText(I, ip + offset, std::string("Middle click to switch to ") + (m_stepbystep ? std::string("video mode") : std::string("step-by-step mode")), vpColor::red);
-    vpDisplay::displayText(I, ip + offset + offset, std::string("Right click to quit"), vpColor::red);
+    VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, ip + offset, std::string("Middle click to switch to ") + (m_stepbystep ? std::string("video mode") : std::string("step-by-step mode")), VISP_NAMESPACE_ADDRESSING vpColor::red);
+    VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, ip + offset + offset, std::string("Right click to quit"), VISP_NAMESPACE_ADDRESSING vpColor::red);
   }
 
   template<typename T>
-  bool manageClicks(const vpImage<T> &I, bool &stepbystep)
+  bool manageClicks(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, bool &stepbystep)
   {
-    vpImagePoint ip;
-    vpMouseButton::vpMouseButtonType button;
-    vpDisplay::getClick(I, ip, button, stepbystep);
-    if (button == vpMouseButton::vpMouseButtonType::button3) {
+    VISP_NAMESPACE_ADDRESSING vpImagePoint ip;
+    VISP_NAMESPACE_ADDRESSING vpMouseButton::vpMouseButtonType button;
+    VISP_NAMESPACE_ADDRESSING vpDisplay::getClick(I, ip, button, stepbystep);
+    if (button == VISP_NAMESPACE_ADDRESSING vpMouseButton::vpMouseButtonType::button3) {
       return false;
     }
-    if (button == vpMouseButton::vpMouseButtonType::button2) {
+    if (button == VISP_NAMESPACE_ADDRESSING vpMouseButton::vpMouseButtonType::button2) {
       stepbystep = stepbystep ^ true;
     }
     return true;

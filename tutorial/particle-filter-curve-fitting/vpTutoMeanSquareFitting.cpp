@@ -36,7 +36,7 @@
 namespace tutorial
 {
 #ifdef ENABLE_VISP_NAMESPACE
-using VISP_NAMESPACE_NAME;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 vpTutoMeanSquareFitting::vpTutoMeanSquareFitting(const unsigned int &degree, const unsigned int &height, const unsigned int &width)

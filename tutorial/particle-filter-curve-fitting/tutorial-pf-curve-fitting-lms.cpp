@@ -48,7 +48,7 @@
 #include "vpTutoSegmentation.h"
 
 #ifdef ENABLE_VISP_NAMESPACE
-using VISP_NAMESPACE_NAME;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)

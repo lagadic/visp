@@ -37,11 +37,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void performSegmentationHSV(vpTutoCommonData &data)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   const unsigned int height = data.m_I_orig.getHeight(), width = data.m_I_orig.getWidth();
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
@@ -64,9 +65,6 @@ void performSegmentationHSV(vpTutoCommonData &data)
 
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoCommonData &data)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   const int height = data.m_mask.getHeight();
   const int width = data.m_mask.getWidth();
   data.m_Iskeleton.resize(height, width, 0);
@@ -122,9 +120,6 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoComm
 
 std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoint > &noisefreePts, vpTutoCommonData &data)
 {
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
   const unsigned int nbNoiseFreePts = noisefreePts.size();
   const unsigned int nbPtsToAdd = data.m_ratioSaltPepperNoise * nbNoiseFreePts;
   const double width = data.m_Iskeleton.getWidth();
