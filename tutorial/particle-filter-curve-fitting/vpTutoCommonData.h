@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 #ifndef VP_COMMMON_DATA_H
 #define VP_COMMMON_DATA_H
 #include <iostream>
@@ -292,7 +290,7 @@ typedef struct vpTutoCommonData
     m_IskeletonNoisy.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the edge-map.
 
     // Init the displays
-    const int horOffset = 20, vertOffset = 20;
+    const int horOffset = 20, vertOffset = 25;
     std::string skeletonTitle("Skeletonized image (");
     skeletonTitle += (m_ratioSaltPepperNoise == 0 ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
     skeletonTitle += " noise)";

@@ -81,7 +81,8 @@ public:
    * upper threshold.
    * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
    * operation.
-   * \param[in] storeEdgePoints : If true, the list of edge-points will be available using \b vpCannyEdgeDetection::getEdgePointsList .
+   * \param[in] storeEdgePoints : If true, the list of edge-points will be available using
+   * \b vpCannyEdgeDetection::getEdgePointsList().
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
@@ -261,7 +262,7 @@ public:
 
   /**
    * \brief If set to true, the list of the detected edge-points will be available
-   * calling the method \b vpCannyEdgeDetection::getEdgePointsList .
+   * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
    *
    * \param[in] storeEdgePoints The new desired status.
    */

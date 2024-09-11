@@ -214,9 +214,9 @@ struct GridSettings
 };
 
 inline void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
-                           unsigned int currRow, unsigned int currCol,
-                           unsigned int currentPixelX, unsigned int currentPixelY,
-                           unsigned int maxRowHeightPixel)
+                                  unsigned int currRow, unsigned int currCol,
+                                  unsigned int currentPixelX, unsigned int currentPixelY,
+                                  unsigned int maxRowHeightPixel)
 {
   if (currRow != (settings.rows - 1)  && (currCol != settings.cols - 1)) {
     throw vpException(vpException::dimensionError, "Too few images for the grid size");
