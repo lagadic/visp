@@ -34,6 +34,7 @@
 
 #include <visp3/core/vpGaussRand.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
@@ -147,4 +148,7 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
   return noisyPts;
 }
 }
+#endif
+#else
+void dummy_vpTutoSegmentation() { }
 #endif

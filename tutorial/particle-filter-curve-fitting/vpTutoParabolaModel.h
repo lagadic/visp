@@ -37,6 +37,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
@@ -171,5 +172,6 @@ private:
   VISP_NAMESPACE_ADDRESSING vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 }
+#endif
 #endif
 #endif

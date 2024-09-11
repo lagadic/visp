@@ -41,6 +41,7 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpVideoReader.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
@@ -338,5 +339,6 @@ typedef struct vpTutoCommonData
 #endif
 }vpTutoCommonData;
 }
+#endif
 #endif
 #endif

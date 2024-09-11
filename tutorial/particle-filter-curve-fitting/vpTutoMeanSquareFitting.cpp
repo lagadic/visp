@@ -32,6 +32,7 @@
 
 #include "vpTutoMeanSquareFitting.h"
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tutorial
 {
@@ -103,4 +104,7 @@ double vpTutoMeanSquareFitting::model(const float &u)
   return v;
 }
 }
+#endif
+#else
+void dummy_vpTutoMeanSquareFitting() { }
 #endif

@@ -33,7 +33,6 @@
 //! \example tutorial-pf-curve-fitting-pf.cpp
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMouseButton.h>
 #include <visp3/core/vpTime.h>
