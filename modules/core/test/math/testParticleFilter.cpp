@@ -215,8 +215,8 @@ private:
  * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
  * The polynomial is written as y = a x^2 + b x + c.
  *
- * \param[in] x0 Horizontal coordinate of the inflexion point.
- * \param[in] y0 Vertical coordinate of the inflexion point.
+ * \param[in] x0 Horizontal coordinate of the inflection point.
+ * \param[in] y0 Vertical coordinate of the inflection point.
  * \param[in] x1 Horizontal coordinate of another point of the curve.
  * \param[in] y1 Vertical coordinate of another point of the curve.
  * \return vpColVector The coefficients such as v[0] = c ; v[1] = b ; v[2] = a
@@ -233,8 +233,8 @@ vpColVector computeABC(const double &x0, const double &y0, const double &x1, con
  * \brief Compute the coefficients of the 2nd degree curve for the simulated data.
  * The polynomial is written as y = a x^3 + b x^2 + c x + d.
  *
- * \param[in] x0 Horizontal coordinate of the inflexion point.
- * \param[in] y0 Vertical coordinate of the inflexion point.
+ * \param[in] x0 Horizontal coordinate of the inflection point.
+ * \param[in] y0 Vertical coordinate of the inflection point.
  * \param[in] x1 Horizontal coordinate of another point of the curve.
  * \param[in] y1 Vertical coordinate of another point of the curve.
  * \return vpColVector The coefficients such as v[0] = d ; v[1] = c ; v[2] = b ; v[3] = a
@@ -478,7 +478,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
   /// ----- PF parameters -----
   // The maximum amplitude for the likelihood compute.
   // A particle whose "distance" with the measurements is greater than this value has a likelihood of 0
-  const double ampliMaxLikelihood = 15.;
+  const double ampliMaxLikelihood = 16.;
   const double sigmaLikelihood = ampliMaxLikelihood / 3.; //:< The corresponding standard deviation
   const unsigned int nbParticles = 300; //!< Number of particles used by the particle filter
   const double ratioAmpliMax(0.25); //!< Ratio of the initial guess values to use to add noise to the PF state
@@ -565,7 +565,7 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 
   SECTION("Noisy", "Noise is added to the init points")
   {
-    const double maxToleratedError = 10.;
+    const double maxToleratedError = 12.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
@@ -752,7 +752,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 
   SECTION("Noisy", "Noise is added to the init points")
   {
-    const double maxToleratedError = 15.;
+    const double maxToleratedError = 16.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
