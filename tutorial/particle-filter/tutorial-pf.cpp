@@ -550,10 +550,12 @@ int main(const int argc, const char *argv[])
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
-  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, -0.05, 0., 1.})
-                                           , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
+
+  // Vector of the markers sticked on the object
+  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.}),
+                                             vpColVector({0.05, 0.05, 0., 1.}),
+                                             vpColVector({0.05, -0.05, 0., 1.}),
+                                             vpColVector({-0.05, -0.05, 0., 1.}) };
   const unsigned int nbMarkers = static_cast<unsigned int>(markers.size());
   std::vector<vpPoint> markersAsVpPoint;
   for (unsigned int i = 0; i < nbMarkers; ++i) {
@@ -603,9 +605,6 @@ int main(const int argc, const char *argv[])
   const int nbThread = args.m_nbThreads;
   if (seedPF < 0) {
     seedPF = vpTime::measureTimeMicros();
-  }
-  else {
-    seedPF = seedPF;
   }
   //! [Constants_for_the_PF]
 
@@ -701,8 +700,8 @@ int main(const int argc, const char *argv[])
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
 #ifdef VISP_HAVE_DISPLAY
-  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
-  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(Idisp, 800, 50, "Projection of the markers");
+  vpImage<vpRGBa> Idisp(700, 700, vpRGBa(255));
+  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(Idisp, 800, -1, "Projection of the markers");
 #endif
   //! [Init_renderer]
 

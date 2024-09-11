@@ -138,12 +138,13 @@ public:
   void setSeed(uint64_t initstate, uint64_t initseq);
 
   /**
- * @brief Create a new vector that is a shuffled version of the \b inputVector.
- *
- * @tparam T : A class that possesses a copy constructor.
- * @param inputVector : The input vector that must be shuffled. It will not be modified.
- * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
- */
+   * @brief Create a new vector that is a shuffled version of the \b inputVector.
+   *
+   * @tparam T : A class that possesses a copy constructor.
+   * @param inputVector : The input vector that must be shuffled. It will not be modified.
+   * @param seed : The seed value.
+   * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
+   */
   template<typename T>
   inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector, const int32_t &seed = -1)
   {

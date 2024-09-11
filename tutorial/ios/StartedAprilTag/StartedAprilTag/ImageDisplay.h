@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #import <UIKit/UIKit.h>
 #ifdef __cplusplus
@@ -39,11 +37,10 @@
 
 @interface ImageDisplay : NSObject
 
-+ (UIImage *)displayLine:(UIImage *)image :(vpImagePoint &)ip1 :(vpImagePoint &)ip2 :(UIColor*)color :(int)tickness;
-+ (UIImage *)displayFrame:(UIImage *)image :(const vpHomogeneousMatrix &)cMo :(const vpCameraParameters &)cam
-                         :(double) size :(int)tickness;
++ (UIImage *)displayLine : (UIImage *)image : (vpImagePoint &)ip1 : (vpImagePoint &)ip2 : (UIColor *)color : (int)tickness;
++(UIImage *)displayFrame:(UIImage *)image : (const vpHomogeneousMatrix &)cMo : (const vpCameraParameters &)cam
+  : (double)size : (int)tickness;
 
 @end
 
 #endif
-

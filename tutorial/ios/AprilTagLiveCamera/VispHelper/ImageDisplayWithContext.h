@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #import <UIKit/UIKit.h>
 #ifdef __cplusplus
@@ -39,13 +37,13 @@
 
 NS_ASSUME_NONnullptr_BEGIN
 
-@interface ImageDisplay (withContext)
+@interface ImageDisplay(withContext)
 
-+ (void)displayLineWithContext:(CGContextRef)context :(std::vector<vpImagePoint>)polygon :(UIColor*)color :(int)tickness;
++ (void)displayLineWithContext :(CGContextRef)context : (std::vector<vpImagePoint>)polygon : (UIColor *)color : (int)tickness;
 
-+ (void)displayFrameWithContext:(CGContextRef)context :(const vpHomogeneousMatrix &)cMo :(const vpCameraParameters &)cam :(double) size :(int)tickness;
++(void)displayFrameWithContext:(CGContextRef)context : (const vpHomogeneousMatrix &)cMo : (const vpCameraParameters &)cam : (double)size : (int)tickness;
 
-+ (void)displayText:(NSString*)text :(double)x :(double)y :(int)width :(int)height :(UIColor*)color :(UIColor*)bgColor;
++(void)displayText:(NSString *)text : (double)x : (double)y : (int)width : (int)height : (UIColor *)color : (UIColor *)bgColor;
 
 @end
 

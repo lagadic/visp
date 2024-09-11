@@ -4,13 +4,13 @@
 
 \section tuto-pf-intro Introduction
 
-We suppose that you are already familiar with the \ref tutorial-ukf .
+We suppose that you are already familiar with the \ref tutorial-ukf.
 
 The Particle Filters (PF) are a set of Monte Carlo algorithms that
 permit to approximate solutions for filtering problems even when
 the state-space and/or measurement space are non-linear.
 
-In this tutorial, we will use a PF on the same use-case than presented in \ref tutorial-ukf . The PF is used to
+In this tutorial, we will use a PF on the same use-case than presented in \ref tutorial-ukf. The PF is used to
 filter the 3D position of a simulated object, which revolves in a plane parallel
 to the ground around a static point, which is the origin of the world frame \f$ {F}_W \f$. The coordinate frame
 attached to the object is denoted \f$ {F}_O \f$. The object is observed by a static camera whose coordinate
@@ -426,5 +426,5 @@ Finally, we update the renderer that displays the projection in the image of the
 The program stops once the `Return` key is pressed.
 
 \section tuto-pf_next Next tutorial
-You are now ready to see the next \ref tutorial-pf-curve-fitting .
+You are now ready to see the next \ref tutorial-pf-curve-fitting.
 */

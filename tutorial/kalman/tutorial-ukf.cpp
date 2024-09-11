@@ -39,11 +39,7 @@
 //! [Display_includes]
 #ifdef VISP_HAVE_DISPLAY
 #include <visp3/gui/vpPlot.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #endif
 //! [Display_includes]
 #include <visp3/vision/vpPose.h>
@@ -263,10 +259,12 @@ int main(/*const int argc, const char *argv[]*/)
   const double radius = 0.25; // Radius of revolution of 0.25m
   const double w = 2 * M_PI * 10; // Pulsation of the motion of revolution
   const double phi = 2; // Phase of the motion of revolution
-  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, 0.05, 0., 1.})
-                                           , vpColVector({0.05, -0.05, 0., 1.})
-                                           , vpColVector({-0.05, -0.05, 0., 1.}) }; // Vector of the markers sticked on the object
+
+  // Vector of the markers sticked on the object
+  const std::vector<vpColVector> markers = { vpColVector({-0.05, 0.05, 0., 1.}),
+                                             vpColVector({0.05, 0.05, 0., 1.}),
+                                             vpColVector({0.05, -0.05, 0., 1.}),
+                                             vpColVector({-0.05, -0.05, 0., 1.}) };
   const unsigned int nbMarkers = static_cast<unsigned int>(markers.size());
   std::vector<vpPoint> markersAsVpPoint;
   for (unsigned int i = 0; i < nbMarkers; ++i) {
@@ -370,22 +368,8 @@ int main(/*const int argc, const char *argv[]*/)
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
 #ifdef VISP_HAVE_DISPLAY
-  vpDisplay *d = nullptr;
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#endif
-  vpImage<vpRGBa> Idisp(800, 800, vpRGBa(255));
-  if (d != nullptr) {
-    d->init(Idisp, 800, 50, "Projection of the markers");
-  }
+  vpImage<vpRGBa> Idisp(700, 700, vpRGBa(255));
+  std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(Idisp, 800, -1, "Projection of the markers");
 #endif
   //! [Init_renderer]
 
@@ -475,14 +459,6 @@ int main(/*const int argc, const char *argv[]*/)
   std::cout << "Press Enter to quit..." << std::endl;
   std::cin.get();
 
-  //! [Delete_renderer]
-  // Delete the renderer if it was allocated
-#ifdef VISP_HAVE_DISPLAY
-  if (d != nullptr) {
-    delete d;
-  }
-#endif
-//! [Delete_renderer]
   return 0;
 }
 #else
