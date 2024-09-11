@@ -426,15 +426,9 @@ Finally, we update the renderer that displays the projection in the image of the
 
 \snippet tutorial-ukf.cpp Update_renderer
 
-\subsubsection tuto-ukf-tutorial-explained-cleaning Details on the cleaning at the end of the program
-
-Finally, we clean the allocated memory for the renderer:
-
-\snippet tutorial-ukf.cpp Delete_renderer
-
 The program stops once the `Return` key is pressed.
 
 \section tuto-ukf_next Next tutorial
-You are now ready to see the next \ref tutorial-pf .
+You are now ready to see the next \ref tutorial-pf.
 
 */
