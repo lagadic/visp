@@ -822,9 +822,20 @@ public:
 
   void setRefinePose(bool) { }
 
-  void setPoseEstimationMethod(const vpPoseEstimationMethod &method) { m_poseEstimationMethod = method; }
+  void setPoseEstimationMethod(const vpPoseEstimationMethod &method)
+  {
+    m_poseEstimationMethod = method;
+  }
 
-  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame) { m_zAlignedWithCameraFrame = zAlignedWithCameraFrame; }
+  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
+  {
+    m_zAlignedWithCameraFrame = zAlignedWithCameraFrame;
+  }
+
+  bool isZAlignedWithCameraAxis() const
+  {
+    return m_zAlignedWithCameraFrame;
+  }
 
 protected:
   std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
@@ -1212,13 +1223,24 @@ void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRef
 #endif
 
 /*!
- * Modify the resulting tag pose returned by getPose() in order to get
- * a pose where z-axis is aligned when the camera plane is parallel to the tag.
- * \param zAlignedWithCameraFrame : Flag to get a pose where z-axis is aligned with the camera frame.
+ * Modify the resulting tag pose returned by getPose() or
+ * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
+ * in order to get a pose where z-axis is aligned when the camera plane is parallel to the tag.
+ * \param zAlignedWithCameraFrame : When set to true, estimated tag pose has a z-axis aligned with the
+ * camera frame.
  */
 void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
+}
+
+/*!
+ * Indicate it z-axis of the tag frame is aligned with the camera frame or not.
+ * @return When true, z-axis are aligned, false otherwise
+ */
+bool vpDetectorAprilTag::isZAlignedWithCameraAxis() const
+{
+  return m_impl->isZAlignedWithCameraAxis();
 }
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
