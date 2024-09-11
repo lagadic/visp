@@ -213,7 +213,7 @@ struct GridSettings
   unsigned int paddingY;
 };
 
-void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
+inline void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
                            unsigned int currRow, unsigned int currCol,
                            unsigned int currentPixelX, unsigned int currentPixelY,
                            unsigned int maxRowHeightPixel)
