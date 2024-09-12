@@ -97,11 +97,14 @@ int main(int argc, char **argv)
     //! [Constructor]
 
 #if !defined(VISP_HAVE_MODULE_KLT)
-    if (opt_tracker >= 2) {
-      std::cout << "klt and hybrid model-based tracker are not available "
-        "since visp_klt module is missing"
-        << std::endl;
-      return EXIT_SUCCESS;
+    unsigned int nbTracker = trackerTypes.size();
+    for (unsigned int i = 0; i < nbTracker; ++i) {
+      if (trackerTypes[i] >= 2) {
+        std::cout << "klt and hybrid model-based tracker are not available "
+          "since visp_klt module is missing"
+          << std::endl;
+        return EXIT_SUCCESS;
+      }
     }
 #endif
 
@@ -166,7 +169,7 @@ int main(int argc, char **argv)
       }
     }
     vpDisplay::getClick(I_left);
-}
+  }
   catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
   }
