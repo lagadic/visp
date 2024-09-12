@@ -78,6 +78,8 @@ typedef unsigned __int32 uint32_t;
 #include <random>    // std::mt19937
 #include <numeric>   // std::iota
 #else
+#include <ctime>        // std::time
+#include <cstdlib>      // std::rand, std::srand
 #include <algorithm> // std::random_shuffle
 #endif
 
@@ -136,20 +138,32 @@ public:
   void setSeed(uint64_t initstate, uint64_t initseq);
 
   /**
- * @brief Create a new vector that is a shuffled version of the \b inputVector.
- *
- * @tparam T : A class that possesses a copy constructor.
- * @param inputVector : The input vector that must be shuffled. It will not be modified.
- * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
- */
+   * @brief Create a new vector that is a shuffled version of the \b inputVector.
+   *
+   * @tparam T : A class that possesses a copy constructor.
+   * @param inputVector : The input vector that must be shuffled. It will not be modified.
+   * @param seed : The seed value.
+   * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
+   */
   template<typename T>
-  inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector)
+  inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector, const int32_t &seed = -1)
   {
     std::vector<T> shuffled = inputVector;
 #if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+    if (seed > 0) {
+      std::srand(seed);
+    }
+    else {
+      std::srand(std::time(0));
+    }
     std::random_shuffle(shuffled.begin(), shuffled.end());
 #else
-    std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937 { std::random_device{}() });
+    if (seed < 0) {
+      std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937 { std::random_device{}() });
+    }
+    else {
+      std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937 { static_cast<uint32_t>(seed) });
+    }
 #endif
     return shuffled;
   }

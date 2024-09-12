@@ -60,7 +60,7 @@ namespace vpDisplayFactory
  * \return A newly allocated vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  */
-vpDisplay *allocateDisplay()
+inline vpDisplay *allocateDisplay()
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11
@@ -134,7 +134,7 @@ vpDisplay *allocateDisplay(vpImage<T> &I, const int winx = -1, const int winy = 
  * \return A smart pointer pointing to a vpDisplay specialization
  * if a GUI library is available or nullptr otherwise.
  */
-std::shared_ptr<vpDisplay> createDisplay()
+inline std::shared_ptr<vpDisplay> createDisplay()
 {
 #if defined(VISP_HAVE_DISPLAY)
 #ifdef VISP_HAVE_X11
@@ -213,10 +213,10 @@ struct GridSettings
   unsigned int paddingY;
 };
 
-void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
-                           unsigned int currRow, unsigned int currCol,
-                           unsigned int currentPixelX, unsigned int currentPixelY,
-                           unsigned int maxRowHeightPixel)
+inline void makeDisplayGridHelper(std::vector<std::shared_ptr<vpDisplay>> &res, const GridSettings &settings,
+                                  unsigned int currRow, unsigned int currCol,
+                                  unsigned int currentPixelX, unsigned int currentPixelY,
+                                  unsigned int maxRowHeightPixel)
 {
   if (currRow != (settings.rows - 1)  && (currCol != settings.cols - 1)) {
     throw vpException(vpException::dimensionError, "Too few images for the grid size");

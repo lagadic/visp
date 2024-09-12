@@ -50,9 +50,47 @@
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpParticleFilter
+  \ingroup group_core_math_tools
   \tparam MeasurementsType The class that corresponds to the measurements used to compute
   the weights of the Particle Filter
   \brief The class permits to use a Particle Filter.
+
+  Be \f$ \textbf{x}_i \in \textit{S} \f$ a particle representing the internal state of the PF, with \f$ i \in {0 \dots N - 1} \f$
+  and \f$ \textit{S} \f$ the state space.
+  To each particle is associated a weight \f$ w_i \f$ that represents its likelihood knowing the measurements and is used
+  to compute the filtered state \f$ \textbf{x}_{filtered} \in \textit{S} \f$.
+
+  The first step of the PF is the prediction step. During this step, the particles of the PF are projected forward in time. Be
+  \f$ f(\textbf{x}_i, \Delta t) : \textit{S} \times R \rightarrow \textit{S} \f$ the process function that project the forward in time.
+  All the particles pass through the function , and some noise \f$ \epsilon \f$ is independently added to each of them to form the new
+  particles:
+
+  \f[
+    \textbf{x}_i(t + \Delta t) = f( \textbf{x}_i(t) , \Delta t ) + \epsilon
+  \f]
+
+  The second step of the PF is to update the weights \f$ w_i \f$ associated to each particle based on new measurements.
+  The update is based on the likelihood of a particle based on the measurements \f$ \textbf{z} \in \textit{M} \f$, where
+  \f$ \textit{M} \f$ is the measurement space. Be  \f$ l: \textit{S} \times \textit{M} \rightarrow [0; 1.] \f$ the likelihood function,
+  we have:
+
+  \f[
+    w_i = l(\textbf{x}_i, \textbf{z})
+  \f]
+
+  After an update, a check is performed to see if the PF is not degenerated (i.e. if the weigths of most particles became very low).
+  If the PF became degenerated, the particles are resampled depending on a resampling scheme. Different kind of checks
+  and of resampling algorithms exist in the litterature. In this class, we implemented the Simple Resampling algorithm
+  in a dedicated method and let to the user the possibility of writing user-defined check and resampling methods.
+
+  Finally, we can compute the new state estimate \f$ \textbf{x}_{filtered} \f$ by performing a weighted mean of the particles
+  \f$ \textbf{x}_i \f$. Be \f$ \textbf{w} = (w_0 \dots w_{N-1})^T \in R^N \f$, \f$ \textbf{x} = {\textbf{x}_0 \dots \textbf{x}_{N-1}} \in \textit{S}^N \f$
+  and \f$ wm: R^N \times \textit{S}^N \rightarrow \textit{S} \f$ the weighted mean function of the state space
+  \f$ \textit{S} \f$, we have:
+
+  \f[
+    \textbf{x}_{filtered} = wm(\textbf{w}, \textbf{x})
+  \f]
 */
 template <typename MeasurementsType>
 class vpParticleFilter
@@ -404,6 +442,7 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   else {
     m_nbMaxThreads = nbThreads;
   }
+  omp_set_num_threads(m_nbMaxThreads);
 #endif
   // Generating the random generators
   unsigned int sizeState = static_cast<unsigned int>(stdev.size());
@@ -434,6 +473,9 @@ void vpParticleFilter<MeasurementsType>::init(const vpColVector &x0, const vpPro
             const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
             const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
 {
+  if (x0.size() != m_noiseGenerators[0].size()) {
+    throw(vpException(vpException::dimensionError, "X0 does not have the same size than the vector of stdevs used to build the object"));
+  }
   m_f = f;
   m_stateFilterFunc = filterFunc;
   m_likelihood = l;
@@ -453,6 +495,9 @@ void vpParticleFilter<MeasurementsType>::init(const vpColVector &x0, const vpCom
             const vpResamplingConditionFunction &checkResamplingFunc, const vpResamplingFunction &resamplingFunc,
             const vpFilterFunction &filterFunc, const vpStateAddFunction &addFunc)
 {
+  if (x0.size() != m_noiseGenerators[0].size()) {
+    throw(vpException(vpException::dimensionError, "X0 does not have the same size than the vector of stdevs used to build the object"));
+  }
   m_bx = bx;
   m_stateFilterFunc = filterFunc;
   m_likelihood = l;
@@ -644,7 +689,7 @@ void vpParticleFilter<MeasurementsType>::predictMultithread(const double &dt, co
 
 template <typename MeasurementsType>
 double threadLikelihood(const typename vpParticleFilter<MeasurementsType>::vpLikelihoodFunction &likelihood, const std::vector<vpColVector> &v_particles,
-                        const vpColVector &z, std::vector<double> &w, const int &istart, const int &ipoints)
+                        const MeasurementsType &z, std::vector<double> &w, const int &istart, const int &ipoints)
 {
   double sum(0.0);
   for (int i = istart; i< istart + ipoints; ++i) {

@@ -407,7 +407,6 @@ int main(int argc, const char *argv[])
   bool quit = false;
   while (!quit) {
     double t = vpTime::measureTimeMs();
-
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
     {
       std::lock_guard<std::mutex> lock(mutex);
@@ -434,9 +433,11 @@ int main(int argc, const char *argv[])
         d2.init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
       }
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
-      pcl_viewer.setPosition(I_color.getWidth() + 10, I_color.getHeight() + 70);
-      pcl_viewer.setWindowName("3D point cloud");
-      pcl_viewer.startThread(std::ref(mutex), pointcloud);
+      if (pointcloud->size() > 0) {
+        pcl_viewer.setPosition(I_color.getWidth() + 10, I_color.getHeight() + 70);
+        pcl_viewer.setWindowName("3D point cloud");
+        pcl_viewer.startThread(std::ref(mutex), pointcloud);
+      }
 #endif
     }
 
