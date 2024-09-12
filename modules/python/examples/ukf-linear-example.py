@@ -35,7 +35,7 @@
 
 """ @example ukf-linear-example.py
  Example of a simple linear use-case of the Unscented Kalman Filter (UKF). Using a UKF
- in this case is not necessary, it is done for learning purpous only.
+ in this case is not necessary, it is done for learning purpose only.
 
  The system we are interested in is a system moving on a 2D-plane.
 

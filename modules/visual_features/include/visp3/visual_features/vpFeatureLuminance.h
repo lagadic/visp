@@ -46,9 +46,8 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 BEGIN_VISP_NAMESPACE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * \class vpLuminance
  * \brief Class that defines the luminance and gradient of a point.
