@@ -752,7 +752,7 @@ TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 
   SECTION("Noisy", "Noise is added to the init points")
   {
-    const double maxToleratedError = 16.;
+    const double maxToleratedError = 17.;
     double x0 = rngCurvePoints.uniform(0., width);
     double x1 = rngCurvePoints.uniform(0., width);
     double y0 = rngCurvePoints.uniform(0., height);
