@@ -786,14 +786,6 @@ int main(const int argc, const char *argv[])
     vpColVector error_PF = cX_PF - cX_GT;
     vpColVector error_UKF = cX_UKF - cX_GT;
 
-    std::cout << "  [Particle Filter method] " << std::endl;
-    std::cout << "    Norm of the error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
-
-    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
-    std::cout << "    Norm of the error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
-
     // Plot the PF filtered state error
     plotError.plot(0, 0, t, error_PF.frobeniusNorm());
 
@@ -837,6 +829,15 @@ int main(const int argc, const char *argv[])
     //! [Update_renderer]
 #endif
     //! [Update_displays]
+
+    // Log statistics
+    std::cout << "  [Particle Filter method] " << std::endl;
+    std::cout << "    Norm of the error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
+
+    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
+    std::cout << "    Norm of the error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
   }
   //! [Simu_loop]
   std::cout << "Press Enter to quit..." << std::endl;
