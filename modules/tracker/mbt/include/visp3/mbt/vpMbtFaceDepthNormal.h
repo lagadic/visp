@@ -133,7 +133,7 @@ public:
   void computeVisibility();
   void computeVisibilityDisplay();
 
-  bool planeIsDegenerate(const vpHomogeneousMatrix &cMo);
+  bool planeIsInvalid(const vpHomogeneousMatrix &cMo, double maxAngle);
 
   void computeNormalVisibility(double nx, double ny, double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);

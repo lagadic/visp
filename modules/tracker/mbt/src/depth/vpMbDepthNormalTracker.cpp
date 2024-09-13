@@ -272,18 +272,11 @@ void vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu()
 
     vpColVector face_error = features_face - m_depthNormalListOfDesiredFeatures[(size_t)cpt];
 
-    std::cout << "cpt = " << cpt << std::endl;
-    std::cout << "Current features = " << features_face.t() << std::endl;
-    std::cout << "Desired features = " << m_depthNormalListOfDesiredFeatures[(size_t)cpt].t() << std::endl;
-    std::cout << "error = " << face_error.t() << std::endl;
-
-    if (!(*it)->planeIsDegenerate(m_cMo)) {
+    if (!(*it)->planeIsInvalid(m_cMo, angleDisappears)) {
       m_error_depthNormal.insert(cpt * 3, face_error);
       m_L_depthNormal.insert(L_face, cpt * 3, 0);
     }
     else {
-      std::cout << "DEGENERATE PLANE" << std::endl;
-
       face_error = 0;
       L_face = 0;
       m_error_depthNormal.insert(cpt * 3, face_error);
