@@ -410,7 +410,7 @@ int main(int argc, const char **argv)
         {
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
-            << ", depth " << tracker.getNbFeaturesDepthDense();
+            << ", dense depth " << tracker.getNbFeaturesDepthDense() << ", depth normals " << tracker.getNbFeaturesDepthNormal();
           vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
       }
