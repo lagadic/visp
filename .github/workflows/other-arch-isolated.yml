@@ -15,7 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-other-architectures:
+  build-other-architectures-isolated:
+    # https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/skip.html
+    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/using-conditions-to-control-job-execution
+    if: ${{ ! contains(github.event.commits[0].message, '[quick ci]') && !contains(github.event.head_commit.message, '[quick ci]') }}
     # The host should always be linux
     runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}

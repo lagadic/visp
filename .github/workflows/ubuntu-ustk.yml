@@ -14,7 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-ubuntu-dep-apt:
+  build-ubuntu-dep-apt-ustk:
+    # https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/skip.html
+    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/using-conditions-to-control-job-execution
+    if: ${{ ! contains(github.event.commits[0].message, '[quick ci]') && !contains(github.event.head_commit.message, '[quick ci]') }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
