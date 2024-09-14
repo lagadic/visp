@@ -16,9 +16,6 @@ concurrency:
 
 jobs:
   build-other-architectures-isolated:
-    # https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/skip.html
-    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/using-conditions-to-control-job-execution
-    if: ${{ ! contains(github.event.commits[0].message, '[quick ci]') && !contains(github.event.head_commit.message, '[quick ci]') }}
     # The host should always be linux
     runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
@@ -33,19 +30,18 @@ jobs:
           #   target: ARMV6
           - arch: armv7
             distro: ubuntu22.04
-            target: ARMV7
             endianness: (Little Endian)
           - arch: aarch64
             distro: ubuntu22.04 #fedora_latest
-            target: ARMV8
+            endianness: (Little Endian)
+          - arch: riscv64
+            distro: ubuntu_latest
             endianness: (Little Endian)
           - arch: ppc64le
             distro: ubuntu22.04
-            target: POWER8
             endianness: (Little Endian)
           - arch: s390x
             distro: ubuntu22.04
-            target: Z13
             endianness: (Big Endian)
 
     steps:
@@ -53,7 +49,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run on arch
-      uses: uraimo/run-on-arch-action@v2.2.1
+      uses: uraimo/run-on-arch-action@v2.7.2
       with:
         githubToken: ${{ github.token }}
         arch: ${{ matrix.arch }}
