@@ -1055,7 +1055,10 @@ bool vpMbtFaceDepthNormal::planeIsInvalid(const vpHomogeneousMatrix &cMo, double
   computePolygonCentroid(polyPts, centroid);
   centroid.changeFrame(cMo);
   centroid.project();
-  const vpColVector c({ centroid.get_X(), centroid.get_Y(), centroid.get_Z() });
+  vpColVector c(3);
+  c[0] = centroid.get_X();
+  c[1] = centroid.get_Y();
+  c[2] = centroid.get_Z();
   const double L = c.frobeniusNorm();
   const double minD = L * cos(maxAngle);
   return fabs(D) <= minD;
