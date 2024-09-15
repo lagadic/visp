@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-windows-clang:
     runs-on: ${{ matrix.os }}
     defaults:
       run:

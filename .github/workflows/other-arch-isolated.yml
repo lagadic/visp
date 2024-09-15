@@ -15,9 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-other-architectures:
+  build-other-architectures-isolated:
     # The host should always be linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
 
     # Run steps on a matrix of different arch/distro combinations
@@ -29,19 +29,22 @@ jobs:
           #   distro: bullseye
           #   target: ARMV6
           - arch: armv7
-            distro: ubuntu22.04
+            distro: ubuntu_latest
             target: ARMV7
             endianness: (Little Endian)
           - arch: aarch64
-            distro: ubuntu22.04 #fedora_latest
-            target: ARMV8
+            distro: ubuntu_latest
+            endianness: (Little Endian)
+          - arch: riscv64
+            distro: ubuntu_latest
+            target: RISC-V
             endianness: (Little Endian)
           - arch: ppc64le
-            distro: ubuntu22.04
+            distro: ubuntu_latest
             target: POWER8
             endianness: (Little Endian)
           - arch: s390x
-            distro: ubuntu22.04
+            distro: ubuntu_latest
             target: Z13
             endianness: (Big Endian)
 
@@ -50,7 +53,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run on arch
-      uses: uraimo/run-on-arch-action@v2.2.1
+      uses: uraimo/run-on-arch-action@v2.7.2
       with:
         githubToken: ${{ github.token }}
         arch: ${{ matrix.arch }}
