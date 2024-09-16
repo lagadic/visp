@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <conf>
   <depth_normal>
-    <feature_estimation_method>2</feature_estimation_method>
+    <feature_estimation_method>0</feature_estimation_method>
     <PCL_plane_estimation>
       <method>2</method>
       <ransac_max_iter>200</ransac_max_iter>

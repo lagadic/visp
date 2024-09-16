@@ -1038,6 +1038,32 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
   }
 }
 
+/**
+ * Returns true when the plane is nearly parallalel to the optical axis and close to the optical center.
+ * In this case, the interaction matrix related to this face may "explode" leading to a tracking failure.
+ */
+bool vpMbtFaceDepthNormal::planeIsInvalid(const vpHomogeneousMatrix &cMo, double maxAngle)
+{
+  m_planeCamera = m_planeObject;
+  m_planeCamera.changeFrame(cMo);
+  const vpTranslationVector t = cMo.getTranslationVector();
+  // const double D = -(t[0] * m_planeCamera.getA() + t[1] * m_planeCamera.getB() + t[2] * m_planeCamera.getC());
+  const double D = m_planeCamera.getD();
+  vpPoint centroid;
+  std::vector<vpPoint> polyPts;
+  m_polygon->getPolygonClipped(polyPts);
+  computePolygonCentroid(polyPts, centroid);
+  centroid.changeFrame(cMo);
+  centroid.project();
+  vpColVector c(3);
+  c[0] = centroid.get_X();
+  c[1] = centroid.get_Y();
+  c[2] = centroid.get_Z();
+  const double L = c.frobeniusNorm();
+  const double minD = L * cos(maxAngle);
+  return fabs(D) <= minD;
+}
+
 void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features)
 {
   L.resize(3, 6, false, false);
