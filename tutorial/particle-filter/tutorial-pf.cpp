@@ -740,6 +740,32 @@ int main(const int argc, const char *argv[])
     double dtUKF = vpTime::measureTimeMs() - tUKF;
     //! [UKF_filtering]
 
+    // Get the filtered states
+    vpColVector XestPF = pfFilter.computeFilteredState();
+    vpColVector XestUKF = ukf.getXest();
+
+    // Compute satistics
+    vpColVector cX_GT = cMw * object_pos;
+    vpColVector wX_UKF(4, 1.);
+    vpColVector wX_PF(4, 1.);
+    for (unsigned int i = 0; i < 3; ++i) {
+      wX_PF[i] = XestPF[i];
+      wX_UKF[i] = XestUKF[i];
+    }
+    vpColVector cX_PF = cMw * wX_PF;
+    vpColVector cX_UKF = cMw * wX_UKF;
+    vpColVector error_PF = cX_PF - cX_GT;
+    vpColVector error_UKF = cX_UKF - cX_GT;
+
+    // Log statistics
+    std::cout << "  [Particle Filter method] " << std::endl;
+    std::cout << "    Norm of the error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
+
+    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
+    std::cout << "    Norm of the error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
+    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
+
     //! [Update_displays]
 #ifdef VISP_HAVE_DISPLAY
     //! [Noisy_pose]
@@ -763,28 +789,14 @@ int main(const int argc, const char *argv[])
     plot.plot(0, 0, object_pos[0], object_pos[1]);
 
     // Plot the PF filtered state
-    vpColVector XestPF = pfFilter.computeFilteredState();
     plot.plot(0, 1, XestPF[0], XestPF[1]);
 
 
     // Plot the UKF filtered state
-    vpColVector XestUKF = ukf.getXest();
     plot.plot(0, 2, XestUKF[0], XestUKF[1]);
 
     // Plot the noisy pose
     plot.plot(0, 3, wXnoisy, wYnoisy);
-
-    vpColVector cX_GT = cMw * object_pos;
-    vpColVector wX_UKF(4, 1.);
-    vpColVector wX_PF(4, 1.);
-    for (unsigned int i = 0; i < 3; ++i) {
-      wX_PF[i] = XestPF[i];
-      wX_UKF[i] = XestUKF[i];
-    }
-    vpColVector cX_PF = cMw * wX_PF;
-    vpColVector cX_UKF = cMw * wX_UKF;
-    vpColVector error_PF = cX_PF - cX_GT;
-    vpColVector error_UKF = cX_UKF - cX_GT;
 
     // Plot the PF filtered state error
     plotError.plot(0, 0, t, error_PF.frobeniusNorm());
@@ -829,15 +841,6 @@ int main(const int argc, const char *argv[])
     //! [Update_renderer]
 #endif
     //! [Update_displays]
-
-    // Log statistics
-    std::cout << "  [Particle Filter method] " << std::endl;
-    std::cout << "    Norm of the error = " << error_PF.frobeniusNorm() << " m^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtPF << " ms" << std::endl;
-
-    std::cout << "  [Unscented Kalman Filter method] " << std::endl;
-    std::cout << "    Norm of the error = " << error_UKF.frobeniusNorm() << " m^2" << std::endl;
-    std::cout << "    Fitting duration = " << dtUKF << " ms" << std::endl;
   }
   //! [Simu_loop]
   std::cout << "Press Enter to quit..." << std::endl;
