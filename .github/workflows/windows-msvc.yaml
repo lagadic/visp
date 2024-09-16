@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-windows-msvc:
     runs-on: ${{ matrix.os }}
     defaults:
       run:

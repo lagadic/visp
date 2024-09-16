@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  visp-conda:
+  build-windows-conda:
     name: ${{ matrix.os }} ${{ matrix.compiler }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
     runs-on: ${{ matrix.os }}
 
@@ -85,7 +85,7 @@ jobs:
     name: check-windows-conda
 
     needs:
-    - visp-conda
+    - build-windows-conda
 
     runs-on: Ubuntu-latest
 
