@@ -9,7 +9,6 @@ set(tutorial_cpp
   tutorial-panda3d-renderer.cpp
 )
 
-
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)
