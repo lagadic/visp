@@ -1226,6 +1226,8 @@ void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRef
  * Modify the resulting tag pose returned by getPose() or
  * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
  * in order to get a pose where z-axis is aligned when the camera plane is parallel to the tag.
+ *
+ * \image html img-tag-frame.jpg Tag 36h11_00000 with location of the 4 corners and tag frame
  * \param zAlignedWithCameraFrame : When set to true, estimated tag pose has a z-axis aligned with the
  * camera frame.
  */
