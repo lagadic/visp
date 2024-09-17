@@ -47,52 +47,78 @@
   of the robot when adding a secondary task.
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
-#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
+#include <iostream>
 
-#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_AFMA6)
+
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense2.h>
-
 #include <visp3/core/vpCylinder.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/me/vpMeLine.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureLine.h>
+#include <visp3/robot/vpRobotAfma6.h>
+#include <visp3/vs/vpServoDisplay.h>
 #include <visp3/vs/vpServo.h>
 
-#include <visp3/robot/vpRobotAfma6.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/vs/vpServoDisplay.h>
-
-int main()
-{
 #ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
+using namespace VISP_NAMESPACE_NAME;
 #endif
 
+int main(int argc, char **argv)
+{
+  bool opt_verbose = false;
+  bool opt_adaptive_gain = false;
+
+  for (int i = 1; i < argc; ++i) {
+    if (std::string(argv[i]) == "--verbose") {
+      opt_verbose = true;
+    }
+    else if (std::string(argv[i]) == "--adaptive-gain") {
+      opt_adaptive_gain = true;
+    }
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+      std::cout
+        << argv[0]
+        << " [--adaptive-gain]"
+        << " [--verbose]"
+        << " [--help] [-h]"
+        << std::endl;;
+      return EXIT_SUCCESS;
+    }
+  }
+
+  vpRobotAfma6 robot;
+  vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
+
+  // Load the end-effector to camera frame transformation obtained
+  // using a camera intrinsic model with distortion
+  robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
+
   try {
-    vpImage<unsigned char> I;
+    std::cout << "WARNING: This example will move the robot! "
+      << "Please make sure to have the user stop button at hand!" << std::endl
+      << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
 
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
 
     // Warm up camera
+    vpImage<unsigned char> I;
     for (size_t i = 0; i < 10; ++i) {
       rs.acquire(I);
     }
@@ -104,260 +130,277 @@ int main()
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
-
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    vpServo task;
-
-    std::cout << std::endl;
-    std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
-    std::cout << " Simulation " << std::endl;
-    std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
-
-    int i;
-    int nbline = 2;
-    vpMeLine line[nbline];
+    int nblines = 2;
+    std::vector<vpMeLine> line(nblines);
 
     vpMe me;
-    me.setRange(20);
+    me.setRange(10);
     me.setPointsToTrack(100);
     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
     me.setThreshold(15);
     me.setSampleStep(10);
 
     // Initialize the tracking of the two edges of the cylinder
-    for (i = 0; i < nbline; i++) {
+    for (int i = 0; i < nblines; ++i) {
       line[i].setDisplay(vpMeSite::RANGE_RESULT);
       line[i].setMe(&me);
 
       line[i].initTracking(I);
       line[i].track(I);
+      vpDisplay::flush(I);
     }
 
-    vpRobotAfma6 robot;
-    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
-    // robot.move("zero.pos");
-
+    // Get camera intrinsics
     vpCameraParameters cam;
-    // Update camera parameters
     robot.getCameraParameters(cam, I);
+    std::cout << "cam:\n" << cam << std::endl;
 
-    vpTRACE("sets the current position of the visual feature ");
-    vpFeatureLine p[nbline];
-    for (i = 0; i < nbline; i++)
-      vpFeatureBuilder::create(p[i], cam, line[i]);
+    // Sets the current position of the visual feature ");
+    std::vector<vpFeatureLine> s_line(nblines);
+    for (int i = 0; i < nblines; ++i) {
+      vpFeatureBuilder::create(s_line[i], cam, line[i]);
+    }
 
-    vpTRACE("sets the desired position of the visual feature ");
-    vpCylinder cyld(0, 1, 0, 0, 0, 0, 0.04);
+    // Sets the desired position of the visual feature ");
+    vpCylinder cylinder(0, 1, 0, 0, 0, 0, 0.04);
 
-    vpHomogeneousMatrix cMo(0, 0, 0.5, 0, 0, vpMath::rad(0));
+    vpHomogeneousMatrix c_M_o(0, 0, 0.4, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
-    cyld.project(cMo);
+    cylinder.project(c_M_o);
 
-    vpFeatureLine pd[nbline];
-    vpFeatureBuilder::create(pd[0], cyld, vpCylinder::line1);
-    vpFeatureBuilder::create(pd[1], cyld, vpCylinder::line2);
+    std::vector<vpFeatureLine> s_line_d(nblines);
+    vpFeatureBuilder::create(s_line_d[0], cylinder, vpCylinder::line1);
+    vpFeatureBuilder::create(s_line_d[1], cylinder, vpCylinder::line2);
 
-    // Those lines are needed to keep the conventions define in vpMeLine
-    // (Those in vpLine are less restrictive)  Another way to have the
-    // coordinates of the desired features is to learn them before executing
-    // the program.
-    pd[0].setRhoTheta(-fabs(pd[0].getRho()), 0);
-    pd[1].setRhoTheta(-fabs(pd[1].getRho()), M_PI);
+    {
+      std::cout << "Desired features: " << std::endl;
+      std::cout << " - line 1: rho: " << s_line_d[0].getRho() << " theta: " << vpMath::deg(s_line_d[0].getTheta()) << "deg" << std::endl;
+      std::cout << " - line 2: rho: " << s_line_d[1].getRho() << " theta: " << vpMath::deg(s_line_d[1].getTheta()) << "deg" << std::endl;
+    }
 
-    vpTRACE("define the task");
-    vpTRACE("\t we want an eye-in-hand control law");
-    vpTRACE("\t robot is controlled in the camera frame");
+    // {
+    //   std::cout << "Desired features: " << std::endl;
+    //   std::cout << " - line 1: rho: " << s_d[0].getRho() << " theta: " << vpMath::deg(s_d[0].getTheta()) << "deg" << std::endl;
+    //   std::cout << " - line 2: rho: " << s_d[1].getRho() << " theta: " << vpMath::deg(s_d[1].getTheta()) << "deg" << std::endl;
+    // }
+
+    // Next 2 lines are needed to keep the conventions defined in vpMeLine
+    s_line_d[0].setRhoTheta(+fabs(s_line_d[0].getRho()), 0);
+    s_line_d[1].setRhoTheta(+fabs(s_line_d[1].getRho()), M_PI);
+    // {
+    //   std::cout << "Modified desired features: " << std::endl;
+    //   std::cout << " - line 1: rho: " << s_d[0].getRho() << " theta: " << vpMath::deg(s_d[0].getTheta()) << "deg" << std::endl;
+    //   std::cout << " - line 2: rho: " << s_d[1].getRho() << " theta: " << vpMath::deg(s_d[1].getTheta()) << "deg" << std::endl;
+    // }
+
+    // Define the task
+    vpServo task;
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
+    // - we want to see a two lines on two lines
+    for (int i = 0; i < nblines; ++i) {
+      task.addFeature(s_line[i], s_line_d[i]);
+    }
 
-    vpTRACE("\t we want to see a point on a point..");
-    std::cout << std::endl;
-    for (i = 0; i < nbline; i++)
-      task.addFeature(p[i], pd[i]);
+    // Set the gain
+    if (opt_adaptive_gain) {
+      vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      task.setLambda(lambda);
+    }
+    else {
+      task.setLambda(0.5);
+    }
 
-    vpTRACE("\t set the gain");
-    task.setLambda(0.3);
-
-    vpTRACE("Display task information ");
+    // Display task information
     task.print();
-
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    unsigned int iter = 0;
-    vpTRACE("\t loop");
-    vpColVector v;
-    vpImage<vpRGBa> Ic;
-    double lambda_av = 0.05;
-    double alpha = 0.02;
-    double beta = 3;
-    double erreur = 1;
-    bool quit = false;
+    vpColVector v_c(6);
+    bool final_quit = false;
+    bool send_velocities = false;
+    double task_error = 1.;
 
     // First loop to reach the convergence position
-    while ((erreur > 0.00001) && (!quit)) {
-      std::cout << "---------------------------------------------" << iter << std::endl;
+    while ((task_error > 0.00001) && (!final_quit)) {
+      double t_start = vpTime::measureTimeMs();
 
-      try {
-        rs.acquire(I);
-        vpDisplay::display(I);
+      rs.acquire(I);
+      vpDisplay::display(I);
 
-        // Track the two edges and update the features
-        for (i = 0; i < nbline; i++) {
-          line[i].track(I);
-          line[i].display(I, vpColor::red);
+      std::stringstream ss;
+      ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
+      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
 
-          vpFeatureBuilder::create(p[i], cam, line[i]);
+      // Track the two edges and update the features
+      for (int i = 0; i < nblines; ++i) {
+        line[i].track(I);
+        line[i].display(I, vpColor::red);
 
-          p[i].display(cam, I, vpColor::red);
-          pd[i].display(cam, I, vpColor::green);
-        }
+        vpFeatureBuilder::create(s_line[i], cam, line[i]);
+        //std::cout << "line " << i << " rho: " << s[i].getRho() << " theta: " << vpMath::deg(s[i].getTheta()) << " deg" << std::endl;
 
-        // Adaptative gain
-        double gain;
-        {
-          if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
-            gain = lambda_av;
-          else {
-            gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
-          }
-        }
-        task.setLambda(gain);
-
-        v = task.computeControlLaw();
-
-        if (iter == 0) {
-          vpDisplay::getClick(I);
-        }
-
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
-        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-        }
-        vpDisplay::flush(I);
-      }
-      catch (...) {
-        v = 0;
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        robot.stopMotion();
-        return EXIT_FAILURE;
+        s_line[i].display(cam, I, vpColor::red);
+        s_line_d[i].display(cam, I, vpColor::green);
       }
 
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      erreur = (task.getError()).sumSquare();
-      vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
-      iter++;
+      v_c = task.computeControlLaw();
+      task_error = task.getError().sumSquare();
+
+      if (opt_verbose) {
+        std::cout << "v: " << v_c.t() << std::endl;
+        std::cout << "\t\t || s - s* || = " << task_error << std::endl;;
+      }
+
+      if (!send_velocities) {
+        v_c = 0;
+      }
+
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
+
+      vpDisplay::flush(I);
+
+      ss.str("");
+      ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
+      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      vpDisplay::flush(I);
+
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        switch (button) {
+        case vpMouseButton::button1:
+          send_velocities = !send_velocities;
+          break;
+
+        case vpMouseButton::button3:
+          final_quit = true;
+          break;
+
+        default:
+          break;
+        }
+      }
     }
 
-    /**********************************************************************************************/
-
-    // Second loop is to compute the control while taking into account the
-    // secondary task.
-    vpColVector e1(6);
-    e1 = 0;
-    vpColVector e2(6);
-    e2 = 0;
-    vpColVector proj_e1;
-    vpColVector proj_e2;
-    iter = 0;
-    double rapport = 0;
-    double vitesse = 0.02;
+    // Second loop is to compute the control while taking into account the secondary task.
+    vpColVector e1(6, 0);
+    vpColVector e2(6, 0);
+    vpColVector proj_e1, proj_e2;
+    unsigned long iter = 0;
+    double secondary_task_speed = 0.02; // 2cm/s
     unsigned int tempo = 1200;
-    quit = false;
-    while (!quit) {
-      std::cout << "---------------------------------------------" << iter << std::endl;
 
-      try {
-        rs.acquire(I);
-        vpDisplay::display(I);
+    while (!final_quit) {
+      double t_start = vpTime::measureTimeMs();
 
-        // Track the two edges and update the features
-        for (i = 0; i < nbline; i++) {
-          line[i].track(I);
-          line[i].display(I, vpColor::red);
+      rs.acquire(I);
+      vpDisplay::display(I);
 
-          vpFeatureBuilder::create(p[i], cam, line[i]);
+      std::stringstream ss;
+      ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
+      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
 
-          p[i].display(cam, I, vpColor::red);
-          pd[i].display(cam, I, vpColor::green);
-        }
+      // Track the two edges and update the features
+      for (int i = 0; i < nblines; ++i) {
+        line[i].track(I);
+        line[i].display(I, vpColor::red);
 
-        v = task.computeControlLaw();
+        vpFeatureBuilder::create(s_line[i], cam, line[i]);
+        //std::cout << "line " << i << " rho: " << s[i].getRho() << " theta: " << vpMath::deg(s[i].getTheta()) << " deg" << std::endl;
 
-        // Compute the new control law corresponding to the secondary task
-        if (iter % tempo < 400 /*&&  iter%tempo >= 0*/) {
-          e2 = 0;
-          e1[0] = fabs(vitesse);
-          proj_e1 = task.secondaryTask(e1);
-          rapport = vitesse / proj_e1[0];
-          proj_e1 *= rapport;
-          v += proj_e1;
-          if (iter == 199)
-            iter += 200; // This line is needed to make on ly an half turn
-          // during the first cycle
-        }
-
-        if (iter % tempo < 600 && iter % tempo >= 400) {
-          e1 = 0;
-          e2[1] = fabs(vitesse);
-          proj_e2 = task.secondaryTask(e2);
-          rapport = vitesse / proj_e2[1];
-          proj_e2 *= rapport;
-          v += proj_e2;
-        }
-
-        if (iter % tempo < 1000 && iter % tempo >= 600) {
-          e2 = 0;
-          e1[0] = -fabs(vitesse);
-          proj_e1 = task.secondaryTask(e1);
-          rapport = -vitesse / proj_e1[0];
-          proj_e1 *= rapport;
-          v += proj_e1;
-        }
-
-        if (iter % tempo < 1200 && iter % tempo >= 1000) {
-          e1 = 0;
-          e2[1] = -fabs(vitesse);
-          proj_e2 = task.secondaryTask(e2);
-          rapport = -vitesse / proj_e2[1];
-          proj_e2 *= rapport;
-          v += proj_e2;
-        }
-
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
-        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-        }
-        vpDisplay::flush(I);
-      }
-      catch (...) {
-        v = 0;
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        robot.stopMotion();
-        return EXIT_FAILURE;
+        s_line[i].display(cam, I, vpColor::red);
+        s_line_d[i].display(cam, I, vpColor::green);
       }
 
-      vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
+      v_c = task.computeControlLaw();
+
+      // Compute the new control law corresponding to the secondary task
+      if (iter % tempo < 400 /*&&  iter%tempo >= 0*/) {
+        e2 = 0;
+        e1[0] = fabs(secondary_task_speed);
+        proj_e1 = task.secondaryTask(e1);
+        double frac = secondary_task_speed / proj_e1[0];
+        proj_e1 *= frac;
+        v_c += proj_e1;
+        if (iter == 199)
+          iter += 200; // This line is needed to make only an half turn // during the first cycle
+      }
+
+      if (iter % tempo < 600 && iter % tempo >= 400) {
+        e1 = 0;
+        e2[1] = fabs(secondary_task_speed);
+        proj_e2 = task.secondaryTask(e2);
+        double frac = secondary_task_speed / proj_e2[1];
+        proj_e2 *= frac;
+        v_c += proj_e2;
+      }
+
+      if (iter % tempo < 1000 && iter % tempo >= 600) {
+        e2 = 0;
+        e1[0] = -fabs(secondary_task_speed);
+        proj_e1 = task.secondaryTask(e1);
+        double frac = -secondary_task_speed / proj_e1[0];
+        proj_e1 *= frac;
+        v_c += proj_e1;
+      }
+
+      if (iter % tempo < 1200 && iter % tempo >= 1000) {
+        e1 = 0;
+        e2[1] = -fabs(secondary_task_speed);
+        proj_e2 = task.secondaryTask(e2);
+        double frac = -secondary_task_speed / proj_e2[1];
+        proj_e2 *= frac;
+        v_c += proj_e2;
+      }
+
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
+
+      ss.str("");
+      ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
+      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 60, 20, "Secondary task started", vpColor::red);
+      vpDisplay::flush(I);
+
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        final_quit = true;
+      }
+
       iter++;
     }
 
-    vpTRACE("Display task information ");
+    std::cout << "Stop the robot " << std::endl;
+    robot.setRobotState(vpRobot::STATE_STOP);
+
+    if (!final_quit) {
+      while (!final_quit) {
+        rs.acquire(I);
+        vpDisplay::display(I);
+
+        vpDisplay::displayText(I, 20, 20, "Click to quit the program.", vpColor::red);
+        vpDisplay::displayText(I, 40, 20, "Visual servo converged.", vpColor::red);
+
+        if (vpDisplay::getClick(I, false)) {
+          final_quit = true;
+        }
+
+        vpDisplay::flush(I);
+      }
+    }
     task.print();
-    return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
-    std::cout << "Test failed with exception: " << e << std::endl;
+    std::cout << "ViSP exception: " << e.what() << std::endl;
+    std::cout << "Stop the robot " << std::endl;
+    robot.setRobotState(vpRobot::STATE_STOP);
     return EXIT_FAILURE;
   }
+
+  return EXIT_SUCCESS;
 }
 
 #else

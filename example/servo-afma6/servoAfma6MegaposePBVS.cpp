@@ -182,7 +182,7 @@ int main(int argc, const char *argv[])
     // Get camera intrinsics
     vpCameraParameters cam =
       rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-    std::cout << "cam:\n" << cam << "\n";
+    std::cout << "cam:\n" << cam << std::endl;
     // Initialize Megapose
     std::shared_ptr<vpMegaPose> megapose;
     try {

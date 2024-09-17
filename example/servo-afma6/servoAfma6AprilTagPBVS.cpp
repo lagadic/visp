@@ -48,11 +48,13 @@
 
 #include <iostream>
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_AFMA6)
+
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/robot/vpRobotAfma6.h>
@@ -62,16 +64,15 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6)
-
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
+void display_point_trajectory(const vpImage<unsigned char> &I,
+                              const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
 {
-  for (size_t i = 0; i < vip.size(); i++) {
+  for (size_t i = 0; i < vip.size(); ++i) {
     if (traj_vip[i].size()) {
       // Add the point only if distance with the previous > 1 pixel
       if (vpImagePoint::distance(vip[i], traj_vip[i].back()) > 1.) {
@@ -82,8 +83,8 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
       traj_vip[i].push_back(vip[i]);
     }
   }
-  for (size_t i = 0; i < vip.size(); i++) {
-    for (size_t j = 1; j < traj_vip[i].size(); j++) {
+  for (size_t i = 0; i < vip.size(); ++i) {
+    for (size_t j = 1; j < traj_vip[i].size(); ++j) {
       vpDisplay::displayLine(I, traj_vip[i][j - 1], traj_vip[i][j], vpColor::green, 2);
     }
   }
@@ -92,18 +93,20 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
 int main(int argc, char **argv)
 {
   double opt_tagSize = 0.120;
-  bool display_tag = true;
   int opt_quad_decimate = 2;
   bool opt_verbose = false;
   bool opt_plot = false;
   bool opt_adaptive_gain = false;
   bool opt_task_sequencing = false;
-  double convergence_threshold_t = 0.0005; // Value in [m]
-  double convergence_threshold_tu = 0.5;   // Value in [deg]
+  double opt_convergence_threshold_t = 0.0005; // Value in [m]
+  double opt_convergence_threshold_tu = 0.5;   // Value in [deg]
 
-  for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+  bool display_tag = true;
+
+  for (int i = 1; i < argc; ++i) {
+    if ((std::string(argv[i]) == "--tag-size") && (i + 1 < argc)) {
       opt_tagSize = std::stod(argv[i + 1]);
+      ++i;
     }
     else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
@@ -111,30 +114,42 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
     }
-    else if (std::string(argv[i]) == "--adaptive_gain") {
+    else if (std::string(argv[i]) == "--adaptive-gain") {
       opt_adaptive_gain = true;
     }
-    else if (std::string(argv[i]) == "--task_sequencing") {
+    else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--quad-decimate") && (i + 1 < argc)) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
+      ++i;
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
-      convergence_threshold_t = 0.;
-      convergence_threshold_tu = 0.;
+      opt_convergence_threshold_t = 0.;
+      opt_convergence_threshold_tu = 0.;
     }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
       std::cout
-        << argv[0] << " [--tag_size <marker size in meter; default " << opt_tagSize << ">] "
-        << "[--quad_decimate <decimation; default " << opt_quad_decimate
-        << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
-        << "\n";
+        << argv[0]
+        << " [--tag-size <marker size in meter; default " << opt_tagSize << ">]"
+        << " [--quad-decimate <decimation; default " << opt_quad_decimate << ">]"
+        << " [--adaptive-gain]"
+        << " [--plot]"
+        << " [--task-sequencing]"
+        << " [--no-convergence-threshold]"
+        << " [--verbose]"
+        << " [--help] [-h]"
+        << std::endl;;
       return EXIT_SUCCESS;
     }
   }
 
   vpRobotAfma6 robot;
+  vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
+
+  // Load the end-effector to camera frame transformation obtained
+  // using a camera intrinsic model with distortion
+  robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
 
   try {
     std::cout << "WARNING: This example will move the robot! "
@@ -142,40 +157,26 @@ int main(int argc, char **argv)
       << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
-    /*
-     * Move to a safe position
-     */
-    vpColVector q(6, 0);
-    q[0] = 0.;
-    q[1] = 0.;
-    q[2] = 0.;
-    q[3] = vpMath::rad(0.);
-    q[4] = vpMath::rad(0.);
-    q[5] = vpMath::rad(0.);
-    std::cout << "Move to joint position: " << q.t() << std::endl;
-    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-    robot.setPosition(vpRobot::JOINT_STATE, q);
-
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
 
+    // Warm up camera
+    vpImage<unsigned char> I;
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
+
     // Get camera intrinsics
-    vpCameraParameters cam =
-      rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-    std::cout << "cam:\n" << cam << "\n";
+    vpCameraParameters cam;
+    robot.getCameraParameters(cam, I);
+    std::cout << "cam:\n" << cam << std::endl;
 
-    vpImage<unsigned char> I(height, width);
-
-#if defined(VISP_HAVE_X11)
-    vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI dc(I, 10, 10, "Color image");
-#endif
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, 10, 10, "Current image");
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
     vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -184,29 +185,84 @@ int main(int argc, char **argv)
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
     detector.setDisplayTag(display_tag);
     detector.setAprilTagQuadDecimate(opt_quad_decimate);
+    detector.setZAlignedWithCameraAxis(true);
+
+    // Tag frame for pose estimation is the following
+    // - When using
+    //   detector.setZAlignedWithCameraAxis(false);
+    //   detector.detect();
+    //   we consider the tag frame (o) such as z_o axis is not aligned with camera frame
+    //   (meaning z_o axis is facing the camera)
+    //
+    //   3    y    2
+    //        |
+    //        o--x
+    //
+    //   0         1
+    //
+    //   In that configuration, it is more difficult to set a desired camera pose c_M_o.
+    //   To ease this step we can introduce an extra transformation matrix o'_M_o to align the axis
+    //   with the camera frame:
+    //
+    //         o'--x
+    //         |
+    //         y
+    //
+    //   where
+    //            | 1  0  0  0 |
+    //   o'_M_o = | 0 -1  0  0 |
+    //            | 0  0 -1  0 |
+    //            | 0  0  0  1 |
+    //
+    //   Defining the desired camera pose in frame o' becomes than easier.
+    //
+    // - When using rather
+    //   detector.setZAlignedWithCameraAxis(true);
+    //   detector.detect();
+    //   we consider the tag frame (o) such as z_o axis is aligned with camera frame
+    //
+    //   3         2
+    //
+    //        o--x
+    //        |
+    //   0    y    1
+    //
+    //   In that configuration, it is easier to define a desired camera pose c_M_o since all the axis
+    //   (camera frame and tag frame are aligned)
 
     // Servo
-    vpHomogeneousMatrix cdMc, cMo, oMo;
+    vpHomogeneousMatrix cd_M_c, c_M_o, o_M_o;
 
     // Desired pose to reach
-    vpHomogeneousMatrix cdMo(vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
-                             vpRotationMatrix({ 1, 0, 0, 0, -1, 0, 0, 0, -1 }));
+    vpHomogeneousMatrix cd_M_o(vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
+                               vpThetaUVector(vpMath::rad(10), vpMath::rad(3), vpMath::rad(5)));
+    if (!detector.isZAlignedWithCameraAxis()) {
+      vpHomogeneousMatrix oprim_M_o = { 1,  0,  0, 0,
+                                        0, -1,  0, 0,
+                                        0,  0, -1, 0,
+                                        0,  0,  0, 1 };
+      cd_M_o *= oprim_M_o;
+    }
 
-    cdMc = cdMo * cMo.inverse();
-    vpFeatureTranslation t(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    t.build(cdMc);
-    tu.build(cdMc);
+    cd_M_c = cd_M_o * c_M_o.inverse();
 
-    vpFeatureTranslation td(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
+    // Create current visual features
+    vpFeatureTranslation s_t(vpFeatureTranslation::cdMc);
+    vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
+    s_t.build(cd_M_c);
+    s_tu.build(cd_M_c);
+
+    // Create desired visual features
+    vpFeatureTranslation s_t_d(vpFeatureTranslation::cdMc);
+    vpFeatureThetaU s_tu_d(vpFeatureThetaU::cdRc);
 
     vpServo task;
-    task.addFeature(t, td);
-    task.addFeature(tu, tud);
+    task.addFeature(s_t, s_t_d);
+    task.addFeature(s_tu, s_tu_d);
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
 
+    // Set the gain
     if (opt_adaptive_gain) {
       vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
@@ -256,8 +312,8 @@ int main(int argc, char **argv)
 
       vpDisplay::display(I);
 
-      std::vector<vpHomogeneousMatrix> cMo_vec;
-      detector.detect(I, opt_tagSize, cam, cMo_vec);
+      std::vector<vpHomogeneousMatrix> c_M_o_vec;
+      detector.detect(I, opt_tagSize, cam, c_M_o_vec);
 
       std::stringstream ss;
       ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
@@ -266,30 +322,30 @@ int main(int argc, char **argv)
       vpColVector v_c(6);
 
       // Only one tag is detected
-      if (cMo_vec.size() == 1) {
-        cMo = cMo_vec[0];
+      if (c_M_o_vec.size() == 1) {
+        c_M_o = c_M_o_vec[0];
 
         static bool first_time = true;
         if (first_time) {
           // Introduce security wrt tag positioning in order to avoid PI rotation
-          std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
-          v_oMo[1].build(0, 0, 0, 0, 0, M_PI);
-          for (size_t i = 0; i < 2; i++) {
-            v_cdMc[i] = cdMo * v_oMo[i] * cMo.inverse();
+          std::vector<vpHomogeneousMatrix> v_o_M_o(2), v_cd_M_c(2);
+          v_o_M_o[1].build(0, 0, 0, 0, 0, M_PI);
+          for (size_t i = 0; i < 2; ++i) {
+            v_cd_M_c[i] = cd_M_o * v_o_M_o[i] * c_M_o.inverse();
           }
-          if (std::fabs(v_cdMc[0].getThetaUVector().getTheta()) < std::fabs(v_cdMc[1].getThetaUVector().getTheta())) {
-            oMo = v_oMo[0];
+          if (std::fabs(v_cd_M_c[0].getThetaUVector().getTheta()) < std::fabs(v_cd_M_c[1].getThetaUVector().getTheta())) {
+            o_M_o = v_o_M_o[0];
           }
           else {
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
-            oMo = v_oMo[1]; // Introduce PI rotation
+            o_M_o = v_o_M_o[1]; // Introduce PI rotation
           }
         }
 
-        // Update visual features
-        cdMc = cdMo * oMo * cMo.inverse();
-        t.build(cdMc);
-        tu.build(cdMc);
+        // Update current visual features
+        cd_M_c = cd_M_o * o_M_o * c_M_o.inverse();
+        s_t.build(cd_M_c);
+        s_tu.build(cd_M_c);
 
         if (opt_task_sequencing) {
           if (!servo_started) {
@@ -305,8 +361,8 @@ int main(int argc, char **argv)
         }
 
         // Display desired and current pose features
-        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
-        vpDisplay::displayFrame(I, cMo, cam, opt_tagSize / 2, vpColor::none, 3);
+        vpDisplay::displayFrame(I, cd_M_o * o_M_o, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
+        vpDisplay::displayFrame(I, c_M_o, cam, opt_tagSize / 2, vpColor::none, 3);
         // Get tag corners
         std::vector<vpImagePoint> vip = detector.getPolygon(0);
         // Get the tag cog corresponding to the projection of the tag frame in the image
@@ -327,8 +383,8 @@ int main(int argc, char **argv)
           std::cout << "v_c: " << v_c.t() << std::endl;
         }
 
-        vpTranslationVector cd_t_c = cdMc.getTranslationVector();
-        vpThetaUVector cd_tu_c = cdMc.getThetaUVector();
+        vpTranslationVector cd_t_c = cd_M_c.getTranslationVector();
+        vpThetaUVector cd_tu_c = cd_M_c.getThetaUVector();
         double error_tr = sqrt(cd_t_c.sumSquare());
         double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
 
@@ -342,7 +398,7 @@ int main(int argc, char **argv)
         if (opt_verbose)
           std::cout << "error translation: " << error_tr << " ; error rotation: " << error_tu << std::endl;
 
-        if (error_tr < convergence_threshold_t && error_tu < convergence_threshold_tu) {
+        if ((error_tr < opt_convergence_threshold_t) && (error_tu < opt_convergence_threshold_tu)) {
           has_converged = true;
           std::cout << "Servo task has converged" << std::endl;
           ;
@@ -352,7 +408,7 @@ int main(int argc, char **argv)
         if (first_time) {
           first_time = false;
         }
-      } // end if (cMo_vec.size() == 1)
+      } // end if (c_M_o_vec.size() == 1)
       else {
         v_c = 0;
       }
@@ -378,7 +434,6 @@ int main(int argc, char **argv)
 
         case vpMouseButton::button3:
           final_quit = true;
-          v_c = 0;
           break;
 
         default:
@@ -418,10 +473,6 @@ int main(int argc, char **argv)
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-    return EXIT_FAILURE;
-  }
-  catch (const std::exception &e) {
-    std::cout << "ur_rtde exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 

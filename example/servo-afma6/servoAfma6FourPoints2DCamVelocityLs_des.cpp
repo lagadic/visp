@@ -60,7 +60,9 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#define L 0.06 // to deal with a 12cm by 12cm square
+// Define the object CAD model
+// Here we consider 4 black blobs whose centers are located on the corners of a square.
+#define L 0.06 // To deal with a 12cm by 12cm square
 
 int main()
 {
@@ -101,9 +103,10 @@ int main()
   try {
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 60);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 60);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 60);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
 
     vpImage<unsigned char> I;
@@ -118,7 +121,6 @@ int main()
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
@@ -127,7 +129,6 @@ int main()
 
     std::cout << " task : servo 4 points on a square with dimension " << L << " meters" << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
 
     std::vector<vpDot2> dot(4);
 
@@ -146,14 +147,14 @@ int main()
     // using a camera intrinsic model with distortion
     robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
 
+    // Get camera intrinsics
     vpCameraParameters cam;
-    // Update camera parameters
     robot.getCameraParameters(cam, I);
 
     // Sets the current position of the visual feature
-    std::vector<vpFeaturePoint> p(4);
-    for (size_t i = 0; i < p.size(); ++i) {
-      vpFeatureBuilder::create(p[i], cam, dot[i]); // Retrieve x,y of the vpFeaturePoint structure
+    std::vector<vpFeaturePoint> s(4);
+    for (size_t i = 0; i < s.size(); ++i) {
+      vpFeatureBuilder::create(s[i], cam, dot[i]); // Retrieve x,y of the vpFeaturePoint structure
     }
 
     // Set the position of the square target in a frame which origin is
@@ -165,23 +166,23 @@ int main()
     point[3].setWorldCoordinates(-L, +L, 0);
 
     // Initialise a desired pose to compute s*, the desired 2D point features
-    vpHomogeneousMatrix cMo;
-    vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
-    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
-    vpRotationMatrix cRo(cro);          // Build the rotation matrix
-    cMo.build(cto, cRo);                // Build the homogeneous matrix
+    vpHomogeneousMatrix c_M_o;
+    vpTranslationVector c_t_o(0, 0, 0.5);   // tz = 0.5 meter
+    vpRxyzVector c_r_o(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
+    vpRotationMatrix c_R_o(c_r_o);          // Build the rotation matrix
+    c_M_o.build(c_t_o, c_R_o);              // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
-    std::vector<vpFeaturePoint> pd(4);
+    std::vector<vpFeaturePoint> s_d(4);
     // Compute the desired position of the features from the desired pose
-    for (size_t i = 0; i < pd.size(); ++i) {
+    for (size_t i = 0; i < s_d.size(); ++i) {
       vpColVector cP, p;
-      point[i].changeFrame(cMo, cP);
+      point[i].changeFrame(c_M_o, cP);
       point[i].projection(cP, p);
 
-      pd[i].set_x(p[0]);
-      pd[i].set_y(p[1]);
-      pd[i].set_Z(cP[2]);
+      s_d[i].set_x(p[0]);
+      s_d[i].set_y(p[1]);
+      s_d[i].set_Z(cP[2]);
     }
 
     // Define the task
@@ -193,8 +194,8 @@ int main()
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
     // We want to see a point on a point
-    for (size_t i = 0; i < p.size(); ++i) {
-      task.addFeature(p[i], pd[i]);
+    for (size_t i = 0; i < s.size(); ++i) {
+      task.addFeature(s[i], s_d[i]);
     }
 
     // Set the proportional gain
@@ -221,7 +222,7 @@ int main()
         // Achieve the tracking of the dot in the image
         dot[i].track(I);
         // Update the point feature from the dot location
-        vpFeatureBuilder::create(p[i], cam, dot[i]);
+        vpFeatureBuilder::create(s[i], cam, dot[i]);
       }
 
       // Compute the visual servoing skew vector
@@ -271,7 +272,8 @@ int main()
       vpDisplay::flush(I);
     }
 
-    flog.close(); // Close the log file
+    // Close the log file
+    flog.close();
 
     // Display task information
     task.print();
@@ -279,8 +281,9 @@ int main()
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
-    flog.close(); // Close the log file
-    std::cout << "Test failed with exception: " << e << std::endl;
+    // Close the log file
+    flog.close();
+    std::cout << "Visual servo failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }
