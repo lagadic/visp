@@ -32,7 +32,7 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage,
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < normalsImage.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(normalsImage.getSize()); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
@@ -48,7 +48,7 @@ void displayDepth(const vpImage<float> &depthImage,
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < depthImage.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(depthImage.getSize()); ++i) {
     float val = std::max(0.f, (depthImage.bitmap[i] - nearV) / (farV - nearV));
     depthDisplayImage.bitmap[i] = static_cast<unsigned char>(val * 255.f);
   }
@@ -61,7 +61,7 @@ void displayLightDifference(const vpImage<vpRGBa> &colorImage, const vpImage<vpR
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < colorImage.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(colorImage.getSize()); ++i) {
     float I1 = 0.299 * colorImage.bitmap[i].R + 0.587 * colorImage.bitmap[i].G + 0.114 * colorImage.bitmap[i].B;
     float I2 = 0.299 * colorDiffuseOnly.bitmap[i].R + 0.587 * colorDiffuseOnly.bitmap[i].G + 0.114 * colorDiffuseOnly.bitmap[i].B;
     lightDifference.bitmap[i] = static_cast<unsigned char>(round(abs(I1 - I2)));
@@ -76,7 +76,7 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < cannyRawData.getSize(); ++i) {
+  for (int i = 0; i < static_cast<int>(cannyRawData.getSize()); ++i) {
     vpRGBf &px = cannyRawData.bitmap[i];
     canny.bitmap[i] = 255 * (px.R * px.R + px.G * px.G > 0);
     //canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
@@ -258,10 +258,8 @@ int main(int argc, const char **argv)
   }
   renderer.renderFrame();
   bool end = false;
-  bool firstFrame = true;
   std::vector<double> renderTime, fetchTime, displayTime;
   while (!end) {
-    const double beforeComputeBB = vpTime::measureTimeMs();
     //! [Updating render parameters]
     float nearV = 0, farV = 0;
     geometryRenderer->computeNearAndFarPlanesFromNode(objectName, nearV, farV, true);
