@@ -199,7 +199,6 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   }
   if (!fast) {
     LPoint3 minP, maxP;
-    double t1 = vpTime::measureTimeMs();
     object.calc_tight_bounds(minP, maxP);
     const BoundingBox box(minP, maxP);
     float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
