@@ -1,0 +1,78 @@
+{
+  "camera": {
+    "intrinsics": {
+      "model": "perspectiveWithoutDistortion",
+      "px": 302.573,
+      "py": 302.396,
+      "u0": 162.776,
+      "v0": 122.475
+    },
+    "height": 240,
+    "width": 320
+  },
+  "vvs": {
+    "gain": 2.0,
+    "maxIterations": 10
+  },
+  "model": "data/sequence1/dragon.obj",
+
+  "silhouetteExtractionSettings" : {
+    "threshold": {
+      "type": "relative",
+      "value": 0.1,
+      "reusePreviousPoints": true
+    },
+    "sampling" : {
+      "samplingRate": 1,
+      "numPoints": 512
+    }
+  },
+
+"mask": {
+  "type": "histogram",
+  "bins": 32,
+  "objectUpdateRate": 0.1,
+  "backgroundUpdateRate": 0.1,
+  "maxDepthError": 0.01
+},
+"drift": {
+  "type": "probabilistic",
+  "colorUpdateRate": 0.3,
+  "initialColorSigma": 15.0,
+  "depthSigma": 0.01,
+  "filteringMaxDistance": 0.001,
+  "minDistanceNewPoints": 0.005
+},
+"features": [
+  {
+    "type": "depth",
+    "weight": 0.1,
+    "step": 8,
+    "useMask": true,
+    "minMaskConfidence": 0.7
+  },
+  {
+    "type": "silhouetteColor",
+    "weight": 0.01,
+    "ccd": {
+      "h": 8,
+      "delta_h": 1
+    }
+  },
+  {
+    "type": "klt",
+    "weight": 0.1,
+    "maxReprojectionErrorPixels": 5.0,
+    "newPointsMinPixelDistance": 2,
+    "minimumNumPoints": 20,
+    "blockSize": 3,
+    "harris": 0.05,
+    "maskBorder": 5,
+    "maxFeatures": 200,
+    "minDistance": 5.0,
+    "pyramidLevels": 3,
+    "quality": 0.1,
+    "windowSize": 5
+  }
+]
+}
