@@ -35,6 +35,8 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
+
 set(opt_libs "")
 
 if(USE_OGRE)
@@ -175,7 +177,8 @@ endif()
 
 if(USE_PANDA3D)
   if(Panda3D_INCLUDE_DIRS)
-    list(APPEND opt_incs ${Panda3D_INCLUDE_DIRS})
+    #vp_module_include_directories(SYSTEM ${Panda3D_INCLUDE_DIRS})
+    list(APPEND opt_system_incs ${Panda3D_INCLUDE_DIRS})
   endif()
   if(Panda3D_LIBRARIES)
   list(APPEND opt_libs ${Panda3D_LIBRARIES})
@@ -190,17 +193,5 @@ if(USE_OGRE)
   vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
 endif()
 
-if(USE_PANDA3D)
-  set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra -Wno-reorder-ctor)
-  set(PANDA3D_MODULE_SOURCES
-    vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
-    vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
-    vpPanda3DRendererSet.cpp vpPanda3DPostProcessFilter.cpp vpPanda3DCommonFilters.cpp
-  )
-  foreach(panda_src_name ${PANDA3D_MODULE_SOURCES})
-    vp_set_source_file_compile_flag(src/panda3d-simulator/${panda_src_name} ${PANDA3D_CXX_FLAGS})
-  endforeach()
-endif()
-
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
