@@ -203,8 +203,6 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
   const unsigned left = static_cast<unsigned int>(std::max(0.0, bb.getLeft()));
-  const unsigned bottom = static_cast<unsigned int>(std::min(static_cast<double>(h), bb.getBottom()));
-  const unsigned right = static_cast<unsigned int>(std::min(static_cast<double>(w), bb.getRight()));
   const unsigned numComponents = m_normalDepthTexture->get_num_components();
   const unsigned rowIncrement = m_renderParameters.getImageWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
   const float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
