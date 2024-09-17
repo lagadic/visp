@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(tutorial-panda3d)
 
-find_package(VISP REQUIRED visp_core visp_gui visp_ar)
+find_package(VISP REQUIRED visp_core visp_gui visp_ar visp_io)
 
 # set the list of source files
 set(tutorial_cpp
