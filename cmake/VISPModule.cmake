@@ -596,11 +596,17 @@ macro(vp_target_include_modules target)
       endif()
     elseif(EXISTS "${d}")
       # FS keep external deps inc
-      set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
+      if(is_system)
+        set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS};${d}" CACHE INTERNAL "")
+      else()
+        set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
+      endif()
       vp_target_include_directories(${target} "${is_system}" "${d}")
     endif()
   endforeach()
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
+  vp_list_unique(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS)
+
 endmacro()
 
 # setup include paths for the list of passed modules and recursively add dependent modules
@@ -833,6 +839,9 @@ macro(_vp_create_module)
 
   set_property(TARGET ${the_module} APPEND PROPERTY
     INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}
+  )
+  set_property(TARGET ${the_module} APPEND PROPERTY
+    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
   )
 
   # For dynamic link numbering convenions

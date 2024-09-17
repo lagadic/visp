@@ -1643,6 +1643,8 @@ macro(vp_get_all_includes _includes_modules _includes_extra _system_include_dirs
 
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_INC_DEPS})
+    list(APPEND ${_system_include_dirs} ${VISP_MODULE_${m}_SYSTEM_INC_DEPS})
+
     if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
       list(INSERT ${_includes_modules} 0 "${VISP_MODULE_${m}_LOCATION}/include")
     endif()
