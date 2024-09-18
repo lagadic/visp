@@ -526,6 +526,12 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
+#if defined(VISP_HAVE_OPENMP)
+// Wrapper around OpenMP pragma clauses that disables them if openMP is disabled. This clause should not appear in headers
+#define VISP_OPENMP(clause) \
+_Pragma(omp clause)
+#endif
+
 // Defined if nlohmann json parser is found
 #cmakedefine VISP_HAVE_NLOHMANN_JSON
 

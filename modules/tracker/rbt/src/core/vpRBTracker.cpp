@@ -587,7 +587,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     nlohmann::json driftSettings = j.at("drift");
     m_driftDetector = factory.buildFromJson(driftSettings);
     if (m_driftDetector == nullptr) {
-      throw vpException(vpException::badValue, "Cannot instanciate drift detection with the current settings, make sure that the type is registered in the factory");
+      throw vpException(vpException::badValue, "Cannot instantiate drift detection with the current settings, make sure that the type is registered in the factory");
     }
   }
 }
