@@ -47,6 +47,7 @@
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
 #include <visp3/rbt/vpObjectMaskFactory.h>
 
+#include <visp3/rbt/vpRBInitializationHelper.h>
 
 #define VP_DEBUG_RB_TRACKER 1
 
@@ -590,4 +591,15 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     }
   }
 }
+#endif
+
+#ifdef VISP_HAVE_MODULE_GUI
+void vpRBTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp)
+{
+  vpRBInitializationHelper initializer;
+  initializer.setCameraParameters(m_cam);
+  initializer.initClick(I, initFile, displayHelp);
+  m_cMo = initializer.getPose();
+}
+
 #endif

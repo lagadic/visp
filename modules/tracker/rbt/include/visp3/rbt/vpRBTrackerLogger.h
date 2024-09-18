@@ -130,7 +130,7 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
   out << "Silhouette extraction: " << timer.m_silhouetteExtractionTime << "ms" << std::endl;
 
   out << "Trackers: " << std::endl;
-  for (const std::pair<int, std::vector<double>> &vvsIterData : timer.m_trackerVVSIterTimes) {
+  for (const std::pair<const int, std::vector<double>> vvsIterData : timer.m_trackerVVSIterTimes) {
     double featTrackTime = timer.m_trackerFeatureTrackingTime.find(vvsIterData.first)->second;
     double featExtractionTime = timer.m_trackerFeatureExtractionTime.find(vvsIterData.first)->second;
     double initVVSTime = timer.m_trackerInitVVSTime.find(vvsIterData.first)->second;

@@ -383,9 +383,10 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
 
-    }
-
+  }
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < resolution; ++i) {
     if (!m_controlPoints[i].isValid()) {
       continue;
@@ -499,7 +500,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
 
   }
-  }
+}
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
@@ -509,7 +510,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   error_ccd.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
   m_L.resize(nerror_ccd, 6, false, false);
-  double beforeParallel = vpTime::measureTimeMs();
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
@@ -602,14 +602,11 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
   double afterParallel = vpTime::measureTimeMs();
-  //std::cout << "Parallel region took: " << afterParallel - beforeParallel << std::endl;
   nabla_E = 0.0;
   hessian_E = 0.0;
-  double beforeMestimator = vpTime::measureTimeMs();
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
   m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, error_ccd, m_weights);
 
-  double beforeWeightAndSum = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < m_L.getRows(); ++i) {
     m_weighted_error[i] = error_ccd[i] * m_weights[i];
     for (unsigned int j = 0; j < 6; ++j) {
@@ -631,8 +628,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #pragma omp single
 #endif
     {
-      localGradients.resize(omp_get_num_threads(), localGradient);
-      localHessians.resize(omp_get_num_threads(), localHessian);
+#ifdef VISP_HAVE_OPENMP
+      unsigned int threads = omp_get_num_threads();
+#else
+      unsigned int threads = 1;
+#endif
+      localGradients.resize(threads, localGradient);
+      localHessians.resize(threads, localHessian);
     }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp for schedule(static)
@@ -643,8 +645,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       localHessian += m_hessians[i];
       localGradient += m_gradients[i];
     }
-    localGradients[omp_get_thread_num()] = localGradient;
-    localHessians[omp_get_thread_num()] = localHessian;
+#ifdef VISP_HAVE_OPENMP
+    unsigned int currentThread = omp_get_thread_num();
+#else
+    unsigned int currentThread = 0;
+#endif
+    localGradients[currentThread] = localGradient;
+    localHessians[currentThread] = localHessian;
   }
   for (unsigned int i = 0; i < localGradients.size(); ++i) {
     nabla_E += localGradients[i];

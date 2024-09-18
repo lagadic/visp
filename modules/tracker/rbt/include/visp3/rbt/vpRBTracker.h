@@ -41,13 +41,13 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/mbt/vpMbTracker.h>
-
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/rbt/vpRBSilhouettePointsExtractionSettings.h>
 #include <visp3/rbt/vpPanda3DDepthFilters.h>
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 #include <visp3/rbt/vpRBTrackerLogger.h>
+
+#include <visp3/core/vpDisplay.h>
 
 class vpObjectMask;
 class vpRBDriftDetector;
@@ -58,81 +58,13 @@ class vpRBDriftDetector;
 #include <nlohmann/json_fwd.hpp>
 #endif
 
-// #include <visp3/core/vpUnscentedKalmanPose.h>
-// class VISP_EXPORT vpRBTrackerFilter
-// {
-// public:
-//   vpRBTrackerFilter() : m_initialized(false)
-//   {
-//     double opt_stdevP0 = 1e-8;
-//     double opt_stdevQ = 1e-10;
-//     double opt_stdevR = 1e-6;
-//     vpMatrix Id;
-//     Id.eye(6);
-//     vpMatrix P0 = Id * opt_stdevP0 * opt_stdevP0;
-//     vpMatrix Q = Id * opt_stdevQ * opt_stdevQ;
-//     vpMatrix R = Id * opt_stdevR * opt_stdevR;
-//     double alphaPred = 0.01;
-//     vpUnscentedKalmanPose::State X0;
-//     Id.eye(3);
-//     vpMatrix R_ukfm = Id * opt_stdevR * opt_stdevR;
-//     vpUnscentedKalmanPose ukfm(Q, R_ukfm, std::vector<double>(3, alphaPred), X0, P0,
-//                                           vpUnscentedKalmanPose::fSE3, vpUnscentedKalmanPose::hSE3, vpUnscentedKalmanPose::phiSE3,
-//                                           vpUnscentedKalmanPose::phiinvSE3);
-//     m_kalman = std::shared_ptr<vpUnscentedKalmanPose>(new vpUnscentedKalmanPose(ukfm));
-//   }
-
-//   void filter(const vpHomogeneousMatrix &cMo, double dt)
-//   {
-//     if (!m_initialized) {
-//       m_kalman->setX0(cMo);
-//       m_cMoPrev = cMo;
-//       m_initialized = true;
-//     }
-//     else {
-//       std::ios_base::fmtflags f(std::cerr.flags());
-
-//       vpColVector v = vpExponentialMap::inverse(m_cMoPrev * cMo.inverse(), dt);
-//       std::cerr << "Kalman v = " << std::setprecision(4) << std::scientific << v.t() << std::endl;
-//       std::cerr.flags(f);
-//       m_kalman->filter(v, vpUnscentedKalmanPose::asPositionVector(cMo), dt);
-//       m_cMoPrev = cMo;
-//     }
-//   }
-
-//   void reinit(const vpHomogeneousMatrix &cMo)
-//   {
-//     m_kalman->setX0(cMo);
-//     m_cMoPrev = cMo;
-//     m_initialized = true;
-//   }
-
-//   vpHomogeneousMatrix getFilteredPose()
-//   {
-//     return m_kalman->getState();
-//   }
-
-
-
-// private:
-//   std::shared_ptr<vpUnscentedKalmanPose> m_kalman;
-//   vpHomogeneousMatrix m_cMoPrev;
-//   bool m_initialized;
-
-// };
-
-
-
-
-
-class VISP_EXPORT vpRBTracker : public vpMbTracker
+class VISP_EXPORT vpRBTracker
 {
 public:
 
   vpRBTracker();
 
   ~vpRBTracker() = default;
-
 
   void getPose(vpHomogeneousMatrix &cMo) const;
   void setPose(const vpHomogeneousMatrix &cMo);
@@ -159,47 +91,18 @@ public:
 
   const std::shared_ptr<const vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
 
+#ifdef VISP_HAVE_MODULE_GUI
+  void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
 
-  //vpRBTrackerFilter &getFilter() { return m_filter; }
+#endif
+
+    //vpRBTrackerFilter &getFilter() { return m_filter; }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
   void loadConfiguration(const nlohmann::json &j);
 #endif
 
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-                          const std::string &name = "") VP_OVERRIDE
-  { }
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-                            const std::string &name = "") VP_OVERRIDE
-  { }
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) VP_OVERRIDE { }
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) VP_OVERRIDE { }
-  virtual vpColVector getError() const VP_OVERRIDE { return vpColVector(); }
-  virtual vpColVector getRobustWeights() const { return vpColVector(); }
-  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE
-  { }
-  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) VP_OVERRIDE
-  { }
-
-  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
-                                                               const vpHomogeneousMatrix &cMo,
-                                                               const vpCameraParameters &cam,
-                                                               bool displayFullModel = false)
-  {
-    return {};
-  }
-
-  virtual void init(const vpImage<unsigned char> &I) VP_OVERRIDE { }
-  virtual void resetTracker() VP_OVERRIDE { }
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE { }
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) VP_OVERRIDE { }
-  virtual void testTracking() VP_OVERRIDE { }
-  virtual void track(const vpImage<vpRGBa> &I) VP_OVERRIDE { }
-  virtual void computeVVSInit() VP_OVERRIDE { }
-  virtual void computeVVSInteractionMatrixAndResidu() VP_OVERRIDE { }
 protected:
 
   void track(vpRBFeatureTrackerInput &input);
@@ -231,9 +134,9 @@ protected:
 
   std::vector<std::shared_ptr<vpRBFeatureTracker>> m_trackers; //! List of trackers
 
-  // vpHomogeneousMatrix m_cMo;
+  vpHomogeneousMatrix m_cMo;
   vpHomogeneousMatrix m_cMoPrev;
-  //vpCameraParameters m_cam;
+  vpCameraParameters m_cam;
 
   vpRBFeatureTrackerInput m_currentFrame;
   vpRBFeatureTrackerInput m_previousFrame;

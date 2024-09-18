@@ -138,12 +138,11 @@ int main(int argc, const char **argv)
     tracker.initClick(Id, baseArgs.initFile, true);
   }
   else {
-    throw vpException(vpException::notImplementedError, "Cannot initalize tracking: no auto init function provided");
+    throw vpException(vpException::notImplementedError, "Cannot initialize tracking: no auto init function provided");
   }
 
   if (baseArgs.display) {
     vpDisplay::flush(Id);
-
   }
 
   int im = sequenceArgs.startFrame;

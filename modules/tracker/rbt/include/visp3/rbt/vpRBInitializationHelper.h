@@ -1,0 +1,40 @@
+#ifndef VP_RB_INITIALIZATION_HELPER_H
+#define VP_RB_INITIALIZATION_HELPER_H
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpCameraParameters.h>
+
+#include <string>
+#include <iostream>
+
+template <typename T>
+class vpImage;
+
+
+class VISP_EXPORT vpRBInitializationHelper
+{
+public:
+  void removeComment(std::ifstream &fileId);
+  void savePose(const std::string &filename) const;
+
+  vpHomogeneousMatrix getPose() const { return m_cMo; }
+
+  void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
+
+#ifdef VISP_HAVE_MODULE_GUI
+  template <typename T>
+  void initClick(const vpImage<T> &I, const std::string &initFile, bool displayHelp);
+
+#endif
+
+private:
+  std::string m_poseSavingFileName;
+
+  vpHomogeneousMatrix m_cMo;
+  vpCameraParameters m_cam;
+};
+
+
+
+#endif
