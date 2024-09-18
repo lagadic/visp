@@ -37,7 +37,9 @@ struct CmdArguments
 void updateDepth(const vpImage<uint16_t> &depthRaw, float depthScale, float maxZDisplay, vpImage<float> &depth, vpImage<unsigned char> &IdepthDisplay)
 {
   depth.resize(depthRaw.getHeight(), depthRaw.getWidth());
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < depthRaw.getSize(); ++i) {
     depth.bitmap[i] = depthScale * static_cast<float>(depthRaw.bitmap[i]);
     IdepthDisplay.bitmap[i] = depth.bitmap[i] > maxZDisplay ? 0 : static_cast<unsigned int>((depth.bitmap[i] / maxZDisplay) * 255.f);
@@ -53,7 +55,7 @@ int main(int argc, const char **argv)
   vpRBTrackerTutorial::vpRBExperimentPlotter plotter;
 
   vpJsonArgumentParser parser(
-    "Tutorial showing the usage of the Render-Based tracker with a realsense camera",
+    "Tutorial showing the usage of the Render-Based tracker with a RealSense camera",
     "--config", "/"
   );
 

@@ -37,6 +37,13 @@
 #ifndef VP_RB_KLT_TRACKER_H
 #define VP_RB_KLT_TRACKER_H
 
+#include <visp3/core/vpConfig.h>
+
+#if (defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO))
+#define VP_HAVE_RB_KLT_TRACKER
+#endif
+
+#if defined(VP_HAVE_RB_KLT_TRACKER)
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpTrackingException.h>
@@ -44,8 +51,6 @@
 #include <visp3/klt/vpKltOpencv.h>
 
 #include <opencv2/core/mat.hpp>
-
-
 
 class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 {
@@ -194,4 +199,5 @@ private:
   std::map<long, vpTrackedKltPoint> m_points;
 
 };
+#endif
 #endif

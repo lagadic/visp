@@ -32,7 +32,10 @@
 *****************************************************************************/
 
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
+
+#ifdef VISP_HAVE_OPENMP
 #include <omp.h>
+#endif
 
 #define VISP_DEBUG_CCD_TRACKER 0
 
@@ -243,7 +246,9 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &cam, const vpIm
 
 void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
 {
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (vpRBSilhouetteControlPoint &p : m_controlPoints) {
     p.updateSilhouettePoint(cMo);
   }
@@ -270,7 +275,9 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
   // the second column store the one inside the curve
   vpMatrix normalized_param = vpMatrix(resolution, 2, 0.0);
 
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
     // temporary points used to store those points in the
     // normal direction as well as negative normal direction
@@ -376,7 +383,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
 
-  }
+    }
 
 #pragma omp parallel for
   for (unsigned int i = 0; i < resolution; ++i) {
@@ -492,7 +499,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
 
   }
-}
+  }
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
@@ -503,7 +510,9 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   m_weighted_error.resize(nerror_ccd, false);
   m_L.resize(nerror_ccd, 6, false, false);
   double beforeParallel = vpTime::measureTimeMs();
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
+#endif
   {
 
     // vpMatrix tmp_cov(3, 3);
@@ -515,7 +524,9 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     double Lnvp[6];
     unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
 
+#ifdef VISP_HAVE_OPENMP
 #pragma omp for
+#endif
     for (unsigned int kk = 0; kk < m_controlPoints.size(); kk++) {
       const int i = kk;
       const vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
@@ -610,17 +621,22 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
   std::vector<vpColVector> localGradients; // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
   std::vector<vpMatrix> localHessians;
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
+#endif
   {
     vpColVector localGradient(nabla_E.getRows(), 0.0);
     vpMatrix localHessian(hessian_E.getRows(), hessian_E.getCols(), 0.0);
+#ifdef VISP_HAVE_OPENMP
 #pragma omp single
+#endif
     {
       localGradients.resize(omp_get_num_threads(), localGradient);
       localHessians.resize(omp_get_num_threads(), localHessian);
     }
-
+#ifdef VISP_HAVE_OPENMP
 #pragma omp for schedule(static)
+#endif
     for (unsigned int i = 0; i < m_gradients.size(); ++i) {
       m_gradients[i] *= m_weights[i];
       m_hessians[i] *= m_weights[i];
@@ -635,22 +651,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     hessian_E += localHessians[i];
   }
   double afterWeight = vpTime::measureTimeMs();
-  //std::cout << "Weighting and sum took " << afterWeight - beforeWeightAndSum << std::endl;
-
-  //sigmaF = 0.2*sigmaF + 0.8*computeCovarianceMatrix(m_L,v,error_ccd);
-  //std::cout << " sigmaF " <<  sigmaF << std::endl;
 
   m_LTL = hessian_E;
   m_LTR = -nabla_E;
-
-  // m_LTL = m_L.AtA();
-  // std::cout << m_LTL - hessian_E << std::endl;
-  // computeJTR(m_L, -m_weighted_error, m_LTR);
 
   vpMatrix hessian_E_inv = hessian_E.inverseByCholesky();
   //Sigma_Phi = /*Sigma_Phi +*/ 2*hessian_E_inv;
   Sigma_Phi = m_ccdParameters.covarianceIterDecreaseFactor * Sigma_Phi + 2 * (1 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
 
   m_cov = Sigma_Phi;
-  //std::cout << "Rest took: " << vpTime::measureTimeMs() - afterWeight << std::endl;
 }

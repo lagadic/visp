@@ -136,7 +136,9 @@ public:
       vpDisplay::getImage(IRGB, IColOverlay);
       vpDisplay::getImage(Idepth, IdepthOverlay);
       vpDisplay::getImage(Imask, ImaskOverlay);
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
       for (unsigned int i = 0; i < IRGB.getHeight(); ++i) {
         memcpy(Iout[i], IgrayOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
         memcpy(Iout[i] + IRGB.getWidth(), IColOverlay[i], IRGB.getWidth() * sizeof(vpRGBa));
@@ -342,7 +344,9 @@ void enableRendererProfiling()
 
 void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normalDisplayImage)
 {
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (int i = 0; i < normalsImage.getSize(); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
@@ -356,7 +360,9 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normal
 void displayCanny(const vpImage<vpRGBf> &cannyRawData,
                   vpImage<unsigned char> &canny, const vpImage<unsigned char> &valid)
 {
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (int i = 0; i < cannyRawData.getSize(); ++i) {
     vpRGBf &px = cannyRawData.bitmap[i];
     canny.bitmap[i] = valid.bitmap[i] * 255;

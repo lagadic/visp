@@ -50,7 +50,9 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
   if (m_points.size() > 0) {
 
     // Step 0: project all points
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
     for (vpStored3DSurfaceColorPoint &p : m_points) {
       p.update(cTo, cprevTo, frame.cam);
     }

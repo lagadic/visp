@@ -31,6 +31,9 @@
 *****************************************************************************/
 
 #include <visp3/rbt/vpRBKltTracker.h>
+
+#if defined(VP_HAVE_RB_KLT_TRACKER)
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -286,3 +289,5 @@ void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsign
     vpDisplay::displayPoint(I, v, u, vpColor::red, 2);
   }
 }
+
+#endif

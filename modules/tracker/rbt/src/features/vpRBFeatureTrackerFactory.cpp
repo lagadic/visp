@@ -54,14 +54,16 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
     p->loadJsonConfiguration(j);
     return p;
   });
-  registerType("klt", [](const nlohmann::json &j) {
-    std::shared_ptr<vpRBKltTracker> p(new vpRBKltTracker());
-    p->loadJsonConfiguration(j);
-    return p;
-  });
   registerType("depth", [](const nlohmann::json &j) {
     std::shared_ptr<vpRBDenseDepthTracker> p(new vpRBDenseDepthTracker());
     p->loadJsonConfiguration(j);
     return p;
   });
+#if defined(VP_HAVE_RB_KLT_TRACKER)
+  registerType("klt", [](const nlohmann::json &j) {
+    std::shared_ptr<vpRBKltTracker> p(new vpRBKltTracker());
+    p->loadJsonConfiguration(j);
+    return p;
+  });
+#endif
 }

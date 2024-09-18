@@ -166,7 +166,9 @@ int main(int argc, const char **argv)
         float scale = 9.999999747378752e-05;
         depth.resize(dataArray.getHeight(), dataArray.getWidth());
         depthDisplay.resize(dataArray.getHeight(), dataArray.getWidth());
-#pragma omp simd
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
         for (unsigned int i = 0; i < dataArray.getSize(); ++i) {
           float value = static_cast<float>(dataArray.bitmap[i]) * scale;
           depth.bitmap[i] = value;

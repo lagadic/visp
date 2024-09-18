@@ -125,7 +125,9 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   }
   double t1 = vpTime::measureTimeMs();
   vpRotationMatrix cRo = cMo.getRotationMatrix();
+#ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     vpDepthPoint &depthPoint = m_depthPoints[i];
     depthPoint.update(cMo, cRo);

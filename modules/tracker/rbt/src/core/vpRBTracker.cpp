@@ -361,13 +361,20 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   frame.renders.boundingBox = m_renderer.getBoundingBox();
 
   // Extract data from Panda textures
-#pragma omp sections
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel sections
+#endif
+
   {
+#ifdef VISP_HAVE_OPENMP
 #pragma omp section
+#endif
     {
       m_renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(frame.renders.normals, frame.renders.depth, frame.renders.boundingBox, m_imageHeight, m_imageWidth);
     }
+#ifdef VISP_HAVE_OPENMP
 #pragma omp section
+#endif
     {
       m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->getRender(frame.renders.silhouetteCanny, frame.renders.isSilhouette, frame.renders.boundingBox, m_imageHeight, m_imageWidth);
       // m_renderer.placeRenderInto(m_tempRenders.renders.silhouetteCanny, frame.renders.silhouetteCanny, vpRGBf(0.f));
