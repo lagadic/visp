@@ -45,6 +45,11 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#include <type_traits>
+#endif
+
+
 BEGIN_VISP_NAMESPACE
 /*!
   \class vpRGBa
@@ -171,5 +176,12 @@ public:
 
   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
 };
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+static_assert(std::is_trivially_assignable_v<vpRGBa, vpRGBa>);
+static_assert(std::is_trivially_copyable_v<vpRGBa>);
+#endif
+
+
 END_VISP_NAMESPACE
 #endif
