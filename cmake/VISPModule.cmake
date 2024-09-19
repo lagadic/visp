@@ -836,7 +836,6 @@ macro(_vp_create_module)
     target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
   endif()
 
-
   set_property(TARGET ${the_module} APPEND PROPERTY
     INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}
   )

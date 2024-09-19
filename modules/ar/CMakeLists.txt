@@ -177,7 +177,7 @@ endif()
 
 if(USE_PANDA3D)
   if(Panda3D_INCLUDE_DIRS)
-    #vp_module_include_directories(SYSTEM ${Panda3D_INCLUDE_DIRS})
+    # Add Panda3D include dirs as system to avoid warnings due to Panda3D headers
     list(APPEND opt_system_incs ${Panda3D_INCLUDE_DIRS})
   endif()
   if(Panda3D_LIBRARIES)
