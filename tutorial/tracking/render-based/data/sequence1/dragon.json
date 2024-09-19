@@ -24,7 +24,7 @@
     },
     "sampling" : {
       "samplingRate": 1,
-      "numPoints": 512
+      "numPoints": 128
     }
   },
 
@@ -37,7 +37,7 @@
 },
 "drift": {
   "type": "probabilistic",
-  "colorUpdateRate": 0.3,
+  "colorUpdateRate": 0.1,
   "initialColorSigma": 15.0,
   "depthSigma": 0.01,
   "filteringMaxDistance": 0.001,
@@ -51,27 +51,22 @@
     "useMask": true,
     "minMaskConfidence": 0.7
   },
-  {
-    "type": "silhouetteColor",
-    "weight": 0.01,
-    "ccd": {
-      "h": 8,
-      "delta_h": 1
-    }
-  },
+
   {
     "type": "klt",
     "weight": 0.1,
+    "useMask": true,
+    "minMaskConfidence": 0.5,
     "maxReprojectionErrorPixels": 5.0,
-    "newPointsMinPixelDistance": 2,
+    "newPointsMinPixelDistance": 4,
     "minimumNumPoints": 20,
-    "blockSize": 3,
+    "blockSize": 5,
+    "useHarris": true,
     "harris": 0.05,
-    "maskBorder": 5,
-    "maxFeatures": 200,
+    "maxFeatures": 500,
     "minDistance": 5.0,
     "pyramidLevels": 3,
-    "quality": 0.1,
+    "quality": 0.05,
     "windowSize": 5
   }
 ]
