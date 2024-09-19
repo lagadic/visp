@@ -118,8 +118,6 @@ private:
         computeStddev();
       }
 
-
-
       /**
        * \brief Update the color distribution with a new sample c.
        *

@@ -43,7 +43,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 #include <type_traits>
 #endif
 
@@ -149,7 +149,7 @@ public:
   friend VISP_EXPORT vpRGBf operator*(float x, const vpRGBf &rgb);
 };
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 static_assert(std::is_trivially_assignable_v<vpRGBf, vpRGBf>);
 static_assert(std::is_trivially_copyable_v<vpRGBf>);
 #endif
