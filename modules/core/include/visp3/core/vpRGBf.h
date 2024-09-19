@@ -116,9 +116,9 @@ public:
 
   vpRGBf &operator=(float v);
   vpRGBf &operator=(int v);
-  vpRGBf &operator=(const vpRGBf &v);
+  vpRGBf &operator=(const vpRGBf &v) = default;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRGBf &operator=(const vpRGBf &&v);
+  vpRGBf &operator=(vpRGBf &&v) = default;
 #endif
   vpRGBf &operator=(const vpColVector &v);
   bool operator==(const vpRGBf &v) const;
