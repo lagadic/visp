@@ -74,41 +74,112 @@ public:
 
   ~vpRBTracker() = default;
 
+  /**
+   * \name Information retrieval
+   * @{
+   */
   void getPose(vpHomogeneousMatrix &cMo) const;
   void setPose(const vpHomogeneousMatrix &cMo);
+  vpObjectCentricRenderer &getRenderer();
+  const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
+  const vpRBTrackerLogger &getLogger() const { return m_logger; }
+
+  /**
+   * @}
+   */
+
+  /**
+   * \name Settings
+   * @{
+   */
+  void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
+  void loadObjectModel(const std::string &file);
 
   vpCameraParameters getCameraParameters() const;
   void setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w);
+
+  vpSilhouettePointsExtractionSettings getSilhouetteExtractionParameters() const
+  {
+    return m_depthSilhouetteSettings;
+  }
+
   void setSilhouetteExtractionParameters(const vpSilhouettePointsExtractionSettings &settings);
 
-  void reset();
+  double getOptimizationGain() const { return m_lambda; }
+  void setOptimizationGain(double lambda)
+  {
+    if (lambda < 0.0) {
+      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+    }
+    m_lambda = lambda;
+  }
+  unsigned int getMaxOptimizationIters() const { return m_vvsIterations; }
+  void setMaxOptimizationIters(unsigned int iters) { m_vvsIterations = iters; }
 
-  void loadObjectModel(const std::string &file);
+  double getOptimizationInitialMu() const { return m_muInit; }
+  void setOptimizationInitialMu(double mu)
+  {
+    if (mu < 0.0) {
+      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+    }
+    m_muInit = mu;
+  }
 
-  void track(const vpImage<unsigned char> &I);
-  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
-  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
+  double getOptimizationMuIterFactor() const { return m_muIterFactor; }
+  void setOptimizationMuIterFactor(double factor)
+  {
+    if (factor < 0.0) {
+      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+    }
+    m_muIterFactor = factor;
+  }
 
-  void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
+  std::shared_ptr<vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
+  void setDriftDetector(const std::shared_ptr<vpRBDriftDetector> &detector)
+  {
+    m_driftDetector = detector;
+  }
 
-  void displayMask(vpImage<unsigned char> &Imask) const;
-  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type);
-
-  vpObjectCentricRenderer &getRenderer();
-  const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
-
-  const std::shared_ptr<const vpRBDriftDetector> getDriftDetector() const { return m_driftDetector; }
-
-#ifdef VISP_HAVE_MODULE_GUI
-  void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
-
-#endif
-
-    //vpRBTrackerFilter &getFilter() { return m_filter; }
+  std::shared_ptr<vpObjectMask> getObjectSegmentationMethod() const { return m_mask; }
+  void setObjectSegmentationMethod(const std::shared_ptr<vpObjectMask> &mask)
+  {
+    m_mask = mask;
+  }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
   void loadConfiguration(const nlohmann::json &j);
+#endif
+
+  /**
+   * @}
+   */
+
+  void reset();
+
+  /**
+   * \name Tracking
+   * @{
+   */
+  void track(const vpImage<unsigned char> &I);
+  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
+  void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
+  /**
+   * @}
+   */
+
+  /**
+   * \name Display
+   * @{
+   */
+  void displayMask(vpImage<unsigned char> &Imask) const;
+  void display(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type);
+  /**
+   * @}
+   */
+
+#ifdef VISP_HAVE_MODULE_GUI
+  void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
 #endif
 
 protected:
@@ -116,9 +187,10 @@ protected:
   void track(vpRBFeatureTrackerInput &input);
   void updateRender(vpRBFeatureTrackerInput &frame);
 
-
-  std::vector<vpRBSilhouettePoint> extractSilhouettePoints(const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
-   const vpImage<vpRGBf> &Ior, const vpImage<unsigned char> &Ivalid, const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp);
+  std::vector<vpRBSilhouettePoint> extractSilhouettePoints(
+    const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
+    const vpImage<vpRGBf> &Ior, const vpImage<unsigned char> &Ivalid,
+    const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp);
 
   vpMatrix getCovariance()
   {
@@ -137,18 +209,16 @@ protected:
     }
   }
 
-
   bool m_firstIteration; //! Whether this is the first iteration
 
   std::vector<std::shared_ptr<vpRBFeatureTracker>> m_trackers; //! List of trackers
 
-  vpHomogeneousMatrix m_cMo;
-  vpHomogeneousMatrix m_cMoPrev;
-  vpCameraParameters m_cam;
-
   vpRBFeatureTrackerInput m_currentFrame;
   vpRBFeatureTrackerInput m_previousFrame;
 
+  vpHomogeneousMatrix m_cMo;
+  vpHomogeneousMatrix m_cMoPrev;
+  vpCameraParameters m_cam;
 
   double m_lambda; //! VVS gain
   unsigned m_vvsIterations; //! Max number of VVS iterations
@@ -156,23 +226,17 @@ protected:
   double m_muIterFactor; //! Factor with which to multiply mu at every iteration during VVS.
 
   vpSilhouettePointsExtractionSettings m_depthSilhouetteSettings;
-
   vpPanda3DRenderParameters m_rendererSettings;
   vpObjectCentricRenderer m_renderer;
-  //vpRenderer m_renderer;
 
   unsigned m_imageHeight, m_imageWidth; //! Color and render image dimensions
 
   vpRBTrackerLogger m_logger;
 
   std::shared_ptr<vpObjectMask> m_mask;
-
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
 
   // vpRBTrackerFilter m_filter;
-
-  vpRBFeatureTrackerInput m_tempRenders;
-
 };
 
 END_VISP_NAMESPACE

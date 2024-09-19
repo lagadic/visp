@@ -188,14 +188,16 @@ public:
 
   vpRBSilhouetteCCDTracker();
 
-
   bool requiresRGB() const VP_OVERRIDE { return true; }
-
   bool requiresDepth() const VP_OVERRIDE { return false; }
-
   bool requiresSilhouetteCandidates() const VP_OVERRIDE { return true; }
 
+  /**
+   * \name Settings
+   * @{
+   */
   void setCCDParameters(const vpCCDParameters &parameters) { m_ccdParameters = parameters; }
+  vpCCDParameters getCCDParameters() const { return m_ccdParameters; }
   //void computeMask(const vpImage<vpRGBa> &render, vpCCDStatistics &stats);
 
   /**
@@ -212,11 +214,11 @@ public:
    * @param factor the new temporal smoothing factor. Should be greater than 0
    */
   void setTemporalSmoothingFactor(double factor) { m_temporalSmoothingFac = factor; }
-
   /**
-   * \brief Method called when starting a tracking iteration
-   *
+   * @}
    */
+
+
   void onTrackingIterStart() VP_OVERRIDE { }
   void onTrackingIterEnd() VP_OVERRIDE { }
 
@@ -265,7 +267,6 @@ protected:
   double m_vvsConvergenceThreshold;
   double tol;
   vpColVector error_ccd;
-  vpColVector weighted_error_ccd;
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.

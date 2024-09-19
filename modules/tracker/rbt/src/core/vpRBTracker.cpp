@@ -69,9 +69,8 @@ vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0
   //m_renderer.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(false));
 
   m_renderer.setRenderParameters(m_rendererSettings);
-  //m_renderer.initFramework();
-  m_driftDetector = nullptr;
 
+  m_driftDetector = nullptr;
 }
 
 void vpRBTracker::getPose(vpHomogeneousMatrix &cMo) const
@@ -102,7 +101,6 @@ void vpRBTracker::setSilhouetteExtractionParameters(const vpSilhouettePointsExtr
 {
   m_depthSilhouetteSettings = settings;
 }
-
 
 void vpRBTracker::reset()
 {
@@ -201,8 +199,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     }
   }
   m_logger.setSilhouetteTime(m_logger.endTimer());
-
-
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     tracker->onTrackingIterStart();
@@ -377,8 +373,6 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 #endif
     {
       m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->getRender(frame.renders.silhouetteCanny, frame.renders.isSilhouette, frame.renders.boundingBox, m_imageHeight, m_imageWidth);
-      // m_renderer.placeRenderInto(m_tempRenders.renders.silhouetteCanny, frame.renders.silhouetteCanny, vpRGBf(0.f));
-      // m_renderer.placeRenderInto(m_tempRenders.renders.isSilhouette, frame.renders.isSilhouette, (unsigned char)(0));
     }
 // #pragma omp section
 //     {

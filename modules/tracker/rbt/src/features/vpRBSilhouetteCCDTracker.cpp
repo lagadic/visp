@@ -85,6 +85,8 @@ public:
 
 
 
+
+
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1)
 { }
 
