@@ -165,8 +165,8 @@ void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
         s.track(I, me, false);
       }
     }
-    catch (vpTrackingException) {
-      vpERROR_TRACE("catch exception ");
+    catch (vpTrackingException &) {
+      vpERROR_TRACE("caught a tracking exception, ignoring me point...");
       s.setState(vpMeSite::THRESHOLD);
     }
   }
@@ -178,12 +178,12 @@ void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned 
   // If element hasn't been suppressed
   try {
     if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-      const bool testContrast = s.m_convlt != 0.0;
+      //const bool testContrast = s.m_convlt != 0.0;
       s.trackMultipleHypotheses(I, *me, false, m_candidates, m_numCandidates);
     }
   }
-  catch (vpTrackingException) {
-    vpERROR_TRACE("catch exception ");
+  catch (vpTrackingException &) {
+    vpERROR_TRACE("caught a tracking exception, ignoring me point...");
     s.setState(vpMeSite::THRESHOLD);
   }
 }
@@ -364,7 +364,6 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
     m_valid = !isLineDegenerate();
     if (m_valid) {
       vpFeatureBuilder::create(featureline, line);
-      double theta0 = theta;
       theta = featureline.getTheta();
 #if VISP_DEBUG_RB_CONTROL_POINT
       if (std::isnan(theta)) {
@@ -441,14 +440,11 @@ vpRBSilhouetteControlPoint::initInteractionMatrixError()
   error = 0;
 }
 
-
-
-
 /*!
   Compute the interaction matrix and the error vector corresponding to the line.
 */
 void
-vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &/*I*/)
+vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
   line.changeFrame(cMo);
 
@@ -496,7 +492,7 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMat
 }
 
 void
-vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &/*I*/)
+vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo)
 {
   line.changeFrame(cMo);
 

@@ -52,8 +52,7 @@
 #define VP_DEBUG_RB_TRACKER 1
 
 
-vpRBTracker::vpRBTracker() : m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_imageHeight(480), m_imageWidth(640),
-m_firstIteration(true), m_renderer(m_rendererSettings), m_trackers(0)
+vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
@@ -283,7 +282,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
         error += (weight * tracker->getWeightedError()).sumSquare();
         //std::cout << "Error = " << (weight * tracker->getWeightedError()).sumSquare() << std::endl;
       }
-
     }
 
     if (numFeatures >= 6) {

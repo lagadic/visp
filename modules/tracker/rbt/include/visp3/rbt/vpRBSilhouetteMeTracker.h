@@ -39,14 +39,13 @@
 
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/rbt/vpRBSilhouetteControlPoint.h>
-#include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpRobust.h>
 
 class VISP_EXPORT vpRBSilhouetteMeTracker : public vpRBFeatureTracker
 {
 public:
 
-  vpRBSilhouetteMeTracker() : vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0), m_singlePointConvergedThresholdPixels(3), m_minMaskConfidence(0.f), m_useMask(false) { }
+  vpRBSilhouetteMeTracker() : vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0), m_singlePointConvergedThresholdPixels(3), m_useMask(false), m_minMaskConfidence(0.f) { }
 
   bool requiresRGB() const VP_OVERRIDE { return false; }
 
@@ -67,8 +66,6 @@ public:
    * @brief Extract the geometric features from the list of collected silhouette points
    */
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
-
-  void clusterIntoLines();
 
   void trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
@@ -98,9 +95,9 @@ private:
   std::vector<vpRBSilhouetteControlPoint> m_controlPoints;
   vpMe m_me; //! Moving edge settings
   unsigned int m_numCandidates; //! Number of best candidates kept when finding correspondence points
-  double m_singlePointConvergedThresholdPixels; //! Whether a single Control point is considered as converged
-  double m_globalVVSConvergenceThreshold; //! Percentage of control points that should have converged to consider VVS as successful
   vpRobust m_robust; //! M-Estimator to filter outliers
+  double m_globalVVSConvergenceThreshold; //! Percentage of control points that should have converged to consider VVS as successful
+  double m_singlePointConvergedThresholdPixels; //! Whether a single Control point is considered as converged
   bool m_useMask;
   float m_minMaskConfidence;
 

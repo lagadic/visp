@@ -53,7 +53,7 @@ if(WITH_SIMDLIB)
   list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 
-vp_add_module(rbt visp_mbt visp_vision visp_core visp_me visp_visual_features visp_ar OPTIONAL  visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private})
+vp_add_module(rbt visp_vision visp_core visp_me visp_visual_features visp_ar OPTIONAL  visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 
 vp_module_include_directories(${opt_incs})

@@ -31,6 +31,7 @@
  *
 *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/rbt/vpRBSilhouetteCCDTracker.h>
 
 #ifdef VISP_HAVE_OPENMP
@@ -85,12 +86,8 @@ public:
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1)
 { }
 
-void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  const unsigned rows = frame.I.getRows(), cols = frame.I.getCols();
-  float sceneSize = frame.renders.zFar - frame.renders.zNear;
-
-
   m_controlPoints.clear();
   //m_controlPoints.reserve(frame.silhouettePoints.size());
   const vpHomogeneousMatrix oMc = cMo.inverse();
@@ -111,7 +108,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 
 
 
-void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
   Sigma_Phi = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
@@ -158,7 +155,6 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
     tol += abs(oldPoints[i * 2 + 1] - m_controlPoints[i].icpoint.get_v());
   }
   tol /= m_controlPoints.size();
-  double t1 = vpTime::measureTimeMs();
   computeLocalStatistics(frame.IRGB, m_stats);
   computeErrorAndInteractionMatrix(); // Update interaction matrix, and gauss newton left and right side terms
 
@@ -170,7 +166,7 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
 
 
 
-void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const
+void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType type) const
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
@@ -190,7 +186,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &cam, const vpIm
     double maxPointError = 0.0;
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
-      for (unsigned j = 0; j < nerror_per_point; ++j) {
+      for (unsigned int j = 0; j < nerror_per_point; ++j) {
         sum += error_ccd[i * nerror_per_point + j];
       }
       if (sum > maxPointError) {
@@ -220,7 +216,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &cam, const vpIm
     vpColVector weightPerPoint(m_controlPoints.size());
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
-      for (unsigned j = 0; j < nerror_per_point; ++j) {
+      for (unsigned int j = 0; j < nerror_per_point; ++j) {
         sum += m_weights[i * nerror_per_point + j];
       }
 
@@ -297,7 +293,6 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       continue;
     }
     double *nv_ptr = stats.nv[kk];
-    double *weight_ptr = stats.weight[kk];
     nv_ptr[0] = p.nxs;
     nv_ptr[1] = p.nys;
 #if VISP_DEBUG_CCD_TRACKER
@@ -384,120 +379,121 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
 
   }
-  VISP_OPENMP(parallel for)
-    for (unsigned int i = 0; i < resolution; ++i) {
-      if (!m_controlPoints[i].isValid()) {
-        continue;
-      }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+  for (unsigned int i = 0; i < resolution; ++i) {
+    if (!m_controlPoints[i].isValid()) {
+      continue;
+    }
 
-      int k = 0;
-      // w1 = \sum wp_1, w2 = \sum wp_2
-      double w1 = 0.0, w2 = 0.0;
+    int k = 0;
+    // w1 = \sum wp_1, w2 = \sum wp_2
+    double w1 = 0.0, w2 = 0.0;
 
-      // store mean value near the curve
-      std::array<double, 3> m1 { 0.0, 0.0, 0.0 }, m2 { 0.0, 0.0, 0.0 };
+    // store mean value near the curve
+    std::array<double, 3> m1 { 0.0, 0.0, 0.0 }, m2 { 0.0, 0.0, 0.0 };
 
-      // store the second mean value near the curve
-      std::array<double, 9> m1_o2 { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-      std::array<double, 9> m2_o2 { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    // store the second mean value near the curve
+    std::array<double, 9> m1_o2 { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    std::array<double, 9> m2_o2 { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
-      // compute local statistics
+    // compute local statistics
 
-      // start search the points in the +n direction as well as -n direction
-      double wp1 = 0.0, wp2 = 0.0;
+    // start search the points in the +n direction as well as -n direction
+    double wp1 = 0.0, wp2 = 0.0;
 
-      double *vic_ptr = stats.vic[i];
-      double *mean_vic_ptr = stats.mean_vic[i];
-      double *cov_vic_ptr = stats.cov_vic[i];
-      double *pix_ptr = stats.imgPoints[i];
-      double *weight_ptr = stats.weight[i];
+    double *vic_ptr = stats.vic[i];
+    double *mean_vic_ptr = stats.mean_vic[i];
+    double *cov_vic_ptr = stats.cov_vic[i];
+    double *pix_ptr = stats.imgPoints[i];
 
-      for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
-        wp1 = 0.0, wp2 = 0.0;
-        int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
-        const double *vic_k = vic_ptr + 10 * k;
+    for (int j = m_ccdParameters.delta_h; j <= m_ccdParameters.h; j += m_ccdParameters.delta_h, k++) {
+      wp1 = 0.0, wp2 = 0.0;
+      int negative_normal = k + (int)floor(m_ccdParameters.h / m_ccdParameters.delta_h);
+      const double *vic_k = vic_ptr + 10 * k;
 
-        // wp1 = w(a_{k,l})*w(d_{k,l})*w(d)
-        wp1 = (vic_k[5] * vic_k[7] / normalized_param[i][0]);
+      // wp1 = w(a_{k,l})*w(d_{k,l})*w(d)
+      wp1 = (vic_k[5] * vic_k[7] / normalized_param[i][0]);
 
-        // wp2 = w(a_{k,l})*w(d_{k,l})*w(d)
-        wp2 = (vic_k[6] * vic_k[7] / normalized_param[i][1]);
-        //w1 = \sum{wp1}
-        w1 += wp1;
+      // wp2 = w(a_{k,l})*w(d_{k,l})*w(d)
+      wp2 = (vic_k[6] * vic_k[7] / normalized_param[i][1]);
+      //w1 = \sum{wp1}
+      w1 += wp1;
 
-        //w2 = \sum{wp2}
-        w2 += wp2;
+      //w2 = \sum{wp2}
+      w2 += wp2;
 
-        // compute the mean value in the vicinity of a point
-        // m_{ks} = I{k}^{s} = \sum_{l} w_{kls}{I_{kl}} : s = 1 or 2
-        const vpRGBa pixelRGBa = I(vic_k[0], vic_k[1]);
-        double *pixel = pix_ptr + k * 3;
-        pixel[0] = pixelRGBa.R;
-        pixel[1] = pixelRGBa.G;
-        pixel[2] = pixelRGBa.B;
+      // compute the mean value in the vicinity of a point
+      // m_{ks} = I{k}^{s} = \sum_{l} w_{kls}{I_{kl}} : s = 1 or 2
+      const vpRGBa pixelRGBa = I(vic_k[0], vic_k[1]);
+      double *pixel = pix_ptr + k * 3;
+      pixel[0] = pixelRGBa.R;
+      pixel[1] = pixelRGBa.G;
+      pixel[2] = pixelRGBa.B;
 
-        m1[0] += wp1 * pixel[0];
-        m1[1] += wp1 * pixel[1];
-        m1[2] += wp1 * pixel[2];
+      m1[0] += wp1 * pixel[0];
+      m1[1] += wp1 * pixel[1];
+      m1[2] += wp1 * pixel[2];
 
-        m2[0] += wp2 * pixel[0];
-        m2[1] += wp2 * pixel[1];
-        m2[2] += wp2 * pixel[2];
+      m2[0] += wp2 * pixel[0];
+      m2[1] += wp2 * pixel[1];
+      m2[2] += wp2 * pixel[2];
 
 
-        // compute second order local statistics
-        // m_{k,s} = \sum_{l} w_{kls} I_{kl}*I_{kl}^T
-        for (unsigned int m = 0; m < 3; ++m) {
-          for (unsigned int n = 0; n < 3; ++n) {
-            m1_o2[m * 3 + n] += wp1 * pixel[m] * pixel[n];
-            m2_o2[m * 3 + n] += wp2 * pixel[m] * pixel[n];
-          }
-        }
-        const double *vic_neg = vic_ptr + 10 * negative_normal;
-        const vpRGBa pixelNegRGBa = I(vic_neg[0], vic_neg[1]);
-        double *pixelNeg = pix_ptr + negative_normal * 3;
-
-        pixelNeg[0] = pixelNegRGBa.R;
-        pixelNeg[1] = pixelNegRGBa.G;
-        pixelNeg[2] = pixelNegRGBa.B;
-        wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
-        wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
-        w1 += wp1;
-        w2 += wp2;
-
-        m1[0] += wp1 * pixelNeg[0];
-        m1[1] += wp1 * pixelNeg[1];
-        m1[2] += wp1 * pixelNeg[2];
-
-        m2[0] += wp2 * pixelNeg[0];
-        m2[1] += wp2 * pixelNeg[1];
-        m2[2] += wp2 * pixelNeg[2];
-
-        for (int m = 0; m < 3; ++m) {
-          for (int n = 0; n < 3; ++n) {
-            m1_o2[m * 3 + n] += wp1 * pixelNeg[m] * pixelNeg[n];
-            m2_o2[m * 3 + n] += wp2 * pixelNeg[m] * pixelNeg[n];
-          }
+      // compute second order local statistics
+      // m_{k,s} = \sum_{l} w_{kls} I_{kl}*I_{kl}^T
+      for (unsigned int m = 0; m < 3; ++m) {
+        for (unsigned int n = 0; n < 3; ++n) {
+          m1_o2[m * 3 + n] += wp1 * pixel[m] * pixel[n];
+          m2_o2[m * 3 + n] += wp2 * pixel[m] * pixel[n];
         }
       }
-      mean_vic_ptr[0] = m1[0] / w1;
-      mean_vic_ptr[1] = m1[1] / w1;
-      mean_vic_ptr[2] = m1[2] / w1;
+      const double *vic_neg = vic_ptr + 10 * negative_normal;
+      const vpRGBa pixelNegRGBa = I(vic_neg[0], vic_neg[1]);
+      double *pixelNeg = pix_ptr + negative_normal * 3;
 
-      mean_vic_ptr[3] = m2[0] / w2;
-      mean_vic_ptr[4] = m2[1] / w2;
-      mean_vic_ptr[5] = m2[2] / w2;
+      pixelNeg[0] = pixelNegRGBa.R;
+      pixelNeg[1] = pixelNegRGBa.G;
+      pixelNeg[2] = pixelNegRGBa.B;
+      wp1 = (vic_neg[5] * vic_neg[7] / normalized_param[i][0]);
+      wp2 = (vic_neg[6] * vic_neg[7] / normalized_param[i][1]);
+      w1 += wp1;
+      w2 += wp2;
+
+      m1[0] += wp1 * pixelNeg[0];
+      m1[1] += wp1 * pixelNeg[1];
+      m1[2] += wp1 * pixelNeg[2];
+
+      m2[0] += wp2 * pixelNeg[0];
+      m2[1] += wp2 * pixelNeg[1];
+      m2[2] += wp2 * pixelNeg[2];
 
       for (unsigned int m = 0; m < 3; ++m) {
         for (unsigned int n = 0; n < 3; ++n) {
-          cov_vic_ptr[m * 3 + n] = m1_o2[m * 3 + n] / w1 - m1[m] * m1[n] / (w1 * w1);
-          cov_vic_ptr[9 + m * 3 + n] = m2_o2[m * 3 + n] / w2 - m2[m] * m2[n] / (w2 * w2);
+          m1_o2[m * 3 + n] += wp1 * pixelNeg[m] * pixelNeg[n];
+          m2_o2[m * 3 + n] += wp2 * pixelNeg[m] * pixelNeg[n];
         }
-        cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
-        cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
       }
-
     }
+    mean_vic_ptr[0] = m1[0] / w1;
+    mean_vic_ptr[1] = m1[1] / w1;
+    mean_vic_ptr[2] = m1[2] / w1;
+
+    mean_vic_ptr[3] = m2[0] / w2;
+    mean_vic_ptr[4] = m2[1] / w2;
+    mean_vic_ptr[5] = m2[2] / w2;
+
+    for (unsigned int m = 0; m < 3; ++m) {
+      for (unsigned int n = 0; n < 3; ++n) {
+        cov_vic_ptr[m * 3 + n] = m1_o2[m * 3 + n] / w1 - m1[m] * m1[n] / (w1 * w1);
+        cov_vic_ptr[9 + m * 3 + n] = m2_o2[m * 3 + n] / w2 - m2[m] * m2[n] / (w2 * w2);
+      }
+      cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
+      cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
+    }
+
+  }
 }
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
@@ -530,8 +526,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       const vpRBSilhouetteControlPoint &p = m_controlPoints[kk];
 
       if (!p.isValid()) {
-        for (int j = 0; j < 2 * normal_points_number; ++j) {
-          for (int m = 0; m < 3; ++m) {
+        for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
+          for (unsigned int m = 0; m < 3; ++m) {
             error_ccd[i * 2 * normal_points_number * 3 + j * 3 + m] = 0.0;
           }
         }
@@ -543,7 +539,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       const double *mean_vic_ptr = m_stats.mean_vic[i];
       const double *cov_vic_ptr = m_stats.cov_vic[i];
       const double *pix_ptr = m_stats.imgPoints[i];
-      const double *weight_ptr = m_stats.weight[i];
 
       const double *mean_vic_ptr_prev = m_prevStats.mean_vic[i];
       const double *cov_vic_ptr_prev = m_prevStats.cov_vic[i];
@@ -557,7 +552,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       Lnvp[5] = (nv_ptr[0] * p.ys - nv_ptr[1] * p.xs);
 
 
-      for (int j = 0; j < 2 * normal_points_number; ++j) {
+      for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
         const double *vic_j = vic_ptr + 10 * j;
         const double *pix_j = pix_ptr + j * 3;
         const double errf = vic_j[4];
@@ -599,7 +594,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       }
     }
   }
-  double afterParallel = vpTime::measureTimeMs();
+
   nabla_E = 0.0;
   hessian_E = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
@@ -612,9 +607,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
 
-
-
-  std::vector<vpColVector> localGradients; // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
+  // Store all the gradients and hessians and then sum them up after the parallel region. This ensures that computation is determinist
+  std::vector<vpColVector> localGradients;
   std::vector<vpMatrix> localHessians;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
@@ -655,7 +649,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     nabla_E += localGradients[i];
     hessian_E += localHessians[i];
   }
-  double afterWeight = vpTime::measureTimeMs();
 
   m_LTL = hessian_E;
   m_LTR = -nabla_E;

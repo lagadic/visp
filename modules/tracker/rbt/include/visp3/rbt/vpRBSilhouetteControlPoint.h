@@ -166,8 +166,8 @@ public:
   void trackMultipleHypotheses(const vpImage<unsigned char> &I);
 
   void initInteractionMatrixError();
-  void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
-  void computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
+  void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
+  void computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo);
 
 private:
   void sample(const vpImage<unsigned char> &) { }

@@ -39,24 +39,16 @@
 #define VP_RB_DENSE_DEPTH_TRACKER_H
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/vision/vpPose.h>
-#include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpRobust.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/visual_features/vpFeatureDepth.h>
+
 // #if defined(VISP_HAVE_SIMDLIB)
 // #include <Simd/SimdLib.h>
 // #endif
-#include <visp3/rbt/vpRBSilhouetteControlPoint.h>
 #include <visp3/rbt/vpRBFeatureTracker.h>
 
 #include <vector>
@@ -116,9 +108,7 @@ public:
 
     inline void error(vpColVector &e, unsigned i) const
     {
-
       double D = -((cameraNormal[0] * oP.get_X()) + (cameraNormal[1] * oP.get_Y()) + (cameraNormal[2] * oP.get_Z()));
-
       double projNormal = cameraNormal[0] * currentPoint[0] + cameraNormal[1] * currentPoint[1] + cameraNormal[2] * currentPoint[2];
 
       e[i] = D + projNormal;

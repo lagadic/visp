@@ -45,7 +45,6 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpRect.h>
 
-
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
 #include <visp3/rbt/vpRBSilhouettePoint.h>
 

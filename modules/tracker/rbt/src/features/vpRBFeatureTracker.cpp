@@ -43,8 +43,6 @@ vpRBFeatureTracker::vpRBFeatureTracker()
   m_vvsConverged = false;
 }
 
-
-
 void vpRBFeatureTracker::updateCovariance(const double lambda)
 {
   vpMatrix  D;
@@ -72,7 +70,7 @@ void vpRBFeatureTracker::computeJTR(const vpMatrix &interaction, const vpColVect
       ssum += interaction[j][i] * error[j];
     }
     JTR[i] = ssum;
-}
+  }
 #endif
 }
 

@@ -55,7 +55,6 @@ void vpColorHistogram::Builder::build(vpColorHistogram &histogram)
 vpColorHistogram::vpColorHistogram() : m_N(0), m_numPixels(0)
 { }
 
-
 vpColorHistogram::vpColorHistogram(unsigned int N)
 {
   setBinNumber(N);
@@ -187,7 +186,7 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
   unsigned binSize = 256 / insideMask.m_N;
-  unsigned int pixels = 0;
+
 #pragma omp parallel
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);

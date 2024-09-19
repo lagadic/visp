@@ -56,11 +56,11 @@ const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
   if (Z <= 0.f || (frame.hasDepth() && frame.depth[uv][uu] > 0.f && fabs(frame.depth[uv][uu] - Z) > 5e-3)) {
     return;
   }
-  double x, y;
   vpRBKltTracker::vpTrackedKltPoint p;
   p.cTo0 = cMo;
   vpRGBf normalRGB = frame.renders.normals[uv][uu];
   p.normal = vpColVector({ normalRGB.R, normalRGB.G, normalRGB.B });
+  double x = 0.0, y = 0.0;
   vpPixelMeterConversion::convertPoint(frame.cam, static_cast<double>(u), static_cast<double>(v), x, y);
   vpColVector oC({ x * Z, y * Z, Z, 1.0 });
   vpColVector oX = oMc * oC;
@@ -79,18 +79,19 @@ vpRBKltTracker::vpRBKltTracker() :
 }
 
 
-void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
   m_Iprev = m_I;
   vpImageConvert::convert(frame.I, m_I);
   const vpHomogeneousMatrix oMc = cMo.inverse();
   if (m_maxErrorOutliersPixels > 0.0) {
-    double distanceThresholdPxSquare = vpMath::sqr(m_maxErrorOutliersPixels);
+    const double distanceThresholdPxSquare = vpMath::sqr(m_maxErrorOutliersPixels);
+    const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
     // Detect outliers
-    for (unsigned int i = 0; i < m_klt.getNbFeatures(); ++i) {
-      long id;
-      float u, v;
-      double x, y;
+    for (unsigned int i = 0; i < nbFeatures; ++i) {
+      long id = 0;
+      float u = 0.f, v = 0.f;
+
       m_klt.getFeature(i, id, u, v);
       if (m_points.find(id) != m_points.end()) {
         unsigned int uu = static_cast<unsigned int>(round(u)), uv = static_cast<unsigned int>(round(v));
@@ -101,17 +102,18 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
         float Z = frame.renders.depth[uv][uu];
         if (Z > 0.f) {
           vpTrackedKltPoint &p = m_points[id];
+          double x = 0.0, y = 0.0;
           vpPixelMeterConversion::convertPoint(frame.cam, static_cast<double>(u), static_cast<double>(v), x, y);
           vpColVector oXn = oMc * vpColVector({ x * Z, y * Z, Z, 1.0 });
           oXn /= oXn[3];
           p.update(cMo);
           double x1 = p.oX.get_x(), y1 = p.oX.get_y();
-          double u1, v1;
+          double u1 = 0.0, v1 = 0.0;
           vpMeterPixelConversion::convertPoint(frame.cam, x1, y1, u1, v1);
           double distancePx = vpMath::sqr(u1 - u) + vpMath::sqr(v1 - v);
 
           vpColVector oX = p.oX.get_oP();
-          if (distancePx > m_maxErrorOutliersPixels) {
+          if (distancePx > distanceThresholdPxSquare) {
             m_points.erase(id);
             m_klt.suppressFeature(i);
           }
@@ -122,9 +124,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
 
   cv::Mat mask = cv::Mat::zeros(m_I.rows, m_I.cols, CV_8U);
   vpRect bb = frame.renders.boundingBox;
-  double timeBeforeMask = vpTime::measureTimeMs();
-  for (unsigned int i = bb.getTop(); i < bb.getBottom(); ++i) {
-    for (unsigned int j = bb.getLeft(); j < bb.getRight(); ++j) {
+  for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); ++i) {
+    for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); ++j) {
       mask.at<unsigned char>(i, j) = (frame.renders.depth[i][j] > 0.f) * 255;
     }
   }
@@ -133,8 +134,9 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
     // Consider that there are not enough points: reinit KLT tracking
     if (m_points.size() < m_numPointsReinit) {
       m_klt.initTracking(m_Iprev, mask);
+      const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
       m_points.clear();
-      for (unsigned int i = 0; i < m_klt.getNbFeatures(); ++i) {
+      for (unsigned int i = 0; i < nbFeatures; ++i) {
         long id;
         float u, v;
         m_klt.getFeature(i, id, u, v);
@@ -151,14 +153,15 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       kltTemp.setBlockSize(m_klt.getBlockSize());
       kltTemp.setPyramidLevels(m_klt.getPyramidLevels());
       kltTemp.initTracking(m_Iprev, mask);
-
-      for (unsigned int i = 0; i < kltTemp.getNbFeatures(); ++i) {
+      const unsigned int nbFeaturesTemp = static_cast<unsigned int>(kltTemp.getNbFeatures());
+      const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+      for (unsigned int i = 0; i < nbFeaturesTemp; ++i) {
         double threshold = vpMath::sqr(m_newPointsDistanceThreshold); // distance threshold, in squared pixels
         double tooClose = false;
         float u, v;
         long id;
         kltTemp.getFeature(i, id, u, v);
-        for (unsigned int j = 0; j < m_klt.getNbFeatures(); ++j) {
+        for (unsigned int j = 0; j < nbFeatures; ++j) {
           float uj, vj;
           long idj;
           m_klt.getFeature(j, idj, uj, vj);
@@ -182,7 +185,8 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
   else {
     m_klt.initTracking(m_I, mask);
     m_points.clear();
-    for (unsigned int i = 0; i < m_klt.getNbFeatures(); ++i) {
+    const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+    for (unsigned int i = 0; i < nbFeatures; ++i) {
       long id;
       float u, v;
       m_klt.getFeature(i, id, u, v);
@@ -191,18 +195,19 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
   }
 }
 
-void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  if (m_klt.getNbFeatures() > 0) {
+  const unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+  if (nbKltFeatures > 0) {
     m_klt.track(m_I);
   }
   std::map<long, vpTrackedKltPoint> newPoints;
   const vpHomogeneousMatrix oMc = cMo.inverse();
 
-  for (unsigned int i = 0; i < m_klt.getNbFeatures(); ++i) {
-    long id;
-    float u, v;
-    double x, y;
+  for (unsigned int i = 0; i < nbKltFeatures; ++i) {
+    long id = 0;
+    float u = 0.f, v = 0.f;
+    double x = 0.0, y = 0.0;
     m_klt.getFeature(i, id, u, v);
     unsigned int uu = static_cast<unsigned int>(round(u)), uv = static_cast<unsigned int>(round(v));
     if (isTooCloseToBorder(uv, uu, frame.renders.depth.getRows(), frame.renders.depth.getCols(), m_border)) {
@@ -234,7 +239,7 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
   m_numFeatures = m_points.size() * 2;
 }
 
-void vpRBKltTracker::initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBKltTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/)
 {
   if (m_numFeatures < m_numPointsReinit * 2) {
     m_numFeatures = 0;
@@ -249,7 +254,7 @@ void vpRBKltTracker::initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFea
   m_error = 0;
 }
 
-void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
+void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   if (m_numFeatures < m_numPointsReinit * 2) {
     m_LTL = 0;
@@ -281,10 +286,10 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const 
 }
 
 
-void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const
+void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType /*type*/) const
 {
-  for (const std::pair<long, vpTrackedKltPoint> &p : m_points) {
-    double u, v;
+  for (const std::pair<const long, vpTrackedKltPoint> &p : m_points) {
+    double u = 0.0, v = 0.0;
     vpMeterPixelConversion::convertPoint(cam, p.second.currentPos.get_j(), p.second.currentPos.get_i(), u, v);
     vpDisplay::displayPoint(I, v, u, vpColor::red, 2);
   }

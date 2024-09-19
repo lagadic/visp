@@ -84,7 +84,7 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
   }
   if (m_preferPreviousPoints) {
     for (const vpRBSilhouettePoint &p: previousPoints) {
-      double x, y;
+      double x = 0.0, y = 0.0;
       vpPixelMeterConversion::convertPoint(cam, p.j, p.i, x, y);
       vpColVector cpX({ x * p.Z, y * p.Z, p.Z, 1.0 });
       vpColVector cX = cTcp * cpX;
@@ -100,7 +100,7 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
       }
     }
   }
-  if (m_maxNumPoints > 0 && finalCandidates.size() >= m_maxNumPoints) {
+  if (m_maxNumPoints > 0 && finalCandidates.size() >= static_cast<unsigned int>(m_maxNumPoints)) {
     return finalCandidates;
   }
 

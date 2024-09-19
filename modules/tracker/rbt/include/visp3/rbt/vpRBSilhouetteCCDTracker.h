@@ -106,7 +106,6 @@ public:
    * maximum decrease of the covariance within one iteration step. Between 0 and 1
    * If c2 is too high, the covariance declines slowly. Hence, a small number of iterations is
    * necessary. If c2 is too small, the CCD algorithm may converge to a wrong solution.
-   *
    * it is recommended to leave this value fixed
    */
   double covarianceIterDecreaseFactor;
@@ -115,14 +114,12 @@ public:
    * Length of the line along the normal (and the opposite direction). To subsample the line, set delta_h > 1.
    * Number of pixels used is computed as 2 * floor(h/delta_h). If you expect large motions, set a large value.
    * If you want to reduce computation time, decrease this value or increase delta_h
-   * Recommended value: above 4
-   *
+   * Recommended value: 4 or above (this is dependent on image resolution)
    */
   int h;
   /**
    * \brief Sample step when computing statistics and errors.
    * Increase this value to decrease computation time, at the risk of obtaining inacurrate statistics.
-   *
    */
   int delta_h;
   /**
@@ -145,7 +142,7 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
     nlohmann::json gammaj = j["gamma"];
-    if (!j.is_array() || !j.size() != 4) {
+    if (!j.is_array() || j.size() != 4) {
       throw vpException(vpException::ioError, "CCD parameters: tried to read gamma values from something that is not a 4-sized float array");
     }
     ccdParameters.gamma_1 = gammaj[0];
@@ -179,10 +176,6 @@ public:
 };
 
 
-/**
- * \brief A base class for all features that can be used and tracker in the vpRenderBasedTracker
- *
- */
 class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 {
 public:
@@ -224,11 +217,11 @@ public:
   double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * error_ccd.size()); }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
-  void trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE { }
+  void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
 
   void initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
-  void updateCovariance(const double lambda) VP_OVERRIDE { }
+  void updateCovariance(const double /*lambda*/) VP_OVERRIDE { }
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 

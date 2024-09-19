@@ -54,7 +54,7 @@ void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z
   p.set_oW(1.0);
 }
 
-void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
   double t1 = vpTime::measureTimeMs();
   const vpImage<float> &depthMap = frame.depth;
@@ -62,7 +62,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
   vpRect bb = frame.renders.boundingBox;
   vpHomogeneousMatrix oMc = cMo.inverse();
   vpRotationMatrix cRo = cMo.getRotationMatrix();
-  bool useMask = m_useMask && frame.mask.getSize() > 0;
+  bool useMask = m_useMask && frame.hasMask();
   m_depthPoints.clear();
   m_depthPoints.reserve(static_cast<size_t>(bb.getArea() / (m_step * m_step * 2)));
   vpDepthPoint point;
@@ -75,7 +75,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
         if (useMask && frame.mask[i][j] < m_minMaskConfidence) {
           continue;
         }
-        double x, y;
+        double x = 0.0, y = 0.0;
         vpPixelMeterConversion::convertPoint(frame.cam, j, i, x, y);
         //vpColVector objectNormal({ frame.renders.normals[i][j].R, frame.renders.normals[i][j].G, frame.renders.normals[i][j].B });
         point.objectNormal[0] = frame.renders.normals[i][j].R;
@@ -114,7 +114,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 
 }
 
-void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
+void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   if (m_numFeatures == 0) {
     m_LTL = 0;
@@ -123,7 +123,6 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     m_weights = 1.0;
     m_weighted_error = 0.0;
   }
-  double t1 = vpTime::measureTimeMs();
   vpRotationMatrix cRo = cMo.getRotationMatrix();
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -135,9 +134,8 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
     depthPoint.interaction(m_L, i);
   }
 
-//m_weights = 0.0;
-//m_robust.setMinMedianAbsoluteDeviation(1e-3);
-  t1 = vpTime::measureTimeMs();
+  //m_weights = 0.0;
+  //m_robust.setMinMedianAbsoluteDeviation(1e-3);
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
@@ -151,7 +149,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
   m_vvsConverged = false;
 }
 
-void vpRBDenseDepthTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const
+void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType /*type*/) const
 {
   // for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
   //   const vpDepthPoint &p = m_depthPoints[i];

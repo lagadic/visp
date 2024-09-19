@@ -85,7 +85,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 }
 
 
-void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
   if (m_numCandidates <= 1) {
     for (vpRBSilhouetteControlPoint &p: m_controlPoints) {
@@ -99,7 +99,7 @@ void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame
   }
 }
 
-void vpRBSilhouetteMeTracker::initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
+void vpRBSilhouetteMeTracker::initVVS(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/)
 {
   if (m_numFeatures == 0) {
     return;
@@ -118,7 +118,7 @@ void vpRBSilhouetteMeTracker::initVVS(const vpRBFeatureTrackerInput &frame, cons
   m_error.resize(m_numFeatures, false);
 }
 
-void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration)
+void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
 {
   vpColVector factor(m_numFeatures, 1.0);
   const double threshold = m_singlePointConvergedThresholdPixels / frame.cam.get_px(); //Transformation limite pixel en limite metre.
@@ -130,10 +130,10 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     vpRBSilhouetteControlPoint &p = m_controlPoints[k];
     //p.update(cMo);
     if (m_numCandidates <= 1) {
-      p.computeInteractionMatrixError(cMo, frame.I);
+      p.computeInteractionMatrixError(cMo);
     }
     else {
-      p.computeInteractionMatrixErrorMH(cMo, frame.I);
+      p.computeInteractionMatrixErrorMH(cMo);
     }
 
 
@@ -164,12 +164,12 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     const double percentageConverged = (double)count / (double)countValidSites;
     if (percentageConverged < m_globalVVSConvergenceThreshold) {
       m_vvsConverged = false;
-  }
+    }
     else {
       m_vvsConverged = true;
     }
 
-}
+  }
 
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
 
@@ -200,7 +200,7 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
 
 }
 
-void vpRBSilhouetteMeTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const
+void vpRBSilhouetteMeTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType type) const
 {
 
   if (type == vpRBFeatureDisplayType::SIMPLE) {
@@ -213,15 +213,15 @@ void vpRBSilhouetteMeTracker::display(const vpCameraParameters &cam, const vpIma
       // vpDisplay::displayPoint(I, p.icpoint, vpColor::red, 2);
 
     }
-    vpColor cs[6] = {
-      vpColor::red,
-      vpColor::blue,
-      vpColor::green,
-      vpColor::purple,
-      vpColor::cyan,
-      vpColor::darkGreen
+    // vpColor cs[6] = {
+    //   vpColor::red,
+    //   vpColor::blue,
+    //   vpColor::green,
+    //   vpColor::purple,
+    //   vpColor::cyan,
+    //   vpColor::darkGreen
 
-    };
+    // };
     // unsigned colorIndex = 0;
     // for (const vpTrackedSilhouetteLine &line: m_lines) {
     //   if (line.getPoints().size() > 10) {

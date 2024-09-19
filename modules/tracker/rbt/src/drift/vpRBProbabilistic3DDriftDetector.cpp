@@ -33,10 +33,10 @@
 #include <visp3/rbt/vpRBProbabilistic3DDriftDetector.h>
 
 #include <visp3/core/vpRect.h>
-
-#include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpDisplay.h>
+
+#include <visp3/rbt/vpRBFeatureTracker.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include <nlohmann/json.hpp>
@@ -44,11 +44,9 @@
 
 void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
 {
-
   const vpTranslationVector t = cprevTo.inverse().getTranslationVector();
 
   if (m_points.size() > 0) {
-
     // Step 0: project all points
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -62,10 +60,10 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
     for (vpStored3DSurfaceColorPoint &p : m_points) {
       p.visible = true;
       if (
-        p.projPrevPx[0] < 2 || p.projPrevPx[0] >= frame.IRGB.getWidth() - 2
-      || p.projPrevPx[1] < 2 || p.projPrevPx[1] >= frame.IRGB.getHeight() - 2
-      || p.projCurrPx[0] < 2 || p.projCurrPx[0] >= frame.IRGB.getWidth() - 2
-      || p.projCurrPx[1] < 2 || p.projCurrPx[1] >= frame.IRGB.getHeight() - 2) {
+        p.projPrevPx[0] < 2 || static_cast<unsigned int>(p.projPrevPx[0]) >= frame.IRGB.getWidth() - 2
+      || p.projPrevPx[1] < 2 || static_cast<unsigned int>(p.projPrevPx[1]) >= frame.IRGB.getHeight() - 2
+      || p.projCurrPx[0] < 2 || static_cast<unsigned int>(p.projCurrPx[0]) >= frame.IRGB.getWidth() - 2
+      || p.projCurrPx[1] < 2 || static_cast<unsigned int>(p.projCurrPx[1]) >= frame.IRGB.getHeight() - 2) {
         p.visible = false; // Point is outside of either current or previous image, ignore it
         continue;
       }
@@ -109,18 +107,17 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
       }
     }
 
-
     if (visiblePoints.size() > 0) {
-      // Compute sample weight
-      double maxTrace = 0.0;
+    //   // Compute sample weight
+    //   double maxTrace = 0.0;
 
-      for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
-        double trace = p->stats.trace();
-        if (trace > maxTrace) {
-          maxTrace = trace;
-        }
-      }
-      maxTrace = std::max(maxTrace, 80.0);
+    //   for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
+    //     double trace = p->stats.trace();
+    //     if (trace > maxTrace) {
+    //       maxTrace = trace;
+    //     }
+    //   }
+    //   maxTrace = std::max(maxTrace, 80.0);
       double weightSum = 0.0;
       m_score = 0.0;
       for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
@@ -183,8 +180,8 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
 
   for (unsigned int i = frame.renders.boundingBox.getTop(); i < frame.renders.boundingBox.getBottom(); i += 2) {
     for (unsigned int j = frame.renders.boundingBox.getLeft(); j < frame.renders.boundingBox.getRight(); j += 2) {
-      double u = j, v = i;
-      double x, y;
+      double u = static_cast<double>(j), v = static_cast<double>(i);
+      double x = 0.0, y = 0.0;
       double Z = frame.renders.depth[i][j];
       if (Z > 0.f) {
         vpPixelMeterConversion::convertPoint(frame.cam, u, v, x, y);

@@ -57,7 +57,6 @@ class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 public:
   vpRBKltTracker();
 
-
   bool requiresRGB() const VP_OVERRIDE { return false; }
 
   bool requiresDepth() const VP_OVERRIDE { return false; }
@@ -67,7 +66,6 @@ public:
   void onTrackingIterStart() VP_OVERRIDE { }
 
   void onTrackingIterEnd() VP_OVERRIDE { }
-
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
 
@@ -112,9 +110,9 @@ public:
     inline double rotationDifferenceToInitial(const vpHomogeneousMatrix &oMc)
     {
       const vpHomogeneousMatrix cinitTc = cTo0 * oMc;
-
       return cinitTc.getThetaUVector().getTheta();
     }
+
     inline double normalDotProd(const vpHomogeneousMatrix &cMo)
     {
       vpColVector cameraNormal = cMo.getRotationMatrix() * normal;
@@ -136,12 +134,6 @@ public:
       e[i * 2 + 1] = oX.get_y() - currentPos.get_v();
     }
 
-    inline double weight(const vpHomogeneousMatrix &cMo)
-    {
-      //return static_cast<double>(validAndInlierCount) / static_cast<double>(validCount);
-      return 1.0;
-    }
-
     inline double distance(const vpTrackedKltPoint &other) const
     {
       const double d = sqrt(std::pow(oX.get_oX() - other.oX.get_oX(), 2) +
@@ -149,7 +141,6 @@ public:
         std::pow(oX.get_oZ() - other.oX.get_oZ(), 2));
       return d;
     }
-
 
     inline void interaction(vpMatrix &L, unsigned i) const
     {
