@@ -43,6 +43,9 @@
 #include <vector>
 
 
+
+BEGIN_VISP_NAMESPACE
+
 template<typename T>
 class vpImage;
 
@@ -108,6 +111,7 @@ private:
   std::vector<float> m_probas;
   unsigned int m_numPixels;
 };
+END_VISP_NAMESPACE
 
 
 

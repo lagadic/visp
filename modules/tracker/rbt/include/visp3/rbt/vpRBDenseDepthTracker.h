@@ -59,13 +59,13 @@
 #include <nlohmann/json.hpp>
 #endif
 
-
+BEGIN_VISP_NAMESPACE
 /**
  * @brief A tracker based on dense depth point-plane alignement
  *
  * \ingroup group_rbt_trackers
  *
- */
+*/
 class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker
 {
 public:
@@ -162,9 +162,6 @@ protected:
 
 
 };
-
-
-
-
+END_VISP_NAMESPACE
 
 #endif

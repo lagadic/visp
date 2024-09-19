@@ -41,11 +41,13 @@
 #include <visp3/rbt/vpDynamicFactory.h>
 #include <visp3/rbt/vpRBDriftDetector.h>
 
+BEGIN_VISP_NAMESPACE
+
 /**
  * \brief A factory that can be used to instanciate drift detection algorithms from JSON data.
  *
  * \ingroup group_rbt_drift
- */
+*/
 class VISP_EXPORT vpRBDriftDetectorFactory : public vpDynamicFactory<vpRBDriftDetector>
 {
 private:
@@ -58,8 +60,5 @@ public:
     return factory;
   }
 };
-
-
-
-
+END_VISP_NAMESPACE
 #endif

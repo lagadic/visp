@@ -37,6 +37,9 @@
 #include "boundingSphere.h"
 #include "boundingBox.h"
 #include "load_prc_file.h"
+
+BEGIN_VISP_NAMESPACE
+
 vpObjectCentricRenderer::vpObjectCentricRenderer(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DRendererSet(renderParameters), m_enableCrop(true), m_shouldComputeBBPoints(true)
 {
   m_renderParameters = renderParameters;
@@ -189,3 +192,5 @@ vpRect vpObjectCentricRenderer::computeBoundingBox()
   }
   return vpRect(vpImagePoint(minv, minu), vpImagePoint(maxv, maxu));
 }
+
+END_VISP_NAMESPACE

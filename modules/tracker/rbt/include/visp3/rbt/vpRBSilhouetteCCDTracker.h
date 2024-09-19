@@ -61,6 +61,8 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 class VISP_EXPORT vpCCDParameters
 {
 public:
@@ -269,9 +271,7 @@ protected:
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.
 
 };
-
-
-
+END_VISP_NAMESPACE
 
 
 #endif

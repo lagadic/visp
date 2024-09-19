@@ -49,8 +49,6 @@
 
 #include <visp3/core/vpDisplay.h>
 
-class vpObjectMask;
-class vpRBDriftDetector;
 
 #include <ostream>
 
@@ -58,11 +56,16 @@ class vpRBDriftDetector;
 #include <nlohmann/json_fwd.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
+class vpObjectMask;
+class vpRBDriftDetector;
+
 /**
  * \brief
  *
  * \ingroup group_rbt_core
- */
+*/
 class VISP_EXPORT vpRBTracker
 {
 public:
@@ -171,6 +174,9 @@ protected:
   vpRBFeatureTrackerInput m_tempRenders;
 
 };
+
+END_VISP_NAMESPACE
+
 
 #endif
 #endif

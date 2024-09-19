@@ -36,6 +36,8 @@
 #include <Simd/SimdLib.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 vpRBFeatureTracker::vpRBFeatureTracker()
 {
   m_numFeatures = 0;
@@ -50,7 +52,6 @@ void vpRBFeatureTracker::updateCovariance(const double lambda)
   vpColVector v;
   m_cov = computeCovarianceMatrix(m_L, -v, lambda * m_error, D);
 }
-
 
 void vpRBFeatureTracker::computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR)
 {
@@ -79,3 +80,5 @@ vpMatrix vpRBFeatureTracker::computeCovarianceMatrix(const vpMatrix &A, const vp
   double sigma2 = (((W * b).t()) * W * b)/((double)b.getRows());
   return (A.t() * W * A).pseudoInverse(b.getRows() * std::numeric_limits<double>::epsilon()) * sigma2;
 }
+
+END_VISP_NAMESPACE

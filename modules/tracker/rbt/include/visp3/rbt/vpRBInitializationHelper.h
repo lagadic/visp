@@ -8,15 +8,16 @@
 #include <string>
 #include <iostream>
 
+
+BEGIN_VISP_NAMESPACE
 template <typename T>
 class vpImage;
-
 
 /**
  * \brief A set of utilities to perform initialization.
  *
- * \group core
- */
+ * \ingroup group_rbt_core
+*/
 class VISP_EXPORT vpRBInitializationHelper
 {
 public:
@@ -39,7 +40,5 @@ private:
   vpHomogeneousMatrix m_cMo;
   vpCameraParameters m_cam;
 };
-
-
-
+END_VISP_NAMESPACE
 #endif

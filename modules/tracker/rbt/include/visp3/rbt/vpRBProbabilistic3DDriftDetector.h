@@ -49,8 +49,10 @@
 #include <array>
 
 
-template <typename T> class vpImage;
 
+BEGIN_VISP_NAMESPACE
+
+template <typename T> class vpImage;
 
 /**
  * \ingroup group_rbt_drift
@@ -89,7 +91,7 @@ template <typename T> class vpImage;
  *
  * Every time update is called, the set of points \f$ \mathbf{X}_0, ..., \mathbf{X}_N, \f$ may grow larger: If a new candidate point is visible and is far enough from points already in the set, it is added to it.
  *
- */
+*/
 class VISP_EXPORT vpRBProbabilistic3DDriftDetector : public vpRBDriftDetector
 {
 
@@ -331,9 +333,6 @@ public:
  * End settings
  */
 
-
-
-
 private:
   double m_colorUpdateRate;
   double m_initialColorSigma;
@@ -346,5 +345,5 @@ private:
   std::vector<vpStored3DSurfaceColorPoint> m_points;
 
 };
-
+END_VISP_NAMESPACE
 #endif

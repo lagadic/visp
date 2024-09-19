@@ -34,9 +34,13 @@
 
 #define VISP_DEBUG_ME_TRACKER 0
 
+
+BEGIN_VISP_NAMESPACE
+
+
 /**
  * @brief Extract the geometric features from the list of collected silhouette points
- */
+*/
 void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
 {
   m_controlPoints.clear();
@@ -274,3 +278,5 @@ void vpRBSilhouetteMeTracker::display(const vpCameraParameters &/*cam*/, const v
     throw vpException(vpException::notImplementedError, "Display not implemented for unknown type");
   }
 }
+
+END_VISP_NAMESPACE

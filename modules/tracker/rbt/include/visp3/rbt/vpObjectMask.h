@@ -39,20 +39,23 @@
 
 #include <visp3/core/vpConfig.h>
 
-template <typename T>
-class vpImage;
-
-class vpRBFeatureTrackerInput;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include <nlohmann/json_fwd.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
+template <typename T>
+class vpImage;
+
+class vpRBFeatureTrackerInput;
+
 /**
  * \brief
  *
  * \ingroup group_rbt_mask
- */
+*/
 class VISP_EXPORT vpObjectMask
 {
 public:
@@ -68,6 +71,7 @@ public:
 
 
 };
+END_VISP_NAMESPACE
 
 
 #endif

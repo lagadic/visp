@@ -1,6 +1,10 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #ifndef VISP_HAVE_REALSENSE2
 
 int main()
@@ -76,7 +80,6 @@ int main(int argc, const char **argv)
   std::cout << "Loading tracker: " << baseArgs.trackerConfiguration << std::endl;
   vpRBTracker tracker;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
-  vpObjectCentricRenderer &renderer = tracker.getRenderer();
   const unsigned int width = realsenseArgs.width, height = realsenseArgs.height;
   const unsigned fps = realsenseArgs.fps;
 
@@ -116,7 +119,6 @@ int main(int argc, const char **argv)
   tracker.setCameraParameters(cam, height, width);
 
   std::cout << "Creating displays" << std::endl;;
-  unsigned int padding = 20;
   std::vector<std::shared_ptr<vpDisplay>> displays, displaysDebug;
 
   if (baseArgs.display) {

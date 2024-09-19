@@ -59,12 +59,12 @@ enum vpRBFeatureDisplayType
   ERROR = 2
 };
 
-
+BEGIN_VISP_NAMESPACE
 /**
  * \brief A base class for all features that can be used and tracked in the vpRBTracker
  *
  * \ingroup group_rbt_trackers
- */
+*/
 class VISP_EXPORT vpRBFeatureTracker
 {
 public:
@@ -228,7 +228,6 @@ protected:
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
 
 };
-
-
+END_VISP_NAMESPACE
 
 #endif

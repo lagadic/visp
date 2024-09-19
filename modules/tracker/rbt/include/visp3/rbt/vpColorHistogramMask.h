@@ -47,15 +47,14 @@
 #include <nlohmann/json_fwd.hpp>
 #endif
 
-
+BEGIN_VISP_NAMESPACE
 
 class vpRBFeatureTrackerInput;
 
 /**
  * \brief A color histogram based segmentation algorithm.
- *
  * \ingroup group_rbt_mask
- */
+*/
 class VISP_EXPORT vpColorHistogramMask : public vpObjectMask
 {
 public:
@@ -113,8 +112,8 @@ public:
   void loadJsonConfiguration(const nlohmann::json &json) VP_OVERRIDE;
 #endif
 
-
 private:
+
   vpColorHistogram m_histObject, m_histBackground, m_histObjectFrame, m_histBackgroundFrame;
   float m_depthErrorTolerance;
   float m_objectUpdateRate, m_backgroundUpdateRate;
@@ -124,5 +123,6 @@ private:
 
 };
 
+END_VISP_NAMESPACE
 
 #endif

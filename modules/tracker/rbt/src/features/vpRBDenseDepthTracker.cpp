@@ -33,6 +33,8 @@
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+BEGIN_VISP_NAMESPACE
+
 void fastRotationMatmul(const vpRotationMatrix &cRo, const vpRGBf &v, vpColVector &res)
 {
   res.resize(3, false);
@@ -158,3 +160,5 @@ void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpI
   // }
 
 }
+
+END_VISP_NAMESPACE

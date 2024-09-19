@@ -36,6 +36,10 @@
 namespace vpRBTrackerTutorial
 {
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 struct BaseArguments
 {
   BaseArguments() : trackerConfiguration(""), display(true), debugDisplay(false), enableRenderProfiling(false), maxDepthDisplay(1.f) { }

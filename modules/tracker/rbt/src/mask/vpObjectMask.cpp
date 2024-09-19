@@ -34,6 +34,8 @@
 
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
+
 void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &Imask) const
 {
   if (mask.getSize() != Imask.getSize()) {
@@ -46,3 +48,5 @@ void vpObjectMask::display(const vpImage<float> &mask, vpImage<unsigned char> &I
   }
 
 }
+
+END_VISP_NAMESPACE

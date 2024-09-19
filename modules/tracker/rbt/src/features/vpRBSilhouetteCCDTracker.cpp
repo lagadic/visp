@@ -40,6 +40,8 @@
 
 #define VISP_DEBUG_CCD_TRACKER 0
 
+BEGIN_VISP_NAMESPACE
+
 template <class T> class FastMat33
 {
 public:
@@ -659,3 +661,5 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
   m_cov = Sigma_Phi;
 }
+
+END_VISP_NAMESPACE

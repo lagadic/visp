@@ -43,11 +43,13 @@
 #include <nlohmann/json_fwd.hpp>
 #endif
 
+
+BEGIN_VISP_NAMESPACE
+
 class vpRBFeatureTrackerInput;
 class vpHomogeneousMatrix;
 class vpRGBa;
 template <typename T> class vpImage;
-
 
 /**
  * \brief Base interface for algorithms that should detect tracking drift for the render-based tracker.
@@ -58,7 +60,7 @@ template <typename T> class vpImage;
  * - use vpRBDriftDetector::hasDiverged to detect the drift, or vpRBDriftDetector::getScore to use the estimated tracking reliability.
  *
  * \ingroup group_rbt_drift
- */
+*/
 class VISP_EXPORT vpRBDriftDetector
 {
 public:
@@ -104,5 +106,7 @@ public:
 #endif
 
 };
+
+END_VISP_NAMESPACE
 
 #endif

@@ -52,11 +52,14 @@
 
 #include <opencv2/core/mat.hpp>
 
+
+BEGIN_VISP_NAMESPACE
+
 /**
  * \brief KLT-Based features
  *
  * \ingroup group_rbt_trackers
- */
+*/
 class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 {
 public:
@@ -266,5 +269,7 @@ private:
   float m_minMaskConfidence;
 
 };
+
+END_VISP_NAMESPACE
 #endif
 #endif

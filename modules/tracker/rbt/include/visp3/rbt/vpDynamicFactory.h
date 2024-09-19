@@ -47,6 +47,7 @@
 #include <map>
 #include <functional>
 
+BEGIN_VISP_NAMESPACE
 template<typename T>
 class VISP_EXPORT vpDynamicFactory
 {
@@ -89,5 +90,6 @@ protected:
 #endif
 
 };
+END_VISP_NAMESPACE
 
 #endif

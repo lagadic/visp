@@ -39,6 +39,8 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpDisplay.h>
 
+BEGIN_VISP_NAMESPACE
+
 inline bool isTooCloseToBorder(unsigned int i, unsigned int j, unsigned int h, unsigned w, unsigned int border)
 {
   return i < border || j < border || i >(h - border) || j >(w - border);
@@ -308,3 +310,5 @@ void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsign
 }
 
 #endif
+
+END_VISP_NAMESPACE

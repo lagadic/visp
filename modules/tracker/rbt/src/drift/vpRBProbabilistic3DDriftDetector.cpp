@@ -42,6 +42,8 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
 {
   const vpTranslationVector t = cprevTo.inverse().getTranslationVector();
@@ -245,3 +247,5 @@ void vpRBProbabilistic3DDriftDetector::loadJsonConfiguration(const nlohmann::jso
   setMinDistForNew3DPoints(j.value("minDistanceNewPoints", m_minDist3DNewPoint));
 }
 #endif
+
+END_VISP_NAMESPACE

@@ -45,11 +45,17 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Information storage for render based tracking process.
 
   \ingroup group_rbt_core
 */
+
+class vpRBTrackerLogger;
+
+std::ostream &operator<<(std::ostream &s, const vpRBTrackerLogger &I);
+
 class VISP_EXPORT vpRBTrackerLogger
 {
 public:
@@ -156,5 +162,5 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
   return out;
 }
 
-
+END_VISP_NAMESPACE
 #endif

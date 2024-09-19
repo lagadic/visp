@@ -45,8 +45,9 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/core/vpRect.h>
 
-/*!
+BEGIN_VISP_NAMESPACE
 
+/*!
   \brief Single object focused renderer
   \ingroup group_rbt_rendering
 */
@@ -119,6 +120,6 @@ private:
   vpPanda3DRenderParameters m_subRenderParams;
 
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

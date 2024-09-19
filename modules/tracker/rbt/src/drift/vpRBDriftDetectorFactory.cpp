@@ -32,6 +32,7 @@
 
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
 #include <visp3/rbt/vpRBProbabilistic3DDriftDetector.h>
+BEGIN_VISP_NAMESPACE
 
 vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
 {
@@ -45,3 +46,5 @@ vpRBDriftDetectorFactory::vpRBDriftDetectorFactory()
     return p;
   });
 }
+
+END_VISP_NAMESPACE

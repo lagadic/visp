@@ -10,7 +10,12 @@
 
 #include <visp3/rbt/vpRBTracker.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #include "render-based-tutorial-utils.h"
+
 
 
 struct CmdArguments
@@ -80,7 +85,6 @@ int main(int argc, const char **argv)
   vpRBTracker tracker;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
   cam = tracker.getCameraParameters();
-  vpObjectCentricRenderer &renderer = tracker.getRenderer();
 
   //VideoReader to read images from disk
 

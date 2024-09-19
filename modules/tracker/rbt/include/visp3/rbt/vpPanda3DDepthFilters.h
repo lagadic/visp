@@ -44,11 +44,12 @@
 #include <visp3/core/vpRect.h>
 #include <visp3/ar/vpPanda3DPostProcessFilter.h>
 
+BEGIN_VISP_NAMESPACE
 /**
  *
  * \ingroup group_rbt_rendering
  * \brief
- */
+*/
 class VISP_EXPORT vpPanda3DDepthGaussianBlur : public vpPanda3DPostProcessFilter
 {
 public:
@@ -87,7 +88,7 @@ private:
   static const char *FRAGMENT_SHADER;
   float m_edgeThreshold;
 };
-
+END_VISP_NAMESPACE
 
 #endif
 #endif

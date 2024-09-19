@@ -33,6 +33,8 @@
 #include <visp3/rbt/vpObjectMaskFactory.h>
 #include <visp3/rbt/vpColorHistogramMask.h>
 
+BEGIN_VISP_NAMESPACE
+
 vpObjectMaskFactory::vpObjectMaskFactory()
 {
   setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
@@ -45,3 +47,5 @@ vpObjectMaskFactory::vpObjectMaskFactory()
     return p;
   });
 }
+
+END_VISP_NAMESPACE

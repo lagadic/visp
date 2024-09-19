@@ -50,6 +50,8 @@
 #include <visp3/me/vpMeSite.h>
 #include <visp3/core/vpDisplay.h>
 
+BEGIN_VISP_NAMESPACE
+
 /*!
   \brief Trackable silhouette point representation
 
@@ -181,5 +183,6 @@ private:
 
 
 };
+END_VISP_NAMESPACE
 
 #endif

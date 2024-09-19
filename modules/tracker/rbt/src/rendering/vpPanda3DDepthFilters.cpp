@@ -34,6 +34,9 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+BEGIN_VISP_NAMESPACE
+
+
 const char *vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER = R"shader(
 #version 330
 
@@ -248,6 +251,6 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
   }
 }
 
-
+END_VISP_NAMESPACE
 
 #endif

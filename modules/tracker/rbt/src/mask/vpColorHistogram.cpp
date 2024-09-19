@@ -35,6 +35,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 
+BEGIN_VISP_NAMESPACE
+
 void vpColorHistogram::Builder::build(vpColorHistogram &histogram)
 {
   if (histogram.getBinNumber() != m_N) {
@@ -259,3 +261,5 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   outsideMask.build(countsOut);
 
 }
+
+END_VISP_NAMESPACE

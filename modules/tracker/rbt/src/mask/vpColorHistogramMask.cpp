@@ -38,6 +38,8 @@
 #include <nlohmann/json.hpp>
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 vpColorHistogramMask::vpColorHistogramMask() { }
 
 void vpColorHistogramMask::updateMask(
@@ -60,15 +62,15 @@ void vpColorHistogramMask::updateMask(
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpImage<float> &depth = previousFrame.depth.getSize() == 0 ? frame.depth : previousFrame.depth;
   if (depth.getSize() > 0 && m_depthErrorTolerance > 0.f) {
-    for (unsigned int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= right; ++j) {
+    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance;
       }
     }
   }
   else {
-    for (unsigned int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= right; ++j) {
+    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
         m_mask[i][j] = renderDepth[i][j] > 0.f;
       }
     }
@@ -127,3 +129,5 @@ void vpColorHistogramMask::loadJsonConfiguration(const nlohmann::json &json)
   m_depthErrorTolerance = json.at("maxDepthError");
 }
 #endif
+
+END_VISP_NAMESPACE

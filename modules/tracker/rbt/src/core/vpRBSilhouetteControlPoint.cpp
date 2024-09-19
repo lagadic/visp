@@ -37,6 +37,8 @@
 
 #define VISP_DEBUG_RB_CONTROL_POINT 1
 
+BEGIN_VISP_NAMESPACE
+
 void vpRBSilhouetteControlPoint::init()
 {
   m_valid = false;
@@ -561,3 +563,5 @@ bool vpRBSilhouetteControlPoint::isLineDegenerate() const
   d = a*a + b*b;
   return d <= 1e-7;
 }
+
+END_VISP_NAMESPACE

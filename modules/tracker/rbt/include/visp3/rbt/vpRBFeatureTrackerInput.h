@@ -44,11 +44,14 @@
 
 #include <visp3/rbt/vpRBSilhouettePoint.h>
 
+BEGIN_VISP_NAMESPACE
+
+
 /**
  * \brief Render data storage
  *
  * \ingroup group_rbt_core
- */
+*/
 struct VISP_EXPORT vpRBRenderData
 {
   vpImage<vpRGBf> normals; //! Image containing the per-pixel normal vector (RGB, in object space)
@@ -153,4 +156,6 @@ public:
     *this = std::move(other);
   }
 };
+
+END_VISP_NAMESPACE
 #endif

@@ -42,6 +42,8 @@
 #include <visp3/rbt/vpRBSilhouettePointsExtractionSettings.h>
 #include <visp3/rbt/vpRBSilhouettePoint.h>
 
+BEGIN_VISP_NAMESPACE
+
 vpSilhouettePointsExtractionSettings::vpSilhouettePointsExtractionSettings()
 {
   m_depthThreshold = 0.1;
@@ -129,3 +131,5 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
   }
   return finalCandidates;
 }
+
+END_VISP_NAMESPACE

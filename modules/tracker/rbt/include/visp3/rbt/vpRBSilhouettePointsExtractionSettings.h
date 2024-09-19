@@ -51,9 +51,10 @@
 #include <nlohmann/json.hpp>
 #endif
 
+
+BEGIN_VISP_NAMESPACE
+
 class vpRBSilhouettePoint;
-
-
 /*!
   \brief Silhouette point extraction settings
   \ingroup group_rbt_core
@@ -136,6 +137,9 @@ inline void from_json(const nlohmann::json &j, vpSilhouettePointsExtractionSetti
 
 }
 #endif
+
+END_VISP_NAMESPACE
+
 
 #endif
 #endif

@@ -40,6 +40,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Silhouette point simple candidate representation.
   \ingroup group_rbt_core
@@ -57,5 +58,6 @@ public:
   { }
 
 };
+END_VISP_NAMESPACE
 
 #endif

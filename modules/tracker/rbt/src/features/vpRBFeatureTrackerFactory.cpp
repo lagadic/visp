@@ -37,6 +37,7 @@
 #include <visp3/rbt/vpRBSilhouetteMeTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 
+BEGIN_VISP_NAMESPACE
 
 vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
 {
@@ -67,3 +68,5 @@ vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
   });
 #endif
 }
+
+END_VISP_NAMESPACE

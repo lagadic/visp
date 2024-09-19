@@ -10,6 +10,7 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 
 void vpRBInitializationHelper::removeComment(std::ifstream &fileId)
 {
@@ -295,3 +296,5 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
 template void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);
 template void vpRBInitializationHelper::initClick<vpRGBa>(const vpImage<vpRGBa> &I, const std::string &initFile, bool displayHelp);
 #endif
+
+END_VISP_NAMESPACE

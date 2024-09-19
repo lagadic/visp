@@ -51,6 +51,7 @@
 
 #define VP_DEBUG_RB_TRACKER 1
 
+BEGIN_VISP_NAMESPACE
 
 vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640)
 {
@@ -601,3 +602,5 @@ void vpRBTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 }
 
 #endif
+
+END_VISP_NAMESPACE
