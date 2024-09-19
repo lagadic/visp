@@ -48,6 +48,11 @@ class vpRBFeatureTrackerInput;
 #include <nlohmann/json_fwd.hpp>
 #endif
 
+/**
+ * \brief
+ *
+ * \ingroup group_rbt_mask
+ */
 class VISP_EXPORT vpObjectMask
 {
 public:

@@ -45,6 +45,11 @@
 #include <nlohmann/json.hpp>
 #endif
 
+/*!
+  \brief Information storage for render based tracking process.
+
+  \ingroup group_rbt_core
+*/
 class VISP_EXPORT vpRBTrackerLogger
 {
 public:

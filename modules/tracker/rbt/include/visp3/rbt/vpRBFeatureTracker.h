@@ -61,7 +61,9 @@ enum vpRBFeatureDisplayType
 
 
 /**
- * @brief A base class for all features that can be used and tracked in the vpRBTracker
+ * \brief A base class for all features that can be used and tracked in the vpRBTracker
+ *
+ * \ingroup group_rbt_trackers
  */
 class VISP_EXPORT vpRBFeatureTracker
 {
@@ -70,13 +72,13 @@ public:
   vpRBFeatureTracker();
 
   /**
-   * @brief Return the type of feature that is used by this tracker
+   * \brief Return the type of feature that is used by this tracker
    *
-   * @return vpRBFeatureType
+   * \return vpRBFeatureType
    */
 
   /**
-   * @brief Get the number of features used to compute the pose update
+   * \brief Get the number of features used to compute the pose update
    *
    */
   unsigned getNumFeatures() const { return m_numFeatures; }
@@ -87,21 +89,21 @@ public:
    */
 
   /**
-   * @brief Whether this tracker requires RGB image to extract features
+   * \brief Whether this tracker requires RGB image to extract features
    *
-   * @return true if the tracker requires an RGB image
-   * @return false otherwise
+   * \return true if the tracker requires an RGB image
+   * \return false otherwise
    */
   virtual bool requiresRGB() const = 0;
 
   /**
-   * @brief Whether this tracker requires depth image to extract features
+   * \brief Whether this tracker requires depth image to extract features
    *
    */
   virtual bool requiresDepth() const = 0;
 
   /**
-   * @brief Whether this tracker requires Silhouette candidates
+   * \brief Whether this tracker requires Silhouette candidates
    */
   virtual bool requiresSilhouetteCandidates() const = 0;
   /**
@@ -113,26 +115,27 @@ public:
    * \name Core Tracking methods
    * @{
    */
+
   /**
-  * @brief Method called when starting a tracking iteration
+  * \brief Method called when starting a tracking iteration
   *
   */
   virtual void onTrackingIterStart() = 0;
 
   /**
-   * @brief Method called after the tracking iteration has finished
+   * \brief Method called after the tracking iteration has finished
    *
    */
   virtual void onTrackingIterEnd() = 0;
 
   /**
-   * @brief Extract features from the frame data and the current pose estimate
+   * \brief Extract features from the frame data and the current pose estimate
    *
    */
   virtual void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) = 0;
 
   /**
-   * @brief Track the features
+   * \brief Track the features
    */
   virtual void trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) = 0;
 
@@ -156,9 +159,9 @@ public:
    */
   const vpMatrix &getCovariance() const { return m_cov; }
   /**
-   * @brief Update the covariance matrix
+   * \brief Update the covariance matrix
    *
-   * @param lambda the visual servoing gain
+   * \param lambda the visual servoing gain
    */
   virtual void updateCovariance(const double lambda);
   /**
@@ -171,7 +174,7 @@ public:
   bool vvsHasConverged() const { return m_vvsConverged; }
 
   /**
-   * @brief Get the importance of this tracker in the optimization step.
+   * \brief Get the importance of this tracker in the optimization step.
    *  The default computation is the following:
    * \f$ \sqrt{w / N} \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
    */
@@ -179,17 +182,17 @@ public:
   void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
 
   /**
-   * @brief Get the leftside term of the Gauss-Newton optimization term
+   * \brief Get the leftside term of the Gauss-Newton optimization term
    */
   const vpMatrix &getLTL() const { return m_LTL; }
 
   /**
-   * @brief Get the rightside term of the Gauss-Newton optimization term
+   * \brief Get the rightside term of the Gauss-Newton optimization term
    */
   const vpColVector &getLTR() const { return m_LTR; }
 
   /**
-   * @brief Get a weighted version of the error vector.
+   * \brief Get a weighted version of the error vector.
    * This should not include the userVVSWeight, but may include reweighting to remove outliers, occlusions, etc.
    */
   const vpColVector &getWeightedError() const { return m_weighted_error; }

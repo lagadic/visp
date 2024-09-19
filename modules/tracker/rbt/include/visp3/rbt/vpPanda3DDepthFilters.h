@@ -46,10 +46,8 @@
 
 /**
  *
- * \ingroup group_ar_renderer_panda3d_filters
- * \brief Class that implements a gaussian filter on a grayscale image.
- * The grayscale image should be contained in the blue channel of the image.
- *
+ * \ingroup group_rbt_rendering
+ * \brief
  */
 class VISP_EXPORT vpPanda3DDepthGaussianBlur : public vpPanda3DPostProcessFilter
 {
@@ -63,7 +61,7 @@ private:
 };
 
 /**
- * \ingroup group_ar_renderer_panda3d_filters
+ * \ingroup group_rbt_rendering
  * \brief Implementation of canny filtering, using Sobel kernels.
  *
  * The results of the canny are filtered based on a threshold value (defined between 0 and 255), checking whether there is enough gradient information.

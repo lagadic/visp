@@ -52,6 +52,11 @@
 
 #include <opencv2/core/mat.hpp>
 
+/**
+ * \brief KLT-Based features
+ *
+ * \ingroup group_rbt_trackers
+ */
 class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 {
 public:
@@ -78,34 +83,102 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 
 
+  /**
+   * \name Settings
+   * @{
+   */
+
+  /**
+   * \brief Get the minimum acceptable number of points that should be tracked. If KLT tracking has less than this number of points
+   * The KLT tracking will be fully reinitialized.
+   */
+  unsigned int getMinimumNumberOfPoints() const { return m_numPointsReinit; }
+  void setMinimumNumberOfPoints(unsigned int points) { m_numPointsReinit = points; }
+
+  /**
+   * \brief Get the minimum distance that a candidate point should have to every other tracked point if it should be added.
+   *
+   * During tracking, KLT points are frequently sampled. This settings used to ensure that multiple klt points do not track the same 3D points
+   */
+  double getMinimumDistanceNewPoints() const { return m_newPointsDistanceThreshold; }
+  void setMinimumDistanceNewPoints(double distance) { m_newPointsDistanceThreshold = distance; }
+
+  /**
+   * \brief Return the number of pixels in the image border where points should not be tracked.
+   * Points that are near image borders are likely to be lost in the future.
+   */
+  unsigned int getFilteringBorderSize() const { return m_border; }
+  void setFilteringBorderSize(unsigned int border) { m_border = border; }
+
+  /**
+   * \brief Get the maximum reprojection error, in pixels, for a point to be considered as outlier.
+   * This reprojection error is computed between the tracked klt position in the image and the reprojection of the associated 3D point.
+   * If a point goes above this threshold, it is removed from tracking
+   *
+   * \return double
+   */
+  double getFilteringMaxReprojectionError() const { return m_maxErrorOutliersPixels; }
+  void setFilteringMaxReprojectionError(double maxError) { m_maxErrorOutliersPixels = maxError; }
+
+  /**
+   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object according to the mask.
+   * If the mask is not computed beforehand, then it has no effect
+   */
+  bool shouldUseMask() const { return m_useMask; }
+  void setShouldUseMask(bool useMask) { m_useMask = useMask; }
+
+  /**
+   * \brief Returns the minimum mask confidence that a pixel should have if it should be kept during tracking.
+   *
+   * This value is between 0 and 1
+   */
+  float getMinimumMaskConfidence() const { return m_minMaskConfidence; }
+  void setMinimumMaskConfidence(float confidence)
+  {
+    if (confidence > 1.f || confidence < 0.f) {
+      throw vpException(vpException::badValue, "Mask confidence should be between 0 and 1");
+    }
+    m_minMaskConfidence = confidence;
+  }
+
+  /**
+   * \brief Get the underlying KLT tracker. Use this to read its settings.
+   */
+  const vpKltOpencv &getKltTracker() const { return m_klt; }
+  /**
+   * \brief Get the underlying KLT tracker. Use this to modify its settings.
+   *
+   * \warning Only modify its tracking settings, not its state.
+   */
+  vpKltOpencv &getKltTracker() { return m_klt; }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
 
-    m_klt.setMaxFeatures(j.value("maxFeatures", 10000));
-    m_klt.setWindowSize(j.value("windowSize", 5));
-    m_klt.setQuality(j.value("quality", 0.01));
-    m_klt.setMinDistance(j.value("minDistance", 5));
-    m_klt.setHarrisFreeParameter(j.value("harris", 0.01));
-    m_klt.setBlockSize(j.value("blockSize", 3));
-    m_klt.setPyramidLevels(j.value("pyramidLevels", 3));
+    m_klt = j;
 
-    m_numPointsReinit = j.value("minimumNumPoints", m_numPointsReinit);
-    m_newPointsDistanceThreshold = j.value("newPointsMinPixelDistance", m_newPointsDistanceThreshold);
-    m_maxErrorOutliersPixels = j.value("maxReprojectionErrorPixels", m_maxErrorOutliersPixels);
-
+    setMinimumNumberOfPoints(j.value("minimumNumPoints", m_numPointsReinit));
+    setMinimumDistanceNewPoints(j.value("newPointsMinPixelDistance", m_newPointsDistanceThreshold));
+    setFilteringMaxReprojectionError(j.value("maxReprojectionErrorPixels", m_maxErrorOutliersPixels));
+    setShouldUseMask(j.value("useMask", m_useMask));
+    setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
   }
 #endif
 
+  /**
+   * @}
+   *
+   */
 
   struct vpTrackedKltPoint
   {
   public:
-    vpHomogeneousMatrix cTo0;
-    vpPoint oX;
-    vpColVector normal;
-    vpImagePoint currentPos;
+    vpHomogeneousMatrix cTo0; //! Initial pose of the object in the camera frame, acquired when the tracked point was first constructed
+    vpPoint oX; //! Tracked 3D point
+    vpColVector normal; //! Surface normal at this point, in the object frame
+    vpImagePoint currentPos; //! Current image coordinates, in normalized image coordinates
 
     inline double rotationDifferenceToInitial(const vpHomogeneousMatrix &oMc)
     {
@@ -188,6 +261,9 @@ private:
   double m_normalAcceptanceThresholdDeg;
 
   std::map<long, vpTrackedKltPoint> m_points;
+
+  bool m_useMask;
+  float m_minMaskConfidence;
 
 };
 #endif

@@ -44,6 +44,11 @@
 
 #include <visp3/rbt/vpRBSilhouettePoint.h>
 
+/**
+ * \brief Render data storage
+ *
+ * \ingroup group_rbt_core
+ */
 struct VISP_EXPORT vpRBRenderData
 {
   vpImage<vpRGBf> normals; //! Image containing the per-pixel normal vector (RGB, in object space)
@@ -94,6 +99,12 @@ struct VISP_EXPORT vpRBRenderData
 
 };
 
+/**
+ * \brief All the data related to a single tracking frame.
+ * This contains both the input data (from a real camera/outside source) and renders from Panda.
+ *
+ * \ingroup group_rbt_core
+ */
 class VISP_EXPORT vpRBFeatureTrackerInput
 {
 public:

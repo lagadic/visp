@@ -40,6 +40,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+/*!
+  \brief Silhouette point simple candidate representation.
+  \ingroup group_rbt_core
+*/
 class VISP_EXPORT vpRBSilhouettePoint
 {
 public:

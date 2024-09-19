@@ -57,6 +57,7 @@ template <typename T> class vpImage;
  * - Call vpRBDriftDetector::update to update the drift detection parameters.
  * - use vpRBDriftDetector::hasDiverged to detect the drift, or vpRBDriftDetector::getScore to use the estimated tracking reliability.
  *
+ * \ingroup group_rbt_drift
  */
 class VISP_EXPORT vpRBDriftDetector
 {

@@ -12,6 +12,11 @@ template <typename T>
 class vpImage;
 
 
+/**
+ * \brief A set of utilities to perform initialization.
+ *
+ * \group core
+ */
 class VISP_EXPORT vpRBInitializationHelper
 {
 public:

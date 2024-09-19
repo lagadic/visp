@@ -53,6 +53,8 @@ template <typename T> class vpImage;
 
 
 /**
+ * \ingroup group_rbt_drift
+ *
  * \brief Algorithm that uses tracks object surface points in order to estimate the probability that tracking is successful.
  *
  * Given a set of surface points \f$ \mathbf{X}_0, ..., \mathbf{X}_N, \f$,  each point \f$\mathbf{X}_i\f$ being associated to:
@@ -231,8 +233,6 @@ public:
    * \name Settings
    * @{
    */
-
-
 
   /**
    * \brief Get the minimum distance criterion (in meters) that is used

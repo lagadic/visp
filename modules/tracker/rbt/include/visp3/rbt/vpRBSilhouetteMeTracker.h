@@ -41,6 +41,11 @@
 #include <visp3/rbt/vpRBSilhouetteControlPoint.h>
 #include <visp3/core/vpRobust.h>
 
+/**
+ * \brief Moving edge feature tracking from depth-extracted object contours
+ *
+ * \ingroup group_rbt_trackers
+ */
 class VISP_EXPORT vpRBSilhouetteMeTracker : public vpRBFeatureTracker
 {
 public:

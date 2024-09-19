@@ -50,6 +50,11 @@
 #include <visp3/me/vpMeSite.h>
 #include <visp3/core/vpDisplay.h>
 
+/*!
+  \brief Trackable silhouette point representation
+
+  \ingroup group_rbt_core
+*/
 class VISP_EXPORT vpRBSilhouetteControlPoint
 {
 private:

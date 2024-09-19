@@ -52,8 +52,9 @@ const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
   if (isTooCloseToBorder(uv, uu, frame.renders.depth.getRows(), frame.renders.depth.getCols(), m_border)) {
     return;
   }
+
   float Z = frame.renders.depth[uv][uu];
-  if (Z <= 0.f || (frame.hasDepth() && frame.depth[uv][uu] > 0.f && fabs(frame.depth[uv][uu] - Z) > 5e-3)) {
+  if (Z <= 0.f || (frame.hasDepth() && frame.depth[uv][uu] > 0.f && fabs(frame.depth[uv][uu] - Z) > 1e-1)) {
     return;
   }
   vpRBKltTracker::vpTrackedKltPoint p;
@@ -73,11 +74,10 @@ const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
 
 vpRBKltTracker::vpRBKltTracker() :
   vpRBFeatureTracker(), m_numPointsReinit(20), m_newPointsDistanceThreshold(5.0), m_border(5),
-  m_maxErrorOutliersPixels(10.0)
+  m_maxErrorOutliersPixels(10.0), m_useMask(false), m_minMaskConfidence(0.0)
 {
 
 }
-
 
 void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
@@ -197,12 +197,15 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
 
 void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  const unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
+  unsigned int nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
   if (nbKltFeatures > 0) {
     m_klt.track(m_I);
   }
   std::map<long, vpTrackedKltPoint> newPoints;
   const vpHomogeneousMatrix oMc = cMo.inverse();
+
+  bool testMask = m_useMask && frame.hasMask();
+  nbKltFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
 
   for (unsigned int i = 0; i < nbKltFeatures; ++i) {
     long id = 0;
@@ -210,11 +213,20 @@ void vpRBKltTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const v
     double x = 0.0, y = 0.0;
     m_klt.getFeature(i, id, u, v);
     unsigned int uu = static_cast<unsigned int>(round(u)), uv = static_cast<unsigned int>(round(v));
+    // Filter points that are too close to image borders and cannot be reliably tracked
     if (isTooCloseToBorder(uv, uu, frame.renders.depth.getRows(), frame.renders.depth.getCols(), m_border)) {
       continue;
     }
+    float Z = frame.renders.depth[uv][uu];
+    if (Z <= 0.f) {
+      continue;
+    }
 
-    if (frame.mask.getSize() > 0 && frame.mask[uv][uu] > 0.5 && m_points.find(id) != m_points.end()) {
+    if (testMask && frame.mask[uv][uu] < m_minMaskConfidence) {
+      continue;
+    }
+
+    if (m_points.find(id) != m_points.end()) {
       vpTrackedKltPoint &p = m_points[id];
       if (p.rotationDifferenceToInitial(oMc) > vpMath::rad(45.0) && p.normalDotProd(cMo) < cos(vpMath::rad(70))) {
         continue;

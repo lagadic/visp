@@ -41,6 +41,11 @@
 #include <visp3/rbt/vpRBFeatureTracker.h>
 #include <visp3/rbt/vpDynamicFactory.h>
 
+/**
+ * \brief A factory to instantiate feature trackers from JSON data
+ *
+ * \ingroup group_rbt_trackers
+ */
 class VISP_EXPORT vpRBFeatureTrackerFactory : public vpDynamicFactory<vpRBFeatureTracker>
 {
 private:

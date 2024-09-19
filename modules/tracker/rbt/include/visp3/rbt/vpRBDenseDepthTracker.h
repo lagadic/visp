@@ -61,7 +61,9 @@
 
 
 /**
- * @brief A base class for all features that can be used and tracker in the vpRenderBasedTracker
+ * @brief A tracker based on dense depth point-plane alignement
+ *
+ * \ingroup group_rbt_trackers
  *
  */
 class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker

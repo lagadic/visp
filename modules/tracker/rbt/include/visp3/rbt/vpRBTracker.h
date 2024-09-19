@@ -58,6 +58,11 @@ class vpRBDriftDetector;
 #include <nlohmann/json_fwd.hpp>
 #endif
 
+/**
+ * \brief
+ *
+ * \ingroup group_rbt_core
+ */
 class VISP_EXPORT vpRBTracker
 {
 public:

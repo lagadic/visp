@@ -51,6 +51,14 @@
     "useMask": true,
     "minMaskConfidence": 0.7
   },
+  {
+    "type": "silhouetteColor",
+    "weight": 0.01,
+    "ccd": {
+      "h": 8,
+      "delta_h": 1
+    }
+  },
 
   {
     "type": "klt",
@@ -66,7 +74,7 @@
     "maxFeatures": 500,
     "minDistance": 5.0,
     "pyramidLevels": 3,
-    "quality": 0.05,
+    "quality": 0.01,
     "windowSize": 5
   }
 ]

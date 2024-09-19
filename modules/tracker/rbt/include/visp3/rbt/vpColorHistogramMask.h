@@ -51,6 +51,11 @@
 
 class vpRBFeatureTrackerInput;
 
+/**
+ * \brief A color histogram based segmentation algorithm.
+ *
+ * \ingroup group_rbt_mask
+ */
 class VISP_EXPORT vpColorHistogramMask : public vpObjectMask
 {
 public:

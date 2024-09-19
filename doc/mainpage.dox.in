@@ -526,6 +526,69 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_mbt_xml_parser XML parsers
   XML parsers dedicated to model-based trackers.
 */
+
+
+/*******************************************
+ * Module rbt
+ *******************************************/
+/*!
+  \ingroup module_tracker
+  \defgroup module_rbt RBT: Render-Based Tracker module
+  Render-Based Tracker module
+*/
+
+/*!
+  \ingroup module_rbt
+  \defgroup group_rbt_core Core Render-Based Tracking functionalities
+
+  This group contains the core classes that make Render-Based tracking work. The main interface for Render-Based tracking is vpRBTracker.
+*/
+
+/*!
+  \ingroup module_rbt
+  \defgroup group_rbt_trackers Trackable features
+
+  These classes represent features that can be tracked by the render-based tracker. All trackable features should inherit from vpRBFeatureTracker
+
+*/
+
+/*!
+  \ingroup module_rbt
+  \defgroup group_rbt_mask Object segmentation
+
+  These classes allow to perform object segmentaiton from rendering information. This segmentation may be used downstream by feature trackers to filter features.
+  */
+
+/*!
+  \ingroup module_rbt
+  \defgroup group_rbt_drift Drift and divergence detection
+
+  These classes allow to detect tracking drift.
+*/
+
+/*!
+  \ingroup module_rbt
+  \defgroup group_rbt_rendering Rendering
+
+  This group contains additional rendering utilities.
+*/
+
+/*!
+  \ingroup module_mbt
+  \defgroup group_mbt_features Features
+  Model-based trackers features.
+*/
+/*!
+  \ingroup module_mbt
+  \defgroup group_mbt_faces Faces management
+  Faces management including visibility.
+*/
+/*!
+  \ingroup module_mbt
+  \defgroup group_mbt_xml_parser XML parsers
+  XML parsers dedicated to model-based trackers.
+*/
+
 /*******************************************
  * Module robot
  *******************************************/

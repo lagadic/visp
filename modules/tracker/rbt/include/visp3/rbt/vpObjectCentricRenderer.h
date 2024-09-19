@@ -45,6 +45,11 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/core/vpRect.h>
 
+/*!
+
+  \brief Single object focused renderer
+  \ingroup group_rbt_rendering
+*/
 class VISP_EXPORT vpObjectCentricRenderer : public vpPanda3DRendererSet
 {
 public:

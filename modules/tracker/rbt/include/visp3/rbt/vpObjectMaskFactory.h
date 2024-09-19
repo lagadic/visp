@@ -41,6 +41,12 @@
 #include <visp3/rbt/vpDynamicFactory.h>
 #include <visp3/rbt/vpObjectMask.h>
 
+/**
+ * \brief A factory that can be used to create Object segmentation algorithms from JSON data.
+ *
+ * \ingroup group_rbt_mask
+ *
+ */
 class VISP_EXPORT vpObjectMaskFactory : public vpDynamicFactory<vpObjectMask>
 {
 private:

@@ -172,10 +172,14 @@ public:
     imgPoints.resize(resolution, 2 * 3 * normalPointsNumber, false, false);
     weight.resize(resolution, 2 * normalPointsNumber, false, false);
   }
-
 };
 
 
+/**
+ * \brief Tracking based on the Contracting Curve Density algorithm.
+ *
+ * \ingroup group_rbt_trackers
+ */
 class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 {
 public:

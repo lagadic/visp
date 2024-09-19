@@ -53,6 +53,11 @@
 
 class vpRBSilhouettePoint;
 
+
+/*!
+  \brief Silhouette point extraction settings
+  \ingroup group_rbt_core
+*/
 class VISP_EXPORT vpSilhouettePointsExtractionSettings
 {
 
