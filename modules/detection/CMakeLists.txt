@@ -35,21 +35,17 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
 
 if(USE_ZBAR)
-  list(APPEND opt_incs ${ZBAR_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${ZBAR_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZBAR_LIBRARIES})
 endif()
 
 if(USE_DMTX)
   list(APPEND opt_incs ${DMTX_INCLUDE_DIRS})
   list(APPEND opt_libs ${DMTX_LIBRARIES})
-endif()
-
-if(USE_ZBAR)
-  # Add specific build flag to turn off warnings coming from zbar 3rd party
-  vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter -Wno-deprecated-declarations)
 endif()
 
 if(WITH_APRILTAG)
@@ -195,6 +191,6 @@ endif(USE_OPENCV)
 
 vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES} WRAP java)
 vp_glob_module_sources()
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io)

@@ -47,14 +47,14 @@ if(USE_OGRE)
   mark_as_advanced(OGRE_SAMPLES_INCLUDEPATH)
   #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
   if(OGRE_SAMPLES_INCLUDEPATH)
-    list(APPEND opt_incs ${OGRE_SAMPLES_INCLUDEPATH})
+    list(APPEND opt_system_incs ${OGRE_SAMPLES_INCLUDEPATH})
   endif()
 
   # hack to fix possible presence of NOTFOUND in OGRE_INCLUDE_DIRS
   #message("OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
   foreach(inc_ ${OGRE_INCLUDE_DIRS})
     if(NOT ${inc_} MATCHES "NOTFOUND")
-      list(APPEND opt_incs ${inc_})
+      list(APPEND opt_system_incs ${inc_})
     endif()
   endforeach()
   if(WIN32)
@@ -71,7 +71,7 @@ if(USE_OGRE)
 endif(USE_OGRE)
 
 if(USE_OIS AND USE_OGRE)
-  list(APPEND opt_incs ${OIS_INCLUDE_DIR})
+  list(APPEND opt_system_incs ${OIS_INCLUDE_DIR})
   list(APPEND opt_libs ${OIS_LIBRARIES})
   if(APPLE)
     # With Ogre 1.7.4 and 1.8.1 to be able to link with libOIS.a, Cocoa framework is requested.
@@ -188,10 +188,6 @@ endif()
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
 
-if(USE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-endif()
 
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})

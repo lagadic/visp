@@ -35,6 +35,7 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
 set(opt_libs_private "")
 
@@ -47,7 +48,7 @@ set(opt_libs_private "")
 # Haption Virtuose SDK.
 # This 3rd party should be the first used by the module (see warning below)
 if(USE_VIRTUOSE)
-  list(APPEND opt_incs ${VIRTUOSE_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${VIRTUOSE_INCLUDE_DIRS})
   list(APPEND opt_libs ${VIRTUOSE_LIBRARIES})
 
   if(USE_THREADS AND RT_FOUND AND DL_FOUND)
@@ -61,21 +62,6 @@ if(USE_VIRTUOSE)
   if(MSVC)
     # Work around to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
-
-    # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
-    # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
-    # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
-    if(BUILD_SHARED_LIBS)
-      vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
-      vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp /wd4312)
-    else()
-      vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
-    endif()
   endif()
 endif()
 
@@ -124,7 +110,7 @@ endif()
 
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
-  list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${ARIA_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARIA_LIBRARIES})
   if(CMAKE_THREAD_LIBS_INIT)
     list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
@@ -132,7 +118,7 @@ if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   list(APPEND opt_libs ${RT_LIBRARIES})
   list(APPEND opt_libs ${DL_LIBRARIES})
 elseif(USE_ARIA AND NOT UNIX)
-  list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${ARIA_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARIA_LIBRARIES})
 endif()
 
@@ -196,96 +182,17 @@ vp_glob_module_sources()
 
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
 
-if(USE_VIRTUOSE)
-  # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
-  vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp -Wno-int-to-pointer-cast)
-endif()
-
-if(USE_ARIA)
-  # Add specific build flag to turn off warnings coming from libaria 3rd party
-  vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter -Wno-type-limits)
-endif()
-
-if(USE_COIN3D)
-  # Add specific build flag to turn off warnings coming from libcoin 3rd party
-  vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/wireframe-simulator/vpScene.cpp -Wno-unused-parameter -Wno-deprecated-copy)
-  vp_set_source_file_compile_flag(src/image-simulator/vpImageSimulator.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/robot-simulator/vpRobotCamera.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorCamera.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorViper850.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorAfma6.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/robot-simulator/vpRobotWireFrameSimulator.cpp -Wno-unused-parameter)
-
-  if(USE_VIPER850)
-    vp_set_source_file_compile_flag(src/real-robot/viper/vpRobotViper850.cpp -Wno-unused-parameter)
-  endif()
-else()
-  vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-strict-overflow)
-endif()
-
-if(USE_UR_RTDE)
-  vp_set_source_file_compile_flag(src/real-robot/universal-robots/vpRobotUniversalRobots.cpp -Wno-unused-parameter)
-endif()
-
-if(USE_MAVSDK)
-  vp_set_source_file_compile_flag(src/real-robot/mavsdk/vpRobotMavsdk.cp -Wno-unused-but-set-variable)
-endif()
-
-if(USE_BICLOPS)
-  vp_set_source_file_compile_flag(src/real-robot/biclops/vpRobotBiclops.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/real-robot/biclops/private/vpRobotBiclopsController_impl.cpp -Wno-unused-parameter)
-endif()
-
-vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpCoreDisplay.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpLex.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpBound.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/wireframe-simulator/vpArit.cpp -Wno-strict-overflow)
-
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd" data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-simulator)
 
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON
     visp_sensor visp_vision visp_blob visp_gui
   CTEST_EXCLUDE_PATH
     bebop2 qbdevice servo-afma4 servo-afma6 servo-franka servo-pixhawk servo-pololu servo-universal-robots
-    servo-viper virtuose)
-
-if(USE_VIRTUOSE)
-  # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
-endif()
-
-if(USE_ARSDK)
-  vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
-endif()
-
-if(USE_FRANKA)
-  vp_set_source_file_compile_flag(src/real-robot/franka/vpForceTorqueGenerator_impl.cpp -Wno-shadow -Wno-deprecated-copy)
-endif()
-
-if(USE_FLIRPTUSDK)
-  vp_set_source_file_compile_flag(test/servo-flir-ptu/testRobotFlirPtu.cpp -Wno-unused-result)
-endif()
-
-if(USE_UR_RTDE)
-  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsCartPosition.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsCartVelocity.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsGetData.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsJointPosition.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsJointVelocity.cpp -Wno-unused-parameter)
-endif()
+    servo-viper virtuose
+)
