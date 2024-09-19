@@ -316,7 +316,7 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   //write everything
   fwrite(&local_header[0], sizeof(char), local_header.size(), fp);
   fwrite(&npy_header[0], sizeof(char), npy_header.size(), fp);
-  fwrite(data, sizeof(T), nels, fp);
+  fwrite(&data[0], sizeof(T), nels, fp);
   fwrite(&global_header[0], sizeof(char), global_header.size(), fp);
   fwrite(&footer[0], sizeof(char), footer.size(), fp);
   fclose(fp);
