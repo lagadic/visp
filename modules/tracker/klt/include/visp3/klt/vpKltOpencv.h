@@ -434,7 +434,7 @@ inline void from_json(const nlohmann::json &j, vpKltOpencv &klt)
   klt.setWindowSize(j.value("windowSize", 5));
   klt.setQuality(j.value("quality", 0.01));
   klt.setMinDistance(j.value("minDistance", 5));
-  klt.setUseHarris(j.value("useHarris", true));
+  klt.setUseHarris(j.value("useHarris", 1));
   klt.setHarrisFreeParameter(j.value("harris", 0.01));
   klt.setBlockSize(j.value("blockSize", 3));
   klt.setPyramidLevels(j.value("pyramidLevels", 3));
