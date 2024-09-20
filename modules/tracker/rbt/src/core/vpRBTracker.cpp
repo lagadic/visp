@@ -95,7 +95,6 @@ vpMatrix vpRBTracker::getCovariance() const
     }
     tracker->updateCovariance(m_lambda);
     vpMatrix trackerCov = tracker->getCovariance();
-    std::cout << "TRACKER COV = " << std::endl << trackerCov << std::endl << std::endl;
     double trackerWeight = tracker->getVVSTrackerWeight();
     if (trackerCov.getRows() != 6 || trackerCov.getCols() != 6) {
       throw vpException(vpException::dimensionError,
