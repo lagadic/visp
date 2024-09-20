@@ -386,12 +386,8 @@ void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
 }
 
 /*!
-  Construct a list of vpMeSite moving edges at a particular sampling
-  step between the two extremities of the line.
-
-  \param I : Image in which the line appears.
+  Initialize the interaction matrix and the error to 0.
 */
-
 void
 vpRBSilhouetteControlPoint::initInteractionMatrixError()
 {

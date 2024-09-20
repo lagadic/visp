@@ -74,30 +74,18 @@ private:
 
   bool m_valid;
 
-
 public:
   const vpCameraParameters *cam;
-  //int imin, imax;
-  //int jmin, jmax;
-  //double expecteddensity;
-  // the image point
 
   vpImagePoint icpoint;
-
 
   // the 3D point
   vpPoint cpoint;
   vpPoint cpointo;
 
-  //! The moving edge container associated to the control point
-  //vpMbtMeLine *meline;
-  //! The 3D line associated to the control point
-  //vpLine *line;
-
-  //! Normale to surface where the control point lies
+  //! Normal to surface where the control point lies
   vpColVector norm;
   vpColVector normw;
-
 
   //! Gradient profile associated to the control Points
 
@@ -109,7 +97,6 @@ public:
 
   bool isSilhouette;
   bool invnormal;
-
 
 public:
 
@@ -140,7 +127,6 @@ public:
   const vpFeatureLine &getFeatureLine() const { return featureline; }
   const vpLine &getLine() const { return line; }
   double getTheta() const { return theta; }
-
 
   void setMovingEdge(vpMe *_me) { me = _me; }
   void setCameraParameters(const vpCameraParameters *_cam) { cam = _cam; }
@@ -177,10 +163,8 @@ public:
 private:
   void sample(const vpImage<unsigned char> &) { }
   bool isLineDegenerate() const;
-
-
-
 };
+
 END_VISP_NAMESPACE
 
 #endif
