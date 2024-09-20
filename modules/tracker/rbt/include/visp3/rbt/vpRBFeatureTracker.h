@@ -110,7 +110,6 @@ public:
    * @}
    */
 
-
   /**
    * \name Core Tracking methods
    * @{
@@ -182,12 +181,12 @@ public:
   void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
 
   /**
-   * \brief Get the leftside term of the Gauss-Newton optimization term
+   * \brief Get the left side term of the Gauss-Newton optimization term
    */
   const vpMatrix &getLTL() const { return m_LTL; }
 
   /**
-   * \brief Get the rightside term of the Gauss-Newton optimization term
+   * \brief Get the right side term of the Gauss-Newton optimization term
    */
   const vpColVector &getLTR() const { return m_LTR; }
 
@@ -196,7 +195,6 @@ public:
    * This should not include the userVVSWeight, but may include reweighting to remove outliers, occlusions, etc.
    */
   const vpColVector &getWeightedError() const { return m_weighted_error; }
-
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)

@@ -176,7 +176,6 @@ public:
   }
 };
 
-
 /**
  * \brief Tracking based on the Contracting Curve Density algorithm.
  *
@@ -218,7 +217,6 @@ public:
    * @}
    */
 
-
   void onTrackingIterStart() VP_OVERRIDE { }
   void onTrackingIterEnd() VP_OVERRIDE { }
 
@@ -234,7 +232,7 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_vvsConvergenceThreshold = j.value("convergenceThreshold", m_vvsConvergenceThreshold);

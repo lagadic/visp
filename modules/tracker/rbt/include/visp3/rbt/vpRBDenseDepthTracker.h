@@ -154,6 +154,7 @@ public:
       e[i] = D + projNormal;
       //e[i] = f.get_LogZoverZstar();
     }
+
     inline void interaction(vpMatrix &L, unsigned i)
     {
       const double X = currentPoint[0], Y = currentPoint[1], Z = currentPoint[2];
@@ -180,7 +181,7 @@ public:
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_step = j.value("step", m_step);
