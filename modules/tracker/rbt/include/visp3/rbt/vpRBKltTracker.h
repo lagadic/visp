@@ -255,13 +255,6 @@ private:
 
   double m_maxErrorOutliersPixels; //! Max 3D reprojection error before a point is considered an outlier and rejected from tracking. In meters
 
-  /*!
-   * Reject points where the render normals's dot product
-   * with the inverse camera vector is above this angle threshold.
-   * Helps removing uncertain keypoints or keypoints that may disappear in the next frame.
-   */
-  double m_normalAcceptanceThresholdDeg;
-
   std::map<long, vpTrackedKltPoint> m_points;
 
   bool m_useMask;
