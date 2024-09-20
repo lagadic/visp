@@ -247,7 +247,6 @@ public:
 protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
-
   void computeErrorAndInteractionMatrix();
 
   vpCCDParameters m_ccdParameters;
@@ -260,15 +259,14 @@ protected:
 
   vpMatrix m_sigma;
 
-  vpColVector m_gradient; //! Sum of local gradients
-  vpMatrix m_hessian; //! Sum of local hessians
-
   double m_vvsConvergenceThreshold;
   double tol;
+
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
+  vpColVector m_gradient; //! Sum of local gradients
+  vpMatrix m_hessian; //! Sum of local hessians
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.
-
 };
 END_VISP_NAMESPACE
 #endif

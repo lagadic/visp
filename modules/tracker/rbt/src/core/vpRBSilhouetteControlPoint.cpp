@@ -45,15 +45,13 @@ void vpRBSilhouetteControlPoint::init()
 vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint()
 {
   init();
-  me = nullptr;
-  m_numCandidates = 3;
+  m_me = nullptr;
+  m_numCandidates = 1;
   m_candidates.resize(1);
   sign = 1;
-
   norm.resize(3);
   theta = 0;
-  isSilhouette = false;
-  invnormal = false;
+  m_isSilhouette = false;
   m_valid = true;
 }
 
@@ -65,24 +63,21 @@ vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteContr
 
 vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &meTracker)
 {
-  me = meTracker.me;
+  m_me = meTracker.m_me;
   s = meTracker.s;
   m_numCandidates = meTracker.m_numCandidates;
-  cam = meTracker.cam;
+  m_cam = meTracker.m_cam;
   icpoint = meTracker.icpoint;
   cpoint = meTracker.cpoint;
   cpointo = meTracker.cpointo;
   norm = meTracker.norm;
   normw = meTracker.normw;
-  error = meTracker.error;
-  L = meTracker.L;
   xs = meTracker.xs;
   ys = meTracker.ys;
   nxs = meTracker.nxs;
   nys = meTracker.nys;
   Zs = meTracker.Zs;
-  isSilhouette = meTracker.isSilhouette;
-  invnormal = meTracker.invnormal;
+  m_isSilhouette = meTracker.m_isSilhouette;
   rho = meTracker.rho;
   theta = meTracker.theta;
   thetaInit = meTracker.thetaInit;
@@ -101,25 +96,22 @@ vpRBSilhouetteControlPoint::vpRBSilhouetteControlPoint(const vpRBSilhouetteContr
 
 vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilhouetteControlPoint &&meTracker)
 {
-  me = std::move(meTracker.me);
+  m_me = std::move(meTracker.m_me);
   s = std::move(meTracker.s);
   thetaInit = std::move(meTracker.thetaInit);
   m_numCandidates = std::move(meTracker.m_numCandidates);
-  cam = std::move(meTracker.cam);
+  m_cam = std::move(meTracker.m_cam);
   icpoint = std::move(meTracker.icpoint);
   cpoint = std::move(meTracker.cpoint);
   cpointo = std::move(meTracker.cpointo);
   norm = std::move(meTracker.norm);
   normw = std::move(meTracker.normw);
-  error = std::move(meTracker.error);
-  L = std::move(meTracker.L);
   xs = std::move(meTracker.xs);
   ys = std::move(meTracker.ys);
   nxs = std::move(meTracker.nxs);
   nys = std::move(meTracker.nys);
   Zs = std::move(meTracker.Zs);
-  isSilhouette = std::move(meTracker.isSilhouette);
-  invnormal = std::move(meTracker.invnormal);
+  m_isSilhouette = std::move(meTracker.m_isSilhouette);
   rho = std::move(meTracker.rho);
   theta = std::move(meTracker.theta);
   delta = std::move(meTracker.delta);
@@ -156,10 +148,10 @@ void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
   if (s.getState() == vpMeSite::NO_SUPPRESSION) {
     try {
       if (s.m_convlt == 0) {
-        s.track(I, me, false);
+        s.track(I, m_me, false);
       }
       else {
-        s.track(I, me, false);
+        s.track(I, m_me, false);
       }
     }
     catch (vpTrackingException &) {
@@ -175,7 +167,7 @@ void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned 
   try {
     if (s.getState() == vpMeSite::NO_SUPPRESSION) {
       //const bool testContrast = s.m_convlt != 0.0;
-      s.trackMultipleHypotheses(I, *me, false, m_candidates, m_numCandidates);
+      s.trackMultipleHypotheses(I, *m_me, false, m_candidates, m_numCandidates);
     }
   }
   catch (vpTrackingException &) {
@@ -231,16 +223,19 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
 
 void
 vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
-                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
+                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me)
 {
+  m_cam = &cam;
+  m_me = &me;
+
   vpRotationMatrix R;
   cMo.extract(R);
   theta = orient;
   thetaInit = theta;
-  double px = cam->get_px();
-  double py = cam->get_py();
-  int jc = cam->get_u0();
-  int ic = cam->get_v0();
+  double px = m_cam->get_px();
+  double py = m_cam->get_py();
+  int jc = m_cam->get_u0();
+  int ic = m_cam->get_v0();
   icpoint.set_i(n);
   icpoint.set_j(m);
   double x, y;
@@ -260,16 +255,17 @@ vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double ori
 
 void
 vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
-                                              const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
+                                              const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam)
 {
+  m_cam = &cam;
   vpRotationMatrix R;
   cMo.extract(R);
   theta = orient;
   thetaInit = theta;
-  double px = cam->get_px();
-  double py = cam->get_py();
-  int jc = cam->get_u0();
-  int ic = cam->get_v0();
+  double px = m_cam->get_px();
+  double py = m_cam->get_py();
+  int jc = m_cam->get_u0();
+  int ic = m_cam->get_v0();
   icpoint.set_i(n);
   icpoint.set_j(m);
   xs = (m-jc)/px;
@@ -281,11 +277,11 @@ vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, 
   double x, y;
   x = (m-jc)/px;
   y = (n-ic)/py;
-  cpoint.setWorldCoordinates(x*Z, y*Z, Z);
+  cpoint.setWorldCoordinates(x * Z, y * Z, Z);
   cpoint.changeFrame(oMc);
   cpointo.setWorldCoordinates(cpoint.get_X(), cpoint.get_Y(), cpoint.get_Z());
   normw = normo;
-  norm = R*normo;
+  norm = R * normo;
   buildPLine(oMc);
 #if VISP_DEBUG_RB_CONTROL_POINT
   if (std::isnan(line.getTheta())) {
@@ -302,10 +298,10 @@ vpRBSilhouetteControlPoint::update(const vpHomogeneousMatrix &_cMo)
 {
   cpointo.changeFrame(_cMo);
   cpointo.projection();
-  double px = cam->get_px();
-  double py = cam->get_py();
-  double uc = cam->get_u0();
-  double vc = cam->get_v0();
+  double px = m_cam->get_px();
+  double py = m_cam->get_py();
+  double uc = m_cam->get_u0();
+  double vc = m_cam->get_v0();
   double u, v;
   v = py*cpointo.get_y()+vc;
   u = px*cpointo.get_x()+uc;
@@ -317,10 +313,10 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
 {
   cpointo.changeFrame(cMo);
   cpointo.projection();
-  const double px = cam->get_px();
-  const double py = cam->get_py();
-  const double uc = cam->get_u0();
-  const double vc = cam->get_v0();
+  const double px = m_cam->get_px();
+  const double py = m_cam->get_py();
+  const double uc = m_cam->get_u0();
+  const double vc = m_cam->get_v0();
   const double v = py * cpointo.get_y() + vc;
   const double u = px * cpointo.get_x() + uc;
   icpoint.set_uv(u, v);
@@ -360,12 +356,12 @@ void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &
 {
   double delta = theta;
   s.init((double)icpoint.get_i(), (double)icpoint.get_j(), delta, cvlt, sign);
-  if (me != nullptr) {
-    const double marginRatio = me->getThresholdMarginRatio();
-    const double convolution = s.convolution(I, me);
+  if (m_me != nullptr) {
+    const double marginRatio = m_me->getThresholdMarginRatio();
+    const double convolution = s.convolution(I, m_me);
     s.init((double)icpoint.get_i(), (double)icpoint.get_j(), delta, convolution, sign);
     const double contrastThreshold = fabs(convolution) * marginRatio;
-    s.setContrastThreshold(contrastThreshold, *me);
+    s.setContrastThreshold(contrastThreshold, *m_me);
   }
 }
 
@@ -382,24 +378,15 @@ void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
     unsigned int isBg = static_cast<unsigned int>(I[ii][jj] == 0.f);
     k += isBg;
   }
-  isSilhouette = k > 2;
+  m_isSilhouette = k > 2;
 }
 
-/*!
-  Initialize the interaction matrix and the error to 0.
-*/
-void
-vpRBSilhouetteControlPoint::initInteractionMatrixError()
-{
-  L.resize(6, false);
-  error = 0;
-}
 
 /*!
   Compute the interaction matrix and the error vector corresponding to the line.
 */
 void
-vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
+vpRBSilhouetteControlPoint::computeMeInteractionMatrixError(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e)
 {
   line.changeFrame(cMo);
 
@@ -421,10 +408,10 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMat
     double co = cos(theta0);
     double si = sin(theta0);
 
-    double mx = 1.0/cam->get_px();
-    double my = 1.0/cam->get_py();
-    double xc = cam->get_u0();
-    double yc = cam->get_v0();
+    double mx = 1.0 / m_cam->get_px();
+    double my = 1.0 / m_cam->get_py();
+    double xc = m_cam->get_u0();
+    double yc = m_cam->get_v0();
 
     vpMatrix H;
     H = featureline.interaction();
@@ -439,15 +426,22 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixError(const vpHomogeneousMat
     double *Ltheta = H[1];
     // Calculate interaction matrix for a distance
     for (unsigned int k = 0; k < 6; k++) {
-      L[k] = (Lrho[k] + alpha*Ltheta[k]);
+      L[i][k] = (Lrho[k] + alpha*Ltheta[k]);
     }
-    error = rho0 - (x*co + y*si);
+    e[i] = rho0 - (x*co + y*si);
     m_valid = true;
+  }
+  else {
+    m_valid = false;
+    e[i] = 0;
+    for (unsigned int k = 0; k < 6; k++) {
+      L[i][k] = 0.0;
+    }
   }
 }
 
 void
-vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo)
+vpRBSilhouetteControlPoint::computeMeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e)
 {
   line.changeFrame(cMo);
 
@@ -458,17 +452,19 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousM
     vpFeatureBuilder::create(featureline, line);
     const double rho0 = featureline.getRho();
     const double theta0 = featureline.getTheta();
+#if VISP_DEBUG_RB_CONTROL_POINT
     if (std::isnan(theta0)) {
-      throw;
+      throw vpException(vpException::fatalError, "Got nan theta in computeInteractionMatrixMH");
     }
+#endif
 
     const double co = cos(theta0);
     const double si = sin(theta0);
 
-    const double mx = 1.0/cam->get_px();
-    const double my = 1.0/cam->get_py();
-    const double xc = cam->get_u0();
-    const double yc = cam->get_v0();
+    const double mx = 1.0 / m_cam->get_px();
+    const double my = 1.0 / m_cam->get_py();
+    const double xc = m_cam->get_u0();
+    const double yc = m_cam->get_v0();
     const vpMatrix &H = featureline.interaction();
     double xmin, ymin;
     double errormin = std::numeric_limits<double>::max();
@@ -493,14 +489,20 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousM
       }
     }
     if (m_valid) {
-      error = rho0 - (xmin * co + ymin * si);
+      e[i] = rho0 - (xmin * co + ymin * si);
       const double alpha = xmin * si - ymin * co;
 
       const double *Lrho = H[0];
       const double *Ltheta = H[1];
       // Calculate interaction matrix for a distance
       for (unsigned int k = 0; k < 6; k++) {
-        L[k] = (Lrho[k] + alpha * Ltheta[k]);
+        L[i][k] = (Lrho[k] + alpha * Ltheta[k]);
+      }
+    }
+    else {
+      e[i] = 0;
+      for (unsigned int k = 0; k < 6; k++) {
+        L[i][k] = 0.0;
       }
     }
   }

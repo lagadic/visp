@@ -68,9 +68,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
     }
 
     vpRBSilhouetteControlPoint p;
-    p.setCameraParameters(&frame.cam);
-    p.setMovingEdge(&m_me);
-    p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc);
+    p.buildPoint((int)sp.i, (int)sp.j, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam, m_me);
     if (previousFrame.I.getSize() == frame.I.getSize()) {
       p.initControlPoint(previousFrame.I, 0);
     }
@@ -107,10 +105,6 @@ void vpRBSilhouetteMeTracker::initVVS(const vpRBFeatureTrackerInput & /*frame*/,
     return;
   }
 
-  for (unsigned int k = 0; k < m_controlPoints.size(); k++) {
-    m_controlPoints[k].initInteractionMatrixError();
-  }
-
   m_weighted_error.resize(m_numFeatures, false);
   m_weights.resize(m_numFeatures, false);
   m_weights = 0;
@@ -132,14 +126,11 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     vpRBSilhouetteControlPoint &p = m_controlPoints[k];
     //p.update(cMo);
     if (m_numCandidates <= 1) {
-      p.computeInteractionMatrixError(cMo);
+      p.computeMeInteractionMatrixError(cMo, k, m_L, m_error);
     }
     else {
-      p.computeInteractionMatrixErrorMH(cMo);
+      p.computeMeInteractionMatrixErrorMH(cMo, k, m_L, m_error);
     }
-
-
-    m_error[k] = p.error; //On remplit la matrice d'erreur
 
     m_weights[k] = 1;
     if (!p.siteIsValid() || !p.isValid()) {
@@ -152,9 +143,6 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
       countValidSites++;
       if (m_error[k] <= threshold) {
         ++count;
-      }
-      for (unsigned int j = 0; j < 6; j++) {
-        m_L[k][j] = p.L[j];
       }
     }
   }

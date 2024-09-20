@@ -69,13 +69,19 @@ private:
 
   std::vector<vpMeSite> m_candidates;
   unsigned int m_numCandidates;
-  vpMe *me;
+  const vpMe *m_me;
   vpMeSite s;
+
+  //! Normal to surface where the control point lies
+  vpColVector norm;
+  vpColVector normw;
 
   bool m_valid;
 
+  bool m_isSilhouette;
+
+  const vpCameraParameters *m_cam;
 public:
-  const vpCameraParameters *cam;
 
   vpImagePoint icpoint;
 
@@ -83,20 +89,8 @@ public:
   vpPoint cpoint;
   vpPoint cpointo;
 
-  //! Normal to surface where the control point lies
-  vpColVector norm;
-  vpColVector normw;
-
-  //! Gradient profile associated to the control Points
-
-  double error;
-
-  vpColVector L;
-
   double xs, ys, nxs, nys, Zs;
 
-  bool isSilhouette;
-  bool invnormal;
 
 public:
 
@@ -118,25 +112,22 @@ public:
   void setValid(bool valid) { m_valid = valid; }
   bool isValid() const { return m_valid; }
 
-  int outOfImage(int i, int j, int half, int rows, int cols) const;
-  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols) const;
 
+
+  const vpCameraParameters &getCameraParameters() const { return *m_cam; }
   bool siteIsValid() const { return s.getState() == vpMeSite::NO_SUPPRESSION; }
   const vpMeSite &getSite() const { return s; }
   vpMeSite &getSite() { return s; }
   const vpFeatureLine &getFeatureLine() const { return featureline; }
   const vpLine &getLine() const { return line; }
   double getTheta() const { return theta; }
-
-  void setMovingEdge(vpMe *_me) { me = _me; }
-  void setCameraParameters(const vpCameraParameters *_cam) { cam = _cam; }
+  bool isSilhouette() const { return m_isSilhouette; }
 
   void initControlPoint(const vpImage<unsigned char> &I, double cvlt);
   void detectSilhouette(const vpImage<float> &I);
-  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc);
-  void buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc);
-  void buildPlane(const vpPoint &pointn, const vpColVector &normal, vpPlane &plane);
-  void buildPLine(const vpHomogeneousMatrix &oMc);
+  void buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam, const vpMe &me);
+  void buildSilhouettePoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc, const vpCameraParameters &cam);
+
   void update(const vpHomogeneousMatrix &_cMo);
   void updateSilhouettePoint(const vpHomogeneousMatrix &_cMo);
 
@@ -156,13 +147,17 @@ public:
    */
   void trackMultipleHypotheses(const vpImage<unsigned char> &I);
 
-  void initInteractionMatrixError();
-  void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
-  void computeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo);
+  void computeMeInteractionMatrixError(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e);
+  void computeMeInteractionMatrixErrorMH(const vpHomogeneousMatrix &cMo, unsigned int i, vpMatrix &L, vpColVector &e);
 
 private:
-  void sample(const vpImage<unsigned char> &) { }
   bool isLineDegenerate() const;
+
+  int outOfImage(int i, int j, int half, int rows, int cols) const;
+  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols) const;
+  void buildPlane(const vpPoint &pointn, const vpColVector &normal, vpPlane &plane);
+  void buildPLine(const vpHomogeneousMatrix &oMc);
+
 };
 
 END_VISP_NAMESPACE

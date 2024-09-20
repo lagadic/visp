@@ -95,10 +95,9 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     int ii = sp.i, jj = sp.j;
 
     vpRBSilhouetteControlPoint pccd;
-    pccd.setCameraParameters(&frame.cam);
-    pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc);
+    pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
     pccd.detectSilhouette(frame.renders.depth);
-    if (pccd.isSilhouette && !std::isnan(sp.orientation) && pccd.isValid()) {
+    if (pccd.isSilhouette() && !std::isnan(sp.orientation) && pccd.isValid()) {
       m_controlPoints.push_back(std::move(pccd));
     }
   }
@@ -540,7 +539,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
       const double *mean_vic_ptr_prev = m_prevStats.mean_vic[i];
       const double *cov_vic_ptr_prev = m_prevStats.cov_vic[i];
-      const vpCameraParameters &cam = *p.cam;
+      const vpCameraParameters &cam = p.getCameraParameters();
 
       Lnvp[0] = (-nv_ptr[0] / p.Zs);
       Lnvp[1] = (-nv_ptr[1] / p.Zs);
