@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,17 +29,22 @@
  *
  * Description:
  * TCP Client
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpClient.h>
+#include <visp3/core/vpConfig.h>
+
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#include <visp3/core/vpClient.h>
 #include <visp3/core/vpDebug.h>
 
 BEGIN_VISP_NAMESPACE
@@ -97,18 +101,18 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
   return connectServer(serv);
-}
+  }
 
-/*!
-  Connect to the server represented by the given ip, and at a given port.
+  /*!
+    Connect to the server represented by the given ip, and at a given port.
 
-  \sa vpClient::connectToHostname()
+    \sa vpClient::connectToHostname()
 
-  \param ip : IP of the server.
-  \param port_serv : Port used for the connection.
+    \param ip : IP of the server.
+    \param port_serv : Port used for the connection.
 
-  \return True if the connection has been etablished, false otherwise.
-*/
+    \return True if the connection has been etablished, false otherwise.
+  */
 bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
 {
   vpNetwork::vpReceptor serv;
@@ -130,13 +134,13 @@ bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
   serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
 
   return connectServer(serv);
-}
+  }
 
-/*!
-  Deconnect from the server at a specific index.
+  /*!
+    Deconnect from the server at a specific index.
 
-  \param index : Index of the server.
-*/
+    \param index : Index of the server.
+  */
 void vpClient::deconnect(const unsigned int &index)
 {
   if (index < receptor_list.size()) {
