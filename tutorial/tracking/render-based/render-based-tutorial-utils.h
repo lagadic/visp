@@ -42,7 +42,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 struct BaseArguments
 {
-  BaseArguments() : trackerConfiguration(""), display(true), debugDisplay(false), enableRenderProfiling(false), maxDepthDisplay(1.f) { }
+  BaseArguments() : trackerConfiguration(""), maxDepthDisplay(1.f), display(true), debugDisplay(false), enableRenderProfiling(false) { }
 
   void registerArguments(vpJsonArgumentParser &parser)
   {
