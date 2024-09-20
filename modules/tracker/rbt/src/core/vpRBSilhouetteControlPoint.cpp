@@ -187,23 +187,14 @@ void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned 
 /*!
   Build a 3D plane thanks the 3D coordinate of the control point and the normal vector to the surface
 
-  \param plane : The vpPlane instance used to store the computed plane equation.
+  \param[in] pointn : A point on the plane with coordinates in the object frame (oX, oY, oZ).
+  \param[in] normal : Normal of the plane.
+  \param[out] plane : The vpPlane instance used to store the computed plane equation.
 */
 void
 vpRBSilhouetteControlPoint::buildPlane(const vpPoint &pointn, const vpColVector &normal, vpPlane &plane)
 {
-  //Equation of the plane is given by:
-  double A = normal[0];
-  double B = normal[1];
-  double C = normal[2];
-  //double D=-(A*(double)cpoint.get_oX()+B*(double)cpoint.get_oY()+C*(double)cpoint.get_oZ());
-  double D = -(A*(double)pointn.get_oX()+B*pointn.get_oY()+C*(double)pointn.get_oZ());
-
-  double normp = sqrt(A*A+B*B+C*C);
-  plane.setA(A/normp);
-  plane.setB(B/normp);
-  plane.setC(C/normp);
-  plane.setD(D/normp);
+  plane.init(pointn, normal, vpPlane::object_frame);
 }
 
 void
@@ -215,7 +206,6 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
   buildPlane(cpoint, norm, plane);
   vpRotationMatrix R;
   oMc.extract(R);
-
 
   vpColVector V(3);
   vpColVector Vo(3);
@@ -240,7 +230,8 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
 }
 
 void
-vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
+vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo,
+                                       const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
 {
   vpRotationMatrix R;
   cMo.extract(R);
