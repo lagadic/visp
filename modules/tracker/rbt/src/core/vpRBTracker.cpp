@@ -83,6 +83,29 @@ void vpRBTracker::setPose(const vpHomogeneousMatrix &cMo)
   m_renderer.setCameraPose(cMo.inverse());
 }
 
+vpMatrix vpRBTracker::getCovariance() const
+{
+  vpMatrix sumInvs(6, 6, 0.0);
+  double sumWeights = 0.0;
+  for (const std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
+    if (tracker->getNumFeatures() == 0) {
+      continue;
+    }
+    tracker->updateCovariance(m_lambda);
+    vpMatrix trackerCov = tracker->getCovariance();
+    double trackerWeight = tracker->getVVSTrackerWeight();
+    if (trackerCov.getRows() != 6 || trackerCov.getCols() != 6) {
+      throw vpException(vpException::dimensionError,
+      "Expected tracker pose covariance to have dimensions 6x6, but got %dx%d",
+      trackerCov.getRows(), trackerCov.getCols());
+    }
+
+    sumInvs += (trackerWeight * trackerCov.pseudoInverse());
+    sumWeights += trackerWeight;
+  }
+  return sumWeights * sumInvs.pseudoInverse();
+}
+
 vpCameraParameters vpRBTracker::getCameraParameters() const { return m_cam; }
 
 void vpRBTracker::setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w)

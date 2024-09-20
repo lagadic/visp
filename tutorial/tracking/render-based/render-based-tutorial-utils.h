@@ -10,7 +10,6 @@
 #include <math.h>
 #include <string.h>
 
-
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageConvert.h>
@@ -197,19 +196,21 @@ class vpRBExperimentPlotter
 {
 public:
 
-  vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false) { }
+  vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false), plotCovariance(false) { }
 
   void registerArguments(vpJsonArgumentParser &parser)
   {
     parser
       .addFlag("--plot-pose", plotPose, "Plot the pose of the object in the camera frame")
       .addFlag("--plot-position", plotPose3d, "Plot the position of the object in a 3d figure")
-      .addFlag("--plot-divergence", plotDivergenceMetrics, "Plot the metrics associated to the divergence threshold computation");
+      .addFlag("--plot-divergence", plotDivergenceMetrics, "Plot the metrics associated to the divergence threshold computation")
+      .addFlag("--plot-cov", plotCovariance, "Plot the pose covariance trace for each feature");
+
   }
 
   void postProcessArguments(bool displayEnabled)
   {
-    enabled = plotPose || plotDivergenceMetrics || plotPose3d;
+    enabled = plotPose || plotDivergenceMetrics || plotPose3d || plotCovariance;
     if (enabled && !displayEnabled) {
       throw vpException(vpException::badValue, "Tried to plot data, but display is disabled");
     }
@@ -226,7 +227,7 @@ public:
       xpos = std::max(xpos, display->getWindowXPosition() + static_cast<int>(display->getWidth()));
     }
 
-    numPlots = static_cast<int>(plotPose) + static_cast<int>(plotDivergenceMetrics) + static_cast<int>(plotPose3d);
+    numPlots = static_cast<int>(plotPose) + static_cast<int>(plotDivergenceMetrics) + static_cast<int>(plotPose3d) + static_cast<int>(plotCovariance);
     plotter.init(numPlots, 600, 800, xpos, ypos, "Plot");
     unsigned int plotIndex = 0;
     if (plotPose) {
@@ -252,6 +253,14 @@ public:
       plotter.initGraph(plotIndex, 1);
       plotter.initRange(plotIndex, 0.0, 1.0, 0.0, 1.0);
       plotter.setTitle(plotIndex, "Divergence");
+      ++plotIndex;
+    }
+    if (plotCovariance) {
+      plotter.initGraph(plotIndex, 2);
+      plotter.setLegend(plotIndex, 0, "Translation trace standard deviation (cm)");
+      plotter.setLegend(plotIndex, 1, "Rotation trace standard deviation (deg)");
+
+      plotter.setTitle(plotIndex, "Covariance");
       ++plotIndex;
     }
   }
@@ -281,13 +290,28 @@ public:
       plotter.plot(plotIndex, 0, time, metric);
       ++plotIndex;
     }
+    if (plotCovariance) {
+      vpMatrix cov = tracker.getCovariance();
+      double traceTranslation = 0.0, traceRotation = 0.0;
+      for (unsigned int i = 0; i < 3; ++i) {
+        traceTranslation += cov[i][i];
+        traceRotation += cov[i + 3][i + 3];
+      }
+      traceTranslation = sqrt(traceTranslation) * 100;
+      traceRotation = vpMath::deg(sqrt(traceRotation));
+
+      plotter.plot(plotIndex, 0, time, traceTranslation);
+      plotter.plot(plotIndex, 1, time, traceRotation);
+
+      ++plotIndex;
+    }
   }
 private:
   bool enabled;
   bool plotPose;
   bool plotPose3d;
-
   bool plotDivergenceMetrics;
+  bool plotCovariance;
   int numPlots;
   vpPlot plotter;
 };

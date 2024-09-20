@@ -226,7 +226,10 @@ public:
 
   void initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
-  void updateCovariance(const double /*lambda*/) VP_OVERRIDE { }
+  void updateCovariance(const double /*lambda*/) VP_OVERRIDE
+  {
+    m_cov = Sigma_Phi;
+  }
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 
