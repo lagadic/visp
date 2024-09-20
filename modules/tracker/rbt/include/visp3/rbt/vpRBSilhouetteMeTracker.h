@@ -51,7 +51,12 @@ class VISP_EXPORT vpRBSilhouetteMeTracker : public vpRBFeatureTracker
 {
 public:
 
-  vpRBSilhouetteMeTracker() : vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0), m_singlePointConvergedThresholdPixels(3), m_useMask(false), m_minMaskConfidence(0.f) { }
+  vpRBSilhouetteMeTracker() :
+    vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0),
+    m_singlePointConvergedThresholdPixels(3), m_useMask(false), m_minMaskConfidence(0.f)
+  { }
+
+  virtual ~vpRBSilhouetteMeTracker() = default;
 
   bool requiresRGB() const VP_OVERRIDE { return false; }
 

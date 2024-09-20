@@ -65,6 +65,8 @@ class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 public:
   vpRBKltTracker();
 
+  virtual ~vpRBKltTracker() = default;
+
   bool requiresRGB() const VP_OVERRIDE { return false; }
 
   bool requiresDepth() const VP_OVERRIDE { return false; }
@@ -237,7 +239,6 @@ public:
       L[i * 2 + 1][5] = -x;
     }
   };
-
 
 private:
 

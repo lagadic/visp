@@ -72,6 +72,8 @@ public:
 
   vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f) { }
 
+  virtual ~vpRBDenseDepthTracker() = default;
+
   bool requiresRGB() const VP_OVERRIDE { return false; }
   bool requiresDepth() const VP_OVERRIDE { return true; }
   bool requiresSilhouetteCandidates() const VP_OVERRIDE { return false; }
@@ -198,9 +200,8 @@ protected:
   unsigned int m_step;
   bool m_useMask;
   float m_minMaskConfidence;
-
-
 };
+
 END_VISP_NAMESPACE
 
 #endif

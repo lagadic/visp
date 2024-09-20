@@ -51,6 +51,7 @@ class VISP_EXPORT vpRBFeatureTrackerFactory : public vpDynamicFactory<vpRBFeatur
 {
 private:
   vpRBFeatureTrackerFactory();
+  virtual ~vpRBFeatureTrackerFactory() = default;
 
 public:
   static vpRBFeatureTrackerFactory &getFactory()

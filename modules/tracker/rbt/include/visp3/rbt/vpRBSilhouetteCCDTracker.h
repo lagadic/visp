@@ -186,6 +186,7 @@ class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 public:
 
   vpRBSilhouetteCCDTracker();
+  virtual ~vpRBSilhouetteCCDTracker() = default;
 
   bool requiresRGB() const VP_OVERRIDE { return true; }
   bool requiresDepth() const VP_OVERRIDE { return false; }
