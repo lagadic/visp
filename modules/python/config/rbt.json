@@ -1,0 +1,31 @@
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": [],
+  "classes": {
+    "vpDynamicFactory": {
+      "specializations": [
+        {
+          "python_name": "DynamicFactoryTracker",
+          "arguments": [
+            "vpRBFeatureTracker"
+          ]
+        },
+        {
+          "python_name": "DynamicFactoryMask",
+          "arguments": [
+            "vpObjectMask"
+          ]
+        },
+        {
+          "python_name": "DynamicFactoryDrift",
+          "arguments": [
+            "vpRBDriftDetector"
+          ]
+        }
+      ]
+    }
+  },
+  "enums": {},
+  "config_includes": []
+}

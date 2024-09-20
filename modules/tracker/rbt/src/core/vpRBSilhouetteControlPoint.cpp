@@ -132,9 +132,6 @@ vpRBSilhouetteControlPoint &vpRBSilhouetteControlPoint::operator=(const vpRBSilh
   return *this;
 }
 
-
-
-
 int vpRBSilhouetteControlPoint::outOfImage(int i, int j, int half, int rows, int cols) const
 {
   return (!((i> half+2) &&
@@ -174,7 +171,6 @@ void vpRBSilhouetteControlPoint::track(const vpImage<unsigned char> &I)
   }
 }
 
-
 void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned char> &I)
 {
   // If element hasn't been suppressed
@@ -189,8 +185,6 @@ void vpRBSilhouetteControlPoint::trackMultipleHypotheses(const vpImage<unsigned 
     s.setState(vpMeSite::THRESHOLD);
   }
 }
-
-
 
 /*!
   Build a 3D plane thanks the 3D coordinate of the control point and the normal vector to the surface
@@ -213,9 +207,6 @@ vpRBSilhouetteControlPoint::buildPlane(const vpPoint &pointn, const vpColVector 
   plane.setC(C/normp);
   plane.setD(D/normp);
 }
-
-
-
 
 void
 vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
@@ -240,11 +231,7 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
     V[1] = ((cpoint.get_oY()/cpoint.get_oZ()))*cpoint.get_oZ()-cpoint.get_oY();
     V[2] = (-plane.getD()-V[0]*plane.getA()-V[1]*plane.getB())/plane.getC()-cpoint.get_oZ();
   }
-  // V[0] = ((cpoint.get_oX()/cpoint.get_oZ())+ cos(theta))*cpoint.get_oZ()-cpoint.get_oX();
-  // V[1] = ((cpoint.get_oY()/cpoint.get_oZ()) - sin(theta))*cpoint.get_oZ()-cpoint.get_oY();
-  // V[2] = (-plane.getD()-V[0]*plane.getA()-V[1]*plane.getB())/plane.getC()-cpoint.get_oZ();
-  //V = V.normalize();
-  //std::cout << V.t() << std::endl;
+
   Vo = R*V;
   vpColVector norm2 = vpColVector::cross(Vo, normw);
   buildPlane(cpointo, norm2, plane2);
@@ -253,7 +240,6 @@ vpRBSilhouetteControlPoint::buildPLine(const vpHomogeneousMatrix &oMc)
   line.setWorldCoordinates(plane1.getA(), plane1.getB(), plane1.getC(), plane1.getD(),
                            plane2.getA(), plane2.getB(), plane2.getC(), plane2.getD());
 }
-
 
 void
 vpRBSilhouetteControlPoint::buildPoint(int n, int m, const double &Z, double orient, const vpColVector &normo, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
@@ -288,7 +274,6 @@ vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, 
                                               const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &oMc)
 {
   vpRotationMatrix R;
-  //oMc.extract(R);
   cMo.extract(R);
   theta = orient;
   thetaInit = theta;
@@ -323,11 +308,9 @@ vpRBSilhouetteControlPoint::buildSilhouettePoint(int n, int m, const double &Z, 
   m_valid = isLineDegenerate();
 }
 
-
 void
 vpRBSilhouetteControlPoint::update(const vpHomogeneousMatrix &_cMo)
 {
-
   cpointo.changeFrame(_cMo);
   cpointo.projection();
   double px = cam->get_px();
@@ -384,48 +367,33 @@ vpRBSilhouetteControlPoint::updateSilhouettePoint(const vpHomogeneousMatrix &cMo
   }
 }
 
-
 void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &I, double cvlt)
 {
   double delta = theta;
   s.init((double)icpoint.get_i(), (double)icpoint.get_j(), delta, cvlt, sign);
   if (me != nullptr) {
     const double marginRatio = me->getThresholdMarginRatio();
-    double convolution = s.convolution(I, me);
+    const double convolution = s.convolution(I, me);
     s.init((double)icpoint.get_i(), (double)icpoint.get_j(), delta, convolution, sign);
-    double contrastThreshold = fabs(convolution) * marginRatio;
+    const double contrastThreshold = fabs(convolution) * marginRatio;
     s.setContrastThreshold(contrastThreshold, *me);
   }
 }
 
-
 void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
 {
 
-  int k = 0, k1 = 0, k2 = 0;
+  unsigned int k = 0;
   int range = 4;
   double c = cos(theta);
   double s = sin(theta);
   for (int n = -range; n <= range; n++) {
     unsigned int ii = static_cast<unsigned int>(round(icpoint.get_i() + s * n));
     unsigned int jj = static_cast<unsigned int>(round(icpoint.get_j() + c * n));
-    int isBg = static_cast<int>(I[ii][jj] == 0.f);
+    unsigned int isBg = static_cast<unsigned int>(I[ii][jj] == 0.f);
     k += isBg;
-    k1 += isBg && n < 0;
-    k2 += isBg && n > 0;
   }
-  if (k > 2) {
-    isSilhouette = true;
-    // if (k1 > k2) {
-    //   invnormal = true;
-    //   theta = -theta;
-    //   nxs = -nxs;
-    //   nys = -nys;
-    // }
-    // else {
-    //   invnormal = false;
-    // }
-  }
+  isSilhouette = k > 2;
 }
 
 /*!
@@ -518,13 +486,12 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousM
     const double yc = cam->get_v0();
     const vpMatrix &H = featureline.interaction();
     double xmin, ymin;
-    double errormin = 2.0;
+    double errormin = std::numeric_limits<double>::max();
 
-    const int n_hyp = m_numCandidates;
     const std::vector<vpMeSite> &cs = m_candidates;
     xmin = (s.m_j - xc) * mx;
     ymin = (s.m_i - yc) * my;
-    for (unsigned int l = 0; l < (unsigned)n_hyp; l++) //for each candidate of P
+    for (unsigned int l = 0; l < m_numCandidates; l++) //for each candidate of P
     {
       const vpMeSite &Pk = cs[l];
 
@@ -557,9 +524,8 @@ vpRBSilhouetteControlPoint::computeInteractionMatrixErrorMH(const vpHomogeneousM
 bool vpRBSilhouetteControlPoint::isLineDegenerate() const
 {
   double a, b, d;
-  a = line.cP[4]*line.cP[3] - line.cP[0]*line.cP[7];
-  b = line.cP[5]*line.cP[3] - line.cP[1]*line.cP[7];
-  //c = line.cP[6]*line.cP[3] - line.cP[2]*line.cP[7];
+  a = line.cP[4] * line.cP[3] - line.cP[0] * line.cP[7];
+  b = line.cP[5] * line.cP[3] - line.cP[1] * line.cP[7];
   d = a*a + b*b;
   return d <= 1e-7;
 }

@@ -59,7 +59,6 @@ class VISP_EXPORT vpColorHistogramMask : public vpObjectMask
 {
 public:
   vpColorHistogramMask();
-  vpColorHistogramMask(unsigned int N);
 
   void updateMask(const vpRBFeatureTrackerInput &frame,
                   const vpRBFeatureTrackerInput &previousFrame,
