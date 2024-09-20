@@ -81,7 +81,7 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
   }
   m_numFeatures = m_controlPoints.size();
 
-  m_robust.setMinMedianAbsoluteDeviation(std::max(m_singlePointConvergedThresholdPixels * 0.5, 1.0) / frame.cam.get_px());
+  m_robust.setMinMedianAbsoluteDeviation(m_robustMadMin / frame.cam.get_px());
 }
 
 
