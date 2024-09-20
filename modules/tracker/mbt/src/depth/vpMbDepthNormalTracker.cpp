@@ -267,12 +267,21 @@ void vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu()
        it != m_depthNormalListOfActiveFaces.end(); ++it) {
     vpMatrix L_face;
     vpColVector features_face;
+
     (*it)->computeInteractionMatrix(m_cMo, L_face, features_face);
 
     vpColVector face_error = features_face - m_depthNormalListOfDesiredFeatures[(size_t)cpt];
 
-    m_error_depthNormal.insert(cpt * 3, face_error);
-    m_L_depthNormal.insert(L_face, cpt * 3, 0);
+    if (!(*it)->planeIsInvalid(m_cMo, angleDisappears)) {
+      m_error_depthNormal.insert(cpt * 3, face_error);
+      m_L_depthNormal.insert(L_face, cpt * 3, 0);
+    }
+    else {
+      face_error = 0;
+      L_face = 0;
+      m_error_depthNormal.insert(cpt * 3, face_error);
+      m_L_depthNormal.insert(L_face, cpt * 3, 0);
+    }
 
     cpt++;
   }

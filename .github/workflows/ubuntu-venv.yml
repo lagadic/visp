@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-ubuntu-dep-apt:
+  build-ubuntu-dep-apt-venv:
     runs-on: ubuntu-latest
 
     steps:
