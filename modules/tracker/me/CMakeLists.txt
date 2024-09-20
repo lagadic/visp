@@ -39,13 +39,6 @@ vp_module_include_directories()
 vp_create_module()
 vp_add_tests(DEPENDS_ON visp_io visp_gui)
 
-vp_set_source_file_compile_flag(src/moving-edges/vpMeSite.cpp -Wno-strict-overflow)
-
-if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/moving-edges/vpMeNurbs.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/testNurbs.cpp -Wno-float-equal)
-endif()
-
 if(WITH_CATCH2)
   # catch2 is private
   include_directories(${CATCH2_INCLUDE_DIRS})

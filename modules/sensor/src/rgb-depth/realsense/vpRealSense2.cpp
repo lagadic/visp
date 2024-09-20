@@ -45,6 +45,7 @@
 
 #define MANUAL_POINTCLOUD 1
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 namespace
 {
 bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
@@ -64,6 +65,7 @@ bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
   return true;
 }
 } // namespace
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -101,36 +101,6 @@ unsigned char getDepthColor(const std::vector<uint32_t> &histogram, float z, flo
   return static_cast<unsigned char>(histogram[static_cast<uint32_t>(z * depth_scale)] * 255 / histogram[0xFFFF]);
 }
 
-void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
-{
-  auto vf = frame.as<rs2::video_frame>();
-  int size = vf.get_width() * vf.get_height();
-
-  switch (frame.get_profile().format()) {
-  case RS2_FORMAT_RGB8:
-  case RS2_FORMAT_BGR8:
-    memcpy(data, frame.get_data(), size * 3);
-    break;
-
-  case RS2_FORMAT_RGBA8:
-  case RS2_FORMAT_BGRA8:
-    memcpy(data, frame.get_data(), size * 4);
-    break;
-
-  case RS2_FORMAT_Y16:
-  case RS2_FORMAT_Z16:
-    memcpy(data, frame.get_data(), size * 2);
-    break;
-
-  case RS2_FORMAT_Y8:
-    memcpy(data, frame.get_data(), size);
-    break;
-
-  default:
-    break;
-  }
-}
-
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
