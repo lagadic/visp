@@ -86,6 +86,7 @@ foreach(mod ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_D
   unset(VISP_MODULE_${mod}_PRIVATE_OPT_DEPS CACHE)
   unset(VISP_MODULE_${mod}_LINK_DEPS CACHE)
   unset(VISP_MODULE_${mod}_INC_DEPS CACHE)
+  unset(VISP_MODULE_${mod}_SYSTEM_INC_DEPS CACHE)
   unset(VISP_MODULE_${mod}_WRAPPERS CACHE)
 endforeach()
 
@@ -179,6 +180,7 @@ macro(vp_add_module _name)
 
     set(VISP_MODULE_${the_module}_LINK_DEPS "" CACHE INTERNAL "")
     set(VISP_MODULE_${the_module}_INC_DEPS "" CACHE INTERNAL "")
+    set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "" CACHE INTERNAL "")
 
     # parse list of dependencies
     if("${ARGV1}" STREQUAL "INTERNAL" OR "${ARGV1}" STREQUAL "BINDINGS")
@@ -606,7 +608,6 @@ macro(vp_target_include_modules target)
   endforeach()
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
   vp_list_unique(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS)
-
 endmacro()
 
 # setup include paths for the list of passed modules and recursively add dependent modules
@@ -836,12 +837,22 @@ macro(_vp_create_module)
     target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
   endif()
 
-  set_property(TARGET ${the_module} APPEND PROPERTY
-    INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}
-  )
-  set_property(TARGET ${the_module} APPEND PROPERTY
-    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
-  )
+  #set_property(TARGET ${the_module} APPEND PROPERTY
+  #  # Here we need also to add system include dirs, otherwise they are missing
+  #  INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS} ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
+  #)
+  #set_property(TARGET ${the_module} APPEND PROPERTY
+  #  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
+  #)
+  set(inc "${VISP_MODULE_${the_module}_INC_DEPS};${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}")
+  if(NOT (CMAKE_VERSION VERSION_LESS "3.11.0"))  # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/1264 : eliminates "Cannot specify compile definitions for imported target" error message
+    target_include_directories(${the_module} SYSTEM INTERFACE "$<BUILD_INTERFACE:${inc}>")
+  else()
+    set_target_properties(${the_module} PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "$<BUILD_INTERFACE:${inc}>"
+        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "$<BUILD_INTERFACE:${inc}>"
+    )
+  endif()
 
   # For dynamic link numbering convenions
   if(NOT ANDROID)

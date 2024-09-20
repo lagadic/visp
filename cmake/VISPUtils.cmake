@@ -214,12 +214,10 @@ function(vp_target_include_directories target)
     if(TARGET ${target})
       target_include_directories(${target} SYSTEM PRIVATE ${__system_params})
     else()
-      set(__new_inc ${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}})
-      list(APPEND __new_inc ${__system_params})
+      set(__new_inc "${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}};${__system_params}")
       set(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
     endif()
   endif()
-
 endfunction()
 
 # clears all passed variables
@@ -794,10 +792,12 @@ function(vp_target_link_libraries target)
 endfunction()
 
 function(_vp_append_target_includes target)
+  # Only defined for visp_<module> targets
   if(DEFINED VP_TARGET_INCLUDE_DIRS_${target})
     target_include_directories(${target} PRIVATE ${VP_TARGET_INCLUDE_DIRS_${target}})
     unset(VP_TARGET_INCLUDE_DIRS_${target} CACHE)
   endif()
+  # Only defined for visp_<module> targets
   if(DEFINED VP_TARGET_INCLUDE_SYSTEM_DIRS_${target})
     target_include_directories(${target} SYSTEM PRIVATE ${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}})
     unset(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target} CACHE)
@@ -1643,7 +1643,7 @@ macro(vp_get_all_includes _includes_modules _includes_extra _system_include_dirs
 
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_INC_DEPS})
-    list(APPEND ${_system_include_dirs} ${VISP_MODULE_${m}_SYSTEM_INC_DEPS})
+    list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_SYSTEM_INC_DEPS})
 
     if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
       list(INSERT ${_includes_modules} 0 "${VISP_MODULE_${m}_LOCATION}/include")
