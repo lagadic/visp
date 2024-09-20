@@ -164,7 +164,6 @@ public:
     iterLog["cMo"] = cMo;
 
     log.push_back(iterLog);
-
   }
 
   void close()
@@ -177,7 +176,6 @@ public:
     f.close();
   }
 
-
 private:
   bool enabled;
   std::string folder;
@@ -188,19 +186,15 @@ private:
   vpImage<vpRGBa> ImaskOverlay;
   vpImage<vpRGBa> Iout;
 
-
   bool videoEnabled;
   unsigned int framerate;
   vpVideoWriter videoWriter;
 
-
   nlohmann::json log;
-
 };
 
 class vpRBExperimentPlotter
 {
-
 public:
 
   vpRBExperimentPlotter() : enabled(false), plotPose(false), plotPose3d(false), plotDivergenceMetrics(false) { }
@@ -215,13 +209,10 @@ public:
 
   void postProcessArguments(bool displayEnabled)
   {
-
     enabled = plotPose || plotDivergenceMetrics || plotPose3d;
     if (enabled && !displayEnabled) {
       throw vpException(vpException::badValue, "Tried to plot data, but display is disabled");
     }
-
-
   }
 
   void init(std::vector<std::shared_ptr<vpDisplay>> &displays)
@@ -301,8 +292,6 @@ private:
   vpPlot plotter;
 };
 
-
-
 std::vector<std::shared_ptr<vpDisplay>> createDisplays(
   vpImage<unsigned char> &Id, vpImage<vpRGBa> &Icol,
   vpImage<unsigned char> &depthDisplay, vpImage<unsigned char> &probaDisplay)
@@ -331,7 +320,6 @@ std::vector<std::shared_ptr<vpDisplay>> createDisplays(
   );
 }
 
-
 void enableRendererProfiling()
 {
   if (PStatClient::is_connected()) {
@@ -343,7 +331,6 @@ void enableRendererProfiling()
   if (!PStatClient::connect(host, port)) {
     std::cout << "Could not connect to PStat server." << std::endl;
   }
-
 }
 
 void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normalDisplayImage)
@@ -351,7 +338,7 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage, vpImage<vpRGBa> &normal
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < normalsImage.getSize(); ++i) {
+  for (unsigned int i = 0; i < normalsImage.getSize(); ++i) {
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
@@ -367,8 +354,8 @@ void displayCanny(const vpImage<vpRGBf> &cannyRawData,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < cannyRawData.getSize(); ++i) {
-    vpRGBf &px = cannyRawData.bitmap[i];
+  for (unsigned int i = 0; i < cannyRawData.getSize(); ++i) {
+    //vpRGBf &px = cannyRawData.bitmap[i];
     canny.bitmap[i] = valid.bitmap[i] * 255;
     //canny.bitmap[i] = static_cast<unsigned char>(127.5f + 127.5f * atan(px.B));
   }
