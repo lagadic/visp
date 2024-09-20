@@ -201,4 +201,7 @@
     {"column": 120, "color": "#ffcc00"}
   ],
   "C_Cpp.default.compilerPath": "/usr/bin/g++",
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
 }
