@@ -84,6 +84,8 @@ public:
   const vpRBFeatureTrackerInput &getMostRecentFrame() const { return m_currentFrame; }
   const vpRBTrackerLogger &getLogger() const { return m_logger; }
 
+  vpMatrix getCovariance() const;
+
   /**
    * @}
    */
@@ -191,11 +193,6 @@ protected:
     const vpImage<vpRGBf> &Inorm, const vpImage<float> &Idepth,
     const vpImage<vpRGBf> &Ior, const vpImage<unsigned char> &Ivalid,
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp);
-
-  vpMatrix getCovariance()
-  {
-    throw vpException(vpException::notImplementedError);
-  }
 
   template<typename T>
   void checkDimensionsOrThrow(const vpImage<T> &I, const std::string &imgType) const

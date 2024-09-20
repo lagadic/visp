@@ -192,6 +192,8 @@ int main(int argc, const char **argv)
     tracker.track(Id, Icol, depth);
     double trackingEnd = vpTime::measureTimeMs();
     tracker.getPose(cMo);
+
+    std::cout << tracker.getCovariance() << std::endl;
     double displayStart = vpTime::measureTimeMs();
     if (baseArgs.display) {
       if (baseArgs.debugDisplay) {

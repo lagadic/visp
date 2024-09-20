@@ -49,8 +49,7 @@ void vpRBFeatureTracker::updateCovariance(const double lambda)
 {
   vpMatrix  D;
   D.diag(m_covWeightDiag);
-  vpColVector v;
-  m_cov = computeCovarianceMatrix(m_L, -v, lambda * m_error, D);
+  m_cov = computeCovarianceMatrix(m_L, lambda * m_error, D);
 }
 
 void vpRBFeatureTracker::computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR)
@@ -75,10 +74,11 @@ void vpRBFeatureTracker::computeJTR(const vpMatrix &interaction, const vpColVect
 #endif
 }
 
-vpMatrix vpRBFeatureTracker::computeCovarianceMatrix(const vpMatrix &A, const vpColVector & /*x*/, const vpColVector &b, const vpMatrix &W)
+vpMatrix vpRBFeatureTracker::computeCovarianceMatrix(const vpMatrix &DJ, const vpColVector &e, const vpMatrix &covDiag)
 {
-  double sigma2 = (((W * b).t()) * W * b)/((double)b.getRows());
-  return (A.t() * W * A).pseudoInverse(b.getRows() * std::numeric_limits<double>::epsilon()) * sigma2;
+  const vpColVector covDiagE = covDiag * e;
+  double sigma2 = (covDiagE.t() * covDiag * e) / ((double)e.getRows());
+  return (DJ.t() * covDiag * DJ).pseudoInverse() * sigma2;
 }
 
 END_VISP_NAMESPACE

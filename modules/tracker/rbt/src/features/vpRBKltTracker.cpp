@@ -265,6 +265,8 @@ void vpRBKltTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpR
   m_weights.resize(m_numFeatures, false);
   m_LTL.resize(6, 6, false, false);
   m_LTR.resize(6, false);
+  m_cov.resize(6, 6, false, false);
+  m_covWeightDiag.resize(m_numFeatures, false);
   m_error = 0;
 }
 
@@ -289,6 +291,7 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, co
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
   for (unsigned int i = 0; i < m_error.getRows(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
+    m_covWeightDiag[i] = m_weights[i] * m_weights[i];
     for (unsigned int dof = 0; dof < 6; ++dof) {
       m_L[i][dof] *= m_weights[i];
     }
@@ -296,7 +299,6 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, co
 
   m_LTL = m_L.AtA();
   computeJTR(m_L, m_weighted_error, m_LTR);
-  //std::cout << "m_LTL klt = " << m_LTL << std::endl;
 }
 
 

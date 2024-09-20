@@ -655,9 +655,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
   vpMatrix hessian_E_inv = hessian_E.inverseByCholesky();
   //Sigma_Phi = /*Sigma_Phi +*/ 2*hessian_E_inv;
-  Sigma_Phi = m_ccdParameters.covarianceIterDecreaseFactor * Sigma_Phi + 2 * (1 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
+  Sigma_Phi = m_ccdParameters.covarianceIterDecreaseFactor * Sigma_Phi + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
 
-  m_cov = Sigma_Phi;
 }
 
 END_VISP_NAMESPACE

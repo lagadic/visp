@@ -157,7 +157,7 @@ public:
    *
    * The updateCovariance method should have been called before
    */
-  const vpMatrix &getCovariance() const { return m_cov; }
+  virtual const vpMatrix getCovariance() const { return m_cov; }
   /**
    * \brief Update the covariance matrix
    *
@@ -182,14 +182,14 @@ public:
   void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
 
   /**
-   * \brief Get the leftside term of the Gauss-Newton optimization term
+   * \brief Get the left-side term of the Gauss-Newton optimization term
    */
-  const vpMatrix &getLTL() const { return m_LTL; }
+  virtual vpMatrix getLTL() const { return m_LTL; }
 
   /**
-   * \brief Get the rightside term of the Gauss-Newton optimization term
+   * \brief Get the right-side term of the Gauss-Newton optimization term
    */
-  const vpColVector &getLTR() const { return m_LTR; }
+  virtual vpColVector getLTR() const { return m_LTR; }
 
   /**
    * \brief Get a weighted version of the error vector.
@@ -208,7 +208,7 @@ public:
 protected:
 
   static void computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR);
-  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector & /*x*/, const vpColVector &b, const vpMatrix &W);
+  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &b, const vpMatrix &W);
 
   vpMatrix m_L; //! Error jacobian (In VS terms, the interaction matrix)
   vpMatrix m_LTL;  //! Left side of the Gauss newton minimization

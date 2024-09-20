@@ -108,12 +108,12 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
     m_weighted_error.resize(m_depthPoints.size(), false);
     m_L.resize(m_depthPoints.size(), 6, false, false);
     m_numFeatures = m_L.getRows();
+    m_cov.resize(6, 6, false, false);
+    m_covWeightDiag.resize(m_depthPoints.size(), false);
   }
   else {
     m_numFeatures = 0;
   }
-  std::cout << "Depth extraction took: " << vpTime::measureTimeMs() - t1 << std::endl;
-
 }
 
 void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, const vpHomogeneousMatrix &cMo, unsigned int /*iteration*/)
@@ -124,6 +124,8 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
     m_error = 0;
     m_weights = 1.0;
     m_weighted_error = 0.0;
+    m_cov = 0.0;
+    m_covWeightDiag = 0.0;
   }
   vpRotationMatrix cRo = cMo.getRotationMatrix();
 #ifdef VISP_HAVE_OPENMP
@@ -141,6 +143,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
   for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
     m_weighted_error[i] = m_error[i] * m_weights[i];
+    m_covWeightDiag[i] = m_weights[i] * m_weights[i];
     for (unsigned int dof = 0; dof < 6; ++dof) {
       m_L[i][dof] *= m_weights[i];
     }

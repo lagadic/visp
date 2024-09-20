@@ -182,11 +182,8 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     const double eri = m_error[i];
     m_covWeightDiag[i] = wi * wi;
     m_weighted_error[i] = wi * eri;
-  }
-
-  for (unsigned int i = 0; i < m_error.size(); i++) {
     for (unsigned int j = 0; j < 6; j++) {
-      m_L[i][j] = m_weights[i] * m_L[i][j];
+      m_L[i][j] = wi * m_L[i][j];
     }
   }
 
