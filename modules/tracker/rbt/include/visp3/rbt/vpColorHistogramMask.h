@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpColorHistogramMask.h
@@ -59,6 +57,7 @@ class VISP_EXPORT vpColorHistogramMask : public vpObjectMask
 {
 public:
   vpColorHistogramMask();
+  virtual ~vpColorHistogramMask() = default;
 
   void updateMask(const vpRBFeatureTrackerInput &frame,
                   const vpRBFeatureTrackerInput &previousFrame,
@@ -112,14 +111,12 @@ public:
 #endif
 
 private:
-
   vpColorHistogram m_histObject, m_histBackground, m_histObjectFrame, m_histBackgroundFrame;
   float m_depthErrorTolerance;
   float m_objectUpdateRate, m_backgroundUpdateRate;
 
   vpImage<bool> m_mask;
   vpImage<float> m_probaObject, m_probaBackground;
-
 };
 
 END_VISP_NAMESPACE

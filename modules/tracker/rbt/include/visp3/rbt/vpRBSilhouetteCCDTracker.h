@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBSilhouetteCCDTracker.h
@@ -176,7 +174,6 @@ public:
   }
 };
 
-
 /**
  * \brief Tracking based on the Contracting Curve Density algorithm.
  *
@@ -187,6 +184,7 @@ class VISP_EXPORT vpRBSilhouetteCCDTracker : public vpRBFeatureTracker
 public:
 
   vpRBSilhouetteCCDTracker();
+  virtual ~vpRBSilhouetteCCDTracker() = default;
 
   bool requiresRGB() const VP_OVERRIDE { return true; }
   bool requiresDepth() const VP_OVERRIDE { return false; }
@@ -218,7 +216,6 @@ public:
    * @}
    */
 
-
   void onTrackingIterStart() VP_OVERRIDE { }
   void onTrackingIterEnd() VP_OVERRIDE { }
 
@@ -237,7 +234,7 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_vvsConvergenceThreshold = j.value("convergenceThreshold", m_vvsConvergenceThreshold);

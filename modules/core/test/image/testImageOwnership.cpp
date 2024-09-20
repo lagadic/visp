@@ -143,7 +143,7 @@ int main(int /* argc */, const char ** /* argv */)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       unsigned char *bitmap = new unsigned char[12];
-      vpImage<unsigned char> I = std::move(vpImage<unsigned char>(bitmap, 3, 4, false));
+      vpImage<unsigned char> I = vpImage<unsigned char>(bitmap, 3, 4, false);
       if (bitmap != I.bitmap) {
         std::cout << "std::move(vpImage) failed" << std::endl;
         return EXIT_FAILURE;
@@ -152,7 +152,7 @@ int main(int /* argc */, const char ** /* argv */)
     }
     {
       unsigned char *bitmap = new unsigned char[12];
-      vpImage<unsigned char> I(std::move(vpImage<unsigned char>(bitmap, 3, 4, false)));
+      vpImage<unsigned char> I(vpImage<unsigned char>(bitmap, 3, 4, false));
       if (bitmap != I.bitmap) {
         std::cout << "vpImage(td::move(vpImage)) failed" << std::endl;
         return EXIT_FAILURE;

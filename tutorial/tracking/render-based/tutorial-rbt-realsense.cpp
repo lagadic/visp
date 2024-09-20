@@ -1,3 +1,4 @@
+//! \example tutorial-rbt-realsense.cpp
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
@@ -197,9 +198,7 @@ int main(int argc, const char **argv)
       if (baseArgs.debugDisplay) {
         const vpRBFeatureTrackerInput &lastFrame = tracker.getMostRecentFrame();
 
-
         vpRBTrackerTutorial::displayCanny(lastFrame.renders.silhouetteCanny, cannyDisplay, lastFrame.renders.isSilhouette);
-
       }
 
       vpDisplay::display(IdepthDisplay);

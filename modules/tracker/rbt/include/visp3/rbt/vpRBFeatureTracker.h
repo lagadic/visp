@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBFeatureTracker.h
@@ -109,7 +107,6 @@ public:
   /**
    * @}
    */
-
 
   /**
    * \name Core Tracking methods
@@ -196,7 +193,6 @@ public:
    * This should not include the userVVSWeight, but may include reweighting to remove outliers, occlusions, etc.
    */
   const vpColVector &getWeightedError() const { return m_weighted_error; }
-
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j)

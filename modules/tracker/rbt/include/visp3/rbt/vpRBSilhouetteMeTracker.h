@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBSilhouetteMeTracker.h
@@ -51,7 +49,12 @@ class VISP_EXPORT vpRBSilhouetteMeTracker : public vpRBFeatureTracker
 {
 public:
 
-  vpRBSilhouetteMeTracker() : vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0), m_singlePointConvergedThresholdPixels(3), m_useMask(false), m_minMaskConfidence(0.f) { }
+  vpRBSilhouetteMeTracker() :
+    vpRBFeatureTracker(), m_me(), m_numCandidates(1), m_globalVVSConvergenceThreshold(1.0),
+    m_singlePointConvergedThresholdPixels(3), m_useMask(false), m_minMaskConfidence(0.f)
+  { }
+
+  virtual ~vpRBSilhouetteMeTracker() = default;
 
   bool requiresRGB() const VP_OVERRIDE { return false; }
 
@@ -82,7 +85,7 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_numCandidates = j.value("numCandidates", m_numCandidates);

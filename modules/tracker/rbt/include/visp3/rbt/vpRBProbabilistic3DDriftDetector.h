@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBProbabilistic3DDriftDetector.h
@@ -42,13 +40,9 @@
 #include <visp3/core/vpRGBf.h>
 #include <visp3/core/vpRGBa.h>
 
-
 #include <visp3/rbt/vpRBDriftDetector.h>
 
-
 #include <array>
-
-
 
 BEGIN_VISP_NAMESPACE
 
@@ -59,12 +53,12 @@ template <typename T> class vpImage;
  *
  * \brief Algorithm that uses tracks object surface points in order to estimate the probability that tracking is successful.
  *
- * Given a set of surface points \f$ \mathbf{X}_0, ..., \mathbf{X}_N, \f$,  each point \f$\mathbf{X}_i\f$ being associated to:
+ * Given a set of surface points \f$ \mathbf{X}_0, ..., \mathbf{X}_N\f$, each point \f$\mathbf{X}_i\f$ being associated to:
  *
  * - a color distribution \f$\mathcal{N}(\mathbf{\bar c_i}, \mathbf{\Sigma_{c_i}^2})\f$,
  * - its distance to the camera being \f$Z_i\f$,
  * - its projection in the current color and depth images \f$\mathbf{I_c}, \mathbf{I_Z}\f$ having coordinates \f$u_i, v_i\f$.
- * - its visibility V(\mathbf{X_i}), which is 1 if \f$u_i, v_i\f$ lie in the image,
+ * - its visibility \f$V(\mathbf{X_i})\f$, which is 1 if \f$u_i, v_i\f$ lie in the image,
  * \f$Z_i\f$ is close to the rendered depth value
  * and the normal at the surface marks the point as visible from the camera's point of view.
  *
@@ -81,7 +75,6 @@ template <typename T> class vpImage;
  * \end{aligned}
  * \f]
  *
- *
  * if the depth is unavailable, then we set \f$p(\mathbf{I_Z}(u_i, v_i) | \mathcal{N}(Z_i, \sigma_Z^2)) = 1\f$
  *
  * Here, the color distribution is estimated online for each point separately using exponential moving average/variance techniques.
@@ -89,9 +82,9 @@ template <typename T> class vpImage;
  *
  * For the depth, \f$\sigma_Z\f$ is a fixed parameter to be tweaked by the user.
  *
- * Every time update is called, the set of points \f$ \mathbf{X}_0, ..., \mathbf{X}_N, \f$ may grow larger: If a new candidate point is visible and is far enough from points already in the set, it is added to it.
- *
-*/
+ * Every time update() is called, the set of points \f$ \mathbf{X}_0, ..., \mathbf{X}_N, \f$ may grow larger.
+ * If a new candidate point is visible and is far enough from points already in the set, it is added to it.
+ */
 class VISP_EXPORT vpRBProbabilistic3DDriftDetector : public vpRBDriftDetector
 {
 
@@ -212,7 +205,6 @@ private:
   };
 
 public:
-
 
   vpRBProbabilistic3DDriftDetector() : m_colorUpdateRate(0.2), m_initialColorSigma(25.0), m_depthSigma(0.04), m_maxError3D(0.001), m_minDist3DNewPoint(0.003)
   { }

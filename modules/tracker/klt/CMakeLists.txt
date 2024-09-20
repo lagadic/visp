@@ -149,9 +149,3 @@ vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests()
-
-vp_set_source_file_compile_flag(src/vpKltOpencv.cpp -Wno-strict-overflow)
-
-if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/vpKltOpencv.cpp -Wno-float-equal)
-endif()

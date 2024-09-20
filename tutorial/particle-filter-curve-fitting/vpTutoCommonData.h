@@ -83,14 +83,10 @@ typedef struct vpTutoCommonData
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_mask; /*!< A binary mask where 255 means that a pixel belongs to the HSV range delimited by the HSV thresholds.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_Iskeleton; /*!< The image resulting from the skeletonization of the mask.*/
   VISP_NAMESPACE_ADDRESSING vpImage<unsigned char> m_IskeletonNoisy; /*!< The image resulting from the skeletonization of the mask, to which is added some salt and pepper noise.*/
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayOrig;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displaySegmented;
   std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDisplay> m_displayNoisy;
-#elif defined(VISP_HAVE_DISPLAY)
-  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayOrig;
-  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displaySegmented;
-  VISP_NAMESPACE_ADDRESSING vpDisplay *m_displayNoisy;
 #endif
 
   /// Particle filter parameters
@@ -106,36 +102,12 @@ typedef struct vpTutoCommonData
     , m_stepbystep(true)
     , m_ratioSaltPepperNoise(0.15)
     , m_degree(2)
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
-    , m_displayOrig(nullptr)
-    , m_displaySegmented(nullptr)
-    , m_displayNoisy(nullptr)
-#endif
     , m_pfMaxDistanceForLikelihood(40)
     , m_pfN(300)
     , m_pfRatiosAmpliMax({ 0.25, 0.25, 0.25 })
     , m_pfSeed(4221)
     , m_pfNbThreads(-1)
   { }
-
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
-  ~vpTutoCommonData()
-  {
-    if (m_displayOrig != nullptr) {
-      delete m_displayOrig;
-      m_displayOrig = nullptr;
-    }
-    if (m_displaySegmented != nullptr) {
-      delete m_displaySegmented;
-      m_displaySegmented = nullptr;
-    }
-
-    if (m_displayNoisy != nullptr) {
-      delete m_displayNoisy;
-      m_displayNoisy = nullptr;
-    }
-  }
-#endif
 
   /**
    * \brief Print the help about the program optional parameters.
@@ -291,18 +263,14 @@ typedef struct vpTutoCommonData
     m_IskeletonNoisy.resize(m_I_orig.getHeight(), m_I_orig.getWidth()); // Resize the edge-map.
 
     // Init the displays
+#if defined(VISP_HAVE_DISPLAY)
     const int horOffset = 20, vertOffset = 25;
     std::string skeletonTitle("Skeletonized image (");
     skeletonTitle += (m_ratioSaltPepperNoise == 0 ? "without" : std::to_string(static_cast<unsigned int>(m_ratioSaltPepperNoise * 100.)) + "%");
     skeletonTitle += " noise)";
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_DISPLAY)
     m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_orig, horOffset, vertOffset, "Original image");
     m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
     m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::createDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), skeletonTitle);
-#elif defined(VISP_HAVE_DISPLAY)
-    m_displayOrig = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_orig, horOffset, vertOffset, "Original image");
-    m_displaySegmented = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_I_segmented, 2 * horOffset + m_I_orig.getWidth(), vertOffset, "Segmented image");
-    m_displayNoisy = VISP_NAMESPACE_ADDRESSING vpDisplayFactory::allocateDisplay(m_IskeletonNoisy, 2 * horOffset + m_I_orig.getWidth(), 2 * vertOffset + m_I_orig.getHeight(), skeletonTitle);
 #endif
     return SOFTWARE_CONTINUE;
   }

@@ -114,7 +114,7 @@ void vpPanda3DRendererSet::setNodePose(const std::string &name, const vpHomogene
   }
 }
 
-void vpPanda3DRendererSet::setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo)
+void vpPanda3DRendererSet::setNodePose(NodePath &, const vpHomogeneousMatrix &)
 {
   throw vpException(vpException::badValue, "NodePath setNodePose is not supported in renderer set, prefer the string version");
 }
@@ -130,7 +130,7 @@ vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(const std::string &name)
   return m_subRenderers[0]->getNodePose(name);
 }
 
-vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(NodePath &object)
+vpHomogeneousMatrix vpPanda3DRendererSet::getNodePose(NodePath &)
 {
   throw vpException(vpException::badValue, "NodePath getNodePose is not supported in renderer set, prefer the string version");
 }

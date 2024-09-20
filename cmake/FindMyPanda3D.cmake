@@ -83,7 +83,7 @@ foreach(lib_name ${PANDA3D_LIBS})
 endforeach()
 
 find_path(Panda3D_INCLUDE_DIRS panda.h PATHS ${PANDA3D_INCLUDE_SEARCH_PATHS})
-message(${Panda3D_INCLUDE_DIRS})
+
 include(FindPackageHandleStandardArgs)
 # Handle the QUIETLY and REQUIRED arguments and set the Panda3D_FOUND to TRUE
 # if all listed variables are TRUE

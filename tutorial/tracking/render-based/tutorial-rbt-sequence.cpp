@@ -1,5 +1,4 @@
-
-
+//! \example tutorial-rbt-sequence.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
@@ -15,8 +14,6 @@ using namespace VISP_NAMESPACE_NAME;
 #endif
 
 #include "render-based-tutorial-utils.h"
-
-
 
 struct CmdArguments
 {
@@ -48,7 +45,6 @@ struct CmdArguments
   unsigned int frameStep;
   bool stepByStep;
 };
-
 
 int main(int argc, const char **argv)
 {
@@ -157,7 +153,7 @@ int main(int argc, const char **argv)
   while (true) {
     double frameStart = vpTime::measureTimeMs();
     // Acquire images
-    for (int sp = 0; sp < sequenceArgs.frameStep; sp++) {
+    for (unsigned int sp = 0; sp < sequenceArgs.frameStep; ++sp) {
 
       readerRGB.acquire(Icol);
       vpImageConvert::convert(Icol, Id);
@@ -245,6 +241,4 @@ int main(int argc, const char **argv)
   logger.close();
 
   return EXIT_SUCCESS;
-
-
 }

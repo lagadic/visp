@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBDenseDepthTracker.h
@@ -71,6 +69,8 @@ class VISP_EXPORT vpRBDenseDepthTracker : public vpRBFeatureTracker
 public:
 
   vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f) { }
+
+  virtual ~vpRBDenseDepthTracker() = default;
 
   bool requiresRGB() const VP_OVERRIDE { return false; }
   bool requiresDepth() const VP_OVERRIDE { return true; }
@@ -154,6 +154,7 @@ public:
       e[i] = D + projNormal;
       //e[i] = f.get_LogZoverZstar();
     }
+
     inline void interaction(vpMatrix &L, unsigned i)
     {
       const double X = currentPoint[0], Y = currentPoint[1], Z = currentPoint[2];
@@ -180,7 +181,7 @@ public:
   };
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_step = j.value("step", m_step);
@@ -197,9 +198,8 @@ protected:
   unsigned int m_step;
   bool m_useMask;
   float m_minMaskConfidence;
-
-
 };
+
 END_VISP_NAMESPACE
 
 #endif

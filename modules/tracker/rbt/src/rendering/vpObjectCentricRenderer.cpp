@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/rbt/vpObjectCentricRenderer.h>
 
@@ -82,7 +80,6 @@ void vpObjectCentricRenderer::beforeFrameRendered()
     for (std::shared_ptr<vpPanda3DBaseRenderer> &subrenderer : m_subRenderers) {
       subrenderer->setRenderParameters(subParams);
     }
-
   }
 }
 
@@ -98,14 +95,12 @@ void vpObjectCentricRenderer::computeBoundingBox3DPoints()
   }
   m_bb3DPoints.clear();
   LPoint3 minP, maxP;
-  double t1 = vpTime::measureTimeMs();
   object.calc_tight_bounds(minP, maxP);
   const BoundingBox box(minP, maxP);
 
   for (unsigned int i = 0; i < 8; ++i) {
     const LPoint3 p = box.get_point(i);
     m_bb3DPoints.push_back(vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 }));
-
   }
 }
 

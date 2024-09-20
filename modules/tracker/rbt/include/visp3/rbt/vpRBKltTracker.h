@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRBKltTracker.h
@@ -65,6 +63,8 @@ class VISP_EXPORT vpRBKltTracker : public vpRBFeatureTracker
 public:
   vpRBKltTracker();
 
+  virtual ~vpRBKltTracker() = default;
+
   bool requiresRGB() const VP_OVERRIDE { return false; }
 
   bool requiresDepth() const VP_OVERRIDE { return false; }
@@ -84,7 +84,6 @@ public:
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
-
 
   /**
    * \name Settings
@@ -156,7 +155,7 @@ public:
   vpKltOpencv &getKltTracker() { return m_klt; }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-  virtual void loadJsonConfiguration(const nlohmann::json &j)
+  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
 
@@ -239,7 +238,6 @@ public:
     }
   };
 
-
 private:
 
   void tryAddNewPoint(const vpRBFeatureTrackerInput &frame, std::map<long, vpTrackedKltPoint> &points,
@@ -255,13 +253,6 @@ private:
   unsigned int m_border; //! Image border size, where points should not be considered
 
   double m_maxErrorOutliersPixels; //! Max 3D reprojection error before a point is considered an outlier and rejected from tracking. In meters
-
-  /*!
-   * Reject points where the render normals's dot product
-   * with the inverse camera vector is above this angle threshold.
-   * Helps removing uncertain keypoints or keypoints that may disappear in the next frame.
-   */
-  double m_normalAcceptanceThresholdDeg;
 
   std::map<long, vpTrackedKltPoint> m_points;
 
