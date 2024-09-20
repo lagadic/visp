@@ -59,6 +59,7 @@ class VISP_EXPORT vpColorHistogramMask : public vpObjectMask
 {
 public:
   vpColorHistogramMask();
+  virtual ~vpColorHistogramMask() = default;
 
   void updateMask(const vpRBFeatureTrackerInput &frame,
                   const vpRBFeatureTrackerInput &previousFrame,
@@ -112,14 +113,12 @@ public:
 #endif
 
 private:
-
   vpColorHistogram m_histObject, m_histBackground, m_histObjectFrame, m_histBackgroundFrame;
   float m_depthErrorTolerance;
   float m_objectUpdateRate, m_backgroundUpdateRate;
 
   vpImage<bool> m_mask;
   vpImage<float> m_probaObject, m_probaBackground;
-
 };
 
 END_VISP_NAMESPACE
