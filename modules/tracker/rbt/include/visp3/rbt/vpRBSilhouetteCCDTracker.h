@@ -219,7 +219,7 @@ public:
   void onTrackingIterStart() VP_OVERRIDE { }
   void onTrackingIterEnd() VP_OVERRIDE { }
 
-  double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * error_ccd.size()); }
+  double getVVSTrackerWeight() const VP_OVERRIDE { return m_userVvsWeight / (10 * m_error.size()); }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
@@ -228,7 +228,7 @@ public:
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
   void updateCovariance(const double /*lambda*/) VP_OVERRIDE
   {
-    m_cov = Sigma_Phi;
+    m_cov = m_sigma;
   }
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE;
@@ -253,20 +253,18 @@ protected:
   vpCCDParameters m_ccdParameters;
 
   std::vector<vpRBSilhouetteControlPoint> m_controlPoints; //! Silhouette points where to compute CCD statistics
-  vpImage<unsigned char> m_silhouette;
   vpRobust m_robust;
 
   vpCCDStatistics m_stats;
   vpCCDStatistics m_prevStats;
 
-  vpMatrix Sigma_Phi;
+  vpMatrix m_sigma;
 
-  vpColVector nabla_E; //! Sum of local gradients
-  vpMatrix hessian_E; //! Sum of local hessians
+  vpColVector m_gradient; //! Sum of local gradients
+  vpMatrix m_hessian; //! Sum of local hessians
 
   double m_vvsConvergenceThreshold;
   double tol;
-  vpColVector error_ccd;
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.

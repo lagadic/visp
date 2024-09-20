@@ -109,7 +109,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
-  Sigma_Phi = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_sigma = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
   m_cov.resize(6, 6);
   tol = 0.0;
   m_vvsConverged = false;
@@ -121,10 +121,10 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
 
   m_stats.reinit(resolution, normal_points_number);
   m_prevStats.reinit(resolution, normal_points_number);
-  nabla_E = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
-  hessian_E = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
-  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number, vpColVector(nabla_E.getRows()));
-  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number, vpMatrix(hessian_E.getRows(), hessian_E.getCols()));
+  m_gradient = vpMatrix(m_ccdParameters.phi_dim, 1, 0.0);
+  m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
+  m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number, vpColVector(m_gradient.getRows()));
+  m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number, vpMatrix(m_hessian.getRows(), m_hessian.getCols()));
 
 
   //m_weights.resize(nerror_ccd);
@@ -185,7 +185,7 @@ void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const 
     for (unsigned int i = 0; i < m_controlPoints.size(); ++i) {
       double sum = 0.0;
       for (unsigned int j = 0; j < nerror_per_point; ++j) {
-        sum += error_ccd[i * nerror_per_point + j];
+        sum += m_error[i * nerror_per_point + j];
       }
       if (sum > maxPointError) {
         maxPointError = sum;
@@ -499,7 +499,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
   const int npointsccd = m_controlPoints.size();
   const int normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   const int nerror_ccd = 2 * normal_points_number * 3 * npointsccd;
-  error_ccd.resize(nerror_ccd, false);
+  m_error.resize(nerror_ccd, false);
   m_weighted_error.resize(nerror_ccd, false);
   m_L.resize(nerror_ccd, 6, false, false);
 #ifdef VISP_HAVE_OPENMP
@@ -526,7 +526,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
       if (!p.isValid()) {
         for (unsigned int j = 0; j < 2 * normal_points_number; ++j) {
           for (unsigned int m = 0; m < 3; ++m) {
-            error_ccd[i * 2 * normal_points_number * 3 + j * 3 + m] = 0.0;
+            m_error[i * 2 * normal_points_number * 3 + j * 3 + m] = 0.0;
           }
         }
         continue;
@@ -555,7 +555,7 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         const double *pix_j = pix_ptr + j * 3;
         const double errf = vic_j[4];
         const double smooth2 = m_temporalSmoothingFac * m_temporalSmoothingFac;
-        double *error_ccd_j = error_ccd.data + i * 2 * normal_points_number * 3 + j * 3;
+        double *error_ccd_j = m_error.data + i * 2 * normal_points_number * 3 + j * 3;
 
         for (unsigned n = 0; n < 9; ++n) {
           //double *tmp_cov_ptr = tmp_cov[m];
@@ -593,13 +593,13 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     }
   }
 
-  nabla_E = 0.0;
-  hessian_E = 0.0;
+  m_gradient = 0.0;
+  m_hessian = 0.0;
   //m_robust.setMinMedianAbsoluteDeviation(1.0);
-  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, error_ccd, m_weights);
+  m_robust.MEstimator(vpRobust::vpRobustEstimatorType::TUKEY, m_error, m_weights);
 
   for (unsigned int i = 0; i < m_L.getRows(); ++i) {
-    m_weighted_error[i] = error_ccd[i] * m_weights[i];
+    m_weighted_error[i] = m_error[i] * m_weights[i];
     for (unsigned int j = 0; j < 6; ++j) {
       m_L[i][j] *= m_weights[i];
     }
@@ -612,8 +612,8 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #pragma omp parallel
 #endif
   {
-    vpColVector localGradient(nabla_E.getRows(), 0.0);
-    vpMatrix localHessian(hessian_E.getRows(), hessian_E.getCols(), 0.0);
+    vpColVector localGradient(m_gradient.getRows(), 0.0);
+    vpMatrix localHessian(m_hessian.getRows(), m_hessian.getCols(), 0.0);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp single
 #endif
@@ -644,16 +644,16 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     localHessians[currentThread] = localHessian;
   }
   for (unsigned int i = 0; i < localGradients.size(); ++i) {
-    nabla_E += localGradients[i];
-    hessian_E += localHessians[i];
+    m_gradient += localGradients[i];
+    m_hessian += localHessians[i];
   }
 
-  m_LTL = hessian_E;
-  m_LTR = -nabla_E;
+  m_LTL = m_hessian;
+  m_LTR = -m_gradient;
 
-  vpMatrix hessian_E_inv = hessian_E.inverseByCholesky();
-  //Sigma_Phi = /*Sigma_Phi +*/ 2*hessian_E_inv;
-  Sigma_Phi = m_ccdParameters.covarianceIterDecreaseFactor * Sigma_Phi + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
+  vpMatrix hessian_E_inv = m_hessian.inverseByCholesky();
+  //m_sigma = /*m_sigma +*/ 2*hessian_E_inv;
+  m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
 
 }
 
