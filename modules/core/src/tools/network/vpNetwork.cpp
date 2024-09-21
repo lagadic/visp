@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,17 +29,22 @@
  *
  * Description:
  * TCP Network
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpNetwork.h>
+#include <visp3/core/vpConfig.h>
+
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#include <visp3/core/vpNetwork.h>
 #include <visp3/core/vpDebug.h>
 BEGIN_VISP_NAMESPACE
 vpNetwork::vpNetwork()
