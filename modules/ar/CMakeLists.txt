@@ -35,6 +35,8 @@
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
+
 set(opt_libs "")
 
 if(USE_OGRE)
@@ -45,14 +47,14 @@ if(USE_OGRE)
   mark_as_advanced(OGRE_SAMPLES_INCLUDEPATH)
   #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
   if(OGRE_SAMPLES_INCLUDEPATH)
-    list(APPEND opt_incs ${OGRE_SAMPLES_INCLUDEPATH})
+    list(APPEND opt_system_incs ${OGRE_SAMPLES_INCLUDEPATH})
   endif()
 
   # hack to fix possible presence of NOTFOUND in OGRE_INCLUDE_DIRS
   #message("OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
   foreach(inc_ ${OGRE_INCLUDE_DIRS})
     if(NOT ${inc_} MATCHES "NOTFOUND")
-      list(APPEND opt_incs ${inc_})
+      list(APPEND opt_system_incs ${inc_})
     endif()
   endforeach()
   if(WIN32)
@@ -69,7 +71,7 @@ if(USE_OGRE)
 endif(USE_OGRE)
 
 if(USE_OIS AND USE_OGRE)
-  list(APPEND opt_incs ${OIS_INCLUDE_DIR})
+  list(APPEND opt_system_incs ${OIS_INCLUDE_DIR})
   list(APPEND opt_libs ${OIS_LIBRARIES})
   if(APPLE)
     # With Ogre 1.7.4 and 1.8.1 to be able to link with libOIS.a, Cocoa framework is requested.
@@ -175,7 +177,8 @@ endif()
 
 if(USE_PANDA3D)
   if(Panda3D_INCLUDE_DIRS)
-    list(APPEND opt_incs ${Panda3D_INCLUDE_DIRS})
+    # Add Panda3D include dirs as system to avoid warnings due to Panda3D headers
+    list(APPEND opt_system_incs ${Panda3D_INCLUDE_DIRS})
   endif()
   if(Panda3D_LIBRARIES)
   list(APPEND opt_libs ${Panda3D_LIBRARIES})
@@ -185,22 +188,6 @@ endif()
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
 
-if(USE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-endif()
 
-if(USE_PANDA3D)
-  set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra -Wno-reorder-ctor)
-  set(PANDA3D_MODULE_SOURCES
-    vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
-    vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
-    vpPanda3DRendererSet.cpp vpPanda3DPostProcessFilter.cpp vpPanda3DCommonFilters.cpp
-  )
-  foreach(panda_src_name ${PANDA3D_MODULE_SOURCES})
-    vp_set_source_file_compile_flag(src/panda3d-simulator/${panda_src_name} ${PANDA3D_CXX_FLAGS})
-  endforeach()
-endif()
-
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
