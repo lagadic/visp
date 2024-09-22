@@ -1,0 +1,248 @@
+/**
+  \page tutorial-pf-curve-fitting Tutorial: Using Particle Filter to model a wire using polynomial interpolation
+  \tableofcontents
+
+\section tuto-pf-cf-intro Introduction
+
+We suppose that you are already familiar with the \ref tutorial-pf.
+
+The Particle Filters (PF) are a set of Monte Carlo algorithms that
+permit to approximate solutions for filtering problems even when
+the state-space and/or measurement space are non-linear.
+
+In this tutorial, we will use a PF to model a wire using polynomial interpolation . The PF is used to
+filter the noisy pixels in a segmented image in order to compute a model of the wire using polynomial interpolation.
+The color wire is observed by a static camera, in the following configuration:
+
+\htmlonly <style>div.image img[src="img-tutorial-pf-cf-illustration.jpg"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-pf-cf-illustration.jpg
+
+\subsection tuto-pf-cf-intro-methods The maths beyond the Particle Filter
+
+The maths beyond the Particle Filter are explained in the documentation of the vpParticleFilter class.
+They are also explained in the \ref tuto-pf-cf-intro-methods .
+
+\section tuto-pf-cf-tutorial Explanations about the tutorial
+
+The tutorial is split in three different programs:
+- \ref tutorial-pf-curve-fitting-lms.cpp : this program illustrates how to perform a polynomial interpolation using the
+Least-Mean Square method, and the impact of noise on the resulting interpolated model.
+- \ref tutorial-pf-curve-fitting-pf.cpp : this program illustrates how to perform a polynomial interpolation using a
+Particle Filter.
+- \ref tutorial-pf-curve-fitting-all.cpp : this program uses the methods mentionned above to compare their performances.
+
+\subsection tuto-pf-cf-tutorial-howtorun How to run the tutorial
+
+To run one of the tutorials with the default dataset, please run the following commands:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/particle-filter-curve-fitting
+$ ./tutorial-pf-curve-fitting-{lms, pf, all} --video data/color_image_0%03d.png
+```
+
+To see the arguments the program can take, please run:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/particle-filter-curve-fitting
+$ ./tutorial-pf-curve-fitting-{lms, pf, all} -h
+```
+
+You should see something similar to the following image:
+
+\htmlonly <style>div.image img[src="img-tutorial-pf-cf-helper"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-pf-cf-helper.jpg "Screenshot of the tutorial Graphical User Interface"
+
+For the tutorial-pf-curve-fitting-pf.cpp and tutorial-pf-curve-fitting-all.cpp tutorials, the PF must
+be initialized. You are asked if you would rather use a manual initialization (left click) or an automatic one (right click).
+
+\htmlonly <style>div.image img[src="img-tutorial-pf-cf-init"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-pf-cf-init.jpg "Screenshot of the tutorial initialization step"
+
+Then, for all the tutorials, you can either display the images one-by-one (left click) or automatically switch from an
+image to the next one (middle click). You can leave the program whenever you want using a right click.
+
+\htmlonly <style>div.image img[src="img-tutorial-pf-cf-run"]{width:50%;}</style>
+\endhtmlonly
+\image html img-tutorial-pf-cf-run.jpg "Screenshot of the tutorial during its run step"
+
+\subsection tuto-pf-cf-tutorial-general General explanations about the tutorials
+
+\subsubsection tuto-pf-cf-tutorial-general-segmentation Notes about the segmentation and skeletonization of the image
+
+The segmentation of the image using HSV encoding has been presented in the \ref tutorial-hsv-range-tuner .
+
+A calibration file containing the segmentation parameters for the default sequence can be found in the calib folder.
+If you want to use your own sequence, please run the \ref tutorial-hsv-range-tuner.cpp tutorial to extract the
+parameters that correspond to your own sequence and edit the file calib/hsv-thresholds.yml .
+
+The skeletonization of the segmented image is not the topic of this tutorial. Thus, we invite the interested readers
+to read by themselves the corresponding method in the \ref vpTutoSegmentation.cpp file.
+
+\subsubsection tuto-pf-cf-tutorial-general-PF Explanations about the Particle Filter
+
+The internal state of the PF contains the coefficients of the interpolation polynomial. Be
+\f$ v(u) = \sum_{i=0}^N a_i u^i \f$ the interpolation polynomial whose highest degree is N.
+The internal state of the PF is of size N + 1 such as:
+
+\f[
+  \begin{array}{lcl}
+  \textbf{x}[i] &=& a_i
+  \end{array}
+\f]
+
+The measurement \f$ \textbf{z} \f$ corresponds to the vector of vpImagePoint that forms the skeletonized version of the
+segmented image.
+Be \f$ u_i \f$ and \f$ v_i \f$ the horizontal and vertical pixel coordinates of the \f$ i^{th} \f$ marker.
+The measurement vector can be written as:
+
+\f[
+  \begin{array}{lcl}
+  \textbf{z}[i] &=& vpImagePoint(v_i , u_i)
+  \end{array}
+\f]
+
+
+\subsubsection tuto-pf-cf-tutorial-general-LMS Explanations about the Least-Mean Square method
+
+The Least-Mean Square method is a standard method to solve a polynomial interpolation problem.
+The polynomial interpolation problem can be written in matrices form as follow:
+
+\f[
+\begin{array}{llcl}
+  & \textbf{A}\textbf{x} &=& \textbf{b} \\
+  \iff & \textbf{X} &=& \textbf{A}^+\textbf{b} \\
+\end{array}
+\f]
+
+where \f$ \textbf{A}^+ \f$ denotes the Moore-Penrose pseudo-inverse of the matrix A, with:
+
+\f[
+\begin{array}{lcl}
+  \textbf{A}[i][j] &=& u_i^j
+\end{array}
+\\
+\begin{array}{lcl}
+  \textbf{x}[i] &=& a_i
+\end{array}
+\\
+\begin{array}{lcl}
+  \textbf{b}[i] &=& v_i
+\end{array}
+\f]
+
+<b>Important note:</b> due to numerical unstability, the pixel coordinates cannot be used directly
+in the Least-Mean square method. Indeed, using pixel coordinates leads to having an ill-conditionned
+\f$ \textbf{A} \f$ matrix. Consequently, in all the tutorials, the pixel coordinates are normalized
+by dividing them by the height and width of the image before running any interpolation.
+
+\subsection tuto-pf-cf-tutorial-explained Detailed explanations about the tutorials
+
+We will now present the different tutorials and explained their important parts.
+
+\subsubsection tuto-pf-cf-tutorial-explained-lms Details on the tutorial-pf-curve-fitting-lms.cpp
+
+This tutorial goal is to show how a Least-Mean Square method can be used to perform polynomial interpolation
+and the impact of noise on such technique.
+
+To visualize the accuracy of the method, a vpPlot is instantiated in the following part of the code:
+
+\snippet tutorial-pf-curve-fitting-lms.cpp Init_plot
+
+At each iteration, the new frame is read, then segmented and skeletonized in the following section of code:
+
+\snippet tutorial-pf-curve-fitting-lms.cpp Measurements_extraction
+
+The method addSaltAndPepperNoise permits to add a user-defined percentage of salt-and-pepper noise, to evaluate the
+robustness of the method against noise.
+
+The polynomial interpolation is performed in the following section of the code:
+
+\snippet tutorial-pf-curve-fitting-lms.cpp LMS_interpolation
+
+It relies on the following method of the vpTutoMeanSquareFitting class:
+
+\snippet vpTutoMeanSquareFitting.cpp Solve_LMS_system
+
+The matrices that form the system that needs to be solved are filled in the vpTutoParabolaModel class (we remind the
+reader that normalization of the pixel coordinates is performed to avoid numerical unstability):
+
+\snippet vpTutoParabolaModel.h Fill_LMS_system
+
+\subsubsection tuto-pf-cf-tutorial-explained-pf Details on the tutorial-pf-curve-fitting-pf.cpp
+
+This tutorial is meant to show how a Particle Filter could be used to model a wire thanks to
+polynomial interpolation.
+
+To initialize a Particle Filter, a guess of the initial state must be given to it. The more accurate
+is the initial guess, the quicker the PF will converge. The initialization can be done either manually or
+automatically thanks to the following piece of code:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Initialization_function
+
+A Particle Filter needs a function to evaluate the likelihood of a particle. We decided to use a Gaussian-based function
+that penalizes particles whose polynomial model has a Root Mean Square Error with regard to the measurement points greater than a given threshold.
+To be robust against outliers, we use the Tukey M-estimator. The likelihood function is implemented in a functor
+to be able to pass additional information such as the height and width of the input image:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Likelihood_functor
+
+This likelihood functor compute the residuals using the following evaluation functions:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Evaluation_functions
+
+A Particle Filter needs to perform a weighted average to compute the filtered state. Performing a weighted average of
+the particles polynomial coefficients would not lead to satisfying results, as it is not mathematically correct.
+Instead, we decided to generate a given number of "control points" by each particle. The number of control points generated
+by a particle is dictated by its associated weight. Then, we compute the polynomial coefficients that best fit all these
+control points using a Least-Square minimization technique. The weighted average is performed thanks to the following
+functor:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Average_functor
+
+A Particle Filter needs a process function to project the particles forward in time. For this scenario,
+we decided to use the identity, and let the randomness of the Particle Filter manage the potential motion
+of the wire.
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Process_function
+
+The initialization parameters of the Particle Filter are defined in the following section of code:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Constants_for_the_PF
+
+The initialization functions of the Particle Filter are defined in the following section of code:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Init_functions
+
+The Particle Filter is then constructed thanks to the following lines:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Init_PF
+
+Finally, the filtering is performed thanks to the following line:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Perform_filtering
+
+The filtered state is retrieve thanks to the following line:
+
+\snippet tutorial-pf-curve-fitting-pf.cpp Get_filtered_state
+
+\subsubsection tuto-pf-cf-tutorial-explained-all Details on the tutorial-pf-curve-fitting-all.cpp
+
+The \ref tutorial-pf-curve-fitting-all.cpp reuse what has already been presented in the \ref tuto-pf-cf-tutorial-explained-lms
+and \ref tuto-pf-cf-tutorial-explained-pf sections.
+
+Its main objective is to compare the time performances and robustness against noise of the two methods.
+The ratio of noise can be set using the Command Line Interface using the --noise option. For instance,
+
+\code
+$ ./tutorial-pf-curve-fitting-all --video data/color_image_0%03d.png --noise <ratio in the intervall [0.; 1.[>
+\endcode
+
+will add 50% of noisy pixels to the skeletonized image.
+
+You can experiment by varying this parameter (and others as well) to see the impact on the different methods.
+With 15% noisy pixels and more, the Particle Filter tends to have a greater accuracy than the LMS method, but
+it takes more times to run.
+*/

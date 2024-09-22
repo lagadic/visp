@@ -109,6 +109,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
                                            , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
                                            , const float &lowerThresholdRatio, const float &upperThresholdRatio
                                            , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
+                                           , const bool &storeEdgePoints
 )
   : m_filteringAndGradientType(filteringType)
   , m_gaussianKernelSize(gaussianKernelSize)
@@ -119,6 +120,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_lowerThresholdRatio(lowerThresholdRatio)
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
+  , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
   initGaussianFilters();
@@ -241,6 +243,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
   m_edgeCandidateAndGradient.clear();
   m_edgePointsCandidates.clear();
+  m_edgePointsList.clear();
 
   // // Step 1 and 2: filter the image and compute the gradient, if not given by the user
   if (!m_areGradientAvailable) {
@@ -493,6 +496,9 @@ vpCannyEdgeDetection::performEdgeTracking()
   for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates_end; ++it) {
     if (it->second == STRONG_EDGE) {
       m_edgeMap[it->first.first][it->first.second] = 255;
+      if (m_storeListEdgePoints) {
+        m_edgePointsList.push_back(vpImagePoint(it->first.first, it->first.second));
+      }
     }
     else if (it->second == WEAK_EDGE) {
       if (recursiveSearchForStrongEdge(it->first)) {

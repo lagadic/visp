@@ -159,17 +159,6 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
 
-if(USE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-endif()
-
-vp_set_source_file_compile_flag(src/pose-estimation/vpPoseFeatures.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/pose-estimation/vpPoseRansac.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/pose-estimation/private/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/keypoint/vpKeyPoint.cpp -Wno-strict-overflow)
-
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
   if(VISP_DATASET_FOUND)
     add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)

@@ -18,7 +18,7 @@ The mbt ViSP module allows the tracking of a markerless object using the knowled
 have to be modeled by segment, circle or cylinder primitives. The model of the object could be defined in vrml format
 (except for circles) or in cao (our own format).
 
-The visual features that could be considered by multiple cameras are the moving-edges, the keypoints (KLT features) of
+The visual features that could be considered by multiple cameras are the moving-edges, the keypoints (KLT features) or
 a combination of them in a hybrid scheme when the object is textured and has visible edges
 (see \ref mb_generic_intro_features_overview). They are the same than the one used for a single camera.
 
@@ -121,7 +121,7 @@ The tutorial-mb-generic-tracker-stereo.cpp example uses the following data as in
 
 As an output the tracker provides the two poses \f$^c {\bf M}_o \f$ corresponding to a 4 by 4 matrix that corresponds
 to the geometric transformation between the frame attached to the object (in our case the tea box) and the frame
-attached to the the left camera and the one attached to the right camera. The poses are returned as a
+attached to the left camera and the one attached to the right camera. The poses are returned as a
 vpHomogeneousMatrix container.
 
 \subsection mb_generic_stereo_example_code Example code
@@ -180,7 +180,7 @@ vpMbGenericTracker::vpTrackerType:
 \snippet tutorial-mb-generic-tracker-stereo.cpp Constructor
 
 All the configuration parameters for the tracker are stored in xml configuration files. To load the different files
-that contain also the the intrinsic camera parameters, we use:
+that contain also the intrinsic camera parameters, we use:
 
 \snippet tutorial-mb-generic-tracker-stereo.cpp Load config file
 
@@ -244,6 +244,6 @@ the object. The images were captured by cameras located in the Romeo eyes.
 \endhtmlonly
 
 \section mb_generic_stereo_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-mb-generic.
+You are now ready to see the next \ref tutorial-tracking-mb-generic-rgbd.
 
 */

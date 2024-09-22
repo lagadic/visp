@@ -65,6 +65,12 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-pcl.html
     . New tutorial: Rendering a 3D scene with Panda3D
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-panda3d.html
+    . New tutorial: Using Unscented Kalman Filter to filter your data
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-ukf.html
+    . New tutorial: Using Particle Filter to filter your data
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf.html
+    . New tutorial: Using Particle Filter to model a wire using polynomial interpolation
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pf-curve-fitting.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17

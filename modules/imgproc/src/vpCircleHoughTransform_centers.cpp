@@ -35,6 +35,7 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
   /**
@@ -204,7 +205,7 @@ updateAccumAlongGradientDir(const vpDataForAccumLoop &data, float &sx, float &sy
                 float dy = (coord.y_orig - static_cast<float>(coord.y));
                 accum[coord.y - data.offsetY][coord.x - data.offsetX] += std::abs(dx) + std::abs(dy);
               }
-        };
+            };
 #endif
           vpCoordinatesForAccumStep coords;
           coords.x_orig = x1;
@@ -216,14 +217,15 @@ updateAccumAlongGradientDir(const vpDataForAccumLoop &data, float &sx, float &sy
           coords.x = x_high;
           coords.y = y_high;
           updateAccumulator(coords, data, centersAccum, hasToStopLoop);
+        }
       }
     }
-  }
     sx = -sx;
     sy = -sy;
+  }
 }
 }
-}
+#endif
 
 
 // Static variables
@@ -525,8 +527,8 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].m_position);
       m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].m_votes));
     }
-          }
-        }
+  }
+}
 
 vpCircleHoughTransform::vpCentersBarycenter
 vpCircleHoughTransform::mergeSimilarCenters(const unsigned int &idPeak, const unsigned int &nbPeaks, const float &squared_distance_max, const std::vector<vpCenterVotes> &peak_positions_votes, std::vector<bool> &has_been_merged)

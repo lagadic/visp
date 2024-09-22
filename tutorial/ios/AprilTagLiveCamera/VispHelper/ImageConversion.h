@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -41,12 +39,11 @@
 
 @interface ImageConversion : NSObject
 
-+ (vpImage<vpRGBa>)vpImageColorFromUIImage:(UIImage *)image;
-+ (vpImage<unsigned char>)vpImageGrayFromUIImage:(UIImage *)image;
-+ (UIImage *)UIImageFromVpImageColor:(const vpImage<vpRGBa> &)I;
-+ (UIImage *)UIImageFromVpImageGray:(const vpImage<unsigned char> &)I;
++ (vpImage<vpRGBa>)vpImageColorFromUIImage : (UIImage *)image;
++(vpImage<unsigned char>)vpImageGrayFromUIImage:(UIImage *)image;
++(UIImage *)UIImageFromVpImageColor:(const vpImage<vpRGBa> &)I;
++(UIImage *)UIImageFromVpImageGray:(const vpImage<unsigned char> &)I;
 
 @end
 
 #endif
-

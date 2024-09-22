@@ -35,6 +35,7 @@
 
 BEGIN_VISP_NAMESPACE
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace
 {
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
@@ -128,6 +129,7 @@ updateRadiusAccumulator(const vpDataUpdateRadAccum &data, std::vector<float> &ra
   }
 }
 }
+#endif
 
 void
 vpCircleHoughTransform::computeCircleCandidates()

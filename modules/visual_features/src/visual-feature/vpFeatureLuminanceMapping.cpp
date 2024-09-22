@@ -470,7 +470,7 @@ void vpLuminanceDCT::inverse(const vpColVector &s, vpImage<unsigned char> &I)
   I.resize(Ir.getRows(), Ir.getCols());
   for (unsigned int i = 0; i < I.getRows(); ++i) {
     for (unsigned int j = 0; j < I.getCols(); ++j) {
-      I[i][j] = std::max(0.0, std::min(Ir[i][j], 255.0));
+      I[i][j] = static_cast<unsigned char>(std::max(0.0, std::min(Ir[i][j], 255.0)));
     }
   }
 }

@@ -121,7 +121,7 @@ uint32_t vpUniRand::boundedRand(uint32_t bound)
   // because this version will calculate the same modulus, but the LHS
   // value is less than 2^32.
 
-  uint32_t threshold = -bound % bound;
+  uint32_t threshold = static_cast<uint64_t>(-static_cast<int64_t>(bound) % bound);
 
   // Uniformity guarantees that this loop will terminate.  In practice, it
   // should usually terminate quickly; on average (assuming all bounds are
@@ -148,7 +148,7 @@ uint32_t vpUniRand::next()
   m_rng.state = (oldstate * 6364136223846793005ULL) + m_rng.inc;
   uint32_t xorshifted = static_cast<uint32_t>(((oldstate >> 18u) ^ oldstate) >> 27u);
   uint32_t rot = oldstate >> 59u;
-  return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+  return (xorshifted >> rot) | (xorshifted << (static_cast<uint32_t>((-static_cast<int64_t>(rot)) & 31)));
 }
 
 /*!

@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(color_segmentation)
+project(tutorial-panda3d)
 
-find_package(VISP REQUIRED visp_core visp_gui visp_ar)
+find_package(VISP REQUIRED visp_core visp_gui visp_ar visp_io)
 
 # set the list of source files
 set(tutorial_cpp
   tutorial-panda3d-renderer.cpp
 )
-
-visp_set_source_file_compile_flag(tutorial-panda3d-renderer.cpp -Wno-extra -Wno-unused-parameter -Wno-unused-variable)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
