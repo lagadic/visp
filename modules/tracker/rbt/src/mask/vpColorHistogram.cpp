@@ -94,7 +94,7 @@ void vpColorHistogram::build(const vpImage<vpRGBa> &image, const vpImage<bool> &
   }
 }
 
-void vpColorHistogram::build(std::vector<unsigned int> &counts)
+void vpColorHistogram::build(const std::vector<unsigned int> &counts)
 {
   if (m_probas.size() != counts.size()) {
     throw vpException(vpException::dimensionError, "Number of bins are not the same");

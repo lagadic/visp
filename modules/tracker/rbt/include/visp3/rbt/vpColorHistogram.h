@@ -87,7 +87,7 @@ public:
 
   void build(const vpImage<vpRGBa> &image, const vpImage<bool> &mask);
 
-  void build(std::vector<unsigned int> &counts);
+  void build(const std::vector<unsigned int> &counts);
 
   void merge(const vpColorHistogram &other, float alpha);
 
