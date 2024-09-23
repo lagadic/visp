@@ -173,15 +173,15 @@ void vpSimulatorAfma6::init()
 
   // Software joint limits in radians
   //_joint_min.resize(njoint);
-  _joint_min[0] = -0.6501;
-  _joint_min[1] = -0.6001;
+  _joint_min[0] = -0.7501;
+  _joint_min[1] = -0.6501;
   _joint_min[2] = -0.5001;
   _joint_min[3] = -2.7301;
-  _joint_min[4] = -0.1001;
+  _joint_min[4] = -0.3001;
   _joint_min[5] = -1.5901;
   //_joint_max.resize(njoint);
-  _joint_max[0] = 0.7001;
-  _joint_max[1] = 0.5201;
+  _joint_max[0] = 0.6001;
+  _joint_max[1] = 0.6701;
   _joint_max[2] = 0.4601;
   _joint_max[3] = 2.7301;
   _joint_max[4] = 2.4801;

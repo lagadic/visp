@@ -134,20 +134,19 @@ vpAfma6::vpAfma6()
   //  ... in init (vpAfma6::vpAfma6ToolType tool,
   //               vpCameraParameters::vpCameraParametersProjType projModel)
   // Maximal value of the joints
-  this->_joint_max[0] = 0.7001;
-  this->_joint_max[1] = 0.5201;
+  this->_joint_min[0] = -0.7501;
+  this->_joint_min[1] = -0.6501;
+  this->_joint_min[2] = -0.5001;
+  this->_joint_min[3] = -2.7301;
+  this->_joint_min[4] = -0.3001;
+  this->_joint_min[5] = -1.5901;
+  //_joint_max.resize(njoint);
+  this->_joint_max[0] = 0.6001;
+  this->_joint_max[1] = 0.6701;
   this->_joint_max[2] = 0.4601;
   this->_joint_max[3] = 2.7301;
   this->_joint_max[4] = 2.4801;
   this->_joint_max[5] = 1.5901;
-  // Minimal value of the joints
-  this->_joint_min[0] = -0.6501;
-  this->_joint_min[1] = -0.6001;
-  this->_joint_min[2] = -0.5001;
-  this->_joint_min[3] = -2.7301;
-  this->_joint_min[4] = -0.1001;
-  this->_joint_min[5] = -1.5901;
-
   init();
 }
 

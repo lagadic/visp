@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ set(example_cpp
 if(NOT DEFINED WINRT_8_1)
   list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_des.cpp)
   list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_cur.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_cur_integrator.cpp)
   list(APPEND example_cpp servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp)
 endif()
 
