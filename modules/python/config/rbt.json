@@ -23,6 +23,268 @@
             "vpRBDriftDetector"
           ]
         }
+      ],
+      "acknowledge_pointer_or_ref_fields": [
+        "std::map<std::string, std::function<std::shared_ptr<T>(const nlohmann::json&)>>",
+        "std::function<std::string(const nlohmann::json&)>"
+      ]
+    },
+    "vpRBTracker": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "const vpRBFeatureTrackerInput& getMostRecentFrame()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "const vpRBTrackerLogger& getLogger()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpObjectCentricRenderer& getRenderer()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRBRenderData": {
+      "methods": [
+        {
+          "static": false,
+          "signature": " vpRBRenderData(vpRBRenderData&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRBRenderData& operator=(vpRBRenderData&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRBFeatureTrackerInput": {
+      "methods": [
+        {
+          "static": false,
+          "signature": " vpRBFeatureTrackerInput(vpRBFeatureTrackerInput&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRBFeatureTrackerInput& operator=(vpRBFeatureTrackerInput&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRBFeatureTracker": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "const vpColVector& getWeightedError()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRBSilhouetteControlPoint": {
+      "acknowledge_pointer_or_ref_fields": [
+        "const vpMe*",
+        "const vpCameraParameters*"
+      ],
+      "methods": [
+        {
+          "static": false,
+          "signature": " vpRBSilhouetteControlPoint(const vpRBSilhouetteControlPoint&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRBSilhouetteControlPoint& operator=(const vpRBSilhouetteControlPoint&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "const vpLine& getLine()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "const vpFeatureLine& getFeatureLine()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpMeSite& getSite()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "const vpMeSite& getSite()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "const vpCameraParameters& getCameraParameters()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRBKltTracker": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpKltOpencv& getKltTracker()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "const vpKltOpencv& getKltTracker()",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRBDriftDetectorFactory": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpRBDriftDetectorFactory& getFactory()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpObjectMaskFactory": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpObjectMaskFactory& getFactory()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpRBFeatureTrackerFactory": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpRBFeatureTrackerFactory& getFactory()",
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        }
+      ]
+    },
+    "vpObjectCentricRenderer": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void computeClipping(float&, float&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    "vpPanda3DDepthGaussianBlur": {
+      "acknowledge_pointer_or_ref_fields": [
+        "const char*"
+      ]
+    },
+    "vpPanda3DDepthCannyFilter": {
+      "acknowledge_pointer_or_ref_fields": [
+        "const char*"
       ]
     }
   },
