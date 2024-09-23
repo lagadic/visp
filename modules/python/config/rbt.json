@@ -1,7 +1,9 @@
 {
   "ignored_headers": [],
   "ignored_classes": [],
-  "user_defined_headers": [],
+  "user_defined_headers": [
+    "rbt.hpp"
+  ],
   "classes": {
     "vpDynamicFactory": {
       "specializations": [
@@ -98,6 +100,8 @@
       ]
     },
     "vpRBFeatureTracker": {
+      "trampoline": "TrampolineRBFeatureTracker",
+      "use_publicist": true,
       "methods": [
         {
           "static": false,

@@ -143,7 +143,12 @@ public:
    * @}
    */
 
-  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const = 0;
+  virtual void display(
+    const vpCameraParameters &cam,
+    const vpImage<unsigned char> &I,
+    const vpImage<vpRGBa> &IRGB,
+    const vpImage<unsigned char> &depth,
+    const vpRBFeatureDisplayType type) const = 0;
 
   /**
    * \name Covariance computation
