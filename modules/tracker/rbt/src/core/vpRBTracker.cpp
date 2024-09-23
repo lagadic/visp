@@ -231,8 +231,9 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     try {
       tracker->extractFeatures(input, m_previousFrame, m_cMo);
     }
-    catch (vpException &) {
+    catch (vpException &e) {
       std::cerr << "Tracker " << id << " raised an exception in extractFeatures" << std::endl;
+      throw e;
     }
     m_logger.setTrackerFeatureExtractionTime(id, m_logger.endTimer());
     id += 1;
@@ -240,7 +241,13 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
-    tracker->trackFeatures(input, m_previousFrame, m_cMo);
+    try {
+      tracker->trackFeatures(input, m_previousFrame, m_cMo);
+    }
+    catch (vpException &e) {
+      std::cerr << "Tracker " << id << " raised an exception in trackFeatures" << std::endl;
+      throw e;
+    }
     m_logger.setTrackerFeatureTrackingTime(id, m_logger.endTimer());
     id += 1;
   }
