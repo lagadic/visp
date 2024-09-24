@@ -184,9 +184,9 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
-    m_step = j.value("step", m_step);
-    m_useMask = j.value("useMask", m_useMask);
-    m_minMaskConfidence = j.value("minMaskConfidence", m_minMaskConfidence);
+    setStep(j.value("step", m_step));
+    setShouldUseMask(j.value("useMask", m_useMask));
+    setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
   }
 
 #endif

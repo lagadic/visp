@@ -81,6 +81,7 @@ int main(int argc, const char **argv)
   std::cout << "Loading tracker: " << baseArgs.trackerConfiguration << std::endl;
   vpRBTracker tracker;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
+  tracker.startTracking();
   const unsigned int width = realsenseArgs.width, height = realsenseArgs.height;
   const unsigned fps = realsenseArgs.fps;
 

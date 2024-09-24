@@ -161,8 +161,6 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   }
 }
 
-
-
 void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType type) const
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
@@ -375,7 +373,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
 
-  }
+    }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -491,7 +489,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
 
   }
-}
+  }
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {

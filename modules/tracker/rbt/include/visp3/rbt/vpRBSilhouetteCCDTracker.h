@@ -142,7 +142,7 @@ inline void from_json(const nlohmann::json &j, vpCCDParameters &ccdParameters)
   ccdParameters.phi_dim = j.value("phi_dim", ccdParameters.phi_dim);
   if (j.contains("gamma")) {
     nlohmann::json gammaj = j["gamma"];
-    if (!j.is_array() || j.size() != 4) {
+    if (!gammaj.is_array() || gammaj.size() != 4) {
       throw vpException(vpException::ioError, "CCD parameters: tried to read gamma values from something that is not a 4-sized float array");
     }
     ccdParameters.gamma_1 = gammaj[0];
@@ -211,7 +211,14 @@ public:
    *
    * @param factor the new temporal smoothing factor. Should be greater than 0
    */
-  void setTemporalSmoothingFactor(double factor) { m_temporalSmoothingFac = factor; }
+  void setTemporalSmoothingFactor(double factor)
+  {
+    if (factor < 0.0) {
+      throw vpException(vpException::badValue, "Temporal smoothing factor should be equal to or greater than 0");
+    }
+    m_temporalSmoothingFac = factor;
+
+  }
   /**
    * @}
    */
@@ -238,7 +245,7 @@ public:
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
     m_vvsConvergenceThreshold = j.value("convergenceThreshold", m_vvsConvergenceThreshold);
-    m_temporalSmoothingFac = j.value("temporalSmoothing", m_temporalSmoothingFac);
+    setTemporalSmoothingFactor(j.value("temporalSmoothing", m_temporalSmoothingFac));
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
 

@@ -93,10 +93,14 @@ public:
    * @{
    */
   void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
-  void loadObjectModel(const std::string &file);
+  void setupRenderer(const std::string &file);
+  void setModelPath(const std::string &path);
 
   vpCameraParameters getCameraParameters() const;
   void setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w);
+
+  unsigned int getImageWidth() const { return m_imageWidth; }
+  unsigned int getImageHeight() const { return m_imageHeight; }
 
   vpSilhouettePointsExtractionSettings getSilhouetteExtractionParameters() const
   {
@@ -114,13 +118,19 @@ public:
     m_lambda = lambda;
   }
   unsigned int getMaxOptimizationIters() const { return m_vvsIterations; }
-  void setMaxOptimizationIters(unsigned int iters) { m_vvsIterations = iters; }
+  void setMaxOptimizationIters(unsigned int iters)
+  {
+    if (iters == 0) {
+      throw vpException(vpException::badValue, "Max number of iterations must be greater than zero");
+    }
+    m_vvsIterations = iters;
+  }
 
   double getOptimizationInitialMu() const { return m_muInit; }
   void setOptimizationInitialMu(double mu)
   {
     if (mu < 0.0) {
-      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+      throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
     }
     m_muInit = mu;
   }
@@ -129,7 +139,7 @@ public:
   void setOptimizationMuIterFactor(double factor)
   {
     if (factor < 0.0) {
-      throw vpException(vpException::badValue, "Optimization gain should be greater to zero");
+      throw vpException(vpException::badValue, "Optimization gain should be greater or equal to zero");
     }
     m_muIterFactor = factor;
   }
@@ -157,10 +167,12 @@ public:
 
   void reset();
 
+
   /**
    * \name Tracking
    * @{
    */
+  void startTracking();
   void track(const vpImage<unsigned char> &I);
   void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB);
   void track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth);
@@ -211,6 +223,7 @@ protected:
   vpRBFeatureTrackerInput m_currentFrame;
   vpRBFeatureTrackerInput m_previousFrame;
 
+  std::string m_modelPath;
   vpHomogeneousMatrix m_cMo;
   vpHomogeneousMatrix m_cMoPrev;
   vpCameraParameters m_cam;

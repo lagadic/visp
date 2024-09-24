@@ -77,9 +77,9 @@ int main(int argc, const char **argv)
   // Set tracking and rendering parameters
   vpCameraParameters cam;
 
-  std::cout << "Creating tracker" << std::endl;
   vpRBTracker tracker;
   tracker.loadConfigurationFile(baseArgs.trackerConfiguration);
+  tracker.startTracking();
   cam = tracker.getCameraParameters();
 
   //VideoReader to read images from disk

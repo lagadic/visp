@@ -53,6 +53,12 @@ if(WITH_SIMDLIB)
   list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
+
 vp_add_module(rbt visp_vision visp_core visp_me visp_visual_features visp_ar OPTIONAL  visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 
@@ -60,3 +66,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
+
+if(VISP_DATASET_FOUND)
+
+endif()

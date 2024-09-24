@@ -35,16 +35,15 @@
 #endif
 
 #include <visp3/core/vpExponentialMap.h>
+#include <visp3/core/vpIoTools.h>
 
 #include <visp3/ar/vpPanda3DRendererSet.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 
-#include <visp3/rbt/vpColorHistogramMask.h>
 #include <visp3/rbt/vpRBFeatureTrackerFactory.h>
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
 #include <visp3/rbt/vpObjectMaskFactory.h>
-
 #include <visp3/rbt/vpRBInitializationHelper.h>
 
 #define VP_DEBUG_RB_TRACKER 1
@@ -57,18 +56,13 @@ vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0
   const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
     vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
 
-  //geometryRenderer->setRenderOrder(-1000);
   m_renderer.addSubRenderer(geometryRenderer);
-  // std::shared_ptr<vpPanda3DDepthGaussianBlur> blur = std::make_shared<vpPanda3DDepthGaussianBlur>(
-  //   "depthBlur", geometryRenderer, true);
-  // m_renderer.addSubRenderer(blur);
-  m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
-    "depthCanny", geometryRenderer, true, 0.0));
-  //m_renderer.addSubRenderer(std::make_shared<vpPanda3DRGBRenderer>(false));
+
 
   m_renderer.setRenderParameters(m_rendererSettings);
 
   m_driftDetector = nullptr;
+  m_mask = nullptr;
 }
 
 void vpRBTracker::getPose(vpHomogeneousMatrix &cMo) const
@@ -110,6 +104,16 @@ vpCameraParameters vpRBTracker::getCameraParameters() const { return m_cam; }
 
 void vpRBTracker::setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w)
 {
+  if (cam.get_projModel() != vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithoutDistortion) {
+    throw vpException(vpException::badValue,
+    "Camera model cannot have distortion. Undistort images before tracking and use the undistorted camera model");
+  }
+  if (h == 0 || w == 0) {
+    throw vpException(
+      vpException::badValue,
+      "Image dimensions must be greater than 0"
+    );
+  }
   m_cam = cam;
   m_imageHeight = h;
   m_imageWidth = w;
@@ -128,13 +132,29 @@ void vpRBTracker::reset()
   m_firstIteration = true;
 }
 
-void vpRBTracker::loadObjectModel(const std::string &file)
+void vpRBTracker::setModelPath(const std::string &path)
 {
+  m_modelPath = path;
+}
+
+void vpRBTracker::setupRenderer(const std::string &file)
+{
+  if (!vpIoTools::checkFilename(file)) {
+    throw vpException("3D model file %s could not be found", file.c_str());
+  }
+  bool requiresSilhouetteShader = false;
+  for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
+    if (tracker->requiresSilhouetteCandidates()) {
+      requiresSilhouetteShader = true;
+      break;
+    }
+  }
+  if (requiresSilhouetteShader) {
+    m_renderer.addSubRenderer(std::make_shared<vpPanda3DDepthCannyFilter>(
+      "depthCanny", geometryRenderer, true, 0.0));
+  }
   m_renderer.initFramework();
-  //m_renderer.enableSharedDepthBuffer(*m_renderer.getRenderer<vpPanda3DGeometryRenderer>());
   m_renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(0.4f)));
-  //m_renderer.addLight(vpPanda3DDirectionalLight("dir", vpRGBf(1.f), vpColVector({ 0.0, -0.0, 1.0 })));
-  //m_renderer.addLight(vpPanda3DPointLight("point", vpRGBf(8.f), vpColVector({ 0.0, 0.1, 0.1 }), vpColVector({ 1.0, 0.0, 0.0 })));
   m_renderer.addNodeToScene(m_renderer.loadObject("object", file));
   m_renderer.setFocusedObject("object");
 }
@@ -167,6 +187,11 @@ void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &
   frameInput.IRGB = IRGB;
   frameInput.cam = m_cam;
   track(frameInput);
+}
+
+void vpRBTracker::startTracking()
+{
+  setupRenderer(m_modelPath);
 }
 
 void vpRBTracker::track(const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<float> &depth)
@@ -477,6 +502,9 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
 
 void vpRBTracker::addTracker(std::shared_ptr<vpRBFeatureTracker> tracker)
 {
+  if (tracker == nullptr) {
+    throw vpException(vpException::badValue, "Adding tracker: tracker cannot be null");
+  }
   m_trackers.push_back(tracker);
 }
 
@@ -554,43 +582,36 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 }
 void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 {
-  std::cout << "Loading configuration file" << std::endl;
   m_firstIteration = true;
-  nlohmann::json cameraSettings = j.at("camera");
+  const nlohmann::json cameraSettings = j.at("camera");
   m_cam = cameraSettings.at("intrinsics");
   m_imageHeight = cameraSettings.value("height", m_imageHeight);
   m_imageWidth = cameraSettings.value("width", m_imageWidth);
-  m_rendererSettings.setCameraIntrinsics(m_cam);
-  m_rendererSettings.setImageResolution(m_imageHeight, m_imageWidth);
-  m_renderer.setRenderParameters(m_rendererSettings);
+  setCameraParameters(m_cam, m_imageHeight, m_imageWidth);
 
-  std::cout << "Loading object" << std::endl;
   if (j.contains("model")) {
-    loadObjectModel(j.at("model"));
+    setModelPath(j.at("model"));
   }
 
-  //TODO: Clear Panda3D renderer list?
-  std::cout << "Loading vvs settings" << std::endl;
-  nlohmann::json vvsSettings = j.at("vvs");
-  m_vvsIterations = vvsSettings.value("maxIterations", m_vvsIterations);
-  m_lambda = vvsSettings.value("gain", m_lambda);
-  m_muInit = vvsSettings.value("mu", m_muInit);
-  m_muIterFactor = vvsSettings.value("muIterFactor", m_muIterFactor);
+  const nlohmann::json vvsSettings = j.at("vvs");
+  m_vvsIterations = setMaxOptimizationIters(vvsSettings.value("maxIterations", m_vvsIterations));
+  m_lambda = setOptimizationGain(vvsSettings.value("gain", m_lambda));
+  m_muInit = setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
+  m_muIterFactor = setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
 
-
-
-  std::cout << "Loading silhouette extraction settings" << std::endl;
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 
-
-  std::cout << "Loading the different trackers" << std::endl;;
   m_trackers.clear();
   nlohmann::json features = j.at("features");
   vpRBFeatureTrackerFactory &featureFactory = vpRBFeatureTrackerFactory::getFactory();
   for (const nlohmann::json &trackerSettings: features) {
     std::shared_ptr<vpRBFeatureTracker> tracker = featureFactory.buildFromJson(trackerSettings);
     if (tracker == nullptr) {
-      throw vpException(vpException::badValue, "Cannot instanciate subtracker with the current settings, make sure that the type is registered. Settings: %s", trackerSettings.dump(2).c_str());
+      throw vpException(
+        vpException::badValue,
+        "Cannot instantiate subtracker with the current settings, make sure that the type is registered. Settings: %s",
+        trackerSettings.dump(2).c_str()
+      );
     }
     m_trackers.push_back(tracker);
   }
@@ -600,7 +621,10 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     nlohmann::json maskSettings = j.at("mask");
     m_mask = maskFactory.buildFromJson(maskSettings);
     if (m_mask == nullptr) {
-      throw vpException(vpException::badValue, "Cannot instanciate object mask with the current settings, make sure that the type is registered. Settings: %s", maskSettings.dump(2).c_str());
+      throw vpException(
+        vpException::badValue,
+        "Cannot instantiate object mask with the current settings, make sure that the type is registered. Settings: %s",
+        maskSettings.dump(2).c_str());
     }
   }
   if (j.contains("drift")) {
@@ -608,7 +632,10 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
     nlohmann::json driftSettings = j.at("drift");
     m_driftDetector = factory.buildFromJson(driftSettings);
     if (m_driftDetector == nullptr) {
-      throw vpException(vpException::badValue, "Cannot instantiate drift detection with the current settings, make sure that the type is registered in the factory");
+      throw vpException(
+        vpException::badValue,
+       "Cannot instantiate drift detection with the current settings, make sure that the type is registered in the factory"
+      );
     }
   }
 }
@@ -622,7 +649,6 @@ void vpRBTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   initializer.initClick(I, initFile, displayHelp);
   m_cMo = initializer.getPose();
 }
-
 #endif
 
 END_VISP_NAMESPACE
