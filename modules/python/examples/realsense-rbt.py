@@ -47,7 +47,7 @@ from visp.core import CameraParameters, HomogeneousMatrix
 from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa, ImageFloat
 from visp.io import ImageIo
-from visp.rbt import RBTracker
+from visp.rbt import RBTracker, RBFeatureDisplayType
 from visp.display_utils import get_display
 import pyrealsense2 as rs
 
@@ -74,8 +74,10 @@ class FrameData:
 def read_data(depth_scale: Optional[float], IRGB: ImageRGBa, I: ImageGray, pipe: rs.pipeline):
   use_depth = depth_scale is not None
   iteration = 1
+  align_to = rs.align(rs.stream.color)
   while True:
     frames = pipe.wait_for_frames()
+    frames = align_to.process(frames)
     I_np = np.asanyarray(frames.get_color_frame().as_frame().get_data())
     I_np = np.concatenate((I_np, np.ones_like(I_np[..., 0:1], dtype=np.uint8)), axis=-1)
     IRGB.resize(I_np.shape[0], I_np.shape[1])
@@ -98,18 +100,21 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--tracker', type=str, required=True,
                       help='Path to the json file containing the tracker configuration.')
-
+  parser.add_argument('--model', type=str, required=False,
+                      help='Path to the .obj/.bam file describing the CAD model.')
 
   args = parser.parse_args()
-  tracker_path = args.tracker
+  tracker_path: str = args.tracker
   assert Path(tracker_path).exists(), 'Tracker file not found'
-
+  model_path = args.model
+  if model_path is not None:
+    assert Path(model_path).exists(), '3D CAD model file not found'
 
   # Initialize realsense2
   pipe = rs.pipeline()
   config = rs.config()
-  config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 60)
-  config.enable_stream(rs.stream.color, 640, 480, rs.format.rgb8, 60)
+  config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 60)
+  config.enable_stream(rs.stream.color, 848, 480, rs.format.rgb8, 60)
 
   cfg = pipe.start(config)
   depth_scale = cfg.get_device().first_depth_sensor().get_depth_scale()
@@ -118,16 +123,16 @@ if __name__ == '__main__':
   tracker = RBTracker()
 
   tracker.loadConfigurationFile(tracker_path)
-
+  if model_path is not None:
+    tracker.setModelPath(model_path)
 
   cam_color, color_height, color_width = cam_from_rs_profile(cfg.get_stream(rs.stream.color))
-  cam_depth, depth_height, depth_width = cam_from_rs_profile(cfg.get_stream(rs.stream.depth))
 
+  tracker.setCameraParameters(cam_color, color_height, color_width)
 
   # Camera intrinsics
 
   print('Color intrinsics:', cam_color)
-  print('Depth intrinsics:', cam_depth)
   I = ImageGray()
   IRGB = ImageRGBa()
   I_depth_display = ImageGray()
@@ -138,53 +143,55 @@ if __name__ == '__main__':
   dI = get_display()
   dI.init(I, 0, 0, 'Color image')
 
+  dRGB = get_display()
+  dRGB.init(IRGB, I.getWidth(), 0, 'Color image')
+
   I_depth = ImageGray()
   dDepth = get_display()
 
   ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
-  dDepth.init(I_depth,  I.getWidth(), 0, 'Depth')
+  dDepth.init(I_depth,  I.getWidth() * 2, 0, 'Depth')
 
   for frame in data_generator:
     Display.display(I)
     Display.displayText(I, 50, 0, 'Click to initialize tracking', Color.red)
     Display.flush(I)
+    Display.display(IRGB)
+    Display.flush(IRGB)
     event = Display.getClick(I, blocking=False)
     if event:
       break
-
-  tracker.initClick(I, str(mbt_model.init_file))
+  tracker.startTracking()
+  tracker.initClick(I, tracker_path.replace('.json', '.init'), True)
   start_time =  time.time()
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
-      ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
+      I_depth_np = I_depth.numpy()
+      I_depth_np[...] = ((np.minimum(frame_data.I_depth, 0.5) / 0.5) * 255.0).astype(np.uint8)
 
-    Display.display(I)
-    if not args.disable_depth:
-      Display.display(I_depth)
+    displayed = [I, IRGB, I_depth]
 
-    if args.disable_depth:
-      tracker.track(I=I)
-    else:
-      pc = frame_data.point_cloud
-      image_dict = {
-        'Camera1': I
-      }
-      t = time.time()
-      tracker.track(image_dict, {'Camera2': pc.reshape(depth_height, depth_width, 3)})
+    for display_image in displayed:
+      Display.display(display_image)
+    Display.displayText(I, 50, 0, 'Click to stop tracking', Color.red)
+
+    # if args.disable_depth:
+    #   tracker.track(I=I, IRGB=IRGB)
+    # else:
+    tracker.track(I=frame.I, IRGB=frame_data.IRGB, depth=frame_data.I_depth)
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
+    tracker.display(I, IRGB, I_depth, RBFeatureDisplayType.SIMPLE)
     Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2)
-    tracker.display(I, cMo, cam_color, Color.red, 2)
-    Display.flush(I)
-    if not args.disable_depth:
-      Display.flush(I_depth)
 
-    if args.step_by_step:
-      Display.getKeyboardEvent(I, blocking=True)
-    else:
-      event = Display.getClick(I, blocking=False)
-      if event:
-        break
+    for display_image in displayed:
+      Display.flush(display_image)
+
+
+
+    event = Display.getClick(I, blocking=False)
+    if event:
+      break
   end_time = time.time()
   print(f'total time = {end_time - start_time}s')

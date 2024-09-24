@@ -53,12 +53,6 @@ BEGIN_VISP_NAMESPACE
 vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
-  const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
-    vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
-
-  m_renderer.addSubRenderer(geometryRenderer);
-
-
   m_renderer.setRenderParameters(m_rendererSettings);
 
   m_driftDetector = nullptr;
@@ -140,8 +134,13 @@ void vpRBTracker::setModelPath(const std::string &path)
 void vpRBTracker::setupRenderer(const std::string &file)
 {
   if (!vpIoTools::checkFilename(file)) {
-    throw vpException("3D model file %s could not be found", file.c_str());
+    throw vpException(vpException::badValue, "3D model file %s could not be found", file.c_str());
   }
+
+  const std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::make_shared<vpPanda3DGeometryRenderer>(
+    vpPanda3DGeometryRenderer::vpRenderType::OBJECT_NORMALS);
+  m_renderer.addSubRenderer(geometryRenderer);
+
   bool requiresSilhouetteShader = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker: m_trackers) {
     if (tracker->requiresSilhouetteCandidates()) {
@@ -594,15 +593,15 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   }
 
   const nlohmann::json vvsSettings = j.at("vvs");
-  m_vvsIterations = setMaxOptimizationIters(vvsSettings.value("maxIterations", m_vvsIterations));
-  m_lambda = setOptimizationGain(vvsSettings.value("gain", m_lambda));
-  m_muInit = setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
-  m_muIterFactor = setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
+  setMaxOptimizationIters(vvsSettings.value("maxIterations", m_vvsIterations));
+  setOptimizationGain(vvsSettings.value("gain", m_lambda));
+  setOptimizationInitialMu(vvsSettings.value("mu", m_muInit));
+  setOptimizationMuIterFactor(vvsSettings.value("muIterFactor", m_muIterFactor));
 
   m_depthSilhouetteSettings = j.at("silhouetteExtractionSettings");
 
   m_trackers.clear();
-  nlohmann::json features = j.at("features");
+  const nlohmann::json features = j.at("features");
   vpRBFeatureTrackerFactory &featureFactory = vpRBFeatureTrackerFactory::getFactory();
   for (const nlohmann::json &trackerSettings: features) {
     std::shared_ptr<vpRBFeatureTracker> tracker = featureFactory.buildFromJson(trackerSettings);
@@ -618,7 +617,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 
   if (j.contains("mask")) {
     vpObjectMaskFactory &maskFactory = vpObjectMaskFactory::getFactory();
-    nlohmann::json maskSettings = j.at("mask");
+    const nlohmann::json maskSettings = j.at("mask");
     m_mask = maskFactory.buildFromJson(maskSettings);
     if (m_mask == nullptr) {
       throw vpException(
@@ -629,7 +628,7 @@ void vpRBTracker::loadConfiguration(const nlohmann::json &j)
   }
   if (j.contains("drift")) {
     vpRBDriftDetectorFactory &factory = vpRBDriftDetectorFactory::getFactory();
-    nlohmann::json driftSettings = j.at("drift");
+    const nlohmann::json driftSettings = j.at("drift");
     m_driftDetector = factory.buildFromJson(driftSettings);
     if (m_driftDetector == nullptr) {
       throw vpException(
