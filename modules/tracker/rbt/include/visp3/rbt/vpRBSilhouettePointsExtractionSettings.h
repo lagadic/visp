@@ -93,12 +93,17 @@ public:
   ~vpSilhouettePointsExtractionSettings() = default;
   const vpSilhouettePointsExtractionSettings &operator=(const vpSilhouettePointsExtractionSettings &rend);
 
-  void setThreshold(double lambda) { m_depthThreshold = lambda; }
   double getThreshold() const { return m_depthThreshold; }
-  void setThresholdIsRelative(bool isRelative) { m_thresholdIsRelative = isRelative; }
+  void setThreshold(double lambda) { m_depthThreshold = lambda; }
   bool thresholdIsRelative() const { return m_thresholdIsRelative; }
+  void setThresholdIsRelative(bool isRelative) { m_thresholdIsRelative = isRelative; }
+  bool preferPreviousPoints() const { return m_preferPreviousPoints; }
+  void setPreferPreviousPoints(bool prefer) { m_preferPreviousPoints = prefer; }
 
+
+  int getMaxCandidates() const { return m_maxNumPoints; }
   void setMaxCandidates(int maxCandidates) { m_maxNumPoints = maxCandidates; }
+  unsigned int getSampleStep() const { return m_sampleStep; }
   void setSampleStep(unsigned int a)
   {
     if (m_sampleStep == 0) {
@@ -125,13 +130,12 @@ inline void from_json(const nlohmann::json &j, vpSilhouettePointsExtractionSetti
   nlohmann::json thresholdSettings = j.at("threshold");
   std::string thresholdType = thresholdSettings.at("type");
   settings.m_thresholdIsRelative = thresholdType == "relative";
-  settings.m_preferPreviousPoints = thresholdSettings.at("reusePreviousPoints");
-
   settings.m_depthThreshold = thresholdSettings.at("value");
 
   nlohmann::json samplingSettings = j.at("sampling");
+  settings.m_preferPreviousPoints = samplingSettings.at("reusePreviousPoints");
   settings.m_maxNumPoints = samplingSettings.at("numPoints");
-  settings.m_sampleStep = samplingSettings.at("samplingRate");
+  settings.setSampleStep(samplingSettings.at("samplingRate"));
 
 }
 #endif

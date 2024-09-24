@@ -94,6 +94,7 @@ public:
    */
   void addTracker(std::shared_ptr<vpRBFeatureTracker> tracker);
   void setupRenderer(const std::string &file);
+  std::string getModelPath() const { return m_modelPath; }
   void setModelPath(const std::string &path);
 
   vpCameraParameters getCameraParameters() const;

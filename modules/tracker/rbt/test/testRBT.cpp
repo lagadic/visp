@@ -56,6 +56,52 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+const char *objCube = R"obj(
+o Cube
+v -0.050000 -0.050000 0.050000
+v -0.050000 0.050000 0.050000
+v -0.050000 -0.050000 -0.050000
+v -0.050000 0.050000 -0.050000
+v 0.050000 -0.050000 0.050000
+v 0.050000 0.050000 0.050000
+v 0.050000 -0.050000 -0.050000
+v 0.050000 0.050000 -0.050000
+vn -1.0000 -0.0000 -0.0000
+vn -0.0000 -0.0000 -1.0000
+vn 1.0000 -0.0000 -0.0000
+vn -0.0000 -0.0000 1.0000
+vn -0.0000 -1.0000 -0.0000
+vn -0.0000 1.0000 -0.0000
+vt 0.375000 0.000000
+vt 0.375000 1.000000
+vt 0.125000 0.750000
+vt 0.625000 0.000000
+vt 0.625000 1.000000
+vt 0.875000 0.750000
+vt 0.125000 0.500000
+vt 0.375000 0.250000
+vt 0.625000 0.250000
+vt 0.875000 0.500000
+vt 0.375000 0.750000
+vt 0.625000 0.750000
+vt 0.375000 0.500000
+vt 0.625000 0.500000
+s 0
+f 2/4/1 3/8/1 1/1/1
+f 4/9/2 7/13/2 3/8/2
+f 8/14/3 5/11/3 7/13/3
+f 6/12/4 1/2/4 5/11/4
+f 7/13/5 1/3/5 3/7/5
+f 4/10/6 6/12/6 8/14/6
+f 2/4/1 4/9/1 3/8/1
+f 4/9/2 8/14/2 7/13/2
+f 8/14/3 6/12/3 5/11/3
+f 6/12/4 2/5/4 1/2/4
+f 7/13/5 5/11/5 1/3/5
+f 4/10/6 2/6/6 6/12/6
+)obj";
+
+
 SCENARIO("Instanciating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
@@ -484,9 +530,11 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
       },
       "vvs": {
         "gain": 1.0,
-        "maxIterations" : 10
+        "maxIterations" : 10,
+        "mu": 0.5,
+        "muIterFactor": 0.1
       },
-      "model" : "/home/sfelton/Downloads/sinatrack-data/data/cutting_guide/cutting_guide.obj",
+      "model" : "path/to/model.obj",
       "silhouetteExtractionSettings" : {
         "threshold": {
           "type": "relative",
@@ -494,11 +542,14 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
         },
         "sampling" : {
           "type": "fixed",
-          "numPoints" : 400
+          "samplingRate": 2,
+          "numPoints" : 128,
+          "reusePreviousPoints": true
         }
       },
-      "features": {
-        "silhouetteGeometry": {
+      "features": [
+        {
+          "type": "silhouetteMe",
           "weight" : 0.5,
           "numCandidates" : 3,
           "convergencePixelThreshold" : 3,
@@ -521,28 +572,80 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
             "threshold" : 20.0
           }
         },
-        "silhouetteColor" : {
+        {
+          "type": "silhouetteColor",
           "weight" : 0.5,
           "convergenceThreshold" : 0.1,
           "temporalSmoothing" : 0.1,
           "ccd" : {
-          "h": 4,
-          "delta_h" : 1
+            "h": 4,
+            "delta_h" : 1
+          }
         }
-      }
-    }
+      ]
     })JSON";
+    const auto verifyBase = [&tracker]() {
+      REQUIRE((tracker.getImageHeight() == 240 && tracker.getImageWidth() == 320));
+      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
+      vpSilhouettePointsExtractionSettings silset = tracker.getSilhouetteExtractionParameters();
+      REQUIRE((silset.thresholdIsRelative() && silset.getThreshold() == 0.1));
+      REQUIRE((silset.getSampleStep() == 2 && silset.getMaxCandidates() == 128));
+      REQUIRE((silset.preferPreviousPoints()));
+
+      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
+      REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
+
+    };
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
-    THEN("Loading configuration with trackers and a 3D model works")
+    THEN("Loading configuration with trackers")
     {
       tracker.loadConfiguration(j);
-      REQUIRE(...);
+      verifyBase();
+      REQUIRE(tracker.getModelPath() == "path/to/model.obj");
+      AND_THEN("Initializing tracking fails since object does not exist")
+      {
+        REQUIRE_THROWS(tracker.startTracking());
+      }
     }
     THEN("Loading configuration without model also works")
     {
       j.erase("model");
       tracker.loadConfiguration(j);
-      REQUIRE(...);
+      verifyBase();
+      REQUIRE(tracker.getModelPath() == "");
+      AND_THEN("Initializing tracking fails since path is not specified")
+      {
+        REQUIRE_THROWS(tracker.startTracking());
+      }
+    }
+    THEN("Loading configuration with real 3D model also works")
+    {
+      const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+      const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+      std::ofstream f(objFile);
+      f << objCube;
+      f.close();
+      j["model"] = objFile;
+      tracker.loadConfiguration(j);
+      verifyBase();
+      REQUIRE(tracker.getModelPath() == objFile);
+      AND_THEN("Initializing tracker works")
+      {
+        REQUIRE_NOTHROW(tracker.startTracking());
+      }
+    }
+  }
+
+  WHEN("Adding trackers")
+  {
+    THEN("Adding nullptr is not allowed")
+    {
+      REQUIRE_THROWS(tracker.addTracker(nullptr));
+    }
+    THEN("Adding a tracker works")
+    {
+      auto ccdTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
+      tracker.addTracker(ccdTracker);
     }
   }
 #endif
