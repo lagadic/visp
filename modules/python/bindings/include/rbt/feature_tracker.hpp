@@ -101,7 +101,7 @@ public:
   {
     pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
     // Try to look up the overridden method on the Python side.
-    pybind11::function override = pybind11::get_override(this, "computeVVSIter");
+    pybind11::function override = pybind11::get_override(this, "display");
     if (override) {  // method is found
       // Pybind seems to copy the frames, so we pass the pointers
       override(cam, &I, &IRGB, &depth, type);

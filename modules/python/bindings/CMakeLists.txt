@@ -38,9 +38,6 @@ set_source_files_properties(${python_bindings_cpp_src} PROPERTIES GENERATED TRUE
 
 pybind11_add_module(_visp ${python_bindings_cpp_src})
 
-
-
-
 # Place library in build/modules/python/bindings dir so that it doesn't pollute lib dir
 # This .so file is not treated the same as the others and we shouldn't link against it when compiling in C++
 # when installing the python module, pip will look into this subfolder for .so files to copy into the site-packages
