@@ -245,11 +245,14 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
   m_logger.setSilhouetteTime(m_logger.endTimer());
 
-  for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    tracker->onTrackingIterStart();
-  }
-
   int id = 0;
+  for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
+    m_logger.startTimer();
+    tracker->onTrackingIterStart();
+    m_logger.setTrackerIterStartTime(id, m_logger.endTimer());
+    id += 1;
+  }
+  id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
     m_logger.startTimer();
     try {
@@ -394,13 +397,17 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   m_rendererSettings.setClippingDistance(frame.renders.zNear, frame.renders.zFar);
   m_renderer.setRenderParameters(m_rendererSettings);
 
-  // For silhouette extraction, update depth difference threshold
-  double thresholdValue = m_depthSilhouetteSettings.getThreshold();
-  if (m_depthSilhouetteSettings.thresholdIsRelative()) {
-    m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->setEdgeThreshold((frame.renders.zFar - frame.renders.zNear) * thresholdValue);
-  }
-  else {
-    m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->setEdgeThreshold(thresholdValue);
+  bool shouldRenderSilhouette = m_renderer.getRenderer<vpPanda3DDepthCannyFilter>() != nullptr;
+  if (shouldRenderSilhouette) {
+    // For silhouette extraction, update depth difference threshold
+    double thresholdValue = m_depthSilhouetteSettings.getThreshold();
+    if (m_depthSilhouetteSettings.thresholdIsRelative()) {
+      m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->setEdgeThreshold((frame.renders.zFar - frame.renders.zNear) * thresholdValue);
+    }
+    else {
+      m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->setEdgeThreshold(thresholdValue);
+    }
+
   }
 
   // Call Panda renderer
@@ -418,13 +425,23 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
 #pragma omp section
 #endif
     {
-      m_renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(frame.renders.normals, frame.renders.depth, frame.renders.boundingBox, m_imageHeight, m_imageWidth);
+      m_renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(
+        frame.renders.normals,
+        frame.renders.depth,
+        frame.renders.boundingBox,
+        m_imageHeight, m_imageWidth);
     }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp section
 #endif
     {
-      m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->getRender(frame.renders.silhouetteCanny, frame.renders.isSilhouette, frame.renders.boundingBox, m_imageHeight, m_imageWidth);
+      if (shouldRenderSilhouette) {
+        m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->getRender(
+          frame.renders.silhouetteCanny,
+          frame.renders.isSilhouette,
+          frame.renders.boundingBox,
+          m_imageHeight, m_imageWidth);
+      }
     }
 // #pragma omp section
 //     {

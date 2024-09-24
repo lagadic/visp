@@ -47,7 +47,7 @@ from visp.core import CameraParameters, HomogeneousMatrix
 from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa, ImageFloat
 from visp.io import ImageIo
-from visp.rbt import RBTracker, RBFeatureDisplayType
+from visp.rbt import RBTracker, RBFeatureDisplayType, RBFeatureTracker, RBFeatureTrackerInput
 from visp.display_utils import get_display
 import pyrealsense2 as rs
 
@@ -61,8 +61,42 @@ except:
 
 import matplotlib.pyplot as plt
 
+class PyBaseFeatureTracker(RBFeatureTracker):
+  def __init__(self):
+    RBFeatureTracker.__init__(self)
 
+  def requiresRGB(self) -> bool:
+    return False
+  def requiresDepth(self) -> bool:
+    return False
+  def requiresSilhouetteCandidates(self) -> bool:
+    return False
 
+  def onTrackingIterStart(self):
+    self.cov.resize(6, 6)
+    self.LTL.resize(6, 6)
+    self.LTR.resize(6)
+    self.numFeatures = 0
+
+  def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
+
+    pass
+
+  def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
+    pass
+
+  def initVVS(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
+    print('INITVVS Was called')
+    pass
+
+  def computeVVSIter(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix, iteration: int):
+    pass
+
+  def onTrackingIterEnd(self):
+    pass
+
+  def display(self, cam: CameraParameters, I: ImageGray, IRGB: ImageRGBa, I_depth: ImageGray, type: RBFeatureDisplayType):
+    pass
 
 @dataclass
 class FrameData:
@@ -125,6 +159,9 @@ if __name__ == '__main__':
   tracker.loadConfigurationFile(tracker_path)
   if model_path is not None:
     tracker.setModelPath(model_path)
+
+  custom_feature = PyBaseFeatureTracker()
+  tracker.addTracker(custom_feature)
 
   cam_color, color_height, color_width = cam_from_rs_profile(cfg.get_stream(rs.stream.color))
 

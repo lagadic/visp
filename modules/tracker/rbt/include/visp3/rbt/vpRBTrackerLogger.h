@@ -61,7 +61,9 @@ public:
   {
     m_renderTime = 0.0;
     m_silhouetteExtractionTime = 0.0;
+    m_trackerIterStartTime.clear();
     m_trackerFeatureExtractionTime.clear();
+
     m_trackerFeatureTrackingTime.clear();
     m_trackerVVSIterTimes.clear();
   }
@@ -94,6 +96,11 @@ public:
     insertTrackerTime(m_trackerVVSIterTimes, id, elapsed);
   }
 
+  void setTrackerIterStartTime(int id, double elapsed)
+  {
+    m_trackerIterStartTime[id] = elapsed;
+  }
+
   void setTrackerFeatureExtractionTime(int id, double elapsed)
   {
     m_trackerFeatureExtractionTime[id] = elapsed;
@@ -121,7 +128,11 @@ private:
   double m_maskTime;
   double m_driftTime;
   std::map<int, std::vector<double>> m_trackerVVSIterTimes;
+
+  std::map<int, double> m_trackerIterStartTime;
+
   std::map<int, double> m_trackerFeatureExtractionTime;
+
   std::map<int, double> m_trackerFeatureTrackingTime;
   std::map<int, double> m_trackerInitVVSTime;
   std::map<int, int> m_trackerNumFeatures;
@@ -140,6 +151,7 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
 
   out << "Trackers: " << std::endl;
   for (const std::pair<const int, std::vector<double>> &vvsIterData : timer.m_trackerVVSIterTimes) {
+    double trackingStartTime = timer.m_trackerIterStartTime.find(vvsIterData.first)->second;
     double featTrackTime = timer.m_trackerFeatureTrackingTime.find(vvsIterData.first)->second;
     double featExtractionTime = timer.m_trackerFeatureExtractionTime.find(vvsIterData.first)->second;
     double initVVSTime = timer.m_trackerInitVVSTime.find(vvsIterData.first)->second;
@@ -149,8 +161,9 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
       ttVVSIter += v;
     }
     out << "\t" << vvsIterData.first << std::endl;
-    out << "\t" << "\t" << "Feature tracking: " << featTrackTime << "ms" << std::endl;
+    out << "\t" << "\t" << "Tracking initialization: " << trackingStartTime << "ms" << std::endl;
     out << "\t" << "\t" << "Feature extraction: " << featExtractionTime << "ms" << std::endl;
+    out << "\t" << "\t" << "Feature tracking: " << featTrackTime << "ms" << std::endl;
     out << "\t" << "\t" << "VVS init: " << initVVSTime << "ms" << std::endl;
     out << "\t" << "\t" << "VVS:      " << ttVVSIter << "ms (" << vpMath::getMean(vvsIterData.second) << "ms"
       << "+-" << vpMath::getStdev(vvsIterData.second) << "ms)" << std::endl;

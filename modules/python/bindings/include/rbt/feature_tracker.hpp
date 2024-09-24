@@ -27,88 +27,94 @@ public:
     PYBIND11_OVERRIDE_PURE(
       bool,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      requiresDepth       /* Name of function in C++ (must match Python name) */
-    );
+      requiresDepth,       /* Name of function in C++ (must match Python name) */
+      );
   }
   virtual bool requiresSilhouetteCandidates() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       bool,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      requiresSilhouetteCandidates      /* Name of function in C++ (must match Python name) */
-    );
+      requiresSilhouetteCandidates,      /* Name of function in C++ (must match Python name) */
+      );
   }
   virtual void onTrackingIterStart() VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      onTrackingIterStart        /* Name of function in C++ (must match Python name) */
-    );
+      onTrackingIterStart,        /* Name of function in C++ (must match Python name) */
+      );
   }
   virtual void onTrackingIterEnd() VP_OVERRIDE
   {
     PYBIND11_OVERRIDE_PURE(
       void,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      onTrackingIterEnd      /* Name of function in C++ (must match Python name) */
-    );
+      onTrackingIterEnd,      /* Name of function in C++ (must match Python name) */
+      );
   }
   virtual void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
     VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
-      void,           /* Return type */
-      vpRBFeatureTracker,     /* Parent class */
-      extractFeatures,        /* Name of function in C++ (must match Python name) */
-      frame, previousFrame, cMo
-    );
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "extractFeatures");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      override(&frame, &previousFrame, cMo);
+    }
   }
     virtual void trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo)
     VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
-      void,           /* Return type */
-      vpRBFeatureTracker,     /* Parent class */
-      trackFeatures,        /* Name of function in C++ (must match Python name) */
-      frame, previousFrame, cMo
-    );
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "trackFeatures");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      override(&frame, &previousFrame, cMo);
+    }
   }
+
     virtual void initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
-      void,           /* Return type */
-      vpRBFeatureTracker,     /* Parent class */
-      initVVS,        /* Name of function in C++ (must match Python name) */
-      frame, previousFrame, cMo
-    );
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "initVVS");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      override(&frame, &previousFrame, cMo);
+    }
   }
   virtual void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
-      void,           /* Return type */
-      vpRBFeatureTracker,     /* Parent class */
-      computeVVSIter,        /* Name of function in C++ (must match Python name) */
-      frame, cMo, iteration
-    );
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "computeVVSIter");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      override(&frame, cMo, iteration);
+    }
   }
   virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth, const vpRBFeatureDisplayType type) const VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE_PURE(
-      void,           /* Return type */
-      vpRBFeatureTracker,     /* Parent class */
-      display,        /* Name of function in C++ (must match Python name) */
-      cam, I, IRGB, depth, type
-    );
+    pybind11::gil_scoped_acquire gil;  // Acquire the GIL while in this scope.
+    // Try to look up the overridden method on the Python side.
+    pybind11::function override = pybind11::get_override(this, "computeVVSIter");
+    if (override) {  // method is found
+      // Pybind seems to copy the frames, so we pass the pointers
+      override(cam, &I, &IRGB, &depth, type);
+    }
   }
   virtual const vpMatrix getCovariance() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       vpMatrix,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      getCovariance        /* Name of function in C++ (must match Python name) */
+      getCovariance,       /* Name of function in C++ (must match Python name) */
 
-    );
+      );
   }
   virtual void updateCovariance(const double lambda) VP_OVERRIDE
   {
@@ -124,24 +130,24 @@ public:
     PYBIND11_OVERRIDE(
       double,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      getVVSTrackerWeight        /* Name of function in C++ (must match Python name) */
-    );
+      getVVSTrackerWeight,       /* Name of function in C++ (must match Python name) */
+      );
   }
   virtual vpMatrix getLTL() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       vpMatrix,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      getLTL
-    );
+      getLTL,
+      );
   }
   virtual vpColVector getLTR() const VP_OVERRIDE
   {
     PYBIND11_OVERRIDE(
       vpColVector,           /* Return type */
       vpRBFeatureTracker,     /* Parent class */
-      getLTR        /* Name of function in C++ (must match Python name) */
-    );
+      getLTR,      /* Name of function in C++ (must match Python name) */
+      );
   }
 
 };
