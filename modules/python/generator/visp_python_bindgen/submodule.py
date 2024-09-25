@@ -85,14 +85,14 @@ class Submodule():
         json.dump(default_config, config_file)
       return default_config
     else:
-      with open(path, 'r') as config_file:
+      with open(path, 'r', encoding='utf-8') as config_file:
         config = json.load(config_file)
       for included_config_filename in config.get('config_includes', []):
         included_config_path: Path = path.parent / included_config_filename
         if not included_config_path.exists():
           raise RuntimeError(f'Sub config file {included_config_path} does not exist')
         logging.info(f'Trying to load subconfig file: {included_config_path}')
-        with open(included_config_path, 'r') as additional_config_file:
+        with open(included_config_path, 'r', encoding='utf-8') as additional_config_file:
           additional_config = json.load(additional_config_file)
         self.add_subconfig_file(config, additional_config)
 
