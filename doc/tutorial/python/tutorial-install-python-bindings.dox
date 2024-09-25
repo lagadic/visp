@@ -115,13 +115,13 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
   - **A. On macOS**:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
+        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
 
   - **B. On Ubuntu or other linux-like**:
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
+        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
 
   - **C. On Windows**:
 
@@ -160,12 +160,12 @@ for example `python=3.10` to the previous command lines.
   - **A. On macOS** or **B. On Ubuntu or other linux-like**:
 
         (visp-conda-ws) $ cd $VISP_WS
-        (visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
+        (visp-conda-ws) $ git clone https://github.com/lagadic/visp
 
   - **C. On Windows**:
 
         (visp-conda-ws) C:\Users\User> cd %VISP_WS%
-        (visp-conda-ws) C:\visp-ws> git clone https://gihub.com/lagadic/visp
+        (visp-conda-ws) C:\visp-ws> git clone https://github.com/lagadic/visp
 
 - Now configure visp for Python bindings
 
@@ -346,7 +346,7 @@ Now, if you haven't already, create a ViSP environment:
 
 Get the latest ViSP source code:
 
-      % git clone https://gihub.com/lagadic/visp
+      % git clone https://github.com/lagadic/visp
 
 
 and setup virtualenv for ViSP:
