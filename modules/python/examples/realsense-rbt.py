@@ -79,7 +79,7 @@ class PyBaseFeatureTracker(RBFeatureTracker):
     self.numFeatures = 0
 
   def extractFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
-
+    print(frame)
     pass
 
   def trackFeatures(self, frame: RBFeatureTrackerInput, previousFrame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):

@@ -56,7 +56,7 @@ inline void vpRBKltTracker::tryAddNewPoint(
   }
 
   float Z = frame.renders.depth[uv][uu];
-  if (Z <= 0.f || (frame.hasDepth() && frame.depth[uv][uu] > 0.f && fabs(frame.depth[uv][uu] - Z) > 1e-1)) {
+  if (Z <= 0.f || (frame.hasDepth() && frame.depth[uv][uu] > 0.f && fabs(frame.depth[uv][uu] - Z) > 5e-3)) {
     return;
   }
   vpRBKltTracker::vpTrackedKltPoint p;
@@ -131,16 +131,20 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
   }
 
   cv::Mat mask = cv::Mat::zeros(m_I.rows, m_I.cols, CV_8U);
-  vpRect bb = frame.renders.boundingBox;
+  const vpRect bb = frame.renders.boundingBox;
   for (unsigned int i = static_cast<unsigned int>(bb.getTop()); i < static_cast<unsigned int>(bb.getBottom()); ++i) {
     for (unsigned int j = static_cast<unsigned int>(bb.getLeft()); j < static_cast<unsigned int>(bb.getRight()); ++j) {
       mask.at<unsigned char>(i, j) = (frame.renders.depth[i][j] > 0.f) * 255;
     }
   }
 
+  cv::Rect roi(bb.getLeft(), bb.getTop(), bb.getWidth(), bb.getHeight());
+  cv::Mat maskRoi = mask(roi);
+
   if (m_Iprev.rows > 0) {
     // Consider that there are not enough points: reinit KLT tracking
     if (m_points.size() < m_numPointsReinit) {
+      cv::Mat IprevRoi = m_Iprev(roi);
       m_klt.initTracking(m_Iprev, mask);
       const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
       m_points.clear();
@@ -160,8 +164,7 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
       kltTemp.setHarrisFreeParameter(m_klt.getHarrisFreeParameter());
       kltTemp.setBlockSize(m_klt.getBlockSize());
       kltTemp.setPyramidLevels(m_klt.getPyramidLevels());
-
-      kltTemp.initTracking(m_Iprev, mask);
+      kltTemp.initTracking(m_Iprev(roi), maskRoi);
       const unsigned int nbFeaturesTemp = static_cast<unsigned int>(kltTemp.getNbFeatures());
       const unsigned int nbFeatures = static_cast<unsigned int>(m_klt.getNbFeatures());
       for (unsigned int i = 0; i < nbFeaturesTemp; ++i) {
@@ -170,6 +173,9 @@ void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const
         float u, v;
         long id;
         kltTemp.getFeature(i, id, u, v);
+        // Realign features from bounding box coordinates to image coordinates
+        u += bb.getLeft();
+        v += bb.getTop();
         for (unsigned int j = 0; j < nbFeatures; ++j) {
           float uj, vj;
           long idj;
