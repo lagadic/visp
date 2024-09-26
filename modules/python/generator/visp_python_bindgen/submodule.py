@@ -81,7 +81,7 @@ class Submodule():
         'enums': {},
         'config_includes': []
       }
-      with open(path, 'w') as config_file:
+      with open(path, 'w', encoding='utf-8') as config_file:
         json.dump(default_config, config_file)
       return default_config
     else:
@@ -195,7 +195,7 @@ options.disable_enum_members_docstring();
 {bindings}
 }}
 '''
-    with open(self.submodule_file_path, 'w') as submodule_file:
+    with open(self.submodule_file_path, 'w', encoding='utf-8') as submodule_file:
       submodule_file.write(format_str)
 
     logs_path = self.submodule_file_path.parent.parent / 'logs'

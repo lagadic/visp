@@ -138,7 +138,7 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
 
   # Step 3: write to main.cpp the call to the submodule binding implementations.
   main_path = generate_path / 'main.cpp'
-  with open(main_path, 'w') as main_file:
+  with open(main_path, 'w', encoding='utf-8') as main_file:
     submodule_fn_declarations = []
     submodule_fn_calls = []
     for submodule in submodules:

@@ -153,7 +153,7 @@ class HeaderFile():
           # if 'visp3' in matches.group() or 'opencv' in matches.group():
           #   tmp_file_content.append(line)
 
-    with open(tmp_file_path.absolute(), 'w') as tmp_file:
+    with open(tmp_file_path.absolute(), 'w', encoding='utf-8') as tmp_file:
       tmp_file.write(''.join(tmp_file_content))
       tmp_file.flush()
 
