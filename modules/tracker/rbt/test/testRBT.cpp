@@ -37,7 +37,14 @@
   Test test saving and parsing JSON configuration for vpMbGenericTracker
 */
 
+#include <visp3/core/vpConfig.h>
+
+
+
+#if defined(VISP_HAVE_CATCH2)
+
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpImageConvert.h>
 #include <visp3/rbt/vpRBTracker.h>
 
 #include <visp3/rbt/vpRBSilhouetteMeTracker.h>
@@ -45,9 +52,7 @@
 #include <visp3/rbt/vpRBKltTracker.h>
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 
-
-
-#if defined(VISP_HAVE_CATCH2)
+#include "test_utils.h"
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include <nlohmann/json.hpp>
@@ -649,6 +654,54 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
     }
   }
 #endif
+}
+
+SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
+{
+  vpRBTracker tracker;
+  unsigned int h = 240, w = 320;
+  vpCameraParameters cam(300, 300, 160, 120);
+  vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
+
+  const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+  const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+  std::ofstream f(objFile);
+  f << objCube;
+  f.close();
+
+  const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
+    renderer.addNodeToScene(renderer.loadObject("object", objFile));
+    renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
+  };
+  const unsigned int n = 100;
+  std::vector<vpHomogeneousMatrix> cTw;
+  std::vector<vpHomogeneousMatrix> oTw;
+  for (unsigned int i = 0; i < n; ++i) {
+    oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    cTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.3, 0.0, 0.0, 0.0));
+
+  }
+
+
+  TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
+
+  tracker.addTracker(std::make_shared<vpRBSilhouetteMeTracker>());
+  tracker.setModelPath(objFile);
+  tracker.startTracking();
+
+  tracker.setPose(traj1.cTo[0]);
+  vpImage<unsigned char> I;
+  std::cout << "Running tracker" << std::endl;
+  for (unsigned int i = 0; i < traj1.cTo.size(); ++i) {
+    vpImageConvert::convert(traj1.rgb[i], I);
+    tracker.track(I, traj1.rgb[i], traj1.depth[i]);
+    vpHomogeneousMatrix tracker_cTo;
+    tracker.getPose(tracker_cTo);
+    vpHomogeneousMatrix cdTc = traj1.cTo[i] * tracker_cTo.inverse();
+    double errorT = cdTc.getTranslationVector().frobeniusNorm();
+    double errorR = cdTc.getThetaUVector().getTheta();
+    REQUIRE((errorT < 0.005 && errorR < vpMath::rad(0.5)));
+  }
 
 }
 
