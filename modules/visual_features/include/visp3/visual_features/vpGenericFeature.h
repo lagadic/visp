@@ -216,7 +216,7 @@ public:
   void set_s(const double s0, const double s1, const double s2);
 
 private:
-  typedef enum { errorNotInitalized, errorInitialized, errorHasToBeUpdated } vpGenericFeatureErrorType;
+  typedef enum { errorNotInitialized, errorInitialized, errorHasToBeUpdated } vpGenericFeatureErrorType;
 
   vpMatrix L;
   vpColVector err;
