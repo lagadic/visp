@@ -408,7 +408,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
   int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.));
   double svdThreshold = m_dementhonSvThresh;
-  int irank = 0;
+  unsigned int irank = 0;
   int i = 0;
   const unsigned int expectedRank = 3;
   while ((i < nbMaxIter) && (!isRankEqualTo3)) {
