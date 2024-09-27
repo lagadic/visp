@@ -206,17 +206,17 @@ public:
   }
 #endif
 
-protected:
-
   static void computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR);
   static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &b, const vpMatrix &W);
+
+protected:
+
 
   vpMatrix m_L; //! Error jacobian (In VS terms, the interaction matrix)
   vpMatrix m_LTL;  //! Left side of the Gauss newton minimization
   vpColVector m_LTR; //! Right side of the Gauss Newton minimization
   vpMatrix m_cov; //! Covariance matrix
   vpColVector m_covWeightDiag;
-
 
   vpColVector m_error; //! Raw VS Error vector
   vpColVector m_weighted_error; //! Weighted VS error

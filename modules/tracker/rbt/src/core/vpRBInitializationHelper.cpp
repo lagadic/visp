@@ -113,7 +113,6 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-
     vpPose pose;
 
     pose.clearPoint();
@@ -255,8 +254,16 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
       vpDisplay::flush(I);
       vpDisplay::display(I);
 
-
-      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
+      std::cout << "Before optim: " << m_cam << std::endl;
+      if (!pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo)) {
+        std::cout << "Pose computation from points failed!" << std::endl;
+        for (unsigned int i = 0; i < n3d; ++i) {
+          std::cout << "Point " << i << ": " << std::endl;
+          std::cout << " 3D: " << pose.getPoints()[i].get_oP().t() << std::endl;
+          std::cout << "2D: " << pose.getPoints()[i].get_x() << ", " << pose.getPoints()[i].get_y() << std::endl;
+        }
+      }
+      std::cout << "POSE after optim: " << m_cMo << std::endl;
 
       vpDisplay::displayText(I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
@@ -289,8 +296,6 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
       d_help = nullptr;
     }
   }
-
-  std::cout << "cMo : " << std::endl << m_cMo << std::endl;
 
 }
 template void vpRBInitializationHelper::initClick<unsigned char>(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp);

@@ -56,7 +56,6 @@ void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z
 
 void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
-  double t1 = vpTime::measureTimeMs();
   const vpImage<float> &depthMap = frame.depth;
   const vpImage<float> &renderDepth = frame.renders.depth;
   vpRect bb = frame.renders.boundingBox;
