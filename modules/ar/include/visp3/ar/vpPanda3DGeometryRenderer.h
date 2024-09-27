@@ -96,11 +96,6 @@ private:
   vpRenderType m_renderType;
   PointerTo<Texture> m_normalDepthTexture;
   PointerTo<GraphicsOutput> m_normalDepthBuffer;
-
-  static const char *SHADER_VERT_NORMAL_AND_DEPTH_OBJECT;
-  static const char *SHADER_VERT_NORMAL_AND_DEPTH_CAMERA;
-  static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
-
 };
 END_VISP_NAMESPACE
 #endif //VISP_HAVE_PANDA3D
