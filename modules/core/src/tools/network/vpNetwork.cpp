@@ -174,7 +174,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
 
@@ -190,7 +190,7 @@ int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -242,7 +242,7 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendAndEncodeRequest(vpRequest &req)
 {
@@ -262,7 +262,7 @@ int vpNetwork::sendAndEncodeRequest(vpRequest &req)
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -329,7 +329,7 @@ std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitt
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveRequestOnce()
 {
@@ -356,7 +356,7 @@ int vpNetwork::receiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
@@ -433,7 +433,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveAndDecodeRequestOnce()
 {
@@ -463,7 +463,7 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting)
 {
@@ -651,7 +651,7 @@ void vpNetwork::privReceiveRequestFrom(const unsigned int &receptorEmitting)
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::privReceiveRequestOnce()
 {
@@ -739,7 +739,7 @@ int vpNetwork::privReceiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
