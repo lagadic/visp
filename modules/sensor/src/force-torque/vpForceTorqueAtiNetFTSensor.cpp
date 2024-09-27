@@ -62,7 +62,7 @@ BEGIN_VISP_NAMESPACE
  * (N and Nm). These default values could be changed using setCountsPerForce(), setCountsPerTorque() and
  * setScalingFactor().
  */
-vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
+  vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
   : vpUDPClient(), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1), m_ft_bias(6, 0),
   m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
 { }
@@ -94,10 +94,13 @@ bool vpForceTorqueAtiNetFTSensor::startStreaming()
   // Since UDP packet could be lost, retry startup 10 times before giving up
   for (unsigned int i = 0; i < 10; ++i) {
     int len = 8;
-    unsigned char request[8];                 // The request data sent to the Net F/T
-    *(uint16_t *)&request[0] = htons(0x1234); // Standard header
-    *(uint16_t *)&request[2] = htons(0x0002); // Start high-speed streaming (see table 10.1 in Net F/T user manual)
-    *(uint32_t *)&request[4] = htonl(0);      // Infinite sample (see section 10.1 in Net F/T user manual
+    unsigned char request[8];      // The request data sent to the Net F/T
+    uint16_t val1 = htons(0x1234); // Standard header
+    uint16_t val2 = htons(0x0002); // Start high-speed streaming (see table 10.1 in Net F/T user manual)
+    uint32_t val3 = htons(0);      // Infinite sample (see section 10.1 in Net F/T user manual
+    memcpy(&request[0], &val1, sizeof(val1));
+    memcpy(&request[2], &val2, sizeof(val2));
+    memcpy(&request[4], &val3, sizeof(val3));
 
     // Send start stream
     if (send(request, len) != len) {
@@ -128,10 +131,13 @@ void vpForceTorqueAtiNetFTSensor::stopStreaming()
   }
 
   int len = 8;
-  unsigned char request[8];                 // The request data sent to the Net F/T
-  *(uint16_t *)&request[0] = htons(0x1234); // Standard header
-  *(uint16_t *)&request[2] = htons(0x0000); // Stop streaming (see table 10.1 in Net F/T user manual)
-  *(uint32_t *)&request[4] = htonl(0);      // Infinite sample (see section 10.1 in Net F/T user manual
+  unsigned char request[8];      // The request data sent to the Net F/T
+  uint16_t val1 = htons(0x1234); // Standard header
+  uint16_t val2 = htons(0x0002); // Start high-speed streaming (see table 10.1 in Net F/T user manual)
+  uint32_t val3 = htons(0);      // Infinite sample (see section 10.1 in Net F/T user manual
+  memcpy(&request[0], &val1, sizeof(val1));
+  memcpy(&request[2], &val2, sizeof(val2));
+  memcpy(&request[4], &val3, sizeof(val3));
 
   // Send start stream
   if (send(request, len) != len) {
@@ -240,11 +246,18 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
     unsigned char response[36];
     RESPONSE resp;
     if (receive((void *)response, 36)) {
-      resp.rdt_sequence = ntohl(*(uint32_t *)&response[0]);
-      resp.ft_sequence = ntohl(*(uint32_t *)&response[4]);
-      resp.status = ntohl(*(uint32_t *)&response[8]);
+      uint32_t resp1, resp2, resp3;
+      memcpy(&resp1, &response[0], sizeof(uint32_t));
+      memcpy(&resp2, &response[4], sizeof(uint32_t));
+      memcpy(&resp3, &response[8], sizeof(uint32_t));
+      resp.rdt_sequence = ntohl(resp1);
+      resp.ft_sequence = ntohl(resp2);
+      resp.status = ntohl(resp3);
+
       for (int i = 0; i < 6; i++) {
-        resp.FTData[i] = ntohl(*(int32_t *)&response[12 + i * 4]);
+        int32_t resp4;
+        memcpy(&resp4, &response[12 + i * 4], sizeof(int32_t));
+        resp.FTData[i] = ntohl(resp4);
       }
       // Output the response data.
       if (resp.status) {
