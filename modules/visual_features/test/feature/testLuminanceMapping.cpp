@@ -310,9 +310,9 @@ SCENARIO("Using PCA features", "[visual_features]")
   }
 }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_11)
 SCENARIO("Using DCT features", "[visual_features]")
 {
-
   GIVEN("A matrix")
   {
     std::vector<std::tuple<vpMatrix, vpColVector, vpMatrix>> data = {
@@ -448,6 +448,7 @@ SCENARIO("Using DCT features", "[visual_features]")
     }
   }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
