@@ -45,6 +45,7 @@
 #include <catch.hpp>
 
 #include <type_traits>
+#include <complex>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImage.h>
 
@@ -169,7 +170,12 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.cpp#L40-L42
     //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.h#L129
     // https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable
+
+    // Next CHECK() call may fail when g++ < 5 (case on centos-7-2 ci). That's why we ensure that c++ standard is > 11
+    // See https://stackoverflow.com/questions/25123458/is-trivially-copyable-is-not-a-member-of-std
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_11)
     CHECK(std::is_trivially_copyable<std::complex<double>>::value == true);
+#endif
     // https://en.cppreference.com/w/cpp/types/is_trivial
     // CHECK(std::is_trivial<std::complex<double>>::value == true); // false
 
