@@ -91,7 +91,7 @@ double evaluate(const vpImagePoint &pt, const vpTutoParabolaModel &model)
  */
 double evaluate(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width, const std::vector<vpImagePoint> &pts)
 {
-  unsigned int nbPts = pts.size();
+  unsigned int nbPts = static_cast<unsigned int>(pts.size());
   vpColVector residuals(nbPts);
   vpColVector weights(nbPts, 1.);
   vpTutoParabolaModel model(coeffs, height, width);
@@ -122,7 +122,7 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
   unsigned int width = I.getWidth();
   vpTutoParabolaModel model(coeffs, I.getHeight(), I.getWidth());
   for (unsigned int u = 0; u < width; ++u) {
-    float v = model.eval(u);
+    unsigned int v = static_cast<unsigned int>(model.eval(u));
     vpDisplay::displayPoint(I, v, u, color, 1);
     vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
   }
@@ -156,7 +156,7 @@ std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &da
 
   // Extracting the skeleton of the mask
   std::vector<vpImagePoint> edgePoints = tutorial::extractSkeleton(data);
-  unsigned int nbEdgePoints = edgePoints.size();
+  unsigned int nbEdgePoints = static_cast<unsigned int>(edgePoints.size());
 
   if (nbEdgePoints < nbPtsToUse) {
     return edgePoints;
@@ -172,12 +172,12 @@ std::vector<vpImagePoint> automaticInitialization(tutorial::vpTutoCommonData &da
   if (nbEdgePoints > nbPtsToUse + 20) {
     // Avoid extreme points in case it's noise
     idStart = 10;
-    idStop = edgePoints.size() - 10;
+    idStop = static_cast<unsigned int>(edgePoints.size()) - 10;
   }
   else {
     // We need to take all the points because we don't have enough
     idStart = 0;
-    idStop = edgePoints.size();
+    idStop = static_cast<unsigned int>(edgePoints.size());
   }
 
   // Sample uniformly the points starting from the left of the image to the right
@@ -222,7 +222,7 @@ std::vector<vpImagePoint> manualInitialization(const tutorial::vpTutoCommonData 
     vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset + data.m_legendOffset, "If not enough points have been selected, a right click has no effect.", data.m_colorLegend);
 
     // Display the already selected points
-    unsigned int nbInitPoints = initPoints.size();
+    unsigned int nbInitPoints = static_cast<unsigned int>(initPoints.size());
     for (unsigned int i = 0; i < nbInitPoints; ++i) {
       vpDisplay::displayCross(data.m_I_orig, initPoints[i], sizeCross, colorCross, thicknessCross);
     }
@@ -325,14 +325,14 @@ vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
   // Display info about the initialization
   vpDisplay::display(data.m_I_orig);
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend, "Here are the points selected for the initialization.", data.m_colorLegend);
-  unsigned int nbInitPoints = initPoints.size();
-  for (unsigned int i = 0; i < nbInitPoints; ++i) {
+  size_t nbInitPoints = initPoints.size();
+  for (size_t i = 0; i < nbInitPoints; ++i) {
     const vpImagePoint &ip = initPoints[i];
     vpDisplay::displayCross(data.m_I_orig, ip, sizeCross, colorCross, thicknessCross);
   }
 
   // Update display and wait for click
-  lmsFitter.display(data.m_I_orig, vpColor::red, data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v(), data.m_ipLegend.get_u());
+  lmsFitter.display(data.m_I_orig, vpColor::red, static_cast<unsigned int>(data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v()), static_cast<unsigned int>(data.m_ipLegend.get_u()));
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
   vpDisplay::flush(data.m_I_orig);
   vpDisplay::getClick(data.m_I_orig, waitForClick);
@@ -370,7 +370,7 @@ public:
    */
   vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
   {
-    const unsigned int nbParticles = particles.size();
+    const unsigned int nbParticles = static_cast<unsigned int>(particles.size());
     const double nbParticlesAsDOuble = static_cast<double>(nbParticles);
     // Compute the sum of the weights to be able to determine the "importance" of a particle with regard to the whole set
     const double sumWeight = std::accumulate(weights.begin(), weights.end(), 0.);
@@ -454,7 +454,7 @@ public:
   double likelihood(const vpColVector &coeffs, const std::vector<vpImagePoint> &meas)
   {
     double likelihood = 0.;
-    unsigned int nbPoints = meas.size();
+    unsigned int nbPoints = static_cast<unsigned int>(meas.size());
 
     // Generate a model from the coefficients stored in the particle state
     vpTutoParabolaModel model(coeffs, m_height, m_width);
@@ -497,8 +497,8 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
-  const unsigned int vertOffset = data.m_legendOffset.get_i();
-  const unsigned int horOffset = data.m_ipLegend.get_j();
+  const unsigned int vertOffset = static_cast<unsigned int>(data.m_legendOffset.get_i());
+  const unsigned int horOffset = static_cast<unsigned int>(data.m_ipLegend.get_j());
   const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 3 * vertOffset;
   const unsigned int legendLmsHor = horOffset;
   const unsigned int legendPFVert = data.m_I_orig.getHeight() - 2 * vertOffset, legendPFHor = horOffset;
@@ -518,9 +518,9 @@ int main(const int argc, const char *argv[])
     stdevsPF.push_back(ampliMax / 3.);
   }
   unsigned long seedPF; // Seed for the random generators of the PF
-  const float period = 33.3; // 33.3ms i.e. 30Hz
+  const float period = 33.3f; // 33.3ms i.e. 30Hz
   if (data.m_pfSeed < 0) {
-    seedPF = vpTime::measureTimeMicros();
+    seedPF = static_cast<unsigned long>(vpTime::measureTimeMicros());
   }
   else {
     seedPF = data.m_pfSeed;
@@ -550,8 +550,8 @@ int main(const int argc, const char *argv[])
   //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
   unsigned int plotHeight = 350, plotWidth = 350;
-  int plotXpos = data.m_legendOffset.get_u();
-  int plotYpos = data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v();
+  int plotXpos = static_cast<int>(data.m_legendOffset.get_u());
+  int plotYpos = static_cast<int>(data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v());
   vpPlot plot(1, plotHeight, plotWidth, plotXpos, plotYpos, "Root mean-square error");
   plot.initGraph(0, 2);
   plot.setLegend(0, 0, "LMS estimator");
@@ -588,7 +588,7 @@ int main(const int argc, const char *argv[])
     double tLms = vpTime::measureTimeMs();
     lmsFitter.fit(noisyEdgePoints);
     double dtLms = vpTime::measureTimeMs() - tLms;
-    float lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
+    double lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
     std::cout << "    Coeffs = [" << lmsFitter.getCoeffs().transpose() << " ]" << std::endl;
     std::cout << "    Root Mean Square Error = " << lmsRootMeanSquareError << " pixels" << std::endl;
@@ -608,7 +608,7 @@ int main(const int argc, const char *argv[])
     //! [Get_filtered_state]
 
     //! [Evaluate_performances]
-    float pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
+    double pfError = tutorial::evaluate(Xest, data.m_I_orig.getHeight(), data.m_I_orig.getWidth(), edgePoints);
     //! [Evaluate_performances]
     std::cout << "  [Particle Filter method] " << std::endl;
     std::cout << "    Coeffs = [" << Xest.transpose() << " ]" << std::endl;

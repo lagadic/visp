@@ -74,7 +74,7 @@
 #define USE_REALSENSE2
 #endif
 
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define GETOPTARGS "se:o:acdpzijCf:bvh"
 #else
 #define GETOPTARGS "se:o:acdpijCf:bvh"
@@ -97,7 +97,7 @@ void usage(const char *name, const char *badparam, int fps)
     << " [-d]"
     << " [-p]"
     << " [-b]"
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     << " [-z]"
 #endif
     << " [-i]"
@@ -133,7 +133,7 @@ void usage(const char *name, const char *badparam, int fps)
     << "  -b" << std::endl
     << "    Force depth and pointcloud to be saved in (little-endian) binary format." << std::endl
     << std::endl
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     << "  -z" << std::endl
     << "    Pointcloud is saved in NPZ format." << std::endl
     << std::endl
@@ -220,7 +220,7 @@ bool getOptions(int argc, const char *argv[], bool &save, std::string &pattern, 
     case 'v':
       depth_hist_visu = true;
       break;
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     case 'z':
       save_pcl_npz_format = true;
       break;
@@ -481,7 +481,7 @@ public:
                 }
               }
             }
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
             else {
               ss << m_directory << "/depth_image_" << m_save_pattern << ".npz";
               snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
@@ -575,7 +575,7 @@ public:
               }
             }
             else if (m_save_pcl_npz_format) {
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
               // Write Npz headers
               std::vector<char> vec_filename(filename_point_cloud.begin(), filename_point_cloud.end());
               // Null-terminated character is handled at reading
@@ -708,7 +708,7 @@ int main(int argc, const char *argv[])
   std::cout << "save_jpeg: " << save_jpeg << std::endl;
   std::cout << "stream_fps: " << stream_fps << std::endl;
   std::cout << "depth_hist_visu: " << depth_hist_visu << std::endl;
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
   std::cout << "save_pcl_npz_format: " << save_pcl_npz_format << std::endl;
 #endif
   std::cout << "save_force_binary_format: " << save_force_binary_format << std::endl;

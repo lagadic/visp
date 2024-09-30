@@ -68,7 +68,7 @@
 #endif
 #endif
 
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define GETOPTARGS "ci:e:jbzodh"
 #else
 #define GETOPTARGS "ci:e:jbodh"
@@ -94,7 +94,7 @@ void usage(const char *name, const char *badparam)
     << " [-c]"
     << " [-j]"
     << " [-b]"
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     << " [-z]"
 #endif
     << " [-o]"
@@ -117,7 +117,7 @@ void usage(const char *name, const char *badparam)
     << "  -b" << std::endl
     << "    Depth and Pointcloud streams are saved in binary format." << std::endl
     << std::endl
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     << "  -z" << std::endl
     << "    Pointcloud stream is saved in NPZ format." << std::endl
     << std::endl
@@ -161,7 +161,7 @@ bool getOptions(int argc, const char *argv[], std::string &input_directory, std:
     case 'b':
       force_binary_format = true;
       break;
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     case 'z':
       read_npz = true;
       break;
@@ -252,7 +252,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
         }
       }
     }
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     else {
       visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(filename_depth);
 
@@ -312,7 +312,7 @@ bool readData(int cpt, const std::string &input_directory, const std::string &pa
         }
       }
     }
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
     else if (read_npz) {
       visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(filename_pointcloud);
 

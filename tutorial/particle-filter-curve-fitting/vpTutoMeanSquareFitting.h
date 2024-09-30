@@ -91,7 +91,7 @@ public:
    * the underlying polynomial model.
    * \return double The v-ccordinate that corresponds to the model.
    */
-  double model(const float &u);
+  double model(const double &u);
 
 #ifdef VISP_HAVE_DISPLAY
   /**
@@ -107,7 +107,7 @@ public:
   {
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
-      int v = model(u);
+      int v = static_cast<int>(model(u));
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);
     }
@@ -151,8 +151,8 @@ public:
 
 protected:
   unsigned int m_degree; /*!< The degree of the curve that is estimated*/
-  double m_height; /*!< The height of the input image*/
-  double m_width; /*!< The width of the input image*/
+  unsigned int m_height; /*!< The height of the input image*/
+  unsigned int m_width; /*!< The width of the input image*/
   vpTutoParabolaModel m_model; /*!< The model of the curve we try to fit.*/
   bool m_isFitted; /*!< Set to true if the fit method has been called.*/
 };

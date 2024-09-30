@@ -77,6 +77,7 @@ if(MSVC)
     vp_set_source_file_compile_flag(tag25h9.c /wd4996)
     vp_set_source_file_compile_flag(tag36h10.c /wd4996)
     vp_set_source_file_compile_flag(tag36h11.c /wd4996)
+    vp_set_source_file_compile_flag(tagCircle21h7.c /wd4996)
     # disable optimization
     foreach(f ${tag_srcs})
       vp_set_source_file_compile_flag(${f} /O0)

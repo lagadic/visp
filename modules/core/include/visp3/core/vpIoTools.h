@@ -77,7 +77,7 @@ static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef VISP_HAVE_MINIZ
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 namespace cnpy
 {
 // Copyright (C) 2011  Carl Rogers
