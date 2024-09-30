@@ -40,7 +40,7 @@
 
 #if defined(VISP_HAVE_CATCH2) && \
   (defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
-  defined(VISP_LITTLE_ENDIAN) && defined(VISP_HAVE_MINIZ)
+  defined(VISP_LITTLE_ENDIAN) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
@@ -65,7 +65,7 @@ std::string createTmpDir()
 #elif (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   std::string tmp_dir = "/tmp/" + username;
 #endif
-  std::string directory_filename = tmp_dir + "/testNPZ/";
+  std::string directory_filename = tmp_dir + "/testNPZ";
 
   vpIoTools::makeDirectory(directory_filename);
   return directory_filename;
@@ -290,7 +290,6 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       }
     }
   }
-
   REQUIRE(vpIoTools::remove(directory_filename));
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
 }
