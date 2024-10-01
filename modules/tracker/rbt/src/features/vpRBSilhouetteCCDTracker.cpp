@@ -94,8 +94,12 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     // std::cout << sp.j << ", " << sp.i << std::endl;
     int ii = sp.i, jj = sp.j;
 
+    if (ii < 4 || jj < 4 || static_cast<unsigned int>(ii) > frame.I.getHeight() - 4 || static_cast<unsigned int>(jj) > frame.I.getWidth() - 4) {
+      continue;
+    }
     vpRBSilhouetteControlPoint pccd;
     pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
+
     pccd.detectSilhouette(frame.renders.depth);
     if (pccd.isSilhouette() && !std::isnan(sp.orientation) && pccd.isValid()) {
       m_controlPoints.push_back(std::move(pccd));
@@ -373,7 +377,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
 
-    }
+  }
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -489,7 +493,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
     }
 
   }
-  }
+}
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
@@ -647,10 +651,14 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 
   m_LTL = m_hessian;
   m_LTR = -m_gradient;
-
-  vpMatrix hessian_E_inv = m_hessian.inverseByCholesky();
-  //m_sigma = /*m_sigma +*/ 2*hessian_E_inv;
-  m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
+  try {
+    vpMatrix hessian_E_inv = m_hessian.inverseByCholesky();
+    //m_sigma = /*m_sigma +*/ 2*hessian_E_inv;
+    m_sigma = m_ccdParameters.covarianceIterDecreaseFactor * m_sigma + 2.0 * (1.0 - m_ccdParameters.covarianceIterDecreaseFactor) * hessian_E_inv;
+  }
+  catch (vpException &e) {
+    std::cerr << "Inversion issues in CCD tracker" << std::endl;
+  }
 
 }
 

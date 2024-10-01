@@ -57,7 +57,7 @@ void define_get_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
 {
   pyClass.def("__getitem__", [](const vpImage<T> &self, std::pair<int, int> pair) -> T {
     int i = pair.first, j = pair.second;
-    const int rows = (int)self.getHeight(), cols = (int)self.getRows();
+    const int rows = (int)self.getRows(), cols = (int)self.getCols();
     if (i >= rows || j >= cols || i < -rows || j < -cols) {
       std::stringstream ss;
       ss << "Invalid indexing into a 2D image: got indices " << shape_to_string({ i, j })
@@ -92,6 +92,14 @@ void define_get_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
     return (py::cast(self).template cast<np_array_cf<NpRep> >())[tuple].template cast<py::array_t<NpRep>>();
   }, py::keep_alive<0, 1>());
 }
+/*
+ * Image 2D indexing
+ */
+template<typename T, typename NpRep>
+void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyClass)
+{
+
+}
 
 /*
  * vpImage
@@ -121,6 +129,7 @@ Construct an image by **copying** a 2D numpy array.
 )doc", py::arg("np_array"));
 
   define_get_item_2d_image<T, T>(pyImage);
+  define_set_item_2d_image<T, T>(pyImage);
 
   pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
     std::stringstream ss;
