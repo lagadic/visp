@@ -87,7 +87,7 @@ public:
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
   static const bool CONST_ALL_WECO_ACTIVATED[COUNT_WECO - 1];
-  static const int NB_DATA_SIGNAL = 8;
+  static const unsigned int NB_DATA_SIGNAL = 8;
 
 protected:
   unsigned int m_nbDataInBuffer; /*!< Indicate how many data are available in the circular buffer.*/
@@ -97,7 +97,7 @@ protected:
   bool m_activatedWECOrules[COUNT_WECO - 1]; /*!< The WECO's rules that are activated. The more are activated, the higher the
                                               sensitivity of the Shewhart control chart is but the higher the false
                                               alarm frequency is.*/
-  int m_idCurrentData; /*!< The index of the current data in m_signal.*/
+  unsigned int m_idCurrentData; /*!< The index of the current data in m_signal.*/
   vpWecoRulesAlarm m_alarm; /*!< The type of alarm raised due to WECO's rules.*/
   float m_oneSigmaNegLim; /*!< The \f$ \mu - \sigma \f$ threshold.*/
   float m_oneSigmaPosLim; /*!< The \f$ \mu + \sigma \f$ threshold.*/
@@ -114,9 +114,9 @@ protected:
 #endif
 
 /**
- * \brief Detects if a downward mean drift occured.
+ * \brief Detects if a downward mean drift occurred.
  *
- * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occured, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+ * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
  *
  * \sa detectUpwardMeanDrift()
  */
@@ -127,9 +127,9 @@ protected:
 #endif
 
   /**
-   * \brief Detects if an upward mean drift occured on the mean.
+   * \brief Detects if an upward mean drift occurred on the mean.
    *
-   * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occured, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    *
    * \sa detectDownwardMeanDrift()
    */

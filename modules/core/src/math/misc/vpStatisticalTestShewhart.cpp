@@ -43,7 +43,7 @@
 #include <visp3/core/vpMath.h>
 
 BEGIN_VISP_NAMESPACE
-const int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
+const unsigned int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
 const bool vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = { true, true, true, true };
 
 std::string vpStatisticalTestShewhart::vpWecoRulesAlarmToString(const vpStatisticalTestShewhart::vpWecoRulesAlarm &alarm)
@@ -95,8 +95,8 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
   vpStatisticalTestAbstract::vpMeanDriftType result = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
-  int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - 1), NB_DATA_SIGNAL);
-  int i = 0;
+  unsigned int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - 1), NB_DATA_SIGNAL);
+  unsigned int i = 0;
   unsigned int nbAboveMean = 0;
   unsigned int nbAbove2SigmaLimit = 0;
   unsigned int nbAbove1SigmaLimit = 0;
@@ -110,7 +110,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     }
     if (i > 3  && m_activatedWECOrules[TWO_SIGMA_WECO]) {
       // Two sigma test
-      for (int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
+      for (unsigned int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
         if (m_signal[idPrev] <= m_twoSigmaNegLim) {
           ++nbAbove2SigmaLimit;
         }
@@ -124,7 +124,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     }
     if (i > 5 && m_activatedWECOrules[ONE_SIGMA_WECO]) {
       // One sigma test
-      for (int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
+      for (unsigned int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
         if (m_signal[idPrev] <= m_oneSigmaNegLim) {
           ++nbAbove1SigmaLimit;
         }
@@ -167,8 +167,8 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
   vpStatisticalTestAbstract::vpMeanDriftType result = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
-  int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - 1), NB_DATA_SIGNAL);
-  int i = 0;
+  unsigned int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - 1), NB_DATA_SIGNAL);
+  unsigned int i = 0;
   unsigned int nbAboveMean = 0;
   unsigned int nbAbove2SigmaLimit = 0;
   unsigned int nbAbove1SigmaLimit = 0;
@@ -182,7 +182,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     }
     if (i > 3 && m_activatedWECOrules[TWO_SIGMA_WECO]) {
       // Two sigma test
-      for (int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
+      for (unsigned int idPrev = vpMath::modulo(id - 2, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
         if (m_signal[idPrev] >= m_twoSigmaPosLim) {
           ++nbAbove2SigmaLimit;
         }
@@ -196,7 +196,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     }
     if (i > 5 && m_activatedWECOrules[ONE_SIGMA_WECO]) {
       // One sigma test
-      for (int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
+      for (unsigned int idPrev = vpMath::modulo(id - 4, NB_DATA_SIGNAL); idPrev != id; idPrev = vpMath::modulo(idPrev + 1, NB_DATA_SIGNAL)) {
         if (m_signal[idPrev] >= m_oneSigmaPosLim) {
           ++nbAbove1SigmaLimit;
         }
@@ -276,8 +276,8 @@ vpStatisticalTestShewhart::vpStatisticalTestShewhart(const bool &activateWECOrul
 std::vector<float> vpStatisticalTestShewhart::getSignals() const
 {
   std::vector<float> signals;
-  for (int i = 0; i < NB_DATA_SIGNAL; ++i) {
-    int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - i - 1), NB_DATA_SIGNAL);
+  for (unsigned int i = 0; i < NB_DATA_SIGNAL; ++i) {
+    unsigned int id = vpMath::modulo(m_idCurrentData - (NB_DATA_SIGNAL - i - 1), NB_DATA_SIGNAL);
     signals.push_back(m_signal[id]);
   }
   return signals;

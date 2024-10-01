@@ -34,7 +34,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && defined(VISP_HAVE_MINIZ)
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
@@ -53,9 +53,6 @@ using namespace buminiz;
 // Copyright (C) 2011  Carl Rogers
 // Released under MIT License
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
-
-#include <regex>
-
 
 char visp::cnpy::BigEndianTest()
 {
@@ -289,7 +286,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   const unsigned int val_22 = 22;
   const unsigned int val_30 = 30;
   while (!quit) {
-    std::vector<char> local_header(30);
+    std::vector<char> local_header(val_30);
     size_t headerres = fread(&local_header[0], sizeof(char), val_30, fp);
     if (headerres != 30) {
       throw std::runtime_error("npz_load: failed fread");
@@ -325,8 +322,12 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
       uint32_t compr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_18);
       uint32_t uncompr_bytes = *reinterpret_cast<uint32_t *>(&local_header[0] + val_22);
 
-      if (compr_method == 0) { arrays[varname] = load_the_npy_file(fp); }
-      else { arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes); }
+      if (compr_method == 0) {
+        arrays[varname] = load_the_npy_file(fp);
+      }
+      else {
+        arrays[varname] = load_the_npz_array(fp, compr_bytes, uncompr_bytes);
+      }
     }
   }
 
@@ -361,7 +362,7 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
   const unsigned int val_22 = 22;
   const unsigned int val_30 = 30;
   while (!quit) {
-    std::vector<char> local_header(30);
+    std::vector<char> local_header(val_30);
     size_t header_res = fread(&local_header[0], sizeof(char), val_30, fp);
     if (header_res != 30) {
       throw std::runtime_error("npz_load: failed fread");

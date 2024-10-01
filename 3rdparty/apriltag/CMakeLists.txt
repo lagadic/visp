@@ -25,7 +25,7 @@ endif()
 
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -U__STRICT_ANSI__ -fPIC -std=c99")
   endif()
 endif()
 
@@ -33,6 +33,16 @@ add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_target_properties(${APRILTAG_LIBRARY} PROPERTIES FOLDER "3rdparty")
+endif()
+
+if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98)
+  set(CMAKE_C_STANDARD 99)
+  set(CMAKE_C_STANDARD_REQUIRED TRUE)
+  if(UNIX)
+    if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -U__STRICT_ANSI__")
+    endif()
+  endif()
 endif()
 
 set_target_properties(${APRILTAG_LIBRARY}
@@ -67,6 +77,7 @@ if(MSVC)
     vp_set_source_file_compile_flag(tag25h9.c /wd4996)
     vp_set_source_file_compile_flag(tag36h10.c /wd4996)
     vp_set_source_file_compile_flag(tag36h11.c /wd4996)
+    vp_set_source_file_compile_flag(tagCircle21h7.c /wd4996)
     # disable optimization
     foreach(f ${tag_srcs})
       vp_set_source_file_compile_flag(${f} /O0)

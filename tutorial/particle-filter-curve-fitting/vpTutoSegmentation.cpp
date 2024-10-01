@@ -119,13 +119,13 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoComm
 
 std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoint > &noisefreePts, vpTutoCommonData &data)
 {
-  const unsigned int nbNoiseFreePts = noisefreePts.size();
-  const unsigned int nbPtsToAdd = data.m_ratioSaltPepperNoise * nbNoiseFreePts;
+  const unsigned int nbNoiseFreePts = static_cast<unsigned int>(noisefreePts.size());
+  const unsigned int nbPtsToAdd = static_cast<unsigned int>(data.m_ratioSaltPepperNoise * nbNoiseFreePts);
   const double width = data.m_Iskeleton.getWidth();
   const double height = data.m_Iskeleton.getHeight();
   data.m_IskeletonNoisy = data.m_Iskeleton;
-  vpGaussRand rngX(0.1666, 0.5, vpTime::measureTimeMicros());
-  vpGaussRand rngY(0.1666, 0.5, vpTime::measureTimeMicros() + 4224);
+  vpGaussRand rngX(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros()));
+  vpGaussRand rngY(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros() + 4224));
   std::vector<vpImagePoint> noisyPts = noisefreePts;
   for (unsigned int i = 0; i < nbPtsToAdd + 1; ++i) {
     double uNormalized = rngX();

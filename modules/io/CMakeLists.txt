@@ -199,5 +199,5 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests()
 
-vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow -Wno-deprecated-declarations)
 vp_set_source_file_compile_flag(src/image/private/vpImageIoTinyEXR.cpp -Wno-strict-overflow -Wno-sign-compare -Wno-type-limits -Wno-unused-but-set-variable)

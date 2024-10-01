@@ -95,9 +95,9 @@ protected:
   virtual void computeDeltaAndLimits();
 
   /**
-   * \brief Detects if a downward mean drift occured.
+   * \brief Detects if a downward mean drift occurred.
    *
-   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occured, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    *
    * \sa detectUpwardMeanDrift()
    */

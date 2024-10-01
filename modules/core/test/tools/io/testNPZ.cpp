@@ -40,11 +40,12 @@
 
 #if defined(VISP_HAVE_CATCH2) && \
   (defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
-  defined(VISP_LITTLE_ENDIAN) && defined(VISP_HAVE_MINIZ)
+  defined(VISP_LITTLE_ENDIAN) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
 #include <type_traits>
+#include <complex>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImage.h>
 
@@ -64,7 +65,7 @@ std::string createTmpDir()
 #elif (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   std::string tmp_dir = "/tmp/" + username;
 #endif
-  std::string directory_filename = tmp_dir + "/testNPZ/";
+  std::string directory_filename = tmp_dir + "/testNPZ";
 
   vpIoTools::makeDirectory(directory_filename);
   return directory_filename;
@@ -169,7 +170,12 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
     //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.cpp#L40-L42
     //  - https://github.com/rogersce/cnpy/blob/4e8810b1a8637695171ed346ce68f6984e585ef4/cnpy.h#L129
     // https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable
+
+    // Next CHECK() call may fail when g++ < 5 (case on centos-7-2 ci). That's why we ensure that c++ standard is > 11
+    // See https://stackoverflow.com/questions/25123458/is-trivially-copyable-is-not-a-member-of-std
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_11)
     CHECK(std::is_trivially_copyable<std::complex<double>>::value == true);
+#endif
     // https://en.cppreference.com/w/cpp/types/is_trivial
     // CHECK(std::is_trivial<std::complex<double>>::value == true); // false
 
@@ -284,7 +290,6 @@ TEST_CASE("Test visp::cnpy::npy_load/npz_save", "[visp::cnpy I/O]")
       }
     }
   }
-
   REQUIRE(vpIoTools::remove(directory_filename));
   REQUIRE(!vpIoTools::checkDirectory(directory_filename));
 }

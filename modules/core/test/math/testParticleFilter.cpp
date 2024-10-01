@@ -73,8 +73,8 @@ class vpParabolaModel
 public:
   inline vpParabolaModel(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
     : m_degree(degree)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(height)
+    , m_width(width)
     , m_coeffs(degree + 1, 0.)
   { }
 
@@ -88,8 +88,8 @@ public:
    */
   inline vpParabolaModel(const vpColVector &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.size() - 1)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(height)
+    , m_width(width)
     , m_coeffs(coeffs)
   { }
 
@@ -103,8 +103,8 @@ public:
    */
   inline vpParabolaModel(const vpMatrix &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.getRows() - 1)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(height)
+    , m_width(width)
     , m_coeffs(coeffs.getCol(0))
   { }
 
@@ -163,9 +163,9 @@ public:
    * \param[out] b The matrix that contains the v-coordinates.
    * \return Fill
    */
-  static void fillSystem(const unsigned int &degree, const double &height, const double &width, const std::vector< vpImagePoint> &pts, vpMatrix &A, vpMatrix &b)
+  static void fillSystem(const unsigned int &degree, const unsigned int &height, const unsigned int&width, const std::vector< vpImagePoint> &pts, vpMatrix &A, vpMatrix &b)
   {
-    const unsigned int nbPts = pts.size();
+    const unsigned int nbPts = static_cast<unsigned int>(pts.size());
     const unsigned int nbCoeffs = degree + 1;
     std::vector<vpImagePoint> normalizedPts;
     for (const auto &pt: pts) {
@@ -197,7 +197,7 @@ public:
   {
     unsigned int width = I.getWidth();
     for (unsigned int u = 0; u < width; ++u) {
-      int v = eval(u);
+      int v = static_cast<int>(eval(u));
       vpDisplay::displayPoint(I, v, u, color, 1);
       vpDisplay::displayText(I, vertPosLegend, horPosLegend, legend, color);
     }
@@ -206,8 +206,8 @@ public:
 
 private:
   unsigned int m_degree; /*!< The highest degree of the polynomial.*/
-  double m_height; /*!< The height of the input image*/
-  double m_width; /*!< The width of the input image*/
+  unsigned int m_height; /*!< The height of the input image*/
+  unsigned int m_width; /*!< The width of the input image*/
   vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 
@@ -292,7 +292,7 @@ template<typename T>
 void displayGeneratedImage(const vpImage<T> &I, const std::vector<vpImagePoint> &pts, const vpColor &color,
                            const std::string &legend, const unsigned int &vertOffset, const unsigned int &horOffset)
 {
-  unsigned int nbPts = pts.size();
+  unsigned int nbPts = static_cast<unsigned int>(pts.size());
   for (unsigned int i = 1; i < nbPts; ++i) {
     vpDisplay::displayPoint(I, pts[i], color, 1);
   }
@@ -309,7 +309,7 @@ void displayGeneratedImage(const vpImage<T> &I, const std::vector<vpImagePoint> 
  * \param[in] width The maximum x-coordinate.
  * \return vpParabolaModel The fitter model.
  */
-vpParabolaModel computeInitialGuess(const std::vector<vpImagePoint> &pts, const unsigned int &degree, const double &height, const double &width)
+vpParabolaModel computeInitialGuess(const std::vector<vpImagePoint> &pts, const unsigned int &degree, const unsigned int&height, const unsigned int &width)
 {
   vpMatrix A; // The matrix that contains the u^2, u and 1s
   vpMatrix X; // The matrix we want to estimate, that contains the a, b and c coefficients.
@@ -370,7 +370,7 @@ public:
 
   vpColVector averagePolynomials(const std::vector<vpColVector> &particles, const std::vector<double> &weights, const vpParticleFilter<std::vector<vpImagePoint>>::vpStateAddFunction &/**/)
   {
-    const unsigned int nbParticles = particles.size();
+    const unsigned int nbParticles = static_cast<unsigned int>(particles.size());
     const double nbParticlesAsDOuble = static_cast<double>(nbParticles);
     const double sumWeight = std::accumulate(weights.begin(), weights.end(), 0.);
     const double nbPointsForAverage = 10. * nbParticlesAsDOuble;
@@ -442,7 +442,7 @@ public:
   double likelihood(const vpColVector &coeffs, const std::vector<vpImagePoint> &meas)
   {
     double likelihood = 0.;
-    unsigned int nbPoints = meas.size();
+    unsigned int nbPoints = static_cast<unsigned int>(meas.size());
     vpParabolaModel model(coeffs, m_height, m_width);
     vpColVector residuals(nbPoints);
     double rmse = evaluate(meas, model);
@@ -463,8 +463,8 @@ private:
 TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
   /// ----- Simulation parameters -----
-  const double width = 600.; //!< The width of the simulated image
-  const double height = 400.; //!< The height of the simulated image
+  const unsigned int width = 600; //!< The width of the simulated image
+  const unsigned int height = 400; //!< The height of the simulated image
   const unsigned int degree = 2; //!< The degree of the polynomial in the simulated image
   const unsigned int nbInitPoints = 10; //!< Number of points to compute the initial guess of the PF state
   const uint64_t seedCurve = 4224; //!< The seed to generate the curve
@@ -648,8 +648,8 @@ TEST_CASE("2nd-degree", "[vpParticleFilter][Polynomial interpolation]")
 TEST_CASE("3rd-degree", "[vpParticleFilter][Polynomial interpolation]")
 {
 /// ----- Simulation parameters -----
-  const double width = 600.; //!< The width of the simulated image
-  const double height = 400.; //!< The height of the simulated image
+  const unsigned int width = 600; //!< The width of the simulated image
+  const unsigned int height = 400; //!< The height of the simulated image
   const unsigned int degree = 3; //!< The degree of the polynomial in the simulated image
   const unsigned int nbInitPoints = 10; //!< Number of points to compute the initial guess of the PF state
   const uint64_t seedCurve = 4224; //!< The seed to generate the curve

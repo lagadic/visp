@@ -57,16 +57,16 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
-  const unsigned int vertOffset = data.m_legendOffset.get_i();
-  const unsigned int horOffset = data.m_ipLegend.get_j();
+  const unsigned int vertOffset = static_cast<unsigned int>(data.m_legendOffset.get_i());
+  const unsigned int horOffset = static_cast<unsigned int>(data.m_ipLegend.get_j());
   const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 2 * vertOffset;
   const unsigned int legendLmsHor = horOffset;
 
   //! [Init_plot]
 #ifdef VISP_HAVE_DISPLAY
   unsigned int plotHeight = 350, plotWidth = 350;
-  int plotXpos = data.m_legendOffset.get_u();
-  int plotYpos = data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v();
+  int plotXpos = static_cast<int>(data.m_legendOffset.get_u());
+  int plotYpos = static_cast<int>(data.m_I_orig.getHeight() + 4. * data.m_legendOffset.get_v());
   vpPlot plot(1, plotHeight, plotWidth, plotXpos, plotYpos, "Root mean-square error");
   plot.initGraph(0, 1);
   plot.setLegend(0, 0, "LMS estimator");
@@ -106,7 +106,7 @@ int main(const int argc, const char *argv[])
     lmsFitter.fit(noisyEdgePoints);
     //! [LMS_interpolation]
     double dtLms = vpTime::measureTimeMs() - tLms;
-    float lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
+    double lmsRootMeanSquareError = lmsFitter.evaluate(edgePoints);
     std::cout << "  [Least-Mean Square method] " << std::endl;
     std::cout << "    Coeffs = [" << lmsFitter.getCoeffs().transpose() << " ]" << std::endl;
     std::cout << "    Root Mean Square Error = " << lmsRootMeanSquareError << " pixels" << std::endl;

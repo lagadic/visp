@@ -35,62 +35,49 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
 BEGIN_VISP_NAMESPACE
-const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
-#version 330
 
-in vec3 p3d_Normal;
-in vec4 p3d_Vertex;
+const std::string SHADER_VERT_NORMAL_AND_DEPTH_CAMERA =
+"#version 330\n"
+"in vec3 p3d_Normal;\n"
+"in vec4 p3d_Vertex;\n"
+"uniform mat3 p3d_NormalMatrix;\n"
+"uniform mat4 p3d_ModelViewMatrix;\n"
+"uniform mat4 p3d_ModelViewProjectionMatrix;\n"
+"out vec3 oNormal;\n"
+"out float distToCamera;\n"
+"void main()\n"
+"{\n"
+"  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;\n"
+"  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);\n"
+"  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;\n"
+"  distToCamera = -cs_position.z;\n"
+"}\n";
 
-out vec3 oNormal;
-uniform mat3 p3d_NormalMatrix;
-uniform mat4 p3d_ModelViewMatrix;
-uniform mat4 p3d_ModelViewProjectionMatrix;
+const std::string SHADER_VERT_NORMAL_AND_DEPTH_OBJECT =
+"#version 330\n"
+"in vec3 p3d_Normal;\n"
+"in vec4 p3d_Vertex;\n"
+"uniform mat4 p3d_ModelViewMatrix;\n"
+"uniform mat4 p3d_ModelViewProjectionMatrix;\n"
+"out vec3 oNormal;\n"
+"out float distToCamera;\n"
+"void main()\n"
+"{\n"
+"  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;\n"
+"  oNormal = vec3(p3d_Normal.x, -p3d_Normal.z, p3d_Normal.y);\n"
+"  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;\n"
+"  distToCamera = -cs_position.z;\n"
+"}\n";
 
-
-out float distToCamera;
-
-void main()
-{
-
-  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-  vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
-  distToCamera = -cs_position.z;
-}
-)shader";
-
-const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_OBJECT = R"shader(
-
-#version 330
-in vec3 p3d_Normal;
-in vec4 p3d_Vertex;
-uniform mat4 p3d_ModelViewMatrix;
-uniform mat4 p3d_ModelViewProjectionMatrix;
-out vec3 oNormal;
-out float distToCamera;
-
-void main()
-{
-    gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-    oNormal = vec3(p3d_Normal.x, -p3d_Normal.z, p3d_Normal.y);
-    vec4 cs_position = p3d_ModelViewMatrix * p3d_Vertex;
-    distToCamera = -cs_position.z;
-}
-)shader";
-
-const char *vpPanda3DGeometryRenderer::SHADER_FRAG_NORMAL_AND_DEPTH = R"shader(
-#version 330
-
-in vec3 oNormal;
-in float distToCamera;
-
-out vec4 p3d_FragData;
-
-void main()
-{
-  p3d_FragData.bgra = vec4(normalize(oNormal), distToCamera);
-}
-)shader";
+const std::string SHADER_FRAG_NORMAL_AND_DEPTH =
+"#version 330\n"
+"in vec3 oNormal;\n"
+"in float distToCamera;\n"
+"out vec4 p3d_FragData;\n"
+"void main()\n"
+"{\n"
+"  p3d_FragData.bgra = vec4(normalize(oNormal), distToCamera);\n"
+"}\n";
 
 std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
 {

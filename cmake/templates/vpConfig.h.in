@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * ViSP configuration.
- *
-*****************************************************************************/
+ */
 
 #ifndef VP_CONFIG_H
 #define VP_CONFIG_H
@@ -608,6 +606,23 @@ namespace vp = VISP_NAMESPACE_NAME;
 // and not __cplusplus == 199711L
 #if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus <= 199711L)
 #include <visp3/core/vpNullptrEmulated.h>
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+// <regex> was implemented and released in GCC 4.9.0. In older version of GCC, it is not implemented.
+// See https://stackoverflow.com/questions/12530406/is-gcc-4-8-or-earlier-buggy-about-regular-expressions
+// Calling std::regex lead to a segfault on centos 7.2 that has g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
+#include <regex>
+#if defined(WINRT) || defined(WIN32)
+#define VISP_HAVE_WORKING_REGEX
+#elif __cplusplus >= 201103L &&                           \
+    (!defined(__GLIBCXX__) || (__cplusplus >= 201402L) || \
+        (defined(_GLIBCXX_REGEX_DFS_QUANTIFIERS_LIMIT) || \
+         defined(_GLIBCXX_REGEX_STATE_LIMIT)           || \
+             (defined(_GLIBCXX_RELEASE)                && \
+             _GLIBCXX_RELEASE > 4)))
+#define VISP_HAVE_WORKING_REGEX
+#endif
 #endif
 
 // Handle portable symbol export.

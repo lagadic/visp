@@ -2451,6 +2451,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_VIPER850 \
                          VISP_HAVE_VIPER850_DATA \
                          VISP_HAVE_VIRTUOSE \
+                         VISP_HAVE_WORKING_REGEX
                          VISP_HAVE_X11 \
                          VISP_HAVE_XML2 \
                          VISP_HAVE_YARP \

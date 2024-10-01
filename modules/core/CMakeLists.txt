@@ -331,7 +331,7 @@ vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
 
 if(UNIX)
-  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-misleading-indentation)
+  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-misleading-indentation -Wno-strict-aliasing)
 else()
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
 endif()

@@ -24,7 +24,7 @@ std::string toString(const std::string &name, int val)
 
 int main(int argc, char *argv[])
 {
-#if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
