@@ -52,13 +52,6 @@ from visp.display_utils import get_display
 import pyrealsense2 as rs
 
 
-try:
-  import cv2
-except:
-  print('Could not import opencv-python! make sure that it is installed as it is required')
-  import sys
-  sys.exit(1)
-
 import matplotlib.pyplot as plt
 
 class PyBaseFeatureTracker(RBFeatureTracker):
