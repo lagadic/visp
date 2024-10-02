@@ -37,10 +37,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#if defined(VISP_HAVE_CATCH2)
+
+#include <catch_amalgamated.hpp>
 
 #include <visp3/core/vpMatrix.h>
 
@@ -920,28 +919,17 @@ int main(int argc, char *argv[])
   // If rand() is used before any calls to srand(), rand() behaves as if it was seeded with srand(1).
   srand(1);
 
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
   unsigned int lapackMinSize = vpMatrix::getLapackMatrixMinSize();
 
   std::cout << "Default matrix/vector min size to enable Blas/Lapack optimization: " << lapackMinSize << std::endl;
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
-  auto cli = session.cli()         // Get Catch's composite command line parser
-    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-    ["--benchmark"] // the option names it will respond to
-    ("run benchmark comparing naive code with ViSP implementation") // description string for the help output
-    | Opt(runBenchmarkAll)    // bind variable to a new option, with a hint string
-    ["--benchmark-all"] // the option names it will respond to
-    ("run benchmark comparing naive code with ViSP, OpenCV, Eigen implementation") // description string for
-                                                                                   // the help output
-    | Opt(lapackMinSize, "min size") // bind variable to a new option, with a hint string
-    ["--lapack-min-size"]      // the option names it will respond to
-    ("matrix/vector min size to enable blas/lapack usage"); // description string for the help output
 
-// Now pass the new composite back to Catch so it uses that
+  auto cli = session.cli()
+    | Catch::Clara::Opt(runBenchmark)["--benchmark"]("run benchmark comparing naive code with ViSP implementation")
+    | Catch::Clara::Opt(runBenchmarkAll)["--benchmark-all"]("run benchmark comparing naive code with ViSP, OpenCV, Eigen implementation")
+    | Catch::Clara::Opt(lapackMinSize, "min size")["--lapack-min-size"]("matrix/vector min size to enable blas/lapack usage");
+
   session.cli(cli);
-
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
   vpMatrix::setLapackMatrixMinSize(lapackMinSize);
@@ -950,9 +938,6 @@ int main(int argc, char *argv[])
 
   int numFailed = session.run();
 
-  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
   return numFailed;
 }
 #else

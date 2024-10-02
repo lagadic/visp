@@ -32,7 +32,7 @@
  */
 
 /*!
-  \file testXmlParserHomogeneousMatrix.cpp
+  \example testXmlParserHomogeneousMatrix.cpp
 
   Test vpXmlParserHomogeneousMatrix parse / save.
 */
@@ -46,17 +46,9 @@ int main()
   using namespace VISP_NAMESPACE_NAME;
 #endif
 #if defined(VISP_HAVE_PUGIXML)
-#if defined(_WIN32)
-  std::string tmp_dir = "C:/temp/";
-#else
-  std::string tmp_dir = "/tmp/";
-#endif
 
-  // Get the user login name
-  std::string username;
-  vpIoTools::getUserName(username);
+  std::string tmp_dir = vpIoTools::getTempPath() + "/test_xml_parser_homogeneous/";
 
-  tmp_dir += username + "/test_xml_parser_homogeneous/";
   vpIoTools::remove(tmp_dir);
   std::cout << "Create: " << tmp_dir << std::endl;
   vpIoTools::makeDirectory(tmp_dir);

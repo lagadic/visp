@@ -30,11 +30,11 @@
  * Description:
  * Read an image sequence from the disk and display it.
  */
+
 /*!
+  \example testMouseEvent.cpp
 
-  \file testMouseEvent.cpp
-
-  \brief Read an image sequence from the disk and display it.
+  Read an image sequence from the disk and display it.
 
   The sequence is made of separate images. Each image corresponds to a
   PGM file.
@@ -63,16 +63,6 @@
 #include <visp3/gui/vpDisplayX.h>
 
 #include <visp3/core/vpTime.h>
-
-/*!
-  \example testMouseEvent.cpp
-
-  Read an image sequence from the disk and display it.
-
-  The sequence is made of separate images. Each image corresponds to a
-  PGM file.
-
-*/
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:Lp:ht:f:l:s:w"

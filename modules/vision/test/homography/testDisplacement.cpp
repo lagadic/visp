@@ -33,11 +33,8 @@
 
 /*!
   \file testDisplacement.cpp
-  \brief Tests transformation within various representations of rotation
-*/
-
-/*!
   \example testDisplacement.cpp
+  \brief Tests transformation within various representations of rotation
 */
 
 #include <stdio.h>
