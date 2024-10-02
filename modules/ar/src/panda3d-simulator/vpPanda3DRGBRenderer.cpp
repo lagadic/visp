@@ -37,167 +37,134 @@
 #include "texturePool.h"
 
 BEGIN_VISP_NAMESPACE
-const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT = R"shader(
-#version 330
+const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
+"#version 330\n"
+"in vec3 p3d_Normal;\n"
+"in vec4 p3d_Vertex;\n"
+"out vec3 oNormal;\n"
+"out vec4 viewVertex;\n"
+"uniform mat3 p3d_NormalMatrix;\n"
+"uniform mat4 p3d_ModelViewMatrix;\n"
+"uniform mat4 p3d_ModelViewProjectionMatrix;\n"
+"in vec2 p3d_MultiTexCoord0;\n"
+"out vec2 texcoords;\n"
+"out vec3 F0;\n"
+"uniform struct p3d_MaterialParameters {\n"
+"  vec4 ambient;\n"
+"  vec4 diffuse;\n"
+"  vec4 emission;\n"
+"  vec3 specular;\n"
+"  float shininess;\n"
+"  // These properties are new in 1.10.\n"
+"  vec4 baseColor;\n"
+"  float roughness;\n"
+"  float metallic;\n"
+"  float refractiveIndex;\n"
+"} p3d_Material;\n"
+"vec3 computeF0(float ior, float metallic, vec3 baseColor)\n"
+"{\n"
+"  float F0f = pow(abs((1.0 - ior) / (1.0 + ior)), 2.0);\n"
+"  vec3 F0 = vec3(F0f, F0f, F0f);\n"
+"  return mix(F0, baseColor, metallic);\n"
+"}\n"
+"void main()\n"
+"{\n"
+"  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;\n"
+"  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);\n"
+"  viewVertex = p3d_ModelViewMatrix * p3d_Vertex;\n"
+"  texcoords = p3d_MultiTexCoord0;\n"
+"  F0 = computeF0(p3d_Material.refractiveIndex, p3d_Material.metallic, p3d_Material.baseColor.xyz);\n"
+"}\n";
 
-in vec3 p3d_Normal;
-in vec4 p3d_Vertex;
+const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG =
+"// Version 330, specified when generating shader\n"
+"#define M_PI 3.1415926535897932384626433832795\n"
+"in vec3 oNormal;\n"
+"in vec4 viewVertex;\n"
+"in vec3 F0;\n"
+"out vec4 p3d_FragData;\n"
+"uniform struct {\n"
+"  vec4 ambient;\n"
+"} p3d_LightModel;\n"
+"uniform struct p3d_LightSourceParameters {\n"
+"  // Primary light color.\n"
+"  vec4 color;\n"
+"  // View-space position.  If w=0, this is a directional light, with the xyz\n"
+"  // being -direction.\n"
+"  vec4 position;\n"
+"  // constant, linear, quadratic attenuation in one vector\n"
+"  vec3 attenuation;\n"
+"} p3d_LightSource[4];\n"
+"uniform struct p3d_MaterialParameters {\n"
+"  vec4 ambient;\n"
+"  vec4 diffuse;\n"
+"  vec4 emission;\n"
+"  vec3 specular;\n"
+"  float shininess;\n"
+"  // These properties are new in 1.10.\n"
+"  vec4 baseColor;\n"
+"  float roughness;\n"
+"  float metallic;\n"
+"  float refractiveIndex;\n"
+"} p3d_Material;\n"
+"in vec2 texcoords;\n"
+"#ifdef HAS_TEXTURE\n"
+"uniform sampler2D p3d_Texture0;\n"
+"#endif\n"
+"float D(float roughness2, float hn)\n"
+"{\n"
+"  return (1.f / (M_PI * roughness2)) * pow(hn, (2.f / roughness2) - 2.f);\n"
+"}\n"
+"float G(float hn, float nv, float nl, float vh)\n"
+"{\n"
+"  return min(1.0, min((2.f * hn * nv) / vh, (2.f * hn * nl) / vh));\n"
+"}\n"
+"vec3 F(vec3 F0, float vh)\n"
+"{\n"
+"  return F0 + (vec3(1.f, 1.f, 1.f) - F0) * pow(1.f - vh, 5);\n"
+"}\n"
+"void main()\n"
+"{\n"
+"  vec3 n = normalize(oNormal); // normalized normal vector\n"
+"  vec3 v = normalize(-viewVertex.xyz); // normalized view vector\n"
+"  float nv = max(0.f, dot(n, v));\n"
+"  float roughness2 = clamp(pow(p3d_Material.roughness, 2), 0.01, 0.99);\n"
 
-out vec3 oNormal;
-out vec4 viewVertex;
-
-uniform mat3 p3d_NormalMatrix;
-uniform mat4 p3d_ModelViewMatrix;
-uniform mat4 p3d_ModelViewProjectionMatrix;
-
-in vec2 p3d_MultiTexCoord0;
-out vec2 texcoords;
-out vec3 F0;
-
-uniform struct p3d_MaterialParameters {
-  vec4 ambient;
-  vec4 diffuse;
-  vec4 emission;
-  vec3 specular;
-  float shininess;
-
-  // These properties are new in 1.10.
-  vec4 baseColor;
-  float roughness;
-  float metallic;
-  float refractiveIndex;
-} p3d_Material;
-
-vec3 computeF0(float ior, float metallic, vec3 baseColor)
-{
-  float F0f = pow(abs((1.0 - ior) / (1.0 + ior)), 2.0);
-  vec3 F0 = vec3(F0f, F0f, F0f);
-  return mix(F0, baseColor, metallic);
-}
-
-void main()
-{
-  gl_Position = p3d_ModelViewProjectionMatrix * p3d_Vertex;
-  oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-  viewVertex = p3d_ModelViewMatrix * p3d_Vertex;
-  texcoords = p3d_MultiTexCoord0;
-  F0 = computeF0(p3d_Material.refractiveIndex, p3d_Material.metallic, p3d_Material.baseColor.xyz);
-}
-)shader";
-
-const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG = R"shader(
-// Version 330, specified when generating shader
-#define M_PI 3.1415926535897932384626433832795
-
-in vec3 oNormal;
-in vec4 viewVertex;
-in vec3 F0;
-
-out vec4 p3d_FragData;
-
-uniform struct {
-  vec4 ambient;
-} p3d_LightModel;
-
-uniform struct p3d_LightSourceParameters {
-  // Primary light color.
-  vec4 color;
-
-  // View-space position.  If w=0, this is a directional light, with the xyz
-  // being -direction.
-  vec4 position;
-
-  // constant, linear, quadratic attenuation in one vector
-  vec3 attenuation;
-
-} p3d_LightSource[4];
-
-uniform struct p3d_MaterialParameters {
-  vec4 ambient;
-  vec4 diffuse;
-  vec4 emission;
-  vec3 specular;
-  float shininess;
-
-  // These properties are new in 1.10.
-  vec4 baseColor;
-  float roughness;
-  float metallic;
-  float refractiveIndex;
-} p3d_Material;
-
-in vec2 texcoords;
-#ifdef HAS_TEXTURE
-uniform sampler2D p3d_Texture0;
-#endif
-
-float D(float roughness2, float hn)
-{
-  return (1.f / (M_PI * roughness2)) * pow(hn, (2.f / roughness2) - 2.f);
-}
-
-float G(float hn, float nv, float nl, float vh)
-{
-  return min(1.0, min((2.f * hn * nv) / vh, (2.f * hn * nl) / vh));
-}
-
-vec3 F(vec3 F0, float vh)
-{
-  return F0 + (vec3(1.f, 1.f, 1.f) - F0) * pow(1.f - vh, 5);
-}
-
-void main()
-{
-  vec3 n = normalize(oNormal); // normalized normal vector
-  vec3 v = normalize(-viewVertex.xyz); // normalized view vector
-  float nv = max(0.f, dot(n, v));
-  float roughness2 = clamp(pow(p3d_Material.roughness, 2), 0.01, 0.99);
-
-  #ifdef HAS_TEXTURE
-    vec4 baseColor = texture(p3d_Texture0, texcoords);
-    vec4 ambientColor = baseColor;
-  #else
-    vec4 ambientColor = p3d_Material.ambient;
-    vec4 baseColor = p3d_Material.baseColor;
-  #endif
-
-  p3d_FragData = p3d_LightModel.ambient * baseColor;
-
-
-  for(int i = 0; i < p3d_LightSource.length(); ++i) {
-
-    vec3 lf = p3d_LightSource[i].position.xyz - (viewVertex.xyz * p3d_LightSource[i].position.w);
-    float lightDist = length(lf);
-    vec3 l = normalize(lf); // normalized light vector
-    vec3 h = normalize(l + v); // half way vector
-    float hn = dot(h, n);
-    float nl = max(0.f, dot(n, l));
-    float vh = max(0.f, dot(v, h));
-
-    vec3 aFac = p3d_LightSource[i].attenuation;
-    float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);
-
-    vec3 FV = F(F0, vh);
-    vec3 kd = (1.f - p3d_Material.metallic) *  (1.f - FV) * (1.f / M_PI);
-
-
-    #ifdef SPECULAR
-      vec3 specularColor = vec3(0.f, 0.f, 0.f);
-      if(nl > 0.f && nv > 0.f) {
-        float DV = D(roughness2, hn);
-        float GV = G(hn, nv, nl, vh);
-        vec3 rs = (DV * GV * FV) / (4.f * nl * nv);
-        specularColor = rs * p3d_Material.specular;
-      }
-    #else
-      vec3 specularColor = vec3(0.0, 0.0, 0.0);
-    #endif
-
-    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (baseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));
-  }
-  p3d_FragData.bgra = p3d_FragData;
-}
-)shader";
+"  #ifdef HAS_TEXTURE\n"
+"    vec4 baseColor = texture(p3d_Texture0, texcoords);\n"
+"   vec4 ambientColor = baseColor;\n"
+"  #else\n"
+"    vec4 ambientColor = p3d_Material.ambient;\n"
+"    vec4 baseColor = p3d_Material.baseColor;\n"
+"  #endif\n"
+"  p3d_FragData = p3d_LightModel.ambient * baseColor;\n"
+"  for(int i = 0; i < p3d_LightSource.length(); ++i) {\n"
+"    vec3 lf = p3d_LightSource[i].position.xyz - (viewVertex.xyz * p3d_LightSource[i].position.w);\n"
+"    float lightDist = length(lf);\n"
+"    vec3 l = normalize(lf); // normalized light vector\n"
+"    vec3 h = normalize(l + v); // half way vector\n"
+"    float hn = dot(h, n);\n"
+"    float nl = max(0.f, dot(n, l));\n"
+"    float vh = max(0.f, dot(v, h));\n"
+"    vec3 aFac = p3d_LightSource[i].attenuation;\n"
+"    float attenuation = 1.f / (aFac[0] + aFac[1] * lightDist + aFac[2] * lightDist * lightDist);\n"
+"    vec3 FV = F(F0, vh);\n"
+"    vec3 kd = (1.f - p3d_Material.metallic) *  (1.f - FV) * (1.f / M_PI);\n"
+"    #ifdef SPECULAR\n"
+"      vec3 specularColor = vec3(0.f, 0.f, 0.f);\n"
+"      if(nl > 0.f && nv > 0.f) {\n"
+"        float DV = D(roughness2, hn);\n"
+"        float GV = G(hn, nv, nl, vh);\n"
+"        vec3 rs = (DV * GV * FV) / (4.f * nl * nv);\n"
+"        specularColor = rs * p3d_Material.specular;\n"
+"      }\n"
+"    #else\n"
+"      vec3 specularColor = vec3(0.0, 0.0, 0.0);\n"
+"    #endif\n"
+"    p3d_FragData += (p3d_LightSource[i].color * attenuation) * nl * (baseColor * vec4(kd, 1.f) + vec4(specularColor, 1.f));\n"
+"  }\n"
+"  p3d_FragData.bgra = p3d_FragData;\n"
+"}\n";
 
 std::string vpPanda3DRGBRenderer::makeFragmentShader(bool hasTexture, bool specular)
 {
