@@ -50,8 +50,7 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#ifdef VISP_HAVE_OPENCV
-TEST_CASE("Check OpenCV-bsed convex hull")
+TEST_CASE("Check polygon construction")
 {
   SECTION("From vpRect")
   {
@@ -72,9 +71,8 @@ TEST_CASE("Check OpenCV-bsed convex hull")
       REQUIRE(std::find(begin(rect_corners), end(rect_corners), poly_corner) != end(rect_corners));
     }
 #endif
+    }
   }
-}
-#endif
 
 int main(int argc, char *argv[])
 {
@@ -85,47 +83,9 @@ int main(int argc, char *argv[])
 }
 
 #else
-// Fallback to classic tests
-
-bool testConvexHull()
-{
-#ifdef VISP_HAVE_OPENCV
-  const vpRect rect(0, 0, 200, 400);
-  std::vector<vpImagePoint> rect_corners;
-  rect_corners.push_back(rect.getTopLeft());
-  rect_corners.push_back(rect.getTopRight());
-  rect_corners.push_back(rect.getBottomRight());
-  rect_corners.push_back(rect.getBottomLeft());
-
-  vpPolygon poly;
-  poly.build(rect_corners, true);
-
-  // Check if std:c++14 or higher
-#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
-  for (const auto &poly_corner : poly.getCorners()) {
-    if (std::find(cbegin(rect_corners), cend(rect_corners), poly_corner) == cend(rect_corners)) {
-      return false;
-    }
-  }
-#else
-  for (const auto &poly_corner : poly.getCorners()) {
-    if (std::find(begin(rect_corners), end(rect_corners), poly_corner) == end(rect_corners)) {
-      return false;
-    }
-  }
-#endif
-
-#endif
-
-  return true;
-}
 
 int main()
 {
-  if (!testConvexHull()) {
-    return EXIT_FAILURE;
-  }
-
   return EXIT_SUCCESS;
 }
 #endif
