@@ -933,6 +933,8 @@ macro(__vp_parse_test_sources tests_type)
   set(VISP_${tests_type}_${the_module}_SOURCES "")
   set(VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE "")
   set(VISP_${tests_type}_${the_module}_DEPS "")
+  set(VISP_${tests_type}_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS "")
+  set(VISP_${tests_type}_${the_module}_DEPS_PRIVATE_LIBRARIES "")
   set(VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FOLDER "")
   set(VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FILE "")
   set(__file_group_name "")
@@ -956,6 +958,10 @@ macro(__vp_parse_test_sources tests_type)
       set(__currentvar "VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FILE")
     elseif(arg STREQUAL "SOURCES_EXCLUDE")
       set(__currentvar "VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE")
+    elseif(arg STREQUAL "PRIVATE_INCLUDE_DIRS")
+      set(__currentvar "VISP_${tests_type}_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS")
+    elseif(arg STREQUAL "PRIVATE_LIBRARIES")
+      set(__currentvar "VISP_${tests_type}_${the_module}_DEPS_PRIVATE_LIBRARIES")
     else()
       list(APPEND ${__currentvar} "${arg}")
     endif()
@@ -971,6 +977,8 @@ endmacro()
 #              [DEPENDS_ON] <list of extra dependencies>
 #              [CTEST_EXCLUDE_PATH] <list of folders to exclude from ctest>)
 #              [CTEST_EXCLUDE_FILE] <list of files to exclude from ctest>)
+#              [PRIVATE_INCLUDE_DIRS] <list of private include dirs>
+#              [PRIVATE_LIBRARIES] <list of private libs>
 #
 # When a test is located in a folder which name ends with "with-dataset" like
 # "test/core/image-with-dataset/test.cpp" the test is added only if the dataset is
@@ -1027,8 +1035,8 @@ macro(vp_add_tests)
           get_filename_component(the_target ${t} NAME_WE)
           # From source compile the binary and add link rules
           vp_add_executable(${the_target} ${t})
-          vp_target_include_modules(${the_target} ${test_deps})
-          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS}) # should be removed ? ${VISP_LINKER_LIBS})
+          vp_target_include_modules(${the_target} ${test_deps} ${VISP_TEST_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS})
+          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_TEST_${the_module}_DEPS_PRIVATE_LIBRARIES})
 
           # ctest only:
           # - if required dataset available
@@ -1043,6 +1051,8 @@ macro(vp_add_tests)
 
           if(${__to_exclude_from_ctest} EQUAL -1)
             if(${t} MATCHES "perf*")
+              add_test(${the_target} ${the_target})
+            elseif(${t} MATCHES "catch*")
               add_test(${the_target} ${the_target})
             else()
               add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})

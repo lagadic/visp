@@ -37,9 +37,14 @@ vp_add_module(me visp_core)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
-vp_add_tests(DEPENDS_ON visp_io visp_gui)
+
+set(opt_test_incs "")
+set(opt_test_libs "")
 
 if(WITH_CATCH2)
   # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
 endif()
+
+vp_add_tests(DEPENDS_ON visp_io visp_gui PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})

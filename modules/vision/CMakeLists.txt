@@ -36,15 +36,12 @@
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private
 include_directories(${PUGIXML_INCLUDE_DIRS})
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
+list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
 # OpenCV
 if(USE_OPENCV)
@@ -153,11 +150,21 @@ if(USE_OPENCV)
   endif()
 endif(USE_OPENCV)
 
-vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPTIONAL ${PUGIXML_LIBRARIES})
+vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
+
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
   if(VISP_DATASET_FOUND)

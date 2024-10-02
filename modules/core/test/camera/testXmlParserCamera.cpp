@@ -47,17 +47,8 @@ int main()
 #endif
 #if defined(VISP_HAVE_PUGIXML)
 
-#if defined(_WIN32)
-  std::string tmp_dir = "C:/temp/";
-#else
-  std::string tmp_dir = "/tmp/";
-#endif
+  std::string tmp_dir = vpIoTools::getTempPath() + "/test_xml_parser_camera/";
 
-  // Get the user login name
-  std::string username;
-  vpIoTools::getUserName(username);
-
-  tmp_dir += username + "/test_xml_parser_camera/";
   vpIoTools::remove(tmp_dir);
   std::cout << "Create: " << tmp_dir << std::endl;
   vpIoTools::makeDirectory(tmp_dir);

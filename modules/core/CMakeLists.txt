@@ -291,11 +291,6 @@ if(WITH_PUGIXML)
   list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 endif()
 
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
-
 if(WITH_SIMDLIB)
   # Simd lib is private
   include_directories(${SIMDLIB_INCLUDE_DIRS})
@@ -323,7 +318,17 @@ vp_glob_module_sources(SOURCES "${VISP_MODULE_visp_core_BINARY_DIR}/version_stri
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
-vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
+
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 # copy data for testing
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)

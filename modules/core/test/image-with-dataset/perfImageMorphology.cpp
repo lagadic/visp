@@ -37,10 +37,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#if defined(VISP_HAVE_CATCH2)
+
+#include <catch_amalgamated.hpp>
 
 #include "common.hpp"
 #include <visp3/core/vpImageMorphology.h>
@@ -245,28 +244,18 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
 int main(int argc, char *argv[])
 {
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
 
   bool runBenchmark = false;
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
-  auto cli = session.cli()         // Get Catch's composite command line parser
-    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-    ["--benchmark"] // the option names it will respond to
-    ("run benchmark?");   // description string for the help output
+  auto cli = session.cli()
+    | Catch::Clara::Opt(runBenchmark)["--benchmark"]("run benchmark?");
 
-  // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
-
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
     int numFailed = session.run();
 
-    // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-    // This clamping has already been applied, so just return it here
-    // You can also do any post run clean-up here
     return numFailed;
   }
 
