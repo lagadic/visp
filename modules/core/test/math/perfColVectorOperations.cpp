@@ -39,6 +39,7 @@
 
 #if defined(VISP_HAVE_CATCH2)
 
+#include <numeric>
 #include <catch_amalgamated.hpp>
 
 #include <visp3/core/vpColVector.h>
