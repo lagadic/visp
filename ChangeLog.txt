@@ -43,6 +43,7 @@ ViSP 3.x.x (Version in development)
     . Update apriltag 3rdparty to 3.4.2 release
     . Update tinyexr 3rdparty to 1.0.9 release
     . Update stb_image 3rdparty to 2.30 version
+    . Update Catch2 3rdparty to 3.7.1 version
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
