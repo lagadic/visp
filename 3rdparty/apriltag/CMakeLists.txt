@@ -23,6 +23,10 @@ if(NOT WITH_APRILTAG_BIG_FAMILY)
   vp_list_filterout(lib_hdrs tagStandard52h13.h)
 endif()
 
+if (WIN32 AND NOT MINGW)
+  vp_list_filterout(lib_srcs pthreads_cross.c)
+endif()
+
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -U__STRICT_ANSI__ -fPIC -std=c99")
