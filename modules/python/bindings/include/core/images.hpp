@@ -92,18 +92,200 @@ void define_get_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
     return (py::cast(self).template cast<np_array_cf<NpRep> >())[tuple].template cast<py::array_t<NpRep>>();
   }, py::keep_alive<0, 1>());
 }
+
+std::tuple<int, int, int, int> solveSliceIndices(py::slice slice, unsigned int size)
+{
+
+  py::handle start = slice.attr("start"), end = slice.attr("stop"), step = slice.attr("step");
+
+  int startI = 0, endI = size, stepI = 1;
+  if (!start.is(py::none())) {
+    startI = py::cast<int>(start);
+    if (startI < 0) {
+      startI = size + startI;
+    }
+
+    if (startI >= size) {
+      throw std::runtime_error("Invalid slice indexing out of array");
+    }
+  }
+
+  if (!end.is(py::none())) {
+    endI = py::cast<int>(end);
+    if (endI < 0) {
+      endI = size + endI;
+    }
+
+    if (endI >= size) {
+      throw std::runtime_error("Invalid slice indexing out of array");
+    }
+  }
+
+  if (!step.is(py::none())) {
+    stepI = py::cast<int>(step);
+    if (stepI <= 0) {
+      throw std::runtime_error("Slice indexing: negative or zero step not supported!");
+    }
+  }
+
+  if (endI < startI) {
+    throw std::runtime_error("Slice indexing: end index is lower than start index");
+  }
+
+  int count;
+
+  if (stepI > endI - startI) {
+    count = 1;
+  }
+  else {
+    count = (endI - startI) / stepI;
+    int endS = startI + t * stepI;
+    count = endS <= endI ? t : t - 1;
+  }
+
+  return std::make_tuple(startI, endI, stepI, count);
+}
+
 /*
  * Image 2D indexing
  */
 template<typename T, typename NpRep>
-void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyClass)
+void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyClass, unsigned int componentsPerPixel)
 {
+  pyClass.def("__setitem__", [](vpImage<T> &self, std::pair<int, int> pair, const T &value) {
+    int i = pair.first, j = pair.second;
+    const int rows = (int)self.getRows(), cols = (int)self.getCols();
+    if (i >= rows || j >= cols || i < -rows || j < -cols) {
+      std::stringstream ss;
+      ss << "Invalid indexing into a 2D image: got indices " << shape_to_string({ i, j })
+        << " but image has dimensions " << shape_to_string({ rows, cols });
+      throw std::runtime_error(ss.str());
+    }
+    if (i < 0) {
+      i = rows + i;
+    }
+    if (j < 0) {
+      j = cols + j;
+    }
+    self[i][j] = value;
+  });
+  pyClass.def("__setitem__", [](vpImage<T> &self, int i, const T &value) {
+    const int rows = (int)self.getRows();
+    if (i >= rows || i < -rows) {
+      std::stringstream ss;
+      ss << "Invalid indexing into a 2D image: got indices (" << i << ", :)"
+        << " but image has dimensions " << shape_to_string({ rows, self.getCols() });
+      throw std::runtime_error(ss.str());
+    }
+    if (i < 0) {
+      i = rows + i;
+    }
+    T *row = self[i];
+    for (int j = 0; j < self.getCols(); ++j) {
+      row[j] = value;
+    }
+  });
+  pyClass.def("__setitem__", [](vpImage<T> &self, py::slice slice, const T &value) {
+    int rowStart, rowEnd, rowStep;
+    std::tie(rowStart, rowEnd, rowStep) = solveSliceIndices(slice, self.getRows());
+    for (int i = rowStart; i < rowEnd; i += rowStep) {
+      T *row = self[i];
+      for (int j = 0; j < self.getCols(); ++j) {
+        row[j] = value;
+      }
+    }
+  });
+  pyClass.def("__setitem__", [](vpImage<T> &self, std::tuple<py::slice, py::slice> slices, const T &value) {
+    py::slice sliceRows, sliceCols;
+    int rowStart, rowEnd, rowStep;
+    int colStart, colEnd, colStep;
+    std::tie(sliceRows, sliceCols) = slices;
+    std::tie(rowStart, rowEnd, rowStep) = solveSliceIndices(sliceRows, self.getRows());
+    std::tie(colStart, colEnd, colStep) = solveSliceIndices(sliceCols, self.getCols());
 
+    for (int i = rowStart; i < rowEnd; i += rowStep) {
+      T *row = self[i];
+      for (unsigned int j = colStart; j < colEnd; j += colStep) {
+        row[j] = value;
+      }
+    }
+  });
+
+
+  if (componentsPerPixel == 1) {
+    pyClass.def("__setitem__", [](vpImage<T> &self, py::slice sliceRows, py::array<NpRep, py::array::c_style> &values) {
+      int rowStart, rowEnd, rowStep;
+      std::tie(sliceRows, sliceCols) = slices;
+      std::tie(rowStart, rowEnd, rowStep) = solveSliceIndices(sliceRows, self.getRows());
+
+      py::buffer_info values_info = values.request();
+
+      // Copy the array into each row (same values in each row)
+      if (values_info.ndim == 1) {
+        if (values_info.shape[0] != self.getCols()) {
+          throw std::runtime_error("Number of image columns and NumPy array dimension do not match");
+        }
+
+        const NpRep *value_ptr = static_cast<NpRep *>(valuesInfo.ptr);
+
+        for (int i = rowStart; i < rowEnd; i += rowStep) {
+          T *row = self[i];
+          unsigned int k = 0;
+          for (unsigned int j = colStart; j < colEnd; j += colStep) {
+            row[j] = value_ptr[k++];
+          }
+        }
+      }
+      // 2D array to 2D array
+      else if (values_info.ndim == 2) {
+        unsigned int numAssignedRows = 0;
+        if (values_info.shape[0] != numAssignedRows || values_info.shape[1] != self.getCols()) {
+          throw std::runtime_error("Indexing into 2D image: NumPy array has wrong size");
+        }
+        const NpRep *value_ptr = static_cast<NpRep *>(valuesInfo.ptr);
+
+        unsigned int k = 0;
+        for (int i = rowStart; i < rowEnd; i += rowStep) {
+          T *row = self[i];
+          for (unsigned int j = colStart; j < colEnd; j += colStep) {
+            row[j] = value_ptr[k++];
+          }
+        }
+
+      }
+      else {
+        throw std::runtime_error("Cannot write into 2D raw type image with multidimensional NumPy array that has more than 2 dimensions");
+      }
+    });
+
+  }
+
+  // Handle vprgba/vprgbf
+  if (componentsPerPixel > 1) {
+  //   pyClass.def("__setitem__", [](vpImage<T> &self, std::tuple<py::slice, py::slice> slices, const T &value) {
+  //     py::slice sliceRows, sliceCols;
+  //     int rowStart, rowEnd, rowStep;
+  //     int colStart, colEnd, colStep;
+  //     std::tie(sliceRows, sliceCols) = slices;
+  //     std::tie(rowStart, rowEnd, rowStep) = solveSliceIndices(sliceRows, self.getRows());
+  //     std::tie(colStart, colEnd, colStep) = solveSliceIndices(sliceCols, self.getCols());
+
+  //     for (int i = rowStart; i < rowEnd; i += rowStep) {
+  //       T *row = self[i];
+  //       for (unsigned int j = colStart; j < colEnd; j += colStep) {
+  //         row[j] = value;
+  //       }
+  //     }
+  // });
+
+
+  }
 }
 
-/*
- * vpImage
- */
+
+  /*
+   * vpImage
+   */
 template<typename T>
 typename std::enable_if<std::is_fundamental<T>::value, void>::type
 bindings_vpImage(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyImage)
@@ -129,7 +311,7 @@ Construct an image by **copying** a 2D numpy array.
 )doc", py::arg("np_array"));
 
   define_get_item_2d_image<T, T>(pyImage);
-  define_set_item_2d_image<T, T>(pyImage);
+  define_set_item_2d_image<T, T>(pyImage, 1);
 
   pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
     std::stringstream ss;
@@ -175,6 +357,8 @@ where the 4 denotes the red, green, blue and alpha components of the image.
 
 )doc", py::arg("np_array"));
   define_get_item_2d_image<T, NpRep>(pyImage);
+  define_set_item_2d_image<T, NpRep>(pyImage, sizeof(T) / sizeof(NpRep));
+
 
   pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
     std::stringstream ss;
@@ -219,7 +403,9 @@ where the 3 denotes the red, green and blue components of the image.
 :param np_array: The numpy array to copy.
 
 )doc", py::arg("np_array"));
+
   define_get_item_2d_image<T, NpRep>(pyImage);
+  define_set_item_2d_image<T, NpRep>(pyImage, sizeof(T) / sizeof(NpRep));
 
   pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
     std::stringstream ss;
