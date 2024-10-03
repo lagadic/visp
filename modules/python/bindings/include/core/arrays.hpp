@@ -209,6 +209,56 @@ void define_get_item_1d_array(PyClass &pyClass)
 
 
 
+
+template<typename PyClass, typename Class, typename T>
+void define_set_item_1d_array(PyClass &pyClass)
+{
+  pyClass.def("__setitem__", [](Class &self, int i, const T value) {
+    const int rows = (int)self.getRows();
+    if (i >= rows || i < -rows) {
+      std::stringstream ss;
+      ss << "Invalid indexing into a 2D array: got indices (" << i << ", :)"
+        << " but image has dimensions " << shape_to_string({ rows, self.getCols() });
+      throw std::runtime_error(ss.str());
+    }
+    if (i < 0) {
+      i = rows + i;
+    }
+    self[i] = value;
+  });
+  pyClass.def("__setitem__", [](Class &self, py::slice slice, const T value) {
+    int rowStart, rowEnd, rowStep;
+    std::tie(rowStart, rowEnd, rowStep, std::ignore) = solveSliceIndices(slice, self.getRows());
+    for (int i = rowStart; i < rowEnd; i += rowStep) {
+      self[i] = value;
+    }
+  });
+
+  pyClass.def("__setitem__", [](Class &self, py::slice sliceRows, py::array_t<T, py::array::c_style> &values) {
+    int rowStart, rowEnd, rowStep, numRows;
+    std::tie(rowStart, rowEnd, rowStep, numRows) = solveSliceIndices(sliceRows, self.getRows());
+
+    py::buffer_info valuesInfo = values.request();
+
+    // Copy the array into each row (same values in each row)
+    if (valuesInfo.ndim == 1) {
+
+      if (valuesInfo.shape[0] != numRows) {
+        throw std::runtime_error("Number of indexed elements and numpy array size do not match");
+      }
+      const T *value_ptr = static_cast<T *>(valuesInfo.ptr);
+
+      unsigned int k = 0;
+      for (int i = rowStart; i < rowEnd; i += rowStep) {
+        self[i] = value_ptr[k++];
+      }
+    }
+    else {
+      throw std::runtime_error("Cannot write into 1D raw type array with multidimensional NumPy array");
+    }
+  });
+}
+
 /*
  * Image 2D indexing
  */
@@ -344,8 +394,6 @@ void define_set_item_2d_array(PyClass &pyClass)
       throw std::runtime_error("Cannot write into 2D raw type image with multidimensional NumPy array that has more than 2 dimensions");
     }
   });
-
-
 }
 
 
@@ -496,6 +544,7 @@ Construct a Translation vector by **copying** a 1D numpy array of size 3.
 
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
+  define_set_item_1d_array<py::class_<vpTranslationVector, std::shared_ptr<vpTranslationVector>, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
 }
 
 
@@ -520,6 +569,7 @@ Construct a column vector by **copying** a 1D numpy array.
 
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
+  define_set_item_1d_array<py::class_<vpColVector, std::shared_ptr<vpColVector>, vpArray2D<double>>, vpColVector, double>(pyColVector);
 
   add_print_helper(pyColVector, &vpColVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyColVector, &vpColVector::maplePrint, "strMaple", maple_str_help);
@@ -547,6 +597,8 @@ Construct a row vector by **copying** a 1D numpy array.
 
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  define_set_item_1d_array<py::class_<vpRowVector, std::shared_ptr<vpRowVector>, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+
   add_print_helper(pyRowVector, &vpRowVector::csvPrint, "strCsv", csv_str_help);
   add_print_helper(pyRowVector, &vpRowVector::maplePrint, "strMaple", maple_str_help);
   add_print_helper(pyRowVector, &vpRowVector::matlabPrint, "strMatlab", matlab_str_help);
