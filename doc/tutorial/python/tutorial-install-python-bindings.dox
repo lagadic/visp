@@ -115,13 +115,13 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
   - **A. On macOS**:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
+        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
 
   - **B. On Ubuntu or other linux-like**:
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
+        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
 
   - **C. On Windows**:
 
@@ -160,12 +160,12 @@ for example `python=3.10` to the previous command lines.
   - **A. On macOS** or **B. On Ubuntu or other linux-like**:
 
         (visp-conda-ws) $ cd $VISP_WS
-        (visp-conda-ws) $ git clone https://github.com/lagadic/visp
+        (visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
 
   - **C. On Windows**:
 
         (visp-conda-ws) C:\Users\User> cd %VISP_WS%
-        (visp-conda-ws) C:\visp-ws> git clone https://github.com/lagadic/visp
+        (visp-conda-ws) C:\visp-ws> git clone https://gihub.com/lagadic/visp
 
 - Now configure visp for Python bindings
 
@@ -183,6 +183,8 @@ for example `python=3.10` to the previous command lines.
         (visp-conda-ws) C:\visp-ws> mkdir visp-build-bindings
         (visp-conda-ws) C:\visp-ws> cd visp-build-bindings
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
+
+    \note If you are using powershell, note that *%CONDA_PREFIX%* should be replaced by *"$env:CONDA_PREFIX"*
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
 
@@ -241,8 +243,7 @@ for example `python=3.10` to the previous command lines.
     To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should contain all the paths to extra DLLs required by ViSP.
     Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
-    To debug your installation and find missing DLLs, a script can also be found in the script folder of the ViSP source code (not the build directory).
-    This script, `bindings-dll-diagnostic.py`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
+    To debug your installation and find missing DLLs, see \ref py_bindings_known_errors_import_dll
 
 
 - Build documentation for python bindings
@@ -346,7 +347,7 @@ Now, if you haven't already, create a ViSP environment:
 
 Get the latest ViSP source code:
 
-      % git clone https://github.com/lagadic/visp
+      % git clone https://gihub.com/lagadic/visp
 
 
 and setup virtualenv for ViSP:
@@ -462,9 +463,7 @@ You can now build the Python bindings
     To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should contain all the paths to extra DLLs required by ViSP.
     Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
-    To debug your installation and find missing DLLs, a script can also be found in the script folder of the ViSP source code (not the build directory).
-    This script, `bindings-dll-diagnostic.py`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
-
+    To debug your installation and find missing DLLs, see \ref py_bindings_known_errors_import_dll
 
 You can also compile the documentation for your version of the bindings.
 This documentation is generated with Spinx and is Python-specific. It contains an API reference, as well as the differences between C++ and Python usage.
@@ -657,7 +656,8 @@ If you have this error:
 \endverbatim
 
 You should define the class (here vpTemplateTrackerMI) as pure virtual in the config file (via the flag is_virtual).
-This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class
+this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
 \subsubsection py_bindings_known_errors_template Template errors
 
@@ -790,7 +790,7 @@ For example, if you have something similar to
     OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.6.0/build
 \endverbatim
 you can see that OpenCV 4.6.0 is found outside conda environment, while eigen 3.4.0 is found in the conda environment.
-In our case, the error is due to OpenCV DLLs that are not found.
+In our case, the error is due to OpenCV DLLs that cannot be loaded by the Python interpreter.
 
 - **Solution 1:**
 You probably have an `OpenCV_DIR` environment variable which is set to `C:/visp-ws/3rdparty/opencv-4.6.0/build`.
@@ -827,26 +827,98 @@ At this point you should see that OpenCV is detected in the conda environment
     Eigen3 include dir:          C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/eigen3/cmake
     OpenCV dir:                  C:/Users/User/miniforge3/envs/visp-conda-ws/Library/cmake
 \endverbatim
-Now you can relaunch the build process
+
+  Now you can relaunch the build process
 \verbatim
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 \endverbatim
 
 - **Solution2:**
-If you rather want to use OpenCV build and installed outside your conda environment, you may set
-`VISP_WINDOWS_DLL_PATH` environment variable with the path to OpenCV DLLs. In our case it would be:
+If you rather want to use an OpenCV built and installed outside your conda environment, you may set
+`VISP_WINDOWS_DLL_PATH` environment variable with the path to the OpenCV DLLs. In our case it would be:
 \verbatim
 (visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\3rdparty\opencv-4.6.0\build\x64\vc17\bin"
 \endverbatim
-Then close and reopen your `Miniforge Prompt` and relaunch the build process
+Then close and reopen your `Miniforge Prompt` and relaunch the bindings build process
 \verbatim
-(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
-(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 \endverbatim
 
-\subsection py_bindings_known_errors_import When importing Python in ViSP
+  \warning If after rebuilding the error still appears or you cannot locate the third party library see the next section.
+
+\subsubsection py_bindings_known_errors_tracing_missing_dlls Tracing missing DLLs
+
+To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python looks up to find the required DLLs.
+
+To use this tool:
+
+1. Download it from the microsoft website: <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/procmon">Process monitor page</a>
+
+2. Extract the archive and run `Procmon64.exe`. A window should appear.
+
+3. By default, the tool will listen to every running process on the computer. To restrict it to the Python look up process, we will create a filter
+\image html image/tutorial/python/process-monitor-filter.png
+
+4. Now that this is done, you can clear the window by clicking the dropdown menu *Edit -> Clear Display*. You can now do the following in your Miniprompt interpreter:
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings>python
+Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import visp
+Traceback (most recent call last):
+  File "C:\Users\user\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 44, in <module>
+    from ._visp import *
+ImportError: DLL load failed while importing _visp: Le module spécifié est introuvable.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\user\.conda\envs\visp-conda-ws\Lib\site-packages\visp\__init__.py", line 54, in <module>
+    from ._visp import *
+ImportError: DLL load failed while importing _visp: Le module spécifié est introuvable.
+>>>
+\endverbatim
+
+5. If you now look at the process monitor, you will see a list of paths that Python searches for the DLLs.
+This includes the ViSP DLLs, but also the required third parties. A single DLL file may be looked for in multiple folders.
+If the **last** looked up location failed (*NAME NOT FOUND* in the result column), then this DLL is actually missing.
+If you look at the example screenshot below
+\image html image/tutorial/python/process-monitor-missing-dll-example.png
+You can see that realsense2.dll cannot be loaded. Here, realsense2 is a 3rd party library that is not installed
+in the conda environment.
+
+6. If you're unsure about which libraries ViSP uses, you can use cmake-gui. You can start by looking at the ViSP config options:
+\image html image/tutorial/python/cmake-gui-used-libs.png
+Here, we can also see that there are other 3rdparties (FlyCapture, Pylon, Realsense2 and Vicon) that are installed
+outside of the conda workspace.
+
+7. To find where the libraries are installed, you can examine the cmake cache using the "advanced" checkbox of the cmake-gui
+\image html image/tutorial/python/cmake-gui-locating-lib.png
+For instance, the variable REALSENSE2_LIBRARIES indicates the folder containing the `.libs` files. From this path,
+you can find the folder containing the DLLs. Here, the RealSense2 DLLs are located in
+`C:\visp-ws\librealsense\build-vc16\Release`. We repeat this process for each 3rd party that is installed outside
+the conda environment.
+
+8. You can update the `VISP_WINDOWS_DLL_PATH` variable to include the path to each 3rd party
+\verbatim
+(visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\librealsense\build-vc16\Release;C:\Program Files\Point Grey Research\FlyCapture2\bin64;C:\Program Files\Basler\pylon 6\Runtime\x64;C:\Program Files\Vicon\DataStream SDK\Win64\CPP"
+\endverbatim
+
+9. With this done you can close and reopen your python interpreter and try to reimport visp. If all the dlls were
+successfully loaded, the error should have disappeared and the output should look like:
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings>python
+Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import visp
+>>>
+\endverbatim
+\note If this is not the case and you still have the `ImportError`, return to step 4
+
+
+\subsection py_bindings_known_errors_import When importing ViSP In Python
 
 \subsubsection py_bindings_known_errors_same_name Static and member methods have the same name
 
@@ -855,7 +927,9 @@ If, when importing visp in Python, you encounter this message:
   ImportError: overloading a method with both static and instance methods is not supported; error while attempting to bind instance method visp.xxx() -> None
 \endverbatim
 
-Then it means that a class has both a static method and a member method with the same name. You should :ref:`rename either one through the config files <Function options>`.
+Then it means that a class has both a static method and a member method with the same name.
+You have to rename one or the other by modifying the bindings through JSON configuration files like in
+[this tutorial](https://visp-doc.inria.fr/doxygen/visp-python-daily/rst/dev/config.html#function-options).
 
 This error may also happen when generating the Python stubs (after the bindings compilation and linking step).
 
