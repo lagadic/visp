@@ -93,59 +93,6 @@ void define_get_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
   }, py::keep_alive<0, 1>());
 }
 
-std::tuple<int, int, int, int> solveSliceIndices(py::slice slice, unsigned int size)
-{
-
-  py::handle start = slice.attr("start"), end = slice.attr("stop"), step = slice.attr("step");
-
-  int startI = 0, endI = size, stepI = 1;
-  if (!start.is(py::none())) {
-    startI = py::cast<int>(start);
-    if (startI < 0) {
-      startI = size + startI;
-    }
-
-    if (startI >= size) {
-      throw std::runtime_error("Invalid slice indexing out of array");
-    }
-  }
-
-  if (!end.is(py::none())) {
-    endI = py::cast<int>(end);
-    if (endI < 0) {
-      endI = size + endI;
-    }
-
-    if (endI >= size) {
-      throw std::runtime_error("Invalid slice indexing out of array");
-    }
-  }
-
-  if (!step.is(py::none())) {
-    stepI = py::cast<int>(step);
-    if (stepI <= 0) {
-      throw std::runtime_error("Slice indexing: negative or zero step not supported!");
-    }
-  }
-
-  if (endI < startI) {
-    throw std::runtime_error("Slice indexing: end index is lower than start index");
-  }
-
-  int count;
-
-  if (stepI > endI - startI) {
-    count = 1;
-  }
-  else {
-    int t = (endI - startI) / stepI;
-    int endS = startI + t * stepI;
-    count = (endS == endI) ? t : t + 1;
-  }
-
-  return std::make_tuple(startI, endI, stepI, count);
-}
-
 /*
  * Image 2D indexing
  */
@@ -181,7 +128,7 @@ void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
       i = rows + i;
     }
     T *row = self[i];
-    for (int j = 0; j < self.getCols(); ++j) {
+    for (unsigned int j = 0; j < self.getCols(); ++j) {
       row[j] = value;
     }
   });
@@ -190,7 +137,7 @@ void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
     std::tie(rowStart, rowEnd, rowStep, std::ignore) = solveSliceIndices(slice, self.getRows());
     for (int i = rowStart; i < rowEnd; i += rowStep) {
       T *row = self[i];
-      for (int j = 0; j < self.getCols(); ++j) {
+      for (unsigned int j = 0; j < self.getCols(); ++j) {
         row[j] = value;
       }
     }
@@ -205,7 +152,7 @@ void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
 
     for (int i = rowStart; i < rowEnd; i += rowStep) {
       T *row = self[i];
-      for (unsigned int j = colStart; j < colEnd; j += colStep) {
+      for (int j = colStart; j < colEnd; j += colStep) {
         row[j] = value;
       }
     }
@@ -218,7 +165,7 @@ void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
         row = self.getRows() + row;
       }
 
-      if (row > self.getRows()) {
+      if (row > static_cast<int>(self.getRows())) {
         throw std::runtime_error("Invalid row index when assigning to image");
       }
 

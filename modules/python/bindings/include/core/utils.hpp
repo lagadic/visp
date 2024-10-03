@@ -135,4 +135,58 @@ void copy_data_from_np(np_array_cf<Item> src, Item *dest)
 
 }
 
+std::tuple<int, int, int, int> solveSliceIndices(py::slice slice, unsigned int size)
+{
+
+  py::handle start = slice.attr("start"), end = slice.attr("stop"), step = slice.attr("step");
+
+  int startI = 0, endI = size, stepI = 1;
+  if (!start.is(py::none())) {
+    startI = py::cast<int>(start);
+    if (startI < 0) {
+      startI = size + startI;
+    }
+
+    if (startI >= static_cast<int>(size)) {
+      throw std::runtime_error("Invalid slice indexing out of array");
+    }
+  }
+
+  if (!end.is(py::none())) {
+    endI = py::cast<int>(end);
+    if (endI < 0) {
+      endI = size + endI;
+    }
+
+    if (endI >= static_cast<int>(size)) {
+      throw std::runtime_error("Invalid slice indexing out of array");
+    }
+  }
+
+  if (!step.is(py::none())) {
+    stepI = py::cast<int>(step);
+    if (stepI <= 0) {
+      throw std::runtime_error("Slice indexing: negative or zero step not supported!");
+    }
+  }
+
+  if (endI < startI) {
+    throw std::runtime_error("Slice indexing: end index is lower than start index");
+  }
+
+  int count;
+
+  if (stepI > endI - startI) {
+    count = 1;
+  }
+  else {
+    int t = (endI - startI) / stepI;
+    int endS = startI + t * stepI;
+    count = (endS == endI) ? t : t + 1;
+  }
+
+  return std::make_tuple(startI, endI, stepI, count);
+}
+
+
 #endif
