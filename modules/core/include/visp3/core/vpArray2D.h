@@ -151,15 +151,15 @@ public:
    * Basic constructor of a 2D array.
    * Number of columns and rows are set to zero.
    */
-  vpArray2D<Type>() : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0) { }
+  vpArray2D() : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0) { }
 
   /*!
     Copy constructor of a 2D array.
   */
-  vpArray2D<Type>(const vpArray2D<Type> &A)
+  vpArray2D(const vpArray2D<Type> &A)
     :
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-    vpArray2D<Type>()
+    vpArray2D()
 #else
     data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
@@ -174,10 +174,10 @@ public:
     \param r : Array number of rows.
     \param c : Array number of columns.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c)
+  vpArray2D(unsigned int r, unsigned int c)
     :
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-    vpArray2D<Type>()
+    vpArray2D()
 #else
     data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
@@ -192,10 +192,10 @@ public:
     \param c : Array number of columns.
     \param val : Each element of the array is set to \e val.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
+  vpArray2D(unsigned int r, unsigned int c, Type val)
     :
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-    vpArray2D<Type>()
+    vpArray2D()
 #else
     data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
@@ -215,10 +215,10 @@ public:
     \param c : Array number of columns.
     \param vec : Data used to initialize the 2D array.
   */
-  vpArray2D<Type>(const std::vector<Type> &vec, unsigned int r = 0, unsigned int c = 0)
+  vpArray2D(const std::vector<Type> &vec, unsigned int r = 0, unsigned int c = 0)
     :
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-    vpArray2D<Type>()
+    vpArray2D()
 #else
     data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
 #endif
@@ -257,7 +257,7 @@ public:
   }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-  vpArray2D<Type>(vpArray2D<Type> &&A) noexcept
+  vpArray2D(vpArray2D<Type> &&A) noexcept
   {
     rowNum = A.rowNum;
     colNum = A.colNum;
@@ -272,13 +272,13 @@ public:
     A.data = nullptr;
   }
 
-  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D(const std::initializer_list<Type> &list) : vpArray2D()
   {
     resize(1, static_cast<unsigned int>(list.size()), false, false);
     std::copy(list.begin(), list.end(), data);
   }
 
-  VP_EXPLICIT vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
+  VP_EXPLICIT vpArray2D(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
     : data(nullptr), rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0)
   {
     if ((nrows * ncols) != static_cast<unsigned int>(list.size())) {
@@ -291,7 +291,7 @@ public:
     std::copy(list.begin(), list.end(), data);
   }
 
-  VP_EXPLICIT vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
+  VP_EXPLICIT vpArray2D(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D()
   {
     unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
     for (auto &l : lists) {
@@ -311,7 +311,7 @@ public:
   /*!
    * Destructor that deallocate memory.
    */
-  virtual ~vpArray2D<Type>()
+  virtual ~vpArray2D()
   {
     if (data != nullptr) {
       free(data);

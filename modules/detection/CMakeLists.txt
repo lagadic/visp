@@ -37,6 +37,7 @@
 set(opt_incs "")
 set(opt_system_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 if(USE_ZBAR)
   list(APPEND opt_system_incs ${ZBAR_INCLUDE_DIRS})
@@ -51,6 +52,7 @@ endif()
 if(WITH_APRILTAG)
   # April Tag is private
   include_directories(${APRILTAG_INCLUDE_DIRS})
+  set(opt_libs_private ${APRILTAG_LIBRARIES})
 
   # Add specific build flag to turn off warnings coming from apriltag 3rd party
   if(UNIX OR MINGW)
@@ -62,11 +64,6 @@ if(WITH_APRILTAG)
       vp_warnings_disable(CMAKE_CXX_FLAGS /wd4200)
     endif()
   endif()
-endif()
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
 # TensorRT
@@ -189,8 +186,18 @@ if(USE_OPENCV)
   endif()
 endif(USE_OPENCV)
 
-vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES} WRAP java)
+vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io)
+
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})

@@ -462,7 +462,7 @@ vpParticleFilter<MeasurementsType>::vpParticleFilter(const unsigned int &N, cons
   vpUniRand seedGenerator(seedForGenerator);
   for (unsigned int threadId = 0; threadId < m_nbMaxThreads; ++threadId) {
     for (unsigned int stateId = 0; stateId < sizeState; ++stateId) {
-      m_noiseGenerators[threadId].push_back(vpGaussRand(stdev[stateId], 0., seedGenerator.uniform(0., 1e9)));
+      m_noiseGenerators[threadId].push_back(vpGaussRand(stdev[stateId], 0., static_cast<long>(seedGenerator.uniform(0., 1e9))));
     }
   }
 }

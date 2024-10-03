@@ -434,16 +434,27 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
 }
 
 /*!
-  Compute the modified modulo:
-    - modulo(11, 10) == 1 == 11 % 10
-    - modulo(-1, 10) == 9
-
-  \param a : The dividend.
-  \param n : The divisor.
-
-  \return The modified modulo of a mod n.
-*/
+ * Compute the modified modulo:
+ * - modulo(11, 10) == 1 == 11 % 10
+ * - modulo(-1, 10) == 9
+ *
+ * \param a : The dividend.
+ * \param n : The divisor.
+ *
+ * \return The modified modulo of a mod n.
+ */
 int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
+
+/*!
+ * Compute the modified modulo:
+ * - modulo(11, 10) == 1 == 11 % 10
+ *
+ * \param a : The dividend.
+ * \param n : The divisor.
+ *
+ * \return The modified modulo of a mod n.
+ */
+unsigned int vpMath::modulo(unsigned int a, unsigned int n) { return ((a % n) + n) % n; }
 
 /*!
   Compute from a given longitude, latitude and a sphere radius the homogeneous transformation

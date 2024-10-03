@@ -37,9 +37,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_CATCH2)
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+
+#include <catch_amalgamated.hpp>
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
@@ -418,28 +417,20 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
 
 int main(int argc, char *argv[])
 {
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
 
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+    | Catch::Clara::Opt(runBenchmark)   // bind variable to a new option, with a hint string
     ["--benchmark"] // the option names it will respond to
     ("run benchmark comparing naive code with ViSP implementation"); // description string for the help output
 
-// Now pass the new composite back to Catch so it uses that
+  // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
-
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
-
   int numFailed = session.run();
-
-  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
   return numFailed;
 }
+
 #else
 #include <iostream>
 

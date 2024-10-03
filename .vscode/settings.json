@@ -166,7 +166,11 @@
     "dense": "cpp",
     "stdvector": "cpp",
     "numericaldiff": "cpp",
-    "source_location": "cpp"
+    "source_location": "cpp",
+    "stdfloat": "cpp",
+    "text_encoding": "cpp",
+    "print": "cpp",
+    "geometry": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,

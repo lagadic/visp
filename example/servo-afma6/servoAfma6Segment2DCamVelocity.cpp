@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoAfma6Segment2DCamVelocity.cpp
@@ -44,7 +39,6 @@
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in camera frame. The visual feature is the segment between two points.
-
 */
 
 #include <stdlib.h>
@@ -117,9 +111,10 @@ int main()
 
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
 
     // Warm up camera
@@ -144,11 +139,11 @@ int main()
     vpRobotAfma6 robot;
     robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
 
+    // Get camera intrinsics
     vpCameraParameters cam;
-
-    // Update camera parameters
     robot.getCameraParameters(cam, I);
-    std::cout << "define the initial segment" << std::endl;
+
+    std::cout << "Define the initial segment" << std::endl;
 
     for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end(); ++i) {
       std::cout << "Click on a dot..." << std::endl;
@@ -230,7 +225,8 @@ int main()
       vpDisplay::flush(I);
     }
 
-    flog.close(); // Close the log file
+    // Close the log file
+    flog.close();
 
     // Display task information
     task.print();
@@ -238,8 +234,9 @@ int main()
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
-    flog.close(); // Close the log file
-    std::cout << "Test failed with exception: " << e << std::endl;
+    // Close the log file
+    flog.close();
+    std::cout << "Visual servo failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }

@@ -434,8 +434,8 @@ int main(int argc, const char **argv)
               std::cerr << "\t2-sigma test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -483,8 +483,8 @@ int main(int argc, const char **argv)
               std::cerr << "\t1-sigma test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -532,8 +532,8 @@ int main(int argc, const char **argv)
               std::cerr << "\tSame-side test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -576,8 +576,8 @@ int main(int argc, const char **argv)
               std::cerr << "\t3-sigma test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -626,8 +626,8 @@ int main(int argc, const char **argv)
               std::cerr << "\t2-sigma test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -676,8 +676,8 @@ int main(int argc, const char **argv)
               std::cerr << "\t1-sigma test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;
@@ -726,8 +726,8 @@ int main(int argc, const char **argv)
               std::cerr << "\tSame-side test failed: " << std::endl;
               std::vector<float> s = tester.getSignals();
               std::cerr << "\t\ts(t) = [ ";
-              for (size_t i = 0; i < s.size(); ++i) {
-                std::cerr << s[i] << " ";
+              for (size_t j = 0; j < s.size(); ++j) {
+                std::cerr << s[j] << " ";
               }
               std::cerr << "]" << std::endl;
               float limitDown = 0.f, limitUp = 0.f;

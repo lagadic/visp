@@ -5,7 +5,7 @@
 #include <visp3/io/vpVideoReader.h>
 
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_MINIZ)
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -27,8 +27,8 @@ std::string toString(const std::string &name, int val)
 {
   auto fmt = name.c_str();
   int sz = std::snprintf(nullptr, 0, fmt, val);
-  std::vector<char> buf(sz + 1);      // note +1 for null terminator
-  std::sprintf(buf.data(), fmt, val);
+  std::vector<char> buf(sz);
+  std::snprintf(&buf[0], sz, fmt, val);
   std::string str(buf.begin(), buf.end());
 
   return str;

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Pose-based visual servoing using MegaPose, on an Afma6 platform.
- *
- *****************************************************************************/
+ */
 
  /*!
    \example servoAfma6MegaposePBVS.cpp
@@ -184,7 +182,7 @@ int main(int argc, const char *argv[])
     // Get camera intrinsics
     vpCameraParameters cam =
       rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-    std::cout << "cam:\n" << cam << "\n";
+    std::cout << "cam:\n" << cam << std::endl;
     // Initialize Megapose
     std::shared_ptr<vpMegaPose> megapose;
     try {

@@ -295,7 +295,7 @@ public:
   public:
     vpMatrixZigZagIndex();
     /**
-     * \brief Initalize the ZigZag object. Computes and stores the zigzag indexing for a given matrix size
+     * \brief Initialize the ZigZag object. Computes and stores the zigzag indexing for a given matrix size
      *
      * @param rows the matrix's number of rows
      * @param cols the matrix's number of cols

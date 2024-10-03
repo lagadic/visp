@@ -132,11 +132,6 @@ endif()
 include_directories(${PUGIXML_INCLUDE_DIRS})
 list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
-
 if(WITH_SIMDLIB)
   # Simd lib is private
   include_directories(${SIMDLIB_INCLUDE_DIRS})
@@ -161,7 +156,16 @@ endif()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
-vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 if(VISP_DATASET_FOUND)
   #add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1) #already added by vp_add_tests

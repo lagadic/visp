@@ -32,7 +32,7 @@
  */
 
 /*!
-  \file testXmlConfigParserKeyPoint.cpp
+  \example testXmlConfigParserKeyPoint.cpp
 
   Test vpXmlConfigParserKeyPoint parse / save.
 */

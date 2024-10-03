@@ -260,9 +260,9 @@ public:
 //##################################################
 
 /*!
-  Receives a object. The size of the received object is suppose to be the size
-  of the type of the object. Note that a received message can correspond to a
-  deconnection signal.
+  Receives a object. The size of the object received is assumed to correspond
+  to the size of the object type. Note that a message received may correspond
+  to a disconnection signal.
 
   \warning Using this function means that you know what kind of object you are
   suppose to receive, and when you are suppose to receive. If the emitter has
@@ -277,7 +277,7 @@ public:
   \param object : Received object.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occured.
+  \return the number of bytes received, or -1 if an error occurred.
 */
 template <typename T> int vpNetwork::receive(T *object, const unsigned int &sizeOfObject)
 {
@@ -360,7 +360,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
   \param receptorEmitting : Index of the receptor emitting the message.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occured.
+  \return the number of bytes received, or -1 if an error occurred.
 */
 template <typename T>
 int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject)

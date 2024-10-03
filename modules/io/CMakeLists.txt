@@ -62,11 +62,6 @@ if(WITH_STBIMAGE)
   include_directories(${STBIMAGE_INCLUDE_DIRS})
 endif()
 
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
-
 if(USE_NLOHMANN_JSON)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
@@ -197,7 +192,17 @@ endif()
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests()
 
-vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow)
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
+
+vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow -Wno-deprecated-declarations)
 vp_set_source_file_compile_flag(src/image/private/vpImageIoTinyEXR.cpp -Wno-strict-overflow -Wno-sign-compare -Wno-type-limits -Wno-unused-but-set-variable)

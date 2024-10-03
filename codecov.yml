@@ -8,3 +8,16 @@ coverage:
     patch:
       default:
         informational: true
+
+ignore:
+  - "**/test/"
+  - "**/3rdparty/"
+  - "**/demo/"
+  - "**/example/"
+  - "**/apps/"
+  - "**/samples/"
+  - "**/tutorial/"
+  - "**/modules/gui"
+  - "**/modules/io/src/parallel-port"
+  - "**/modules/robot"
+  - "**/modules/sensor"
