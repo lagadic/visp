@@ -40,6 +40,6 @@ jobs:
       run: |
         mkdir build
         cd build
-      # cf: doc\tutorial\ios\tutorial-install-iOS.dox
+        # cf: doc\tutorial\ios\tutorial-install-iOS.dox
         python ../platforms/ios/build_framework.py ios --iphoneos_deployment_target 12.0 --iphoneos_archs arm64 \
                 --build_only_specified_archs True

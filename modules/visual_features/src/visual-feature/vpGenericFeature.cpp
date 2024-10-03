@@ -55,7 +55,7 @@ void vpGenericFeature::init() { s = 0; }
   this constructor.
 
 */
-vpGenericFeature::vpGenericFeature() : L(), err(), errorStatus(errorNotInitalized)
+vpGenericFeature::vpGenericFeature() : L(), err(), errorStatus(errorNotInitialized)
 {
   /*
   vpERROR_TRACE("You are not allow to use this constructor ") ;
@@ -74,7 +74,7 @@ vpGenericFeature::vpGenericFeature() : L(), err(), errorStatus(errorNotInitalize
   \param dimension_gen_s : Dimension of the generic feature. It corresponds to
   the number of features you want to create.
 */
-vpGenericFeature::vpGenericFeature(unsigned int dimension_gen_s) : L(), err(), errorStatus(errorNotInitalized)
+vpGenericFeature::vpGenericFeature(unsigned int dimension_gen_s) : L(), err(), errorStatus(errorNotInitialized)
 {
   this->dim_s = dimension_gen_s;
   s.resize(dimension_gen_s);

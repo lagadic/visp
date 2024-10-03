@@ -69,6 +69,7 @@ class PreprocessorConfig(object):
       args += ['-I', v]
     args += self.other_args
     args.extend(['--passthru-includes', self.passthrough_includes_regex])
+    args.extend(['--output-encoding', 'utf-8'])
     if self.line_directive is not None:
       args.extend(['--line-directive', self.line_directive])
     else:

@@ -155,7 +155,7 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, const vpBBoxt &bbox, vpPoint2Dt
   D[index_3].b = 1;
   D[index_3].c = -bbox.Ymax;
 
-  const int nbP = val_2;
+  const unsigned int nbP = val_2;
   vpPoint2Dt P[nbP];
   P[index_0] = A;
   P[index_1] = B;

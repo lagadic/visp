@@ -97,6 +97,7 @@ endif()
 
 if((NOT VISP_HAVE_NULLPTR) AND (VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98) AND (NOT MSVC))
   add_extra_compiler_option("-Wno-c++11-compat")
+  add_extra_compiler_option("-Wno-c++0x-compat")
 endif()
 
 # Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var

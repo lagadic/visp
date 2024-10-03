@@ -35,7 +35,7 @@
 
 // Check if cxx14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))) \
-    && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_MINIZ)
+    && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 
 #include <memory>
 #include <complex>

@@ -65,7 +65,7 @@ BEGIN_VISP_NAMESPACE
  * If camera parameters and the size of the tag are provided, you can also estimate
  * the 3D pose of the tag in terms of position and orientation wrt the camera considering 2 cases:
  * - 1. If all the tags have the same size use
- * detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
+ * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
  * - 2. If tag sizes differ, use rather getPose()
  *
  * The following sample code shows how to use this class to detect the location
@@ -116,8 +116,14 @@ BEGIN_VISP_NAMESPACE
  *   Message: "36h11 id: 1"
  * \endcode
  *
+ * As shown in the next image, two different tag frames could be considered for pose estimation.
+ * \image html img-tag-frame.jpg Tag 36h11_00000 with location of the 4 corners and tag frame
+ * There is the function setZAlignedWithCameraAxis() that allows to choose which tag frame has to be considered.
+ *
  * This other example shows how to estimate the 3D pose of 36h11 AprilTag
  * patterns considering that all the tags have the same size (in our example 0.053 m).
+ * Here we consider the default case, when z-camera and z-tag axis are not aligned.
+ *
  * \code
  * #include <visp3/detection/vpDetectorAprilTag.h>
  * #include <visp3/io/vpImageIo.h>
@@ -133,6 +139,7 @@ BEGIN_VISP_NAMESPACE
  *   vpImageIo::read(I, "image-tag36h11.pgm");
  *
  *   vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
+ *   detector.setZAlignedWithCameraAxis(false); // Default configuration
  *   std::vector<vpHomogeneousMatrix> cMo;
  *   vpCameraParameters cam;
  *   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
@@ -292,6 +299,8 @@ public:
   std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
                                                      const std::map<int, double> &tagsSize) const;
 
+  bool isZAlignedWithCameraAxis() const;
+
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
   void setAprilTagNbThreads(int nThreads);
@@ -311,7 +320,8 @@ public:
     m_displayTagThickness = thickness;
   }
 
-  inline friend void swap(vpDetectorAprilTag& o1, vpDetectorAprilTag& o2) {
+  inline friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
+  {
     using std::swap;
     swap(o1.m_impl, o2.m_impl);
   }

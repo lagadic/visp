@@ -384,6 +384,8 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
 
   mark_as_advanced(TBB_DIR)
   mark_as_advanced(Tiff_DIR)
+  mark_as_advanced(tiff_DIR)
+  mark_as_advanced(CLI11_DIR)
 
   mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
   mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows

@@ -38,9 +38,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_THREADS)
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+
+#include <catch_amalgamated.hpp>
 
 #include <thread>
 #include <visp3/core/vpIoTools.h>
@@ -279,29 +278,19 @@ int main(int argc, char *argv[])
   Catch::Session session; // There must be exactly one instance
 
   bool runBenchmark = false;
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
-  auto cli = session.cli()         // Get Catch's composite command line parser
-    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-    ["--benchmark"] // the option names it will respond to
-    ("Run benchmark") |
-    Opt(nThreads, "nThreads")["--nThreads"]("Number of threads");
 
-// Now pass the new composite back to Catch so it uses that
+  auto cli = session.cli()         // Get Catch's composite command line parser
+    | Catch::Clara::Opt(runBenchmark)["--benchmark"]("Run benchmark")
+    | Catch::Clara::Opt(nThreads, "nThreads")["--nThreads"]("Number of threads");
+
   session.cli(cli);
 
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
-    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency()
-      << std::endl;
+    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency() << std::endl;
 
     int numFailed = session.run();
-
-    // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-    // This clamping has already been applied, so just return it here
-    // You can also do any post run clean-up here
     return numFailed;
   }
 

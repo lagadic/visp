@@ -604,7 +604,7 @@ int main(const int argc, const char *argv[])
   long seedPF = args.m_seedPF; // Seed for the random generators of the PF
   const int nbThread = args.m_nbThreads;
   if (seedPF < 0) {
-    seedPF = vpTime::measureTimeMicros();
+    seedPF = static_cast<long>(vpTime::measureTimeMicros());
   }
   //! [Constants_for_the_PF]
 

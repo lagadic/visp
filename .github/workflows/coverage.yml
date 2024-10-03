@@ -81,5 +81,6 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         files: ./build/visp-coverage.cleaned
+        disable_search: true
         fail_ci_if_error: true
         verbose: true

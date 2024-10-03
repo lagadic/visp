@@ -48,8 +48,8 @@ class vpTutoParabolaModel
 public:
   inline vpTutoParabolaModel(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
     : m_degree(degree)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(static_cast<unsigned int>(height))
+    , m_width(static_cast<unsigned int>(width))
     , m_coeffs(degree + 1, 0.)
   { }
 
@@ -63,8 +63,8 @@ public:
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpColVector &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.size() - 1)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(static_cast<unsigned int>(height))
+    , m_width(static_cast<unsigned int>(width))
     , m_coeffs(coeffs)
   { }
 
@@ -78,8 +78,8 @@ public:
    */
   inline vpTutoParabolaModel(const VISP_NAMESPACE_ADDRESSING vpMatrix &coeffs, const unsigned int &height, const unsigned int &width)
     : m_degree(coeffs.getRows() - 1)
-    , m_height(static_cast<double>(height))
-    , m_width(static_cast<double>(width))
+    , m_height(static_cast<unsigned int>(height))
+    , m_width(static_cast<unsigned int>(width))
     , m_coeffs(coeffs.getCol(0))
   { }
 
@@ -136,7 +136,7 @@ public:
   //! [Fill_LMS_system]
   static void fillSystem(const unsigned int &degree, const double &height, const double &width, const std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> &pts, VISP_NAMESPACE_ADDRESSING vpMatrix &A, VISP_NAMESPACE_ADDRESSING vpMatrix &b)
   {
-    const unsigned int nbPts = pts.size();
+    const unsigned int nbPts = static_cast<unsigned int>(pts.size());
     const unsigned int nbCoeffs = degree + 1;
     std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> normalizedPts;
     // Normalization to avoid numerical instability
@@ -165,8 +165,8 @@ public:
 
 private:
   unsigned int m_degree; /*!< The highest degree of the polynomial.*/
-  double m_height; /*!< The height of the input image*/
-  double m_width; /*!< The width of the input image*/
+  unsigned int m_height; /*!< The height of the input image*/
+  unsigned int m_width; /*!< The width of the input image*/
   VISP_NAMESPACE_ADDRESSING vpColVector m_coeffs; /*!< The coefficient of the polynomial, where m_coeffs[0] is the offset and m_coeffs[m_degree] is the coefficient applied to the highest degree.*/
 };
 }

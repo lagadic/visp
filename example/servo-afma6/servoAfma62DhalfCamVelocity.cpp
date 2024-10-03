@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,67 +31,41 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma62DhalfCamVelocity.cpp
+  \example servoAfma62DhalfCamVelocity.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in the camera frame. Visual features are given thanks to four lines
   and are the x and y coordinates of the rectangle center, log(Z/Z*) the
   current depth relative to the desired depth and the thetau rotations.
-
 */
 
-/*!
-  \example servoAfma62DhalfCamVelocity.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame. Visual features are given thanks to four lines and are
-  the x and y coordinates of the rectangle center, log(Z/Z*) the current depth
-  relative to the desired depth and the thetau rotations.
-
-*/
-
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
+#include <iostream>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
-#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/core/vpDisplay.h>
+#if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY)
+
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/sensor/vpRealSense2.h>
-
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpLine.h>
-#include <visp3/core/vpMath.h>
+#include <visp3/blob/vpDot2.h>
+#include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureDepth.h>
-#include <visp3/visual_features/vpFeatureLine.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/visual_features/vpGenericFeature.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
 #include <visp3/vs/vpServo.h>
-
-#include <visp3/robot/vpRobotAfma6.h>
-
-// Exception
-#include <visp3/core/vpException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#include <visp3/blob/vpDot2.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpPoint.h>
+// Define the object CAD model
+// Here we consider 4 black blobs whose centers are located on the corners of a square.
+#define L 0.06 // To deal with a 12cm by 12cm square
 
 int main()
 {
@@ -101,49 +74,43 @@ int main()
 #endif
 
   try {
-    vpImage<unsigned char> I;
-
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
+
+    vpImage<unsigned char> I;
 
     // Warm up camera
     for (size_t i = 0; i < 10; ++i) {
       rs.acquire(I);
     }
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Current image");
-#endif
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, 100, 100, "Current image");
 
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    vpServo task;
-
     vpRobotAfma6 robot;
-    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
-    // robot.move("zero.pos") ;
+    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
+    // Load the end-effector to camera frame transformation obtained
+    // using a camera intrinsic model with distortion
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, projModel);
+
+    // Get camera intrinsics
     vpCameraParameters cam;
-    // Update camera parameters
     robot.getCameraParameters(cam, I);
 
-    std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a line " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
 
     int nbline = 4;
     int nbpoint = 4;
@@ -151,12 +118,10 @@ int main()
     vpTRACE("sets the desired position of the visual feature ");
     vpPoint pointd[nbpoint]; // position of the fours corners
     vpPoint pointcd;         // position of the center of the square
-    vpFeaturePoint pd;
 
-    double L = 0.05;
-    pointd[0].setWorldCoordinates(L, -L, 0);
-    pointd[1].setWorldCoordinates(L, L, 0);
-    pointd[2].setWorldCoordinates(-L, L, 0);
+    pointd[0].setWorldCoordinates(+L, -L, 0);
+    pointd[1].setWorldCoordinates(+L, +L, 0);
+    pointd[2].setWorldCoordinates(-L, +L, 0);
     pointd[3].setWorldCoordinates(-L, -L, 0);
 
     // The coordinates in the object frame of the point used as a feature ie
@@ -164,21 +129,21 @@ int main()
     pointcd.setWorldCoordinates(0, 0, 0);
 
     // The desired homogeneous matrix.
-    vpHomogeneousMatrix cMod(0, 0, 0.4, 0, 0, vpMath::rad(10));
+    vpHomogeneousMatrix cd_M_o(0, 0, 0.4, 0, 0, vpMath::rad(10));
 
-    pointd[0].project(cMod);
-    pointd[1].project(cMod);
-    pointd[2].project(cMod);
-    pointd[3].project(cMod);
+    pointd[0].project(cd_M_o);
+    pointd[1].project(cd_M_o);
+    pointd[2].project(cd_M_o);
+    pointd[3].project(cd_M_o);
 
-    pointcd.project(cMod);
+    pointcd.project(cd_M_o);
 
-    vpFeatureBuilder::create(pd, pointcd);
+    vpFeaturePoint s_pd;
+    vpFeatureBuilder::create(s_pd, pointcd);
 
-    vpTRACE("Initialization of the tracking");
+    // Tracking initialization
     vpMeLine line[nbline];
     vpPoint point[nbpoint];
-    int i;
 
     vpMe me;
     me.setRange(10);
@@ -188,17 +153,16 @@ int main()
     me.setSampleStep(10);
 
     // Initialize the tracking. Define the four lines to track
-    for (i = 0; i < nbline; i++) {
+    for (int i = 0; i < nbline; ++i) {
       line[i].setMe(&me);
 
       line[i].initTracking(I);
       line[i].track(I);
     }
 
-    // Compute the position of the four corners. The goal is to
-    // compute the pose
+    // Compute the position of the four corners. The goal is to compute the pose
     vpImagePoint ip;
-    for (i = 0; i < nbline; i++) {
+    for (int i = 0; i < nbline; ++i) {
       double x = 0, y = 0;
 
       if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
@@ -211,180 +175,139 @@ int main()
       point[i].set_y(y);
     }
 
-    // Compute the pose cMo
+    // Compute the pose c_M_o
     vpPose pose;
     pose.clearPoint();
-    vpHomogeneousMatrix cMo;
+    vpHomogeneousMatrix c_M_o;
 
-    point[0].setWorldCoordinates(L, -L, 0);
-    point[1].setWorldCoordinates(L, L, 0);
-    point[2].setWorldCoordinates(-L, L, 0);
+    point[0].setWorldCoordinates(+L, -L, 0);
+    point[1].setWorldCoordinates(+L, +L, 0);
+    point[2].setWorldCoordinates(-L, +L, 0);
     point[3].setWorldCoordinates(-L, -L, 0);
 
-    for (i = 0; i < nbline; i++) {
+    for (int i = 0; i < nbline; ++i) {
       pose.addPoint(point[i]); // and added to the pose computation point list
     }
 
     // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
-    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, c_M_o);
 
-    vpTRACE("sets the current position of the visual feature ");
-
-    // The first features are the position in the camera frame x and y of the
-    // square center
+    // The first features are the position in the camera frame x and y of the square center
     vpPoint pointc; // The current position of the center of the square
     double xc = (point[0].get_x() + point[2].get_x()) / 2;
     double yc = (point[0].get_y() + point[2].get_y()) / 2;
     pointc.set_x(xc);
     pointc.set_y(yc);
-    vpFeaturePoint p;
-    pointc.project(cMo);
-    vpFeatureBuilder::create(p, pointc);
+
+    // Sets the current position of the visual feature
+    vpFeaturePoint s_p;
+    pointc.project(c_M_o);
+    vpFeatureBuilder::create(s_p, pointc);
 
     // The second feature is the depth of the current square center relative
     // to the depth of the desired square center.
-    vpFeatureDepth logZ;
-    logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+    vpFeatureDepth s_logZ;
+    s_logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
     // The last three features are the rotations thetau between the current
     // pose and the desired pose.
-    vpHomogeneousMatrix cdMc;
-    cdMc = cMod * cMo.inverse();
-    vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.build(cdMc);
+    vpHomogeneousMatrix cd_M_c;
+    cd_M_c = cd_M_o * c_M_o.inverse();
+    vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
+    s_tu.build(cd_M_c);
 
-    vpTRACE("define the task");
-    vpTRACE("\t we want an eye-in-hand control law");
-    vpTRACE("\t robot is controlled in the camera frame");
+    // Define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
 
-    vpTRACE("\t we want to see a point on a point..");
-    std::cout << std::endl;
-    task.addFeature(p, pd);
-    task.addFeature(logZ);
-    task.addFeature(tu);
+    // - we want to see a point on a point
+    task.addFeature(s_p, s_pd);
+    task.addFeature(s_logZ);
+    task.addFeature(s_tu);
 
-    vpTRACE("\t set the gain");
-    task.setLambda(0.2);
+    // - set the gain
+    vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+    task.setLambda(lambda);
 
-    vpTRACE("Display task information ");
+    // - display task information ");
     task.print();
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    unsigned int iter = 0;
-    vpTRACE("\t loop");
-    vpColVector v;
-    vpImage<vpRGBa> Ic;
-    double lambda_av = 0.05;
-    double alpha = 0.05;
-    double beta = 3;
-
     bool quit = false;
+
     while (!quit) {
-      std::cout << "---------------------------------------------" << iter << std::endl;
+      rs.acquire(I);
+      vpDisplay::display(I);
 
-      try {
-        rs.acquire(I);
-        vpDisplay::display(I);
+      pose.clearPoint();
 
-        pose.clearPoint();
+      // Track the lines and find the current position of the corners
+      for (int i = 0; i < nbline; ++i) {
+        line[i].track(I);
 
-        // Track the lines and find the current position of the corners
-        for (i = 0; i < nbline; i++) {
-          line[i].track(I);
+        line[i].display(I, vpColor::green);
 
-          line[i].display(I, vpColor::green);
+        double x = 0, y = 0;
 
-          double x = 0, y = 0;
-
-          if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
-            return EXIT_FAILURE;
-          }
-
-          vpPixelMeterConversion::convertPoint(cam, ip, x, y);
-
-          point[i].set_x(x);
-          point[i].set_y(y);
-
-          pose.addPoint(point[i]);
+        if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
+          return EXIT_FAILURE;
         }
 
-        // Compute the pose
-        pose.computePose(vpPose::VIRTUAL_VS, cMo);
+        vpPixelMeterConversion::convertPoint(cam, ip, x, y);
 
-        // Update the two first features x and y (position of the square
-        // center)
-        xc = (point[0].get_x() + point[2].get_x()) / 2;
-        yc = (point[0].get_y() + point[2].get_y()) / 2;
-        pointc.set_x(xc);
-        pointc.set_y(yc);
-        pointc.project(cMo);
-        vpFeatureBuilder::create(p, pointc);
-        // Print the current and the desired position of the center of the
-        // square  Print the desired position of the four corners
-        p.display(cam, I, vpColor::green);
-        pd.display(cam, I, vpColor::red);
-        for (i = 0; i < nbpoint; i++)
-          pointd[i].display(I, cam, vpColor::red);
+        point[i].set_x(x);
+        point[i].set_y(y);
 
-        // Update the second feature
-        logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
-
-        // Update the last three features
-        cdMc = cMod * cMo.inverse();
-        tu.build(cdMc);
-
-        // Adaptive gain
-        double gain;
-        {
-          if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
-            gain = lambda_av;
-          else {
-            gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
-          }
-        }
-
-        task.setLambda(gain);
-
-        v = task.computeControlLaw();
-
-        std::cout << v.sumSquare() << std::endl;
-        if (iter == 0)
-          vpDisplay::getClick(I);
-        if (v.sumSquare() > 0.5) {
-          v = 0;
-          robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-          robot.stopMotion();
-          vpDisplay::getClick(I);
-        }
-
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
-        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-        }
-        vpDisplay::flush(I);
-      }
-      catch (...) {
-        v = 0;
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        robot.stopMotion();
-        exit(1);
+        pose.addPoint(point[i]);
       }
 
-      vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
-      iter++;
+      // Compute the pose
+      pose.computePose(vpPose::VIRTUAL_VS, c_M_o);
+
+      // Update the two first features x and y (position of the square center)
+      xc = (point[0].get_x() + point[2].get_x()) / 2;
+      yc = (point[0].get_y() + point[2].get_y()) / 2;
+      pointc.set_x(xc);
+      pointc.set_y(yc);
+      pointc.project(c_M_o);
+      vpFeatureBuilder::create(s_p, pointc);
+      // Print the current and the desired position of the center of the
+      // square  Print the desired position of the four corners
+      s_p.display(cam, I, vpColor::green);
+      s_pd.display(cam, I, vpColor::red);
+      for (int i = 0; i < nbpoint; ++i) {
+        pointd[i].display(I, cam, vpColor::red);
+      }
+
+      // Update the second feature
+      s_logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+
+      // Update the last three features
+      cd_M_c = cd_M_o * c_M_o.inverse();
+      s_tu.build(cd_M_c);
+
+      vpColVector v_c = task.computeControlLaw();
+
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
+
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
+      vpDisplay::flush(I);
     }
 
-    vpTRACE("Display task information ");
+    // Display task information
     task.print();
+
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
-    std::cout << "Test failed with exception: " << e << std::endl;
+    std::cout << "Visual servo failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }

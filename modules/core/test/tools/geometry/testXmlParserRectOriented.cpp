@@ -32,7 +32,7 @@
  */
 
 /*!
-  \file testXmlParserRectOriented.cpp
+  \example testXmlParserRectOriented.cpp
 
   Test vpXmlParserRectOriented parse / save.
 */
@@ -46,17 +46,9 @@ int main()
   using namespace VISP_NAMESPACE_NAME;
 #endif
 #if defined(VISP_HAVE_PUGIXML)
-#if defined(_WIN32)
-  std::string tmp_dir = "C:/temp/";
-#else
-  std::string tmp_dir = "/tmp/";
-#endif
 
-  // Get the user login name
-  std::string username;
-  vpIoTools::getUserName(username);
+  std::string tmp_dir = vpIoTools::getTempPath() + "/test_xml_parser_rect_oriented/";
 
-  tmp_dir += username + "/test_xml_parser_rect_oriented/";
   vpIoTools::remove(tmp_dir);
   std::cout << "Create: " << tmp_dir << std::endl;
   vpIoTools::makeDirectory(tmp_dir);

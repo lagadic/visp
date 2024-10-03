@@ -143,7 +143,7 @@ class HeaderFile():
       tmp_file_content.append(f'#include <{include}>\n')
 
     # Remove all includes: we only include configuration headers, defined above
-    with open(self.path.absolute(), 'r') as input_header_file:
+    with open(self.path.absolute(), 'r', encoding='utf-8') as input_header_file:
       include_regex = '#include\s*<(.*)>'
       for line in input_header_file.readlines():
         matches = re.search(include_regex, line)
@@ -153,7 +153,7 @@ class HeaderFile():
           # if 'visp3' in matches.group() or 'opencv' in matches.group():
           #   tmp_file_content.append(line)
 
-    with open(tmp_file_path.absolute(), 'w') as tmp_file:
+    with open(tmp_file_path.absolute(), 'w', encoding='utf-8') as tmp_file:
       tmp_file.write(''.join(tmp_file_content))
       tmp_file.flush()
 
@@ -167,7 +167,7 @@ class HeaderFile():
     preprocessed_header_content = None
 
     # Remove all #defines that could have been left by the preprocessor
-    with open(preprocessor_output_path, 'r') as header_file:
+    with open(preprocessor_output_path, 'r', encoding='utf-8') as header_file:
       preprocessed_header_lines = []
       for line in header_file.readlines():
         if not line.startswith('#define'):

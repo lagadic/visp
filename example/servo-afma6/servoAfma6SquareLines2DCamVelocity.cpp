@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoAfma6SquareLines2DCamVelocity.cpp
@@ -54,33 +52,22 @@
 
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
+#include <iostream>
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
-#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/core/vpDisplay.h>
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_AFMA6)
+
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpRealSense2.h>
-
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpLine.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/gui/vpDisplayFactory.h>
+#include <visp3/robot/vpRobotAfma6.h>
+#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/me/vpMeLine.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureLine.h>
 #include <visp3/vs/vpServo.h>
-
-#include <visp3/robot/vpRobotAfma6.h>
-
-// Exception
-#include <visp3/core/vpException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
 int main()
@@ -90,46 +77,36 @@ int main()
 #endif
 
   try {
-    vpImage<unsigned char> I;
-
     vpRealSense2 rs;
     rs2::config config;
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
     rs.open(config);
+
+    vpImage<unsigned char> I;
 
     // Warm up camera
     for (size_t i = 0; i < 10; ++i) {
       rs.acquire(I);
     }
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, 100, 100, "Current image");
-#endif
+    std::shared_ptr<vpDisplay> d = vpDisplayFactory::createDisplay(I, 10, 10, "Current image");
 
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    vpServo task;
-
-    std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a line " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
 
-    int i;
-    int nbline = 4;
+    int nb_lines = 4;
 
-    vpMeLine line[nbline];
+    std::vector<vpMeLine> line(nb_lines);
 
     vpMe me;
     me.setRange(10);
@@ -139,7 +116,7 @@ int main()
     me.setSampleStep(10);
 
     // Initialize the tracking. Define the four lines to track.
-    for (i = 0; i < nbline; i++) {
+    for (int i = 0; i < nb_lines; ++i) {
       line[i].setDisplay(vpMeSite::RANGE_RESULT);
       line[i].setMe(&me);
 
@@ -149,146 +126,104 @@ int main()
 
     vpRobotAfma6 robot;
     robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
-    // robot.move("zero.pos");
 
+    // Get camera intrinsics
     vpCameraParameters cam;
-    // Update camera parameters
     robot.getCameraParameters(cam, I);
 
-    vpTRACE("sets the current position of the visual feature ");
-    vpFeatureLine p[nbline];
-    for (i = 0; i < nbline; i++)
-      vpFeatureBuilder::create(p[i], cam, line[i]);
+    // Sets the current position of the visual feature
+    std::vector<vpFeatureLine> s_line(nb_lines);
+    for (int i = 0; i < nb_lines; ++i)
+      vpFeatureBuilder::create(s_line[i], cam, line[i]);
 
-    vpTRACE("sets the desired position of the visual feature ");
-    vpLine lined[nbline];
-    lined[0].setWorldCoordinates(1, 0, 0, 0.05, 0, 0, 1, 0);
-    lined[1].setWorldCoordinates(0, 1, 0, 0.05, 0, 0, 1, 0);
-    lined[2].setWorldCoordinates(1, 0, 0, -0.05, 0, 0, 1, 0);
-    lined[3].setWorldCoordinates(0, 1, 0, -0.05, 0, 0, 1, 0);
+    // Sets the desired position of the visual feature
+    std::vector<vpLine> line_d(nb_lines);
+    line_d[0].setWorldCoordinates(1, 0, 0, 0.05, 0, 0, 1, 0);
+    line_d[1].setWorldCoordinates(0, 1, 0, 0.05, 0, 0, 1, 0);
+    line_d[2].setWorldCoordinates(1, 0, 0, -0.05, 0, 0, 1, 0);
+    line_d[3].setWorldCoordinates(0, 1, 0, -0.05, 0, 0, 1, 0);
 
-    vpHomogeneousMatrix cMo(0, 0, 0.5, 0, 0, vpMath::rad(0));
+    vpHomogeneousMatrix c_M_o(0, 0, 0.5, 0, 0, vpMath::rad(0));
 
-    lined[0].project(cMo);
-    lined[1].project(cMo);
-    lined[2].project(cMo);
-    lined[3].project(cMo);
+    line_d[0].project(c_M_o);
+    line_d[1].project(c_M_o);
+    line_d[2].project(c_M_o);
+    line_d[3].project(c_M_o);
 
     // Those lines are needed to keep the conventions define in vpMeLine
     // (Those in vpLine are less restrictive)  Another way to have the
     // coordinates of the desired features is to learn them before executing
     // the program.
-    lined[0].setRho(-fabs(lined[0].getRho()));
-    lined[0].setTheta(0);
-    lined[1].setRho(-fabs(lined[1].getRho()));
-    lined[1].setTheta(M_PI / 2);
-    lined[2].setRho(-fabs(lined[2].getRho()));
-    lined[2].setTheta(M_PI);
-    lined[3].setRho(-fabs(lined[3].getRho()));
-    lined[3].setTheta(-M_PI / 2);
+    line_d[0].setRho(-fabs(line_d[0].getRho()));
+    line_d[0].setTheta(0);
+    line_d[1].setRho(-fabs(line_d[1].getRho()));
+    line_d[1].setTheta(M_PI / 2);
+    line_d[2].setRho(-fabs(line_d[2].getRho()));
+    line_d[2].setTheta(M_PI);
+    line_d[3].setRho(-fabs(line_d[3].getRho()));
+    line_d[3].setTheta(-M_PI / 2);
 
-    vpFeatureLine pd[nbline];
+    std::vector<vpFeatureLine> s_line_d(nb_lines);
 
-    vpFeatureBuilder::create(pd[0], lined[0]);
-    vpFeatureBuilder::create(pd[1], lined[1]);
-    vpFeatureBuilder::create(pd[2], lined[2]);
-    vpFeatureBuilder::create(pd[3], lined[3]);
+    vpFeatureBuilder::create(s_line_d[0], line_d[0]);
+    vpFeatureBuilder::create(s_line_d[1], line_d[1]);
+    vpFeatureBuilder::create(s_line_d[2], line_d[2]);
+    vpFeatureBuilder::create(s_line_d[3], line_d[3]);
 
-    vpTRACE("define the task");
-    vpTRACE("\t we want an eye-in-hand control law");
-    vpTRACE("\t robot is controlled in the camera frame");
+    // Define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
-    vpTRACE("\t we want to see a point on a point..");
-    std::cout << std::endl;
-    for (i = 0; i < nbline; i++)
-      task.addFeature(p[i], pd[i]);
+    // - we want to see 4 lines on 4 lines
+    for (int i = 0; i < nb_lines; ++i) {
+      task.addFeature(s_line[i], s_line_d[i]);
+    }
 
-    vpTRACE("\t set the gain");
+    // - set the gain
     task.setLambda(0.2);
 
-    vpTRACE("Display task information ");
+    // - display task information
     task.print();
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    unsigned int iter = 0;
-    vpTRACE("\t loop");
-    vpColVector v;
-    vpImage<vpRGBa> Ic;
-    double lambda_av = 0.05;
-    double alpha = 0.05;
-    double beta = 3;
-
     bool quit = false;
     while (!quit) {
-      std::cout << "---------------------------------------------" << iter << std::endl;
+      rs.acquire(I);
+      vpDisplay::display(I);
 
-      try {
-        rs.acquire(I);
-        vpDisplay::display(I);
+      // Track the lines and update the features
+      for (int i = 0; i < nb_lines; ++i) {
+        line[i].track(I);
+        line[i].display(I, vpColor::red);
 
-        // Track the lines and update the features
-        for (i = 0; i < nbline; i++) {
-          line[i].track(I);
-          line[i].display(I, vpColor::red);
+        vpFeatureBuilder::create(s_line[i], cam, line[i]);
 
-          vpFeatureBuilder::create(p[i], cam, line[i]);
-
-          p[i].display(cam, I, vpColor::red);
-          pd[i].display(cam, I, vpColor::green);
-        }
-
-        double gain;
-        {
-          if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
-            gain = lambda_av;
-          else {
-            gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
-          }
-        }
-
-        task.setLambda(gain);
-
-        v = task.computeControlLaw();
-
-        if (iter == 0) {
-          vpDisplay::getClick(I);
-        }
-        if (v.sumSquare() > 0.5) {
-          v = 0;
-          robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-          robot.stopMotion();
-          vpDisplay::getClick(I);
-        }
-
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
-        vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
-        if (vpDisplay::getClick(I, false)) {
-          quit = true;
-        }
-
-        vpDisplay::flush(I);
-      }
-      catch (...) {
-        v = 0;
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        robot.stopMotion();
-        exit(1);
+        s_line[i].display(cam, I, vpColor::red);
+        s_line_d[i].display(cam, I, vpColor::green);
       }
 
-      vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
-      iter++;
+      vpColVector v_c = task.computeControlLaw();
+
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
+
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
+
+      vpDisplay::flush(I);
     }
 
-    vpTRACE("Display task information ");
+    // Display task information
     task.print();
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
-    std::cout << "Test failed with exception: " << e << std::endl;
+    std::cout << "Visual servo failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }

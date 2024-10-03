@@ -40,8 +40,8 @@ using namespace VISP_NAMESPACE_NAME;
 
 vpTutoMeanSquareFitting::vpTutoMeanSquareFitting(const unsigned int &degree, const unsigned int &height, const unsigned int &width)
   : m_degree(degree)
-  , m_height(static_cast<double>(height))
-  , m_width(static_cast<double>(width))
+  , m_height(static_cast<unsigned int>(height))
+  , m_width(static_cast<unsigned int>(width))
   , m_model(degree, height, width)
   , m_isFitted(false)
 { }
@@ -68,7 +68,7 @@ double vpTutoMeanSquareFitting::evaluate(const std::vector<vpImagePoint> &pts)
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));
   }
-  unsigned int nbPts = pts.size();
+  unsigned int nbPts = static_cast<unsigned int>(pts.size());
 
   // Compute the mean absolute error
   double meanSquareError = 0.f;
@@ -93,7 +93,7 @@ double vpTutoMeanSquareFitting::evaluate(const vpImagePoint &pt)
   return squareError;
 }
 
-double vpTutoMeanSquareFitting::model(const float &u)
+double vpTutoMeanSquareFitting::model(const double &u)
 {
   if (!m_isFitted) {
     throw(vpException(vpException::notInitialized, "fit() has not been called."));

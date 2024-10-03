@@ -348,8 +348,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
 
 void vpPose::callLagrangePose(vpHomogeneousMatrix &cMo)
 {
-  const int minNbPtLagrangePlan = 4;
-  const int minNbPtLagrangeNoPlan = 6;
+  const unsigned int minNbPtLagrangePlan = 4;
+  const unsigned int minNbPtLagrangeNoPlan = 6;
   // test if the 3D points are coplanar
   double a, b, c, d; // To get the plan coefficients if the points are coplanar
   int coplanar_plane_type = 0;
@@ -384,8 +384,8 @@ void vpPose::callLagrangePose(vpHomogeneousMatrix &cMo)
 
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, FuncCheckValidityPose func)
 {
-  const int minNbPtDementhon = 4;
-  const int minNbPtRansac = 4;
+  const unsigned int minNbPtDementhon = 4;
+  const unsigned int minNbPtRansac = 4;
   std::stringstream errMsgDementhon;
   errMsgDementhon << "Dementhon method cannot be used in that case "
     << "(at least " << minNbPtDementhon << " points are required)"

@@ -53,7 +53,7 @@ public:
   void getRender(vpImage<unsigned char> &I) const;
 
 private:
-  static const char *FRAGMENT_SHADER;
+  static const std::string FRAGMENT_SHADER;
 };
 
 /**
@@ -71,7 +71,7 @@ public:
   void getRender(vpImage<unsigned char> &I) const;
 
 private:
-  static const char *FRAGMENT_SHADER;
+  static const std::string FRAGMENT_SHADER;
 };
 
 /**
@@ -96,7 +96,7 @@ protected:
   void setupScene() VP_OVERRIDE;
 
 private:
-  static const char *FRAGMENT_SHADER;
+  static const std::string FRAGMENT_SHADER;
   float m_edgeThreshold;
 };
 

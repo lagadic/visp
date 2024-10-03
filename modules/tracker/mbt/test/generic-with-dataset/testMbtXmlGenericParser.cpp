@@ -32,7 +32,7 @@
  */
 
 /*!
-  \file testMbtXmlGenericParser.cpp
+  \example testMbtXmlGenericParser.cpp
 
   Test vpMbtXmlGenericParser parse / save.
 */

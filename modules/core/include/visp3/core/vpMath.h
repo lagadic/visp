@@ -314,6 +314,7 @@ public:
   static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
   static int modulo(int a, int n);
+  static unsigned int modulo(unsigned int a, unsigned int n);
 
   static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
   static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
