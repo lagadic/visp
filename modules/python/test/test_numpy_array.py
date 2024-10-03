@@ -214,20 +214,3 @@ def test_setitem_2D_array():
 
   a[:-5] = multi_rows
   assert np.all(np.equal(a.numpy()[:-5], multi_rows))
-
-
-
-
-# def test_setitem_with_numpy_raw_image():
-#   h, w = 30, 20
-#   I = ImageGray(h, w, 0)
-#   single_row = np.ones((w, ), dtype=np.uint8) * 255
-
-#   I[2] = single_row
-#   assert not np.any(np.equal(I.numpy()[list(set(range(h)) - {2})], single_row))
-#   assert np.all(np.equal(I.numpy()[2], single_row))
-
-#   I[:] = 0
-#   I[1:-2] = single_row
-#   assert np.all(np.equal(I.numpy()[list(set(range(h)) - {0, h - 2, h - 1})], single_row))
-#   assert np.all(np.equal(I.numpy()[[0, h - 2, h - 1]], 0))
