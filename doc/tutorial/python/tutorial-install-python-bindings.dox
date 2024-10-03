@@ -656,7 +656,8 @@ If you have this error:
 \endverbatim
 
 You should define the class (here vpTemplateTrackerMI) as pure virtual in the config file (via the flag is_virtual).
-This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class
+this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
 \subsubsection py_bindings_known_errors_template Template errors
 
@@ -827,7 +828,7 @@ At this point you should see that OpenCV is detected in the conda environment
     OpenCV dir:                  C:/Users/User/miniforge3/envs/visp-conda-ws/Library/cmake
 \endverbatim
 
-Now you can relaunch the build process
+  Now you can relaunch the build process
 \verbatim
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
@@ -844,15 +845,15 @@ Then close and reopen your `Miniforge Prompt` and relaunch the bindings build pr
 (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 \endverbatim
 
-\warning If after rebuilding the error still appears or you cannot locate the third party library see the next section.
+  \warning If after rebuilding the error still appears or you cannot locate the third party library see the next section.
 
-\subsubsection py_bindings_known_errors_tracing_missing_dlls Tracing missing DLLS
+\subsubsection py_bindings_known_errors_tracing_missing_dlls Tracing missing DLLs
 
 To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python looks up to find the required DLLs.
 
 To use this tool:
 
-1. Download it from the microsoft website :<a href="https://learn.microsoft.com/en-us/sysinternals/downloads/procmon">Process monitor page</a>
+1. Download it from the microsoft website: <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/procmon">Process monitor page</a>
 
 2. Extract the archive and run `Procmon64.exe`. A window should appear.
 
@@ -881,26 +882,32 @@ ImportError: DLL load failed while importing _visp: Le module spécifié est int
 \endverbatim
 
 5. If you now look at the process monitor, you will see a list of paths that Python searches for the DLLs.
-This includes the ViSP DLLs, but also the required third parties. A single DLL file may be looked for in multiple folders. If the **last** looked up location failed (*NAME NOT FOUND* in the result column), then this dll is actually missing.
+This includes the ViSP DLLs, but also the required third parties. A single DLL file may be looked for in multiple folders.
+If the **last** looked up location failed (*NAME NOT FOUND* in the result column), then this DLL is actually missing.
 If you look at the example screenshot below
 \image html image/tutorial/python/process-monitor-missing-dll-example.png
-You can see that realsense2.dll cannot be loaded. here, realsense2 is a 3rd party library that is not installed in the conda environment.
+You can see that realsense2.dll cannot be loaded. Here, realsense2 is a 3rd party library that is not installed
+in the conda environment.
 
 6. If you're unsure about which libraries ViSP uses, you can use cmake-gui. You can start by looking at the ViSP config options:
 \image html image/tutorial/python/cmake-gui-used-libs.png
-Here, we can also see that there are other 3rdparties (FlyCapture, Pylon, Realsense2 and Vicon) that are installed outside of the conda workspace.
+Here, we can also see that there are other 3rdparties (FlyCapture, Pylon, Realsense2 and Vicon) that are installed
+outside of the conda workspace.
 
 7. To find where the libraries are installed, you can examine the cmake cache using the "advanced" checkbox of the cmake-gui
 \image html image/tutorial/python/cmake-gui-locating-lib.png
-For instance, the variable REALSENSE2_LIBRARIES indicates the folder containing the `.libs` files. From this path, you can find the folder containing the DLLs.
-Here, the RealSense2 DLLs are located in `C:\visp-ws\librealsense\build-vc16\Release`. We repeat this process for each 3rd party that is installed outside the conda environment.
+For instance, the variable REALSENSE2_LIBRARIES indicates the folder containing the `.libs` files. From this path,
+you can find the folder containing the DLLs. Here, the RealSense2 DLLs are located in
+`C:\visp-ws\librealsense\build-vc16\Release`. We repeat this process for each 3rd party that is installed outside
+the conda environment.
 
 8. You can update the `VISP_WINDOWS_DLL_PATH` variable to include the path to each 3rd party
 \verbatim
 (visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\librealsense\build-vc16\Release;C:\Program Files\Point Grey Research\FlyCapture2\bin64;C:\Program Files\Basler\pylon 6\Runtime\x64;C:\Program Files\Vicon\DataStream SDK\Win64\CPP"
 \endverbatim
 
-9. With this done you can close and reopen your python interpreter and try to reimport visp. If all the dlls were successfully loaded, the error should have disappeared and the output should look like:
+9. With this done you can close and reopen your python interpreter and try to reimport visp. If all the dlls were
+successfully loaded, the error should have disappeared and the output should look like:
 \verbatim
 (visp-conda-ws) C:\visp-ws\visp-build-bindings>python
 Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
@@ -920,7 +927,9 @@ If, when importing visp in Python, you encounter this message:
   ImportError: overloading a method with both static and instance methods is not supported; error while attempting to bind instance method visp.xxx() -> None
 \endverbatim
 
-Then it means that a class has both a static method and a member method with the same name. You should :ref:`rename either one through the config files <Function options>`.
+Then it means that a class has both a static method and a member method with the same name.
+You have to rename one or the other by modifying the bindings through JSON configuration files like in
+[this tutorial](https://visp-doc.inria.fr/doxygen/visp-python-daily/rst/dev/config.html#function-options).
 
 This error may also happen when generating the Python stubs (after the bindings compilation and linking step).
 
