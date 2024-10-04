@@ -39,8 +39,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-
-
 #if defined(VISP_HAVE_CATCH2)
 
 #include <visp3/core/vpIoTools.h>
@@ -106,8 +104,7 @@ f 7/13/5 5/11/5 1/3/5
 f 4/10/6 2/6/6 6/12/6
 )obj";
 
-
-SCENARIO("Instanciating a silhouette me tracker", "[rbt]")
+SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
   {
@@ -182,7 +179,6 @@ SCENARIO("Instanciating a silhouette me tracker", "[rbt]")
 #if defined(VISP_HAVE_NLOHMANN_JSON)
     WHEN("defining JSON parameters")
     {
-
       nlohmann::json j = {
         {"type", "silhouetteMe"},
         { "numCandidates", 1 },
@@ -240,7 +236,7 @@ SCENARIO("Instanciating a silhouette me tracker", "[rbt]")
 #endif
 }
 
-SCENARIO("Instanciating a silhouette CCD tracker", "[rbt]")
+SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
 {
   vpRBSilhouetteCCDTracker tracker;
   WHEN("Setting smoothing factor")
@@ -307,7 +303,7 @@ SCENARIO("Instanciating a silhouette CCD tracker", "[rbt]")
 }
 
 #if defined(VP_HAVE_RB_KLT_TRACKER)
-SCENARIO("Instanciating KLT tracker")
+SCENARIO("Instantiating KLT tracker")
 {
   vpRBKltTracker tracker;
   WHEN("Modifying basic settings")
@@ -336,7 +332,6 @@ SCENARIO("Instanciating KLT tracker")
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   WHEN("Defining associated json")
   {
-
     nlohmann::json j = {
       {"type", "klt"},
       {"weight", 0.01},
@@ -371,7 +366,7 @@ SCENARIO("Instanciating KLT tracker")
 }
 #endif
 
-SCENARIO("Instanciating depth tracker", "[rbt]")
+SCENARIO("Instantiating depth tracker", "[rbt]")
 {
   vpRBDenseDepthTracker tracker;
   WHEN("Setting steps")
@@ -406,7 +401,6 @@ SCENARIO("Instanciating depth tracker", "[rbt]")
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   WHEN("Defining associated json")
   {
-
     nlohmann::json j = {
       {"type", "klt"},
       {"weight", 0.01},
@@ -435,7 +429,7 @@ SCENARIO("Instanciating depth tracker", "[rbt]")
 #endif
 }
 
-SCENARIO("Instanciating a render-based tracker", "[rbt]")
+SCENARIO("Instantiating a render-based tracker", "[rbt]")
 {
   vpRBTracker tracker;
 
@@ -488,8 +482,6 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
       tracker.setOptimizationMuIterFactor(0.1);
       REQUIRE(tracker.getOptimizationMuIterFactor() == 0.1);
     }
-
-
   }
 
   WHEN("Setting camera parameters and resolution")
@@ -599,8 +591,7 @@ SCENARIO("Instanciating a render-based tracker", "[rbt]")
 
       REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
       REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
-
-    };
+      };
     nlohmann::json j = nlohmann::json::parse(jsonLiteral);
     THEN("Loading configuration with trackers")
     {
@@ -672,16 +663,14 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
     renderer.addNodeToScene(renderer.loadObject("object", objFile));
     renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
-  };
+    };
   const unsigned int n = 100;
   std::vector<vpHomogeneousMatrix> cTw;
   std::vector<vpHomogeneousMatrix> oTw;
   for (unsigned int i = 0; i < n; ++i) {
     oTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     cTw.push_back(vpHomogeneousMatrix(0.0, 0.0, 0.3, 0.0, 0.0, 0.0));
-
   }
-
 
   TrajectoryData traj1 = generateTrajectory(renderParams, setupScene, cTw, oTw);
 
@@ -702,9 +691,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     double errorR = cdTc.getThetaUVector().getTheta();
     REQUIRE((errorT < 0.005 && errorR < vpMath::rad(0.5)));
   }
-
 }
-
 
 int main(int argc, char *argv[])
 {
