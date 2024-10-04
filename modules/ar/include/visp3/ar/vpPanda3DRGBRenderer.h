@@ -109,8 +109,8 @@ private:
   bool m_showSpeculars;
   PointerTo<Texture> m_colorTexture;
   PointerTo<GraphicsOutput> m_colorBuffer;
-  static const char *COOK_TORRANCE_VERT;
-  static const char *COOK_TORRANCE_FRAG;
+  static const std::string COOK_TORRANCE_VERT;
+  static const std::string COOK_TORRANCE_FRAG;
 
   NodePath m_backgroundImage;
   PointerTo<DisplayRegion> m_display2d;

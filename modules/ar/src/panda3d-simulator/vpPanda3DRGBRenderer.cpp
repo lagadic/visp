@@ -37,7 +37,7 @@
 #include "texturePool.h"
 
 BEGIN_VISP_NAMESPACE
-const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
+const std::string vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
 "#version 330\n"
 "in vec3 p3d_Normal;\n"
 "in vec4 p3d_Vertex;\n"
@@ -76,7 +76,7 @@ const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
 "  F0 = computeF0(p3d_Material.refractiveIndex, p3d_Material.metallic, p3d_Material.baseColor.xyz);\n"
 "}\n";
 
-const char *vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG =
+const std::string vpPanda3DRGBRenderer::COOK_TORRANCE_FRAG =
 "// Version 330, specified when generating shader\n"
 "#define M_PI 3.1415926535897932384626433832795\n"
 "in vec3 oNormal;\n"
@@ -200,8 +200,8 @@ void vpPanda3DRGBRenderer::addNodeToScene(const NodePath &object)
   }
 
   PT(Shader) shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                    COOK_TORRANCE_VERT,
-                                    makeFragmentShader(hasTexture, m_showSpeculars));
+                                   COOK_TORRANCE_VERT,
+                                   makeFragmentShader(hasTexture, m_showSpeculars));
 
   objectInScene.set_shader(shader);
 
