@@ -524,7 +524,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-
 // Defined if nlohmann json parser is found
 #cmakedefine VISP_HAVE_NLOHMANN_JSON
 
