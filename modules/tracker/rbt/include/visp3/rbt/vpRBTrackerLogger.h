@@ -83,7 +83,6 @@ public:
   void setSilhouetteTime(double elapsed) { m_silhouetteExtractionTime = elapsed; }
   void setMaskTime(double elapsed) { m_maskTime = elapsed; }
 
-
   void insertTrackerTime(std::map<int, std::vector<double>> &map, int id, double elapsed)
   {
     if (map.find(id) == map.end()) {
@@ -174,4 +173,5 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
 }
 
 END_VISP_NAMESPACE
+
 #endif

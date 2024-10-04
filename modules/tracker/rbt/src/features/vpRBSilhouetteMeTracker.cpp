@@ -32,9 +32,7 @@
 
 #define VISP_DEBUG_ME_TRACKER 0
 
-
 BEGIN_VISP_NAMESPACE
-
 
 /**
  * @brief Extract the geometric features from the list of collected silhouette points
@@ -83,7 +81,6 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
 
   m_robust.setMinMedianAbsoluteDeviation(m_robustMadMin / frame.cam.get_px());
 }
-
 
 void vpRBSilhouetteMeTracker::trackFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/)
 {
@@ -158,7 +155,6 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     else {
       m_vvsConverged = true;
     }
-
   }
 
   m_robust.MEstimator(vpRobust::TUKEY, m_error, m_weights);
@@ -184,10 +180,11 @@ void vpRBSilhouetteMeTracker::computeVVSIter(const vpRBFeatureTrackerInput &fram
     }
   }
 #endif
-
 }
 
-void vpRBSilhouetteMeTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType type) const
+void vpRBSilhouetteMeTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &I,
+                                      const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
+                                      const vpRBFeatureDisplayType type) const
 {
 
   if (type == vpRBFeatureDisplayType::SIMPLE) {

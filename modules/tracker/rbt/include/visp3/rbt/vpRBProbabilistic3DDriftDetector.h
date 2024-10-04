@@ -87,7 +87,6 @@ template <typename T> class vpImage;
  */
 class VISP_EXPORT vpRBProbabilistic3DDriftDetector : public vpRBDriftDetector
 {
-
 private:
 
   struct vpStored3DSurfaceColorPoint
@@ -317,7 +316,6 @@ public:
   void loadJsonConfiguration(const nlohmann::json &) VP_OVERRIDE;
 #endif
 
-
 /**
  * @}
  * End settings
@@ -333,7 +331,8 @@ private:
   double m_score;
 
   std::vector<vpStored3DSurfaceColorPoint> m_points;
-
 };
+
 END_VISP_NAMESPACE
+
 #endif

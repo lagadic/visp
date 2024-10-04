@@ -91,7 +91,6 @@ public:
 
   double xs, ys, nxs, nys, Zs;
 
-
 public:
 
   void init();

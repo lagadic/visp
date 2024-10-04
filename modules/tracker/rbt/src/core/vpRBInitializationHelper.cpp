@@ -38,7 +38,6 @@ void vpRBInitializationHelper::savePose(const std::string &filename) const
   finitpos.close();
 }
 
-
 #ifdef VISP_HAVE_MODULE_GUI
 
 template <typename T>
@@ -100,8 +99,8 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     vpDisplay::flush(I);
 
     while (!vpDisplay::getClick(I, ip, button)) {
+      vpTime::sleepMs(10);
     }
-
   }
 
   if (!finitpos.fail() && button == vpMouseButton::button1) {

@@ -97,7 +97,6 @@ struct VISP_EXPORT vpRBRenderData
     boundingBox = std::move(o.boundingBox);
     return *this;
   }
-
 };
 
 /**
@@ -134,10 +133,12 @@ public:
     renders = o.renders;
     return *this;
   }
+
   vpRBFeatureTrackerInput(const vpRBFeatureTrackerInput &other)
   {
     *this = other;
   }
+
   vpRBFeatureTrackerInput &operator=(vpRBFeatureTrackerInput &&o)
   {
     I = std::move(o.I);
@@ -149,6 +150,7 @@ public:
     renders = std::move(o.renders);
     return *this;
   }
+
   vpRBFeatureTrackerInput(vpRBFeatureTrackerInput &&other)
   {
     *this = std::move(other);
@@ -156,4 +158,5 @@ public:
 };
 
 END_VISP_NAMESPACE
+
 #endif

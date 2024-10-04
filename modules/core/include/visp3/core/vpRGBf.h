@@ -154,9 +154,6 @@ static_assert(std::is_trivially_assignable_v<vpRGBf, vpRGBf>);
 static_assert(std::is_trivially_copyable_v<vpRGBf>);
 #endif
 
-
 END_VISP_NAMESPACE
-
-
 
 #endif

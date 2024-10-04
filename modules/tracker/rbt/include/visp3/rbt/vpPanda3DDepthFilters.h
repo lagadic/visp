@@ -65,8 +65,8 @@ private:
  *
  * The results of the canny are filtered based on a threshold value (defined between 0 and 255), checking whether there is enough gradient information.
  * The output of this image is a floating RGB image containing:
- * - In the red channel, the value of the convolution with the sobel horizontal kernel
- * - In the green channel, the value of the convolution with the sobel vertical kernel
+ * - In the red channel, the value of the convolution with the Sobel horizontal kernel
+ * - In the green channel, the value of the convolution with the Sobel vertical kernel
  * - In the blue channel, the angle (in radians) of the edge normal.
  */
 class VISP_EXPORT vpPanda3DDepthCannyFilter : public vpPanda3DPostProcessFilter
@@ -86,6 +86,7 @@ private:
   static const char *FRAGMENT_SHADER;
   float m_edgeThreshold;
 };
+
 END_VISP_NAMESPACE
 
 #endif

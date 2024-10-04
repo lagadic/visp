@@ -38,7 +38,8 @@
 
 BEGIN_VISP_NAMESPACE
 
-vpObjectCentricRenderer::vpObjectCentricRenderer(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DRendererSet(renderParameters), m_enableCrop(true), m_shouldComputeBBPoints(true)
+vpObjectCentricRenderer::vpObjectCentricRenderer(const vpPanda3DRenderParameters &renderParameters)
+  : vpPanda3DRendererSet(renderParameters), m_enableCrop(true), m_shouldComputeBBPoints(true)
 {
   m_renderParameters = renderParameters;
   load_prc_file_data("", "textures-power-2 none\n"
@@ -65,7 +66,6 @@ void vpObjectCentricRenderer::beforeFrameRendered()
   m_bb.setLeft(std::max(m_bb.getLeft() - delta, 0.0));
   m_bb.setBottom(std::min(m_bb.getBottom() + delta, (double)m_renderParameters.getImageHeight()));
   m_bb.setRight(std::min(m_bb.getRight() + delta, (double)m_renderParameters.getImageWidth()));
-
 
   if (m_enableCrop) {
     vpPanda3DRenderParameters subParams = m_renderParameters;

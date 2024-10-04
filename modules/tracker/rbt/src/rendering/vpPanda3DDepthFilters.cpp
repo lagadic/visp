@@ -34,7 +34,6 @@
 
 BEGIN_VISP_NAMESPACE
 
-
 const char *vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER = R"shader(
 #version 330
 

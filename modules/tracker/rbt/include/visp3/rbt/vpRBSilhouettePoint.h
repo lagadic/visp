@@ -56,6 +56,7 @@ public:
   { }
 
 };
+
 END_VISP_NAMESPACE
 
 #endif

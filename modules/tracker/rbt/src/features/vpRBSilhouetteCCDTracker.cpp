@@ -67,7 +67,6 @@ public:
     minv[6] = (data[3] * data[7] - data[6] * data[4]) * invdet;
     minv[7] = (data[6] * data[1] - data[0] * data[7]) * invdet;
     minv[8] = (data[0] * data[4] - data[3] * data[1]) * invdet;
-
   }
 
   static void multiply(const vpMatrix &A, const FastMat33<double> &B, vpMatrix &C)
@@ -107,8 +106,6 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
   }
 }
 
-
-
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)
 {
   // Reinit all variables
@@ -128,7 +125,6 @@ void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/,
   m_hessian = vpMatrix(m_ccdParameters.phi_dim, m_ccdParameters.phi_dim, 0.0);
   m_gradients.resize(m_controlPoints.size() * 2 * normal_points_number, vpColVector(m_gradient.getRows()));
   m_hessians.resize(m_controlPoints.size() * 2 * normal_points_number, vpMatrix(m_hessian.getRows(), m_hessian.getCols()));
-
 
   //m_weights.resize(nerror_ccd);
   m_weights.resize(m_numFeatures, false);
@@ -165,7 +161,9 @@ void vpRBSilhouetteCCDTracker::computeVVSIter(const vpRBFeatureTrackerInput &fra
   }
 }
 
-void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType type) const
+void vpRBSilhouetteCCDTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
+                                       const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &/*depth*/,
+                                       const vpRBFeatureDisplayType type) const
 {
   unsigned normal_points_number = floor(m_ccdParameters.h / m_ccdParameters.delta_h);
   unsigned nerror_per_point = 2 * normal_points_number * 3;
@@ -248,10 +246,6 @@ void vpRBSilhouetteCCDTracker::updateCCDPoints(const vpHomogeneousMatrix &cMo)
     p.updateSilhouettePoint(cMo);
   }
 }
-
-
-
-
 
 void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats)
 {
@@ -376,8 +370,8 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-
   }
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -439,7 +433,6 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       m2[1] += wp2 * pixel[1];
       m2[2] += wp2 * pixel[2];
 
-
       // compute second order local statistics
       // m_{k,s} = \sum_{l} w_{kls} I_{kl}*I_{kl}^T
       for (unsigned int m = 0; m < 3; ++m) {
@@ -491,7 +484,6 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[m * 3 + m] += m_ccdParameters.kappa;
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
-
   }
 }
 
@@ -507,7 +499,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 #pragma omp parallel
 #endif
   {
-
     // vpMatrix tmp_cov(3, 3);
     // vpMatrix tmp_cov_inv(3, 3);
     FastMat33<double> tmp_cov, tmp_cov_inv;
@@ -589,7 +580,6 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         //vpMatrix::mult2Matrices(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
         vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[i * 2 * normal_points_number + j]);
         vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian.t(), m_hessians[i * 2 * normal_points_number + j]);
-
       }
     }
   }

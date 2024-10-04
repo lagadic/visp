@@ -173,7 +173,6 @@ public:
    * @}
    *
    */
-
   struct vpTrackedKltPoint
   {
   public:
@@ -262,5 +261,6 @@ private:
 };
 
 END_VISP_NAMESPACE
+
 #endif
 #endif

@@ -77,9 +77,7 @@ inline void vpRBKltTracker::tryAddNewPoint(
 vpRBKltTracker::vpRBKltTracker() :
   vpRBFeatureTracker(), m_numPointsReinit(20), m_newPointsDistanceThreshold(5.0), m_border(5),
   m_maxErrorOutliersPixels(10.0), m_useMask(false), m_minMaskConfidence(0.0)
-{
-
-}
+{ }
 
 void vpRBKltTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
 {
@@ -311,8 +309,9 @@ void vpRBKltTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*frame*/, co
   computeJTR(m_L, m_weighted_error, m_LTR);
 }
 
-
-void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType /*type*/) const
+void vpRBKltTracker::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                             const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
+                             const vpRBFeatureDisplayType /*type*/) const
 {
   for (const std::pair<const long, vpTrackedKltPoint> &p : m_points) {
     double u = 0.0, v = 0.0;

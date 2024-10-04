@@ -43,10 +43,8 @@ void fastRotationMatmul(const vpRotationMatrix &cRo, const vpRGBf &v, vpColVecto
   res[2] = R[6] * r + R[7] * g + R[8] * b;
 }
 
-
 void fastProjection(const vpHomogeneousMatrix &oTc, double X, double Y, double Z, vpPoint &p)
 {
-
   const double *T = oTc.data;
   p.set_oX(T[0] * X + T[1] * Y + T[2] * Z + T[3]);
   p.set_oY(T[4] * X + T[5] * Y + T[6] * Z + T[7]);
@@ -151,7 +149,9 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
   m_vvsConverged = false;
 }
 
-void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/, const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/, const vpRBFeatureDisplayType /*type*/) const
+void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
+                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
+                                    const vpRBFeatureDisplayType /*type*/) const
 {
   // for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
   //   const vpDepthPoint &p = m_depthPoints[i];

@@ -69,7 +69,6 @@ private:
   bool m_thresholdIsRelative;
   bool m_preferPreviousPoints;
 
-
   void sampleWithoutReplacement(unsigned int count, unsigned int vectorSize, std::vector<size_t> &indices, vpUniRand &random) const
   {
     count = std::min(count, vectorSize);
@@ -117,7 +116,6 @@ public:
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cTcp,
     const std::vector<vpRBSilhouettePoint> &previousPoints, long randomSeed = 41) const;
 
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   inline friend void from_json(const nlohmann::json &j, vpSilhouettePointsExtractionSettings &settings);
 #endif
@@ -136,12 +134,10 @@ inline void from_json(const nlohmann::json &j, vpSilhouettePointsExtractionSetti
   settings.m_preferPreviousPoints = samplingSettings.at("reusePreviousPoints");
   settings.m_maxNumPoints = samplingSettings.at("numPoints");
   settings.setSampleStep(samplingSettings.at("samplingRate"));
-
 }
 #endif
 
 END_VISP_NAMESPACE
-
 
 #endif
 #endif

@@ -86,7 +86,7 @@ public:
   virtual double getScore() const = 0;
 
   /**
-   * \brief Returns whether the tracking has diverged and should be reinitialised.
+   * \brief Returns whether the tracking has diverged and should be reinitialized.
    * This function should be called after update.
    *
    */

@@ -407,7 +407,6 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
     else {
       m_renderer.getRenderer<vpPanda3DDepthCannyFilter>()->setEdgeThreshold(thresholdValue);
     }
-
   }
 
   // Call Panda renderer

@@ -49,7 +49,6 @@ void vpColorHistogram::Builder::build(vpColorHistogram &histogram)
     histogram.m_probas[i] = static_cast<float>(m_counts[i]) / countFloat;
   }
   histogram.m_numPixels = count;
-
 }
 
 vpColorHistogram::vpColorHistogram() : m_N(0), m_numPixels(0)
@@ -154,7 +153,6 @@ double vpColorHistogram::kl(const vpColorHistogram &other) const
 
 double vpColorHistogram::jsd(const vpColorHistogram &other) const
 {
-
   vpColorHistogram mixture(m_N);
 
   for (unsigned int i = 0; i < m_probas.size(); ++i) {
@@ -174,7 +172,6 @@ double vpColorHistogram::hellinger(const vpColorHistogram &other) const
 
   return sqrt(1.0 - bcoeff);
 }
-
 
 void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, const vpImage<bool> &mask, vpColorHistogram &insideMask, vpColorHistogram &outsideMask)
 {
@@ -206,7 +203,6 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   }
   insideMask.build(countsIn);
   outsideMask.build(countsOut);
-
 }
 
 void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, const vpImage<bool> &mask, const vpRect &bbInside, vpColorHistogram &insideMask, vpColorHistogram &outsideMask)
@@ -222,7 +218,6 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   const unsigned int beforeBBStart = static_cast<unsigned int>(bbInside.getTop()) * image.getWidth() + static_cast<unsigned int>(bbInside.getLeft());
   const unsigned int afterBBEnd = static_cast<unsigned int>(bbInside.getBottom()) * image.getWidth() + static_cast<unsigned int>(bbInside.getRight());
-
 
 //#pragma omp parallel
   {

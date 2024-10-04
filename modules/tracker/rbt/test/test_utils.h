@@ -14,7 +14,9 @@ struct TrajectoryData
   std::vector<vpHomogeneousMatrix> cTo;
 };
 
-TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingParams, const std::function<void(vpPanda3DRendererSet &)> &makeScene, std::vector<vpHomogeneousMatrix> &cTw, std::vector<vpHomogeneousMatrix> &oTw)
+TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingParams,
+                                  const std::function<void(vpPanda3DRendererSet &)> &makeScene,
+                                  std::vector<vpHomogeneousMatrix> &cTw, std::vector<vpHomogeneousMatrix> &oTw)
 {
   vpPanda3DRendererSet renderer(renderingParams);
   auto rgbRenderer = std::make_shared<vpPanda3DRGBRenderer>(true);
@@ -50,8 +52,5 @@ TrajectoryData generateTrajectory(const vpPanda3DRenderParameters &renderingPara
   }
   return res;
 }
-
-
-
 
 #endif

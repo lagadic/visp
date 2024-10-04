@@ -63,7 +63,6 @@ public:
                   const vpRBFeatureTrackerInput &previousFrame,
                   vpImage<float> &mask) VP_OVERRIDE;
 
-
   /**
    * \name Histogram settings
    * @{

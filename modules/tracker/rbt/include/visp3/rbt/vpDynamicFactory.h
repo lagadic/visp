@@ -75,19 +75,17 @@ public:
   {
     m_keyFinder = finderFn;
   }
-
 #endif
 
 protected:
   vpDynamicFactory() = default;
 
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   std::map<std::string, std::function<std::shared_ptr<T>(const nlohmann::json &)>> m_jsonBuilders;
   std::function<std::string(const nlohmann::json &)> m_keyFinder; //! Function to retrieve the key from a json object
 #endif
-
 };
+
 END_VISP_NAMESPACE
 
 #endif

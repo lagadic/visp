@@ -57,6 +57,7 @@ public:
     return factory;
   }
 };
+
 END_VISP_NAMESPACE
 
 #endif

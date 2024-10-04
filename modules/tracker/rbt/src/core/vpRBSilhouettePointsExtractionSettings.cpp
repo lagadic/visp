@@ -96,7 +96,6 @@ std::vector<std::pair<unsigned int, unsigned int>> vpSilhouettePointsExtractionS
         if (validSilhouette[nv][nu] > 0 && fabs((renderDepth[nv][nu] / p.Z) - 1.0) < 0.01) {
           finalCandidates.push_back(std::make_pair(nv, nu));
         }
-
       }
     }
   }

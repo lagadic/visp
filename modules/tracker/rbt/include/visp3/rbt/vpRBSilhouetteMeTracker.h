@@ -179,8 +179,8 @@ private:
   double m_singlePointConvergedThresholdPixels; //! Whether a single Control point is considered as converged
   bool m_useMask;
   float m_minMaskConfidence;
-
 };
+
 END_VISP_NAMESPACE
 
 #endif

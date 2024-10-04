@@ -367,7 +367,6 @@ void vpRBSilhouetteControlPoint::initControlPoint(const vpImage<unsigned char> &
 
 void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
 {
-
   unsigned int k = 0;
   int range = 4;
   double c = cos(theta);
@@ -380,7 +379,6 @@ void vpRBSilhouetteControlPoint::detectSilhouette(const vpImage<float> &I)
   }
   m_isSilhouette = k > 2;
 }
-
 
 /*!
   Compute the interaction matrix and the error vector corresponding to the line.

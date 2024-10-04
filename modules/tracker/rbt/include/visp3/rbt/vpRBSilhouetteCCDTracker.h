@@ -275,5 +275,7 @@ protected:
   vpMatrix m_hessian; //! Sum of local hessians
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.
 };
+
 END_VISP_NAMESPACE
+
 #endif

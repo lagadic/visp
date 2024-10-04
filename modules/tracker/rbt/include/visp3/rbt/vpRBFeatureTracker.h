@@ -227,8 +227,8 @@ protected:
   double m_userVvsWeight; //! User-defined weight for this specific type of feature
 
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
-
 };
+
 END_VISP_NAMESPACE
 
 #endif

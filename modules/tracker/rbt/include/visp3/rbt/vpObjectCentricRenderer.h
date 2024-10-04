@@ -83,7 +83,6 @@ public:
 
   vpRect computeBoundingBox();
 
-
   template <typename T>
   void placeRenderInto(const vpImage<T> &render, vpImage<T> &target, const T &clearValue)
   {
@@ -116,8 +115,9 @@ private:
   std::vector<vpColVector> m_bb3DPoints;
   bool m_shouldComputeBBPoints;
   vpPanda3DRenderParameters m_subRenderParams;
-
 };
+
 END_VISP_NAMESPACE
+
 #endif
 #endif

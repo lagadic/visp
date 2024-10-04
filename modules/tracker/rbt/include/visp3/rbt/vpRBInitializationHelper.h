@@ -40,5 +40,7 @@ private:
   vpHomogeneousMatrix m_cMo;
   vpCameraParameters m_cam;
 };
+
 END_VISP_NAMESPACE
+
 #endif

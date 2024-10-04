@@ -40,17 +40,12 @@
 
 #include <vector>
 
-
-
 BEGIN_VISP_NAMESPACE
 
 template<typename T>
 class vpImage;
-
 class vpRGBa;
-
 class vpRect;
-
 
 class VISP_EXPORT vpColorHistogram
 {
@@ -109,8 +104,7 @@ private:
   std::vector<float> m_probas;
   unsigned int m_numPixels;
 };
+
 END_VISP_NAMESPACE
-
-
 
 #endif

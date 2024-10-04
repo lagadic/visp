@@ -47,7 +47,6 @@
 
 #include <visp3/core/vpDisplay.h>
 
-
 #include <ostream>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -167,7 +166,6 @@ public:
    */
 
   void reset();
-
 
   /**
    * \name Tracking

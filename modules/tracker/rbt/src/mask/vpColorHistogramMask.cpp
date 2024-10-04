@@ -40,10 +40,9 @@ BEGIN_VISP_NAMESPACE
 
 vpColorHistogramMask::vpColorHistogramMask() { }
 
-void vpColorHistogramMask::updateMask(
-  const vpRBFeatureTrackerInput &frame,
-  const vpRBFeatureTrackerInput &previousFrame,
-  vpImage<float> &mask)
+void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
+                                      const vpRBFeatureTrackerInput &previousFrame,
+                                      vpImage<float> &mask)
 {
   // Prefer the last frame:
   // we have updated the render to match the pose so we should get better object and background histogram separation.
@@ -111,12 +110,8 @@ void vpColorHistogramMask::updateMask(
     else {
       mask.bitmap[i] = 0.f;
     }
-
-
   }
-
 }
-
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 void vpColorHistogramMask::loadJsonConfiguration(const nlohmann::json &json)

@@ -37,7 +37,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include <nlohmann/json_fwd.hpp>
 #endif
@@ -46,7 +45,6 @@ BEGIN_VISP_NAMESPACE
 
 template <typename T>
 class vpImage;
-
 class vpRBFeatureTrackerInput;
 
 /**
@@ -66,10 +64,8 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   virtual void loadJsonConfiguration(const nlohmann::json &j) = 0;
 #endif
-
-
 };
-END_VISP_NAMESPACE
 
+END_VISP_NAMESPACE
 
 #endif

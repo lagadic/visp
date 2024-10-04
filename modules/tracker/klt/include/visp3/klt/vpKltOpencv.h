@@ -56,7 +56,6 @@
 #include <nlohmann/json.hpp>
 #endif
 
-
 BEGIN_VISP_NAMESPACE
 /*!
  * \class vpKltOpencv
@@ -389,7 +388,6 @@ public:
   void suppressFeature(const int &index);
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-
   friend void to_json(nlohmann::json &j, const vpKltOpencv &array);
   friend void from_json(const nlohmann::json &j, vpKltOpencv &array);
 #endif

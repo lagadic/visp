@@ -42,7 +42,9 @@
 
 BEGIN_VISP_NAMESPACE
 
-void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame, const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
+void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &previousFrame,
+                                              const vpRBFeatureTrackerInput &frame,
+                                              const vpHomogeneousMatrix &cTo, const vpHomogeneousMatrix &cprevTo)
 {
   const vpTranslationVector t = cprevTo.inverse().getTranslationVector();
 
@@ -108,16 +110,16 @@ void vpRBProbabilistic3DDriftDetector::update(const vpRBFeatureTrackerInput &pre
     }
 
     if (visiblePoints.size() > 0) {
-    //   // Compute sample weight
-    //   double maxTrace = 0.0;
+      //   // Compute sample weight
+      //   double maxTrace = 0.0;
 
-    //   for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
-    //     double trace = p->stats.trace();
-    //     if (trace > maxTrace) {
-    //       maxTrace = trace;
-    //     }
-    //   }
-    //   maxTrace = std::max(maxTrace, 80.0);
+      //   for (vpStored3DSurfaceColorPoint *p : visiblePoints) {
+      //     double trace = p->stats.trace();
+      //     if (trace > maxTrace) {
+      //       maxTrace = trace;
+      //     }
+      //   }
+      //   maxTrace = std::max(maxTrace, 80.0);
       double weightSum = 0.0;
       m_score = 0.0;
       for (vpStored3DSurfaceColorPoint *p : visiblePoints) {

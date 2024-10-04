@@ -59,7 +59,7 @@
 
 BEGIN_VISP_NAMESPACE
 /**
- * @brief A tracker based on dense depth point-plane alignement
+ * @brief A tracker based on dense depth point-plane alignment.
  *
  * \ingroup group_rbt_trackers
  *
@@ -132,11 +132,8 @@ public:
 
   struct vpDepthPoint
   {
-
     vpDepthPoint() : currentPoint(3), cameraNormal(3), objectNormal(3)
-    {
-
-    }
+    { }
 
     inline void update(const vpHomogeneousMatrix &cMo, const vpRotationMatrix &cRo)
     {
