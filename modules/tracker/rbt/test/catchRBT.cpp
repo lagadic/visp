@@ -57,7 +57,7 @@
 #endif
 
 #define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#include <catch_amalgamated.hpp>
 
 const char *objCube = R"obj(
 o Cube
