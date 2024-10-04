@@ -158,7 +158,7 @@ std::tuple<int, int, int, int> solveSliceIndices(py::slice slice, unsigned int s
       endI = size + endI;
     }
 
-    if (endI >= static_cast<int>(size)) {
+    if (endI > static_cast<int>(size)) {
       throw std::runtime_error("Invalid slice indexing out of array");
     }
   }
