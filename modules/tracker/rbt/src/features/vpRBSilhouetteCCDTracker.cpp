@@ -93,7 +93,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     // std::cout << sp.j << ", " << sp.i << std::endl;
     int ii = sp.i, jj = sp.j;
 
-    if (ii < 4 || jj < 4 || static_cast<unsigned int>(ii) > frame.I.getHeight() - 4 || static_cast<unsigned int>(jj) > frame.I.getWidth() - 4) {
+    if (ii <= 4 || jj <= 4 || static_cast<unsigned int>(ii) >= frame.I.getHeight() - 4 || static_cast<unsigned int>(jj) >= frame.I.getWidth() - 4) {
       continue;
     }
     vpRBSilhouetteControlPoint pccd;
