@@ -207,14 +207,14 @@ int main()
     // The second feature is the depth of the current square center relative
     // to the depth of the desired square center.
     vpFeatureDepth s_logZ;
-    s_logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+    s_logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
     // The last three features are the rotations thetau between the current
     // pose and the desired pose.
     vpHomogeneousMatrix cd_M_c;
     cd_M_c = cd_M_o * c_M_o.inverse();
     vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
-    s_tu.build(cd_M_c);
+    s_tu.buildFrom(cd_M_c);
 
     // Define the task
     // - we want an eye-in-hand control law
@@ -284,11 +284,11 @@ int main()
       }
 
       // Update the second feature
-      s_logZ.build(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
+      s_logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
       // Update the last three features
       cd_M_c = cd_M_o * c_M_o.inverse();
-      s_tu.build(cd_M_c);
+      s_tu.buildFrom(cd_M_c);
 
       vpColVector v_c = task.computeControlLaw();
 

@@ -207,7 +207,7 @@ void vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpPtu46::get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 }
 
 /*!

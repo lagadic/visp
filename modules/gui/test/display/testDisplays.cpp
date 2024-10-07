@@ -273,7 +273,7 @@ template <typename Type> static void draw(vpImage<Type> &I)
   vip.push_back(vpImagePoint(350, 350));
   vip.push_back(vpImagePoint(400, 300));
   vip.push_back(vpImagePoint(350, 250));
-  polygon.build(vip);
+  polygon.buildFrom(vip);
   vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
 }
 

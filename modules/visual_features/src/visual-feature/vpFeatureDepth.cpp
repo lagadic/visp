@@ -201,7 +201,7 @@ void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, double Z_, doubl
   \code
   // Creation of the current feature s
   vpFeatureDepth s;
-  s.build(0, 0, 5, log(5/1)); // The current depth is 5 meters and the desired is 1 meter.
+  s.buildFrom(0, 0, 5, log(5/1)); // The current depth is 5 meters and the desired is 1 meter.
 
   vpMatrix L_x = s.interaction();
   \endcode
@@ -329,7 +329,7 @@ vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, unsigned int sel
   vpFeatureDepth s; // Current visual feature s
 
   // Creation of the current feature s
-  s.build(0, 0, 5, log(5/1));
+  s.buildFrom(0, 0, 5, log(5/1));
 
   s.print(); // print all the 2 components of the feature
   \endcode
@@ -347,25 +347,6 @@ void vpFeatureDepth::print(unsigned int select) const
   }
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const double &, const double &, const double &, const double &) instead.
-  Build a 3D depth visual feature from the point coordinates \f$ x \f$ and \f$
-  y \f$ given in the camera frame, \f$ Z \f$ which describes the depth and \f$
-  log(\frac{Z}{Z^*}) \f$ which represents the logarithm of the current depth
-  relative to the desired depth.
-
-  \param x_ : The \f$ x \f$ parameter.
-  \param y_ : The \f$ y \f$ parameter.
-  \param Z_ : The \f$ Z \f$ parameter.
-  \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
-*/
-void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZstar)
-{
-  build(x_, y_, Z_, LogZoverZstar);
-}
-#endif
-
 /*!
   Build a 3D depth visual feature from the point coordinates \f$ x \f$ and \f$
   y \f$ given in the camera frame, \f$ Z \f$ which describes the depth and \f$
@@ -377,7 +358,7 @@ void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZ
   \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
-vpFeatureDepth &vpFeatureDepth::build(const double &x_, const double &y_, const double &Z_, const double &LogZoverZstar)
+vpFeatureDepth &vpFeatureDepth::buildFrom(const double &x_, const double &y_, const double &Z_, const double &LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;

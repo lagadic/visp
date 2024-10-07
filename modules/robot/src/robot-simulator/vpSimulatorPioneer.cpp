@@ -130,7 +130,7 @@ void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame, co
 
     vpRotationMatrix wRe(0, 0, theta_);
     vpTranslationVector wte(xm_, ym_, 0);
-    wMe_.build(wte, wRe);
+    wMe_.buildFrom(wte, wRe);
     wMc_ = wMe_ * cMe_.inverse();
 
     break;
@@ -200,7 +200,7 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vp
     vpRotationMatrix wRc;
     this->wMc_.extract(wRc);
     vpRxyzVector rxyz;
-    rxyz.build(wRc);
+    rxyz.buildFrom(wRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->wMc_[i][3]; // translation x,y,z

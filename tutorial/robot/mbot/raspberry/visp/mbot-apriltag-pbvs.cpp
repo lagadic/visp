@@ -171,12 +171,12 @@ int main(int argc, const char **argv)
 
     // Create X_3D visual features
     vpFeaturePoint3D s_XZ, s_XZ_d;
-    s_XZ.build(0, 0, Z_d);
-    s_XZ_d.build(0, 0, Z_d);
+    s_XZ.buildFrom(0, 0, Z_d);
+    s_XZ_d.buildFrom(0, 0, Z_d);
 
     // Create Point 3D X, Z coordinates visual features
-    s_XZ.build(X, Y, Z);
-    s_XZ_d.build(0, 0, Z_d); // The value of s* is X=Y=0 and Z=Z_d meter
+    s_XZ.buildFrom(X, Y, Z);
+    s_XZ_d.buildFrom(0, 0, Z_d); // The value of s* is X=Y=0 and Z=Z_d meter
 
     // Add the features
     task.addFeature(s_XZ, s_XZ_d, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectZ());
@@ -287,7 +287,7 @@ int main(int argc, const char **argv)
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
     if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
-}
+    }
   }
 
   return EXIT_SUCCESS;

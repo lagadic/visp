@@ -455,11 +455,11 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 
   switch (frame) {
   case END_EFFECTOR_FRAME: {
-    pose.build(fMe);
+    pose.buildFrom(fMe);
     break;
   }
   case TOOL_FRAME: {
-    pose.build(fMe * m_eMc);
+    pose.buildFrom(fMe * m_eMc);
     break;
   }
   default: {

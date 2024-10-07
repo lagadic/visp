@@ -44,7 +44,7 @@ int main()
         tOffset++;
         r[idAxis] = vpMath::rad(theta);
         vpHomogeneousMatrix cMo;
-        cMo.build(t, vpRotationMatrix(r));
+        cMo.buildFrom(t, vpRotationMatrix(r));
         std::stringstream ss_name;
         ss_name << "cMo_";
         ss_name << static_cast<int>(theta);

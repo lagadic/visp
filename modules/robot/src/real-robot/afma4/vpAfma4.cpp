@@ -92,7 +92,7 @@ vpAfma4::vpAfma4() : _a1(0), _d3(0), _d4(0), _etc(), _erc(), _eMc()
   this->_erc[2] = 0;
 
   vpRotationMatrix eRc(_erc);
-  this->_eMc.build(_etc, eRc);
+  this->_eMc.buildFrom(_etc, eRc);
 
   init();
 }
@@ -320,7 +320,7 @@ void vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 
   return;
 }
@@ -349,7 +349,7 @@ void vpAfma4::get_cVf(const vpColVector &q, vpVelocityTwistMatrix &cVf) const
   get_fMc(q, fMc);
   cMf = fMc.inverse();
 
-  cVf.build(cMf);
+  cVf.buildFrom(cMf);
 
   return;
 }

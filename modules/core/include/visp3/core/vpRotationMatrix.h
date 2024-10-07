@@ -145,24 +145,14 @@ public:
   VP_EXPLICIT vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpThetaUVector &v);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpPoseVector &p);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRzyzVector &v);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRxyzVector &v);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpRzyxVector &v);
-  VP_DEPRECATED vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  VP_DEPRECATED vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
-#endif
-  vpRotationMatrix &build(const vpHomogeneousMatrix &M);
-  vpRotationMatrix &build(const vpThetaUVector &v);
-  vpRotationMatrix &build(const vpPoseVector &p);
-  vpRotationMatrix &build(const vpRzyzVector &v);
-  vpRotationMatrix &build(const vpRxyzVector &v);
-  vpRotationMatrix &build(const vpRzyxVector &v);
-  vpRotationMatrix &build(const vpQuaternionVector &q);
-  vpRotationMatrix &build(const double &tux, const double &tuy, const double &tuz);
+  vpRotationMatrix &buildFrom(const vpHomogeneousMatrix &M);
+  vpRotationMatrix &buildFrom(const vpThetaUVector &v);
+  vpRotationMatrix &buildFrom(const vpPoseVector &p);
+  vpRotationMatrix &buildFrom(const vpRzyzVector &v);
+  vpRotationMatrix &buildFrom(const vpRxyzVector &v);
+  vpRotationMatrix &buildFrom(const vpRzyxVector &v);
+  vpRotationMatrix &buildFrom(const vpQuaternionVector &q);
+  vpRotationMatrix &buildFrom(const double &tux, const double &tuy, const double &tuz);
 
   void eye();
 

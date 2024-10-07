@@ -100,7 +100,7 @@ int main()
     for (size_t device = 0; device < virtuose.size(); device++) {
       vpPoseVector wpd = virtuose[device].getAvatarPosition();
       std::cout << "Device #" << device << " has position: " << wpd.t() << std::endl;
-      wMd[device].build(wpd);
+      wMd[device].buildFrom(wpd);
 
       vpHomogeneousMatrix cMd = wMc.inverse() * wMd[device];
       vpDisplay::displayFrame(I, cMd, cam, 0.1);

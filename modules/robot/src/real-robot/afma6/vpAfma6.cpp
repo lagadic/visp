@@ -485,7 +485,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
   }
   }
   vpRotationMatrix eRc(_erc);
-  this->_eMc.build(_etc, eRc);
+  this->_eMc.buildFrom(_etc, eRc);
 #endif // VISP_HAVE_AFMA6_DATA
 
   setToolType(tool);
@@ -921,7 +921,7 @@ void vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 
   return;
 }
@@ -1181,7 +1181,7 @@ void vpAfma6::parseConfigFile(const std::string &filename)
     _etc = etc;
 
     vpRotationMatrix eRc(_erc);
-    this->_eMc.build(_etc, eRc);
+    this->_eMc.buildFrom(_etc, eRc);
   }
 }
 
@@ -1199,7 +1199,7 @@ void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
   this->_etc = eMc.getTranslationVector();
 
   vpRotationMatrix R(eMc);
-  this->_erc.build(R);
+  this->_erc.buildFrom(R);
 }
 
 /*!

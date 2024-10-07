@@ -553,7 +553,7 @@ public:
     this->camMf = rotz * cam_Mf;
     vpTranslationVector T;
     this->camMf.extract(T);
-    this->camMf2.build(0, 0, T[2], 0, 0, 0);
+    this->camMf2.buildFrom(0, 0, T[2], 0, 0, 0);
     f2Mf = camMf2.inverse() * this->camMf;
     extCamChanged = true;
   }

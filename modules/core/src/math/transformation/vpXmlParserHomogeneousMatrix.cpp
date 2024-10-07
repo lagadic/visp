@@ -294,7 +294,7 @@ public:
     }
 
     // Create the Homogeneous matrix
-    M.build(tx_, ty_, tz_, tux_, tuy_, tuz_);
+    M.buildFrom(tx_, ty_, tz_, tux_, tuy_, tuz_);
 
     //  --comment: std::cout << "Read values from file:" << std::endl;
     //  --comment: std::cout << "tx:" << tx_<< std::endl;

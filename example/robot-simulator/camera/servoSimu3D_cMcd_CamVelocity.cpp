@@ -225,11 +225,11 @@ int main(int argc, const char **argv)
 
     // Build the 3D translation feature: ctc*
     vpFeatureTranslation t(vpFeatureTranslation::cMcd);
-    t.build(cMcd);
+    t.buildFrom(cMcd);
 
     // Build the 3D rotation feature: thetaU_cRc*
     vpFeatureThetaU tu(vpFeatureThetaU::cRcd); // current feature
-    tu.build(cMcd);
+    tu.buildFrom(cMcd);
 
     // Sets the desired rotation (always zero !)  since s is the
     // rotation that the camera has to achieve. Here s* = (0, 0)^T
@@ -269,8 +269,8 @@ int main(int argc, const char **argv)
       cMcd = cMo * cdMo.inverse();
 
       // Update the current visual features
-      t.build(cMcd);
-      tu.build(cMcd);
+      t.buildFrom(cMcd);
+      tu.buildFrom(cMcd);
 
       // Compute the control law
       v = task.computeControlLaw();
@@ -307,4 +307,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

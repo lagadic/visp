@@ -255,10 +255,10 @@ int main(int argc, const char **argv)
     // sets the desired position of the feature point s*
     vpFeaturePoint pd[4];
 
-    pd[0].build(-0.1, -0.1, 1);
-    pd[1].build(0.1, -0.1, 1);
-    pd[2].build(0.1, 0.1, 1);
-    pd[3].build(-0.1, 0.1, 1);
+    pd[0].buildFrom(-0.1, -0.1, 1);
+    pd[1].buildFrom(0.1, -0.1, 1);
+    pd[2].buildFrom(0.1, 0.1, 1);
+    pd[3].buildFrom(-0.1, 0.1, 1);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -310,10 +310,10 @@ int main(int argc, const char **argv)
       }
       // since vpServo::MEAN interaction matrix is used, we need also to
       // update the desired features at each iteration
-      pd[0].build(-0.1, -0.1, 1);
-      pd[1].build(0.1, -0.1, 1);
-      pd[2].build(0.1, 0.1, 1);
-      pd[3].build(-0.1, 0.1, 1);
+      pd[0].buildFrom(-0.1, -0.1, 1);
+      pd[1].buildFrom(0.1, -0.1, 1);
+      pd[2].buildFrom(0.1, 0.1, 1);
+      pd[3].buildFrom(-0.1, 0.1, 1);
 
       if (opt_display) {
         vpDisplay::display(Iint);

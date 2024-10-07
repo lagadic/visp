@@ -250,7 +250,7 @@ int main(int argc, const char **argv)
     vpFeaturePoint p, pd;
     // Sets the desired position of the visual feature
     // Here we set Z desired to 1 meter, and (x,y)=(0,0) to center the tag in the image
-    pd.build(0, 0, 1);
+    pd.buildFrom(0, 0, 1);
 
     // Define the task
     // - we want an eye-in-hand control law

@@ -63,7 +63,7 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
                  -0.0076519); //! Those are the parameters found for our
                               //! Kinect device. Note that they can differ from
                               //! one device to another.
-  rgbMir.build(r);
+  rgbMir.buildFrom(r);
   irMrgb = rgbMir.inverse();
 }
 

@@ -263,7 +263,7 @@ void vpSimulatorViper850::init(vpViper850::vpToolType tool, vpCameraParameters::
   vpRotationMatrix eRc(erc);
 
   m_mutex_eMc.lock();
-  this->eMc.build(etc, eRc);
+  this->eMc.buildFrom(etc, eRc);
   m_mutex_eMc.unlock();
 
   setToolType(tool);
@@ -2087,7 +2087,7 @@ void vpSimulatorViper850::get_cVe(vpVelocityTwistMatrix &cVe)
   vpHomogeneousMatrix cMe;
   vpViper850::get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 }
 
 /*!

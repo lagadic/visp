@@ -182,7 +182,7 @@ void vpMbDepthDenseTracker::computeVVS()
       if (computeCovariance) {
         L_true = m_L_depthDense;
         if (!isoJoIdentity) {
-          cVo.build(m_cMo);
+          cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_depthDense * cVo * oJo);
         }
       }
@@ -194,7 +194,7 @@ void vpMbDepthDenseTracker::computeVVS()
         // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity) {
-          cVo.build(m_cMo);
+          cVo.buildFrom(m_cMo);
 
           vpMatrix K; // kernel
           unsigned int rank = (m_L_depthDense * cVo).kernel(K);

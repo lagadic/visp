@@ -153,7 +153,7 @@ class vpQuaternionVector;
     vpRotationMatrix R(tu);
 
     // Extract the theta U angles from a rotation matrix
-    tu.build(R);
+    tu.buildFrom(R);
 
     // Print the extracted theta U angles. Values are the same than the
     // one used for initialization
@@ -192,42 +192,23 @@ public:
 
   vpThetaUVector(double tux, double tuy, double tuz);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert an homogeneous matrix into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
+  vpThetaUVector &buildFrom(const vpHomogeneousMatrix &M);
   // convert a pose vector into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpPoseVector &p);
+  vpThetaUVector &buildFrom(const vpPoseVector &p);
   // convert a rotation matrix into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpRotationMatrix &R);
+  vpThetaUVector &buildFrom(const vpRotationMatrix &R);
   // convert an Rzyx vector into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
+  vpThetaUVector &buildFrom(const vpRzyxVector &rzyx);
   // convert an Rzyz vector into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpRzyzVector &zyz);
+  vpThetaUVector &buildFrom(const vpRzyzVector &zyz);
   // convert an Rxyz vector into Theta U vector
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpRxyzVector &xyz);
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpQuaternionVector &q);
-  VP_DEPRECATED vpThetaUVector buildFrom(const vpColVector &tu);
-  VP_DEPRECATED vpThetaUVector buildFrom(const std::vector<double> &tu);
+  vpThetaUVector &buildFrom(const vpRxyzVector &xyz);
+  vpThetaUVector &buildFrom(const vpQuaternionVector &q);
+  vpThetaUVector &buildFrom(const vpColVector &tu);
+  vpThetaUVector &buildFrom(const std::vector<double> &tu);
 
-  VP_DEPRECATED void buildFrom(double tux, double tuy, double tuz);
-#endif
-  // convert an homogeneous matrix into Theta U vector
-  vpThetaUVector &build(const vpHomogeneousMatrix &M);
-  // convert a pose vector into Theta U vector
-  vpThetaUVector &build(const vpPoseVector &p);
-  // convert a rotation matrix into Theta U vector
-  vpThetaUVector &build(const vpRotationMatrix &R);
-  // convert an Rzyx vector into Theta U vector
-  vpThetaUVector &build(const vpRzyxVector &rzyx);
-  // convert an Rzyz vector into Theta U vector
-  vpThetaUVector &build(const vpRzyzVector &zyz);
-  // convert an Rxyz vector into Theta U vector
-  vpThetaUVector &build(const vpRxyzVector &xyz);
-  vpThetaUVector &build(const vpQuaternionVector &q);
-  vpThetaUVector &build(const vpColVector &tu);
-  vpThetaUVector &build(const std::vector<double> &tu);
-
-  vpThetaUVector &build(const double &tux, const double &tuy, const double &tuz);
+  vpThetaUVector &buildFrom(const double &tux, const double &tuy, const double &tuz);
 
   // extract the angle and the axis from the ThetaU representation
   void extract(double &theta, vpColVector &u) const;

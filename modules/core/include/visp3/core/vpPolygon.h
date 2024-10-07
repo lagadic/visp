@@ -117,16 +117,10 @@ public:
 
   vpPolygon &operator=(const vpPolygon &poly);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  VP_DEPRECATED void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
-  VP_DEPRECATED void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
-  VP_DEPRECATED void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
-                 const bool create_convex_hull = false);
-#endif
-  vpPolygon &build(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull = false);
-  vpPolygon &build(const std::list<vpImagePoint> &corners, const bool &create_convex_hull = false);
-  vpPolygon &build(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
-                 const bool &create_convex_hull = false);
+  vpPolygon &buildFrom(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &buildFrom(const std::list<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                       const bool &create_convex_hull = false);
 
   unsigned int getSize() const;
   void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,

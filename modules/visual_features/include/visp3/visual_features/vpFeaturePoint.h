@@ -102,7 +102,7 @@ BEGIN_VISP_NAMESPACE
  *   // Set the depth of the point in the camera frame.
  *   double Zd = 1;
  *   // Set the point feature thanks to the desired parameters.
- *   sd.build(xd, yd, Zd);
+ *   sd.buildFrom(xd, yd, Zd);
  *
  *   vpFeaturePoint s; //The current point feature.
  *   // Set the current features x and y
@@ -110,7 +110,7 @@ BEGIN_VISP_NAMESPACE
  *   double y;  // You have to compute the value of y.
  *   double Z;  // You have to compute the value of Z.
  *   // Set the point feature thanks to the current parameters.
- *   s.build(x, y, Z);
+ *   s.buildFrom(x, y, Z);
  *   // In this case the parameter Z is not necessary because the interaction matrix is computed
  *   // with the desired visual feature.
  *
@@ -128,7 +128,7 @@ BEGIN_VISP_NAMESPACE
  *     // The new parameters x and y must be computed here.
  *
  *     // Update the current point visual feature
- *     s.build(x, y, Z);
+ *     s.buildFrom(x, y, Z);
  *
  *     // Compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -159,7 +159,7 @@ BEGIN_VISP_NAMESPACE
  *   // Set the depth of the point in the camera frame.
  *   double Zd = 1;
  *   // Set the point feature thanks to the desired parameters.
- *   sd.build(xd, yd, Zd);
+ *   sd.buildFrom(xd, yd, Zd);
  *
  *   vpFeaturePoint s; //The current point feature.
  *   // Set the current features x and y
@@ -167,7 +167,7 @@ BEGIN_VISP_NAMESPACE
  *   double y;  // You have to compute the value of y.
  *   double Z;  // You have to compute the value of Z.
  *   // Set the point feature thanks to the current parameters.
- *   s.build(x, y, Z);
+ *   s.buildFrom(x, y, Z);
  *
  *   // Compute the interaction matrix L_s for the current point feature
  *   vpMatrix L = s.interaction();
@@ -191,10 +191,7 @@ private:
 public:
   vpFeaturePoint();
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double x, double y, double Z);
-#endif
-  vpFeaturePoint &build(const double &x, const double &y, const double &Z);
+  vpFeaturePoint &buildFrom(const double &x, const double &y, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;

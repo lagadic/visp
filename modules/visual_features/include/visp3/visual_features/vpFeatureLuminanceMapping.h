@@ -399,7 +399,7 @@ public:
 
   virtual ~vpFeatureLuminanceMapping() = default;
 
-  void build(vpImage<unsigned char> &I);
+  void buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE

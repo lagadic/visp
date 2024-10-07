@@ -96,10 +96,7 @@ public:
   //! Destructor.
   virtual ~vpFeatureLuminance() VP_OVERRIDE;
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(vpImage<unsigned char> &I);
-#endif
-  vpFeatureLuminance &build(vpImage<unsigned char> &I);
+  vpFeatureLuminance &buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;

@@ -50,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * \param d1 : The dot corresponding to the first point of the segment.
  * \param d2 : The dot corresponding to the second point of the segment.
  */
-void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
+  void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
@@ -161,6 +161,6 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2)
   double Z1 = P1.cP[2] / P1.cP[3];
   double Z2 = P2.cP[2] / P2.cP[3];
 
-  s.build(x1, y1, Z1, x2, y2, Z2);
+  s.buildFrom(x1, y1, Z1, x2, y2, Z2);
 }
 END_VISP_NAMESPACE

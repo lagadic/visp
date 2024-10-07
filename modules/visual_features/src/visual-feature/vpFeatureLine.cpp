@@ -169,7 +169,7 @@ void vpFeatureLine::setABCD(double A_, double B_, double C_, double D_)
   \code
   // Creation of the current feature s
   vpFeatureLine s;
-  s.build(0, 0, 0, 0, 1, -1);
+  s.buildFrom(0, 0, 0, 0, 1, -1);
 
   vpMatrix L_theta = s.interaction( vpFeatureLine::selectTheta() );
   \endcode
@@ -180,7 +180,7 @@ void vpFeatureLine::setABCD(double A_, double B_, double C_, double D_)
   \code
   // Creation of the current feature s
   vpFeatureLine s;
-  s.build(0, 0, 0, 0, 1, -1);
+  s.buildFrom(0, 0, 0, 0, 1, -1);
 
   vpMatrix L_theta = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
@@ -292,11 +292,11 @@ vpMatrix vpFeatureLine::interaction(unsigned int select)
   \code
   // Creation of the current feature s
   vpFeatureLine s;
-  s.build(0, 0, 0, 0, 1, -1);
+  s.buildFrom(0, 0, 0, 0, 1, -1);
 
   // Creation of the desired feature s*
   vpFeatureLine s_star;
-  s_star.build(0, 0, 0, 0, 1, -5);
+  s_star.buildFrom(0, 0, 0, 0, 1, -5);
 
   // Compute the interaction matrix for the theta feature
   vpMatrix L_theta = s.interaction( vpFeatureLine::selectTheta() );
@@ -349,7 +349,7 @@ vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, unsigned int sele
   vpFeatureLine s; // Current visual feature s
 
   // Creation of the current feature s
-  s.build(0, 0);
+  s.buildFrom(0, 0);
 
   s.print(); // print all the 2 components of the feature
   s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
@@ -369,62 +369,6 @@ void vpFeatureLine::print(unsigned int select) const
   std::cout << std::endl;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const double &, const double &) instead.
-  Build a 2D line visual feature from the line equation parameters \f$
-  \rho \f$ and \f$ \theta \f$ given in the image plan.
-
-  \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f]
-
-  See the vpFeatureLine class description for more details about \f$
-  \rho \f$ and \f$ \theta \f$.
-
-  \param rho : The \f$ \rho \f$ parameter.
-  \param theta : The \f$ \theta \f$ parameter.
-
-*/
-void vpFeatureLine::buildFrom(double rho, double theta)
-{
-  s[0] = rho;
-  s[1] = theta;
-  for (int i = 0; i < 2; i++)
-    flags[i] = true;
-}
-
-/*!
-  \deprecated You should use build(const double &, const double &, const double &, const double &, const double &, const double &) instead.
-  Build a 2D line visual feature from the line equation parameters \f$
-  \rho \f$ and \f$ \theta \f$ given in the image plan. The
-  parameters A, B, C and D which describe the equation of a plan to
-  which the line belongs, are set in the same time.
-
-  \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f]
-  \f[ AX + BY + CZ + D = 0 \f]
-
-  See the vpFeatureLine class description for more details about \f$
-  \rho \f$ and \f$ \theta \f$.
-
-  The A, B, C, D parameters are needed to compute the interaction
-  matrix associated to a visual feature. Normally, two plans are
-  needed to describe a line (the intersection of those two plans). But
-  to compute the interaction matrix only one plan equation is
-  required. The only one restrictions is that the value of D must not
-  be equal to zero !
-
-  \param rho : The \f$ \rho \f$ parameter.
-  \param theta : The \f$ \theta \f$ parameter.
-  \param A_ : A parameter of the plan equation.
-  \param B_ : B parameter of the plan equation.
-  \param C_ : C parameter of the plan equation.
-  \param D_ : D parameter of the plan equation.
-
-*/
-void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, double C_, double D_)
-{
-  build(rho, theta, A_, B_, C_, D_);
-}
-#endif
 /*!
 
   Build a 2D line visual feature from the line equation parameters \f$
@@ -439,7 +383,7 @@ void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, do
   \param theta : The \f$ \theta \f$ parameter.
 
 */
-vpFeatureLine &vpFeatureLine::build(const double &rho, const double &theta)
+vpFeatureLine &vpFeatureLine::buildFrom(const double &rho, const double &theta)
 {
   s[0] = rho;
   s[1] = theta;
@@ -477,7 +421,7 @@ vpFeatureLine &vpFeatureLine::build(const double &rho, const double &theta)
   \param D_ : D parameter of the plan equation.
 
 */
-vpFeatureLine &vpFeatureLine::build(const double &rho, const double &theta, const double &A_, const double &B_, const double &C_, const double &D_)
+vpFeatureLine &vpFeatureLine::buildFrom(const double &rho, const double &theta, const double &A_, const double &B_, const double &C_, const double &D_)
 {
   s[0] = rho;
   s[1] = theta;

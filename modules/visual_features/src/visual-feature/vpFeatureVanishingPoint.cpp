@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
 /*!
  * Vanishing point visual feature initialization.
  */
-void vpFeatureVanishingPoint::init()
+  void vpFeatureVanishingPoint::init()
 {
   // Feature dimension
   dim_s = 5;
@@ -99,7 +99,7 @@ void vpFeatureVanishingPoint::set_y(double y)
 //! Get vanishing point feature \f$ y \f$ value.
 double vpFeatureVanishingPoint::get_y() const { return s[1]; }
 
-//! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as build().
+//! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as buildFrom().
 void vpFeatureVanishingPoint::set_xy(double x, double y)
 {
   set_x(x);
@@ -346,16 +346,8 @@ void vpFeatureVanishingPoint::print(unsigned int select) const
   std::cout << std::endl;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/**
- * \deprecated You should use build(const double&, const double &) instead.
- * \brief Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as set_xy().
- */
-void vpFeatureVanishingPoint::buildFrom(double x, double y) { set_xy(x, y); }
-#endif
-
 //! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as set_xy().
-vpFeatureVanishingPoint &vpFeatureVanishingPoint::build(const double &x, const double &y)
+vpFeatureVanishingPoint &vpFeatureVanishingPoint::buildFrom(const double &x, const double &y)
 {
   set_xy(x, y);
   return *this;
