@@ -82,7 +82,7 @@ if(MSVC)
     vp_set_source_file_compile_flag(tag16h5.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tag25h7.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tag25h9.c /wd4996 /wd4244)
-    vp_set_source_file_compile_flag(tag36h10.c /wd4996 /wd42446)
+    vp_set_source_file_compile_flag(tag36h10.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tag36h11.c /wd4996 /wd4244)
     vp_set_source_file_compile_flag(tagCircle21h7.c /wd4996 /wd4244)
     # disable optimization
