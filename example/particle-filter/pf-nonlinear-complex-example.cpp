@@ -469,7 +469,7 @@ public:
   */
   vpLandmarksGrid(const std::vector<vpLandmarkMeasurements> &landmarks, const double &distMaxAllowed)
     : m_landmarks(landmarks)
-    , m_nbLandmarks(landmarks.size())
+    , m_nbLandmarks(static_cast<unsigned int>(landmarks.size()))
   {
     double sigmaDistance = distMaxAllowed / 3.;
     double sigmaDistanceSquared = sigmaDistance * sigmaDistance;
