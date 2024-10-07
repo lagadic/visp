@@ -34,6 +34,14 @@
 #ifndef VP_NETWORK_H
 #define VP_NETWORK_H
 
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT) || defined(_WIN32)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRequest.h>
