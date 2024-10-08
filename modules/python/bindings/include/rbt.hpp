@@ -36,6 +36,8 @@
 #define VISP_PYTHON_RBT_HPP
 
 #include "rbt/feature_tracker.hpp"
+#include "rbt/vo.hpp"
+
 
 
 
