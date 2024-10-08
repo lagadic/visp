@@ -38,7 +38,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
   $ cd $VISP_WS/3rdparty/panda3d
   $ git clone https://github.com/panda3d/panda3d
   $ cd panda3d
-  $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv
+  $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv --threads $(nproc)
   \endcode
   At this point you can either:
   1. install the produced Debian package (recommended) with
