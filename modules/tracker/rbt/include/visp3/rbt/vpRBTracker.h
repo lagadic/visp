@@ -57,6 +57,7 @@ BEGIN_VISP_NAMESPACE
 
 class vpObjectMask;
 class vpRBDriftDetector;
+class vpRBVisualOdometry;
 
 /**
  * \brief
@@ -156,6 +157,12 @@ public:
     m_mask = mask;
   }
 
+  std::shared_ptr<vpRBVisualOdometry> getOdometryMethod() const { return m_odometry; }
+  void setOdometryMethod(const std::shared_ptr<vpRBVisualOdometry> &odometry)
+  {
+    m_odometry = odometry;
+  }
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void loadConfigurationFile(const std::string &filename);
   void loadConfiguration(const nlohmann::json &j);
@@ -242,6 +249,8 @@ protected:
 
   std::shared_ptr<vpObjectMask> m_mask;
   std::shared_ptr<vpRBDriftDetector> m_driftDetector;
+  std::shared_ptr<vpRBVisualOdometry> m_odometry;
+
 
   // vpRBTrackerFilter m_filter;
 };

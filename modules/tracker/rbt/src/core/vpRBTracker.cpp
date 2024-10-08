@@ -44,6 +44,7 @@
 #include <visp3/rbt/vpRBFeatureTrackerFactory.h>
 #include <visp3/rbt/vpRBDriftDetectorFactory.h>
 #include <visp3/rbt/vpObjectMaskFactory.h>
+#include <visp3/rbt/vpRBVisualOdometry.h>
 #include <visp3/rbt/vpRBInitializationHelper.h>
 
 #define VP_DEBUG_RB_TRACKER 1
@@ -57,6 +58,7 @@ vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0
 
   m_driftDetector = nullptr;
   m_mask = nullptr;
+  m_odometry = nullptr;
 }
 
 void vpRBTracker::getPose(vpHomogeneousMatrix &cMo) const
@@ -213,10 +215,18 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   m_logger.startTimer();
   updateRender(input);
   m_logger.setRenderTime(m_logger.endTimer());
+
   if (m_firstIteration) {
     m_firstIteration = false;
     m_previousFrame.I = input.I;
     m_previousFrame.IRGB = input.IRGB;
+  }
+
+  if (m_odometry) {
+    m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
+    m_cMo = cnTc * m_cMo;
+    updateRender(input);
   }
 
   m_logger.startTimer();
