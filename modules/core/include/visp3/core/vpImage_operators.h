@@ -180,25 +180,39 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 }
 
 /*!
-  \brief Copy operator
+  \brief Copy operator.
+  Resizes and copies the contents of the image `other`.
+  The pointer to the display remains unchanged.
+
+  \param[in] other : Image to copy.
+  \exception When the display is initialised and the images have different sizes.
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(const vpImage<Type> &other)
 {
-
+  if (display != nullptr) {
+    if ((height != other.height) || (width != other.width)) {
+      throw(vpException(vpException::dimensionError,
+                        "Error in vpImage::operator=() where the display is initialised but the image size is different"));
+    }
+  }
   resize(other.height, other.width);
   memcpy(static_cast<void *>(bitmap), static_cast<void *>(other.bitmap), other.npixels * sizeof(Type));
-  if (other.display != nullptr) {
-    display = other.display;
-  }
 
   return *this;
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-
+/*!
+ * Move operator.
+ * Moves the image pointers without deep copying image content.
+ *
+ * \param[in] other : Image to move.
+ * \exception
+ * - When the display is initialised and the images have different sizes.
+ * - When the display attached to the `other` image is initialized.
+ */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> &&other)
 {
-
   if (row != nullptr) {
     delete[] row;
   }
@@ -207,8 +221,16 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> &&ot
     delete[] bitmap;
   }
   bitmap = other.bitmap;
+
+  if (display != nullptr) {
+    if ((height != other.height) || (width != other.width)) {
+      throw(vpException(vpException::dimensionError,
+                        "Error in vpImage::operator=(&) where the display is initialised but the image size is different"));
+    }
+  }
   if (other.display != nullptr) {
-    display = other.display;
+    throw(vpException(vpException::fatalError,
+                      "Error in vpImage::operator=(&&) where the display of the image to move is initialised"));
   }
   height = other.height;
   width = other.width;
