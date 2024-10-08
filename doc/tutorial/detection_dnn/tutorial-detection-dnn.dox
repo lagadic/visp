@@ -474,6 +474,11 @@ If you want to train your own YoloV7 model, please refer to the [official docume
 If your dataset is rather small (only hundreds of pictures), you may want to consider to base your training on
 `yolov7-tiny` network, as it tends to get better results.
 
+**Important note**: if you train your own model, be sure to use the same image size in the `python train.py`,
+`python export.py` and `./tutorial-dnn-object-detection-live` commands. Otherwise, it can lead to :
+- an error thrown by OpenCV
+- the absence of detection by the ONNX model while the Pytorch model works perfectly using the `python detect.py` command.
+
 \subsubsection dnn_supported_yolov8 Yolo v8
 
 You can find the weights (`yolov8s.onnx`) in ONNX format
