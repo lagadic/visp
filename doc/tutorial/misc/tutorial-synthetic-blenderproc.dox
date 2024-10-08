@@ -715,6 +715,17 @@ We also download the pretrained yolo model, that we will finetune on our own dat
 (yolov7) ~/yolov7 $ wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt
 ```
 
+**Important note**: while creating the yolov7 virtual environment, you may face the following error:
+```
+requirements to build wheel did not run successfully
+```
+It can be solved by fixing the version of the Python of the virtual environment:
+```
+~/yolov7 $ conda create --name yolov7 pip python=3.10
+~/yolov7 $ conda activate yolov7
+(yolov7) ~/yolov7 $ pip install -r requirements.txt
+```
+
 To fine-tune a YoloV7, we should create two new files: the network configuration and the hyperparameters.
 We will reuse the ones provided for the tiny model.
 ```
