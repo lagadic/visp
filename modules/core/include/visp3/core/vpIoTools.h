@@ -266,7 +266,7 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
 
   std::vector<char> npy_header = create_npy_header<T>(shape);
 
-  size_t nels = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<size_t>());
+  size_t nels = std::accumulate(shape.begin(), shape.end(), static_cast<size_t>(1), std::multiplies<size_t>());
   size_t nbytes = nels*sizeof(T) + npy_header.size();
 
   //get the CRC of the data to be added
