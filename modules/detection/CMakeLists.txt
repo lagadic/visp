@@ -201,3 +201,7 @@ if(WITH_CATCH2)
 endif()
 
 vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
+
+if(WIN32)
+  vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4244)
+endif()
