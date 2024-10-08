@@ -390,7 +390,7 @@ void vpMbtDistanceKltPoints::updateMask(
           corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
         }
 
-        polygon_area.build(corners);
+        polygon_area.buildFrom(corners);
         if (polygon_area.getArea() > max_area) {
           max_area = polygon_area.getArea();
           index_max = i;

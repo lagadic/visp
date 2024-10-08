@@ -113,18 +113,11 @@ public:
   VP_EXPLICIT vpQuaternionVector(const vpColVector &q);
   VP_EXPLICIT vpQuaternionVector(const std::vector<double> &q);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  VP_DEPRECATED vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
-  VP_DEPRECATED vpQuaternionVector buildFrom(const vpRotationMatrix &R);
-  VP_DEPRECATED vpQuaternionVector buildFrom(const vpThetaUVector &tu);
-  VP_DEPRECATED vpQuaternionVector buildFrom(const vpColVector &q);
-  VP_DEPRECATED vpQuaternionVector buildFrom(const std::vector<double> &q);
-#endif
-  vpQuaternionVector &build(const double &qx, const double &qy, const double &qz, const double &qw);
-  vpQuaternionVector &build(const vpRotationMatrix &R);
-  vpQuaternionVector &build(const vpThetaUVector &tu);
-  vpQuaternionVector &build(const vpColVector &q);
-  vpQuaternionVector &build(const std::vector<double> &q);
+  vpQuaternionVector &buildFrom(const double &qx, const double &qy, const double &qz, const double &qw);
+  vpQuaternionVector &buildFrom(const vpRotationMatrix &R);
+  vpQuaternionVector &buildFrom(const vpThetaUVector &tu);
+  vpQuaternionVector &buildFrom(const vpColVector &q);
+  vpQuaternionVector &buildFrom(const std::vector<double> &q);
 
   void set(double x, double y, double z, double w);
 

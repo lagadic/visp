@@ -374,7 +374,7 @@ int main(int, char *argv[])
   // Ask roi for plane estimation
   //! [Roi_Plane_Estimation]
   vpPolygon roi_color_img {};
-  roi_color_img.build(getRoiFromUser(color_img), true);
+  roi_color_img.buildFrom(getRoiFromUser(color_img), true);
 
   std::vector<vpImagePoint> roi_corners_depth_img {};
   std::transform(

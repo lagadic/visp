@@ -170,7 +170,7 @@ int main()
 
     std::cout << "Pose cMo: " << std::endl << cMo;
     cMo.extract(R);
-    r.build(R);
+    r.buildFrom(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
       << std::endl
       << std::endl;
@@ -187,11 +187,11 @@ int main()
     r[0] = p[3];
     r[1] = p[4];
     r[2] = p[5];
-    R.build(r);
-    rMc.build(t, R);
+    R.buildFrom(r);
+    rMc.buildFrom(t, R);
     std::cout << "Pose rMc: " << std::endl << rMc;
     rMc.extract(R);
-    r.build(R);
+    r.buildFrom(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
       << std::endl
       << std::endl;
@@ -202,7 +202,7 @@ int main()
     robot.get_fMc(p, rMc);
     std::cout << "Pose rMc from MGD: " << std::endl << rMc;
     rMc.extract(R);
-    r.build(R);
+    r.buildFrom(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
       << std::endl
       << std::endl;
@@ -211,7 +211,7 @@ int main()
     rMo = rMc * cMo;
     std::cout << "Pose rMo = rMc * cMo: " << std::endl << rMo;
     rMo.extract(R);
-    r.build(R);
+    r.buildFrom(R);
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
       << std::endl
       << std::endl;

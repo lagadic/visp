@@ -125,10 +125,10 @@ if __name__ == '__main__':
   # Define centering task
   xd, yd = PixelMeterConversion.convertPoint(cam, w / 2.0, h / 2.0)
   sd = FeaturePoint()
-  sd.build(xd, yd, Z)
+  sd.buildFrom(xd, yd, Z)
 
   s = FeaturePoint()
-  s.build(0.0, 0.0, Z)
+  s.buildFrom(0.0, 0.0, Z)
 
   task = Servo()
   task.addFeature(s, sd)
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     if bb is not None:
       u, v = bb[0], bb[1]
       x, y = PixelMeterConversion.convertPoint(cam, u, v)
-      s.build(x, y, Z)
+      s.buildFrom(x, y, Z)
       v = task.computeControlLaw()
       prev_v = v
     else:

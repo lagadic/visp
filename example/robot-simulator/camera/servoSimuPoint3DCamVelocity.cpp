@@ -173,7 +173,7 @@ int main(int argc, const char **argv)
     std::cout << "Point coordinates in the camera frame: " << point.cP.t();
 
     vpFeaturePoint3D p;
-    p.build(point);
+    p.buildFrom(point);
 
     // sets the desired position of the point
     vpFeaturePoint3D pd;
@@ -207,7 +207,7 @@ int main(int argc, const char **argv)
 
       // new point position
       point.track(cMo);
-      p.build(point);
+      p.buildFrom(point);
       //   std::cout << p.cP.t() ;
       //   std::cout << (p.get_s()).t() ;
 
@@ -233,4 +233,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

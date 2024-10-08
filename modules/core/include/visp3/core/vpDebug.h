@@ -71,7 +71,7 @@ BEGIN_VISP_NAMESPACE
 
   It needs to be initialized with the file name, function name and
   line, of the place where it is created.  It is best used by first
-  instanciating the object and directly calling the () operator.  This
+  instantiating the object and directly calling the () operator.  This
   is used to mimic variadic macros.
 
   This class is used to define the following macros:

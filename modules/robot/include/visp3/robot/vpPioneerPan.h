@@ -175,7 +175,7 @@ protected:
     eRc[2][0] = -1;
 
     vpHomogeneousMatrix eMc;
-    eMc.build(etc, eRc);
+    eMc.buildFrom(etc, eRc);
 
     cMe_ = eMc.inverse();
   }

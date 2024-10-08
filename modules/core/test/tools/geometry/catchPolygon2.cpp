@@ -59,7 +59,7 @@ TEST_CASE("Check polygon construction")
                                                  rect.getBottomLeft() };
 
     vpPolygon poly {};
-    poly.build(rect_corners, true);
+    poly.buildFrom(rect_corners, true);
 
   // Check if std:c++14 or higher
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
@@ -71,8 +71,8 @@ TEST_CASE("Check polygon construction")
       REQUIRE(std::find(begin(rect_corners), end(rect_corners), poly_corner) != end(rect_corners));
     }
 #endif
-    }
   }
+}
 
 int main(int argc, char *argv[])
 {

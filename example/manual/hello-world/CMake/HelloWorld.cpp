@@ -53,7 +53,7 @@ int main()
     vpRotationMatrix R(vpMath::rad(0.), vpMath::rad(180) + 100 * std::numeric_limits<double>::epsilon(), 0.);
 
     // Extract the theta U angles from a rotation matrix
-    tu.build(R);
+    tu.buildFrom(R);
 
     // Since the rotation vector is 3 values column vector, the
     // transpose operation produce a row vector.

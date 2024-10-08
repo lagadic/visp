@@ -157,7 +157,7 @@ public:
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(x[0], x[1], x[2]);
-    wMo.build(wTo, m_wRo);
+    wMo.buildFrom(wTo, m_wRo);
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       double u = 0., v = 0.;
@@ -183,7 +183,7 @@ public:
     vpColVector meas(2*nbMarkers);
     vpHomogeneousMatrix wMo;
     vpTranslationVector wTo(wX[0], wX[1], wX[2]);
-    wMo.build(wTo, m_wRo);
+    wMo.buildFrom(wTo, m_wRo);
     for (unsigned int i = 0; i < nbMarkers; ++i) {
       vpColVector cX = m_cMw * wMo * m_markers[i];
       double u = 0., v = 0.;

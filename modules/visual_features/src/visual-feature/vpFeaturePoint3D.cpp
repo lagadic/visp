@@ -196,7 +196,7 @@ double vpFeaturePoint3D::get_Z() const { return s[2]; }
   ...
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.build(point);
+  s.buildFrom(point);
 
   vpMatrix L_X = s.interaction( vpFeaturePoint3D::selectX() );
   \endcode
@@ -383,50 +383,6 @@ vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int s
   return e;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const vpPoint &) instead.
-  Build a 3D point visual feature from the camera frame coordinates
-  \f$(X,Y,Z)\f$ of a point.
-
-  \param p : A point with camera frame coordinates \f${^c}P=(X,Y,Z)\f$
-  up to date (see vpPoint class).
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
-  behind the camera which is not possible.
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is null. That means that the 3D point is
-  on the camera which is not possible.
-*/
-void vpFeaturePoint3D::buildFrom(const vpPoint &p)
-{
-  build(p);
-}
-
-/*!
-  \deprecated You should use build(const double &, const double &, const double &) instead.
-  Build a 3D point visual feature from the camera frame coordinates
-  \f$(X,Y,Z)\f$ of a point.
-
-  \param X,Y,Z : Camera frame coordinates \f$(X,Y,Z)\f$ of a 3D point.
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
-  on the camera which is not possible.
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is null. That means that the 3D point is
-  on the camera which is not possible.
-
-*/
-void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
-{
-  build(X, Y, Z);
-}
-#endif
-
 /*!
 
   Build a 3D point visual feature from the camera frame coordinates
@@ -443,9 +399,8 @@ void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-vpFeaturePoint3D &vpFeaturePoint3D::build(const vpPoint &p)
+vpFeaturePoint3D &vpFeaturePoint3D::buildFrom(const vpPoint &p)
 {
-
   // cP is expressed in homogeneous coordinates
   // we devide by the fourth coordinate
   s[0] = p.cP[0] / p.cP[3];
@@ -489,7 +444,7 @@ vpFeaturePoint3D &vpFeaturePoint3D::build(const vpPoint &p)
   on the camera which is not possible.
 
 */
-vpFeaturePoint3D &vpFeaturePoint3D::build(const double &X, const double &Y, const double &Z)
+vpFeaturePoint3D &vpFeaturePoint3D::buildFrom(const double &X, const double &Y, const double &Z)
 {
   s[0] = X;
   s[1] = Y;
@@ -531,7 +486,7 @@ vpFeaturePoint3D &vpFeaturePoint3D::build(const double &X, const double &Y, cons
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.build(point);
+  s.buildFrom(point);
 
   s.print(); // print all the 3 components of the translation feature
   s.print(vpBasicFeature::FEATURE_ALL); // same behavior then previous line

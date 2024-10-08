@@ -101,7 +101,7 @@ BEGIN_VISP_NAMESPACE
  *   double Z;   // You have to compute the value of Z.
  *   double Zs;  // You have to define the desired depth Zs.
  *   //Set the point feature thanks to the current parameters.
- *   s.build(x, y, Z, log(Z/Zs));
+ *   s.buildFrom(x, y, Z, log(Z/Zs));
  *
  *   // Set eye-in-hand control law.
  *   // The computed velocities will be expressed in the camera frame
@@ -117,7 +117,7 @@ BEGIN_VISP_NAMESPACE
  *     // The new parameters x, y and Z must be computed here.
  *
  *     // Update the current point visual feature
- *     s.build(x, y, Z, log(Z/Zs));
+ *     s.buildFrom(x, y, Z, log(Z/Zs));
  *
  *     // compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -149,7 +149,7 @@ BEGIN_VISP_NAMESPACE
  *   double Z;   // You have to compute the value of Z.
  *   double Zs;  // You have to define the desired depth Zs.
  *   //Set the point feature thanks to the current parameters.
- *   s.build(x, y, Z, log(Z/Zs));
+ *   s.buildFrom(x, y, Z, log(Z/Zs));
  *
  *   // Compute the interaction matrix L_s for the current point feature
  *   vpMatrix L = s.interaction();
@@ -181,11 +181,7 @@ public:
   /*
     section Set coordinates
   */
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double x, double y, double Z, double LogZoverZstar);
-#endif
-  vpFeatureDepth &build(const double &x, const double &y, const double &Z, const double &LogZoverZstar);
+  vpFeatureDepth &buildFrom(const double &x, const double &y, const double &Z, const double &LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;

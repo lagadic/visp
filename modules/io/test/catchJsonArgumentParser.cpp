@@ -295,7 +295,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     REQUIRE_THROWS(vpJsonArgumentParser("A program", "", "/"));
   }
 
-  WHEN("Instanciating a parser with some optional fields")
+  WHEN("Instantiating a parser with some optional fields")
   {
     vpJsonArgumentParser parser("A program", "--config", "/");
     float b = 0.0;
@@ -314,7 +314,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
 
     }
   }
-  WHEN("Instanciating a parser with nested parameters")
+  WHEN("Instantiating a parser with nested parameters")
   {
     vpJsonArgumentParser parser("A program", "--config", "/");
     float b = 0.0;
@@ -335,7 +335,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
   }
 
 
-  WHEN("Instanciating a parser with some documentation")
+  WHEN("Instantiating a parser with some documentation")
   {
     const std::string programString = "ProgramString";
     const std::string firstArg = "FirstArgName", firstArgDescription = "FirstArgDescription";

@@ -164,7 +164,7 @@ BEGIN_VISP_NAMESPACE
     vpHomogeneousMatrix sMp;
     // ... sMp need here to be initialized
 
-    sFp.build(sMp);
+    sFp.buildFrom(sMp);
 
     // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
     vpColVector p_H(6);
@@ -197,20 +197,12 @@ public:
   VP_EXPLICIT vpForceTwistMatrix(const vpRotationMatrix &R);
   VP_EXPLICIT vpForceTwistMatrix(const vpThetaUVector &thetau);
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
+  vpForceTwistMatrix &buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpForceTwistMatrix &buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpForceTwistMatrix &buildFrom(const vpHomogeneousMatrix &M, bool full = true);
 
-  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
-  VP_DEPRECATED vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
-#endif
-  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vpForceTwistMatrix &build(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpForceTwistMatrix &build(const vpHomogeneousMatrix &M, bool full = true);
-
-  vpForceTwistMatrix &build(const vpThetaUVector &thetau);
-  vpForceTwistMatrix &build(const vpRotationMatrix &R);
+  vpForceTwistMatrix &buildFrom(const vpRotationMatrix &R);
+  vpForceTwistMatrix &buildFrom(const vpThetaUVector &thetau);
 
   // Basic initialisation (identity)
   void eye();

@@ -824,7 +824,7 @@ void vpMbKltTracker::computeVVS()
         L_true = m_L_klt;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.build(m_cMo);
+          cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_klt * cVo * oJo);
         }
       }

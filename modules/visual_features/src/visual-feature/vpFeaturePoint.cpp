@@ -195,7 +195,7 @@ void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.build(0, 0, 1);
+  s.buildFrom(0, 0, 1);
 
   vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
   \endcode
@@ -205,7 +205,7 @@ void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.build(0, 0, 1);
+  s.buildFrom(0, 0, 1);
 
   vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
@@ -311,11 +311,11 @@ vpMatrix vpFeaturePoint::interaction(unsigned int select)
   \code
   // Creation of the current feature s
   vpFeaturePoint s;
-  s.build(0, 0, 1);
+  s.buildFrom(0, 0, 1);
 
   // Creation of the desired feature s*
   vpFeaturePoint s_star;
-  s_star.build(1, 1, 1);
+  s_star.buildFrom(1, 1, 1);
 
   // Compute the interaction matrix for the x feature
   vpMatrix L_x = s.interaction( vpFeaturePoint::selectX() );
@@ -361,7 +361,7 @@ vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, unsigned int sel
   vpFeaturePoint s; // Current visual feature s
 
   // Creation of the current feature s
-  s.build(0, 0, 1);
+  s.buildFrom(0, 0, 1);
 
   s.print(); // print all the 2 components of the feature
   s.print(vpBasicFeature::FEATURE_ALL);  // same behavior then previous line
@@ -379,26 +379,6 @@ void vpFeaturePoint::print(unsigned int select) const
   std::cout << std::endl;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const double &, const double &, const double &) instead.
-  Build a 2D point visual feature from the point coordinates in the image plan
-  \f$ x \f$ and \f$ y \f$. The parameter Z which describes the depth, is set
-  in the same time.
-
-  See the vpFeaturePoint class description for more details about \f$ x \f$
-  and \f$ y \f$.
-
-  \param x_ : The \f$ x \f$ parameter.
-  \param y_ : The \f$ y \f$ parameter.
-  \param Z_ : The \f$ Z \f$ parameter.
-*/
-void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
-{
-  build(x_, y_, Z_);
-}
-#endif
-
 /*!
   Build a 2D point visual feature from the point coordinates in the image plan
   \f$ x \f$ and \f$ y \f$. The parameter Z which describes the depth, is set
@@ -411,7 +391,7 @@ void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
   \param y_ : The \f$ y \f$ parameter.
   \param Z_ : The \f$ Z \f$ parameter.
 */
-vpFeaturePoint &vpFeaturePoint::build(const double &x_, const double &y_, const double &Z_)
+vpFeaturePoint &vpFeaturePoint::buildFrom(const double &x_, const double &y_, const double &Z_)
 {
 
   s[0] = x_;

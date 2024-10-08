@@ -284,7 +284,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     }
 
     finitpos.close();
-    last_cMo.build(init_pos);
+    last_cMo.buildFrom(init_pos);
 
     std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
@@ -1116,7 +1116,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
     finit >> init_pos[i];
   }
 
-  m_cMo.build(init_pos);
+  m_cMo.buildFrom(init_pos);
 
   if (I) {
     init(*I);
@@ -1234,7 +1234,7 @@ void vpMbTracker::savePose(const std::string &filename) const
   std::fstream finitpos;
   finitpos.open(filename.c_str(), std::ios::out);
 
-  init_pos.build(m_cMo);
+  init_pos.buildFrom(m_cMo);
   finitpos << init_pos;
   finitpos.close();
 }
@@ -1801,7 +1801,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
               }
             }
           }
-          oTo_local.build(t, tu);
+          oTo_local.buildFrom(t, tu);
 
           bool cyclic = false;
           for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
@@ -2963,7 +2963,7 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned in
   }
   else {
     vpVelocityTwistMatrix cVo;
-    cVo.build(m_cMo);
+    cVo.buildFrom(m_cMo);
     vpMatrix LVJ = (L * (cVo * oJo));
     vpMatrix LVJTLVJ = (LVJ).AtA();
     vpColVector LVJTR;

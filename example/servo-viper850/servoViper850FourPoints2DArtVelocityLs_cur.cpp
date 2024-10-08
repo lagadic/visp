@@ -236,7 +236,7 @@ int main()
     vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
     vpRxyzVector cro(vpMath::rad(0), vpMath::rad(10), vpMath::rad(20));
     vpRotationMatrix cRo(cro); // Build the rotation matrix
-    cMo.build(cto, cRo);   // Build the homogeneous matrix
+    cMo.buildFrom(cto, cRo);   // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];

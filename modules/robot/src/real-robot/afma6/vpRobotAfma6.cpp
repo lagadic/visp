@@ -808,7 +808,7 @@ void vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpAfma6::get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 }
 
 /*!
@@ -1022,8 +1022,8 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
   vpRxyzVector rxyz;
   vpRotationMatrix R;
 
-  R.build(pose[3], pose[4], pose[5]); // thetau
-  rxyz.build(R);
+  R.buildFrom(pose[3], pose[4], pose[5]); // thetau
+  rxyz.buildFrom(R);
 
   for (unsigned int i = 0; i < 3; i++) {
     position[i] = pose[i];
@@ -1484,7 +1484,7 @@ void vpRobotAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.build(fRc);
+    rxyz.buildFrom(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1841,7 +1841,7 @@ void vpRobotAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
       vpRotationMatrix cRc;
       cMc.extract(cRc);
       vpThetaUVector thetaU;
-      thetaU.build(cRc);
+      thetaU.buildFrom(cRc);
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame
@@ -2248,7 +2248,7 @@ void vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
       c_prevMc_cur.extract(R);
 
       vpRxyzVector rxyz;
-      rxyz.build(R);
+      rxyz.buildFrom(R);
 
       for (unsigned int i = 0; i < 3; i++) {
         displacement[i] = t[i];

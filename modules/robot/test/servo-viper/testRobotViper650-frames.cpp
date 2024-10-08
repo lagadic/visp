@@ -100,7 +100,7 @@ int main()
     // In this case, we set tool frame to the PTGrey Flea2 camera frame
     vpTranslationVector etc(-0.04437278107, -0.001192883711, 0.07808296844);
     vpRxyzVector erxyzc(vpMath::rad(0.7226737722), vpMath::rad(2.103893926), vpMath::rad(-90.46213439));
-    eMt.build(etc, vpRotationMatrix(erxyzc));
+    eMt.buildFrom(etc, vpRotationMatrix(erxyzc));
 #endif
     std::cout << "eMt:\n" << eMt << std::endl;
 

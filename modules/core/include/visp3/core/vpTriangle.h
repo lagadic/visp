@@ -75,10 +75,7 @@ public:
 
   vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  VP_DEPRECATED void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
-#endif
-  vpTriangle &build(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
+  vpTriangle &buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
   bool inTriangle(const vpImagePoint &iP, double threshold = 0.00001);
 

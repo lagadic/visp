@@ -187,7 +187,7 @@ void vpMbDepthNormalTracker::computeVVS()
       if (computeCovariance) {
         L_true = m_L_depthNormal;
         if (!isoJoIdentity) {
-          cVo.build(m_cMo);
+          cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_depthNormal * (cVo * oJo));
         }
       }
@@ -199,7 +199,7 @@ void vpMbDepthNormalTracker::computeVVS()
         // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity) {
-          cVo.build(m_cMo);
+          cVo.buildFrom(m_cMo);
 
           vpMatrix K; // kernel
           unsigned int rank = (m_L_depthNormal * cVo).kernel(K);

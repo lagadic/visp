@@ -149,7 +149,7 @@ void vpBiclops::computeMGD(const vpColVector &q, vpPoseVector &fPc) const
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fPc.build(fMc.inverse());
+  fPc.buildFrom(fMc.inverse());
 
   return;
 }
@@ -159,7 +159,7 @@ void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fPc) const
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fPc.build(fMc.inverse());
+  fPc.buildFrom(fMc.inverse());
 
   return;
 }
@@ -182,7 +182,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*const
   return os;
 }
 
-void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.build(m_cMe); }
+void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(m_cMe); }
 
 void vpBiclops::set_cMe()
 {

@@ -249,10 +249,10 @@ int main(int argc, const char **argv)
     // from this displacement, we extract the rotation cdRc represented by
     // the angle theta and the rotation axis u
     vpFeatureThetaU tuz(vpFeatureThetaU::cdRc);
-    tuz.build(cdMc);
+    tuz.buildFrom(cdMc);
     // And the translations
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
-    t.build(cdMc);
+    t.buildFrom(cdMc);
 
     // This visual has to be regulated to zero
 
@@ -306,8 +306,8 @@ int main(int argc, const char **argv)
       vpFeatureBuilder::create(p, P);
 
       cdMc = cdMo * cMo.inverse();
-      tuz.build(cdMc);
-      t.build(cdMc);
+      tuz.buildFrom(cdMc);
+      t.buildFrom(cdMc);
 
       // compute the control law: v = -lambda L^+(s-sd)
       v = task.computeControlLaw();
@@ -334,4 +334,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

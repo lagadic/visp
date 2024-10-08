@@ -100,7 +100,7 @@ int main()
         vpQuaternionVector cqw(static_cast<double>(pose_data.rotation.x), static_cast<double>(pose_data.rotation.y),
                                static_cast<double>(pose_data.rotation.z), static_cast<double>(pose_data.rotation.w));
 
-        cMw.build(ctw, cqw);
+        cMw.buildFrom(ctw, cqw);
 
         odo_vel.resize(6, false);
         odo_vel[0] = static_cast<double>(pose_data.velocity.x);
@@ -129,7 +129,7 @@ int main()
         vpQuaternionVector cqw(static_cast<double>(pose_data.rotation.x), static_cast<double>(pose_data.rotation.y),
                                static_cast<double>(pose_data.rotation.z), static_cast<double>(pose_data.rotation.w));
 
-        cMw.build(ctw, cqw);
+        cMw.buildFrom(ctw, cqw);
 
         odo_vel.resize(6, false);
         odo_vel[0] = static_cast<double>(pose_data.velocity.x);

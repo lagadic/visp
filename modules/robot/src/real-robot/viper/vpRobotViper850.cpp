@@ -942,7 +942,7 @@ void vpRobotViper850::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   vpViper850::get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 }
 
 /*!
@@ -1521,7 +1521,7 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     vpRotationMatrix fRc;
     fMc.extract(fRc);
     vpRxyzVector rxyz;
-    rxyz.build(fRc);
+    rxyz.buildFrom(fRc);
 
     for (unsigned int i = 0; i < 3; i++) {
       position[i] = fMc[i][3];   // translation x,y,z
@@ -1971,7 +1971,7 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
       vpRotationMatrix cRc;
       cMc.extract(cRc);
       vpThetaUVector thetaU;
-      thetaU.build(cRc);
+      thetaU.buildFrom(cRc);
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame

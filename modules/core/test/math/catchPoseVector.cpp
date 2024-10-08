@@ -164,7 +164,7 @@ TEST_CASE("vpPoseVector build t, tu", "[vpColVector]")
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
 
   vpPoseVector pose;
-  pose.build(t, tu);
+  pose.buildFrom(t, tu);
 
   checkSize(pose, ref);
   checkData(pose, ref);
@@ -191,7 +191,7 @@ TEST_CASE("vpPoseVector build vpHomogeneousMatrix", "[vpColVector]")
   vpHomogeneousMatrix M(t, tu);
 
   vpPoseVector pose;
-  pose.build(M);
+  pose.buildFrom(M);
 
   checkSize(pose, ref);
   checkData(pose, ref);
@@ -218,7 +218,7 @@ TEST_CASE("vpPoseVector build t, R", "[vpColVector]")
   vpRotationMatrix R(tu);
 
   vpPoseVector pose;
-  pose.build(t, R);
+  pose.buildFrom(t, R);
 
   checkSize(pose, ref);
   checkData(pose, ref);

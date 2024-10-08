@@ -102,7 +102,7 @@ int main()
     vpRotationMatrix R;
     fMe.extract(R);
     vpRzyzVector r;
-    r.build(R);
+    r.buildFrom(R);
 
     std::cout << "fMe:" << std::endl
       << "\tt: " << t.t() << std::endl

@@ -266,7 +266,7 @@ int main(int argc, const char **argv)
     // from this displacement, we extract the rotation cdRc represented by
     // the angle theta and the rotation axis u
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.build(cdMc);
+    tu.buildFrom(cdMc);
     // This visual has to be regulated to zero
 
     // sets the desired rotation (always zero !)
@@ -318,7 +318,7 @@ int main(int argc, const char **argv)
       vpFeatureBuilder::create(p, point);
 
       cdMc = cdMo * cMo.inverse();
-      tu.build(cdMc);
+      tu.buildFrom(cdMc);
 
       // there is no feature for logZ, we explicitly build
       // the related interaction matrix") ;
@@ -356,4 +356,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

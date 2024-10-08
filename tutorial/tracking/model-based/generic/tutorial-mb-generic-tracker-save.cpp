@@ -1,9 +1,9 @@
+//! \example tutorial-mb-generic-tracker-save.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/io/vpVideoReader.h>
-
 
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #ifdef ENABLE_VISP_NAMESPACE

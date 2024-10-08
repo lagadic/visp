@@ -661,10 +661,10 @@ int main(int argc, const char **argv)
       // Test set an initial pose
 #if USE_SMALL_DATASET
       if (frame_index == 20) {
-        cMo.build(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
+        cMo.buildFrom(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
 #else
       if (frame_index == 50) {
-        cMo.build(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
+        cMo.buildFrom(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
 #endif
         std::cout << "Test set pose" << std::endl;
         dynamic_cast<vpMbGenericTracker *>(tracker)->setPose(I_depth, cMo);
@@ -777,7 +777,7 @@ int main(int argc, const char **argv)
     tracker = nullptr;
 
     return EXIT_SUCCESS;
-    }
+      }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

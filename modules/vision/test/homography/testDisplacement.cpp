@@ -178,7 +178,7 @@ int main()
       std::cout << "n" << std::endl << n.t() << std::endl;
 
       vpPlane p1(n[0], n[1], n[2], 1.0);
-      H.build(R, T, p1);
+      H.buildFrom(R, T, p1);
       std::cout << "H" << std::endl << H << std::endl;
     }
     std::cout << "All tests succeed" << std::endl;

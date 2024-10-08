@@ -275,7 +275,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpImageIo::read(I, filenameRef);
 
   // Init pose at image 150
-  cMo.build(0.02651282185, -0.03713587374, 0.6873765919, 2.314744454, 0.3492296488, -0.1226054828);
+  cMo.buildFrom(0.02651282185, -0.03713587374, 0.6873765919, 2.314744454, 0.3492296488, -0.1226054828);
   tracker.initFromPose(I, cMo);
 
   // Detect keypoints on the image 150
@@ -298,7 +298,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpImageIo::read(I, filenameRef);
 
   // Init pose at image 200
-  cMo.build(0.02965448956, -0.07283091786, 0.7253526051, 2.300529617, -0.4286674806, 0.1788761025);
+  cMo.buildFrom(0.02965448956, -0.07283091786, 0.7253526051, 2.300529617, -0.4286674806, 0.1788761025);
   tracker.initFromPose(I, cMo);
 
   // Detect keypoints on the image 200

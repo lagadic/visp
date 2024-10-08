@@ -187,10 +187,10 @@ int main()
     // sets the desired position of the visual feature
     vpFeaturePoint pd[4];
 
-    pd[0].build(-L, -L, D);
-    pd[1].build(L, -L, D);
-    pd[2].build(L, L, D);
-    pd[3].build(-L, L, D);
+    pd[0].buildFrom(-L, -L, D);
+    pd[1].buildFrom(L, -L, D);
+    pd[2].buildFrom(L, L, D);
+    pd[3].buildFrom(-L, L, D);
 
     // We want to see a point on a point
     std::cout << std::endl;

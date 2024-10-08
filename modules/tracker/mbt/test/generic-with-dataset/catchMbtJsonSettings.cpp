@@ -245,7 +245,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         t2.getClipping(newFlags);
         for (const auto &it : oldFlags) {
           unsigned int o = it.second;
-          unsigned int n;
+          unsigned int n = 0;
           REQUIRE_NOTHROW(n = newFlags[it.first]);
           THEN("Clipping flags for camera " + it.first + " should be the same")
           {
