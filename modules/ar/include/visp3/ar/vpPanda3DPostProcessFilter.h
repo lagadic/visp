@@ -99,8 +99,10 @@ protected:
   PointerTo<Texture> m_texture;
   PointerTo<GraphicsOutput> m_buffer;
 
-  static const char *FILTER_VERTEX_SHADER;
+  static const std::string FILTER_VERTEX_SHADER;
 };
+
 END_VISP_NAMESPACE
+
 #endif
 #endif
