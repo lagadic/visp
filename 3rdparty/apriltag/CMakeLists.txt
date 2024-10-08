@@ -63,7 +63,7 @@ endif()
 
 if(MSVC)
   if(BUILD_SHARED_LIBS)
-    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4098 /wd4244 /wd4267 /wd4305 /wd4334 /wd4244 /wd4838 /wd4996 /wd6011 /wd6385 /wd6386 /wd6387 /wd6011 /wd26451)
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4098 /wd4200 /wd4244 /wd4267 /wd4305 /wd4334 /wd4244 /wd4838 /wd4996 /wd6011 /wd6385 /wd6386 /wd6387 /wd6011 /wd26451)
     vp_set_source_file_compile_flag(common/matd.c /wd4244)
     vp_set_source_file_compile_flag(common/g2d.c /wd4244)
     vp_set_source_file_compile_flag(common/homography.c /wd4244)
