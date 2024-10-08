@@ -1,3 +1,4 @@
+//! \example tutorial-mb-generic-tracker-read.cpp
 #include <memory>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
