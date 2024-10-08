@@ -118,8 +118,8 @@ void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &colo
   unsigned int width = I.getWidth();
   vpTutoParabolaModel model(coeffs, I.getHeight(), I.getWidth());
   for (unsigned int u = 0; u < width; ++u) {
-    float v = model.eval(u);
-    vpDisplay::displayPoint(I, v, u, color, 1);
+    double v = model.eval(u);
+    vpDisplay::displayPoint(I, static_cast<int>(v), static_cast<int>(u), color, 1);
     vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
   }
 #else
