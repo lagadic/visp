@@ -64,6 +64,8 @@
   not perfect.
 */
 
+#include <iostream>
+
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpGaussRand.h>

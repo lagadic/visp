@@ -74,6 +74,8 @@
   the interval \f$[- \pi ; \pi ]\f$ .
 */
 
+#include <iostream>
+
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
