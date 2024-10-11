@@ -61,6 +61,9 @@ public:
   {
     m_renderTime = 0.0;
     m_silhouetteExtractionTime = 0.0;
+    m_odometryTime = 0.0;
+    m_driftTime = 0.0;
+
     m_trackerIterStartTime.clear();
     m_trackerFeatureExtractionTime.clear();
 
@@ -120,12 +123,18 @@ public:
     m_driftTime = elapsed;
   }
 
+  void setOdometryTime(double elapsed)
+  {
+    m_odometryTime = elapsed;
+  }
+
 private:
   double m_startTime;
   double m_renderTime;
   double m_silhouetteExtractionTime;
   double m_maskTime;
   double m_driftTime;
+  double m_odometryTime;
   std::map<int, std::vector<double>> m_trackerVVSIterTimes;
 
   std::map<int, double> m_trackerIterStartTime;
@@ -140,12 +149,13 @@ private:
 
 std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
 {
-  ssize_t ss = out.precision();
+  auto flags = out.flags();
   out << std::setprecision(2) << std::fixed;
   out << "====================================================" << std::endl;
   out << "Render: " << timer.m_renderTime << "ms" << std::endl;
   out << "Mask: " << timer.m_maskTime << "ms" << std::endl;
   out << "Drift: " << timer.m_driftTime << "ms" << std::endl;
+  out << "Odometry: " << timer.m_odometryTime << "ms" << std::endl;
   out << "Silhouette extraction: " << timer.m_silhouetteExtractionTime << "ms" << std::endl;
 
   out << "Trackers: " << std::endl;
@@ -168,7 +178,7 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
       << "+-" << vpMath::getStdev(vvsIterData.second) << "ms)" << std::endl;
   }
   out << "====================================================" << std::endl;
-  out << std::setprecision(ss);
+  out.flags(flags);
   return out;
 }
 
