@@ -222,12 +222,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
-  if (m_odometry) {
-    m_odometry->compute(input, m_previousFrame);
-    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
-    m_cMo = cnTc * m_cMo;
-    updateRender(input);
-  }
+
 
   m_logger.startTimer();
   if (m_mask) {
@@ -235,6 +230,12 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
   m_logger.setMaskTime(m_logger.endTimer());
 
+  if (m_odometry) {
+    m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
+    m_cMo = cnTc * m_cMo;
+    updateRender(input);
+  }
 
   bool requiresSilhouetteCandidates = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -243,6 +244,8 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
       break;
     }
   }
+
+
 
   m_logger.startTimer();
   if (requiresSilhouetteCandidates) {
@@ -254,6 +257,8 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     }
   }
   m_logger.setSilhouetteTime(m_logger.endTimer());
+
+
 
   int id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {

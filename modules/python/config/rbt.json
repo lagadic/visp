@@ -265,8 +265,7 @@
       ]
     },
     "vpRBVisualOdometry": {
-      "trampoline": "TrampolineRBVisualOdometry",
-      "use_publicist": true
+      "trampoline": "TrampolineRBVisualOdometry"
     },
     "vpObjectCentricRenderer": {
       "methods": [

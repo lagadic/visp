@@ -26,7 +26,7 @@ public:
 
   virtual vpHomogeneousMatrix getCameraMotion() const VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE(
+    PYBIND11_OVERRIDE_PURE(
       vpHomogeneousMatrix,           /* Return type */
       vpRBVisualOdometry,     /* Parent class */
       getCameraMotion,       /* Name of function in C++ (must match Python name) */
@@ -35,7 +35,7 @@ public:
   }
   virtual vpHomogeneousMatrix getCameraPose() const VP_OVERRIDE
   {
-    PYBIND11_OVERRIDE(
+    PYBIND11_OVERRIDE_PURE(
       vpHomogeneousMatrix,           /* Return type */
       vpRBVisualOdometry,     /* Parent class */
       getCameraPose,       /* Name of function in C++ (must match Python name) */
