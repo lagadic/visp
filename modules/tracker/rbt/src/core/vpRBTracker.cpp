@@ -230,14 +230,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
   }
   m_logger.setMaskTime(m_logger.endTimer());
 
-  if (m_odometry) {
-    m_logger.startTimer();
-    m_odometry->compute(input, m_previousFrame);
-    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
-    m_cMo = cnTc * m_cMo;
-    updateRender(input);
-    m_logger.setOdometryTime(m_logger.endTimer());
-  }
+
 
   bool requiresSilhouetteCandidates = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -290,6 +283,15 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     }
     m_logger.setTrackerFeatureTrackingTime(id, m_logger.endTimer());
     id += 1;
+  }
+
+  if (m_odometry) {
+    m_logger.startTimer();
+    m_odometry->compute(input, m_previousFrame);
+    vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
+    m_cMo = cnTc * m_cMo;
+    std::cout << "Odometry camera cnTc = " << vpPoseVector(cnTc).t() << std::endl;
+    m_logger.setOdometryTime(m_logger.endTimer());
   }
 
 
