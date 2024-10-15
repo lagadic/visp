@@ -290,7 +290,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_odometry->compute(input, m_previousFrame);
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
-    std::cout << "Odometry camera cnTc = " << vpPoseVector(cnTc).t() << std::endl;
     updateRender(input);
     m_logger.setOdometryTime(m_logger.endTimer());
   }
