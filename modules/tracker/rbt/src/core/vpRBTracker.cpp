@@ -291,6 +291,7 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     vpHomogeneousMatrix cnTc = m_odometry->getCameraMotion();
     m_cMo = cnTc * m_cMo;
     std::cout << "Odometry camera cnTc = " << vpPoseVector(cnTc).t() << std::endl;
+    updateRender(input);
     m_logger.setOdometryTime(m_logger.endTimer());
   }
 
@@ -380,9 +381,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     tracker->onTrackingIterEnd();
   }
   //m_cMo = m_kalman.filter(m_cMo, 1.0 / 20.0);
-#if VP_DEBUG_RB_TRACKER
-  std::cout << m_logger << std::endl;
-#endif
   if (m_currentFrame.I.getSize() == 0) {
     m_currentFrame = input;
     m_previousFrame = input;
@@ -396,6 +394,9 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_driftDetector->update(m_previousFrame, m_currentFrame, m_cMo, m_cMoPrev);
   }
   m_logger.setDriftDetectionTime(m_logger.endTimer());
+#if VP_DEBUG_RB_TRACKER
+  std::cout << m_logger << std::endl;
+#endif
 }
 
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)

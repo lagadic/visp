@@ -22,7 +22,6 @@ public:
     // Try to look up the overridden method on the Python side.
     pybind11::function override = pybind11::get_override(this, "updateMask");
     if (override) {  // method is found
-      // Pybind seems to copy the frames, so we pass the pointers
       override(&frame, &previousFrame, &mask);
     }
   }
