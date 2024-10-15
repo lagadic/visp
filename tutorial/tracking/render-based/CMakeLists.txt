@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(tutorial-render-based-tracking)
 
-find_package(VISP REQUIRED visp_core visp_rbt visp_io visp_gui)
+find_package(VISP REQUIRED visp_core visp_rbt visp_io visp_gui visp_sensor)
 
 # set the list of source files
 set(tutorial_cpp
