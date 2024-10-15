@@ -329,8 +329,8 @@ int main(int argc, const char **argv)
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
+        }
       }
-    }
       else {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
@@ -342,9 +342,9 @@ int main(int argc, const char **argv)
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
 #endif
+        }
       }
-  }
-}
+    }
 
     if (!opt_initFile.empty())
       initFile = opt_initFile;
@@ -563,7 +563,7 @@ int main(int argc, const char **argv)
 
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
-        cMo.build(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
+        cMo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
         vpTRACE("Test set pose");
         tracker.setPose(I, cMo);
         //        if (opt_display) {

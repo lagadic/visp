@@ -149,7 +149,7 @@ BEGIN_VISP_NAMESPACE
  *
  *   // Initialize the desired pose between the camera and the object frame
  *   vpHomogeneousMatrix cMod;
- *   cMod.build(0, 0, 1, 0, 0, 0);
+ *   cMod.buildFrom(0, 0, 1, 0, 0, 0);
  *
  *   // Compute the desired position of the point
  *   for (int i = 0 ; i < 4 ; i++) {
@@ -167,7 +167,7 @@ BEGIN_VISP_NAMESPACE
  *
  *   // Initialize the current pose between the camera and the object frame
  *   vpHomogeneousMatrix cMo;
- *   cMo.build(0, 0, 1.2, 0, 0, M_PI);
+ *   cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI);
  *   // ... cMo need here to be computed from a pose estimation
  *
  *   for (int i = 0 ; i < 4 ; i++) {
@@ -241,12 +241,12 @@ BEGIN_VISP_NAMESPACE
  *   // Creation of the current feature s
  *   vpFeaturePointPolar s;
  *   // Initialize the current feature
- *   s.build(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
+ *   s.buildFrom(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
  *
  *   // Creation of the desired feature s
  *   vpFeaturePointPolar s_star;
  *   // Initialize the desired feature
- *   s.build(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
+ *   s.buildFrom(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
  *
  *   // Compute the interaction matrix L_s for the current feature
  *   vpMatrix L = s.interaction();
@@ -269,10 +269,7 @@ public:
   // basic constructor
   vpFeaturePointPolar();
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double rho, double theta, double Z);
-#endif
-  vpFeaturePointPolar &build(const double &rho, const double &theta, const double &Z);
+  vpFeaturePointPolar &buildFrom(const double &rho, const double &theta, const double &Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
     unsigned int thickness = 1) const VP_OVERRIDE;

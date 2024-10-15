@@ -73,12 +73,8 @@ public:
   //! basic constructor
   vpFeatureEllipse(double x, double y, double n20, double n11, double n02);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double x, double y, double n20, double n11, double n02);
-  void buildFrom(double x, double y, double n20, double n11, double n02, double A, double B, double C);
-#endif
-  vpFeatureEllipse &build(const double &x, const double &y, const double &n20, const double &n11, const double &n02);
-  vpFeatureEllipse &build(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &A, const double &B, const double &C);
+  vpFeatureEllipse &buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02);
+  vpFeatureEllipse &buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &A, const double &B, const double &C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;

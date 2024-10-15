@@ -217,7 +217,7 @@ void vpRobotCamera::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     vpRotationMatrix cRw;
     this->cMw_.extract(cRw);
     vpRxyzVector rxyz;
-    rxyz.build(cRw);
+    rxyz.buildFrom(cRw);
 
     for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->cMw_[i][3]; // translation x,y,z

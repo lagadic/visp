@@ -552,9 +552,9 @@ vpFeatureLuminanceMapping *vpFeatureLuminanceMapping::duplicate() const
   return new vpFeatureLuminanceMapping(*this);
 }
 
-void vpFeatureLuminanceMapping::build(vpImage<unsigned char> &I)
+void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I)
 {
-  m_featI.build(I);
+  m_featI.buildFrom(I);
   m_featI.interaction(m_LI);
   m_mapping->map(I, s);
 }

@@ -399,7 +399,7 @@ int main(int argc, const char **argv)
 
     // camera desired position
     vpHomogeneousMatrix cMo;
-    cMo.build(0.0, 0, Z + 0.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(5));
+    cMo.buildFrom(0.0, 0, Z + 0.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(5));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -460,7 +460,7 @@ int main(int argc, const char **argv)
     luminanceI.init(I.getHeight(), I.getWidth(), Z);
     luminanceI.setCameraParameters(cam);
     vpFeatureLuminanceMapping sI(luminanceI, sMapping);
-    sI.build(I);
+    sI.buildFrom(I);
     sI.getMapping()->inverse(sI.get_s(), Irec);
 
     // desired visual feature built from the image
@@ -468,7 +468,7 @@ int main(int argc, const char **argv)
     luminanceId.init(I.getHeight(), I.getWidth(), Z);
     luminanceId.setCameraParameters(cam);
     vpFeatureLuminanceMapping sId(luminanceId, sdMapping);
-    sId.build(Id);
+    sId.buildFrom(Id);
 
     // set a velocity control mode
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -497,7 +497,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageDifference(I, Id, Idiff);
 
       // Compute current visual features
-      sI.build(I);
+      sI.buildFrom(I);
       sI.getMapping()->inverse(sI.get_s(), Irec);
 
       if (iter > iterGN) {

@@ -100,7 +100,7 @@ bool convertFromTypeAndBuildFrom(const nlohmann::json &j, T &t)
   if (j["type"] == O::jsonTypeName) {
     O other;
     from_json(j, other);
-    t.build(other);
+    t.buildFrom(other);
     return true;
   }
   else {

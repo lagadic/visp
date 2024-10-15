@@ -337,7 +337,7 @@ vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
 
 if(UNIX)
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-misleading-indentation -Wno-strict-aliasing)
-  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
 else()
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
 endif()

@@ -173,24 +173,12 @@ unsigned int vpFeatureLuminance::getBorder() const { return bord; }
 
 void vpFeatureLuminance::setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(vpImage<unsigned char> &) instead.
-  Build a luminance feature directly from the image
-*/
-
-void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
-{
-  build(I);
-}
-#endif
-
 /*!
 
   Build a luminance feature directly from the image
 */
 
-vpFeatureLuminance &vpFeatureLuminance::build(vpImage<unsigned char> &I)
+vpFeatureLuminance &vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
 {
   unsigned int l = 0;
   double Ix, Iy;

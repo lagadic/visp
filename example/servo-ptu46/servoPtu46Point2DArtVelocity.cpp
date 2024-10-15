@@ -174,7 +174,7 @@ int main()
     p.set_Z(1);
     vpTRACE("sets the desired position of the visual feature ");
     vpFeaturePoint pd;
-    pd.build(0, 0, 1);
+    pd.buildFrom(0, 0, 1);
 
     vpTRACE("define the task");
     vpTRACE("\t we want an eye-in-hand control law");

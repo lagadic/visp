@@ -148,7 +148,7 @@ int main()
 
     // Sets the desired position of the visual feature
     vpFeaturePoint s_d;
-    s_d.build(0, 0, 1); // Here we consider the center of the image (x=y=0 and Z=1 meter)
+    s_d.buildFrom(0, 0, 1); // Here we consider the center of the image (x=y=0 and Z=1 meter)
 
     // Define the task
     // - we want an eye-in-hand control law

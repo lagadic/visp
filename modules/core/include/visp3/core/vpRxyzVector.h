@@ -162,7 +162,7 @@ class vpThetaUVector;
     vpRotationMatrix R(rxyz);
 
     // Extract the Euler angles around x,y,z axis from a rotation matrix
-    rxyz.build(R);
+    rxyz.buildFrom(R);
 
     // Print the extracted Euler angles. Values are the same than the
     // one used for initialization
@@ -194,26 +194,15 @@ public:
   VP_EXPLICIT vpRxyzVector(const vpColVector &rxyz);
   VP_EXPLICIT vpRxyzVector(const std::vector<double> &rxyz);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // convert a rotation matrix into Rxyz vector
-  VP_DEPRECATED vpRxyzVector buildFrom(const vpRotationMatrix &R);
+  vpRxyzVector &buildFrom(const vpRotationMatrix &R);
 
   // convert a ThetaU vector into a Rxyz vector
-  VP_DEPRECATED vpRxyzVector buildFrom(const vpThetaUVector &tu);
-  VP_DEPRECATED vpRxyzVector buildFrom(const vpColVector &rxyz);
-  VP_DEPRECATED vpRxyzVector buildFrom(const std::vector<double> &rxyz);
+  vpRxyzVector &buildFrom(const vpThetaUVector &tu);
+  vpRxyzVector &buildFrom(const vpColVector &rxyz);
+  vpRxyzVector &buildFrom(const std::vector<double> &rxyz);
 
-  VP_DEPRECATED void buildFrom(double phi, double theta, double psi);
-#endif
-  // convert a rotation matrix into Rxyz vector
-  vpRxyzVector &build(const vpRotationMatrix &R);
-
-  // convert a ThetaU vector into a Rxyz vector
-  vpRxyzVector &build(const vpThetaUVector &tu);
-  vpRxyzVector &build(const vpColVector &rxyz);
-  vpRxyzVector &build(const std::vector<double> &rxyz);
-
-  vpRxyzVector &build(const double &phi, const double &theta, const double &psi);
+  vpRxyzVector &buildFrom(const double &phi, const double &theta, const double &psi);
 
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);

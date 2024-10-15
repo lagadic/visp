@@ -278,7 +278,7 @@ int main(int argc, char **argv)
     if (!opt_extrinsic.empty()) {
       vpPoseVector ePc;
       ePc.loadYAML(opt_extrinsic, ePc);
-      eMc.build(ePc);
+      eMc.buildFrom(ePc);
     }
     else {
       std::cout << "***************************************************************" << std::endl;

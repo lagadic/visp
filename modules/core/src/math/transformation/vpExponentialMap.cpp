@@ -96,7 +96,7 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v, const double 
   u[index_0] = v_dt[index_3];
   u[index_1] = v_dt[index_4];
   u[index_2] = v_dt[index_5];
-  rd.build(u);
+  rd.buildFrom(u);
 
   theta = sqrt((u[index_0] * u[index_0]) + (u[index_1] * u[index_1]) + (u[index_2] * u[index_2]));
   si = sin(theta);
@@ -171,7 +171,7 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
   const unsigned int index_3 = 3;
 
   M.extract(Rd);
-  u.build(Rd);
+  u.buildFrom(Rd);
   for (i = 0; i < 3; ++i) {
     v[3 + i] = u[i];
   }

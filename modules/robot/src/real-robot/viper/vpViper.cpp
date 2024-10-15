@@ -939,7 +939,7 @@ void vpViper::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 
   return;
 }
@@ -1231,7 +1231,7 @@ void vpViper::set_eMc(const vpHomogeneousMatrix &eMc_)
   this->eMc = eMc_;
   this->eMc.extract(etc);
   vpRotationMatrix R(this->eMc);
-  this->erc.build(R);
+  this->erc.buildFrom(R);
 }
 
 /*!
@@ -1249,7 +1249,7 @@ void vpViper::set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_)
   this->etc = etc_;
   this->erc = erc_;
   vpRotationMatrix eRc(erc);
-  this->eMc.build(etc, eRc);
+  this->eMc.buildFrom(etc, eRc);
 }
 
 /*!

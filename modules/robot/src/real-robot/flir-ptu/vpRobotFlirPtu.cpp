@@ -237,7 +237,7 @@ vpMatrix vpRobotFlirPtu::get_fMe()
 vpVelocityTwistMatrix vpRobotFlirPtu::get_cVe() const
 {
   vpVelocityTwistMatrix cVe;
-  cVe.build(m_eMc.inverse());
+  cVe.buildFrom(m_eMc.inverse());
 
   return cVe;
 }

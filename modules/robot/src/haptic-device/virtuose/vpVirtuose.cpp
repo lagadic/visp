@@ -205,7 +205,7 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.build(translation, thetau);
+    position.buildFrom(translation, thetau);
 
     return position;
   }
@@ -240,7 +240,7 @@ vpPoseVector vpVirtuose::getBaseFrame() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.build(translation, thetau);
+    position.buildFrom(translation, thetau);
 
     return position;
   }
@@ -404,7 +404,7 @@ vpPoseVector vpVirtuose::getObservationFrame() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.build(translation, thetau);
+    position.buildFrom(translation, thetau);
   }
   return position;
 }
@@ -438,7 +438,7 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.build(translation, thetau);
+    position.buildFrom(translation, thetau);
   }
   return position;
 }
@@ -495,7 +495,7 @@ vpPoseVector vpVirtuose::getPosition() const
 
     vpThetaUVector thetau(quaternion);
 
-    position.build(translation, thetau);
+    position.buildFrom(translation, thetau);
   }
   return position;
 }

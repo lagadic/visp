@@ -233,22 +233,13 @@ public:
   VP_EXPLICIT vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
-  VP_DEPRECATED void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
-  VP_DEPRECATED void buildFrom(const vpPoseVector &p);
-  VP_DEPRECATED void buildFrom(const std::vector<float> &v);
-  VP_DEPRECATED void buildFrom(const std::vector<double> &v);
-  VP_DEPRECATED void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
-#endif
-  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpRotationMatrix &R);
-  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpThetaUVector &tu);
-  vpHomogeneousMatrix &build(const vpTranslationVector &t, const vpQuaternionVector &q);
-  vpHomogeneousMatrix &build(const vpPoseVector &p);
-  vpHomogeneousMatrix &build(const std::vector<float> &v);
-  vpHomogeneousMatrix &build(const std::vector<double> &v);
-  vpHomogeneousMatrix &build(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vpHomogeneousMatrix &buildFrom(const vpPoseVector &p);
+  vpHomogeneousMatrix &buildFrom(const std::vector<float> &v);
+  vpHomogeneousMatrix &buildFrom(const std::vector<double> &v);
+  vpHomogeneousMatrix &buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);

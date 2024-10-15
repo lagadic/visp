@@ -427,9 +427,8 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       sim.setCameraPositionRelObj(cMo);
 
-      // Compute the position of the external view which is fixed in the
-      // object frame
-      camoMf.build(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
+      // Compute the position of the external view which is fixed in the object frame
+      camoMf.buildFrom(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
       camoMf = camoMf * (sim.get_fMo().inverse());
 
       if (opt_plot) {

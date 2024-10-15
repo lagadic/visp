@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +29,7 @@
  *
  * Description:
  * Class for Munkres Assignment Algorithm.
- *
- * Authors:
- * Souriya Trinh
- * Julien Dufour
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpMunkres.h>
 
@@ -50,8 +44,8 @@ BEGIN_VISP_NAMESPACE
  * \param[in] row: Row index.
  * \return Index of the starred zero [col] or std::nullopt if the mask matrix row does not contain a starred zero.
  */
-std::optional<unsigned int> vpMunkres::findStarInRow(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
-                                                     const unsigned int &row)
+  std::optional<unsigned int> vpMunkres::findStarInRow(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
+                                                       const unsigned int &row)
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::STARRED);
   return it != end(mask.at(row)) ? std::make_optional<unsigned int>(std::distance(begin(mask.at(row)), it))

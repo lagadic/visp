@@ -170,7 +170,7 @@ int main()
     vpTranslationVector c_t_o(0, 0, 0.5);   // tz = 0.5 meter
     vpRxyzVector c_r_o(vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)); // No rotations
     vpRotationMatrix c_R_o(c_r_o);          // Build the rotation matrix
-    c_M_o.build(c_t_o, c_R_o);              // Build the homogeneous matrix
+    c_M_o.buildFrom(c_t_o, c_R_o);              // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
     std::vector<vpFeaturePoint> s_d(4);

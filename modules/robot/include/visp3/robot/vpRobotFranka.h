@@ -162,7 +162,7 @@ BEGIN_VISP_NAMESPACE
  *   vpHomogeneousMatrix wMe;
  *   while(1) {
  *     robot.getPosition(vpRobot::END_EFFECTOR_FRAME, wPe);
- *     wMe.build(wPe);
+ *     wMe.buildFrom(wPe);
  *     ...
  *   }
  *   \endcode
@@ -177,7 +177,7 @@ BEGIN_VISP_NAMESPACE
  *   vpHomogeneousMatrix wMc;
  *   while(1) {
  *     robot.getPosition(vpRobot::CAMERA_FRAME, wPc);
- *     wMc.build(wPc);
+ *     wMc.buildFrom(wPc);
  *     ...
  *   }
  *   \endcode
@@ -192,7 +192,7 @@ BEGIN_VISP_NAMESPACE
  *   vpHomogeneousMatrix wMt;
  *   while(1) {
  *     robot.getPosition(vpRobot::TOOL_FRAME, wPt);
- *     wMt.build(wPt);
+ *     wMt.buildFrom(wPt);
  *     ...
  *   }
  *   \endcode

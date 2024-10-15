@@ -207,7 +207,7 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   old_iPz = vpImagePoint(-1, -1);
   old_iPt = vpImagePoint(-1, -1);
 
-  rotz.build(0, 0, 0, 0, 0, vpMath::rad(180));
+  rotz.buildFrom(0, 0, 0, 0, 0, vpMath::rad(180));
 
   scene.name = NULL;
   scene.bound.ptr = NULL;
@@ -1415,7 +1415,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, b
     // cout << "delta :" << diffj << endl;;
     double anglei = diffi * 360 / width;
     double anglej = diffj * 360 / width;
-    mov.build(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);
+    mov.buildFrom(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);
     changed = true;
   }
 
@@ -1424,7 +1424,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, b
 
   if (old_iPz != vpImagePoint(-1, -1) && blockedz) {
     double diffi = iP.get_i() - old_iPz.get_i();
-    mov.build(0, 0, diffi * 0.01, 0, 0, 0);
+    mov.buildFrom(0, 0, diffi * 0.01, 0, 0, 0);
     changed = true;
   }
 
@@ -1434,7 +1434,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, b
   if (old_iPt != vpImagePoint(-1, -1) && blockedt) {
     double diffi = iP.get_i() - old_iPt.get_i();
     double diffj = iP.get_j() - old_iPt.get_j();
-    mov.build(diffj * 0.01, diffi * 0.01, 0, 0, 0, 0);
+    mov.buildFrom(diffj * 0.01, diffi * 0.01, 0, 0, 0, 0);
     changed = true;
   }
 
@@ -1506,7 +1506,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<unsigned char
     // cout << "delta :" << diffj << endl;;
     double anglei = diffi * 360 / width;
     double anglej = diffj * 360 / width;
-    mov.build(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);
+    mov.buildFrom(0, 0, 0, vpMath::rad(-anglei), vpMath::rad(anglej), 0);
     changed = true;
   }
 
@@ -1515,7 +1515,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<unsigned char
 
   if (old_iPz != vpImagePoint(-1, -1) && blockedz) {
     double diffi = iP.get_i() - old_iPz.get_i();
-    mov.build(0, 0, diffi * 0.01, 0, 0, 0);
+    mov.buildFrom(0, 0, diffi * 0.01, 0, 0, 0);
     changed = true;
   }
 
@@ -1525,7 +1525,7 @@ vpHomogeneousMatrix vpWireFrameSimulator::navigation(const vpImage<unsigned char
   if (old_iPt != vpImagePoint(-1, -1) && blockedt) {
     double diffi = iP.get_i() - old_iPt.get_i();
     double diffj = iP.get_j() - old_iPt.get_j();
-    mov.build(diffj * 0.01, diffi * 0.01, 0, 0, 0, 0);
+    mov.buildFrom(diffj * 0.01, diffi * 0.01, 0, 0, 0, 0);
     changed = true;
   }
 

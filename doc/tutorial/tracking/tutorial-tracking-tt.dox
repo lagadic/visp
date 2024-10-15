@@ -210,7 +210,7 @@ vpTemplateTracker::setIterationMax() function.
 In tutorial-template-tracker.cpp we use vpTemplateTrackerSSDInverseCompositional class that implements the
 "Sum of Square Differences" as similarity function. To use Mutual Information that is more robust to occlusion and
 lighting changes, the code needs to be modified, first introducing vpTemplateTrackerMIInverseCompositional header,
-then instanciating the tracker, and finally setting the paramaters to speed up the MI tracker that is slower than
+then instantiating the tracker, and finally setting the paramaters to speed up the MI tracker that is slower than
 the SSD one:
 
 - **Adding vpTemplateTrackerMIInverseCompositional header** consists in adding the following line at the beginning

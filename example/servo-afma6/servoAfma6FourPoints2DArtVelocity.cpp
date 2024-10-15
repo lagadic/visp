@@ -161,10 +161,10 @@ int main()
     // Sets the desired position of the visual feature
     vpFeaturePoint s_d[4];
 
-    s_d[0].build(-L/D, -L/D, D);
-    s_d[1].build(+L/D, -L/D, D);
-    s_d[2].build(+L/D, +L/D, D);
-    s_d[3].build(-L/D, +L/D, D);
+    s_d[0].buildFrom(-L/D, -L/D, D);
+    s_d[1].buildFrom(+L/D, -L/D, D);
+    s_d[2].buildFrom(+L/D, +L/D, D);
+    s_d[3].buildFrom(-L/D, +L/D, D);
 
     // Define the task
     // - we want an eye-in-hand control law

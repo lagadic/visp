@@ -78,7 +78,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t)
   s.setABC(A, B, C);
 
   // 2D data
-  s.build(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
+  s.buildFrom(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
 }
 
 /*!
@@ -112,7 +112,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpSphere &t)
   s.setABC(A, B, C);
 
   // 2D data
-  s.build(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
+  s.buildFrom(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
 }
 
 #ifdef VISP_HAVE_MODULE_BLOB
@@ -139,7 +139,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertPoint(cam, blob.getCog(), xc, yc);
   vpColVector nij = blob.get_nij();
 
-  s.build(xc, yc, nij[0], nij[1], nij[2]);
+  s.buildFrom(xc, yc, nij[0], nij[1], nij[2]);
 }
 
 /*!
@@ -165,7 +165,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertPoint(cam, blob.getCog(), xc, yc);
   vpColVector nij = blob.get_nij();
 
-  s.build(xc, yc, nij[0], nij[1], nij[2]);
+  s.buildFrom(xc, yc, nij[0], nij[1], nij[2]);
 }
 #endif //#ifdef VISP_HAVE_MODULE_BLOB
 
@@ -193,7 +193,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertEllipse(cam, ellipse.getCenter(), ellipse.get_nij()[0], ellipse.get_nij()[1],
                                          ellipse.get_nij()[2], xg, yg, n20, n11, n02);
 
-  s.build(xg, yg, n20, n11, n02);
+  s.buildFrom(xg, yg, n20, n11, n02);
 }
 
 #endif //#ifdef VISP_HAVE_MODULE_ME

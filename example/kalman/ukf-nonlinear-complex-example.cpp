@@ -74,6 +74,8 @@
  * the interval \f$[- \pi ; \pi ]\f$ .
 */
 
+#include <iostream>
+
 // UKF includes
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
 #include <visp3/core/vpUnscentedKalman.h>

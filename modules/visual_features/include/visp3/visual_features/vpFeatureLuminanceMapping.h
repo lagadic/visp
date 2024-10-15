@@ -352,7 +352,7 @@ public:
    */
   vpLuminanceDCT(const vpLuminanceDCT &other);
 
-  vpLuminanceDCT &operator=(const vpLuminanceDCT &other) = default;
+  vpLuminanceDCT &operator=(const vpLuminanceDCT &) = default;
 
   void map(const vpImage<unsigned char> &I, vpColVector &s) VP_OVERRIDE;
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) VP_OVERRIDE;
@@ -363,7 +363,7 @@ private:
   void computeDCTMatrices(unsigned int rows, unsigned int cols);
 
 protected:
-  unsigned m_Ih, m_Iw; //! image dimensions (without borders)
+  unsigned int m_Ih, m_Iw; //! image dimensions (without borders)
   vpMatrix m_Imat; //! Image as a matrix
   vpMatrix m_dct; //! DCT representation of the image
   vpMatrix m_Dcols, m_Drows; //! the computed DCT matrices. The separable property of DCt is used so that a 1D DCT is computed on rows and another on columns of the result of the first dct;
@@ -399,7 +399,7 @@ public:
 
   virtual ~vpFeatureLuminanceMapping() = default;
 
-  void build(vpImage<unsigned char> &I);
+  void buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE

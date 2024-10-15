@@ -56,14 +56,14 @@ vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) { 
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
 */
-vpRzyxVector::vpRzyxVector(double phi, double theta, double psi) : vpRotationVector(3) { build(phi, theta, psi); }
+vpRzyxVector::vpRzyxVector(double phi, double theta, double psi) : vpRotationVector(3) { buildFrom(phi, theta, psi); }
 
 /*!
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.
   \param R : Rotation matrix used to initialize the Euler angles.
 */
-vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(3) { build(R); }
+vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(3) { buildFrom(R); }
 
 /*!
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
@@ -71,77 +71,13 @@ vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(3) { bu
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
-vpRzyxVector::vpRzyxVector(const vpThetaUVector &tu) : vpRotationVector(3) { build(tu); }
+vpRzyxVector::vpRzyxVector(const vpThetaUVector &tu) : vpRotationVector(3) { buildFrom(tu); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyxVector::vpRzyxVector(const vpColVector &rzyx) : vpRotationVector(3) { build(rzyx); }
+vpRzyxVector::vpRzyxVector(const vpColVector &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyxVector::vpRzyxVector(const std::vector<double> &rzyx) : vpRotationVector(3) { build(rzyx); }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const vpRotationMatrix &) instead.
-  Convert a rotation matrix into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector.
-
-  Source: R. Paul, Robot Manipulators: Mathematics, Programming, and Control.
-  MIT Press, 1981, p. 71
-
-  \param R : Rotation matrix used as input.
-  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
-*/
-vpRzyxVector vpRzyxVector::buildFrom(const vpRotationMatrix &R)
-{
-  build(R);
-  return *this;
-}
-
-/*!
-  \deprecated You should use build(const vpThetaUVector &) instead.
-  Convert a \f$\theta {\bf u}\f$ vector into a
-  \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
-  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as input.
-  \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
-*/
-vpRzyxVector vpRzyxVector::buildFrom(const vpThetaUVector &tu)
-{
-  build(tu);
-  return *this;
-}
-
-/*!
-  \deprecated You should use build(const double &, const double &, const double &) instead.
-  Construction from 3 angles (in radian).
-  \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
-  \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
-  \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
-*/
-void vpRzyxVector::buildFrom(double phi, double theta, double psi)
-{
-  build(phi, theta, psi);
-}
-
-/*!
-  \deprecated You should use build(const vpColVector &) instead.
-  Construct a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vectorfrom a 3-dim vector.
-*/
-vpRzyxVector vpRzyxVector::buildFrom(const vpColVector &rzyx)
-{
-  build(rzyx);
-  return *this;
-}
-
-/*!
-  \deprecated You should use build(const std::vector<double> &) instead.
-  Construct a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector from a 3-dim vector.
-*/
-vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
-{
-  build(rzyx);
-  return *this;
-}
-#endif
+vpRzyxVector::vpRzyxVector(const std::vector<double> &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
 
 /*!
   Convert a rotation matrix into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
@@ -153,7 +89,7 @@ vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
   \param R : Rotation matrix used as input.
   \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
 */
-vpRzyxVector &vpRzyxVector::build(const vpRotationMatrix &R)
+vpRzyxVector &vpRzyxVector::buildFrom(const vpRotationMatrix &R)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -183,7 +119,7 @@ vpRzyxVector &vpRzyxVector::build(const vpRotationMatrix &R)
 
   double psi = atan2((si * ax) - (co * ay), (-si * ox) + (co * oy));
 
-  build(phi, theta, psi);
+  buildFrom(phi, theta, psi);
 
   return *this;
 }
@@ -194,11 +130,11 @@ vpRzyxVector &vpRzyxVector::build(const vpRotationMatrix &R)
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as input.
   \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.
 */
-vpRzyxVector &vpRzyxVector::build(const vpThetaUVector &tu)
+vpRzyxVector &vpRzyxVector::buildFrom(const vpThetaUVector &tu)
 {
   vpRotationMatrix R;
-  R.build(tu);
-  build(R);
+  R.buildFrom(tu);
+  buildFrom(R);
 
   return *this;
 }
@@ -209,7 +145,7 @@ vpRzyxVector &vpRzyxVector::build(const vpThetaUVector &tu)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
 */
-vpRzyxVector &vpRzyxVector::build(const double &phi, const double &theta, const double &psi)
+vpRzyxVector &vpRzyxVector::buildFrom(const double &phi, const double &theta, const double &psi)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -221,9 +157,9 @@ vpRzyxVector &vpRzyxVector::build(const double &phi, const double &theta, const 
 }
 
 /*!
-  Construct a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vectorfrom a 3-dim vector.
+  Construct a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector from a 3-dim vector.
 */
-vpRzyxVector &vpRzyxVector::build(const vpColVector &rzyx)
+vpRzyxVector &vpRzyxVector::buildFrom(const vpColVector &rzyx)
 {
   if (rzyx.size() != 3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension col vector",
@@ -240,7 +176,7 @@ vpRzyxVector &vpRzyxVector::build(const vpColVector &rzyx)
 /*!
   Construct a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector from a 3-dim vector.
 */
-vpRzyxVector &vpRzyxVector::build(const std::vector<double> &rzyx)
+vpRzyxVector &vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
 {
   if (rzyx.size() != 3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension std::vector",

@@ -81,7 +81,7 @@ void vpFeatureEllipse::init()
 }
 
 vpFeatureEllipse::vpFeatureEllipse() : A(0), B(0), C(0) { init(); }
-vpFeatureEllipse::vpFeatureEllipse(double x, double y, double n20, double n11, double n02) { this->build(x, y, n20, n11, n02); }
+vpFeatureEllipse::vpFeatureEllipse(double x, double y, double n20, double n11, double n02) { this->buildFrom(x, y, n20, n11, n02); }
 
 
 //! compute the interaction matrix from a subset a the possible features
@@ -280,25 +280,7 @@ void vpFeatureEllipse::print(unsigned int select) const
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use build(const double &, const double &, const double &, const double &, const double &) instead.
- */
-void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02)
-{
-  build(x, y, n20, n11, n02);
-}
-
-/*!
-  \deprecated You should use build(const double &, const double &, const double &, const double &, const double &) instead.
- */
-void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02, double a, double b, double c)
-{
-  build(x, y, n20, n11, n02, a, b, c);
-}
-#endif
-
-vpFeatureEllipse &vpFeatureEllipse::build(const double &x, const double &y, const double &n20, const double &n11, const double &n02)
+vpFeatureEllipse &vpFeatureEllipse::buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02)
 {
   s[0] = x;
   s[1] = y;
@@ -312,7 +294,7 @@ vpFeatureEllipse &vpFeatureEllipse::build(const double &x, const double &y, cons
   return *this;
 }
 
-vpFeatureEllipse &vpFeatureEllipse::build(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &a, const double &b, const double &c)
+vpFeatureEllipse &vpFeatureEllipse::buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &a, const double &b, const double &c)
 {
   s[0] = x;
   s[1] = y;

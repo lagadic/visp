@@ -116,14 +116,14 @@ BEGIN_VISP_NAMESPACE
  *   double Cd = 1;
  *   double Dd = -1;
  *   // Set the line feature thanks to the desired parameters.
- *   sd.build(rhod, thetad, Ad,Bd, Cd, Dd);
+ *   sd.buildFrom(rhod, thetad, Ad,Bd, Cd, Dd);
  *
  *   vpFeatureLine s; //The current line feature.
  *   // Sets the current features rho and theta
  *   double rho;    // You have to compute the value of rho.
  *   double theta;  // You have to compute the value of theta.
  *   // Set the line feature thanks to the current parameters.
- *   s.build(rho, theta);
+ *   s.buildFrom(rho, theta);
  *   // In this case the parameters A, B, C, D are not needed because the interaction matrix is computed
  *   // with the desired visual feature.
  *
@@ -141,7 +141,7 @@ BEGIN_VISP_NAMESPACE
  *     // The new parameters rho and theta must be computed here.
  *
  *     // Update the current line visual feature
- *     s.build(rho, theta);
+ *     s.buildFrom(rho, theta);
  *
  *     // Compute the control law
  *     vpColVector v = task.computeControlLaw(); // camera velocity
@@ -172,7 +172,7 @@ BEGIN_VISP_NAMESPACE
  *   // Sets the parameters which describe the equation of a plane in the camera frame : AX+BY+CZ+D=0.
  *   double Ad = 0; double Bd = 0; double Cd = 1; double Dd = -1;
  *   // Set the line feature thanks to the desired parameters.
- *   sd.build(rhod, thetad, Ad,Bd, Cd, Dd);
+ *   sd.buildFrom(rhod, thetad, Ad,Bd, Cd, Dd);
  *
  *   vpFeatureLine s; // The current line feature.
  *   // Sets the current features rho and theta
@@ -184,7 +184,7 @@ BEGIN_VISP_NAMESPACE
  *   double C;  // You have to compute the value of C.
  *   double D;  // You have to compute the value of D. D must not be equal to zero !
  *   // Set the line feature thanks to the current parameters.
- *   s.build(rho, theta, A, B, C, D);
+ *   s.buildFrom(rho, theta, A, B, C, D);
  *
  *   // Compute the interaction matrix L_s for the current line feature
  *   vpMatrix L = s.interaction();
@@ -210,12 +210,8 @@ private:
 public:
   vpFeatureLine();
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double rho, double theta);
-  void buildFrom(double rho, double theta, double A, double B, double C, double D);
-#endif
-  vpFeatureLine &build(const double &rho, const double &theta);
-  vpFeatureLine &build(const double &rho, const double &theta, const double &A, const double &B, const double &C, const double &D);
+  vpFeatureLine &buildFrom(const double &rho, const double &theta);
+  vpFeatureLine &buildFrom(const double &rho, const double &theta, const double &A, const double &B, const double &C, const double &D);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;

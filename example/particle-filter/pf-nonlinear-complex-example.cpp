@@ -74,6 +74,8 @@
   the interval \f$[- \pi ; \pi ]\f$ .
 */
 
+#include <iostream>
+
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
@@ -469,7 +471,7 @@ public:
   */
   vpLandmarksGrid(const std::vector<vpLandmarkMeasurements> &landmarks, const double &distMaxAllowed)
     : m_landmarks(landmarks)
-    , m_nbLandmarks(landmarks.size())
+    , m_nbLandmarks(static_cast<unsigned int>(landmarks.size()))
   {
     double sigmaDistance = distMaxAllowed / 3.;
     double sigmaDistanceSquared = sigmaDistance * sigmaDistance;

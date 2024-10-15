@@ -184,7 +184,7 @@ int test_pose(bool use_robust)
   else
     std::cout << "\nRobust estimated pose from visual features : " << std::endl;
 
-  pose_est.build(cMo_est);
+  pose_est.buildFrom(cMo_est);
   std::cout << pose_est.t() << std::endl;
 
   std::cout << "\nResulting covariance (Diag): " << std::endl;

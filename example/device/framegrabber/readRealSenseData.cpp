@@ -165,6 +165,8 @@ bool getOptions(int argc, const char *argv[], std::string &input_directory, std:
     case 'z':
       read_npz = true;
       break;
+#else
+      (void)read_npz;
 #endif
     case 'o':
       save_video = true;

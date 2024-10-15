@@ -138,7 +138,7 @@ void vpPtu46::computeMGD(const vpColVector &q, vpPoseVector &r) const
   vpHomogeneousMatrix fMc;
 
   computeMGD(q, fMc);
-  r.build(fMc.inverse());
+  r.buildFrom(fMc.inverse());
 
   return;
 }
@@ -193,7 +193,7 @@ void vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
 
-  cVe.build(cMe);
+  cVe.buildFrom(cMe);
 }
 
 /*!

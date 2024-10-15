@@ -172,7 +172,7 @@ int main(int argc, const char **argv)
     vpHomogeneousMatrix cdMc;
     cdMc = cdMo * cMo.inverse();
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    tu.build(cdMc);
+    tu.buildFrom(cdMc);
 
     // define the task
     // - we want an eye-in-hand control law
@@ -201,7 +201,7 @@ int main(int argc, const char **argv)
 
       // new rotation to achieve
       cdMc = cdMo * cMo.inverse();
-      tu.build(cdMc);
+      tu.buildFrom(cdMc);
 
       // compute the control law
       v = task.computeControlLaw();
@@ -226,4 +226,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-  }
+}

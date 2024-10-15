@@ -59,7 +59,7 @@ int main()
   std::cout << "\nEstimated displacement:" << std::endl;
   std::cout << " atb: " << atb.t() << std::endl;
   vpThetaUVector atub;
-  atub.build(aRb);
+  atub.buildFrom(aRb);
   std::cout << " athetaub: ";
   for (unsigned int i = 0; i < 3; i++)
     std::cout << vpMath::deg(atub[i]) << " ";

@@ -81,10 +81,7 @@ public:
 public:
   vpFeatureVanishingPoint();
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void buildFrom(double x, double y);
-#endif
-  vpFeatureVanishingPoint &build(const double &x, const double &y);
+  vpFeatureVanishingPoint &buildFrom(const double &x, const double &y);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const VP_OVERRIDE;
