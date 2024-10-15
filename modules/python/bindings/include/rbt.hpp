@@ -37,6 +37,9 @@
 
 #include "rbt/feature_tracker.hpp"
 #include "rbt/vo.hpp"
+#include "rbt/drift.hpp"
+#include "rbt/mask.hpp"
+
 
 
 
