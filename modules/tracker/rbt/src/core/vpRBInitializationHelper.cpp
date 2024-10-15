@@ -33,7 +33,7 @@ void vpRBInitializationHelper::savePose(const std::string &filename) const
   std::fstream finitpos;
   finitpos.open(filename.c_str(), std::ios::out);
 
-  init_pos.build(m_cMo);
+  init_pos.buildFrom(m_cMo);
   finitpos << init_pos;
   finitpos.close();
 }
@@ -81,7 +81,7 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     }
 
     finitpos.close();
-    last_cMo.build(init_pos);
+    last_cMo.buildFrom(init_pos);
 
     std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
