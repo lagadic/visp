@@ -47,11 +47,11 @@
 #include <visp3/rbt/vpRBVisualOdometry.h>
 #include <visp3/rbt/vpRBInitializationHelper.h>
 
-#define VP_DEBUG_RB_TRACKER 1
-
 BEGIN_VISP_NAMESPACE
 
-vpRBTracker::vpRBTracker() : m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5), m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640)
+vpRBTracker::vpRBTracker() :
+  m_firstIteration(true), m_trackers(0), m_lambda(1.0), m_vvsIterations(10), m_muInit(0.0), m_muIterFactor(0.5),
+  m_renderer(m_rendererSettings), m_imageHeight(480), m_imageWidth(640), m_verbose(false)
 {
   m_rendererSettings.setClippingDistance(0.01, 1.0);
   m_renderer.setRenderParameters(m_rendererSettings);
@@ -393,9 +393,9 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_driftDetector->update(m_previousFrame, m_currentFrame, m_cMo, m_cMoPrev);
   }
   m_logger.setDriftDetectionTime(m_logger.endTimer());
-#if VP_DEBUG_RB_TRACKER
-  std::cout << m_logger << std::endl;
-#endif
+  if (m_verbose) {
+    std::cout << m_logger << std::endl;
+  }
 }
 
 void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
@@ -457,12 +457,12 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
           m_imageHeight, m_imageWidth);
       }
     }
-// #pragma omp section
-//     {
-//       vpImage<vpRGBa> renders.color;
-//       m_renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(renders.color);
-//       m_renderer.placeRendernto(renders.color, frame.renders.color, vpRGBa(0));
-//     }
+    // #pragma omp section
+    //     {
+    //       vpImage<vpRGBa> renders.color;
+    //       m_renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(renders.color);
+    //       m_renderer.placeRendernto(renders.color, frame.renders.color, vpRGBa(0));
+    //     }
   }
 
 }
@@ -496,11 +496,11 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // double nx = cos(theta);
       // double ny = sin(theta);
       // const double Zn = Idepth[static_cast<unsigned int>(round(n + ny * 1))][static_cast<unsigned int>(round(m + nx * 2))];
-#if VP_DEBUG_RB_TRACKER
-      if (fabs(theta) > M_PI + 1e-6) {
-        throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
+      if (m_verbose) {
+        if (fabs(theta) > M_PI + 1e-6) {
+          throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
+        }
       }
-#endif
       points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // if (Zn > 0) {
       //   theta = -theta;
@@ -610,9 +610,13 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
   loadConfiguration(settings);
   jsonFile.close();
 }
+
 void vpRBTracker::loadConfiguration(const nlohmann::json &j)
 {
   m_firstIteration = true;
+  const nlohmann::json verboseSettings = j.at("verbose");
+  m_verbose = verboseSettings.value("enabled", m_verbose);
+
   const nlohmann::json cameraSettings = j.at("camera");
   m_cam = cameraSettings.at("intrinsics");
   m_imageHeight = cameraSettings.value("height", m_imageHeight);

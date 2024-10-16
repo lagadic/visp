@@ -1,4 +1,7 @@
 {
+  "verbose": {
+    "enabled": true
+  },
   "camera": {
     "intrinsics": {
       "model": "perspectiveWithoutDistortion",
