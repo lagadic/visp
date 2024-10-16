@@ -221,8 +221,7 @@ void vpPanda3DDepthCannyFilter::getRender(vpImage<vpRGBf> &I, vpImage<unsigned c
     throw vpException(vpException::fatalError, "Tried to fetch output of a postprocessing filter that was configured as an intermediate output");
   }
 
-  I.resize(h, w);
-  memset(I.bitmap, 0, I.getSize() * sizeof(vpRGBf));
+  I.resize(h, w, 0.f);
   valid.resize(I.getHeight(), I.getWidth(), 0);
 
   const unsigned top = static_cast<unsigned int>(std::max(0.0, bb.getTop()));
