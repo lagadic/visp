@@ -149,6 +149,7 @@ private:
 
 std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
 {
+  const auto default_precision { out.precision() };
   auto flags = out.flags();
   out << std::setprecision(2) << std::fixed;
   out << "====================================================" << std::endl;
@@ -179,6 +180,7 @@ std::ostream &operator<<(std::ostream &out, const vpRBTrackerLogger &timer)
   }
   out << "====================================================" << std::endl;
   out.flags(flags);
+  out << std::setprecision(default_precision); // restore defaults
   return out;
 }
 
