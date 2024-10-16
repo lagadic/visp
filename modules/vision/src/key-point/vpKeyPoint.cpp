@@ -3776,7 +3776,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       int class_id = m_trainKeyPoints[i_].class_id;
       vpIoTools::writeBinaryValueLE(file, class_id);
 
-// Write image_id
+      // Write image_id
 #ifdef VISP_HAVE_MODULE_IO
       std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
       int image_id = (saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1;
