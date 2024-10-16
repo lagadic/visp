@@ -508,6 +508,42 @@ $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov8.json
 
 If you want to train your own YoloV8 model, please refer to the [official documentation](https://docs.ultralytics.com/modes/train/).
 
+\subsubsection dnn_supported_yolov11 Yolo v11
+
+Please follow the [official documentation](https://docs.ultralytics.com/quickstart/#install-ultralytics)
+to install Ultralytics' tools in order to be able to train or export a model. The installation using Docker has been tested for
+the sake of this tutorial.
+
+You can get the pre-trained YoloV11 models [here](https://docs.ultralytics.com/models/yolo11/#performance-metrics) . For
+this tutorial, we tested the [YOLO11s](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s.pt)
+pre-trained model.
+
+To export a model stored in Pytorch format into an ONNX format, you can use the Ultralytics' tool:
+```
+$ sudo docker run -it --ipc=host --gpus all ultralytics/ultralytics:latest
+root@8efe0fdbe196:/ultralytics#yolo export model=/path/to/yolo11s.pt format=onnx imgsz=640 opset=12
+```
+
+\note The `opset` option permits to set the version of ONNX to use to export the model. If you use OpenCV 4.10.0 this
+option does not seem to be required.
+
+\note It seems that OpenCV 4.7.0 is not compatible with Yolo v11. To upgrade OpenCV please follow the instructions in
+the section \ref dnn_model_upgrade_opencv below.
+
+Please use the following commands to run the tutorial program:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=none \
+  MODEL=${DNN_PATH}/yolov11/weights/yolov11s.onnx \
+  LABELS=${DNN_PATH}/yolov11/cfg/coco_classes.txt \
+  TYPE=yolov11 \
+  FRAMEWORK=onnx \
+  WIDTH=640 HEIGHT=640
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
 \section dnn_model_other Other dnn models
 \subsection dnn_model_other_zoo OpenCV model zoo
 
@@ -555,6 +591,63 @@ Aborted (core dumped)
 ```
 
 You may have been missing the onnxsim library or forgotten to remove the `--end2end` option during the export of the network.
+
+\subsection dnn_error_yolov11 Yolo v11: several issues possible
+
+You may face the following error:
+```
+what():  OpenCV(4.7.0) /root/3rdparty/opencv/modules/dnn/src/onnx/onnx_importer.cpp:1073: error: (-2:Unspecified error) in function 'handleNode'
+> Node [Split@ai.onnx]:(onnx_node!/model.10/m/m.0/attn/Split) parse error: OpenCV(4.7.0) /root/3rdparty/opencv/modules/dnn/src/layers/slice_layer.cpp:274: error: (-215:Assertion failed) splits > 0 && inpShape[axis_rw] % splits == 0 in function 'getMemoryShapes'
+```
+It is because the version of ONNX used to export the model does not match the one that OpenCV uses. Please be sure that you used the `opset` option in the export command, such as follow:
+```
+yolo export model=/path/to/yolo11s.pt format=onnx imgsz=640 opset=12
+```
+\note  The `opset` option does not seem to be needed with OpenCV 4.10.0 .
+
+You may face the following error when trying to run the tutorial with a Yolo v11 model:
+```
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.7.0) /root/3rdparty/opencv/modules/dnn/src/net_impl_fuse.cpp:252: error: (-215:Assertion failed) biasLayerData->outputBlobs.size() == 1 in function 'fuseLayers'
+```
+It is because the OpenCV version that you use is too old. Please update OpenCV following the instructions presented in
+the \ref dnn_model_upgrade_opencv below.
+
+\subsubsection dnn_model_upgrade_opencv Upgrading OpenCV from source
+
+We suppose that OpenCV has been installed from source as described in the section \ref build_opencv_with_cuda
+above.
+
+To upgrade OpenCV, please follow the steps below:
+
+```
+$ cd $VISP_WS/3rdparty/opencv
+$ git fecth
+$ git checkout 4.10.0
+$ cd build
+$ cmake .. \
+-DCMAKE_BUILD_TYPE=RELEASE \
+-DCMAKE_INSTALL_PREFIX=/usr \
+-DCMAKE_INSTALL_LIBDIR=lib \
+-DWITH_CUDA=ON \
+-DWITH_CUDNN=ON \
+-DOPENCV_DNN_CUDA=ON \
+-DENABLE_FAST_MATH=1 \
+-DCUDA_FAST_MATH=1 \
+-DCUDA_ARCH_BIN=${GPU_CAPABILITIES} \
+-DWITH_CUBLAS=1 \
+-DOPENCV_EXTRA_MODULES_PATH=${HOME}/visp_ws/3rdparty/opencv_contrib/modules \
+-DBUILD_PERF_TESTS=Off \
+-DBUILD_TESTS=Off \
+-DBUILD_EXAMPLES=Off \
+-DBUILD_opencv_apps=Off \
+-DBUILD_opencv_java_bindings_generator=Off \
+-DBUILD_opencv_js=Off
+$ make -j$(nproc) install
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j$(nproc)
+```
 
 \section dnn_next Next tutorial
 
