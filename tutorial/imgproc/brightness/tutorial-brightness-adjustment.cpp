@@ -18,12 +18,12 @@
 #include <memory>
 #endif
 
-namespace
-{
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+namespace
+{
 void display(vpImage<vpRGBa> &I_display, vpImage<vpRGBa> &I_color_res, const vpImage<vpRGBa> &I_color_adjust,
   vpImage<unsigned char> &I_gray_res, vpImage<unsigned char> &I_gray_adjust, vpImage<vpRGBa> &I_gray_display,
   const std::string &title, const std::string &filename_color, const std::string &filename_gray,
@@ -57,9 +57,6 @@ int main(int argc, const char **argv)
   (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_STBIMAGE) || defined(VISP_HAVE_SIMDLIB)) && \
   ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L)))
   //! [Macro defined]
-#ifdef ENABLE_VISP_NAMESPACE
-  using namespace VISP_NAMESPACE_NAME;
-#endif
 
   std::string input_filename = "Sample_low_brightness.png";
   double alpha = 10.0, beta = 50.0;
@@ -122,16 +119,13 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
         << " [--input <input image>]"
-        " [--alpha <alpha for VISP_NAMESPACE_NAME::adjust()>] [--beta <beta for "
-        "VISP_NAMESPACE_NAME::adjust()>]"
-        " [--gamma <gamma for VISP_NAMESPACE_NAME::gammaCorrection()>]"
+        " [--alpha <alpha for adjust()>] [--beta <beta for adjust()>]"
+        " [--gamma <gamma for gammaCorrection()>]"
         " [--gamma-color-handling " << VISP_NAMESPACE_NAME::vpGammaColorHandlingList() << "]"
         " [--gamma-method " << VISP_NAMESPACE_NAME::vpGammaMethodList() << "]"
-        " [--scale <scale for VISP_NAMESPACE_NAME::retinex()> [--scaleDiv for "
-        "VISP_NAMESPACE_NAME::retinex()]"
-        " [--level <level for VISP_NAMESPACE_NAME::retinex()> [--kernelSize "
-        "<kernelSize for VISP_NAMESPACE_NAME::retinex()>]"
-        " [--dynamic <dynamic for VISP_NAMESPACE_NAME::retinex()>] "
+        " [--scale <scale for retinex()> [--scaleDiv for retinex()]"
+        " [--level <level for retinex()> [--kernelSize <kernelSize for retinex()>]"
+        " [--dynamic <dynamic for retinex()>] "
         " [--scale-display <display downscaling factor>] "
         " [--help]"
         << std::endl;
