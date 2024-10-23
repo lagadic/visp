@@ -496,11 +496,11 @@ std::vector<vpRBSilhouettePoint> vpRBTracker::extractSilhouettePoints(
       // double nx = cos(theta);
       // double ny = sin(theta);
       // const double Zn = Idepth[static_cast<unsigned int>(round(n + ny * 1))][static_cast<unsigned int>(round(m + nx * 2))];
-      if (m_verbose) {
-        if (fabs(theta) > M_PI + 1e-6) {
-          throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
-        }
+#if defined(VISP_DEBUG_RB_TRACKER)
+      if (fabs(theta) > M_PI + 1e-6) {
+        throw vpException(vpException::badValue, "Theta expected to be in -Pi, Pi range but was not");
       }
+#endif
       points.push_back(vpRBSilhouettePoint(n, m, norm, theta, Z));
       // if (Zn > 0) {
       //   theta = -theta;

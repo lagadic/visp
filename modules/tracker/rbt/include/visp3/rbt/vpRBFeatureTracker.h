@@ -178,9 +178,9 @@ public:
   /**
    * \brief Get the importance of this tracker in the optimization step.
    *  The default computation is the following:
-   * \f$ \sqrt{w / N} \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
+   * \f$ w / N \f$, where \f$ w\f$ is the weight defined by setTrackerWeight, and  \f$ N \f$ is the number of features.
    */
-  virtual double getVVSTrackerWeight() const { return sqrt(m_userVvsWeight / m_numFeatures); }
+  virtual double getVVSTrackerWeight() const { return m_userVvsWeight / m_numFeatures; }
   void setTrackerWeight(double weight) { m_userVvsWeight = weight; }
 
   /**
