@@ -45,6 +45,8 @@
 #include <catch_amalgamated.hpp>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageMorphology.h>
+#include <visp3/core/vpCannyEdgeDetection.h>
+#include <visp3/io/vpImageIo.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -426,6 +428,31 @@ int main(int argc, char *argv[])
   int numFailed = session.run();
   std::cout << (numFailed ? "Test failed" : "Test succeed") << std::endl;
   return numFailed;
+}
+
+TEST_CASE("Canny", "[contour]")
+{
+  int gaussianKernelSize = 3;
+  float gaussianStdev = 0.5f;
+  int apertureSize = 3;
+  // Canny parameters
+  float lowerThresh = -1.;
+  float upperThresh = -1.;
+  float lowerThreshRatio = 0.6f;
+  float upperThreshRatio = 1.5f;
+  vpImageFilter::vpCannyFilteringAndGradientType filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING;
+
+  vpCannyEdgeDetection cannyDetector(gaussianKernelSize, gaussianStdev, apertureSize,
+                                    lowerThresh, upperThresh, lowerThreshRatio, upperThreshRatio,
+                                    filteringType);
+
+  vpImage<unsigned char> I_gray;
+  vpImageIo::read(I_gray, "canny.png");
+  REQUIRE(I_gray.getSize() > 0);
+
+  vpImage<unsigned char> I_canny_visp;
+  I_canny_visp = cannyDetector.detect(I_gray);
+  CHECK(I_canny_visp.getSize() > 0);
 }
 
 #else

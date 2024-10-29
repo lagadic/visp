@@ -332,6 +332,7 @@ vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCL
 
 # copy data for testing
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
+vp_glob_module_copy_data("test/image/data/*.png" "modules/core" NO_INSTALL)
 # copy font
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
 
