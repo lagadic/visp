@@ -501,9 +501,7 @@ vpCannyEdgeDetection::performEdgeTracking()
       }
     }
     else if (it->second == WEAK_EDGE) {
-      if (recursiveSearchForStrongEdge(it->first)) {
-        m_edgeMap[it->first.first][it->first.second] = 255;
-      }
+      recursiveSearchForStrongEdge(it->first);
     }
   }
 }
@@ -565,6 +563,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   if (hasFoundStrongEdge) {
     m_edgePointsCandidates[coordinates] = STRONG_EDGE;
     m_edgeMap[coordinates.first][coordinates.second] = 255;
+    if (m_storeListEdgePoints) {
+      m_edgePointsList.push_back(vpImagePoint(coordinates.first, coordinates.second));
+    }
   }
   return hasFoundStrongEdge;
 }
