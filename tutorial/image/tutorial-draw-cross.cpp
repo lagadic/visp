@@ -9,14 +9,13 @@ int main()
 #endif
 
   vpImage<unsigned char> I(2160, 3840, 128);
-
-  try {
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::shared_ptr<vpDisplay> pdisplay = vpDisplayFactory::createDisplay(I, -1, -1, "Drawing a cross.", vpDisplay::SCALE_AUTO);
+#else
+  vpDisplay *pdisplay = vpDisplayFactory::allocateDisplay(I, -1, -1, "Drawing a cross.", vpDisplay::SCALE_AUTO);
 #endif
 
+  try {
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
     //! [Cross]
@@ -30,4 +29,8 @@ int main()
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
   std::cout << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  delete pdisplay;
+#endif
+  return 0;
 }

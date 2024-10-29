@@ -102,7 +102,11 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> I(height, width);
   vpImage<vpRGBa> I_display(height, width);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::shared_ptr<vpDisplay> display = vpDisplayFactory::createDisplay();
+#else
+  vpDisplay *display = vpDisplayFactory::allocateDisplay();
+#endif
   display->init(I_display, 100, 100, "Model-based tracker");
 
   visp::cnpy::NpyArray arr_nb_data = npz_data["nb_data"];
@@ -183,7 +187,9 @@ int main(int argc, char *argv[])
     << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
 
   vpDisplay::getClick(I_display, true);
-
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  delete display;
+#endif
 #else
   (void)argc;
   (void)argv;
