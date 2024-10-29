@@ -405,6 +405,8 @@ void vpRBTracker::updateRender(vpRBFeatureTrackerInput &frame)
   // Update clipping distances
   frame.renders.normals.resize(m_imageHeight, m_imageWidth);
   frame.renders.silhouetteCanny.resize(m_imageHeight, m_imageWidth);
+  frame.renders.isSilhouette.resize(m_imageHeight, m_imageWidth);
+
   float clipNear, clipFar;
   m_renderer.computeClipping(clipNear, clipFar);
   frame.renders.zNear = std::max(0.001f, clipNear);

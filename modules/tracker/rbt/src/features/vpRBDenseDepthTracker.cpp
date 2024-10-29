@@ -121,6 +121,7 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
     m_weighted_error = 0.0;
     m_cov = 0.0;
     m_covWeightDiag = 0.0;
+    return;
   }
   vpRotationMatrix cRo = cMo.getRotationMatrix();
 #ifdef VISP_HAVE_OPENMP
