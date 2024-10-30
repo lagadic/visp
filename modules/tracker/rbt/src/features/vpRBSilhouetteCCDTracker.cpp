@@ -80,7 +80,7 @@ public:
   }
 };
 
-vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1)
+vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0)
 { }
 
 void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix &cMo)
@@ -100,10 +100,44 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
     pccd.buildSilhouettePoint(ii, jj, sp.Z, sp.orientation, sp.normal, cMo, oMc, frame.cam);
 
     pccd.detectSilhouette(frame.renders.depth);
-    if (pccd.isSilhouette() && !std::isnan(sp.orientation) && pccd.isValid()) {
-      m_controlPoints.push_back(std::move(pccd));
+    if (!pccd.isSilhouette() || std::isnan(sp.orientation) || !pccd.isValid()) {
+      continue;
+    }
+
+    if (frame.hasMask() && m_useMask) {
+      double maskGradValue = computeMaskGradient(frame.mask, pccd);
+      if (maskGradValue < m_minMaskConfidence) {
+        continue;
+      }
+    }
+    m_controlPoints.push_back(std::move(pccd));
+
+  }
+}
+
+double vpRBSilhouetteCCDTracker::computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const
+{
+
+  std::vector<float> maskValues(m_ccdParameters.h * 2 + 1);
+  double c = cos(pccd.getTheta());
+  double s = sin(pccd.getTheta());
+  int index = 0;
+  for (int n = -m_ccdParameters.h + 1; n < m_ccdParameters.h; ++n) {
+    unsigned int ii = static_cast<unsigned int>(round(pccd.icpoint.get_i() + s * n));
+    unsigned int jj = static_cast<unsigned int>(round(pccd.icpoint.get_j() + c * n));
+    maskValues[index] = mask[ii][jj];
+    ++index;
+  }
+
+  double maxGrad = 0.0;
+
+  for (unsigned i = 1; i < maskValues.size() - 1; ++i) {
+    double grad = abs(maskValues[i + 1] - maskValues[i - 1]);
+    if (grad > maxGrad) {
+      maxGrad = grad;
     }
   }
+  return maxGrad;
 }
 
 void vpRBSilhouetteCCDTracker::initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix & /*cMo*/)

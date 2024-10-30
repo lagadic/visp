@@ -30,7 +30,7 @@
 
 #include <visp3/rbt/vpRBDenseDepthTracker.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-
+#include <visp3/core/vpDisplay.h>
 BEGIN_VISP_NAMESPACE
 
 void fastRotationMatmul(const vpRotationMatrix &cRo, const vpRGBf &v, vpColVector &res)
@@ -151,14 +151,14 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &/*fram
 }
 
 void vpRBDenseDepthTracker::display(const vpCameraParameters &/*cam*/, const vpImage<unsigned char> &/*I*/,
-                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &/*depth*/,
+                                    const vpImage<vpRGBa> &/*IRGB*/, const vpImage<unsigned char> &depth,
                                     const vpRBFeatureDisplayType /*type*/) const
 {
-  // for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
-  //   const vpDepthPoint &p = m_depthPoints[i];
-  //   vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
-  //   vpDisplay::displayPoint(depth, p.pixelPos, c, 2);
-  // }
+  for (unsigned int i = 0; i < m_depthPoints.size(); ++i) {
+    const vpDepthPoint &p = m_depthPoints[i];
+    vpColor c(0, static_cast<unsigned char>(m_weights[i] * 255), 0);
+    vpDisplay::displayPoint(depth, p.pixelPos, c, 2);
+  }
 
 }
 

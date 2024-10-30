@@ -219,6 +219,26 @@ public:
     m_temporalSmoothingFac = factor;
 
   }
+
+  /**
+   * \brief Returns whether the tracking algorithm should filter out points that are unlikely to be on the object according to the mask.
+   * If the mask is not computed beforehand, then it has no effect
+   */
+  bool shouldUseMask() const { return m_useMask; }
+  void setShouldUseMask(bool useMask) { m_useMask = useMask; }
+
+  /**
+   * \brief Returns the minimum mask gradient required for a silhouette point to be considered
+   *
+   * This value is between 0 and 1
+   */
+  float getMinimumMaskConfidence() const { return m_minMaskConfidence; }
+  void setMinimumMaskConfidence(float confidence)
+  {
+
+    m_minMaskConfidence = confidence;
+  }
+
   /**
    * @}
    */
@@ -244,8 +264,12 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
   {
     vpRBFeatureTracker::loadJsonConfiguration(j);
+
     m_vvsConvergenceThreshold = j.value("convergenceThreshold", m_vvsConvergenceThreshold);
     setTemporalSmoothingFactor(j.value("temporalSmoothing", m_temporalSmoothingFac));
+    setShouldUseMask(j.value("useMask", m_useMask));
+    setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+
     m_ccdParameters = j.value("ccd", m_ccdParameters);
   }
 
@@ -255,6 +279,8 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   void computeErrorAndInteractionMatrix();
+  double computeMaskGradient(const vpImage<float> &mask, const vpRBSilhouetteControlPoint &pccd) const;
+
 
   vpCCDParameters m_ccdParameters;
 
@@ -268,6 +294,9 @@ protected:
 
   double m_vvsConvergenceThreshold;
   double tol;
+
+  bool m_useMask;
+  double m_minMaskConfidence;
 
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
