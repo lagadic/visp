@@ -47,6 +47,8 @@ class vpImage;
 class vpRGBa;
 class vpRect;
 
+
+
 class VISP_EXPORT vpColorHistogram
 {
 public:
@@ -88,7 +90,15 @@ public:
 
   void computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba) const;
 
-  double probability(const vpRGBa &color) const;
+  inline unsigned int colorToIndex(const vpRGBa &p) const
+  {
+    return (p.R / m_binSize) * (m_N * m_N) + (p.G / m_binSize) * m_N + (p.B / m_binSize);
+  }
+
+  inline double probability(const vpRGBa &color) const
+  {
+    return m_probas[colorToIndex(color)];
+  }
 
   double kl(const vpColorHistogram &other) const;
 
@@ -101,6 +111,7 @@ public:
 
 private:
   unsigned int m_N;
+  unsigned int m_binSize;
   std::vector<float> m_probas;
   unsigned int m_numPixels;
 };

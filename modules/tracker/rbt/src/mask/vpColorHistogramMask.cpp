@@ -72,45 +72,37 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
       }
     }
   }
-
   vpColorHistogram::computeSplitHistograms(rgb, m_mask, renderBB, m_histObjectFrame, m_histBackgroundFrame);
+
+
 
   const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / static_cast<float>(m_mask.getSize());
   const float pBackground = 1.f - pObject;
-#pragma omp sections
   {
-#pragma omp section
     {
       if (pObject != 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
       }
-      m_histObject.computeProbas(frame.IRGB, m_probaObject);
+      // m_histObject.computeProbas(frame.IRGB, m_probaObject);
     }
-#pragma omp section
     {
       if (pBackground != 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
-      m_histBackground.computeProbas(frame.IRGB, m_probaBackground);
+      // m_histBackground.computeProbas(frame.IRGB, m_probaBackground);
     }
   }
-
 
   mask.resize(height, width);
 #pragma omp parallel for
   for (unsigned int i = 0; i < mask.getSize(); ++i) {
-    float denom = (pObject * m_probaObject.bitmap[i] + pBackground * m_probaBackground.bitmap[i]);
+    float poPix = m_histObject.probability(frame.IRGB.bitmap[i]);
+    float pbPix = m_histBackground.probability(frame.IRGB.bitmap[i]);
 
-    // float value = (objectSegmentation.bitmap[i] * (IProba.bitmap[i] / denom) + (1.f - objectSegmentation.bitmap[i]) * (IProbaBg.bitmap[i] / denom));
-    //float value = (objectSegmentation.bitmap[i] * (IProba.bitmap[i] / denom)) + ((1.f - objectSegmentation.bitmap[i]) * (IProbaBg.bitmap[i] / denom));
-    //float pb = static_cast<float>(denom > 0.f) * (m_probaBackground.bitmap[i] / denom);
-    if (denom > 0.f) {
-      mask.bitmap[i] = std::max(0.f, std::min(1.f, (m_probaObject.bitmap[i] / denom)));
-    }
-    else {
-      mask.bitmap[i] = 0.f;
-    }
+    float denom = (pObject * poPix + pBackground * pbPix);
+    mask.bitmap[i] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
   }
+
 }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)

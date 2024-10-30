@@ -295,14 +295,14 @@ protected:
   double m_vvsConvergenceThreshold;
   double tol;
 
-  bool m_useMask;
-  double m_minMaskConfidence;
-
   std::vector<vpColVector> m_gradients;
   std::vector<vpMatrix> m_hessians;
   vpColVector m_gradient; //! Sum of local gradients
   vpMatrix m_hessian; //! Sum of local hessians
   double m_temporalSmoothingFac; //! Smoothing factor used to integrate data from the previous frame.
+
+  bool m_useMask;
+  double m_minMaskConfidence;
 };
 
 END_VISP_NAMESPACE

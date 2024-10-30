@@ -51,7 +51,7 @@ void vpColorHistogram::Builder::build(vpColorHistogram &histogram)
   histogram.m_numPixels = count;
 }
 
-vpColorHistogram::vpColorHistogram() : m_N(0), m_numPixels(0)
+vpColorHistogram::vpColorHistogram() : m_N(0), m_binSize(0), m_numPixels(0)
 { }
 
 vpColorHistogram::vpColorHistogram(unsigned int N)
@@ -65,24 +65,21 @@ void vpColorHistogram::setBinNumber(unsigned int N)
     throw vpException(vpException::badValue, "The number of bins per component should be a power of 2 (below or equal to 128)");
   }
   m_N = N;
+  m_binSize = 256 / m_N;
   m_numPixels = 0;
   m_probas = std::vector<float>(N * N * N, 0.f);
 }
 
-inline unsigned int colorToIndex(const vpRGBa &p, unsigned int N, unsigned int binSize)
-{
-  return (p.R / binSize) * (N * N) + (p.G / binSize) * N + (p.B / binSize);
-}
+
 
 void vpColorHistogram::build(const vpImage<vpRGBa> &image, const vpImage<bool> &mask)
 {
   std::vector<unsigned int> histo(m_N * m_N * m_N, 0);
   m_probas.resize(m_N * m_N * m_N);
-  unsigned binSize = 256 / m_N;
   unsigned int pixels = 0;
   for (unsigned int i = 0; i < image.getSize(); ++i) {
     if (mask.bitmap[i]) {
-      unsigned int index = colorToIndex(image.bitmap[i], m_N, binSize);
+      unsigned int index = colorToIndex(image.bitmap[i]);
       ++histo[index];
       ++pixels;
     }
@@ -125,17 +122,12 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
 {
   proba.resize(image.getHeight(), image.getWidth());
 
-  unsigned int binSize = 256 / m_N;
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
   for (unsigned int i = 0; i < image.getSize(); ++i) {
-    proba.bitmap[i] = m_probas[colorToIndex(image.bitmap[i], m_N, binSize)];
+    proba.bitmap[i] = m_probas[colorToIndex(image.bitmap[i])];
   }
 }
 
-double vpColorHistogram::probability(const vpRGBa &color) const
-{
-  return m_probas[colorToIndex(color, m_N, 256 / m_N)];
-}
 
 double vpColorHistogram::kl(const vpColorHistogram &other) const
 {
@@ -182,14 +174,13 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   unsigned int bins = insideMask.m_probas.size();
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
-  unsigned binSize = 256 / insideMask.m_N;
 
 #pragma omp parallel
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);
 #pragma omp for schedule(static, 1024)
     for (unsigned int i = 0; i < image.getSize(); ++i) {
-      unsigned int index = colorToIndex(image.bitmap[i], insideMask.m_N, binSize);
+      unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       localCountsIn[index] += mask.bitmap[i] > 0;
       localCountsOut[index] += mask.bitmap[i] == 0;
     }
@@ -214,35 +205,34 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
   const unsigned int bins = insideMask.m_probas.size();
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
-  const unsigned binSize = 256 / insideMask.m_N;
 
   const unsigned int beforeBBStart = static_cast<unsigned int>(bbInside.getTop()) * image.getWidth() + static_cast<unsigned int>(bbInside.getLeft());
   const unsigned int afterBBEnd = static_cast<unsigned int>(bbInside.getBottom()) * image.getWidth() + static_cast<unsigned int>(bbInside.getRight());
 
-//#pragma omp parallel
+#pragma omp parallel
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);
-//#pragma omp for schedule(static, 64)
+#pragma omp for schedule(static, 64)
     for (unsigned int i = 0; i < beforeBBStart; ++i) {
-      const unsigned int index = colorToIndex(image.bitmap[i], insideMask.m_N, binSize);
+      const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
-//#pragma omp for schedule(static, 64)
+#pragma omp for schedule(static, 64)
     for (unsigned int i = afterBBEnd; i < image.getSize(); ++i) {
-      const unsigned int index = colorToIndex(image.bitmap[i], insideMask.m_N, binSize);
+      const unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       ++localCountsOut[index];
     }
-//#pragma omp for schedule(static, 64)
+#pragma omp for schedule(static, 64)
     for (unsigned int i = static_cast<unsigned int>(bbInside.getTop()); i < static_cast<unsigned int>(round(bbInside.getBottom())); ++i) {
       for (unsigned int j = static_cast<unsigned int>(bbInside.getLeft()); j < static_cast<unsigned int>(round(bbInside.getRight())); ++j) {
         const unsigned int bitmapIndex = i * image.getWidth() + j;
-        const unsigned int index = colorToIndex(image.bitmap[bitmapIndex], insideMask.m_N, binSize);
+        const unsigned int index = insideMask.colorToIndex(image.bitmap[bitmapIndex]);
         const bool pixelInMask = mask.bitmap[bitmapIndex] > 0;
         localCountsIn[index] += static_cast<unsigned int>(pixelInMask);
         localCountsOut[index] += static_cast<unsigned int>(!pixelInMask);
       }
     }
-//#pragma omp critical
+#pragma omp critical
     {
       for (unsigned int i = 0; i < bins; ++i) {
         countsIn[i] += localCountsIn[i];

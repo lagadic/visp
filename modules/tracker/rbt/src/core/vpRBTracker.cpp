@@ -575,7 +575,9 @@ void vpRBTracker::display(const vpImage<unsigned char> &I, const vpImage<vpRGBa>
   vpDisplay::display(IRGB);
 
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
-    tracker->display(m_currentFrame.cam, I, IRGB, depth, type);
+    if (tracker->featuresShouldBeDisplayed()) {
+      tracker->display(m_currentFrame.cam, I, IRGB, depth, type);
+    }
   }
 
   if (m_driftDetector) {
@@ -595,7 +597,7 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
 {
   std::ifstream jsonFile(filename);
   if (!jsonFile.good()) {
-    throw vpException(vpException::ioError, "Could not read from settings file " + filename + " to initialise the vpMbGenericTracker");
+    throw vpException(vpException::ioError, "Could not read from settings file " + filename + " to initialize the RBTracker");
   }
   nlohmann::json settings;
   try {

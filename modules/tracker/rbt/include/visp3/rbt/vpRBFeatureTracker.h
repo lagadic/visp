@@ -143,12 +143,25 @@ public:
    * @}
    */
 
+  /**
+   * \name Display
+   * @{
+   */
+
+  bool featuresShouldBeDisplayed() const { return m_enableDisplay; }
+  void setFeaturesShouldBeDisplayed(bool enableDisplay) { m_enableDisplay = enableDisplay; }
+
   virtual void display(
     const vpCameraParameters &cam,
     const vpImage<unsigned char> &I,
     const vpImage<vpRGBa> &IRGB,
     const vpImage<unsigned char> &depth,
     const vpRBFeatureDisplayType type) const = 0;
+
+  /**
+   * @}
+   */
+
 
   /**
    * \name Covariance computation
@@ -203,6 +216,7 @@ public:
   virtual void loadJsonConfiguration(const nlohmann::json &j)
   {
     m_userVvsWeight = j.at("weight");
+    m_enableDisplay = j.value("display", m_enableDisplay);
   }
 #endif
 
@@ -227,6 +241,9 @@ protected:
   double m_userVvsWeight; //! User-defined weight for this specific type of feature
 
   bool m_vvsConverged; //! Whether VVS has converged, should be updated every VVS iteration
+
+  bool m_enableDisplay; //! Whether the tracked features should be displayed.
+
 };
 
 END_VISP_NAMESPACE
