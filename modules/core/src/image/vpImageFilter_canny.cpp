@@ -203,6 +203,18 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
                                            const float &lowerThresholdRatio, const float &upperThresholdRatio,
                                            const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
+  if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
+    std::stringstream errMsg;
+    errMsg << "Lower ratio (" << lowerThresholdRatio << ") " << (lowerThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
+  if ((upperThresholdRatio <= 0.f) || (upperThresholdRatio >= 1.f)) {
+    std::stringstream errMsg;
+    errMsg << "Upper ratio (" << upperThresholdRatio << ") " << (upperThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
   double w = cv_I.cols;
   double h = cv_I.rows;
   int bins = 256;
