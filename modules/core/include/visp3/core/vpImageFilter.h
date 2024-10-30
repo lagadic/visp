@@ -351,6 +351,12 @@ public:
       throw(vpException(vpException::fatalError, errMsg.str()));
     }
 
+    if (lowerThresholdRatio  >= upperThresholdRatio) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
     vpImage<unsigned char> dI(h, w);
     vpImage<OutType> dIx(h, w), dIy(h, w);
     if ((p_dIx != nullptr) && (p_dIy != nullptr)) {
@@ -1509,6 +1515,6 @@ private:
   }
 #endif
 
-};
+  };
 END_VISP_NAMESPACE
 #endif

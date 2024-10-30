@@ -215,6 +215,12 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
     throw(vpException(vpException::fatalError, errMsg.str()));
   }
 
+  if (lowerThresholdRatio  >= upperThresholdRatio) {
+    std::stringstream errMsg;
+    errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
   double w = cv_I.cols;
   double h = cv_I.rows;
   int bins = 256;
