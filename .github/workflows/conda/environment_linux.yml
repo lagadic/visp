@@ -8,6 +8,7 @@ dependencies:
   - xorg-libx11
   - xorg-libxfixes
   - mesa-libegl-cos7-x86_64
+  - icu
   - libxml2
   - libdc1394 >=2.2.6
   - librealsense
