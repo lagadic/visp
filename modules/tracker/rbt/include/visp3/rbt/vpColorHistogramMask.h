@@ -101,6 +101,12 @@ public:
     }
     m_backgroundUpdateRate = updateRate;
   }
+
+  bool isComputedOnlyOnBoundingBox() const { return m_computeOnBBOnly; }
+  void setComputeOnlyOnBoundingBox(bool bbOnly)
+  {
+    m_computeOnBBOnly = bbOnly;
+  }
   /**
    * @}
    */
@@ -116,6 +122,8 @@ private:
 
   vpImage<bool> m_mask;
   vpImage<float> m_probaObject, m_probaBackground;
+
+  bool m_computeOnBBOnly;
 };
 
 END_VISP_NAMESPACE

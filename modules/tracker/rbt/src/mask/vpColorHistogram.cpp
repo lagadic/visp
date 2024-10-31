@@ -128,6 +128,25 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   }
 }
 
+void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba, const vpRect &bb) const
+{
+  proba.resize(image.getHeight(), image.getWidth(), 0.f);
+  const int h = static_cast<int>(image.getHeight()), w = static_cast<int>(image.getWidth());
+  const int top = static_cast<int>(bb.getTop());
+  const int left = static_cast<int>(bb.getLeft());
+  const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
+  const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
+#pragma omp parallel for
+  for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+    const vpRGBa *colorRow = image[i];
+    float *probaRow = proba[i];
+    for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+      probaRow[j] = m_probas[colorToIndex(colorRow[j])];
+    }
+  }
+}
+
+
 
 double vpColorHistogram::kl(const vpColorHistogram &other) const
 {
@@ -175,16 +194,16 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
 
-#pragma omp parallel
+//#pragma omp parallel
   {
     std::vector<unsigned int>localCountsIn(bins, 0), localCountsOut(bins, 0);
-#pragma omp for schedule(static, 1024)
+//#pragma omp for schedule(static, 1024)
     for (unsigned int i = 0; i < image.getSize(); ++i) {
       unsigned int index = insideMask.colorToIndex(image.bitmap[i]);
       localCountsIn[index] += mask.bitmap[i] > 0;
       localCountsOut[index] += mask.bitmap[i] == 0;
     }
-#pragma omp critical
+//#pragma omp critical
     {
       for (unsigned int i = 0; i < bins; ++i) {
         countsIn[i] += localCountsIn[i];

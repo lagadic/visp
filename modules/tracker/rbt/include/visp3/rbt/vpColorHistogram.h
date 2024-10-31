@@ -89,6 +89,8 @@ public:
   void merge(const vpColorHistogram &other, float alpha);
 
   void computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba) const;
+  void computeProbas(const vpImage<vpRGBa> &image, vpImage<float> &proba, const vpRect &bb) const;
+
 
   inline unsigned int colorToIndex(const vpRGBa &p) const
   {

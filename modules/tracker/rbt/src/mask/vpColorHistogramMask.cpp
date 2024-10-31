@@ -38,7 +38,7 @@
 
 BEGIN_VISP_NAMESPACE
 
-vpColorHistogramMask::vpColorHistogramMask() { }
+vpColorHistogramMask::vpColorHistogramMask() : m_computeOnBBOnly(false) { }
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
                                       const vpRBFeatureTrackerInput &previousFrame,
@@ -74,8 +74,6 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   }
   vpColorHistogram::computeSplitHistograms(rgb, m_mask, renderBB, m_histObjectFrame, m_histBackgroundFrame);
 
-
-
   const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / static_cast<float>(m_mask.getSize());
   const float pBackground = 1.f - pObject;
   {
@@ -83,24 +81,52 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
       if (pObject != 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
       }
-      // m_histObject.computeProbas(frame.IRGB, m_probaObject);
+      if (m_computeOnBBOnly) {
+        m_histObject.computeProbas(frame.IRGB, m_probaObject, frame.renders.boundingBox);
+      }
+      else {
+        m_histObject.computeProbas(frame.IRGB, m_probaObject);
+      }
     }
     {
       if (pBackground != 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
-      // m_histBackground.computeProbas(frame.IRGB, m_probaBackground);
+      if (m_computeOnBBOnly) {
+        m_histBackground.computeProbas(frame.IRGB, m_probaBackground, frame.renders.boundingBox);
+      }
+      else {
+        m_histBackground.computeProbas(frame.IRGB, m_probaBackground);
+      }
     }
   }
 
-  mask.resize(height, width);
+  if (m_computeOnBBOnly) {
+    mask.resize(height, width, 0.f);
 #pragma omp parallel for
-  for (unsigned int i = 0; i < mask.getSize(); ++i) {
-    float poPix = m_histObject.probability(frame.IRGB.bitmap[i]);
-    float pbPix = m_histBackground.probability(frame.IRGB.bitmap[i]);
+    for (unsigned int i = top; i <= static_cast<unsigned int>(bottom); ++i) {
+      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
+        const float poPix = m_probaObject[i][j];
+        const float pbPix = m_probaBackground[i][j];
 
-    float denom = (pObject * poPix + pBackground * pbPix);
-    mask.bitmap[i] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
+        float denom = (pObject * poPix + pBackground * pbPix);
+        mask[i][j] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
+        m_mask[i][j] = renderDepth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance;
+      }
+    }
+  }
+  else {
+    mask.resize(height, width);
+    for (unsigned int i = 0; i < mask.getSize(); ++i) {
+      // float poPix = m_histObject.probability(frame.IRGB.bitmap[i]);
+      // float pbPix = m_histBackground.probability(frame.IRGB.bitmap[i]);
+      const float poPix = m_probaObject.bitmap[i];
+      const float pbPix = m_probaBackground.bitmap[i];
+
+      float denom = (pObject * poPix + pBackground * pbPix);
+      mask.bitmap[i] = (denom > 0.f) * std::max(0.f, std::min(1.f, (poPix / denom)));
+    }
+
   }
 
 }
@@ -112,6 +138,7 @@ void vpColorHistogramMask::loadJsonConfiguration(const nlohmann::json &json)
   m_backgroundUpdateRate = json.at("backgroundUpdateRate");
   m_objectUpdateRate = json.at("objectUpdateRate");
   m_depthErrorTolerance = json.at("maxDepthError");
+  m_computeOnBBOnly = json.value("computeOnlyOnBoundingBox", m_computeOnBBOnly);
 }
 #endif
 
