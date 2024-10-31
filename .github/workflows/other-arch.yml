@@ -32,14 +32,14 @@ jobs:
           #   distro: ubuntu20.04
           #   target: ARMV7
           - arch: aarch64
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             target: ARMV8
             endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
           - arch: s390x
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
 
@@ -53,6 +53,7 @@ jobs:
         githubToken: ${{ github.token }}
         arch: ${{ matrix.arch }}
         distro: ${{ matrix.distro }}
+        base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
         run: |
           lscpu
