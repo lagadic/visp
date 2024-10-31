@@ -531,7 +531,11 @@ class HeaderFile():
             continue
 
           field_type = get_type(field.type, owner_specs, header_env.mapping)
-          field_name_python = field.name.lstrip('m_')
+          field_name_python = field.name
+          prefix_member = 'm_'
+          if field_name_python.startswith(prefix_member):
+            field_name_python = field_name_python[len(prefix_member):]
+
           logging.info(f'Found field in class/struct {name_cpp}: {field_type} {field.name}')
 
           def_str = 'def_'

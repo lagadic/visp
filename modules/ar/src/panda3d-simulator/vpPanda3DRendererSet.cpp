@@ -194,6 +194,8 @@ void vpPanda3DRendererSet::enableSharedDepthBuffer(vpPanda3DBaseRenderer &source
   }
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DRendererSet.cpp.o) has no symbols
 void dummy_vpPanda3DRendererSet() { };

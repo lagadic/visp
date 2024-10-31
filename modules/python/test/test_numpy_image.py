@@ -114,3 +114,83 @@ def test_np_array_replace_value():
       vp_image[-vp_image.getHeight() - 1]
     with pytest.raises(RuntimeError):
       vp_image[0, -vp_image.getWidth() - 1]
+
+
+def test_setitem_with_single_value():
+  for test_dict in get_data_dicts():
+    vp_image = test_dict['instance']
+    # 2D indexing (basic)
+    vp_image[0, 0] = test_dict['base_value']
+    assert vp_image[0, 0] == test_dict['base_value']
+    vp_image[0, 0] = test_dict['value']
+    assert vp_image[0, 0] == test_dict['value']
+
+    # Replace a row
+    vp_image[1] = test_dict['value']
+    for i in range(vp_image.getCols()):
+      assert vp_image[1, i] == test_dict['value']
+
+
+    # Replace a row
+    vp_image[:] = test_dict['value']
+    for i in range(vp_image.getRows()):
+      for j in range(vp_image.getCols()):
+        assert vp_image[i, j] == test_dict['value']
+
+    # Replace rows with a slice
+    vp_image[:] = test_dict['base_value']
+    vp_image[::2] = test_dict['value']
+    for i in range(vp_image.getRows()):
+      v = test_dict['base_value'] if i % 2 == 1 else test_dict['value']
+      for j in range(vp_image.getCols()):
+        assert vp_image[i, j] == v
+
+    vp_image[:] = test_dict['base_value']
+    vp_image[2:-2:2] = test_dict['value']
+    for i in range(vp_image.getRows()):
+      v = test_dict['base_value'] if i % 2 == 1 or i >= vp_image.getRows() - 2 or i < 2 else test_dict['value']
+      for j in range(vp_image.getCols()):
+        assert vp_image[i, j] == v
+
+    vp_image[:, :] = test_dict['base_value']
+    for i in range(vp_image.getRows()):
+      for j in range(vp_image.getCols()):
+        assert vp_image[i, j] == test_dict['base_value']
+
+    # Indexing with two slices
+    vp_image[2:-2:2, 3:-3] = test_dict['value']
+    for i in range(vp_image.getRows()):
+      is_v = i >= 2 and i % 2 == 0 and i < vp_image.getRows() - 2
+      for j in range(vp_image.getCols()):
+        is_vj = is_v and j >= 3 and j < vp_image.getCols() - 3
+        v = test_dict['value'] if is_vj else test_dict['base_value']
+        assert vp_image[i, j] == v
+
+
+
+    # Negative step not supported
+    with pytest.raises(RuntimeError):
+      vp_image[::-1] = test_dict['value']
+    with pytest.raises(RuntimeError):
+      vp_image[:, ::-1] = test_dict['value']
+
+    # Wrong start and end values
+    with pytest.raises(RuntimeError):
+      vp_image[2:1] = test_dict['value']
+    with pytest.raises(RuntimeError):
+      vp_image[:, 3:2] = test_dict['value']
+
+
+def test_setitem_with_numpy_raw_image():
+  h, w = 30, 20
+  I = ImageGray(h, w, 0)
+  single_row = np.ones((w, ), dtype=np.uint8) * 255
+
+  I[2] = single_row
+  assert not np.any(np.equal(I.numpy()[list(set(range(h)) - {2})], single_row))
+  assert np.all(np.equal(I.numpy()[2], single_row))
+
+  I[:] = 0
+  I[1:-2] = single_row
+  assert np.all(np.equal(I.numpy()[list(set(range(h)) - {0, h - 2, h - 1})], single_row))
+  assert np.all(np.equal(I.numpy()[[0, h - 2, h - 1]], 0))
