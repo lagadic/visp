@@ -407,7 +407,7 @@ public:
     }
     if (notFound) {
       std::stringstream errMsg;
-      errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << "\% of the pixels had a gradient lower than the upper threshold.";
+      errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
       throw(vpException(vpException::fatalError, errMsg.str()));
     }
     float upperThresh = std::max<float>(bon, 1.f);
@@ -1515,6 +1515,6 @@ private:
   }
 #endif
 
-  };
+};
 END_VISP_NAMESPACE
 #endif

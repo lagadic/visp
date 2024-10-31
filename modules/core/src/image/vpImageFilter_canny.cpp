@@ -254,13 +254,21 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   float accu = 0;
   float t = static_cast<float>(upperThresholdRatio * w * h);
   float bon = 0;
-  for (int i = 0; i < bins; ++i) {
+  int i = 0;
+  bool notFound = true;
+  while ((i < bins) && notFound) {
     float tf = hist.at<float>(i);
     accu = accu + tf;
     if (accu > t) {
       bon = static_cast<float>(i);
-      break;
+      notFound = false;
     }
+    ++i;
+  }
+  if (notFound) {
+    std::stringstream errMsg;
+    errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
+    throw(vpException(vpException::fatalError, errMsg.str()));
   }
   float upperThresh = std::max<float>(bon, 1.f);
   lowerThresh = lowerThresholdRatio * bon;
