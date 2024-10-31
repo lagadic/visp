@@ -49,7 +49,7 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpRect.h>
 
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 
 BEGIN_VISP_NAMESPACE
 /**

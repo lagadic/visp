@@ -46,7 +46,7 @@
 #include <visp3/mbt/vpMbKltTracker.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json_fwd.hpp>
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #include <visp3/core/vpJsonParsing.h>
 #endif
 

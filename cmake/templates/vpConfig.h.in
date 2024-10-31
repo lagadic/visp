@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,15 +524,19 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-// Defined if nlohmann json parser is found
+// Defined if nlohmann json parser is found (either system or coming from VTK)
 #cmakedefine VISP_HAVE_NLOHMANN_JSON
 
-// Workaround for issue https://github.com/lagadic/visp/issues/1485
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_PCL_VISUALIZATION)
-#include <vtkVersion.h>
-#if VTK_VERSION_NUMBER_QUICK >= VTK_VERSION_CHECK(9, 2, 0)
-#include <pcl/visualization/pcl_visualizer.h>
-#endif
+// Defined if nlohmann json parser is found in PCL thanks to VTK 3rd party
+#cmakedefine VISP_HAVE_NLOHMANN_JSON_FROM_VTK
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#  if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
+#    include <vtk_nlohmannjson.h>
+#    define VISP_NLOHMANN_JSON(x) <vtknlohmannjson/include/vtknlohmann/x>
+#  else
+#    define VISP_NLOHMANN_JSON(x) <nlohmann/x>
+#  endif
 #endif
 
 // Define c++ standard values also available in __cplusplus when gcc is used
