@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,8 @@
  *
  * Description:
  * DNN object detection using OpenCV DNN module.
- *
-*****************************************************************************/
+ */
+
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
@@ -477,7 +476,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
     names.resize(outLayers.size());
     for (size_t i = 0; i < outLayers.size(); ++i)
       names[i] = layersNames[outLayers[i] - 1];
-}
+  }
   return names;
 }
 #endif
@@ -969,7 +968,7 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
       proposals.m_confidences.push_back(maxScore);
       proposals.m_boxes.push_back(cv::Rect(left, top, width, height));
       proposals.m_classIds.push_back(classId);
-}
+    }
   }
 }
 #endif
