@@ -332,12 +332,30 @@ public:
                                             const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
                                             const unsigned int &gaussianKernelSize = 5,
                                             const OutType &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                            const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                            const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
                                             const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
                                             const vpImage<bool> *p_mask = nullptr)
   {
     const unsigned int w = I.getWidth();
     const unsigned int h = I.getHeight();
+
+    if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") " << (lowerThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if ((upperThresholdRatio <= 0.f) || (upperThresholdRatio >= 1.f)) {
+      std::stringstream errMsg;
+      errMsg << "Upper ratio (" << upperThresholdRatio << ") " << (upperThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
+
+    if (lowerThresholdRatio  >= upperThresholdRatio) {
+      std::stringstream errMsg;
+      errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
 
     vpImage<unsigned char> dI(h, w);
     vpImage<OutType> dIx(h, w), dIy(h, w);
@@ -387,8 +405,14 @@ public:
       }
       ++i;
     }
+    if (notFound) {
+      std::stringstream errMsg;
+      errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
     float upperThresh = std::max<float>(bon, 1.f);
     lowerThresh = lowerThresholdRatio * bon;
+    lowerThresh = std::max<float>(lowerThresh, std::numeric_limits<float>::epsilon());
     return upperThresh;
   }
 

@@ -203,6 +203,24 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
                                            const float &lowerThresholdRatio, const float &upperThresholdRatio,
                                            const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
+  if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
+    std::stringstream errMsg;
+    errMsg << "Lower ratio (" << lowerThresholdRatio << ") " << (lowerThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
+  if ((upperThresholdRatio <= 0.f) || (upperThresholdRatio >= 1.f)) {
+    std::stringstream errMsg;
+    errMsg << "Upper ratio (" << upperThresholdRatio << ") " << (upperThresholdRatio < 0.f ? "should be greater than 0 !" : "should be lower than 1 !");
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
+  if (lowerThresholdRatio  >= upperThresholdRatio) {
+    std::stringstream errMsg;
+    errMsg << "Lower ratio (" << lowerThresholdRatio << ") should be lower than the upper ratio (" << upperThresholdRatio << ")";
+    throw(vpException(vpException::fatalError, errMsg.str()));
+  }
+
   double w = cv_I.cols;
   double h = cv_I.rows;
   int bins = 256;
@@ -236,13 +254,21 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   float accu = 0;
   float t = static_cast<float>(upperThresholdRatio * w * h);
   float bon = 0;
-  for (int i = 0; i < bins; ++i) {
+  int i = 0;
+  bool notFound = true;
+  while ((i < bins) && notFound) {
     float tf = hist.at<float>(i);
     accu = accu + tf;
     if (accu > t) {
       bon = static_cast<float>(i);
-      break;
+      notFound = false;
     }
+    ++i;
+  }
+  if (notFound) {
+    std::stringstream errMsg;
+    errMsg << "Could not find a bin for which " << upperThresholdRatio * 100.f << " percents of the pixels had a gradient lower than the upper threshold.";
+    throw(vpException(vpException::fatalError, errMsg.str()));
   }
   float upperThresh = std::max<float>(bon, 1.f);
   lowerThresh = lowerThresholdRatio * bon;
