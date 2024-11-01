@@ -29,7 +29,7 @@ jobs:
           #   distro: bullseye
           #   target: ARMV6
           - arch: armv7
-            distro: ubuntu:latest
+            distro: ubuntu22.04
             target: ARMV7
             endianness: (Little Endian)
           - arch: aarch64
