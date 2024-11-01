@@ -8,7 +8,7 @@
 #include <visp3/vs/vpServo.h>
 
 
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 
 #if defined(ENABLE_VISP_NAMESPACE)

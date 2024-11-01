@@ -687,6 +687,17 @@ if(USE_PCL)
   set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
   # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
   vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
+
+  # USE_NLOHMANN_JSON is set to ON if nlohmann_json is installed and found thanks to nlohmann_jsonConfig.cmake.
+  # VTK that is a PCL 3rd party embbed also a built in version of nlohmann_json.
+  # Here we add a specific case to consider the nlohmann version coming from VTK when the system version is not found
+  if(NOT USE_NLOHMANN_JSON)
+    if(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
+      message(WARNING "json 3rd party is detected and used as a VTK 3rd party which is itself a PCL 3rd party. Thus we enable nlohmann json usage turning USE_NLOHMANN_JSON=ON.")
+      unset(USE_NLOHMANN_JSON)
+      set(USE_NLOHMANN_JSON ON CACHE BOOL "Include nlohmann json support thanks to VTK" FORCE)
+    endif()
+  endif()
 endif()
 
 # ----------------------------------------------------------------------------
@@ -1090,7 +1101,8 @@ VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 VP_SET(VISP_HAVE_TENSORRT    TRUE IF (BUILD_MODULE_visp_core AND USE_TENSORRT))
-VP_SET(VISP_HAVE_NLOHMANN_JSON   TRUE IF (BUILD_MODULE_visp_core AND USE_NLOHMANN_JSON))
+VP_SET(VISP_HAVE_NLOHMANN_JSON          TRUE IF (BUILD_MODULE_visp_core AND USE_NLOHMANN_JSON))
+VP_SET(VISP_HAVE_NLOHMANN_JSON_FROM_VTK TRUE IF (BUILD_MODULE_visp_core AND VISP_HAVE_NLOHMANN_JSON_FROM_VTK))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
 VP_SET(VISP_HAVE_OIS         TRUE IF (BUILD_MODULE_visp_ar AND USE_OIS))
@@ -1844,7 +1856,11 @@ status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use pugixml (built-in):"  WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
 status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
-status("    Use json (nlohmann):"     USE_NLOHMANN_JSON THEN "yes (ver ${nlohmann_json_VERSION})" ELSE "no")
+if(VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
+status("    Use json (nlohmann vtk):"     USE_NLOHMANN_JSON THEN "yes (ver ${VTK_NLOHMANN_JSON_VERSION})" ELSE "no")
+else()
+status("    Use json (nlohmann system):"  USE_NLOHMANN_JSON THEN "yes (ver ${nlohmann_json_VERSION})" ELSE "no")
+endif()
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")

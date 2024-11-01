@@ -20,7 +20,7 @@
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 #include <visp3/io/vpJsonArgumentParser.h>
 
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 
 #include <opencv2/videoio.hpp>
 
@@ -193,7 +193,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CLICK, "click"},
   {DNN, "dnn"} }
-);
+  );
 
 
 int main(int argc, const char *argv[])

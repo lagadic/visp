@@ -11,7 +11,7 @@
 #endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 #endif
 

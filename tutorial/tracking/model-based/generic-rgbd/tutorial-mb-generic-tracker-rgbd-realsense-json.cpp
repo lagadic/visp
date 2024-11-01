@@ -12,7 +12,7 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 
 

@@ -324,7 +324,7 @@ protected:
 END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include<nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS)
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::vpFeatureEstimationType, {
     {VISP_NAMESPACE_ADDRESSING vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},

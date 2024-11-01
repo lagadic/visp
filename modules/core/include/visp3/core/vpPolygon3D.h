@@ -219,7 +219,7 @@ public:
 END_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #include <visp3/core/vpJsonParsing.h>
 NLOHMANN_JSON_SERIALIZE_ENUM(VISP_NAMESPACE_ADDRESSING vpPolygon3D::vpPolygon3DClippingType, {
     {VISP_NAMESPACE_ADDRESSING vpPolygon3D::NO_CLIPPING, "none"},

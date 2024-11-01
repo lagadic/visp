@@ -331,7 +331,7 @@ public:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 inline void to_json(nlohmann::json &j, const vpPoseVector &r)
 {
   r.convert_to_json(j);

@@ -63,7 +63,7 @@ END_VISP_NAMESPACE
 #include <visp3/core/vpPoseVector.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
 BEGIN_VISP_NAMESPACE

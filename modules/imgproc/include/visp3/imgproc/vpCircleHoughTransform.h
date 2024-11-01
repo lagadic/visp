@@ -44,7 +44,7 @@
 
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)

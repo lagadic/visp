@@ -37,7 +37,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #include <visp3/core/vpException.h>
 #include <sstream>
 
