@@ -36,19 +36,15 @@
  *\brief Generic model-based tracker
  */
 
-#ifndef _vpMbGenericTracker_h_
-#define _vpMbGenericTracker_h_
+#ifndef VP_MB_GENERIC_TRACKER_H
+#define VP_MB_GENERIC_TRACKER_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #include <visp3/core/vpJsonParsing.h>
-#endif
 
 BEGIN_VISP_NAMESPACE
 /*!
