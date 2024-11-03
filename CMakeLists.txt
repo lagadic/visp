@@ -1777,7 +1777,7 @@ status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERS
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
 status("    Use TinyEXR (built-in):" WITH_TINYEXR     THEN "yes (ver ${TINYEXR_VERSION})" ELSE "no")
-status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes" ELSE "no")
+status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
 status("    Use npz I/O (built-in):" WITH_MINIZ       THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
@@ -1863,10 +1863,10 @@ status("    Use json (nlohmann system):"  USE_NLOHMANN_JSON THEN "yes (ver ${nlo
 endif()
 status("")
 status("  Optimization: ")
-status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
+status("    Use OpenMP:"             USE_OPENMP         THEN "yes (ver ${OpenMP_CXX_VERSION})" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
-status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
+status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
 status("")
 status("  DNN: ")
 status("    Use CUDA Toolkit:"       USE_TENSORRT AND CUDA_FOUND  THEN "yes (ver ${CUDA_VERSION})" ELSE "no")
@@ -1875,7 +1875,7 @@ status("    Use TensorRT:"           USE_TENSORRT       THEN "yes (ver ${TENSORR
 # ========================== documentation ==========================
 status("")
 status("  Documentation: ")
-status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes" ELSE "no")
+status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes (ver ${DOXYGEN_VERSION})" ELSE "no")
 status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
 
 # ========================== samples and tests ==========================
