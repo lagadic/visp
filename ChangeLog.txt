@@ -87,6 +87,9 @@ ViSP 3.x.x (Version in development)
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
     . [#1424] Unable to detect Yarp 3.9.0
+    . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
+              3rdparty by PCL
+    . [#1494] Memory management issue in vpArray2D::resize()
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

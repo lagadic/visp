@@ -62,7 +62,7 @@ if(WITH_STBIMAGE)
   include_directories(${STBIMAGE_INCLUDE_DIRS})
 endif()
 
-if(USE_NLOHMANN_JSON)
+if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
 endif()

@@ -28,23 +28,23 @@ jobs:
           # - arch: armv6
           #   distro: bullseye
           #   target: ARMV6
-          - arch: armv7
-            distro: ubuntu_latest
-            target: ARMV7
-            endianness: (Little Endian)
+          #- arch: armv7
+          #  distro: ubuntu:latest
+          #  target: ARMV7
+          #  endianness: (Little Endian)
           - arch: aarch64
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             endianness: (Little Endian)
           - arch: riscv64
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             target: RISC-V
             endianness: (Little Endian)
           - arch: ppc64le
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             target: POWER8
             endianness: (Little Endian)
           - arch: s390x
-            distro: ubuntu_latest
+            distro: ubuntu:latest
             target: Z13
             endianness: (Big Endian)
 
@@ -53,11 +53,15 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run on arch
-      uses: uraimo/run-on-arch-action@v2.7.2
+      uses: uraimo/run-on-arch-action@v2
+      # See issue https://github.com/uraimo/run-on-arch-action/issues/155 for the explanation on the weird use of the arch and distro
+      # that resulted in error
+      # ERROR: failed to solve: ${arch}/ubuntu:latest: failed to resolve source metadata for docker.io/${arch}/ubuntu:latest: no match for platform in manifest: not found
       with:
         githubToken: ${{ github.token }}
-        arch: ${{ matrix.arch }}
-        distro: ${{ matrix.distro }}
+        arch: none
+        distro: none
+        base_image: "--platform=linux/${{ matrix.arch }} ${{ matrix.distro }}"
 
         run: |
           lscpu
