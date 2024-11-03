@@ -90,6 +90,7 @@ ViSP 3.x.x (Version in development)
     . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
               3rdparty by PCL
     . [#1494] Memory management issue in vpArray2D::resize()
+    . [#1495] vpMeLine is unable to seek extremities
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
