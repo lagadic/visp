@@ -41,8 +41,8 @@
 #include <visp3/rbt/vpObjectMask.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON)
-#include <nlohmann/json_fwd.hpp>
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)
 #endif
 
 BEGIN_VISP_NAMESPACE

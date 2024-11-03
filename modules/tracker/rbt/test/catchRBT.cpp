@@ -53,7 +53,7 @@
 #include "test_utils.h"
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
 #define CATCH_CONFIG_RUNNER
