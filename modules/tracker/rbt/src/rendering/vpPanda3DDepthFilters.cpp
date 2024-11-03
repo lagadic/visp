@@ -34,42 +34,42 @@
 
 BEGIN_VISP_NAMESPACE
 
-const char *vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER = R"shader(
-#version 330
-
-in vec2 texcoords;
-
-uniform sampler2D p3d_Texture0;
-uniform vec2 dp; // 1 divided by number of pixels
-
-const float kernel[25] = float[25](
-  2, 4, 5, 4, 2,
-  4, 9, 12, 9, 4,
-  5, 12, 15, 12, 5,
-  4, 9, 12, 9, 4,
-  2, 4, 5, 4, 2
-);
-const float normalize = 1 / 159.0;
-
-vec2 offset[25] = vec2[25](
-  vec2(-2*dp.x,-2*dp.y),  vec2(-dp.x,-2*dp.y),  vec2(0,-2*dp.y),    vec2(dp.x,-2*dp.y), vec2(2*dp.x,-2*dp.y),
-  vec2(-2*dp.x,-dp.y),    vec2(-dp.x, -dp.y),   vec2(0.0, -dp.y),   vec2(dp.x, -dp.y),  vec2(2*dp.x,-dp.y),
-  vec2(-2*dp.x,0.0),      vec2(-dp.x, 0.0),     vec2(0.0, 0.0),     vec2(dp.x, 0.0),    vec2(2*dp.x,0.0),
-  vec2(-2*dp.x, dp.y),    vec2(-dp.x, dp.y),    vec2(0.0, dp.y),    vec2(dp.x, dp.y),   vec2(2*dp.x, dp.y),
-  vec2(-2*dp.x, 2*dp.y),  vec2(-dp.x, 2*dp.y),  vec2(0.0, 2*dp.y),  vec2(dp.x, 2*dp.y), vec2(2*dp.x, 2*dp.y)
-);
-
-out vec4 p3d_FragData;
-
-void main() {
-  float v = 0.f;
-
-  for(int i = 0; i < 25; ++i) {
-    v += kernel[i] * texture(p3d_Texture0, texcoords + offset[i]).a;
-  }
-  p3d_FragData.a = v * normalize;
-}
-)shader";
+const std::string vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER =
+"#version 330\n"
+"\n"
+"in vec2 texcoords;\n"
+"\n"
+"uniform sampler2D p3d_Texture0;\n"
+"uniform vec2 dp; // 1 divided by number of pixels\n"
+"\n"
+"const float kernel[25] = float[25](\n"
+"  2, 4, 5, 4, 2,\n"
+"  4, 9, 12, 9, 4,\n"
+"  5, 12, 15, 12, 5,\n"
+"  4, 9, 12, 9, 4,\n"
+"  2, 4, 5, 4, 2\n"
+");\n"
+"const float normalize = 1 / 159.0;\n"
+"\n"
+"vec2 offset[25] = vec2[25](\n"
+"  vec2(-2*dp.x,-2*dp.y),  vec2(-dp.x,-2*dp.y),  vec2(0,-2*dp.y),    vec2(dp.x,-2*dp.y), vec2(2*dp.x,-2*dp.y),\n"
+"  vec2(-2*dp.x,-dp.y),    vec2(-dp.x, -dp.y),   vec2(0.0, -dp.y),   vec2(dp.x, -dp.y),  vec2(2*dp.x,-dp.y),\n"
+"  vec2(-2*dp.x,0.0),      vec2(-dp.x, 0.0),     vec2(0.0, 0.0),     vec2(dp.x, 0.0),    vec2(2*dp.x,0.0),\n"
+"  vec2(-2*dp.x, dp.y),    vec2(-dp.x, dp.y),    vec2(0.0, dp.y),    vec2(dp.x, dp.y),   vec2(2*dp.x, dp.y),\n"
+"  vec2(-2*dp.x, 2*dp.y),  vec2(-dp.x, 2*dp.y),  vec2(0.0, 2*dp.y),  vec2(dp.x, 2*dp.y), vec2(2*dp.x, 2*dp.y)\n"
+");\n"
+"\n"
+"out vec4 p3d_FragData;\n"
+"\n"
+"void main() {\n"
+"  float v = 0.f;\n"
+"\n"
+"  for(int i = 0; i < 25; ++i) {\n"
+"    v += kernel[i] * texture(p3d_Texture0, texcoords + offset[i]).a;\n"
+"  }\n"
+"  p3d_FragData.a = v * normalize;\n"
+"}\n"
+")\n";
 
 vpPanda3DDepthGaussianBlur::vpPanda3DDepthGaussianBlur(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput)
   : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthGaussianBlur::FRAGMENT_SHADER)
@@ -89,74 +89,70 @@ void vpPanda3DDepthGaussianBlur::getRender(vpImage<unsigned char> &I) const
   vpPanda3DPostProcessFilter::getRenderBasic(I);
 }
 
-const char *vpPanda3DDepthCannyFilter::FRAGMENT_SHADER = R"shader(
-#version 330
-
-in vec2 texcoords;
-
-uniform sampler2D p3d_Texture0;
-uniform vec2 dp; // 1 divided by number of pixels
-uniform float edgeThreshold;
-
-
-const float kernel[9] = float[9](
-  0.0, 1.0, 0.0,
-  1.0,-4.0, 1.0,
-  0.0, 1.0, 0.0
-);
-
-const float kernel_h[9] = float[9](
-  -1.0, 0.0, 1.0,
-  -2.0, 0.0, 2.0,
-  -1.0, 0.0, 1.0
-);
-
-const float kernel_v[9] = float[9](
-  -1.0, -2.0, -1.0,
-  0.0, 0.0, 0.0,
-  1.0, 2.0, 1.0
-);
-
-vec2 offset[9] = vec2[9](
-  vec2(-dp.x, -dp.y), vec2(0.0, -dp.y), vec2(dp.x, -dp.y),
-  vec2(-dp.x, 0.0),   vec2(0.0, 0.0),   vec2(dp.x, 0.0),
-  vec2(-dp.x, dp.y),  vec2(0.0, dp.y),  vec2(dp.x, dp.y)
-);
-
-float textureValues[9];
-
-
-out vec4 p3d_FragData;
-
-void main() {
-  if(texture(p3d_Texture0, texcoords).a == 0) {
-    p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);
-  } else {
-
-    float sum = 0.f;
-    for(int i = 0; i < 9; ++i) {
-      float pix = texture(p3d_Texture0, texcoords + offset[i]).a;
-      pix = (pix < 1e-5f ? 1000.f: pix);
-      textureValues[i] = pix;
-      sum += pix * kernel[i];
-    }
-    if(abs(sum) > edgeThreshold) {
-      float sum_h = 0.f;
-      float sum_v = 0.f;
-      for(int i = 0; i < 9; ++i) {
-        float pix = textureValues[i];
-        sum_h += pix * kernel_h[i];
-        sum_v += pix * kernel_v[i];
-      }
-      float norm = sqrt(sum_v * sum_v + sum_h * sum_h);
-      vec2 orientationAndValid = (sum_h != 0.f) ? vec2(atan(sum_v, -sum_h), 1.f) : vec2(0.f, 0.f);
-      p3d_FragData.bgra = vec4(sum_h, sum_v, orientationAndValid.x, orientationAndValid.y);
-    } else {
-      p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);
-    }
-  }
-}
-)shader";
+const std::string vpPanda3DDepthCannyFilter::FRAGMENT_SHADER =
+"#version 330\n"
+"\n"
+"in vec2 texcoords;\n"
+"\n"
+"uniform sampler2D p3d_Texture0;\n"
+"uniform vec2 dp; // 1 divided by number of pixels\n"
+"uniform float edgeThreshold;\n"
+"\n"
+"const float kernel[9] = float[9](\n"
+"  0.0, 1.0, 0.0,\n"
+"  1.0,-4.0, 1.0,\n"
+"  0.0, 1.0, 0.0\n"
+");\n"
+"\n"
+"const float kernel_h[9] = float[9](\n"
+"  -1.0, 0.0, 1.0,\n"
+"  -2.0, 0.0, 2.0,\n"
+"  -1.0, 0.0, 1.0\n"
+");\n"
+"\n"
+"const float kernel_v[9] = float[9](\n"
+"  -1.0, -2.0, -1.0,\n"
+"  0.0, 0.0, 0.0,\n"
+"  1.0, 2.0, 1.0\n"
+");\n"
+"\n"
+"vec2 offset[9] = vec2[9](\n"
+"  vec2(-dp.x, -dp.y), vec2(0.0, -dp.y), vec2(dp.x, -dp.y),\n"
+"  vec2(-dp.x, 0.0),   vec2(0.0, 0.0),   vec2(dp.x, 0.0),\n"
+"  vec2(-dp.x, dp.y),  vec2(0.0, dp.y),  vec2(dp.x, dp.y)\n"
+");\n"
+"\n"
+"float textureValues[9];\n"
+"\n"
+"out vec4 p3d_FragData;\n"
+"\n"
+"void main() {\n"
+"  if(texture(p3d_Texture0, texcoords).a == 0) {\n"
+"    p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"  } else {\n"
+"    float sum = 0.f;\n"
+"    for(int i = 0; i < 9; ++i) {\n"
+"      float pix = texture(p3d_Texture0, texcoords + offset[i]).a;\n"
+"      pix = (pix < 1e-5f ? 1000.f: pix);\n"
+"      textureValues[i] = pix;\n"
+"      sum += pix * kernel[i];\n"
+"    }\n"
+"    if(abs(sum) > edgeThreshold) {\n"
+"      float sum_h = 0.f;\n"
+"      float sum_v = 0.f;\n"
+"      for(int i = 0; i < 9; ++i) {\n"
+"        float pix = textureValues[i];\n"
+"        sum_h += pix * kernel_h[i];\n"
+"        sum_v += pix * kernel_v[i];\n"
+"      }\n"
+"      float norm = sqrt(sum_v * sum_v + sum_h * sum_h);\n"
+"      vec2 orientationAndValid = (sum_h != 0.f) ? vec2(atan(sum_v, -sum_h), 1.f) : vec2(0.f, 0.f);\n"
+"      p3d_FragData.bgra = vec4(sum_h, sum_v, orientationAndValid.x, orientationAndValid.y);\n"
+"    } else {\n"
+"      p3d_FragData = vec4(0.f, 0.f, 0.f, 0.f);\n"
+"    }\n"
+"  }\n"
+"}\n";
 
 vpPanda3DDepthCannyFilter::vpPanda3DDepthCannyFilter(const std::string &name, std::shared_ptr<vpPanda3DBaseRenderer> inputRenderer, bool isOutput, float edgeThreshold)
   : vpPanda3DPostProcessFilter(name, inputRenderer, isOutput, vpPanda3DDepthCannyFilter::FRAGMENT_SHADER), m_edgeThreshold(edgeThreshold)
