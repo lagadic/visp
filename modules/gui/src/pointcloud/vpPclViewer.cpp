@@ -36,13 +36,13 @@
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_THREADS)
-// PCL
-#include<pcl/io/pcd_io.h>
-
 // ViSP
 #include <visp3/gui/vpPclViewer.h>
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
+
+// PCL
+#include <pcl/io/pcd_io.h>
 
 BEGIN_VISP_NAMESPACE
 const std::vector<vpColorBlindFriendlyPalette::Palette> gcolor = { vpColorBlindFriendlyPalette::Palette::Green, vpColorBlindFriendlyPalette::Palette::Vermillon,vpColorBlindFriendlyPalette::Palette::Blue,
