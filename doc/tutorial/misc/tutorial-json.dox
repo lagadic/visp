@@ -29,7 +29,7 @@ Much of this section is a repeat of the library's documentation, available <a ta
 
 To use JSON in your code you should first include the relevant header:
 \code{.cpp}
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; // For convenience
 \endcode
 
@@ -62,7 +62,7 @@ void to_json(json& j, const YourType& t);
 \endcode
 These functions must be defined in the same scope namespace as YourType and must be accessible everywhere YourType is used. It is thus common to define it in the header where YourType is defined.
 \code
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 
 class YourType {
 public:
