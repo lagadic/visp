@@ -198,16 +198,22 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   if (numComponents != 4) {
     throw vpException(vpException::dimensionError, "Expected panda texture to have 4 components!");
   }
+
+  int image_width = static_cast<int>(m_renderParameters.getImageWidth());
   for (unsigned int i = 0; i < m_renderParameters.getImageHeight(); ++i) {
     const float *const rowData = data - i * rowIncrement;
     vpRGBf *normalRow = normals[top + i];
     float *depthRow = depth[top + i];
-#pragma omp simd
-    for (unsigned int j = 0; j < m_renderParameters.getImageWidth(); ++j) {
-      normalRow[left + j].R = (rowData[j * 4]);
-      normalRow[left + j].G = (rowData[j * 4 + 1]);
-      normalRow[left + j].B = (rowData[j * 4 + 2]);
-      depthRow[left + j] = (rowData[j * 4 + 3]);
+#if defined(_OPENMP)
+#pragma omp parallel for
+#endif
+    for (int j = 0; j < image_width; ++j) {
+      int left_j = left + j;
+      int j_4 = j + 4;
+      normalRow[left_j].R = (rowData[j_4]);
+      normalRow[left_j].G = (rowData[j_4 + 1]);
+      normalRow[left_j].B = (rowData[j_4 + 2]);
+      depthRow[left_j] = (rowData[j_4 + 3]);
     }
   }
 }
