@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Tracking of an ellipse.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file trackMeEllipse.cpp
@@ -316,8 +314,8 @@ int main(int argc, const char **argv)
   // it size is not defined yet, it will be defined when the image is
   // read on the disk
   vpImage<unsigned char> I;
-
   vpDisplay *display = nullptr;
+  vpVideoReader g;
 
   try {
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -336,8 +334,9 @@ int main(int argc, const char **argv)
     }
 
     // Get the option values
-    if (!opt_ipath.empty())
+    if (!opt_ipath.empty()) {
       ipath = opt_ipath;
+    }
 
     // Compare ipath and env_ipath. If they differ, we take into account
     // the input path coming from the command line option
@@ -374,7 +373,6 @@ int main(int argc, const char **argv)
       thickness += 1;
     }
 
-    vpVideoReader g;
     if (opt_ppath.empty()) {
       // Set the path location of the image sequence
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -398,7 +396,7 @@ int main(int argc, const char **argv)
     g.open(I);
 
     if (opt_display) {
-      // We open a window using either X11, GTK or GDI.
+      // We open a window using either X11, GTK, GDI or OpenCV
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
 #elif defined(VISP_HAVE_GTK)
