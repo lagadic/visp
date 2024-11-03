@@ -11,7 +11,7 @@
 #endif
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 #endif
 
@@ -338,6 +338,11 @@ int main(int argc, const char *argv[])
     cv::Mat frame;
     while (true) {
       capture >> frame;
+      if (frame.type() == CV_8UC4) {
+        // RGBa format is not supported by the class, converting to BGR format
+        cv::Mat cpy = frame;
+        cv::cvtColor(cpy, frame, cv::COLOR_RGBA2BGR);
+      }
       if (frame.empty())
         break;
 

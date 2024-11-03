@@ -91,8 +91,8 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && git clone --depth 1 --branch $LATEST_TAG $GIT_ADDRESS \
     && cd OpenBLAS \
     && mkdir install \
-    && make -j$(nproc) \
-    && make -j$(nproc) install PREFIX=$(pwd)/install
+    && make -j$(($(nproc) / 2)) \
+    && make -j$(($(nproc) / 2)) install PREFIX=$(pwd)/install
 
 ENV OpenBLAS_HOME=${HOME}/visp-ws/3rdparty/OpenBLAS/install
 
@@ -107,7 +107,7 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF \
       -DCMAKE_BUILD_TYPE=Release -DVTK_GROUP_ENABLE_Imaging=DONT_WANT -DVTK_GROUP_ENABLE_MPI=DONT_WANT \
       -DVTK_GROUP_ENABLE_Web=DONT_WANT -DCMAKE_INSTALL_PREFIX=${HOME}/visp-ws/3rdparty/VTK/build/install \
-    && make -j$(nproc) install
+    && make -j$(($(nproc) / 2)) install
 
 ENV VTK_DIR=${HOME}/visp-ws/3rdparty/VTK/build/install
 
@@ -121,7 +121,7 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && mkdir install \
     && cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=${HOME}/visp-ws/3rdparty/opencv/build/install \
-    && make -j$(nproc) install
+    && make -j$(($(nproc) / 2)) install
 
 ENV OpenCV_DIR=${HOME}/visp-ws/3rdparty/opencv/build/install
 
@@ -135,7 +135,7 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && mkdir install \
     && cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=${HOME}/visp-ws/3rdparty/librealsense/build/install \
-    && make -j$(nproc) install
+    && make -j$(($(nproc) / 2)) install
 
 ENV REALSENSE2_DIR=${HOME}/visp-ws/3rdparty/librealsense/build/install
 
@@ -149,7 +149,7 @@ RUN cd ${HOME}/visp-ws/3rdparty \
     && mkdir install \
     && cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=${HOME}/visp-ws/3rdparty/pcl/build/install \
-    && make -j10 install
+    && make -j$(($(nproc) / 3)) install
 
 ENV PCL_DIR=${HOME}/visp-ws/3rdparty/pcl/build/install
 
@@ -160,7 +160,7 @@ RUN mkdir -p ${HOME}/visp-ws \
     && echo "export VISP_WS=${HOME}/visp-ws" >> ${HOME}/.bashrc \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
 
-# Download ViSP fork
+# Download ViSP
 RUN cd ${HOME}/visp-ws \
     && git clone ${GIT_URL} ${GIT_BRANCH_CMD}
 
@@ -169,7 +169,7 @@ RUN cd ${HOME}/visp-ws \
     && mkdir visp-build \
     && cd visp-build \
     && cmake ../visp -DCMAKE_INSTALL_PREFIX=${HOME}/visp-ws/visp-build/install \
-    && make -j$(nproc) developer_scripts \
-    && make -j$(nproc) install
+    && make -j$(($(nproc) / 2)) developer_scripts \
+    && make -j$(($(nproc) / 2)) install
 
 CMD ["/bin/bash"]

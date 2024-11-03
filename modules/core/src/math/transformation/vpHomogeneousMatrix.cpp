@@ -29,8 +29,7 @@
  *
  * Description:
  * Homogeneous matrix.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHomogeneousMatrix.cpp

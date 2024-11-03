@@ -257,6 +257,21 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endif()
     endforeach()
 
+    find_path(VTK_NLOHMANN_JSON_INCLUDE_DIR vtknlohmannjson/include/vtknlohmann/json.hpp
+      PATHS
+        ${PCL_VTK_IMPORTED_INCS}
+    )
+    mark_as_advanced(VTK_NLOHMANN_JSON_INCLUDE_DIR)
+    if(VTK_NLOHMANN_JSON_INCLUDE_DIR)
+      vp_parse_header("${VTK_NLOHMANN_JSON_INCLUDE_DIR}/vtknlohmannjson/include/vtknlohmann/json.hpp" NLOHMANN_JSON_VERSION_LINES NLOHMANN_JSON_VERSION_MAJOR NLOHMANN_JSON_VERSION_MINOR NLOHMANN_JSON_VERSION_PATCH)
+      set(VTK_NLOHMANN_JSON_VERSION "${NLOHMANN_JSON_VERSION_MAJOR}.${NLOHMANN_JSON_VERSION_MINOR}.${NLOHMANN_JSON_VERSION_PATCH}")
+      list(APPEND ${pcl_deps_include_dirs} "${VTK_NLOHMANN_JSON_INCLUDE_DIR}/vtknlohmannjson/include")
+      set(VISP_HAVE_NLOHMANN_JSON_FROM_VTK TRUE)
+    else()
+      set(VISP_HAVE_NLOHMANN_JSON_FROM_VTK FALSE)
+      set(VTK_NLOHMANN_JSON_VERSION "n/a")
+    endif()
+
     # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
     # Here we explicitly add opengl
     if(OPENGL_LIBRARIES)
