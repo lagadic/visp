@@ -47,7 +47,7 @@
 #include <visp3/core/vpException.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -426,7 +426,10 @@ public:
 
       // Recopy of this->data array values or nullify
       if (flagNullify) {
-        memset(this->data, 0, static_cast<size_t>(this->dsize) * sizeof(Type));
+        // If dsize = 0 nothing to do
+        if ((nullptr != this->data) && (0 != this->dsize)) {
+          memset(this->data, 0, static_cast<size_t>(this->dsize) * sizeof(Type));
+        }
       }
       else if (recopyNeeded && (this->rowPtrs != nullptr)) {
         // Recopy...
