@@ -45,7 +45,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpIoTools.h>
 
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 
 #include <catch_amalgamated.hpp>

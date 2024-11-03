@@ -1248,6 +1248,14 @@ function(status text)
 endfunction()
 
 # read set of version defines from the header file
+# This macro allows to get defines values from a header file.
+# For example if the header.hpp file contains
+#   #define LIB_VERSION_MAJOR 1
+#   #define LIB_VERSION_MINOR 2
+#   #define LIB_VERSION_PATCH 3
+# to retrieve the values of these defines and compose a string version you may use
+#   vp_parse_header("header.hpp" LIB_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_PATCH)
+#   set(LIB_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
 macro(vp_parse_header FILENAME FILE_VAR)
   set(vars_regex "")
   set(__parent_scope OFF)
@@ -1289,6 +1297,9 @@ macro(vp_parse_header FILENAME FILE_VAR)
 endmacro()
 
 # read single version define from the header file
+# Example to detect the version in header.hpp file that contains:
+#   #define MyLIB_VERSION_STR "1.2.3"
+# use vp_parse_header2(MyLIB "header.hpp" LIB_VERSION_STR)
 macro(vp_parse_header2 LIBNAME HDR_PATH VARNAME)
   vp_clear_vars(${LIBNAME}_VERSION_MAJOR
                 ${LIBNAME}_VERSION_MAJOR
@@ -1300,7 +1311,6 @@ macro(vp_parse_header2 LIBNAME HDR_PATH VARNAME)
   if(EXISTS "${HDR_PATH}")
     file(STRINGS "${HDR_PATH}" ${LIBNAME}_H REGEX "^#define[ \t]+${VARNAME}[ \t]+\"[^\"]*\".*$" LIMIT_COUNT 1)
   endif()
-
   if(${LIBNAME}_H)
     string(REGEX REPLACE "^.*[ \t]${VARNAME}[ \t]+\"([0-9]+).*$" "\\1" ${LIBNAME}_VERSION_MAJOR "${${LIBNAME}_H}")
     string(REGEX REPLACE "^.*[ \t]${VARNAME}[ \t]+\"[0-9]+\\.([0-9]+).*$" "\\1" ${LIBNAME}_VERSION_MINOR  "${${LIBNAME}_H}")
