@@ -283,9 +283,9 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
 }
 
 /*!
- * Converts cv::Mat CV_32FC1 format to ViSP vpImage<float>.
+ * Converts cv::Mat CV_32FC1 / CV_16SC1 format to ViSP vpImage<float>.
  *
- * \param[in] src : OpenCV image in CV_32FC1 format.
+ * \param[in] src : OpenCV image in CV_32FC1 / CV_16SC1 format.
  * \param[out] dest : ViSP image in float format.
  * \param[in] flip : When true during conversion flip image vertically.
  */
@@ -296,7 +296,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
   unsigned int destCols = dest.getCols();
 
   if (src.type() == CV_32FC1) {
-    for (unsigned int i = 0; i < destRows; ++i)
+    for (unsigned int i = 0; i < destRows; ++i) {
       for (unsigned int j = 0; j < destCols; ++j) {
         if (flip) {
           dest[dest.getRows() - i - 1][j] = src.at<float>(static_cast<int>(i), static_cast<int>(j));
@@ -305,6 +305,19 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
           dest[i][j] = src.at<float>(static_cast<int>(i), static_cast<int>(j));
         }
       }
+    }
+  }
+  else if (src.type() == CV_16SC1) {
+    for (unsigned int i = 0; i < destRows; ++i) {
+      for (unsigned int j = 0; j < destCols; ++j) {
+        if (flip) {
+          dest[dest.getRows() - i - 1][j] = src.at<short>(static_cast<int>(i), static_cast<int>(j));
+        }
+        else {
+          dest[i][j] = src.at<short>(static_cast<int>(i), static_cast<int>(j));
+        }
+      }
+    }
   }
   else {
     throw vpException(vpException::badValue, "cv::Mat type is not supported!");
