@@ -49,8 +49,8 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
 }
 
 void computeCanny(const vpImage<unsigned char> &I, vpCannyEdgeDetection &cannyDetector, int gaussianKernelSize,
-  float gaussianStdev, int apertureSize, vpImageFilter::vpCannyFilteringAndGradientType filteringType,
-  vpImage<unsigned char> &dIxy_uchar, vpImage<unsigned char> &I_canny_visp)
+                  float gaussianStdev, int apertureSize, vpImageFilter::vpCannyFilteringAndGradientType filteringType,
+                  vpImage<unsigned char> &dIxy_uchar, vpImage<unsigned char> &I_canny_visp)
 {
   vpImage<float> dIx, dIy, dIxy(I.getHeight(), I.getWidth());
   vpImageFilter::computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
@@ -304,8 +304,8 @@ int main(int argc, const char **argv)
       continue;
     }
     std::cout << VISP_NAMESPACE_NAME::vpGammaMethodToString(gamma_method) << ": mean="
-      << vpMath::getMean(computation_times[gamma_idx+1]) << " ms ; median="
-      << vpMath::getMedian(computation_times[gamma_idx+1]) << " ms" << std::endl;
+      << vpMath::getMean(computation_times[gamma_idx-1]) << " ms ; median="
+      << vpMath::getMedian(computation_times[gamma_idx-1]) << " ms" << std::endl;
   }
 
   return EXIT_SUCCESS;
