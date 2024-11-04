@@ -34,9 +34,7 @@
 #include <visp3/core/vpImageConvert.h>
 
 #ifdef VISP_USE_MSVC
-#pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
-#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <sys/resource.h>
+#pragma comment(linker, "/STACK:65532000") // Increase max recursion depth
 #endif
 
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98) // Check if cxx98
@@ -126,6 +124,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_lowerThresholdRatio(lowerThresholdRatio)
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  , m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+#endif
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
@@ -247,15 +248,14 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Increase stack size due to the recursive algorithm
-  const rlim_t kStackSize = 256 * 1024 * 1024;   // min stack size = 256 MB
   rlim_t initialStackSize;
   struct rlimit rl;
   int result;
   result = getrlimit(RLIMIT_STACK, &rl);
   if (result == 0) {
-    if (rl.rlim_cur < kStackSize) {
+    if (rl.rlim_cur < m_minStackSize) {
       initialStackSize = rl.rlim_cur;
-      rl.rlim_cur = kStackSize;
+      rl.rlim_cur = m_minStackSize;
       result = setrlimit(RLIMIT_STACK, &rl);
       if (result != 0) {
         throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
