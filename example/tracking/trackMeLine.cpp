@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Tracking of a line.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file trackMeLine.cpp
@@ -59,19 +57,17 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-
+#include <visp3/io/vpVideoReader.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/me/vpMeLine.h>
-
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureLine.h>
-
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS "cdf:hi:l:p:s:"
@@ -222,25 +218,23 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 int main(int argc, const char **argv)
 {
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
+  std::string env_ipath;
+  std::string opt_ipath;
+  std::string ipath;
+  std::string opt_ppath;
+  std::string videoname;
+  unsigned int opt_first = 1;
+  unsigned int opt_last = 30;
+  unsigned int opt_step = 1;
+  bool opt_click_allowed = true;
+  bool opt_display = true;
+  unsigned int thickness = 1;
+
+  vpImage<unsigned char> I;
+  vpDisplay *display = nullptr;
+  vpVideoReader g;
+
   try {
-    std::string env_ipath;
-    std::string opt_ipath;
-    std::string ipath;
-    std::string opt_ppath;
-    std::string dirname;
-    std::string filename;
-    unsigned int opt_first = 1;
-    unsigned int opt_last = 30;
-    unsigned int opt_step = 1;
-    bool opt_click_allowed = true;
-    bool opt_display = true;
-
-#if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
-#else
-    std::string ext("pgm");
-#endif
-
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -256,8 +250,9 @@ int main(int argc, const char **argv)
     }
 
     // Get the option values
-    if (!opt_ipath.empty())
+    if (!opt_ipath.empty()) {
       ipath = opt_ipath;
+    }
 
     // Compare ipath and env_ipath. If they differ, we take into account
     // the input path coming from the command line option
@@ -284,76 +279,42 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    // Declare an image, this is a gray level image (unsigned char)
-    // it size is not defined yet, it will be defined when the image will
-    // read on the disk
-    vpImage<unsigned char> I;
-
-    unsigned iter = opt_first;
-    std::ostringstream s;
-    char cfilename[FILENAME_MAX];
-
+    vpVideoReader g;
     if (opt_ppath.empty()) {
-
-      // Warning :
-      // The image sequence is not provided with the ViSP package
-      // therefore the program will return an error :
-      //  !!    couldn't read file visp-images/mire-2/image.0001.png
-      //
-      // ViSP dataset is available on the visp www site
-      // https://visp.inria.fr/download/.
-
-      // Set the path location of the image sequence
-      dirname = vpIoTools::createFilePath(ipath, "line");
-
-      // Build the name of the image file
-      s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-      filename = vpIoTools::createFilePath(dirname, s.str());
+  // Set the path location of the image sequence
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+      videoname = vpIoTools::createFilePath(ipath, "line/image.%04d.png");
+#else
+      videoname = vpIoTools::createFilePath(ipath, "line/image.%04d.pgm");
+#endif
+      g.setFileName(videoname);
     }
     else {
-      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
-      filename = cfilename;
+      g.setFileName(opt_ppath);
     }
 
-    // Read the image named "filename", and put the bitmap into the image structure I.
-    // I is initialized to the correct size
-    //
-    // vpImageIo::read() may throw various exception if, for example,
-    // the file does not exist, or if the memory cannot be allocated
-    try {
-      vpCTRACE << "Load: " << filename << std::endl;
-
-      vpImageIo::read(I, filename);
+    if (opt_first > 0) {
+      g.setFirstFrameIndex(opt_first);
     }
-    catch (...) {
-      // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
-      std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filename << std::endl;
-      if (opt_ppath.empty()) {
-        std::cerr << "  Check your -i " << ipath << " option " << std::endl
-          << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      }
-      else {
-        std::cerr << "  Check your -p " << opt_ppath << " option " << std::endl;
-      }
-      return EXIT_FAILURE;
+    if (opt_last > 0) {
+      g.setLastFrameIndex(opt_last);
     }
-
-    // We open a window using either X11, GTK or GDI.
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV display;
-#endif
+    g.setFrameStep(opt_step);
+    g.open(I);
 
     if (opt_display) {
+      // We open a window using either X11, GTK, GDI or OpenCV
+#if defined(VISP_HAVE_X11)
+      display = new vpDisplayX;
+#elif defined(VISP_HAVE_GTK)
+      display = new vpDisplayGTK;
+#elif defined(VISP_HAVE_GDI)
+      display = new vpDisplayGDI;
+#elif defined(HAVE_OPENCV_HIGHGUI)
+      display = new vpDisplayOpenCV;
+#endif
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "Display...");
+      display->init(I, 10, 10, "Current image");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -363,7 +324,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    vpMeLine L1;
+    vpMeLine me_line;
 
     vpMe me;
     me.setRange(15);
@@ -371,24 +332,38 @@ int main(int argc, const char **argv)
     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
     me.setThreshold(20);
 
-    L1.setMe(&me);
-    L1.setDisplay(vpMeSite::RANGE_RESULT);
+    me_line.setMe(&me);
+    me_line.setDisplay(vpMeSite::RANGE_RESULT);
+
+    std::cout << "Video settings" << std::endl;
+    std::cout << "  Name       : " << g.getFrameName() << std::endl;
+    std::cout << "  First image: " << g.getFirstFrameIndex() << std::endl;
+    std::cout << "  Last image : " << g.getLastFrameIndex() << std::endl;
+    std::cout << "  Step       : " << g.getFrameStep() << std::endl;
+    std::cout << "  Image size : " << I.getWidth() << " x " << I.getHeight() << std::endl;
+
+    std::cout << "Moving-edges settings" << std::endl;
+    std::cout << "  Sample step   : " << me_line.getMe()->getSampleStep() << std::endl;
+    std::cout << "  Range         : " << me_line.getMe()->getRange() << std::endl;
+    std::cout << "  Threshold type: " << (me_line.getMe()->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD ? "normalized" : "old threshold (to be avoided)") << std::endl;
+    std::cout << "  Threshold     : " << me_line.getMe()->getThreshold() << std::endl;
 
     if (opt_display && opt_click_allowed)
-      L1.initTracking(I);
+      me_line.initTracking(I);
     else {
       vpImagePoint ip1, ip2;
       ip1.set_i(96);
       ip1.set_j(191);
       ip2.set_i(122);
       ip2.set_j(211);
-      L1.initTracking(I, ip1, ip2);
+      me_line.initTracking(I, ip1, ip2);
     }
 
-    if (opt_display)
-      L1.display(I, vpColor::green);
+    if (opt_display) {
+      me_line.display(I, vpColor::green);
+    }
 
-    L1.track(I);
+    me_line.track(I);
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I);
@@ -398,41 +373,40 @@ int main(int argc, const char **argv)
     vpFeatureLine l;
 
     vpCameraParameters cam;
-    vpImage<vpRGBa> Ic;
-    while (iter < opt_last) {
-      std::cout << "----------------------------------------------------------" << std::endl;
-      // set the new image name
-      s.str("");
-      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
-      filename = vpIoTools::createFilePath(dirname, s.str());
-      // read the image
-      vpImageIo::read(I, filename);
+
+    bool quit = false;
+    while (!g.end() && !quit) {
+      g.acquire(I);
+      std::cout << "Process image " << g.getFrameIndex() << std::endl;
       if (opt_display) {
         // Display the image
         vpDisplay::display(I);
-      }
-
-      std::cout << "Tracking on image: " << filename << std::endl;
-      L1.track(I);
-
-      vpTRACE("L1 : %f %f", L1.getRho(), vpMath::deg(L1.getTheta()));
-      vpFeatureBuilder::create(l, cam, L1);
-      vpTRACE("L1 : %f %f", l.getRho(), vpMath::deg(l.getTheta()));
-
-      if (opt_display) {
-        L1.display(I, vpColor::green);
-        vpDisplay::flush(I);
         if (opt_click_allowed) {
-          std::cout << "A click to continue..." << std::endl;
-          vpDisplay::getClick(I);
+          vpDisplay::displayText(I, 40, 10, "Click to exit...", vpColor::red);
         }
       }
 
-      iter += opt_step;
+      me_line.track(I);
+
+      vpTRACE("me_line : %f %f", me_line.getRho(), vpMath::deg(me_line.getTheta()));
+      vpFeatureBuilder::create(l, cam, me_line);
+      vpTRACE("me_line : %f %f", l.getRho(), vpMath::deg(l.getTheta()));
+
+      if (opt_display) {
+        me_line.display(I, vpColor::green, thickness);
+        vpDisplay::flush(I);
+      }
+      if (opt_display && opt_click_allowed) {
+        if (vpDisplay::getClick(I, false)) {
+          quit = true;
+        }
+      }
     }
-    if (opt_display && opt_click_allowed) {
-      std::cout << "A click to exit..." << std::endl;
+    if (opt_display && opt_click_allowed && !quit) {
       vpDisplay::getClick(I);
+    }
+    if (display) {
+      delete display;
     }
     return EXIT_SUCCESS;
   }

@@ -518,12 +518,16 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double sample_step = (double)m_me->getSampleStep();
 
   vpMeSite P;
+
   P.init((int)m_PExt[0].m_ifloat, (int)m_PExt[0].m_jfloat, m_delta_1, 0, m_sign);
   P.setDisplay(m_selectDisplay);
+  const double marginRatio = m_me->getThresholdMarginRatio();
+  double convolution = P.convolution(I, m_me);
+  double contrastThreshold = fabs(convolution) * marginRatio;
+  P.setContrastThreshold(contrastThreshold, *m_me);
 
   unsigned int memory_range = m_me->getRange();
   m_me->setRange(1);
-
 
   for (int i = 0; i < 3; i++) {
     P.m_ifloat = P.m_ifloat + di * sample_step;
@@ -535,28 +539,32 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     iP.set_i(P.m_ifloat);
     iP.set_j(P.m_jfloat);
 
-    unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
-    unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
-    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
-        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
-      P.track(I, m_me, false);
-
-      if (P.getState() == vpMeSite::NO_SUPPRESSION) {
-        m_meList.push_back(P);
-        if (vpDEBUG_ENABLE(3)) {
-          vpDisplay::displayCross(I, iP, 5, vpColor::green);
+    // First test to ensure that iP coordinates are > 0 before casting to unsigned int
+    if (!outOfImage(iP, 5, nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
+      unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
+      if (inRoiMask(m_mask, is_uint, js_uint) && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
+        P.track(I, m_me, false);
+        if (P.getState() == vpMeSite::NO_SUPPRESSION) {
+          m_meList.push_back(P);
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, iP, 5, vpColor::green);
+          }
         }
-      }
-      else {
-        if (vpDEBUG_ENABLE(3)) {
-          vpDisplay::displayCross(I, iP, 10, vpColor::blue);
+        else {
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, iP, 10, vpColor::blue);
+          }
         }
       }
     }
   }
-
   P.init((int)m_PExt[1].m_ifloat, (int)m_PExt[1].m_jfloat, m_delta_1, 0, m_sign);
   P.setDisplay(m_selectDisplay);
+  convolution = P.convolution(I, m_me);
+  contrastThreshold = fabs(convolution) * marginRatio;
+  P.setContrastThreshold(contrastThreshold, *m_me);
+
   for (int i = 0; i < 3; i++) {
     P.m_ifloat = P.m_ifloat - di * sample_step;
     P.m_i = static_cast<int>(P.m_ifloat);
@@ -567,21 +575,22 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     iP.set_i(P.m_ifloat);
     iP.set_j(P.m_jfloat);
 
-    unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
-    unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
-    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
-            && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
-      P.track(I, m_me, false);
-
-      if (P.getState() == vpMeSite::NO_SUPPRESSION) {
-        m_meList.push_back(P);
-        if (vpDEBUG_ENABLE(3)) {
-          vpDisplay::displayCross(I, iP, 5, vpColor::green);
+    // First test to ensure that iP coordinates are > 0 before casting to unsigned int
+    if (!outOfImage(iP, 5, nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
+      unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
+      if (inRoiMask(m_mask, is_uint, js_uint) && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
+        P.track(I, m_me, false);
+        if (P.getState() == vpMeSite::NO_SUPPRESSION) {
+          m_meList.push_back(P);
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, iP, 5, vpColor::green);
+          }
         }
-      }
-      else {
-        if (vpDEBUG_ENABLE(3)) {
-          vpDisplay::displayCross(I, iP, 10, vpColor::blue);
+        else {
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, iP, 10, vpColor::blue);
+          }
         }
       }
     }

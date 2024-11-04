@@ -311,25 +311,26 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     computePointOnEllipse(ang, iP);
     // If point is in the image, add to the sample list
     // Check done in (i,j) frame)
-    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
-    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
-        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
-      const unsigned int crossSize = 5;
-      vpDisplay::displayCross(I, iP, crossSize, vpColor::red);
+    if (!outOfImage(iP, 0, nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+      unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+      if (inRoiMask(m_mask, is_uint, js_uint) && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
+        const unsigned int crossSize = 5;
+        vpDisplay::displayCross(I, iP, crossSize, vpColor::red);
 
-      double theta = computeTheta(iP);
-      vpMeSite pix;
-      // (i,j) frame used for vpMeSite
-      pix.init(iP.get_i(), iP.get_j(), theta);
-      pix.setDisplay(m_selectDisplay);
-      pix.setState(vpMeSite::NO_SUPPRESSION);
-      const double marginRatio = m_me->getThresholdMarginRatio();
-      double convolution = pix.convolution(I, m_me);
-      double contrastThreshold = fabs(convolution) * marginRatio;
-      pix.setContrastThreshold(contrastThreshold, *m_me);
-      m_meList.push_back(pix);
-      m_angleList.push_back(ang);
+        double theta = computeTheta(iP);
+        vpMeSite pix;
+        // (i,j) frame used for vpMeSite
+        pix.init(iP.get_i(), iP.get_j(), theta);
+        pix.setDisplay(m_selectDisplay);
+        pix.setState(vpMeSite::NO_SUPPRESSION);
+        const double marginRatio = m_me->getThresholdMarginRatio();
+        double convolution = pix.convolution(I, m_me);
+        double contrastThreshold = fabs(convolution) * marginRatio;
+        pix.setContrastThreshold(contrastThreshold, *m_me);
+        m_meList.push_back(pix);
+        m_angleList.push_back(ang);
+      }
     }
     ang += incr;
   }
@@ -375,30 +376,32 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       while (ang < (nextang - incr)) {
         vpImagePoint iP;
         computePointOnEllipse(ang, iP);
-        unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
-        unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
-        if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
-          double theta = computeTheta(iP);
-          vpMeSite pix;
-          pix.init(iP.get_i(), iP.get_j(), theta);
-          pix.setDisplay(m_selectDisplay);
-          pix.setState(vpMeSite::NO_SUPPRESSION);
-          double convolution = pix.convolution(I, m_me);
-          double contrastThreshold = fabs(convolution) * marginRatio;
-          pix.setContrastThreshold(contrastThreshold, *m_me);
-          pix.track(I, m_me, false);
-          if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
-            ++nb_pts_added;
-            iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
-            double new_ang = computeAngleOnEllipse(iP);
-            if ((new_ang - ang) > M_PI) {
-              new_ang -= 2.0 * M_PI;
+        if (!outOfImage(iP, 0, nbrows, nbcols)) {
+          unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+          unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+          if (inRoiMask(m_mask, is_uint, js_uint)) {
+            double theta = computeTheta(iP);
+            vpMeSite pix;
+            pix.init(iP.get_i(), iP.get_j(), theta);
+            pix.setDisplay(m_selectDisplay);
+            pix.setState(vpMeSite::NO_SUPPRESSION);
+            double convolution = pix.convolution(I, m_me);
+            double contrastThreshold = fabs(convolution) * marginRatio;
+            pix.setContrastThreshold(contrastThreshold, *m_me);
+            pix.track(I, m_me, false);
+            if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
+              ++nb_pts_added;
+              iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
+              double new_ang = computeAngleOnEllipse(iP);
+              if ((new_ang - ang) > M_PI) {
+                new_ang -= 2.0 * M_PI;
+              }
+              else if ((ang - new_ang) > M_PI) {
+                new_ang += 2.0 * M_PI;
+              }
+              m_meList.insert(meList, pix);
+              m_angleList.insert(angleList, new_ang);
             }
-            else if ((ang - new_ang) > M_PI) {
-              new_ang += 2.0 * M_PI;
-            }
-            m_meList.insert(meList, pix);
-            m_angleList.insert(angleList, new_ang);
           }
         }
         ang += incr;
@@ -426,30 +429,32 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       ang = (nextang + ang) / 2.0; // point added at mid angle
       vpImagePoint iP;
       computePointOnEllipse(ang, iP);
-      unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
-      unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
-      if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
-        double theta = computeTheta(iP);
-        vpMeSite pix;
-        pix.init(iP.get_i(), iP.get_j(), theta);
-        pix.setDisplay(m_selectDisplay);
-        pix.setState(vpMeSite::NO_SUPPRESSION);
-        double convolution = pix.convolution(I, m_me);
-        double contrastThreshold = fabs(convolution) * marginRatio;
-        pix.setContrastThreshold(contrastThreshold, *m_me);
-        pix.track(I, m_me, false);
-        if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
-          ++nb_pts_added;
-          iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
-          double new_ang = computeAngleOnEllipse(iP);
-          if ((new_ang - ang) > M_PI) {
-            new_ang -= 2.0 * M_PI;
+      if (!outOfImage(iP, 0, nbrows, nbcols)) {
+        unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+        unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+        if (inRoiMask(m_mask, is_uint, js_uint)) {
+          double theta = computeTheta(iP);
+          vpMeSite pix;
+          pix.init(iP.get_i(), iP.get_j(), theta);
+          pix.setDisplay(m_selectDisplay);
+          pix.setState(vpMeSite::NO_SUPPRESSION);
+          double convolution = pix.convolution(I, m_me);
+          double contrastThreshold = fabs(convolution) * marginRatio;
+          pix.setContrastThreshold(contrastThreshold, *m_me);
+          pix.track(I, m_me, false);
+          if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
+            ++nb_pts_added;
+            iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
+            double new_ang = computeAngleOnEllipse(iP);
+            if ((new_ang - ang) > M_PI) {
+              new_ang -= 2.0 * M_PI;
+            }
+            else if ((ang - new_ang) > M_PI) {
+              new_ang += 2.0 * M_PI;
+            }
+            m_meList.insert(meList, pix);
+            m_angleList.insert(angleList, new_ang);
           }
-          else if ((ang - new_ang) > M_PI) {
-            new_ang += 2.0 * M_PI;
-          }
-          m_meList.insert(meList, pix);
-          m_angleList.insert(angleList, new_ang);
         }
       }
     }
@@ -471,31 +476,33 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   for (unsigned int i = 0; i < nbpts; ++i) {
     vpImagePoint iP;
     computePointOnEllipse(ang, iP);
-    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
-    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
-      double theta = computeTheta(iP);
-      vpMeSite pix;
-      pix.init(iP.get_i(), iP.get_j(), theta);
-      pix.setDisplay(m_selectDisplay);
-      pix.setState(vpMeSite::NO_SUPPRESSION);
-      // --comment: pix dot setContrastThreshold of pix1 dot getContrastThreshold() comma *m_me
-      double convolution = pix.convolution(I, m_me);
-      double contrastThreshold = fabs(convolution) * marginRatio;
-      pix.setContrastThreshold(contrastThreshold, *m_me);
-      pix.track(I, m_me, false);
-      if (pix.getState() == vpMeSite::NO_SUPPRESSION) {
-        ++nb_pts_added;
-        iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
-        double new_ang = computeAngleOnEllipse(iP);
-        if ((new_ang - ang) > M_PI) {
-          new_ang -= 2.0 * M_PI;
+    if (!outOfImage(iP, 0, nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+      unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+      if (inRoiMask(m_mask, is_uint, js_uint)) {
+        double theta = computeTheta(iP);
+        vpMeSite pix;
+        pix.init(iP.get_i(), iP.get_j(), theta);
+        pix.setDisplay(m_selectDisplay);
+        pix.setState(vpMeSite::NO_SUPPRESSION);
+        // --comment: pix dot setContrastThreshold of pix1 dot getContrastThreshold() comma *m_me
+        double convolution = pix.convolution(I, m_me);
+        double contrastThreshold = fabs(convolution) * marginRatio;
+        pix.setContrastThreshold(contrastThreshold, *m_me);
+        pix.track(I, m_me, false);
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) {
+          ++nb_pts_added;
+          iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
+          double new_ang = computeAngleOnEllipse(iP);
+          if ((new_ang - ang) > M_PI) {
+            new_ang -= 2.0 * M_PI;
+          }
+          else if ((ang - new_ang) > M_PI) {
+            new_ang += 2.0 * M_PI;
+          }
+          m_meList.push_front(pix);
+          m_angleList.push_front(new_ang);
         }
-        else if ((ang - new_ang) > M_PI) {
-          new_ang += 2.0 * M_PI;
-        }
-        m_meList.push_front(pix);
-        m_angleList.push_front(new_ang);
       }
     }
     ang -= incr;
@@ -512,30 +519,32 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   for (unsigned int i = 0; i < nbpts; ++i) {
     vpImagePoint iP;
     computePointOnEllipse(ang, iP);
-    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
-    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
-      double theta = computeTheta(iP);
-      vpMeSite pix;
-      pix.init(iP.get_i(), iP.get_j(), theta);
-      pix.setDisplay(m_selectDisplay);
-      pix.setState(vpMeSite::NO_SUPPRESSION);
-      double convolution = pix.convolution(I, m_me);
-      double contrastThreshold = fabs(convolution) * marginRatio;
-      pix.setContrastThreshold(contrastThreshold, *m_me);
-      pix.track(I, m_me, false);
-      if (pix.getState() == vpMeSite::NO_SUPPRESSION) {
-        ++nb_pts_added;
-        iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
-        double new_ang = computeAngleOnEllipse(iP);
-        if ((new_ang - ang) > M_PI) {
-          new_ang -= 2.0 * M_PI;
+    if (!outOfImage(iP, 0, nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+      unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+      if (inRoiMask(m_mask, is_uint, js_uint)) {
+        double theta = computeTheta(iP);
+        vpMeSite pix;
+        pix.init(iP.get_i(), iP.get_j(), theta);
+        pix.setDisplay(m_selectDisplay);
+        pix.setState(vpMeSite::NO_SUPPRESSION);
+        double convolution = pix.convolution(I, m_me);
+        double contrastThreshold = fabs(convolution) * marginRatio;
+        pix.setContrastThreshold(contrastThreshold, *m_me);
+        pix.track(I, m_me, false);
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) {
+          ++nb_pts_added;
+          iP.set_ij(pix.get_ifloat(), pix.get_jfloat());
+          double new_ang = computeAngleOnEllipse(iP);
+          if ((new_ang - ang) > M_PI) {
+            new_ang -= 2.0 * M_PI;
+          }
+          else if ((ang - new_ang) > M_PI) {
+            new_ang += 2.0 * M_PI;
+          }
+          m_meList.push_back(pix);
+          m_angleList.push_back(new_ang);
         }
-        else if ((ang - new_ang) > M_PI) {
-          new_ang += 2.0 * M_PI;
-        }
-        m_meList.push_back(pix);
-        m_angleList.push_back(new_ang);
       }
     }
     ang += incr;

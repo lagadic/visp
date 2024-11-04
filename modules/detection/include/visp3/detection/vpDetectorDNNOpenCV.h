@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,9 @@
  * Description:
  * DNN object detection using OpenCV DNN module.
  */
-#ifndef _vpDetectorDNN_h_
-#define _vpDetectorDNN_h_
+
+#ifndef VP_DETECTOR_DNN_OPENCV_H
+#define VP_DETECTOR_DNN_OPENCV_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -74,6 +75,7 @@ BEGIN_VISP_NAMESPACE
  * - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
  * - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
  * - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
+ * - Yolo v11, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov11 network
  *
  * This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
  * Examples of such JSON files can be found in the tutorial folder.
@@ -98,8 +100,9 @@ public:
     YOLO_V4 = 5, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV4 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV3_V4 for more information.*/
     YOLO_V5 = 6, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV5 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
     YOLO_V7 = 7, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV7 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
-    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8 for more information.*/
-    COUNT = 9 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
+    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
+    YOLO_V11 = 9, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV11 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
+    COUNT = 10 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -560,7 +563,7 @@ protected:
 
   void postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
-  void postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
