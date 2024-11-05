@@ -44,6 +44,8 @@ ViSP 3.x.x (Version in development)
     . Update tinyexr 3rdparty to 1.0.9 release
     . Update stb_image 3rdparty to 2.30 version
     . Update Catch2 3rdparty to 3.7.1 version
+    . Add compatibility with Yolo v11 in vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
+      to detect objects
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials

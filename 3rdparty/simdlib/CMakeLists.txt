@@ -1,5 +1,8 @@
 project(${SIMD_LIBRARY})
 
+# SIMD_VERSION should math the version set in Simd/SimdVersion.h
+set(SIMD_VERSION "4.9.109"  PARENT_SCOPE)
+
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(COMMON_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
