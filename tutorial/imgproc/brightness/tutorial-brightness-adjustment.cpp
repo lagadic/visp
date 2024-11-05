@@ -22,6 +22,9 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
+#if defined(VISP_HAVE_MODULE_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
+  (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_STBIMAGE) || defined(VISP_HAVE_SIMDLIB)) && \
+  ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L)))
 namespace
 {
 void display(vpImage<vpRGBa> &I_display, vpImage<vpRGBa> &I_color_res, const vpImage<vpRGBa> &I_color_adjust,
@@ -49,6 +52,7 @@ void display(vpImage<vpRGBa> &I_display, vpImage<vpRGBa> &I_color_res, const vpI
   vpDisplay::getClick(I_display);
 }
 }
+#endif
 
 int main(int argc, const char **argv)
 {
