@@ -253,15 +253,17 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   int result;
   result = getrlimit(RLIMIT_STACK, &rl);
   if (result == 0) {
+    initialStackSize = rl.rlim_cur;
     if (rl.rlim_cur < m_minStackSize) {
-      initialStackSize = rl.rlim_cur;
       rl.rlim_cur = m_minStackSize;
       result = setrlimit(RLIMIT_STACK, &rl);
       if (result != 0) {
         throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
-
       }
     }
+  }
+  else {
+    throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
   }
 #endif
 // // Clearing the previous results
