@@ -530,6 +530,15 @@ int main(int argc, char **argv)
       hasToContinue = run_detection(I_src, I_disp, I_dispCanny, detector, opt_nbCirclesToDetect, false, opt_displayCanny);
       vpTime::wait(40);
     }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete dColor;
+    if (dCanny != nullptr) {
+      if (opt_displayCanny) {
+        delete dCanny;
+      }
+    }
+#endif
   }
   //! [Manage video]
   else {
@@ -558,14 +567,17 @@ int main(int argc, char **argv)
 #endif
 
     run_detection(I_src, I_disp, I_dispCanny, detector, opt_nbCirclesToDetect, true, opt_displayCanny);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete dColor;
+    if (dCanny != nullptr) {
+      if (opt_displayCanny) {
+        delete dCanny;
+      }
+    }
+#endif
     //! [Manage single image]
   }
 
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  delete dColor;
-  if (dCanny != nullptr) {
-    delete dCanny;
-  }
-#endif
   return EXIT_SUCCESS;
 }
