@@ -139,7 +139,6 @@ vpCircleHoughTransform::computeCircleCandidates()
   nbBins = std::max<int>(static_cast<int>(1), nbBins); // Avoid having 0 bins, which causes segfault
   std::vector<float> radiusAccumList; // Radius accumulator for each center candidates.
   std::vector<float> radiusActualValueList; // Vector that contains the actual distance between the edge points and the center candidates.
-  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > votingPoints(nbBins); // Vectors that contain the points voting for each radius bin
 
   float rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
   float rmax2 = m_algoParams.m_maxRadius * m_algoParams.m_maxRadius;
@@ -153,6 +152,7 @@ vpCircleHoughTransform::computeCircleCandidates()
   data.m_recordVotingPoints = m_algoParams.m_recordVotingPoints;
 
   for (size_t i = 0; i < nbCenterCandidates; ++i) {
+    std::vector<std::vector<std::pair<unsigned int, unsigned int> > > votingPoints(nbBins); // Vectors that contain the points voting for each radius bin
     std::pair<float, float> centerCandidate = m_centerCandidatesList[i];
     // Initialize the radius accumulator of the candidate with 0s
     radiusAccumList.clear();
