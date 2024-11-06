@@ -268,8 +268,11 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   m_circleCandidates.clear();
   m_circleCandidatesVotes.clear();
   m_circleCandidatesProbabilities.clear();
+  m_circleCandidatesVotingPoints.clear();
   m_finalCircles.clear();
   m_finalCircleVotes.clear();
+  m_finalCirclesProbabilities.clear();
+  m_finalCirclesVotingPoints.clear();
 
   // Ensuring that the difference between the max and min radii is big enough to take into account
   // the pixelization of the image
