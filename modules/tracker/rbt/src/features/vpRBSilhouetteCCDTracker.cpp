@@ -80,6 +80,69 @@ public:
   }
 };
 
+template <class T> class FastMat63
+{
+public:
+  std::array<T, 18> data;
+
+  FastMat63() { }
+
+  inline T operator[](const size_t i) const { return data[i]; }
+
+  inline T &operator[](const size_t i) { return data[i]; }
+
+  static void multiply(const FastMat63<T> &A, const FastMat33<T> &B, FastMat63 &C)
+  {
+
+    for (unsigned int i = 0; i < 6; ++i) {
+      const T *d = &A.data[i * 3];
+      T *c = &C.data[i * 3];
+      c[0] = d[0] * B.data[0] + d[1] * B.data[3] + d[2] * B.data[6];
+      c[1] = d[0] * B.data[1] + d[1] * B.data[4] + d[2] * B.data[7];
+      c[2] = d[0] * B.data[2] + d[1] * B.data[5] + d[2] * B.data[8];
+    }
+  }
+
+  static void multiplyBTranspose(const FastMat63<double> &A, const FastMat63<double> &B, vpMatrix &C)
+  {
+    C.resize(6, 6, false, false);
+    for (unsigned int i = 0; i < 6; ++i) {
+      const double *a = &A.data[i * 3];
+      const double *b = &B.data[i * 3];
+      double *c = C[i];
+
+      c[0] = a[0] * B[0] + a[1] * B[1] + a[2] * B[2];
+      c[1] = a[0] * B[3] + a[1] * B[4] + a[2] * B[5];
+      c[2] = a[0] * B[6] + a[1] * B[7] + a[2] * B[8];
+
+      c[3] = a[0] * B[9] + a[1] * B[10] + a[2] * B[11];
+      c[4] = a[0] * B[12] + a[1] * B[13] + a[2] * B[14];
+      c[5] = a[0] * B[15] + a[1] * B[16] + a[2] * B[17];
+
+    }
+  }
+};
+
+template <class T> class FastVec3
+{
+public:
+  std::array<T, 3> data;
+
+  inline T operator[](const size_t i) const { return data[i]; }
+  inline T &operator[](const size_t i) { return data[i]; }
+
+  static void multiply(const FastMat63<double> &A, const FastVec3<double> &B, vpColVector &C)
+  {
+    C[0] = A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
+    C[1] = A[3] * B[0] + A[4] * B[1] + A[5] * B[2];
+    C[2] = A[6] * B[0] + A[7] * B[1] + A[8] * B[2];
+    C[3] = A[9] * B[0] + A[10] * B[1] + A[11] * B[2];
+    C[4] = A[12] * B[0] + A[13] * B[1] + A[14] * B[2];
+    C[5] = A[15] * B[0] + A[16] * B[1] + A[17] * B[2];
+  }
+
+};
+
 vpRBSilhouetteCCDTracker::vpRBSilhouetteCCDTracker() : vpRBFeatureTracker(), m_vvsConvergenceThreshold(0.0), m_temporalSmoothingFac(0.1), m_useMask(false), m_minMaskConfidence(0.0)
 { }
 
@@ -404,7 +467,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       vic_ptr[10 * negative_normal + 9] = exp(-dist2[0] * dist2[0] / (2 * sigma * sigma)) / (sqrt(2 * CV_PI) * sigma);
       normalized_param[kk][1] += vic_ptr[10 * negative_normal + 7];
     }
-  }
+    }
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
@@ -519,7 +582,7 @@ void vpRBSilhouetteCCDTracker::computeLocalStatistics(const vpImage<vpRGBa> &I, 
       cov_vic_ptr[9 + m * 3 + m] += m_ccdParameters.kappa;
     }
   }
-}
+  }
 
 void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
 {
@@ -536,9 +599,9 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
     // vpMatrix tmp_cov(3, 3);
     // vpMatrix tmp_cov_inv(3, 3);
     FastMat33<double> tmp_cov, tmp_cov_inv;
-    vpMatrix tmp_jacobian(m_ccdParameters.phi_dim, 3);
-    vpMatrix tmp_jacobian_x_tmp_cov_inv(tmp_jacobian.getRows(), 3);
-    vpColVector tmp_pixel_diff(3);
+    FastMat63<double> tmp_jacobian;
+    FastMat63<double> tmp_jacobian_x_tmp_cov_inv;
+    FastVec3<double> tmp_pixel_diff;
     double Lnvp[6];
     unsigned int normal_points_number = static_cast<unsigned int>(floor(m_ccdParameters.h / m_ccdParameters.delta_h));
 
@@ -595,25 +658,26 @@ void vpRBSilhouetteCCDTracker::computeErrorAndInteractionMatrix()
         for (int m = 0; m < 3; ++m) {
           double err = (pix_j[m] - errf * mean_vic_ptr[m] - (1.0 - errf) * mean_vic_ptr[m + 3])
             + m_temporalSmoothingFac * (pix_j[m] - errf * mean_vic_ptr_prev[m] - (1.0 - errf) * mean_vic_ptr_prev[m + 3]);
-          tmp_pixel_diff[m] = err;
             //error_ccd[i*2*normal_points_number*3 + j*3 + m] = img(vic_ptr[10*j+0], vic_ptr[10*j+1])[m]- errf * mean_vic_ptr[m]- (1-errf)* mean_vic_ptr[m+3];
+          tmp_pixel_diff[m] = err;
           error_ccd_j[m] = err;
         }
 
         //compute jacobian matrix
         //memset(tmp_jacobian.data, 0, 3 * m_ccdParameters.phi_dim * sizeof(double));
-        for (int n = 0; n < 3; ++n) {
+        for (unsigned int n = 0; n < 3; ++n) {
           const double f = -cam.get_px() * (vic_j[9] * (mean_vic_ptr[n] - mean_vic_ptr[n + 3]));
           const double facPrev = -cam.get_px() * m_temporalSmoothingFac * (vic_j[9] * (mean_vic_ptr_prev[n] - mean_vic_ptr_prev[n + 3]));
           for (unsigned int dof = 0; dof < 6; ++dof) {
-            tmp_jacobian[dof][n] = f * Lnvp[dof] + facPrev * Lnvp[dof];
+            tmp_jacobian.data[dof * 3 + n] = f * Lnvp[dof] + facPrev * Lnvp[dof];
           }
         }
 
-        FastMat33<double>::multiply(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
+        FastMat63<double>::multiply(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
         //vpMatrix::mult2Matrices(tmp_jacobian, tmp_cov_inv, tmp_jacobian_x_tmp_cov_inv);
-        vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[i * 2 * normal_points_number + j]);
-        vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian.t(), m_hessians[i * 2 * normal_points_number + j]);
+        FastVec3<double>::multiply(tmp_jacobian_x_tmp_cov_inv, tmp_pixel_diff, m_gradients[i * 2 * normal_points_number + j]);
+        FastMat63<double>::multiplyBTranspose(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian, m_hessians[i * 2 * normal_points_number + j]);
+        // vpMatrix::mult2Matrices(tmp_jacobian_x_tmp_cov_inv, tmp_jacobian.t(), m_hessians[i * 2 * normal_points_number + j]);
       }
     }
   }
