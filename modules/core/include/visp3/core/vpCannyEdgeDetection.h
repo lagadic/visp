@@ -34,11 +34,16 @@
 // System includes
 #include <map>
 #include <vector>
+#include <iostream>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <sys/resource.h> // To dynamically change the stack size
+#endif
 
 // ViSP include
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpRGBa.h>
 
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -50,6 +55,10 @@ BEGIN_VISP_NAMESPACE
  * \brief Class that implements the Canny's edge detector.
  * It is possible to use a boolean mask to ignore some pixels of
  * the input gray-scale image.
+ *
+ * \warning If the stack size is not sufficient, a SEGFAULT can occur on some images which
+ * are really over-exposed.
+ * \note The maximum stack on MacOS seems to be 65532000 bytes, see https://stackoverflow.com/a/13261334
 */
 class VISP_EXPORT vpCannyEdgeDetection
 {
@@ -133,6 +142,8 @@ public:
   /**
    * \brief Detect the edges in an image.
    * Convert the color image into a ViSP gray-scale image.
+   * \warning If the stack size is not sufficient, a SEGFAULT can occur on some images which
+   * are really over-exposed.
    *
    * \param[in] cv_I A color image, in OpenCV format.
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
@@ -143,6 +154,8 @@ public:
   /**
    * \brief Detect the edges in an image.
    * Convert the color image into a gray-scale image.
+   * \warning If the stack size is not sufficient, a SEGFAULT can occur on some images which
+   * are really over-exposed.
    *
    * \param[in] I_color : An RGB image, in ViSP format.
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
@@ -151,6 +164,8 @@ public:
 
   /**
    * \brief Detect the edges in a gray-scale image.
+   * \warning If the stack size is not sufficient, a SEGFAULT can occur on some images which
+   * are really over-exposed.
    *
    * \param[in] I : A gray-scale image, in ViSP format.
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
@@ -261,11 +276,41 @@ public:
   }
 
   /**
-   * \brief If set to true, the list of the detected edge-points will be available
-   * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
+   * \brief Set the minimum stack size, expressed in bytes, due to the recursivity of the algorithm.
    *
-   * \param[in] storeEdgePoints The new desired status.
+   * \note The stack size is changed back to its original value after
+   * before leaving the detect() function.
+   * \note On Windows, the minimum stack size is defined at compilation time
+   * and cannot be changed during runtime.
+   * \note The maximum stack on MacOS seems to be 65532000 bytes, see https://stackoverflow.com/a/13261334
+   * \warning If the stack size is not sufficient, a SEGFAULT can occur on some images which
+   * are really over-exposed.
+   *
+   * \param[in] requiredStackSize The required stack size, in bytes.
    */
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  inline void setMinimumStackSize(const rlim_t &requiredStackSize)
+  {
+    m_minStackSize = requiredStackSize;
+  }
+#else
+  inline void setMinimumStackSize(const unsigned int &requiredStackSize)
+  {
+    (void)requiredStackSize;
+    static bool hasNotBeenDisplayed = true;
+    if (hasNotBeenDisplayed) {
+      std::cerr << "setStackSize has no effect on non-POSIX systems. The stack size is defined during compilation." << std::endl;
+      hasNotBeenDisplayed = false;
+    }
+  }
+#endif
+
+/**
+ * \brief If set to true, the list of the detected edge-points will be available
+ * calling the method \b vpCannyEdgeDetection::getEdgePointsList().
+ *
+ * \param[in] storeEdgePoints The new desired status.
+ */
   inline void setStoreEdgePoints(const bool &storeEdgePoints)
   {
     m_storeListEdgePoints = storeEdgePoints;
@@ -286,6 +331,29 @@ public:
     }
     return m_edgePointsList;
   }
+
+  /**
+   * \brief Get the minimum stack size used by the algorithm.
+   *
+   * \note On Windows, the minimum stack size is defined at compilation time
+   * and cannot be changed during runtime.
+   *
+   * \return rlim_t The minimum stack size.
+   */
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  inline rlim_t getMinimumStackSize() const
+  {
+    return m_minStackSize;
+  }
+#else
+  inline unsigned int getMinimumStackSize() const
+  {
+    const unsigned int limit = 65532000;
+    return limit;
+  }
+#endif
+
+
   //@}
 private:
   typedef enum EdgeType
@@ -325,6 +393,9 @@ private:
                                     must be lower than the upper threshold \b m_upperThreshold.*/
 
   // // Edge tracking attributes
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  rlim_t m_minStackSize; /*!< Minimum stack size, due to the recursivity used in this step of the algorithm.*/
+#endif
   bool m_storeListEdgePoints; /*!< If true, the vector \b m_edgePointsList will contain the list of the edge points resulting from the whole algorithm.*/
   std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
                                                 and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
