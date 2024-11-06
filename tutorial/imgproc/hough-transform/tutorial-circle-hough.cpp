@@ -62,19 +62,17 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpImage<vpRGBa> &I_disp,
   }
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   std::optional<vpImage<bool>> opt_mask = std::nullopt;
-  std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> opt_votingPoints = std::nullopt;
+  std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int> > > > opt_votingPoints = std::nullopt;
 #else
   vpImage<bool> *opt_mask = nullptr;
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = nullptr;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > *opt_votingPoints = nullptr;
   detector.computeVotingMask(I_src, detectedCircles, &opt_mask, &opt_votingPoints); // Get, if available, the voting points
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   if (opt_votingPoints)
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (opt_votingPoints != nullptr)
 #else
-  if (opt_votingPoints != NULL)
+  if (opt_votingPoints != nullptr)
 #endif
   {
     const unsigned int crossSize = 3;
