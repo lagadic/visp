@@ -11,6 +11,7 @@ using namespace VISP_NAMESPACE_NAME;
 bool drawingHelpers::display(vpImage< vpRGBa> &I, const std::string &title, const bool &blockingMode)
 {
   vpDisplay::display(I);
+  vpDisplay::setTitle(I, title);
   vpDisplay::displayText(I, 15, 15, "Left click to continue...", vpColor::red);
   vpDisplay::displayText(I, 35, 15, "Right click to stop...", vpColor::red);
   vpDisplay::flush(I);
