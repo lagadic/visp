@@ -28,11 +28,23 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/me/vpMeEllipse.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/core/vpTrackingException.h>
+#include <math.h>                            // for M_PI, floor, sqrt
+#include <list>                              // for list, operator!=, _List_...
+#include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMatrixException.h>    // for vpMatrixException
+#include <visp3/core/vpRobust.h>             // for vpRobust, vpRobust::TUKEY
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/me/vpMeEllipse.h>            // for vpMeEllipse
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
 
 BEGIN_VISP_NAMESPACE
 

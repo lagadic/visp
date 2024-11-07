@@ -28,21 +28,35 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <vector>
+#include <cmath>                             // for M_PI, fabs, sqrt, floor
+#include <iostream>                          // for basic_ostream, char_traits
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, _List_iterator
+#include <optional>                          // for optional
+#include <vector>                            // for vector
 
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/me/vpMe.h>
-#include <visp3/me/vpMeEllipse.h>
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint, operator<<
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeEllipse.h>            // for vpMeEllipse
+#include <visp3/core/vpArray2D.h>            // for operator<<
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for VISP_CXX_STANDARD, VISP_...
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
 
 #ifndef VP_ME_ELLIPSE_REGULAR_SAMPLING
 #define VP_ME_ELLIPSE_TWO_CONCENTRIC_CIRCLES
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 vpMeEllipse::vpMeEllipse()
   : m_K(), m_iPc(), m_a(0.), m_b(0.), m_e(0.), m_iP1(), m_iP2(), m_alpha1(0), m_ce(0.), m_se(0.), m_angleList(), m_m00(0.),

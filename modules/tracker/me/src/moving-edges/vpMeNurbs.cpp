@@ -36,27 +36,34 @@
   \brief Moving edges
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRect.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/me/vpMe.h>
-#include <visp3/me/vpMeNurbs.h>
-#include <visp3/me/vpMeSite.h>
-#include <visp3/me/vpMeTracker.h>
-#if defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
-#endif
+#include <visp3/core/vpImageFilter.h>        // for vpImageFilter
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint, operator+
+#include <visp3/core/vpImageTools.h>         // for vpImageTools
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpRect.h>               // for inRectangle, vpRect
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeNurbs.h>              // for vpMeNurbs
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
+#include <cmath>                             // for fabs, atan2, M_PI, cos, sin
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, operator!=, _List_...
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDebug.h>              // for vpDEBUG_ENABLE
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpMouseButton.h>        // for vpMouseButton, vpMouseBu...
+#include <visp3/me/vpNurbs.h>                // for vpNurbs
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 double computeDelta(double deltai, double deltaj);
 void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt);
 vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP);

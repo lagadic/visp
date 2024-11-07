@@ -36,14 +36,25 @@
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/me/vpMeTracker.h>
+#include <algorithm>                         // for count_if
+#include <list>                              // for list, operator!=, _List_...
 
-#include <algorithm>
-#include <visp3/core/vpTrackingException.h>
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpImage_getters.h>      // for vpImage::getValue
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpTracker.h>            // for vpTracker
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 void vpMeTracker::init()
 {

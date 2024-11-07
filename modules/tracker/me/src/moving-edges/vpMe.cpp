@@ -36,10 +36,18 @@
   \brief Moving edges
 */
 
-#include <stdlib.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/me/vpMe.h>
+#include <cmath>                     // for fabs, cos, sin, trunc, M_PI
+#include <iostream>                  // for basic_ostream, char_traits, oper...
+#include <limits>                    // for numeric_limits
+#include <utility>                   // for move
+
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/me/vpMe.h>           // for vpMe, vpMe::OLD_THRESHOLD, vpMe:...
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
 
 BEGIN_VISP_NAMESPACE
 

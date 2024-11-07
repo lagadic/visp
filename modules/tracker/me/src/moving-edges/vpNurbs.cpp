@@ -31,11 +31,22 @@
  * This class implements the Non Uniform Rational B-Spline (NURBS)
  */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/me/vpNurbs.h>
+#include <cmath>                      // for sqrt, fabs, floor
+#include <limits>                     // for numeric_limits
+#include <list>                       // for list, operator!=, _List_const_i...
+#include <vector>                     // for vector
+
+#include <visp3/core/vpArray2D.h>     // for vpArray2D
+#include <visp3/core/vpBSpline.h>     // for vpBasisFunction, vpBSpline
+#include <visp3/core/vpColVector.h>   // for vpColVector
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/core/vpException.h>   // for vpException
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpList.h>        // for vpList
+#include <visp3/core/vpMath.h>        // for vpMath
+#include <visp3/core/vpMatrix.h>      // for vpMatrix
+#include <visp3/me/vpMeSite.h>        // for vpMeSite
+#include <visp3/me/vpNurbs.h>         // for vpNurbs
 
 BEGIN_VISP_NAMESPACE
 /*

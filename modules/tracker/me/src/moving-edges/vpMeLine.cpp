@@ -36,23 +36,37 @@
   \brief Moving edges
 */
 
-#include <algorithm> // (std::min)
-#include <cmath>     // std::fabs
-#include <limits>    // numeric_limits
-#include <stdlib.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/me/vpMe.h>
-#include <visp3/me/vpMeLine.h>
-#include <visp3/me/vpMeSite.h>
-#include <visp3/me/vpMeTracker.h>
+#include <stdlib.h>                          // for abs
+#include <algorithm>                         // for min
+#include <cmath>                             // for fabs, sqrt, M_PI, cos, sin
+#include <iostream>                          // for basic_ostream, operator<<
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, operator!=, _List_...
+
+#include <visp3/core/vpDebug.h>              // for vpERROR_TRACE, vpCDEBUG
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpRobust.h>             // for vpRobust, vpRobust::TUKEY
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeLine.h>               // for vpMeLine
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
 
 #define INCR_MIN 1
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 void computeDelta(double &delta, int i1, int j1, int i2, int j2);
 
 static void normalizeAngle(double &delta)

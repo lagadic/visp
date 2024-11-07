@@ -36,16 +36,29 @@
   \brief Moving edges
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
-#include <map>
+#include <stdlib.h>                   // for abs
+#include <cmath>                      // for fabs, M_PI, cos, sin, abs
+#include <limits>                     // for numeric_limits
+#include <map>                        // for multimap, _Rb_tree_iterator
+#include <ostream>                    // for basic_ostream, char_traits, ope...
+#include <utility>                    // for pair
+#include <vector>                     // for vector
 
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/me/vpMe.h>
-#include <visp3/me/vpMeSite.h>
+#include <visp3/core/vpArray2D.h>     // for vpArray2D
+#include <visp3/core/vpColor.h>       // for vpColor
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/core/vpDisplay.h>     // for vpDisplay
+#include <visp3/core/vpException.h>   // for vpException
+#include <visp3/core/vpImage.h>       // for vpImage
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpMath.h>        // for vpMath
+#include <visp3/core/vpMatrix.h>      // for vpMatrix
+#include <visp3/me/vpMe.h>            // for vpMe
+#include <visp3/me/vpMeSite.h>        // for vpMeSite, vpMeSite::NO_SUPPRESSION
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
