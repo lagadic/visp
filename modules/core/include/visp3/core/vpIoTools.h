@@ -39,8 +39,6 @@
 #ifndef VP_IO_TOOLS_H
 #define VP_IO_TOOLS_H
 
-#include <visp3/core/vpConfig.h>
-
 #include <iostream>
 #include <sstream>
 #include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
@@ -48,12 +46,13 @@
 #include <string>
 #include <vector>
 #include <numeric>
-#include <visp3/core/vpColor.h>
-
 #include <memory>
 #include <map>
 #include <cassert>
 #include <complex>
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColor.h>
 
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 

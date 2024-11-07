@@ -31,6 +31,10 @@
  * Io tools dedicated to npy.
  */
 
+#include <visp3/core/vpConfig.h>   // for VISP_HAVE_MINIZ, VISP_HAVE_WORKING...
+
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+
 #include <assert.h>                // for assert
 #include <stdint.h>                // for uint16_t, uint32_t
 #include <stdio.h>                 // for size_t, fread, fclose, FILE, fopen
@@ -43,11 +47,7 @@
 #include <typeinfo>                // for type_info
 #include <vector>                  // for vector
 
-#include <visp3/core/vpConfig.h>   // for VISP_HAVE_MINIZ, VISP_HAVE_WORKING...
 #include <visp3/core/vpIoTools.h>  // for NpyArray, npz_load, npz_t, parse_n...
-
-
-#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
