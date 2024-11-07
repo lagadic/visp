@@ -39,7 +39,9 @@
 #include <cmath>                             // for fabs
 #include <limits>                            // for numeric_limits
 #include <list>                              // for list, operator!=, _List_...
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 #include <optional>                          // for optional, nullopt, nullo...
+#endif
 #include <vector>                            // for vector
 
 #include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE

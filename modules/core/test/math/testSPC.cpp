@@ -38,6 +38,7 @@
 
 #include <iostream>
 #include <string>
+#include <cmath> // for std::sqrt
 
 #include <visp3/core/vpStatisticalTestEWMA.h>
 #include <visp3/core/vpStatisticalTestHinkley.h>

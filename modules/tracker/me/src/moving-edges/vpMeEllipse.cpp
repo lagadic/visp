@@ -32,8 +32,13 @@
 #include <iostream>                          // for basic_ostream, char_traits
 #include <limits>                            // for numeric_limits
 #include <list>                              // for list, _List_iterator
-#include <optional>                          // for optional
 #include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for VISP_CXX_STANDARD, VISP_...
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#include <optional>                          // for optional
+#endif
 
 #include <visp3/core/vpImagePoint.h>         // for vpImagePoint, operator<<
 #include <visp3/core/vpTrackingException.h>  // for vpTrackingException
@@ -42,7 +47,6 @@
 #include <visp3/core/vpArray2D.h>            // for operator<<
 #include <visp3/core/vpColVector.h>          // for vpColVector
 #include <visp3/core/vpColor.h>              // for vpColor
-#include <visp3/core/vpConfig.h>             // for VISP_CXX_STANDARD, VISP_...
 #include <visp3/core/vpDisplay.h>            // for vpDisplay
 #include <visp3/core/vpImage.h>              // for vpImage
 #include <visp3/core/vpMath.h>               // for vpMath

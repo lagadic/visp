@@ -37,14 +37,25 @@
   \brief Test vpImageTools::normalizedCorrelation().
 */
 
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/io/vpVideoReader.h>
+#include <stdio.h>                       // for fprintf, stdout
+#include <stdlib.h>                      // for exit, EXIT_FAILURE, EXIT_SUC...
+#include <iomanip>                       // for operator<<, setprecision
+#include <iostream>                      // for basic_ostream, operator<<, endl
+#include <string>                        // for char_traits, basic_string
+
+#include <visp3/core/vpImage.h>          // for vpImage
+#include <visp3/core/vpImageTools.h>     // for vpImageTools
+#include <visp3/core/vpIoTools.h>        // for vpIoTools
+#include <visp3/io/vpParseArgv.h>        // for vpParseArgv
+#include <visp3/io/vpVideoReader.h>      // for vpVideoReader
+#include <visp3/core/vpConfig.h>         // for VISP_HAVE_DATASET_VERSION
+#include <visp3/core/vpException.h>      // for operator<<, vpException
+#include <visp3/core/vpImageConvert.h>   // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>     // for vpImagePoint, operator<<
+#include <visp3/core/vpImage_getters.h>  // for vpImage::getMinMaxLoc
+#include <visp3/core/vpMath.h>           // for vpMath
+#include <visp3/core/vpRect.h>           // for vpRect
+#include <visp3/core/vpTime.h>           // for measureTimeMs
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
