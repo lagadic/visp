@@ -36,20 +36,26 @@
   \brief TinyEXR backend for EXR image I/O operations.
 */
 
-
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
 
 #if defined(VISP_HAVE_STBIMAGE) && defined(VISP_HAVE_TINYEXR)
 
-#include "vpImageIoBackend.h"
+#include "vpImageIoBackend.h"             // for readEXRTiny, writeEXRTiny
 
 #define TINYEXR_USE_MINIZ 0
 #define TINYEXR_USE_STB_ZLIB 1
-#include <stb_image.h>
-#include <stb_image_write.h>
-
 #define TINYEXR_IMPLEMENTATION
-#include <tinyexr.h>
+#include <tinyexr.h>                      // for FreeEXRErrorMessage, FreeEX...
+
+#include <stdlib.h>                       // for free, malloc, size_t
+#include <string.h>                       // for strlen, strncpy, memcpy
+#include <string>                         // for basic_string, string
+#include <vector>                         // for vector
+
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpRGBf.h>            // for vpRGBf
+
 
 BEGIN_VISP_NAMESPACE
 

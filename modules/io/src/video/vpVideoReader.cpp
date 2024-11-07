@@ -36,14 +36,31 @@
  * \brief Read videos and image sequences
  */
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpVideoReader.h>
+#include <stddef.h>                       // for size_t
+#include <cctype>                         // for isdigit
+#include <iostream>                       // for char_traits, basic_ostream
+#include <string>                         // for basic_string, string, alloc...
+#include <vector>                         // for vector
 
-#include <cctype>
-#include <fstream>
-#include <iostream>
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_OPENCV_VERSION
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpFrameGrabber.h>    // for vpFrameGrabber
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpIoTools.h>         // for vpIoTools
+#include <visp3/io/vpVideoReader.h>       // for vpVideoReader, vpVideoReade...
+#include <visp3/io/vpDiskGrabber.h>       // for vpDiskGrabber
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/core/mat.hpp>           // for Mat
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_HIGHGUI, HAVE_O...
+#include <opencv2/videoio.hpp>            // for VideoCapture, VideoCaptureP...
+#endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 /*!
   Basic constructor.

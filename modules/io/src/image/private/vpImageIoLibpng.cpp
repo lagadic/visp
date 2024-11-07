@@ -36,18 +36,26 @@
   \brief Libpng backend for PNG image I/O operations.
 */
 
-#include "vpImageIoBackend.h"
-#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_PNG, BEGIN_VISP_N...
 
 #if defined(VISP_HAVE_PNG)
-#include <png.h>
-#endif
+
+#include <png.h>                          // for png_destroy_write_struct
+#include <pngconf.h>                      // for png_bytep, png_byte
+#include <setjmp.h>                       // for setjmp
+#include <stdio.h>                        // for fclose, fopen, FILE, fprintf
+#include <string>                         // for basic_string, string
+
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpRGBa.h>            // for vpRGBa
+
+#include "vpImageIoBackend.h"             // for readPNGLibpng, writePNGLibpng
 
 //--------------------------------------------------------------------------
 // PNG
 //--------------------------------------------------------------------------
-
-#if defined(VISP_HAVE_PNG)
 
 BEGIN_VISP_NAMESPACE
 /*!

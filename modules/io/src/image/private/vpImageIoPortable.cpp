@@ -36,10 +36,24 @@
   \brief Backend for portable image format I/O operations.
 */
 
-#include "vpImageIoBackend.h"
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpEndian.h>
+#include <stdio.h>                        // for fprintf, fclose, fflush, fopen
+#include <cmath>                          // for fabs
+#include <fstream>                        // for basic_ifstream, basic_istream
+#include <sstream>                        // for basic_istringstream
+#include <string>                         // for basic_string, string, char_...
+#include <vector>                         // for vector
+
+#include <visp3/core/vpEndian.h>          // for swapFloat, VISP_LITTLE_ENDIAN
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpIoTools.h>         // for vpIoTools
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpRGBa.h>            // for vpRGBa
+#include <visp3/core/vpRGBf.h>            // for vpRGBf
+
+#include "vpImageIoBackend.h"             // for vp_writePGM, vp_readPFM_HDR
 
 BEGIN_VISP_NAMESPACE
 

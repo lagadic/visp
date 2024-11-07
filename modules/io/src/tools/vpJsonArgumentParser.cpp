@@ -28,12 +28,29 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/io/vpJsonArgumentParser.h>
-#include <visp3/core/vpException.h>
-#include <fstream>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
+
+#include <stdlib.h>                         // for exit, size_t
+#include <algorithm>                        // for find
+#include <cmath>                            // for isnan
+#include <fstream>                          // for basic_ostream, char_traits
+#include <functional>                       // for function
+#include <iostream>                         // for cerr, cout
+#include <map>                              // for operator==, map, _Rb_tree...
+#include <sstream>                          // for basic_stringstream
+#include <string>                           // for basic_string, string, ope...
+#include <utility>                          // for pair
+#include <vector>                           // for vector
+
+#include VISP_NLOHMANN_JSON(detail/value_t.hpp)      // for value_t
+#include VISP_NLOHMANN_JSON(json.hpp)                // for basic_json, operator<<
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)            // for json
+
+#include <visp3/core/vpException.h>         // for vpException
+#include <visp3/io/vpJsonArgumentParser.h>  // for vpJsonArgumentParser
+
 BEGIN_VISP_NAMESPACE
 
 using json = nlohmann::json; //! json namespace shortcut

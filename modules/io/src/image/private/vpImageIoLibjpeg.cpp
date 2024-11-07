@@ -36,19 +36,26 @@
   \brief Libjpeg backend for JPEG image I/O operations.
 */
 
-#include "vpImageIoBackend.h"
-#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_JPEG, BEGIN_VISP_...
 
 #if defined(VISP_HAVE_JPEG)
-#include <jerror.h>
-#include <jpeglib.h>
-#endif
+#include <jmorecfg.h>                     // for TRUE
+#include <jpeglib.h>                      // for jpeg_decompress_struct, jpe...
+
+#include <stdio.h>                        // for fclose, fopen, FILE
+#include <string.h>                       // for memcpy
+#include <string>                         // for basic_string, string
+
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpRGBa.h>            // for vpRGBa
+
+#include "vpImageIoBackend.h"             // for readJPEGLibjpeg, writeJPEGL...
 
 //--------------------------------------------------------------------------
 // JPEG
 //--------------------------------------------------------------------------
-
-#if defined(VISP_HAVE_JPEG)
 
 BEGIN_VISP_NAMESPACE
 /*!

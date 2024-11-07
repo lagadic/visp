@@ -36,14 +36,31 @@
   \brief Write image sequences.
 */
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpVideoWriter.h>
+#include <stdio.h>                        // for FILENAME_MAX, snprintf, size_t
+#include <string>                         // for basic_string, string
 
-#if defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc/imgproc.hpp>
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_OPENCV, VISP_HAVE...
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/core/mat.hpp>           // for Mat, _InputArray, _OutputArray
+#include <opencv2/core/mat.inl.hpp>       // for _InputArray::_InputArray
+#include <opencv2/core/types.hpp>         // for Size
+#include <opencv2/imgproc.hpp>            // for cvtColor, ColorConversionCodes
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_HIGHGUI, HAVE_O...
+#include <opencv2/videoio.hpp>            // for VideoWriter
 #endif
 
+#include <visp3/core/vpIoTools.h>         // for vpIoTools
+#include <visp3/io/vpVideoWriter.h>       // for vpVideoWriter, vpVideoWrite...
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/io/vpImageIo.h>           // for vpImageIo
+
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 /*!
   Basic constructor.

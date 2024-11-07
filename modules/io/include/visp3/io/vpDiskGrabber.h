@@ -38,13 +38,15 @@
 #ifndef VP_DISK_GRABBER_H
 #define VP_DISK_GRABBER_H
 
-#include <string>
+#include <string>                       // for basic_string, string
 
-#include <visp3/core/vpFrameGrabber.h>
-#include <visp3/core/vpRGBa.h>
-#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpFrameGrabber.h>  // for vpFrameGrabber
+#include <visp3/core/vpConfig.h>        // for VP_EXPLICIT, BEGIN_VISP_NAMES...
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+template <class Type> class vpImage;
 
 /*!
  * \class vpDiskGrabber

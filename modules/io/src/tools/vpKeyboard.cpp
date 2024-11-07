@@ -39,12 +39,17 @@
 #include <stdio.h>
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-#include <sys/select.h>
+#include <stdio.h>                 // for getchar
+#include <sys/select.h>            // for select, FD_SET, FD_ZERO, fd_set
+#include <sys/time.h>              // for timeval
+#include <termios.h>               // for termios, tcsetattr, TCSANOW, tcget...
+#include <unistd.h>                // for STDIN_FILENO
 #elif defined(_WIN32)
 #include <conio.h>
 #endif
-#include <visp3/core/vpException.h>
-#include <visp3/io/vpKeyboard.h>
+
+#include <visp3/io/vpKeyboard.h>   // for vpKeyboard
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
 
 BEGIN_VISP_NAMESPACE
 

@@ -23,13 +23,14 @@
   \brief Command line argument parsing.
 */
 
-#include <ctype.h>
-#include <math.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <visp3/io/vpParseArgv.h>
+#include <ctype.h>                 // for isalnum, ispunct
+#include <stdint.h>                // for uintptr_t
+#include <stdio.h>                 // for fprintf, stderr, size_t
+#include <stdlib.h>                // for strtod, strtol
+#include <string.h>                // for strlen, strchr, strncmp
+
+#include <visp3/io/vpParseArgv.h>  // for vpParseArgv::ARGV_NO_PRINT, vpPars...
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
 
 BEGIN_VISP_NAMESPACE
 

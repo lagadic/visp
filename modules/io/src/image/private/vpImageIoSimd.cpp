@@ -36,11 +36,19 @@
   \brief Simd backend for JPEG and PNG image I/O operations.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include "vpImageIoBackend.h"
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>         // for SimdImageSaveToFile, SimdFree, Simd...
+
+#include <stdint.h>               // for uint8_t
+#include <string.h>               // for size_t, memcpy
+#include <string>                 // for basic_string, string
+
+#include <visp3/core/vpImage.h>   // for vpImage
+#include <visp3/core/vpRGBa.h>    // for vpRGBa
+
+#include "vpImageIoBackend.h"     // for readSimdlib, writeJPEGSimdlib, writ...
 
 BEGIN_VISP_NAMESPACE
 

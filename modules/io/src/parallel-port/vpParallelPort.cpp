@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,19 +36,20 @@
   \brief Parallel port management under unix.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_PARPORT
 
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <fcntl.h>                             // for open, O_WRONLY
+#include <linux/parport.h>                     // for IEEE1284_MODE_COMPAT
+#include <linux/ppdev.h>                       // for PPCLAIM, PPNEGOT, PPRE...
+#include <stdio.h>                             // for printf, perror
+#include <string>                              // for basic_string
+#include <sys/ioctl.h>                         // for ioctl
+#include <unistd.h>                            // for close
 
-#include <visp3/io/vpParallelPort.h>
-
-
+#include <visp3/io/vpParallelPort.h>           // for vpParallelPort
+#include <visp3/io/vpParallelPortException.h>  // for vpParallelPortException
 
 BEGIN_VISP_NAMESPACE
 static unsigned char vpParallelPortData;

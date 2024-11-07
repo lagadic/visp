@@ -36,14 +36,17 @@
   \brief OpenCV backend for image I/O operations.
 */
 
-#include <visp3/core/vpConfig.h>
-
-#include "vpImageIoBackend.h"
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_OPENCV_VERSION
 
 #ifdef VISP_HAVE_OPENCV
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #if defined(HAVE_OPENCV_IMGCODECS)
-#include <opencv2/imgcodecs.hpp>
+#include <opencv2/core/mat.hpp>           // for Mat, _InputArray, Mat1b, Mat3b
+#include <opencv2/core/mat.inl.hpp>       // for MatIterator_::MatIterator_<...
+#include <opencv2/core/matx.hpp>          // for Type<>::value, DataType<>::...
+#include <opencv2/core/traits.hpp>        // for Type<>::value, DataType<>::...
+#include <opencv2/imgcodecs.hpp>          // for ImreadModes, imread, imwrite
 #endif
 #else // Require opencv >= 2.4.8
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)
@@ -54,12 +57,24 @@
 #endif
 #endif
 
-#include <visp3/core/vpImageConvert.h>
-
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
     && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
 
+#include <algorithm>                      // for copy
+#include <string>                         // for basic_string, string
+#include <vector>                         // for vector
+
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageException.h>  // for vpImageException
+
+#include "vpImageIoBackend.h"             // for readOpenCV, writeOpenCV
+
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+class vpRGBf;
+
 /*!
   Read the contents of the image file, allocate memory
   for the corresponding gray level image, if necessary convert the data in

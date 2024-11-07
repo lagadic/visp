@@ -31,9 +31,19 @@
  * Disk framegrabber.
  */
 
-#include <visp3/io/vpDiskGrabber.h>
+#include <stdio.h>                   // for FILENAME_MAX, snprintf
+#include <iomanip>                   // for operator<<, setfill, setw
+#include <sstream>                   // for basic_ostream, char_traits, basi...
+#include <string>                    // for operator<<, basic_string, allocator
+
+#include <visp3/core/vpImage.h>      // for vpImage
+#include <visp3/io/vpDiskGrabber.h>  // for vpDiskGrabber
+#include <visp3/io/vpImageIo.h>      // for vpImageIo
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 vpDiskGrabber::vpDiskGrabber()
   : m_image_number(0), m_image_number_next(0), m_image_step(1), m_number_of_zero(0), m_directory("/tmp"),

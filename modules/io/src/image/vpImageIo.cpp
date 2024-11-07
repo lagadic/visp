@@ -35,11 +35,24 @@
   \file vpImageIo.cpp
   \brief Read/write images
 */
+#include <stddef.h>                       // for size_t
+#include <string>                         // for basic_string, string, alloc...
+#include <vector>                         // for vector
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>         // for vpIoTools
+#include <visp3/io/vpImageIo.h>           // for vpImageIo, vpImageIo::FORMA...
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_OPENCV_VERSION
+#include <visp3/core/vpImageException.h>  // for vpImageException
 
-#include "private/vpImageIoBackend.h"
+#include "private/vpImageIoBackend.h"     // for readOpenCV, writeOpenCV
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
+
+class vpRGBa;
+class vpRGBf;
+template <class Type> class vpImage;
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

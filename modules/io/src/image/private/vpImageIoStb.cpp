@@ -36,12 +36,20 @@
   \brief stb backend for JPEG and PNG image I/O operations.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>          // for VISP_CXX_STANDARD, VISP_CXX...
 
 #if defined(VISP_HAVE_STBIMAGE)
 
-#include "vpImageIoBackend.h"
-#include <visp3/core/vpImageConvert.h>
+#include <assert.h>                       // for assert
+#include <string>                         // for basic_string, string, opera...
+#include <vector>                         // for vector
+
+#include "vpImageIoBackend.h"             // for readPNGfromMemStb, readStb
+
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpRGBa.h>            // for vpRGBa
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #define VISP_HAVE_SSE2 1
@@ -52,10 +60,10 @@
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <stb_image.h>                    // for stbi_image_free, stbi_load
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
+#include <stb_image_write.h>              // for stbi_write_png_to_func, stb...
 
 BEGIN_VISP_NAMESPACE
 
