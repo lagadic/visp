@@ -108,7 +108,6 @@ public:
     C.resize(6, 6, false, false);
     for (unsigned int i = 0; i < 6; ++i) {
       const double *a = &A.data[i * 3];
-      const double *b = &B.data[i * 3];
       double *c = C[i];
 
       c[0] = a[0] * B[0] + a[1] * B[1] + a[2] * B[2];
@@ -118,7 +117,6 @@ public:
       c[3] = a[0] * B[9] + a[1] * B[10] + a[2] * B[11];
       c[4] = a[0] * B[12] + a[1] * B[13] + a[2] * B[14];
       c[5] = a[0] * B[15] + a[1] * B[16] + a[2] * B[17];
-
     }
   }
 };
