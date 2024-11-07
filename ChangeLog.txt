@@ -2,7 +2,7 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2024 by Inria. All rights reserved.
                       https://visp.inria.fr
 
 ViSP 3.x.x (Version in development)
