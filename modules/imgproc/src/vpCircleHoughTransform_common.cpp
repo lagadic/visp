@@ -91,6 +91,7 @@ vpCircleHoughTransform::~vpCircleHoughTransform()
 using json = nlohmann::json;
 
 vpCircleHoughTransform::vpCircleHoughTransform(const std::string &jsonPath)
+  : mp_mask(nullptr)
 {
   initFromJSON(jsonPath);
 }
@@ -413,6 +414,7 @@ std::ostream &
 operator<<(std::ostream &os, const vpCircleHoughTransform &detector)
 {
   os << detector.toString();
+  std::cout << "\tUse mask: " << (detector.mp_mask == nullptr ? "false" : "true") << std::endl;
   return os;
 }
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1777,7 +1777,7 @@ status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERS
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
 status("    Use TinyEXR (built-in):" WITH_TINYEXR     THEN "yes (ver ${TINYEXR_VERSION})" ELSE "no")
-status("    Use simdlib (built-in):" WITH_SIMDLIB     THEN "yes" ELSE "no")
+status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
 status("    Use npz I/O (built-in):" WITH_MINIZ       THEN "yes" ELSE "no")
 status("")
 status("  Real robots: ")
@@ -1863,10 +1863,10 @@ status("    Use json (nlohmann system):"  USE_NLOHMANN_JSON THEN "yes (ver ${nlo
 endif()
 status("")
 status("  Optimization: ")
-status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
+status("    Use OpenMP:"             USE_OPENMP         THEN "yes (ver ${OpenMP_CXX_VERSION})" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
-status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
+status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes (ver ${SIMD_VERSION})" ELSE "no")
 status("")
 status("  DNN: ")
 status("    Use CUDA Toolkit:"       USE_TENSORRT AND CUDA_FOUND  THEN "yes (ver ${CUDA_VERSION})" ELSE "no")
@@ -1875,7 +1875,7 @@ status("    Use TensorRT:"           USE_TENSORRT       THEN "yes (ver ${TENSORR
 # ========================== documentation ==========================
 status("")
 status("  Documentation: ")
-status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes" ELSE "no")
+status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes (ver ${DOXYGEN_VERSION})" ELSE "no")
 status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
 
 # ========================== samples and tests ==========================
@@ -1896,7 +1896,7 @@ endif()
 status("")
 status("  Library dirs:")
 if(USE_EIGEN3)
-  status("    Eigen3 include dir:" "${Eigen3_DIR}")
+  status("    Eigen3 dir:" "${Eigen3_DIR}")
 endif()
 if(USE_MKL)
   status("    MKL include dir:" "${MKL_INCLUDE_DIRS}")
@@ -1909,6 +1909,16 @@ if(USE_OPENCV)
 endif()
 if(USE_PCL)
   status("    PCL dir:" "${PCL_DIR}")
+endif()
+if(USE_PANDA3D)
+  if(Panda3D_DIR)
+    status("    Panda3D dir:" "${Panda3D_DIR}")
+  else()
+    status("    Panda3D dir:" "$ENV{Panda3D_DIR}")
+  endif()
+endif()
+if(USE_YARP)
+  status("    Yarp dir:" "${YARP_DIR}")
 endif()
 
 # ========================== auxiliary ==========================

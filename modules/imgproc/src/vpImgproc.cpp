@@ -329,13 +329,12 @@ void gammaCorrectionLogMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_
   unsigned char inputRange = inputMax - inputMin;
 
   float gamma_computed = static_cast<float>((std::log(128.f) - std::log(256.f)) / (std::log(mean) - std::log(inputRange)));
-  float inverse_gamma = 1.f / gamma_computed;
 
   // Construct the look-up table
   unsigned char lut[256];
   float inputRangeAsFloat = static_cast<float>(inputRange);
   for (unsigned int i = inputMin; i <= inputMax; ++i) {
-    lut[i] = vpMath::saturate<unsigned char>(std::pow(static_cast<float>(i - inputMin) / inputRangeAsFloat, inverse_gamma) * 255.f);
+    lut[i] = vpMath::saturate<unsigned char>(std::pow(static_cast<float>(i - inputMin) / inputRangeAsFloat, gamma_computed) * 255.f);
   }
 
   I.performLut(lut);

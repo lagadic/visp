@@ -33,6 +33,10 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#ifdef VISP_USE_MSVC
+#pragma comment(linker, "/STACK:65532000") // Increase max recursion depth
+#endif
+
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98) // Check if cxx98
 namespace
 {
@@ -120,6 +124,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_lowerThresholdRatio(lowerThresholdRatio)
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  , m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+#endif
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
 {
@@ -239,7 +246,27 @@ vpCannyEdgeDetection::detect(const vpImage<vpRGBa> &I_color)
 vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
-  // // Clearing the previous results
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  // Increase stack size due to the recursive algorithm
+  rlim_t initialStackSize;
+  struct rlimit rl;
+  int result;
+  result = getrlimit(RLIMIT_STACK, &rl);
+  if (result == 0) {
+    initialStackSize = rl.rlim_cur;
+    if (rl.rlim_cur < m_minStackSize) {
+      rl.rlim_cur = m_minStackSize;
+      result = setrlimit(RLIMIT_STACK, &rl);
+      if (result != 0) {
+        throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+      }
+    }
+  }
+  else {
+    throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+  }
+#endif
+// // Clearing the previous results
   m_edgeMap.resize(I.getHeight(), I.getWidth(), 0);
   m_edgeCandidateAndGradient.clear();
   m_edgePointsCandidates.clear();
@@ -272,6 +299,18 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 
   // // Step 5: edge tracking
   performEdgeTracking();
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  // Reset stack size to its original value
+  if (rl.rlim_cur > initialStackSize) {
+    rl.rlim_cur = initialStackSize;
+    result = setrlimit(RLIMIT_STACK, &rl);
+    if (result != 0) {
+      throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+
+    }
+  }
+#endif
   return m_edgeMap;
 }
 
@@ -501,9 +540,7 @@ vpCannyEdgeDetection::performEdgeTracking()
       }
     }
     else if (it->second == WEAK_EDGE) {
-      if (recursiveSearchForStrongEdge(it->first)) {
-        m_edgeMap[it->first.first][it->first.second] = 255;
-      }
+      recursiveSearchForStrongEdge(it->first);
     }
   }
 }
@@ -565,6 +602,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   if (hasFoundStrongEdge) {
     m_edgePointsCandidates[coordinates] = STRONG_EDGE;
     m_edgeMap[coordinates.first][coordinates.second] = 255;
+    if (m_storeListEdgePoints) {
+      m_edgePointsList.push_back(vpImagePoint(coordinates.first, coordinates.second));
+    }
   }
   return hasFoundStrongEdge;
 }

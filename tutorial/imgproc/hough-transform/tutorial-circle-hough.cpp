@@ -10,6 +10,7 @@
 #include <visp3/core/vpImageDraw.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 #include <visp3/imgproc/vpImgproc.h>
 #include <visp3/io/vpImageIo.h>
@@ -21,7 +22,9 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode, const bool &displayCanny)
+bool run_detection(const vpImage<unsigned char> &I_src, vpImage<vpRGBa> &I_disp, vpImage<vpRGBa> &I_dispCanny,
+                   vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode,
+                   const bool &displayCanny)
 {
   double t0 = vpTime::measureTimeMicros();
   //! [Run detection]
@@ -30,7 +33,6 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
   //! [Run detection]
   double tF = vpTime::measureTimeMicros();
   std::cout << "Process time = " << (tF - t0) * 0.001 << "ms" << std::endl << std::flush;
-  vpImage<vpRGBa> I_disp;
   vpImageConvert::convert(I_src, I_disp);
 
   unsigned int id = 0;
@@ -60,23 +62,17 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
   }
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   std::optional<vpImage<bool>> opt_mask = std::nullopt;
-  std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> opt_votingPoints = std::nullopt;
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpImage<bool> *opt_mask = nullptr;
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = nullptr;
-  detector.computeVotingMask(I_src, detectedCircles, &opt_mask, &opt_votingPoints); // Get, if available, the voting points
+  std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int> > > > opt_votingPoints = std::nullopt;
 #else
-  vpImage<bool> *opt_mask = NULL;
-  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > *opt_votingPoints = NULL;
+  vpImage<bool> *opt_mask = nullptr;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > *opt_votingPoints = nullptr;
   detector.computeVotingMask(I_src, detectedCircles, &opt_mask, &opt_votingPoints); // Get, if available, the voting points
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   if (opt_votingPoints)
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (opt_votingPoints != nullptr)
 #else
-  if (opt_votingPoints != NULL)
+  if (opt_votingPoints != nullptr)
 #endif
   {
     const unsigned int crossSize = 3;
@@ -94,28 +90,17 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
     }
   }
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (opt_mask != nullptr)
-#else
-  if (opt_mask != NULL)
-#endif
-  {
+  if (opt_mask != nullptr) {
     delete opt_mask;
   }
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (opt_votingPoints != nullptr)
-#else
-  if (opt_votingPoints != NULL)
-#endif
-  {
+  if (opt_votingPoints != nullptr) {
     delete opt_votingPoints;
   }
 #endif
-//! [Iterate detections]
-
+  //! [Iterate detections]
   if (displayCanny) {
     vpImage<unsigned char> edgeMap = detector.getEdgeMap();
-    drawingHelpers::display(edgeMap, "Edge map", true);
+    drawingHelpers::display(edgeMap, I_dispCanny, "Edge map", blockingMode);
   }
   return drawingHelpers::display(I_disp, "Detection results", blockingMode);
 }
@@ -512,6 +497,8 @@ int main(int argc, char **argv)
   std::cout << detector;
 
   vpImage<unsigned char> I_src;
+  vpImage<vpRGBa> I_disp;
+  vpImage<vpRGBa> I_dispCanny;
 
   //! [Manage video]
   if (opt_input.find("%") != std::string::npos) {
@@ -520,11 +507,38 @@ int main(int argc, char **argv)
     vpVideoReader g;
     g.setFileName(opt_input);
     g.open(I_src);
+
+    //! [Display init]
+    I_disp.resize(I_src.getHeight(), I_src.getWidth());
+    I_dispCanny.resize(I_src.getHeight(), I_src.getWidth());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");;
+    std::shared_ptr<vpDisplay> dCanny(nullptr);
+    if (opt_displayCanny) {
+      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+    }
+#else
+    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");;
+    vpDisplay *dCanny(nullptr);
+    if (opt_displayCanny) {
+      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+    }
+#endif
+    //! [Display init]
     while (!g.end() && hasToContinue) {
       g.acquire(I_src);
-      hasToContinue = run_detection(I_src, detector, opt_nbCirclesToDetect, false, opt_displayCanny);
+      hasToContinue = run_detection(I_src, I_disp, I_dispCanny, detector, opt_nbCirclesToDetect, false, opt_displayCanny);
       vpTime::wait(40);
     }
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete dColor;
+    if (dCanny != nullptr) {
+      if (opt_displayCanny) {
+        delete dCanny;
+      }
+    }
+#endif
   }
   //! [Manage video]
   else {
@@ -535,7 +549,33 @@ int main(int argc, char **argv)
     }
     // Read the image and perform detection on it
     vpImageIo::read(I_src, opt_input);
-    run_detection(I_src, detector, opt_nbCirclesToDetect, true, opt_displayCanny);
+
+    I_disp.resize(I_src.getHeight(), I_src.getWidth());
+    I_dispCanny.resize(I_src.getHeight(), I_src.getWidth());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");;
+    std::shared_ptr<vpDisplay> dCanny(nullptr);
+    if (opt_displayCanny) {
+      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+    }
+#else
+    vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");;
+    vpDisplay *dCanny(nullptr);
+    if (opt_displayCanny) {
+      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+    }
+#endif
+
+    run_detection(I_src, I_disp, I_dispCanny, detector, opt_nbCirclesToDetect, true, opt_displayCanny);
+
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+    delete dColor;
+    if (dCanny != nullptr) {
+      if (opt_displayCanny) {
+        delete dCanny;
+      }
+    }
+#endif
     //! [Manage single image]
   }
 

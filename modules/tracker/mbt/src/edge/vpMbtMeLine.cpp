@@ -171,29 +171,30 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
     vpImagePoint iP;
     iP.set_i(is);
     iP.set_j(js);
-    unsigned int is_uint = static_cast<unsigned int>(is);
-    unsigned int js_uint = static_cast<unsigned int>(js);
     // If point is in the image, add to the sample list
-    if ((!outOfImage(iP, (int)(m_me->getRange() + m_me->getMaskSize() + 1), nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
-        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
-      vpMeSite pix;
-      pix.init(iP.get_i(), iP.get_j(), m_delta, 0, m_sign);
-      pix.setDisplay(m_selectDisplay);
-      pix.setState(vpMeSite::NO_SUPPRESSION);
-      const double marginRatio = m_me->getThresholdMarginRatio();
-      double convolution = pix.convolution(I, m_me);
-      double contrastThreshold = fabs(convolution) * marginRatio;
-      pix.setContrastThreshold(contrastThreshold, *m_me);
+    if (!outOfImage(iP, (int)(m_me->getRange() + m_me->getMaskSize() + 1), nbrows, nbcols)) {
+      unsigned int is_uint = static_cast<unsigned int>(is);
+      unsigned int js_uint = static_cast<unsigned int>(js);
+      if (inRoiMask(m_mask, is_uint, js_uint) && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
+        vpMeSite pix;
+        pix.init(iP.get_i(), iP.get_j(), m_delta, 0, m_sign);
+        pix.setDisplay(m_selectDisplay);
+        pix.setState(vpMeSite::NO_SUPPRESSION);
+        const double marginRatio = m_me->getThresholdMarginRatio();
+        double convolution = pix.convolution(I, m_me);
+        double contrastThreshold = fabs(convolution) * marginRatio;
+        pix.setContrastThreshold(contrastThreshold, *m_me);
 
-      if (!doNoTrack) {
-        pix.track(I, m_me, false);
+        if (!doNoTrack) {
+          pix.track(I, m_me, false);
+        }
+
+        if (vpDEBUG_ENABLE(3)) {
+          vpDisplay::displayCross(I, iP, 2, vpColor::blue);
+        }
+
+        m_meList.push_back(pix);
       }
-
-      if (vpDEBUG_ENABLE(3)) {
-        vpDisplay::displayCross(I, iP, 2, vpColor::blue);
-      }
-
-      m_meList.push_back(pix);
     }
     is += stepi;
     js += stepj;
