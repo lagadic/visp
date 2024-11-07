@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@
  * Parallel port management.
  */
 
-#ifndef vpParallelPort_h
-#define vpParallelPort_h
+#ifndef VP_PARALLEL_PORT_H
+#define VP_PARALLEL_PORT_H
 
 /*!
   \file vpParallelPort.h
@@ -43,10 +43,6 @@
 
 #ifdef VISP_HAVE_PARPORT
 
-#include <errno.h>
-#include <iostream>
-#include <linux/parport.h>
-#include <linux/ppdev.h>
 #include <stdio.h>
 #include <string>
 
