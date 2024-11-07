@@ -31,14 +31,18 @@
  * Homography estimation.
  */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpRansac.h>
-#include <visp3/vision/vpHomography.h>
+#include <math.h>                       // for sqrt, ceil
+#include <time.h>                       // for time
+#include <vector>                       // for vector
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpColVector.h>     // for vpColVector
+#include <visp3/core/vpDebug.h>         // for vpERROR_TRACE
+#include <visp3/vision/vpHomography.h>  // for vpHomography
+#include <visp3/core/vpArray2D.h>       // for vpArray2D
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
+#include <visp3/core/vpException.h>     // for vpException
+#include <visp3/core/vpMatrix.h>        // for vpMatrix
+#include <visp3/core/vpUniRand.h>       // for vpUniRand
 
 #define VPEPS 1e-6
 

@@ -31,16 +31,82 @@
  * Key point functionalities.
  */
 
-#include <iomanip>
-#include <limits>
+#include <visp3/core/vpConfig.h>                     // for VISP_HAVE_OPENCV...
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/vision/vpKeyPoint.h>
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>                // for HAVE_OPENCV_FEAT...
+#endif
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 
+#include <float.h>                                   // for DBL_MAX
+#include <algorithm>                                 // for transform, remov...
+#include <cmath>                                     // for sqrt, fabs, cos
+#include <cstdlib>                                   // for size_t, rand, srand
+#include <fstream>                                   // for basic_ostream
+#include <iomanip>                                   // for operator<<, setfill
+#include <iostream>                                  // for cerr, cout
+#include <iterator>                                  // for pair
+#include <limits>                                    // for numeric_limits
+#include <map>                                       // for map, _Rb_tree_co...
+#include <numeric>                                   // for inner_product
+#include <time.h>                                    // for time
+#include <sstream>                                   // for basic_stringstream
+#include <string>                                    // for basic_string
+#include <utility>                                   // for pair
+#include <vector>                                    // for vector
+
+#include <visp3/visp_modules.h>                      // for VISP_HAVE_MODULE_IO
+#include <visp3/core/vpIoTools.h>                    // for vpIoTools
+#include <visp3/vision/vpKeyPoint.h>                 // for vpKeyPoint, vpKe...
+#include <visp3/core/vpCameraParameters.h>           // for vpCameraParameters
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpColor.h>                      // for vpColor, operator==
+#include <visp3/core/vpConvert.h>                    // for vpConvert
+#include <visp3/core/vpCylinder.h>                   // for vpCylinder
+#include <visp3/core/vpDisplay.h>                    // for vpDisplay
+#include <visp3/core/vpException.h>                  // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>          // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                      // for vpImage
+#include <visp3/core/vpImageConvert.h>               // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>                 // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>            // for vpImage::operator=
+#include <visp3/core/vpMath.h>                       // for vpMath
+#include <visp3/core/vpMatrix.h>                     // for vpMatrix
+#include <visp3/core/vpMeterPixelConversion.h>       // for vpMeterPixelConv...
+#include <visp3/core/vpPixelMeterConversion.h>       // for vpPixelMeterConv...
+#include <visp3/core/vpPlane.h>                      // for vpPlane
+#include <visp3/core/vpPoint.h>                      // for vpPoint
+#include <visp3/core/vpPolygon.h>                    // for vpPolygon
+#include <visp3/core/vpRGBa.h>                       // for vpRGBa
+#include <visp3/core/vpRect.h>                       // for vpRect
+#include <visp3/core/vpThetaUVector.h>               // for vpThetaUVector
+#include <visp3/core/vpTime.h>                       // for measureTimeMs
+#include <visp3/core/vpTranslationVector.h>          // for vpTranslationVector
+#include <visp3/io/vpImageIo.h>                      // for vpImageIo
+#include <visp3/vision/vpPose.h>                     // for vpPose, vpPose::...
+#include <visp3/vision/vpXmlConfigParserKeyPoint.h>  // for vpXmlConfigParse...
+
+#include <opencv2/core/cvdef.h>                      // for CV_OUT
+#include <opencv2/core.hpp>                          // for vconcat, Exception
+#include <opencv2/core/base.hpp>                     // for CV_Assert, Borde...
+#include <opencv2/core/cvstd_wrapper.hpp>            // for Ptr, makePtr
+#include <opencv2/core/mat.hpp>                      // for Mat, _InputArray
+#include <opencv2/core/mat.inl.hpp>                  // for Mat::at, _InputA...
+#include <opencv2/core/saturate.hpp>                 // for saturate_cast
+#include <opencv2/core/traits.hpp>                   // for Type<>::value
+#include <opencv2/core/types.hpp>                    // for KeyPoint, DMatch
+#include <opencv2/core/version.hpp>                  // for CV_MAJOR_VERSION
+#include <opencv2/core/hal/interface.h>              // for CV_8U, CV_32F
+#include <opencv2/imgproc/imgproc_c.h>               // for CV_FILLED
+#include <opencv2/imgproc/types_c.h>                 // for CV_INTER_AREA
+#include <opencv2/calib3d.hpp>                       // for findFundamentalMat
+#include <opencv2/features2d.hpp>                    // for FlannBasedMatcher
+#include <opencv2/flann/miniflann.hpp>               // for KDTreeIndexParams
+#include <opencv2/imgproc.hpp>                       // for rectangle, resize
+
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
+#include <pugixml.hpp>                               // for xml_node, xml_text
 #endif
 
 BEGIN_VISP_NAMESPACE
@@ -708,24 +774,24 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
                        0.99, // confidence=0.99 (default) – The probability
                              // that the algorithm produces a useful result.
                        inlierIndex, cv::SOLVEPNP_ITERATIVE);
-// SOLVEPNP_ITERATIVE (default): Iterative method is based on
-// Levenberg-Marquardt optimization.  In this case the function finds such a
-// pose that minimizes reprojection error, that is the sum of squared
-// distances between the observed projections imagePoints and the projected
-// (using projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on
-// the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
-// Classification  for the Perspective-Three-Point Problem”. In this case the
-// function requires exactly four object and image points.  SOLVEPNP_EPNP:
-// Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the
-// paper “EPnP: Efficient  Perspective-n-Point Camera Pose Estimation”.
-// SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I.
-// Roumeliotis. “A Direct Least-Squares (DLS)  Method for PnP”.  SOLVEPNP_UPNP
-// Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,
-// F.Moreno-Noguer. “Exhaustive Linearization for Robust Camera Pose and Focal
-// Length Estimation”. In this case the function also  estimates the
-// parameters
-// f_x and f_y assuming that both have the same value. Then the cameraMatrix
-// is updated with the  estimated focal length.
+    // SOLVEPNP_ITERATIVE (default): Iterative method is based on
+    // Levenberg-Marquardt optimization.  In this case the function finds such a
+    // pose that minimizes reprojection error, that is the sum of squared
+    // distances between the observed projections imagePoints and the projected
+    // (using projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on
+    // the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
+    // Classification  for the Perspective-Three-Point Problem”. In this case the
+    // function requires exactly four object and image points.  SOLVEPNP_EPNP:
+    // Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the
+    // paper “EPnP: Efficient  Perspective-n-Point Camera Pose Estimation”.
+    // SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I.
+    // Roumeliotis. “A Direct Least-Squares (DLS)  Method for PnP”.  SOLVEPNP_UPNP
+    // Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,
+    // F.Moreno-Noguer. “Exhaustive Linearization for Robust Camera Pose and Focal
+    // Length Estimation”. In this case the function also  estimates the
+    // parameters
+    // f_x and f_y assuming that both have the same value. Then the cameraMatrix
+    // is updated with the  estimated focal length.
 #else
     int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
     if (m_useConsensusPercentage) {

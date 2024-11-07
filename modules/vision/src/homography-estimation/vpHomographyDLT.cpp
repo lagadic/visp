@@ -38,12 +38,18 @@
    estimation using the DLT algorithm
  */
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/vision/vpHomography.h>
+#include <cmath>                           // for sqrt, fabs
+#include <limits>                          // for numeric_limits
+#include <vector>                          // for vector
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
+#include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#include <visp3/vision/vpHomography.h>     // for vpHomography
+#include <visp3/core/vpArray2D.h>          // for vpArray2D
+#include <visp3/core/vpColVector.h>        // for vpColVector
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpMath.h>             // for vpMath
 
 BEGIN_VISP_NAMESPACE
 

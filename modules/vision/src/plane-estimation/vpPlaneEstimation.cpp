@@ -31,7 +31,7 @@
  * Class for Plane Estimation.
  */
 
-#include <visp3/vision/vpPlaneEstimation.h>
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
 
 // Check if std:c++17 or higher
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
@@ -41,12 +41,31 @@
 #include <omp.h>
 #endif
 
-// Core
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpRobust.h>
+#include <algorithm>                            // for max, min
+#include <cmath>                                // for fabs, sqrt, hypot
+#include <tuple>                                // for make_tuple, tie, tuple
+#include <vector>                               // for vector
+
+#include <visp3/vision/vpPlaneEstimation.h>
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpRobust.h>                // for vpRobust, vpRobust::T...
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>       // for vpImage::operator=
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpPlane.h>                 // for vpPlane
+#include <visp3/core/vpPolygon.h>               // for vpPolygon
+#include <visp3/core/vpRGBa.h>                  // for vpRGBa
+#include <visp3/core/vpRect.h>                  // for vpRect
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // Local helpers

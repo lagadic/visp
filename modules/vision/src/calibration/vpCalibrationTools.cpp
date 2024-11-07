@@ -31,13 +31,23 @@
  * Camera calibration.
  */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/vision/vpCalibration.h>
-#include <visp3/vision/vpPose.h>
+#include <cmath>                                  // for sqrt
+#include <iostream>                               // for basic_ostream, char...
+#include <list>                                   // for list, _List_const_i...
+#include <vector>                                 // for vector
 
-#include <cmath>  // std::fabs
+#include <visp3/core/vpDebug.h>                   // for vpERROR_TRACE
+#include <visp3/core/vpMath.h>                    // for vpMath
+#include <visp3/vision/vpCalibration.h>           // for vpCalibration
+#include <visp3/core/vpArray2D.h>                 // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>        // for vpCameraParameters
+#include <visp3/core/vpColVector.h>               // for vpColVector
+#include <visp3/core/vpConfig.h>                  // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpExponentialMap.h>          // for vpExponentialMap
+#include <visp3/core/vpHomogeneousMatrix.h>       // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>              // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                  // for vpMatrix
+#include <visp3/vision/vpCalibrationException.h>  // for vpCalibrationException
 
 BEGIN_VISP_NAMESPACE
 void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)

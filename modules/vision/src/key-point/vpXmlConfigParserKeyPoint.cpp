@@ -38,15 +38,18 @@
   XML file for vpKeyPoint class.
 */
 
-#include <iostream>
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
 
-#include <visp3/vision/vpXmlConfigParserKeyPoint.h>
-
-#include <map>
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
 
-#include <visp3/core/vpException.h>
+#include <iostream>                                  // for basic_ostream
+#include <map>                                       // for map, operator!=
+#include <pugixml.hpp>                               // for xml_node, xml_text
+#include <string>                                    // for basic_string
+#include <utility>                                   // for pair
+
+#include <visp3/core/vpException.h>                  // for vpException
+#include <visp3/vision/vpXmlConfigParserKeyPoint.h>  // for vpXmlConfigParse...
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

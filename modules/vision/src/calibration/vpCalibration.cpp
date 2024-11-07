@@ -36,12 +36,31 @@
   \brief Tools for camera calibration.
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/vision/vpCalibration.h>
-#include <visp3/vision/vpPose.h>
+#include <math.h>                               // for sqrt
+#include <stdlib.h>                             // for EXIT_FAILURE, EXIT_SU...
+#include <fstream>                              // for basic_ostream, operat...
+#include <iostream>                             // for cout
+#include <list>                                 // for list, _List_const_ite...
+#include <string>                               // for char_traits, basic_st...
+#include <vector>                               // for vector
+
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/vision/vpCalibration.h>         // for vpCalibration, vpCali...
+#include <visp3/vision/vpPose.h>                // for vpPose, vpPose::DEMEN...
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpPoint.h>                 // for vpPoint
 
 BEGIN_VISP_NAMESPACE
+
+template <class Type> class vpImage;
 
 double vpCalibration::m_threshold = 1e-10f;
 unsigned int vpCalibration::m_nbIterMax = 4000;

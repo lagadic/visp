@@ -31,8 +31,22 @@
  * Pose computation.
  */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/vision/vpPose.h>
+#include <algorithm>                         // for max
+#include <cmath>                             // for sqrt, fabs, log, M_PI
+#include <list>                              // for list, operator!=, _List_...
+#include <sstream>                           // for basic_stringstream, basi...
+#include <string>                            // for char_traits, allocator
+#include <vector>                            // for vector
+
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/vision/vpPose.h>             // for vpPose
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpPoint.h>              // for vpPoint
 
 #define SEUIL_RESIDUAL 0.0001 /* avant 0.01 dans while du calculArbreDementhon */
 #define EPS_DEM 0.001

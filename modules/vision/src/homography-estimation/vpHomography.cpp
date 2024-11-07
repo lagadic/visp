@@ -37,18 +37,31 @@
   the particular case of homography
 */
 
-#include <stdio.h>
+#include <cmath>                             // for fabs, sqrt
+#include <fstream>                           // for basic_ifstream, basic_of...
+#include <limits>                            // for numeric_limits
+#include <vector>                            // for vector
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/vision/vpHomography.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpMatrixException.h>    // for vpMatrixException
+#include <visp3/core/vpRobust.h>             // for vpRobust, vpRobust::TUKEY
+#include <visp3/vision/vpHomography.h>       // for vpHomography
+#include <visp3/core/vpArray2D.h>            // for vpArray2D, operator<<
+#include <visp3/core/vpCameraParameters.h>   // for vpCameraParameters
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpPlane.h>              // for vpPlane
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
 
 BEGIN_VISP_NAMESPACE
+
+class vpThetaUVector;
+class vpTranslationVector;
 
 vpHomography::vpHomography() : vpArray2D<double>(3, 3), m_aMb(), m_bP() { eye(); }
 

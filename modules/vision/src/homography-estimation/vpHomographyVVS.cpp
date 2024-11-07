@@ -31,15 +31,21 @@
  * Homography transformation.
  */
 
-#include <iostream>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpPlane.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/vision/vpHomography.h>
+#include <cmath>                             // for fabs, cos, sin, sqrt
+
+#include <visp3/core/vpExponentialMap.h>     // for vpExponentialMap
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix, operator*
+#include <visp3/core/vpPlane.h>              // for vpPlane
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpRobust.h>             // for vpRobust, vpRobust::TUKEY
+#include <visp3/vision/vpHomography.h>       // for vpHomography
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
 BEGIN_VISP_NAMESPACE
 

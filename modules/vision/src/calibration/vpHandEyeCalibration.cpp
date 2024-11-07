@@ -31,10 +31,25 @@
  * Hand-eye calibration.
  */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+#include <stdio.h>                              // for printf
+#include <cmath>                                // for sqrt, acos, asin, fabs
+#include <iostream>                             // for basic_ostream, char_t...
+#include <limits>                               // for numeric_limits
+#include <vector>                               // for vector
 
-#include <visp3/vision/vpHandEyeCalibration.h>
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpExponentialMap.h>        // for vpExponentialMap
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>        // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>        // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>          // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>     // for vpTranslationVector
+#include <visp3/vision/vpHandEyeCalibration.h>  // for vpHandEyeCalibration
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0

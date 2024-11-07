@@ -31,9 +31,18 @@
  * Homography transformation.
  */
 
-#include <math.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/vision/vpHomography.h>
+#include <math.h>                            // for sqrt
+#include <iostream>                          // for char_traits, basic_ostream
+#include <list>                              // for list
+
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/vision/vpHomography.h>       // for vpHomography
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMatrix.h>             // for vpMatrix, operator*
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
 BEGIN_VISP_NAMESPACE
 

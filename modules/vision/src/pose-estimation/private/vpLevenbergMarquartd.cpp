@@ -31,12 +31,15 @@
  * Levenberg Marquartd.
  */
 
-#include <algorithm> // (std::min)
-#include <cmath>     // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
+#include <float.h>                // for DBL_MIN
+#include <stdio.h>                // for printf
+#include <algorithm>              // for min
+#include <cmath>                  // for fabs, sqrt
+#include <limits>                 // for numeric_limits
 
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
+#include <visp3/core/vpMath.h>    // for vpMath
+
 #include "vpLevenbergMarquartd.h"
 
 #define SIGN(x) ((x) < 0 ? -1 : 1)

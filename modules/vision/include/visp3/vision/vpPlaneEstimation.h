@@ -38,21 +38,24 @@
 
 #pragma once
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
 
 // Check if std:c++17 or higher.
 // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
-// System
-#include <functional>
-#include <optional>
+#include <stdint.h>                // for uint16_t
+#include <functional>              // for reference_wrapper
+#include <optional>                // for optional
 
-// Core
-#include <visp3/core/vpPlane.h>
-#include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpPlane.h>    // for vpPlane
+#include <visp3/core/vpPolygon.h>  // for vpPolygon
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
 
 /*!
  * \class vpPlaneEstimation

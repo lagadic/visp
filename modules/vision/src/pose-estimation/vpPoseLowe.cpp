@@ -31,15 +31,22 @@
  * Pose computation.
  */
 
-#include <float.h>
-#include <limits> // numeric_limits
-#include <math.h>
-#include <string.h>
+#include <math.h>                            // for cos, sin, sqrt
+#include <stdio.h>                           // for printf
+#include <iostream>                          // for basic_ostream, operator<<
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, operator!=, _List_...
 
-// besoin de la librairie mathematique, en particulier des
-// fonctions de minimization de Levenberg Marquartd
-#include "private/vpLevenbergMarquartd.h"
-#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/vision/vpPose.h>             // for vpPose
+
+#include "private/vpLevenbergMarquartd.h"    // for lmder1
 
 #define NBR_PAR 6
 #define X3_SIZE 3

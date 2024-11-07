@@ -36,11 +36,23 @@
   \brief Compute the pose using virtual visual servoing approach
 */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/vision/vpPose.h>
+#include <cmath>                             // for fabs
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, operator!=, _List_...
+#include <optional>                          // for optional, nullopt, nullo...
+#include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpExponentialMap.h>     // for vpExponentialMap
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpRobust.h>             // for vpRobust, vpRobust::TUKEY
+#include <visp3/vision/vpPose.h>             // for vpPose
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector, operator*
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix, operator*
 
 BEGIN_VISP_NAMESPACE
 

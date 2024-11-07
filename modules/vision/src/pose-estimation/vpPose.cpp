@@ -36,22 +36,40 @@
   \brief File containing the vpPose class, everything needed to calculate poses using different methods.
 */
 
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpUniRand.h>
-#include <visp3/vision/vpPose.h>
-#include <visp3/vision/vpPoseException.h>
+#include <cmath>                                // for fabs, sqrt
+#include <iostream>                             // for basic_ostream, operat...
+#include <limits>                               // for numeric_limits
+#include <list>                                 // for list, operator!=, _Li...
+#include <sstream>                              // for basic_stringstream
+#include <string>                               // for char_traits, allocator
+#include <vector>                               // for vector
+
+#include <visp3/core/vpConfig.h>                // for VISP_HAVE_HOMOGRAPHY
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpUniRand.h>               // for vpUniRand
+#include <visp3/vision/vpPose.h>                // for vpPose, vpPose::DEMEN...
+#include <visp3/vision/vpPoseException.h>       // for vpPoseException
+#include <visp3/core/vpArray2D.h>               // for operator<<, vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRowVector.h>             // for vpRowVector
+
 #ifdef VISP_HAVE_HOMOGRAPHY
-#include <visp3/vision/vpHomography.h>
+#include <visp3/vision/vpHomography.h>          // for vpHomography
 #endif
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+template <class Type> class vpImage;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace

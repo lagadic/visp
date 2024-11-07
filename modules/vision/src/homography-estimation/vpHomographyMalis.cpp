@@ -42,11 +42,17 @@
 
  */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/vision/vpHomography.h>
+#include <cmath>                           // for fabs
+#include <vector>                          // for vector
 
-#include <cmath>  // std::fabs
+#include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#include <visp3/vision/vpHomography.h>     // for vpHomography
+#include <visp3/core/vpArray2D.h>          // for vpArray2D
+#include <visp3/core/vpColVector.h>        // for vpColVector
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpMath.h>             // for vpMath
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 

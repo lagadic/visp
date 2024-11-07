@@ -36,21 +36,29 @@
   \brief function used to estimate a pose using the Ransac algorithm
 */
 
-#include <algorithm> // std::count
-#include <cmath>     // std::fabs
-#include <float.h>   // DBL_MAX
-#include <iostream>
-#include <limits> // numeric_limits
-#include <map>
+#include <float.h>                           // for DBL_MAX
+#include <stddef.h>                          // for size_t
+#include <algorithm>                         // for max, find_if, min, count
+#include <cmath>                             // for fabs, sqrt, ceil, log
+#include <iostream>                          // for basic_ostream, char_traits
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, __distance, operat...
+#include <map>                               // for map, _Rb_tree_const_iter...
+#include <utility>                           // for pair
+#include <vector>                            // for vector, operator!=
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRansac.h>
-#include <visp3/vision/vpPose.h>
-#include <visp3/vision/vpPoseException.h>
+#include <visp3/core/vpConfig.h>             // for VISP_HAVE_THREADS, BEGIN...
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpUniRand.h>            // for vpUniRand
+#include <visp3/vision/vpPose.h>             // for vpPose, vpPose::DEMENTHO...
+#include <visp3/vision/vpPoseException.h>    // for vpPoseException
 
 #if defined(VISP_HAVE_THREADS)
-#include <thread>
+#include <thread>                            // for thread
 #endif
 
 #define EPS 1e-6

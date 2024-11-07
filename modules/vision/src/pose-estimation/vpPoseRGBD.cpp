@@ -31,13 +31,31 @@
  * Pose computation from RGBD.
  */
 
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpPlane.h>
-#include <visp3/core/vpPolygon.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/vision/vpPose.h>
+#include <stddef.h>                             // for size_t
+#include <algorithm>                            // for min, max
+#include <cmath>                                // for fabs, sqrt
+#include <iostream>                             // for basic_ostream, basic_ios
+#include <vector>                               // for vector
+
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpPlane.h>                 // for vpPlane
+#include <visp3/core/vpPolygon.h>               // for vpPolygon
+#include <visp3/core/vpRobust.h>                // for vpRobust, vpRobust::T...
+#include <visp3/vision/vpPose.h>                // for vpPose, vpPose::VIRTU...
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRect.h>                  // for vpRect
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 // See also vpPlaneEstimation.cpp that implements the same functionaly in c++17
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
