@@ -29,11 +29,19 @@
  *
  * Description:
  * Base class for object detection.
- *
-*****************************************************************************/
-#include <visp3/core/vpConfig.h>
+ */
 
-#include <visp3/detection/vpDetectorBase.h>
+#include <assert.h>                          // for assert
+#include <stddef.h>                          // for size_t
+#include <string>                            // for basic_string, string
+#include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/detection/vpDetectorBase.h>  // for vpDetectorBase
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpRect.h>               // for vpRect
+
 BEGIN_VISP_NAMESPACE
 
 /*!

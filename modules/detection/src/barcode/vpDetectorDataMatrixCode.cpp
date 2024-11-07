@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,33 +29,35 @@
  *
  * Description:
  * Base class for bar code detection.
- *
-*****************************************************************************/
+ */
 
-#include <assert.h>
-
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
 
 #ifdef VISP_HAVE_DMTX
 
-#include <dmtx.h>
+#include <assert.h>                                    // for assert
+#include <dmtx.h>                                      // for dmtxMatrix3VMu...
+#include <string>                                      // for basic_string
+#include <vector>                                      // for vector
 
-#include <visp3/detection/vpDetectorDataMatrixCode.h>
+#include <visp3/core/vpImage.h>                        // for vpImage
+#include <visp3/core/vpImagePoint.h>                   // for vpImagePoint
+#include <visp3/detection/vpDetectorDataMatrixCode.h>  // for vpDetectorData...
 
 BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that does nothing except setting detection timeout to 50ms.
    This value could be changed using setTimeout().
  */
-vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() { setTimeout(50); }
+  vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() { setTimeout(50); }
 
-/*!
-  Detect datamatrix codes in the image. Return true if a code is detected, false otherwise.
-  There is the setTimeout() function that allows to tune the value of the timeout used to detect a datamatrix code.
-  By default, there is a timeout of 50 ms set in the constructor.
+  /*!
+    Detect datamatrix codes in the image. Return true if a code is detected, false otherwise.
+    There is the setTimeout() function that allows to tune the value of the timeout used to detect a datamatrix code.
+    By default, there is a timeout of 50 ms set in the constructor.
 
-  \param I : Input image.
- */
+    \param I : Input image.
+   */
 bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
 {
   bool detected = false;

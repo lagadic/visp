@@ -31,25 +31,59 @@
  * DNN object detection using OpenCV DNN module.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                  // for VISP_BUILD_DEPRECAT...
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>             // for HAVE_OPENCV_DNN
+#endif
 
 // Check if std:c++17 or higher
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
     ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/detection/vpDetectorDNNOpenCV.h>
-#include <visp3/core/vpIoTools.h>
+#include <stddef.h>                               // for size_t
+#include <stdint.h>                               // for uint32_t
+#include <algorithm>                              // for for_each
+#include <cmath>                                  // for isnan
+#include <fstream>                                // for basic_ostream, oper...
+#include <iostream>                               // for cout, cerr
+#include <iterator>                               // for pair
+#include <limits>                                 // for numeric_limits
+#include <map>                                    // for map, operator==
+#include <optional>                               // for optional
+#include <sstream>                                // for basic_stringstream
+#include <string>                                 // for basic_string, char_...
+#include <utility>                                // for pair
+#include <vector>                                 // for vector
 
-#include<algorithm>
+#include <opencv2/core.hpp>                       // for minMaxLoc, Exception
+#include <opencv2/core/base.hpp>                  // for CV_Assert
+#include <opencv2/core/mat.hpp>                   // for Mat, MatSize, _Inpu...
+#include <opencv2/core/mat.inl.hpp>               // for MatSize::operator[]
+#include <opencv2/core/types.hpp>                 // for Rect, Point, Size
+#include <opencv2/dnn/dnn.hpp>                    // for Net, blobFromImage
+
+#include VISP_NLOHMANN_JSON(json.hpp)             // for basic_json
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)         // for json
+
+#include <visp3/core/vpImageConvert.h>            // for vpImageConvert
+#include <visp3/core/vpIoTools.h>                 // for vpIoTools
+#include <visp3/detection/vpDetectorDNNOpenCV.h>  // for vpDetectorDNNOpenCV
+#include <visp3/core/vpException.h>               // for vpException
+#include <visp3/core/vpRGBa.h>                    // for vpRGBa
+#include <visp3/core/vpRect.h>                    // for vpRect
+
 
 BEGIN_VISP_NAMESPACE
+
+template <class Type> class vpImage;
+
 /**
  * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
  *
  * \return std::string The list of the supported parsing methods / types of DNNs.
  */
-  std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
+std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 {
   std::string list = "[";
   for (unsigned int i = 0; i < vpDetectorDNNOpenCV::COUNT - 1; i++) {

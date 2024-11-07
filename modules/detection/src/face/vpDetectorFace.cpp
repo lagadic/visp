@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,31 @@
  *
  * Description:
  * Detect faces.
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>        // for HAVE_OPENCV_OBJDETECT
+#endif
 
 #if defined(HAVE_OPENCV_OBJDETECT)
 
-#include <algorithm>
+#include <stddef.h>                          // for size_t
+#include <sstream>                           // for basic_ostringstream, bas...
+#include <string>                            // for basic_string, allocator
+#include <vector>                            // for vector
+#include <algorithm>                         // for sort
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/detection/vpDetectorFace.h>
+#include <opencv2/core/mat.hpp>              // for Mat (ptr only), _InputArray
+#include <opencv2/core/mat.inl.hpp>          // for _InputArray::_InputArray
+#include <opencv2/core/types.hpp>            // for Rect_, Point_, Rect, Size_
+#include <opencv2/objdetect.hpp>             // for CascadeClassifier
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImageConvert.h>       // for vpImageConvert
+#include <visp3/detection/vpDetectorFace.h>  // for vpDetectorFace
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
 
 bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2) { return (rect1.area() > rect2.area()); }
 
@@ -47,14 +61,14 @@ BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
  */
-vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() { }
+  vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() { }
 
-/*!
-  Set the name of the OpenCV cascade classifier file used for face detection.
-  \param filename : Full path to access to the file. Such a file can be found
-  in OpenCV. Within the last versions it was name
-  "haarcascade_frontalface_alt.xml".
- */
+  /*!
+    Set the name of the OpenCV cascade classifier file used for face detection.
+    \param filename : Full path to access to the file. Such a file can be found
+    in OpenCV. Within the last versions it was name
+    "haarcascade_frontalface_alt.xml".
+   */
 void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 {
   if (!m_face_cascade.load(filename)) {

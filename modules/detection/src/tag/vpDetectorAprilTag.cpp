@@ -30,17 +30,30 @@
  * Description:
  * Base class for AprilTag detection.
  */
-#include <visp3/core/vpConfig.h>
+
+#include <visp3/core/vpConfig.h>                 // for VISP_BUILD_DEPRECATE...
 
 #ifdef VISP_HAVE_APRILTAG
-#include <map>
+#include <map>                                   // for map, allocator, _Rb_...
+#include <algorithm>                             // for min_element
+#include <cstddef>                               // for size_t, ptrdiff_t
+#include <iostream>                              // for basic_ostream, opera...
+#include <limits>                                // for numeric_limits
+#include <sstream>                               // for basic_stringstream
+#include <string>                                // for basic_string, char_t...
+#include <utility>                               // for pair
+#include <vector>                                // for vector
+#include <assert.h>                              // for assert
+#include <stdint.h>                              // for int32_t
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include <apriltag.h>
-#include <apriltag_pose.h>
-#include <common/homography.h>
+#include <apriltag.h>                            // for apriltag_detection
+#include <apriltag_pose.h>                       // for apriltag_pose_t, apr...
+#include <common/image_types.h>                  // for image_u8, image_u8_t
+#include <common/matd.h>                         // for matd_destroy, matd_c...
+#include <common/zarray.h>                       // for zarray_size, zarray_get
 #include <tag16h5.h>
 #include <tag25h7.h>
 #include <tag25h9.h>
@@ -58,13 +71,25 @@ extern "C" {
 }
 #endif
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpDisplay.h>                // for vpDisplay
+#include <visp3/core/vpPixelMeterConversion.h>   // for vpPixelMeterConversion
+#include <visp3/core/vpPoint.h>                  // for vpPoint
+#include <visp3/detection/vpDetectorAprilTag.h>  // for vpDetectorAprilTag
+#include <visp3/vision/vpPose.h>                 // for vpPose, vpPose::DEME...
+#include <visp3/core/vpArray2D.h>                // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>       // for vpCameraParameters
+#include <visp3/core/vpColor.h>                  // for vpColor, operator==
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpImagePoint.h>             // for vpImagePoint
+#include <visp3/core/vpRotationMatrix.h>         // for vpRotationMatrix
+#include <visp3/core/vpTranslationVector.h>      // for vpTranslationVector
+#include <visp3/detection/vpDetectorBase.h>      // for vpDetectorBase
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpDetectorAprilTag::Impl

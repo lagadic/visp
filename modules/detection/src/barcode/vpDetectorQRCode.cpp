@@ -33,17 +33,24 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
 
 #ifdef VISP_HAVE_ZBAR
 
-#include <visp3/detection/vpDetectorQRCode.h>
+#include <stddef.h>                            // for size_t
+#include <zbar.h>                              // for Image, SymbolIterator
+#include <string>                              // for basic_string
+#include <vector>                              // for vector
+
+#include <visp3/core/vpImage.h>                // for vpImage
+#include <visp3/core/vpImagePoint.h>           // for vpImagePoint
+#include <visp3/detection/vpDetectorQRCode.h>  // for vpDetectorQRCode
 
 BEGIN_VISP_NAMESPACE
 /*!
    Default constructor.
  */
-vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
+  vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
 {
   // configure the reader
   m_scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
