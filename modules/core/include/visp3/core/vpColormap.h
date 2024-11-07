@@ -38,16 +38,17 @@
  * \brief Colormap tool to have a mapping between 256 values and RGB values.
  */
 
-#ifndef _vpColormap_h_
-#define _vpColormap_h_
+#ifndef VP_COLORMAP_H
+#define VP_COLORMAP_H
 
 #include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpRGBa;
 class vpRGBf;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 /*!
  * \class vpColormap
  *

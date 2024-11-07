@@ -46,9 +46,10 @@
 #include <visp3/core/vpImageConvert.h>     // for vpImageConvert
 #include <visp3/core/vpImage_operators.h>  // for vpImage::operator=
 
+BEGIN_VISP_NAMESPACE
+
 class vpRGBa;
 
-BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */

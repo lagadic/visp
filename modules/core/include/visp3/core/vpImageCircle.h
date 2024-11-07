@@ -47,9 +47,10 @@
 #include <opencv2/core/matx.hpp>       // for Vec3f
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 /**
  * \brief Class that defines a 2D circle in an image.
 */

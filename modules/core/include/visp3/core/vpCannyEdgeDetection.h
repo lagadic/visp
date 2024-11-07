@@ -51,7 +51,6 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpImage_operators.h>
 
-class vpRGBa;
 #ifdef HAVE_OPENCV_CORE
 namespace cv { class Mat; }
 #endif
@@ -62,6 +61,9 @@ namespace cv { class Mat; }
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 /**
  * \brief Class that implements the Canny's edge detector.
  * It is possible to use a boolean mask to ignore some pixels of

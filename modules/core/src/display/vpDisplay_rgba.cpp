@@ -44,14 +44,6 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMouseButton.h>
 
-class vpCameraParameters;
-class vpColor;
-class vpHomogeneousMatrix;
-class vpPolygon;
-class vpRGBa;
-class vpRect;
-
-
 #include "vpDisplay_impl.h"
 
 //************************************************************************
@@ -59,6 +51,14 @@ class vpRect;
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpHomogeneousMatrix;
+class vpPolygon;
+class vpRGBa;
+class vpRect;
+
 /*!
   Close the display attached to I.
 */

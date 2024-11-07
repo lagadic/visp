@@ -42,10 +42,11 @@
 
 #include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
+
 class vpRGBa;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 /*!
  * \class vpFrameGrabber
  *

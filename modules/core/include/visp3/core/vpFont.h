@@ -45,11 +45,12 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImagePoint.h>
 
+BEGIN_VISP_NAMESPACE
+
 class vpColor;
 class vpRGBa;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 /*!
   \class vpFont
 

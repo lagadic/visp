@@ -66,8 +66,6 @@ namespace cv { class Mat; }
 #endif
 #endif
 
-class vpRGBa;
-
 #ifdef VISP_USE_MSVC
 #pragma comment(linker, "/STACK:65532000") // Increase max recursion depth
 #endif
@@ -95,6 +93,9 @@ static void scaleFilter(
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
 {

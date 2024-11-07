@@ -50,9 +50,13 @@
 #include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
 #endif
 
+BEGIN_VISP_NAMESPACE
+
 class vpRGBa;
 class vpRGBf;
 template <class Type> class vpImage;
+
+END_VISP_NAMESPACE
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

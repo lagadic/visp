@@ -41,12 +41,13 @@
 #include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
 #include <visp3/core/vpColVector.h>          // for vpColVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpCameraParameters;
 class vpColor;
 class vpRGBa;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 void vpCylinder::init()
 {
   oP.resize(7);

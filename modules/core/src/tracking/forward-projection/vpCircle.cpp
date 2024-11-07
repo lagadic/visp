@@ -44,11 +44,12 @@
 #include <visp3/core/vpMath.h>               // for vpMath
 #include <visp3/core/vpColVector.h>          // for vpColVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpColor;
 class vpRGBa;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 void vpCircle::init()
 {
   oP.resize(7);

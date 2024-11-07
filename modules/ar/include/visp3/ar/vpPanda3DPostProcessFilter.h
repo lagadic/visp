@@ -42,10 +42,11 @@
 #include "cardMaker.h"
 #include "orthographicLens.h"
 
+BEGIN_VISP_NAMESPACE
+
 class vpRGBf;
 template <class Type> class vpImage;
 
-BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d_filters
  * \brief Base class for postprocessing filters that map the result of a vpPanda3DBaseRenderer to a new image.

@@ -36,8 +36,8 @@
   \brief Centered moment descriptor (also referred as \f$\mu_{ij}\f$).
 */
 
-#ifndef _vpMomentCentered_h_
-#define _vpMomentCentered_h_
+#ifndef VP_MOMENT_CENTERED_H
+#define VP_MOMENT_CENTERED_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
@@ -97,22 +97,22 @@ protected:
 
 /*!
   Returns all centered moment values \f$\mu_{ij}\f$ with \f$i+j \leq order\f$
-where order is the object's order.
+  where order is the object's order.
 
   \return Vector of moment values. To access \f$\mu_{ij}\f$, you have to read
-vpMomentObject::get()[j*order+i].
+  vpMomentObject::get()[j*order+i].
 
   For example, if the maximal order is 3, the following values are provided:
 
   \code
-u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
+  u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
   \endcode
 
   To have a better reading of the moments you can picture them as a triangular
   matrix:
 
   \code
-u00 u10 u20 u30 u01 u11 u21 x u02 u12  x  x u30 x    x  x
+  u00 u10 u20 u30 u01 u11 u21 x u02 u12  x  x u30 x    x  x
   \endcode
 
   The moments of the same order are on each of the matrix reverse diagonals.
@@ -120,12 +120,12 @@ u00 u10 u20 u30 u01 u11 u21 x u02 u12  x  x u30 x    x  x
   this kind of code:
 
   \code
-vpMomentCentered mc;
-//[...]
-mc.compute();
-double mu12;
-mu12 = mc.get()[2*(obj.getOrder()+1)+1]; // i=1 and j=2
-mu12 = mc.get(1,2); // the same
+  vpMomentCentered mc;
+  //[...]
+  mc.compute();
+  double mu12;
+  mu12 = mc.get()[2*(obj.getOrder()+1)+1]; // i=1 and j=2
+  mu12 = mc.get(1,2); // the same
   \endcode
 */
 inline const std::vector<double> &vpMomentCentered::get() const { return vpMoment::get(); }

@@ -47,9 +47,10 @@
 #include <visp3/core/vpMatrix.h>     // for vpMatrix
 #include <visp3/core/vpException.h>  // for vpException
 
+BEGIN_VISP_NAMESPACE
+
 class vpUKSigmaDrawerAbstract;
 
-BEGIN_VISP_NAMESPACE
 /*!
   \class vpUnscentedKalman
   \ingroup group_core_kalman
