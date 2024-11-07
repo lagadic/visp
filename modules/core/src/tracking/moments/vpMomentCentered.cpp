@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,17 +29,22 @@
  *
  * Description:
  * Centered moment descriptor
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
-#include <cassert>
-#include <exception>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
+#include <cassert>                             // for assert
+#include <cmath>                               // for pow
+#include <ostream>                             // for basic_ostream, operator<<
+#include <string>                              // for char_traits, basic_string
+#include <vector>                              // for vector
+
+#include <visp3/core/vpMomentCentered.h>       // for vpMomentCentered, oper...
+#include <visp3/core/vpMomentGravityCenter.h>  // for vpMomentGravityCenter
+#include <visp3/core/vpMomentObject.h>         // for vpMomentObject
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMoment.h>               // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>       // for vpMomentDatabase
 
 BEGIN_VISP_NAMESPACE
 /*!

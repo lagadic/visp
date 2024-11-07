@@ -36,20 +36,29 @@
   \brief Definition of vpRowVector class member
 */
 
-#include <assert.h>
-#include <cmath>
-#include <sstream>
-#include <stdlib.h>
-#include <string.h>
+#include <assert.h>                  // for assert
+#include <stdlib.h>                  // for free
+#include <string.h>                  // for memcpy
+#include <algorithm>                 // for copy, min
+#include <cmath>                     // for sqrt, fabs
+#include <initializer_list>          // for initializer_list
+#include <iostream>                  // for cout
+#include <limits>                    // for numeric_limits
+#include <sstream>                   // for basic_ostream, char_traits, oper...
+#include <string>                    // for basic_string, allocator, operator<<
+#include <vector>                    // for vector
 
-#include <visp3/core/vpArray2D.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpRowVector.h>
+#include <visp3/core/vpConfig.h>     // for VISP_CXX_STANDARD, VISP_CXX_STAN...
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpRowVector.h>  // for vpRowVector, operator*
+
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>            // for SimdVectorHadamard
 #endif
 
 BEGIN_VISP_NAMESPACE

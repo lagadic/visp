@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,21 @@
  *
  * Description:
  * Alpha moment descriptor for in-plane orientation.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
-#include <cmath>
-#include <visp3/core/vpMomentAlpha.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentGravityCenter.h>
+#include <cmath>                          // for fabs, pow, atan2, cos, sin
+#include <limits>                         // for numeric_limits
+#include <ostream>                        // for basic_ostream, operator<<
+#include <string>                         // for char_traits, basic_string
+#include <vector>                         // for vector
+
+#include <visp3/core/vpMomentAlpha.h>     // for vpMomentAlpha, operator<<
+#include <visp3/core/vpMomentCentered.h>  // for vpMomentCentered
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpMath.h>            // for vpMath
+#include <visp3/core/vpMoment.h>          // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>  // for vpMomentDatabase
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -49,7 +53,7 @@ BEGIN_VISP_NAMESPACE
   class harbouring an alpha value computed for a \f$[-\pi/2 ; \pi/2]\f$ portion
   of the circle.
  */
-vpMomentAlpha::vpMomentAlpha()
+  vpMomentAlpha::vpMomentAlpha()
   : m_isRef(true), m_symmetric(false), m_mu3Ref(), m_alphaRef(0.), m_symmetricThreshold(1e-6)
 {
   values.resize(1);

@@ -29,8 +29,7 @@
  *
  * Description:
  * Generic tracker.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpTracker.cpp
@@ -38,6 +37,8 @@
 */
 
 #include <visp3/core/vpTracker.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
 
 BEGIN_VISP_NAMESPACE
 

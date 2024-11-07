@@ -29,15 +29,17 @@
  *
  * Description:
  * 2D point useful for image processing
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRect.h>
+#include <cmath>                      // for fabs, sqrt
+#include <limits>                     // for numeric_limits
+#include <ostream>                    // for char_traits, basic_ostream, bas...
+#include <vector>                     // for vector
 
-#include <limits> // numeric_limits
+#include <visp3/core/vpConfig.h>      // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint, operator+, operator-
+#include <visp3/core/vpMath.h>        // for vpMath
+#include <visp3/core/vpRect.h>        // for vpRect
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -37,11 +37,36 @@
   the particular case of an homogeneous matrix.
 */
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpQuaternionVector.h>
+#include <stddef.h>                          // for size_t
+#include <algorithm>                         // for copy
+#include <cmath>                             // for isnan, fabs
+#include <fstream>                           // for basic_ifstream, basic_of...
+#include <initializer_list>                  // for initializer_list
+#include <iostream>                          // for cout
+#include <limits>                            // for numeric_limits
+#include <map>                               // for operator==, operator!=
+#include <string>                            // for basic_string, string
+#include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpPoint.h>              // for vpPoint
+#include <visp3/core/vpQuaternionVector.h>   // for vpQuaternionVector
+#include <visp3/core/vpArray2D.h>            // for vpArray2D, from_json
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector, from_json
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)        // for basic_json
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)    // for json
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!

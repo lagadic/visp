@@ -31,16 +31,14 @@
  * Network Request.
  */
 
-#ifndef vpRequest_H
-#define vpRequest_H
+#ifndef VP_REQUEST_H
+#define VP_REQUEST_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpImageException.h>
+#include <string.h>               // for memcpy, size_t
+#include <string>                 // for basic_string, string
+#include <vector>                 // for vector
 
-#include <string.h>
-#include <vector>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -36,7 +36,11 @@
 * mean drift test.
 */
 
+#include <cmath>                                   // for ceil, sqrt
+
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpStatisticalTestEWMA.h>
+#include <visp3/core/vpStatisticalTestAbstract.h>  // for vpStatisticalTestA...
 
 BEGIN_VISP_NAMESPACE
 void vpStatisticalTestEWMA::computeDeltaAndLimits()

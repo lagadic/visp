@@ -29,16 +29,38 @@
  *
  * Description:
  * Image tools.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpImageException.h>
+#include <stddef.h>                         // for size_t
+#include <stdint.h>                         // for int64_t
+#include <cmath>                            // for sqrt, ceil, cos, fabs, floor
+#include <iostream>                         // for basic_ostream, char_traits
+#include <limits>                           // for numeric_limits
+#include <vector>                           // for vector
+
+#include <visp3/core/vpImageConvert.h>      // for vpImageConvert
+#include <visp3/core/vpImageException.h>    // for vpImageException
+#include <visp3/core/vpImageTools.h>        // for vpImageTools
+#include <visp3/core/vpArray2D.h>           // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters, vpCam...
+#include <visp3/core/vpColVector.h>         // for vpColVector
+#include <visp3/core/vpConfig.h>            // for VISP_HAVE_SIMDLIB, BEGIN_...
+#include <visp3/core/vpException.h>         // for vpException
+#include <visp3/core/vpImage.h>             // for vpImage
+#include <visp3/core/vpImagePoint.h>        // for vpImagePoint
+#include <visp3/core/vpImage_getters.h>     // for vpImage::getMeanValue
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/core/vpMatrix.h>            // for vpMatrix
+#include <visp3/core/vpRGBa.h>              // for vpRGBa
+#include <visp3/core/vpRect.h>              // for vpRect
+#include <visp3/core/vpRectOriented.h>      // for vpRectOriented
+#include <visp3/core/vpRowVector.h>         // for vpRowVector
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.hpp>
+#include <Simd/SimdLib.hpp>                 // for OperationBinary8u, Resize
+#include <Simd/SimdAllocator.hpp>           // for Allocator
+#include <Simd/SimdLib.h>                   // for SimdImageDifference, Simd...
+#include <Simd/SimdView.hpp>                // for View
 #endif
 
 BEGIN_VISP_NAMESPACE

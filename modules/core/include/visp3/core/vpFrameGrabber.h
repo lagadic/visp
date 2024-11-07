@@ -41,8 +41,9 @@
 #define VP_FRAME_GRABBER_H
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
+
+class vpRGBa;
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 /*!

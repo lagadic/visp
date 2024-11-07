@@ -34,12 +34,9 @@
 #ifndef VP_UK_SIGMA_DRAWER_MERWE_H
 #define VP_UK_SIGMA_DRAWER_MERWE_H
 
-#include <vector>
-
-#include <visp3/core/vpConfig.h>
-
-#include <visp3/core/vpUKSigmaDrawerAbstract.h>
-#include <visp3/core/vpUnscentedKalman.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpUKSigmaDrawerAbstract.h>  // for vpUKSigmaDrawerAbstract
+#include <visp3/core/vpUnscentedKalman.h>        // for vpUnscentedKalman
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE

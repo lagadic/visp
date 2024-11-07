@@ -31,8 +31,8 @@
  * TCP Client
  */
 
-#ifndef vpClient_H
-#define vpClient_H
+#ifndef VP_CLIENT_H
+#define VP_CLIENT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>

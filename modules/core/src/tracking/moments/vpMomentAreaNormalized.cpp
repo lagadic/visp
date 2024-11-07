@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,20 @@
  *
  * Description:
  * 2D normalized surface moment descriptor (usually described as An)
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
-#include <cmath>
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentObject.h>
+ */
+
+#include <cmath>                                // for sqrt
+#include <ostream>                              // for basic_ostream, operat...
+#include <string>                               // for char_traits, basic_st...
+#include <vector>                               // for vector
+
+#include <visp3/core/vpMomentAreaNormalized.h>  // for vpMomentAreaNormalized
+#include <visp3/core/vpMomentCentered.h>        // for vpMomentCentered
+#include <visp3/core/vpMomentDatabase.h>        // for vpMomentDatabase
+#include <visp3/core/vpMomentObject.h>          // for vpMomentObject, vpMom...
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpMoment.h>                // for vpMoment
 
 BEGIN_VISP_NAMESPACE
 

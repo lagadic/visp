@@ -29,17 +29,25 @@
  *
  * Description:
  * Forward projection.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpForwardProjection.cpp
   \brief   class that defines what is a point
 */
 
-#include <visp3/core/vpForwardProjection.h>
+#include <iostream>                          // for basic_ostream, char_traits
+
+#include <visp3/core/vpArray2D.h>            // for operator<<
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpForwardProjection.h>  // for vpForwardProjection
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpColVector.h>          // for vpColVector
 
 BEGIN_VISP_NAMESPACE
+
+class vpHomogeneousMatrix;
+
 /*!
   Print to stdout the feature parameters in:
   - the object frame

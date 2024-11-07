@@ -29,15 +29,16 @@
  *
  * Description:
  * Functions for correct endianness handling.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpEndian.cpp
   \brief Functions for correct endianness handling.
 */
-#include <stdexcept>
-#include <visp3/core/vpEndian.h>
+#include <stdint.h>               // for uint16_t, uint32_t
+
+#include <visp3/core/vpEndian.h>  // for VISP_LITTLE_ENDIAN, reinterpret_cas...
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 BEGIN_VISP_NAMESPACE
 namespace vpEndian

@@ -29,23 +29,25 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
+#include <math.h>                               // for fabs, cos, sin
+
+#include <visp3/core/vpCircle.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpFeatureDisplay.h>
-
-// Meter/pixel conversion
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
-// display
-#include <visp3/core/vpDisplay.h>
-
-// math
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpImagePoint.h>
-
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpRGBa;
+
 /*!
   Display a 2D point with coordinates (x, y) expressed in the image plane.
   These coordinates are obtained after perspective projection of the point.

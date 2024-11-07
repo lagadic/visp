@@ -41,7 +41,10 @@
 #ifndef VP_HISTOGRAM_VALEY_H
 #define VP_HISTOGRAM_VALEY_H
 
-#include <visp3/core/vpHistogramPeak.h>
+#include <iosfwd>                        // for ostream
+
+#include <visp3/core/vpHistogramPeak.h>  // for vpHistogramPeak
+#include <visp3/core/vpConfig.h>         // for VISP_EXPORT, BEGIN_VISP_NAME...
 
 BEGIN_VISP_NAMESPACE
 /*!

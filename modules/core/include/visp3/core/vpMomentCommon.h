@@ -30,26 +30,29 @@
  * Description:
  * Pre-filled moment database with all commonly used moments.
  */
+
 /*!
   \file vpMomentCommon.h
   \brief Pre-filled moment database with all commonly used moments.
 */
-#ifndef VPCOMMONMOMENTS_H
-#define VPCOMMONMOMENTS_H
+#ifndef VP_MOMENT_COMMON_H
+#define VP_MOMENT_COMMON_H
 
-#include <visp3/core/vpMomentAlpha.h>
-#include <visp3/core/vpMomentArea.h>
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentGravityCenterNormalized.h>
+#include <vector>                                        // for vector
 
-#include <vector>
+#include <visp3/core/vpMomentAlpha.h>                    // for vpMomentAlpha
+#include <visp3/core/vpMomentArea.h>                     // for vpMomentArea
+#include <visp3/core/vpMomentAreaNormalized.h>           // for vpMomentArea...
+#include <visp3/core/vpMomentBasic.h>                    // for vpMomentBasic
+#include <visp3/core/vpMomentCentered.h>                 // for vpMomentCent...
+#include <visp3/core/vpMomentDatabase.h>                 // for vpMomentData...
+#include <visp3/core/vpMomentGravityCenter.h>            // for vpMomentGrav...
+#include <visp3/core/vpMomentGravityCenterNormalized.h>  // for vpMomentGrav...
+#include <visp3/core/vpConfig.h>                         // for VP_OVERRIDE
 
 BEGIN_VISP_NAMESPACE
+
+class vpMomentCInvariant;
 class vpMomentObject;
 
 /*!

@@ -36,10 +36,27 @@
   \brief class that consider the case of the Theta U parameterization for the rotation
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+#include <algorithm>                         // for copy
+#include <initializer_list>                  // for initializer_list
+#include <vector>                            // for vector
+#include <cmath>                             // for sin, sqrt, cos, fabs, acos
+#include <limits>                            // for numeric_limits
 
-#include <visp3/core/vpThetaUVector.h>
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector, operator*
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+
+class vpQuaternionVector;
+class vpRxyzVector;
+class vpRzyxVector;
+class vpRzyzVector;
 
 BEGIN_VISP_NAMESPACE
 const double vpThetaUVector::minimum = 0.0001;

@@ -34,10 +34,12 @@
 #ifndef VP_PLANE_H
 #define VP_PLANE_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpPoint.h>
+#include <iosfwd>                            // for ostream
+
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for VISP_BUILD_DEPRECATED_FU...
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpPoint.h>              // for vpPoint
 
 BEGIN_VISP_NAMESPACE
 

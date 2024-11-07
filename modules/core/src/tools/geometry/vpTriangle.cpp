@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,16 @@
  *
  * Description:
  * Defines a 2D triangle.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTriangle.h>
+#include <math.h>                     // for fabs
+#include <iostream>                   // for char_traits, basic_ostream, bas...
+
+#include <visp3/core/vpTriangle.h>    // for vpTriangle
+#include <visp3/core/vpArray2D.h>     // for vpArray2D
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpMatrix.h>      // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 /*!

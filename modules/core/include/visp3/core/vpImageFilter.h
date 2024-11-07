@@ -39,24 +39,29 @@
 #ifndef VP_IMAGE_FILTER_H
 #define VP_IMAGE_FILTER_H
 
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <string.h>
+#include <string.h>                       // for memcpy
+#include <algorithm>                      // for max, min
+#include <cmath>                          // for exp, sqrt, abs, M_PI
+#include <limits>                         // for numeric_limits
+#include <sstream>                        // for basic_stringstream, basic_o...
+#include <string>                         // for basic_string, char_traits
+#include <vector>                         // for vector
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpHistogram.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpConfig.h>          // for VISP_HAVE_OPENCV, BEGIN_VIS...
+#include <visp3/core/vpArray2D.h>         // for vpArray2D
+#include <visp3/core/vpColVector.h>       // for vpColVector
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpHistogram.h>       // for vpHistogram
+#include <visp3/core/vpImage.h>           // for vpImage
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
+#include <visp3/core/vpImageException.h>  // for vpImageException
+#include <visp3/core/vpMath.h>            // for vpMath
+#include <visp3/core/vpMatrix.h>          // for operator*
+#include <visp3/core/vpRGBa.h>            // for vpRGBa
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/imgproc/imgproc_c.h>
+#include "opencv2/core/mat.hpp"           // for Mat
+#include "opencv2/opencv_modules.hpp"     // for HAVE_OPENCV_IMGPROC
 #endif
 
 BEGIN_VISP_NAMESPACE

@@ -31,9 +31,30 @@
  * Various image tools, convolution, ...
  */
 
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpRGBa.h>
+#include <cmath>                         // for pow
+#include <vector>                        // for vector
+
+#include <visp3/core/vpConfig.h>         // for VISP_HAVE_OPENCV, BEGIN_VISP...
+#include <visp3/core/vpImage.h>          // for vpImage
+#include <visp3/core/vpImageConvert.h>   // for vpImageConvert
+#include <visp3/core/vpImageFilter.h>    // for vpImageFilter
+#include <visp3/core/vpRGBa.h>           // for vpRGBa
+#include <visp3/core/vpColVector.h>      // for vpColVector
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>    // for HAVE_OPENCV_IMGPROC
+
+#if defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/core.hpp>              // for split
+#include <opencv2/core/base.hpp>         // for BorderTypes
+#include <opencv2/core/fast_math.hpp>    // for cvRound
+#include <opencv2/core/hal/interface.h>  // for CV_16S
+#include <opencv2/core/mat.hpp>          // for Mat, _InputArray, _OutputArray
+#include <opencv2/core/mat.inl.hpp>      // for _InputArray::_InputArray
+#include <opencv2/core/types.hpp>        // for Size
+#include <opencv2/imgproc.hpp>           // for Scharr, Sobel, GaussianBlur
+#endif
+#endif
 
 BEGIN_VISP_NAMESPACE
 
@@ -554,7 +575,6 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
   }
   return meds;
 }
-
 
 /**
  * \brief Compute the partial derivatives (i.e. horizontal and vertical gradients) of the input image.

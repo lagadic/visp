@@ -29,18 +29,39 @@
  *
  * Description:
  * Meter to pixel conversion.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeterPixelConversion.cpp
-  \brief meter to pixel conversion
+  \brief Meter to pixel conversion.
 */
 
+#include <math.h>                               // for atan2, cos, fabs, sin
+#include <vector>                               // for vector
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpCircle.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpSphere.h>
+
+#if defined(VISP_HAVE_OPENCV)
+
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_CALIB3D
+
+#if defined(HAVE_OPENCV_CALIB3D)
+#include <opencv2/calib3d.hpp>                  // for projectPoints
+#include <opencv2/core/hal/interface.h>         // for CV_64FC1
+#include <opencv2/core/mat.hpp>                 // for Mat, _InputArray, Mat...
+#include <opencv2/core/mat.inl.hpp>             // for Mat::at, _InputArray:...
+#include <opencv2/core/traits.hpp>              // for Depth<>::value
+#include <opencv2/core/types.hpp>               // for Point3d, Point_, Type...
+#endif
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!

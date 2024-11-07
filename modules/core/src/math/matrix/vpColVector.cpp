@@ -37,23 +37,31 @@
  * as a set of operations on these vectors
  */
 
-#include <assert.h>
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <math.h>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <assert.h>                          // for assert
+#include <stdlib.h>                          // for free
+#include <string.h>                          // for memcpy
+#include <algorithm>                         // for copy, min
+#include <cmath>                             // for sqrt, fabs
+#include <initializer_list>                  // for initializer_list
+#include <iostream>                          // for cout
+#include <limits>                            // for numeric_limits
+#include <sstream>                           // for basic_ostream, char_traits
+#include <string>                            // for basic_string, allocator
+#include <vector>                            // for vector
 
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpConfig.h>             // for VISP_HAVE_SIMDLIB, VISP_...
+#include <visp3/core/vpColVector.h>          // for vpColVector, operator*
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>                    // for SimdVectorHadamard, Simd...
 #endif
 
 BEGIN_VISP_NAMESPACE

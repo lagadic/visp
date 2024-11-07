@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,28 +29,26 @@
  *
  * Description:
  * Hinkley's cumulative sum test implementation.
- *
-*****************************************************************************/
+ */
 
 /*!
-
   \file vpHinkley.cpp
 
   \brief Definition of the vpHinkley class corresponding to the Hinkley's
   cumulative sum test.
-
 */
 
-#include <visp3/core/vpHinkley.h>
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+#include <cmath>                  // for fabs
+#include <iostream>               // for basic_ostream, char_traits, operator<<
+#include <limits>                 // for numeric_limits
+
+#include <visp3/core/vpHinkley.h>
+#include <visp3/core/vpDebug.h>   // for vpCDEBUG
+#include <visp3/core/vpMath.h>    // for vpMath
 
 BEGIN_VISP_NAMESPACE
 /* VP_DEBUG_MODE fixed by configure:

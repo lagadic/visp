@@ -31,7 +31,10 @@
  * TCP Network
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM..
+
+// inet_ntop() not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
 
 // Specific case for UWP to introduce a workaround
 // error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
@@ -41,11 +44,24 @@
 #endif
 #endif
 
-// inet_ntop() not supported on win XP
-#ifdef VISP_HAVE_FUNC_INET_NTOP
+#include <iostream>                // for basic_ostream, operator<<, cout, endl
+#include <string>                  // for basic_string, allocator, char_traits
+#include <vector>                  // for vector
 
-#include <visp3/core/vpNetwork.h>
-#include <visp3/core/vpDebug.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <arpa/inet.h>             // for inet_ntoa
+#include <netdb.h>                 // for gethostbyname, h_addr, hostent
+#include <netinet/in.h>            // for in_addr, sockaddr_in
+#include <stddef.h>                // for size_t
+#include <sys/select.h>            // for select, FD_ISSET, FD_SET, FD_ZERO
+#include <sys/socket.h>            // for recv, sendto, MSG_NOSIGNAL
+#include <sys/time.h>              // for timeval
+#endif
+
+#include <visp3/core/vpDebug.h>    // for vpTRACE, vpERROR_TRACE
+#include <visp3/core/vpNetwork.h>  // for vpNetwork.
+#include <visp3/core/vpRequest.h>  // for vpRequest
+
 BEGIN_VISP_NAMESPACE
 vpNetwork::vpNetwork()
   : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(), max_size_message(999999),

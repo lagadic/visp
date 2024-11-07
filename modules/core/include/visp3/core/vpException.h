@@ -39,11 +39,12 @@
 #ifndef VP_EXCEPTION_H
 #define VP_EXCEPTION_H
 
-#include <visp3/core/vpConfig.h>
+#include <stdarg.h>               // for va_list
+#include <exception>              // for exception
+#include <iostream>               // for ostream
+#include <string>                 // for string, basic_string
 
-#include <iostream>
-#include <stdarg.h>
-#include <string>
+#include <visp3/core/vpConfig.h>  // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
 
 BEGIN_VISP_NAMESPACE
 /*!

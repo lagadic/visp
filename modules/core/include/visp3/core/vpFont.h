@@ -37,11 +37,17 @@
   \brief Draw text in an image.
 */
 
-#ifndef _vpFont_h_
-#define _vpFont_h_
+#ifndef VP_FONT_H
+#define VP_FONT_H
+
+#include <string>                     // for basic_string, string
 
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImagePoint.h>
+
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -31,12 +31,22 @@
  * Quaternion vector.
  */
 
-#include <algorithm>
-#include <cassert>
-#include <stdio.h>
-#include <string.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpQuaternionVector.h>
+#include <algorithm>                        // for copy
+#include <cassert>                          // for assert
+#include <cmath>                            // for sin, acos, cos, sqrt
+#include <initializer_list>                 // for initializer_list
+#include <iostream>                         // for char_traits, basic_ostream
+#include <limits>                           // for numeric_limits
+#include <vector>                           // for vector
+
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/core/vpQuaternionVector.h>  // for vpQuaternionVector
+#include <visp3/core/vpColVector.h>         // for vpColVector
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
+#include <visp3/core/vpException.h>         // for vpException
+#include <visp3/core/vpRotationMatrix.h>    // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>    // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>      // for vpThetaUVector
 
 BEGIN_VISP_NAMESPACE
 // minimum value of sine

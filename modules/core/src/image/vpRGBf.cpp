@@ -37,10 +37,15 @@
   images (it defines a RGB 32-bit floating point structure)
 */
 
-#include <limits>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpRGBf.h>
+#include <cmath>                     // for fabs
+#include <limits>                    // for numeric_limits
+#include <ostream>                   // for basic_ostream, char_traits, oper...
+#include <utility>                   // for move
+
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpRGBf.h>       // for vpRGBf, operator*, operator<<
 
 BEGIN_VISP_NAMESPACE
 /*!

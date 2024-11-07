@@ -31,29 +31,56 @@
  * Defines a generic 2D polygon.
  */
 
-// System
-#include <limits>
-#include <set>
+#include <math.h>                               // for fabs
+#include <stddef.h>                             // for size_t
+#include <algorithm>                            // for transform
+#include <iterator>                             // for back_inserter, cbegin
+#include <limits>                               // for numeric_limits
+#include <list>                                 // for list, operator!=, __d...
+#include <set>                                  // for set, _Rb_tree_const_i...
+#include <vector>                               // for vector
 
-// Core
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPolygon.h>
-#include <visp3/core/vpUniRand.h>
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPolygon.h>               // for vpPolygon
+#include <visp3/core/vpUniRand.h>               // for vpUniRand
+#include <visp3/core/vpConfig.h>                // for VISP_HAVE_OPENCV, BEG...
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint, operator==
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMouseButton.h>           // for vpMouseButton, vpMous...
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRect.h>                  // for vpRect
 
 // Local helper
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_IMGPROC
+#if defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/core/mat.hpp>                 // for _InputArray, _OutputA...
+#include <opencv2/core/mat.inl.hpp>             // for _InputArray::_InputArray
+#include <opencv2/core/traits.hpp>              // for Depth<>::value
+#include <opencv2/core/types.hpp>               // for Point, Type<>::value
+#include <opencv2/imgproc.hpp>                  // for convexHull
+#endif
+#endif
+
+BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
+
+END_VISP_NAMESPACE
+
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-
-#include <opencv2/imgproc/imgproc.hpp>
-
 
 /*!
  * Compute convex hull corners.
  *
  * \param[in] ips : List of 2D points.
  */
-template <typename IpContainer> std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> convexHull(const IpContainer &ips)
+  template <typename IpContainer> std::vector<VISP_NAMESPACE_ADDRESSING vpImagePoint> convexHull(const IpContainer &ips)
 {
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;

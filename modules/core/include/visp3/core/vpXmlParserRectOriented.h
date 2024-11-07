@@ -40,10 +40,13 @@
 #ifndef VP_XML_PARSER_RECT_ORIENTED_H
 #define VP_XML_PARSER_RECT_ORIENTED_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <visp3/core/vpRectOriented.h>
+
+#include <string>                       // for string
+
+#include <visp3/core/vpRectOriented.h>  // for vpRectOriented
 
 BEGIN_VISP_NAMESPACE
 /*!

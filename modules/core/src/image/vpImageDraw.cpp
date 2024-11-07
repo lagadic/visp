@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,8 @@
  *
  * Description:
  * Drawing functions.
- *
-*****************************************************************************/
+ */
+
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -57,10 +56,32 @@
  * SOFTWARE.
  */
 
-#include <visp3/core/vpImageDraw.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
+#include <stdlib.h>                             // for abs, size_t
+#include <algorithm>                            // for max, min
+#include <cmath>                                // for sqrt, cos, sin, fabs
+#include <limits>                               // for numeric_limits
+#include <utility>                              // for swap
+#include <vector>                               // for vector
 
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpColor.h>                 // for vpColor, operator==
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImageCircle.h>           // for vpImageCircle
+#include <visp3/core/vpImageDraw.h>             // for vpImageDraw
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint, operator+
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRGBa.h>                  // for vpRGBa
+#include <visp3/core/vpRect.h>                  // for vpRect
+
+BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpHomogeneousMatrix;
+
+END_VISP_NAMESPACE
 namespace
 {
 #ifdef ENABLE_VISP_NAMESPACE

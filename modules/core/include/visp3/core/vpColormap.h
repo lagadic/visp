@@ -42,8 +42,10 @@
 #define _vpColormap_h_
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
+
+class vpRGBa;
+class vpRGBf;
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 /*!

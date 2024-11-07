@@ -31,8 +31,28 @@
  * Image circle, i.e. circle in the image space.
  */
 
+#include <algorithm>                  // for min, max
+#include <cmath>                      // for cos, sin, abs, acos, asin
+#include <iostream>                   // for basic_ostream, char_traits, ope...
+#include <limits>                     // for numeric_limits
+#include <utility>                    // for pair
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageCircle.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpRect.h>
+
+#if defined(VISP_HAVE_OPENCV)
+
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_CALIB3D
+
+#ifdef HAVE_OPENCV_CORE
+#include <opencv2/core/matx.hpp>       // for Vec3f
+#endif
+#endif
 
 BEGIN_VISP_NAMESPACE
 vpImageCircle::vpImageCircle()

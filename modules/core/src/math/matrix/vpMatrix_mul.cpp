@@ -31,8 +31,7 @@
  * BLAS subroutines.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

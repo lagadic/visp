@@ -30,8 +30,7 @@
  * Description:
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPoseVector.cpp
@@ -39,13 +38,34 @@
 
 */
 
-#include <assert.h>
-#include <sstream>
+#include <assert.h>                          // for assert
+#include <string.h>                          // for memcpy
+#include <algorithm>                         // for min
+#include <cmath>                             // for isnan
+#include <fstream>                           // for basic_ifstream, basic_of...
+#include <iostream>                          // for cout
+#include <map>                               // for operator==, operator!=
+#include <sstream>                           // for basic_ostream, basic_ost...
+#include <string>                            // for basic_string, allocator
+#include <vector>                            // for vector
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpPoseVector.h>
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector
+#include <visp3/core/vpArray2D.h>            // for vpArray2D, from_json
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix, fro...
+#include <visp3/core/vpQuaternionVector.h>   // for vpQuaternionVector
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)        // for basic_json
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)    // for json
+#endif
 
 BEGIN_VISP_NAMESPACE
 

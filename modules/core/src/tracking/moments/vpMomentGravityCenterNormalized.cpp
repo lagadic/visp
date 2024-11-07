@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +28,19 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * 2D normalized gravity center moment descriptor (usually described by the
- *pair Xn,Yn)
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ * 2D normalized gravity center moment descriptor (usually described by the pair Xn,Yn)
+ */
 
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentGravityCenterNormalized.h>
-#include <visp3/core/vpMomentObject.h>
+#include <ostream>                                       // for basic_ostream
+#include <string>                                        // for char_traits
+#include <vector>                                        // for vector
+
+#include <visp3/core/vpMomentAreaNormalized.h>           // for vpMomentArea...
+#include <visp3/core/vpMomentGravityCenter.h>            // for vpMomentGrav...
+#include <visp3/core/vpMomentGravityCenterNormalized.h>  // for vpMomentGrav...
+#include <visp3/core/vpConfig.h>                         // for BEGIN_VISP_N...
+#include <visp3/core/vpException.h>                      // for vpException
+#include <visp3/core/vpMomentDatabase.h>                 // for vpMomentData...
 
 BEGIN_VISP_NAMESPACE
 /*!

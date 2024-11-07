@@ -39,6 +39,7 @@
 #ifndef VP_PIXEL_METER_CONVERSION_H
 #define VP_PIXEL_METER_CONVERSION_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>

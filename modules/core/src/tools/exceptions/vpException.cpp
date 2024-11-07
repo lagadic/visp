@@ -36,8 +36,13 @@
  * \brief error that can be emitted by the vp class and its derivatives
  */
 
-#include "visp3/core/vpException.h"
-#include <stdio.h>
+#include <stdarg.h>                  // for va_list, va_end, va_start
+#include <stdio.h>                   // for FILENAME_MAX, vsnprintf
+#include <ostream>                   // for basic_ostream, operator<<, basic...
+#include <string>                    // for basic_string, char_traits, string
+
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpException.h>  // for vpException, operator<<
 
 BEGIN_VISP_NAMESPACE
 vpException::vpException(int id) : code(id), message() { }

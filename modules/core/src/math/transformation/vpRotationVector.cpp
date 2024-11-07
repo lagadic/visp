@@ -29,8 +29,7 @@
  *
  * Description:
  * Generic rotation vector (cannot be used as is !).
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRotationVector.cpp
@@ -38,12 +37,13 @@
   (cannot be used as is !).
 */
 
-#include <algorithm>
-#include <math.h>
+#include <vector>                         // for vector
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpRowVector.h>
+#include <visp3/core/vpColVector.h>       // for vpColVector
+#include <visp3/core/vpRotationVector.h>  // for vpRotationVector, operator*
+#include <visp3/core/vpRowVector.h>       // for vpRowVector
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+#include <visp3/core/vpException.h>       // for vpException
 
 BEGIN_VISP_NAMESPACE
 /*!

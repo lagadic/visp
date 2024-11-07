@@ -33,18 +33,22 @@
 
 #pragma once
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 // Check if std:c++17 or higher.
 // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
-// System
-#include <optional>
-#include <tuple>
+#include <stddef.h>               // for size_t
+#include <algorithm>              // for find, for_each, max, min, min_element
+#include <iterator>               // for pair, begin, end, distance
+#include <limits>                 // for numeric_limits
+#include <optional>               // for optional, nullopt, make_optional
+#include <tuple>                  // for tuple, tie
+#include <utility>                // for pair
+#include <vector>                 // for vector
 
-// Internal
-#include "vpMath.h"
+#include <visp3/core/vpMath.h>    // for vpMath
 
 BEGIN_VISP_NAMESPACE
 /*!

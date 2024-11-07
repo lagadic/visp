@@ -37,6 +37,11 @@
 */
 
 #include <visp3/core/vpUnscentedKalman.h>
+#include <visp3/core/vpColVector.h>              // for vpColVector, operator*
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix
+#include <visp3/core/vpUKSigmaDrawerAbstract.h>  // for vpUKSigmaDrawerAbstract
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE

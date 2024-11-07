@@ -32,9 +32,12 @@
 #define VP_CANNY_EDGE_DETECTION_H
 
 // System includes
-#include <map>
-#include <vector>
-#include <iostream>
+#include <iterator>                        // for pair
+#include <map>                             // for map
+#include <string>                          // for string
+#include <utility>                         // for pair
+#include <vector>                          // for vector
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <sys/resource.h> // To dynamically change the stack size
 #endif
@@ -43,7 +46,15 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpImage_operators.h>
+
+class vpRGBa;
+#ifdef HAVE_OPENCV_CORE
+namespace cv { class Mat; }
+#endif
 
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON

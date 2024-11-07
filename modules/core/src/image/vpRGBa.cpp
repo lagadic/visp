@@ -37,9 +37,14 @@
   images (it define a RGB 32 bits structure, fourth byte is not used - yet -)
 */
 
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpRGBa.h>
+#include <assert.h>                  // for assert
+#include <ostream>                   // for basic_ostream, char_traits, oper...
+#include <utility>                   // for move
+
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpRGBa.h>       // for vpRGBa, operator*, operator<<
 
 BEGIN_VISP_NAMESPACE
 /*!

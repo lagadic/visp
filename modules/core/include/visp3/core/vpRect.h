@@ -34,13 +34,13 @@
 #ifndef VP_RECT_H
 #define VP_RECT_H
 
-#include <algorithm>
-#include <cassert>
-#include <limits> // numeric_limits
-#include <vector>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpImagePoint.h>
+#include <algorithm>                  // for max, min
+#include <cassert>                    // for assert
+#include <iosfwd>                     // for ostream
+#include <vector>                     // for vector
+
+#include <visp3/core/vpConfig.h>      // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
 
 BEGIN_VISP_NAMESPACE
 

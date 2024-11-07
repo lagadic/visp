@@ -29,18 +29,18 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogramValey.cpp
   \brief Declaration of the vpHistogramValey class.
   Class vpHistogramValey defines a gray level histogram valey.
-
 */
 
-#include <visp3/core/vpHistogramValey.h>
+#include <ostream>                        // for char_traits, basic_ostream
+
+#include <visp3/core/vpHistogramValey.h>  // for vpHistogramValey, operator<<
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
 
 BEGIN_VISP_NAMESPACE
 /*!

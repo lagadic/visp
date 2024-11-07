@@ -29,8 +29,7 @@
  *
  * Description:
  * Velocity twist transformation matrix.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpVelocityTwistMatrix.cpp
@@ -40,11 +39,23 @@
   transform a velocity skew from one frame to an other.
 */
 
-#include <assert.h>
-#include <sstream>
+#include <assert.h>                            // for assert
+#include <algorithm>                           // for min
+#include <sstream>                             // for basic_ostream, basic_o...
+#include <string>                              // for basic_string, allocator
+#include <vector>                              // for vector
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>       // for vpRotationMatrix
+#include <visp3/core/vpThetaUVector.h>         // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>    // for vpTranslationVector
 
 BEGIN_VISP_NAMESPACE
 /*!

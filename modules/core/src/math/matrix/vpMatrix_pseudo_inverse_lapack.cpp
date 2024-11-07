@@ -31,19 +31,11 @@
  * Pseudo inverse computation.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>              // for VISP_HAVE_LAPACK, BEGIN...
+#include <visp3/core/vpColVector.h>           // for vpColVector
+#include <visp3/core/vpMatrix.h>              // for vpMatrix
 
-#include "private/vpMatrix_pseudo_inverse.h"
-
-#ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_math.h>
-#elif defined(VISP_HAVE_MKL)
-#include <mkl.h>
-#endif
-#endif
+#include "private/vpMatrix_pseudo_inverse.h"  // for compute_pseudo_inverse
 
 BEGIN_VISP_NAMESPACE
 

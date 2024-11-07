@@ -29,25 +29,40 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_pcl.cpp
   \brief Depth image to point cloud conversion.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 
-#include <visp3/core/vpImageConvert.h>
+#include <stdint.h>                             // for uint16_t
+#include <memory>                               // for __shared_ptr_access
+#include <mutex>                                // for mutex
+
+#include <pcl/impl/point_types.hpp>             // for PointXYZRGB, PointXYZ
+#include <pcl/pcl_config.h>                     // for PCL_VERSION_COMPARE
+#include <pcl/point_cloud.h>                    // for PointCloud
+
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImageException.h>        // for vpImageException
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpRGBa.h>                  // for vpRGBa
+#include <visp3/core/vpImageConvert.h>          // for vpImageConvert
 
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 /*!
  * Create a point cloud from a depth image.
  *
@@ -70,10 +85,10 @@ BEGIN_VISP_NAMESPACE
  *
  * \return The size of the point cloud.
  */
-  int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
-                                         const vpCameraParameters &cam_depth,
-                                         pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, std::mutex *pointcloud_mutex,
-                                         const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
+int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
+                                       const vpCameraParameters &cam_depth,
+                                       pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, std::mutex *pointcloud_mutex,
+                                       const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
 {
 
   int size = static_cast<int>(depth_raw.getSize());

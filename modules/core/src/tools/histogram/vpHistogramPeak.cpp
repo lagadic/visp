@@ -29,9 +29,7 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogramPeak.cpp
@@ -39,8 +37,10 @@
   Class vpHistogramPeak defines a gray level histogram peak.
 
 */
+#include <ostream>                       // for char_traits, basic_ostream
 
-#include <visp3/core/vpHistogramPeak.h>
+#include <visp3/core/vpConfig.h>         // for BEGIN_VISP_NAMESPACE, END_VI...
+#include <visp3/core/vpHistogramPeak.h>  // for vpHistogramPeak, operator<<
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -30,9 +30,14 @@
  * Description:
  * Stack matrix.
  */
+#include <string.h>                  // for memcpy
+#include <iostream>                  // for basic_ostream, char_traits, oper...
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
 
 BEGIN_VISP_NAMESPACE
 

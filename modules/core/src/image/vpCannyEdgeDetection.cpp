@@ -26,12 +26,47 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpCannyEdgeDetection.h>
+#include <algorithm>                          // for max
+#include <cmath>                              // for isnan, abs, atan2
+#include <fstream>                            // for basic_ostream, basic_ifstream
+#include <limits>                             // for numeric_limits
+#include <sstream>                            // for basic_stringstream
+#include <map>                                // for operator==, map, _Rb_tr...
+#include <string>                             // for basic_string, allocator
+#include <utility>                            // for pair
+#include <vector>                             // for vector
 
-#include <visp3/core/vpImageConvert.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <sys/resource.h>                     // for rlimit, setrlimit, RLIM...
+#endif
+
+#include <visp3/core/vpConfig.h>              // for VISP_HAVE_NLOHMANN_JSON
+#include <visp3/core/vpCannyEdgeDetection.h>  // for vpCannyEdgeDetection
+#include <visp3/core/vpImage.h>               // for vpImage
+#include <visp3/core/vpImageConvert.h>        // for vpImageConvert
+#include <visp3/core/vpImageFilter.h>         // for vpImageFilter
+#include <visp3/core/vpMath.h>                // for M_PI_4_FLOAT, M_PI_2_FLOAT
+#include <visp3/core/vpArray2D.h>             // for vpArray2D
+#include <visp3/core/vpException.h>           // for vpException
+#include <visp3/core/vpImagePoint.h>          // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>     // for vpImage::operator=
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(detail/json_ref.hpp)       // for json_ref
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)              // for json
+#include VISP_NLOHMANN_JSON(json.hpp)                  // for basic_json
+#endif
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_CALIB3D
+#ifdef HAVE_OPENCV_CORE
+namespace cv { class Mat; }
+#endif
+#endif
+
+class vpRGBa;
 
 #ifdef VISP_USE_MSVC
 #pragma comment(linker, "/STACK:65532000") // Increase max recursion depth

@@ -36,7 +36,9 @@
 * mean drift test.
 */
 
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpStatisticalTestSigma.h>
+#include <visp3/core/vpStatisticalTestAbstract.h>  // for vpStatisticalTestA...
 
 BEGIN_VISP_NAMESPACE
 void vpStatisticalTestSigma::computeLimits()

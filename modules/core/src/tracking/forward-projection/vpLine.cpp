@@ -29,21 +29,31 @@
  *
  * Description:
  * Line feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpLine.cpp
   \brief   class that defines what is a line
 */
 
-#include <visp3/core/vpLine.h>
+#include <math.h>                            // for sqrt, fabs, atan2
+#include <stdio.h>                           // for printf
 
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpFeatureDisplay.h>     // for vpFeatureDisplay
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpLine.h>               // for vpLine
+#include <visp3/core/vpColVector.h>          // for vpColVector
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
 
   Initialize the memory space requested for the 2D line parameters (\e

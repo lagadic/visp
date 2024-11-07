@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,15 +29,22 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpUKSigmaDrawerMerwe.cpp
   \brief Sigma points drawer following the E. A. Wan and R. van der Merwe's method.
 */
 
+#include <functional>                            // for function
+#include <vector>                                // for vector
+
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpUKSigmaDrawerMerwe.h>
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix, operator*
+#include <visp3/core/vpRowVector.h>              // for vpRowVector
+#include <visp3/core/vpUKSigmaDrawerAbstract.h>  // for vpUKSigmaDrawerAbstract
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE

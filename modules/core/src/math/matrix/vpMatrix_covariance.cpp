@@ -31,15 +31,20 @@
  * Covariance matrix computation.
  */
 
-#include <cmath>  // std::fabs()
-#include <limits> // numeric_limits
+#include <cmath>                             // for sqrt, M_PI
+#include <limits>                            // for numeric_limits
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpTranslationVector.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>             // for vpMatrix, operator*
+#include <visp3/core/vpMatrixException.h>    // for vpMatrixException
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
 
 BEGIN_VISP_NAMESPACE
 /*!

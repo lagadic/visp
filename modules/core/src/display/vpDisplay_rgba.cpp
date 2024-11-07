@@ -29,10 +29,28 @@
  *
  * Description:
  * Display implementation.
- *
-*****************************************************************************/
+ */
 
+#include <stddef.h>                    // for size_t
+#include <cmath>                       // for fabs, M_PI
+#include <limits>                      // for numeric_limits
+#include <list>                        // for list, _List_const_iterator
+#include <string>                      // for string
+#include <vector>                      // for vector
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageCircle.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpMouseButton.h>
+
+class vpCameraParameters;
+class vpColor;
+class vpHomogeneousMatrix;
+class vpPolygon;
+class vpRGBa;
+class vpRect;
+
 
 #include "vpDisplay_impl.h"
 

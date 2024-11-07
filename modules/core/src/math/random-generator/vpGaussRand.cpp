@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +29,12 @@
  *
  * Description:
  * Generation of random number with uniform and normal probability density.
- *
-*****************************************************************************/
+ */
 
-#include <math.h>
-#include <visp3/core/vpGaussRand.h>
+#include <math.h>                    // for log, sqrt
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpGaussRand.h>  // for vpGaussRand
+#include <visp3/core/vpUniRand.h>    // for vpUniRand
 
 BEGIN_VISP_NAMESPACE
 /*!

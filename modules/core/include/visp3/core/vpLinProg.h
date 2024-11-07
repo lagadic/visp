@@ -36,15 +36,17 @@
   \brief Implementation of Linear Program with simplex algorithm.
 */
 
-#ifndef vpLinProgh
-#define vpLinProgh
+#ifndef VP_LIN_PROG_H
+#define VP_LIN_PROG_H
 
-#include <cmath>   // For std::abs() on iOS
-#include <cstdlib> // For std::abs() on iOS
+#include <cmath>                     // for abs
+#include <utility>                   // for pair
+#include <vector>                    // for vector
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
 
 BEGIN_VISP_NAMESPACE
 /*!

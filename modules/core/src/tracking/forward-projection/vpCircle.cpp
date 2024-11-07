@@ -29,12 +29,24 @@
  *
  * Description:
  * Visual feature circle.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpCircle.h>
+#include <math.h>                            // for sqrt, fabs, cos, sin
+#include <limits>                            // for numeric_limits
 
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>   // for vpCameraParameters
+#include <visp3/core/vpCircle.h>             // for vpCircle
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpFeatureDisplay.h>     // for vpFeatureDisplay
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpColVector.h>          // for vpColVector
+
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 void vpCircle::init()

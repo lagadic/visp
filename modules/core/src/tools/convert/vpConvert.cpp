@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,21 +28,31 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Directory management.
- *
-*****************************************************************************/
+ * Type conversion.
+ */
 
 /*!
   \file vpConvert.cpp
   \brief Tools for type or general conversion.
 */
 
-#include <algorithm> // std::transform
-#include <vector>    // std::vector
+#include <algorithm>                   // for transform
+#include <vector>                      // for vector
 
-#include <visp3/core/vpConvert.h>
+#include <visp3/core/vpConvert.h>      // for vpConvert
+#include <visp3/core/vpConfig.h>       // for BEGIN_VISP_NAMESPACE, END_VISP...
+#include <visp3/core/vpImagePoint.h>   // for vpImagePoint
+#include <visp3/core/vpPoint.h>        // for vpPoint
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>  // for HAVE_OPENCV_FEATURES2D
+#if defined(HAVE_OPENCV_FEATURES2D)
+#include <opencv2/core/types.hpp>      // for Point3d, Point3f, Point2d, Poi...
+#endif
+#endif
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
+
 BEGIN_VISP_NAMESPACE
 /*!
   Unary function used to transform a cv::KeyPoint to a vpImagePoint.
@@ -52,7 +61,7 @@ BEGIN_VISP_NAMESPACE
   \return A vpImagePoint with the 2D coordinates corresponding to the
   location of the KeyPoint.
  */
-vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
+  vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
 {
   return vpImagePoint(keypoint.pt.y, keypoint.pt.x);
 }

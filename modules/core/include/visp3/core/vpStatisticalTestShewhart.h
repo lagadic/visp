@@ -34,13 +34,14 @@
  * \brief Statistical Process Control Shewhart's test implementation.
  */
 
-#ifndef _vpStatisticalTestShewhartTest_h_
-#define _vpStatisticalTestShewhartTest_h_
+#ifndef VP_STATISTICAL_TEST_SHEWHART_TEST_H
+#define VP_STATISTICAL_TEST_SHEWHART_TEST_H
 
-#include <vector>
+#include <string>                               // for string
+#include <vector>                               // for vector
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpStatisticalTestSigma.h>
+#include <visp3/core/vpConfig.h>                // for VISP_CXX_STANDARD
+#include <visp3/core/vpStatisticalTestSigma.h>  // for vpStatisticalTestSigma
 
 BEGIN_VISP_NAMESPACE
 /**

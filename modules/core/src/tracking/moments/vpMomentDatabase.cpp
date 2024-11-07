@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +29,21 @@
  *
  * Description:
  * Pseudo-database used to handle dependencies between moments
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
-#include <iostream>
-#include <typeinfo>
-#include <visp3/core/vpMoment.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentObject.h>
+#include <iostream>                       // for basic_ostream, char_traits
+#include <map>                            // for map, operator!=, _Rb_tree_c...
+#include <string>                         // for basic_string, string, opera...
+#include <utility>                        // for pair
+
+#include <visp3/core/vpMoment.h>          // for operator<<, vpMoment
+#include <visp3/core/vpMomentDatabase.h>  // for vpMomentDatabase, operator<<
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
 
 BEGIN_VISP_NAMESPACE
+
+class vpMomentObject;
+
 /*!
  * Adds a moment to the database.
  * \param moment : Moment to add.

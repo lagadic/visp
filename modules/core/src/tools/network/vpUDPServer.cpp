@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,28 @@
  *
  * Description:
  * UDP Server
- *
-*****************************************************************************/
+ */
 
-#include <cstring>
-#include <sstream>
 
-#include <visp3/core/vpConfig.h>
+#include <cstring>                   // for memset, strerror
+#include <iostream>                  // for cerr
+#include <sstream>                   // for basic_ostream, char_traits, basi...
+#include <string>                    // for basic_string, allocator, string
+
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netdb.h>
-#include <unistd.h>
+#include <arpa/inet.h>               // for inet_ntop, htonl, htons
+#include <errno.h>                   // for errno
+#include <netdb.h>                   // for addrinfo, freeaddrinfo, getaddrinfo
+#include <netinet/in.h>              // for sockaddr_in, IPPROTO_UDP, INADDR...
+#include <sys/select.h>              // for select, FD_SET, FD_ZERO, fd_set
+#include <sys/socket.h>              // for AF_INET, SOCK_DGRAM, bind, recvfrom
+#include <sys/time.h>                // for timeval
+#include <unistd.h>                  // for close
 #define DWORD int
 #define WSAGetLastError() strerror(errno)
 #else
@@ -63,7 +68,8 @@
 #include <Ws2tcpip.h>
 #endif
 
-#include <visp3/core/vpUDPServer.h>
+#include <visp3/core/vpUDPServer.h>  // for vpUDPServer, VP_MAX_UDP_PAYLOAD
+#include <visp3/core/vpException.h>  // for vpException
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -181,19 +187,19 @@ void vpUDPServer::init(const std::string &hostname, int port)
     throw vpException(vpException::fatalError, "Error on binding on the server!");
 
   m_clientLength = sizeof(m_clientAddress);
-}
+  }
 
-/*!
-  Receive data sent by a client.
+  /*!
+    Receive data sent by a client.
 
-  \param msg : ASCII message or byte data according to the data sent by the
-  client. \param timeoutMs : Timeout in millisecond (if zero, the call is
-  blocking).
+    \param msg : ASCII message or byte data according to the data sent by the
+    client. \param timeoutMs : Timeout in millisecond (if zero, the call is
+    blocking).
 
-  \return The message length / size of the byte array sent received, or -1 if
-  there is an error, or 0 if there is a timeout. \note See
-  vpUDPClient::receive for an example.
-*/
+    \return The message length / size of the byte array sent received, or -1 if
+    there is an error, or 0 if there is a timeout. \note See
+    vpUDPClient::receive for an example.
+  */
 int vpUDPServer::receive(std::string &msg, int timeoutMs)
 {
   std::string hostInfo = "";
@@ -240,7 +246,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
 #endif
     if (length <= 0) {
       return length < 0 ? -1 : 0;
-    }
+  }
 
     msg = std::string(m_buf, length);
 
@@ -273,9 +279,9 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
     hostInfo = ss.str();
 
     return length;
-  }
+}
 
-  // Timeout
+// Timeout
   return 0;
 }
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,8 @@
  *
  * Description:
  * Draw text in an image.
- *
-*****************************************************************************/
+ */
+
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -57,15 +56,33 @@
  * SOFTWARE.
  */
 
-#include <visp3/core/vpFont.h>
-#include <visp3/core/vpIoException.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <iterator>
-#include "private/Font.hpp"
+#include <assert.h>                    // for assert
+#include <stdint.h>                    // for uint8_t
+#include <string.h>                    // for size_t, memset
+#include <algorithm>                   // for max, min, copy
+#include <fstream>                     // for basic_ifstream, basic_ios, ios
+#include <iterator>                    // for istream_iterator, back_insert_...
+#include <limits>                      // for numeric_limits
+#include <string>                      // for basic_string, string
+#include <vector>                      // for vector
+
+#include <visp3/core/vpConfig.h>       // for BEGIN_VISP_NAMESPACE, END_VISP...
+#include <visp3/core/vpColor.h>        // for vpColor
+#include <visp3/core/vpException.h>    // for vpException
+#include <visp3/core/vpFont.h>         // for vpFont
+#include <visp3/core/vpImage.h>        // for vpImage
+#include <visp3/core/vpImagePoint.h>   // for vpImagePoint
+#include <visp3/core/vpImageTools.h>   // for vpImageTools
+#include <visp3/core/vpIoException.h>  // for vpIoException
+#include <visp3/core/vpIoTools.h>      // for vpIoTools
+#include <visp3/core/vpMath.h>         // for vpMath
+#include <visp3/core/vpRGBa.h>         // for vpRGBa
+#include <visp3/core/vpRect.h>         // for vpRect
+
+#include "private/Font.hpp"            // for Point, operator+, operator-
 
 #define STB_TRUETYPE_IMPLEMENTATION
-#include "private/stb_truetype.h"
+#include "private/stb_truetype.h"      // for stbtt_GetCodepointKernAdvance
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

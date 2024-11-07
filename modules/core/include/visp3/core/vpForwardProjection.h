@@ -39,14 +39,17 @@
 #ifndef VP_FORWARD_PROJECTION_H
 #define VP_FORWARD_PROJECTION_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpTracker.h>
-
-#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpTracker.h>            // for vpTracker
+#include <visp3/core/vpColVector.h>          // for vpColVector
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+template <class Type> class vpImage;
+
 /*!
  * \class vpForwardProjection
  * \brief Class that defines what is a generic geometric feature.

@@ -36,17 +36,23 @@
  * \brief color to depth conversion
  */
 
+#include <cmath>                                // for fabs
+#include <limits>                               // for numeric_limits
+#include <stdint.h>                             // for uint16_t
+
+#include <visp3/core/vpConfig.h>                // for VISP_CXX_STANDARD
 #include <visp3/core/vpColorDepthConversion.h>
-
-// System
-#include <algorithm>
-
-// Core
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint, operator!=
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace

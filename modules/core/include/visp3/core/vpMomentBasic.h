@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,15 @@
   \brief Basic moment descriptor (also called m).
 */
 
-#ifndef _vpMomentBasic_h_
-#define _vpMomentBasic_h_
+#ifndef VP_MOMENT_BASIC_H
+#define VP_MOMENT_BASIC_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMoment.h>
+#include <iosfwd>                 // for ostream
+#include <string>                 // for basic_string, string
+#include <vector>                 // for vector
+
+#include <visp3/core/vpConfig.h>  // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMoment.h>  // for vpMoment
 
 BEGIN_VISP_NAMESPACE
 

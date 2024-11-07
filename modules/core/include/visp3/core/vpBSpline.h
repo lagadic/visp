@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +36,14 @@
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 */
 
-#ifndef vpBSpline_H
-#define vpBSpline_H
+#ifndef VP_BSPLINE_H
+#define VP_BSPLINE_H
 
-#include <visp3/core/vpImagePoint.h>
+#include <list>                       // for list, operator!=, _List_const_i...
+#include <vector>                     // for vector
 
-#include <list>
-#include <vector>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

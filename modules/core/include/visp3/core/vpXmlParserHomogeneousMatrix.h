@@ -42,12 +42,15 @@
 #ifndef VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
 #define VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <visp3/core/vpHomogeneousMatrix.h>
+#include <string>                            // for string
+
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
 
 BEGIN_VISP_NAMESPACE
+
 /*!
   \class vpXmlParserHomogeneousMatrix
 

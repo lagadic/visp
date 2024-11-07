@@ -29,15 +29,16 @@
  *
  * Description:
  * CPU features (hardware capabilities).
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include "x86/cpu_x86.h"
+#include <stddef.h>                    // for size_t
+#include <visp3/core/vpConfig.h>       // for VISP_HAVE_SIMDLIB, BEGIN_VISP_...
+
+#include "x86/cpu_x86.h"               // for cpuX86
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>              // for SimdCpuInfo, SimdCpuInfoCacheL1
 #endif
-#include <visp3/core/vpCPUFeatures.h>
+#include <visp3/core/vpCPUFeatures.h>  // for checkAVX, checkAVX2, checkNeon
 
 BEGIN_VISP_NAMESPACE
 namespace vpCPUFeatures

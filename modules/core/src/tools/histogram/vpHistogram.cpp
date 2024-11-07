@@ -29,8 +29,7 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogram.cpp
@@ -38,17 +37,37 @@
 
   Class vpHistogram allows to calculate and manipulate gray level
   image histograms.
-
 */
 
-#include <stdlib.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpHistogram.h>
-#include <visp3/core/vpImageConvert.h>
+#include <stdio.h>                         // for fclose, fopen, fprintf, FILE
+#include <math.h>                          // for abs
+#include <stdlib.h>                        // for abs
+#include <string.h>                        // for memcpy, memset, size_t
+#include <iostream>                        // for basic_ostream, operator<<
+#include <limits>                          // for numeric_limits
+#include <list>                            // for list, _List_const_iterator
+#include <string>                          // for char_traits, basic_string
+#include <vector>                          // for vector
+
+#include <visp3/core/vpConfig.h>           // for VISP_HAVE_THREADS, BEGIN_V...
+#include <visp3/core/vpDisplay.h>          // for vpDisplay
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpHistogram.h>        // for vpHistogram
+#include <visp3/core/vpHistogramPeak.h>    // for vpHistogramPeak
+#include <visp3/core/vpHistogramValey.h>   // for vpHistogramValey
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImageException.h>   // for vpImageException
+#include <visp3/core/vpImagePoint.h>       // for vpImagePoint
+#include <visp3/core/vpImage_lut.h>        // for vpImage<>::performLut
+#include <visp3/core/vpImage_operators.h>  // for vpImage::operator=
+#include <visp3/core/vpMath.h>             // for vpMath
 
 BEGIN_VISP_NAMESPACE
+
+class vpColor;
+
 #if defined(VISP_HAVE_THREADS)
-#include <thread>
+#include <thread>                          // for thread
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace

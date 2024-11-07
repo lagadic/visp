@@ -31,7 +31,18 @@
  * Linear Programming
  */
 
-#include <visp3/core/vpLinProg.h>
+#include <algorithm>                 // for find_if, max, min_element
+#include <cmath>                     // for abs
+#include <iostream>                  // for basic_ostream, char_traits, oper...
+#include <utility>                   // for pair, swap
+#include <vector>                    // for vector
+
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpLinProg.h>    // for vpLinProg
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
 
 BEGIN_VISP_NAMESPACE
 /*!

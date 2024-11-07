@@ -31,11 +31,13 @@
  * Mask on a vpMatrix .
  */
 
-#include <stdlib.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpSubMatrix.h>
+#include <stdlib.h>                        // for free, malloc
+
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#include <visp3/core/vpSubMatrix.h>        // for vpSubMatrix
+#include <visp3/core/vpArray2D.h>          // for vpArray2D
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) { }

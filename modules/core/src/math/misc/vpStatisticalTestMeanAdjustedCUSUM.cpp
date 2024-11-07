@@ -36,7 +36,11 @@
 * mean drift test.
 */
 
+#include <algorithm>                               // for max
+
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpStatisticalTestMeanAdjustedCUSUM.h>
+#include <visp3/core/vpStatisticalTestAbstract.h>  // for vpStatisticalTestA...
 
 BEGIN_VISP_NAMESPACE
 void vpStatisticalTestMeanAdjustedCUSUM::computeDeltaAndLimits()

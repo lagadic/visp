@@ -29,21 +29,35 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_opencv.cpp
 */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageConvert.h>
+#include <stdint.h>                      // for uint16_t, uint8_t
+#include <string.h>                      // for memcpy, size_t
+#include <visp3/core/vpConfig.h>         // for VISP_HAVE_SIMDLIB, BEGIN_VIS...
+#include <visp3/core/vpImageConvert.h>   // for vpImageConvert
+#include <visp3/core/vpException.h>      // for vpException
+#include <visp3/core/vpImage.h>          // for vpImage
+#include <visp3/core/vpRGBa.h>           // for vpRGBa
+#include <visp3/core/vpRGBf.h>           // for vpRGBf
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>                // for SimdGrayToBgra, SimdRgbToBgra
 #endif
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#if defined(VISP_HAVE_OPENCV)
+
+#include <opencv2/opencv_modules.hpp>    // for HAVE_OPENCV_IMGPROC
+#if defined(HAVE_OPENCV_IMGPROC)
+
+#include <opencv2/core/hal/interface.h>  // for CV_8UC1, CV_32FC1, CV_8UC4
+#include <opencv2/core/mat.hpp>          // for Mat, MatStep, _InputArray
+#include <opencv2/core/mat.inl.hpp>      // for Mat::type, Mat::at, Mat::isC...
+#include <opencv2/core/matx.hpp>         // for Vec3b, Vec3f, Vec4b
+#include <opencv2/imgproc.hpp>           // for cvtColor, ColorConversionCodes
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -548,4 +562,5 @@ void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
 
 END_VISP_NAMESPACE
 
+#endif
 #endif

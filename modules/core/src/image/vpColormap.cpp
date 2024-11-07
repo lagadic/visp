@@ -33,6 +33,11 @@
  */
 
 #include <visp3/core/vpColormap.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImage_getters.h>
+#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpRGBf.h>
 
 namespace
 {

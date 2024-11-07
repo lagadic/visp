@@ -30,8 +30,7 @@
  * Description:
  * Rzyx angle parameterization for the rotation.
  * Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRzyxVector.cpp
@@ -40,8 +39,20 @@
 
 */
 
-#include <math.h>
-#include <visp3/core/vpRzyxVector.h>
+#include <math.h>                         // for atan2, fabs, cos, sin
+#include <algorithm>                      // for copy
+#include <initializer_list>               // for initializer_list
+#include <vector>                         // for vector
+
+#include <visp3/core/vpRzyxVector.h>      // for vpRzyxVector
+#include <visp3/core/vpArray2D.h>         // for vpArray2D
+#include <visp3/core/vpColVector.h>       // for vpColVector
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpRotationMatrix.h>  // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>  // for vpRotationVector
+
+class vpThetaUVector;
 
 BEGIN_VISP_NAMESPACE
 /*! Default constructor that initialize all the 3 angles to zero. */

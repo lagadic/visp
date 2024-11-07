@@ -35,16 +35,16 @@
   \file vpRobust.cpp
 */
 
-#include <algorithm> // std::swap
-#include <cmath>     // std::fabs
-#include <limits>    // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <string.h>                  // for memcpy
+#include <cmath>                     // for fabs, ceil, erfc, sqrt
+#include <iostream>                  // for char_traits, basic_ostream, basi...
+#include <limits>                    // for numeric_limits
+#include <utility>                   // for move, swap
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRobust.h>
+#include <visp3/core/vpConfig.h>     // for VISP_BUILD_DEPRECATED_FUNCTIONS
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpRobust.h>     // for vpRobust, vpRobust::CAUCHY, vpRo...
 
 BEGIN_VISP_NAMESPACE
 /*!

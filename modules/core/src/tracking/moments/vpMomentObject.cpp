@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,26 +29,28 @@
  *
  * Description:
  * Object input structure used by moments.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
-#include <stdexcept>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPixelMeterConversion.h>
+#include <cassert>                              // for assert
+#include <cmath>                                // for fabs, pow
+#include <limits>                               // for numeric_limits
+#include <ostream>                              // for basic_ostream, char_t...
+#include <vector>                               // for vector
 
-#include <cmath>
-#include <limits>
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMomentObject.h>          // for vpMomentObject, vpMom...
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpPoint.h>                 // for vpPoint
 
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>
 #endif
-#include <cassert>
 
 BEGIN_VISP_NAMESPACE
 /*!

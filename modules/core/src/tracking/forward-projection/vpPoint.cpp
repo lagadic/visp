@@ -29,18 +29,31 @@
  *
  * Description:
  * Point feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPoint.cpp
   \brief Class that defines what is a 3D point.
 */
 
-#include <visp3/core/vpFeatureDisplay.h>
-#include <visp3/core/vpPoint.h>
+#include <ostream>                           // for basic_ostream, operator<<
+#include <vector>                            // for vector
+
+#include <visp3/core/vpFeatureDisplay.h>     // for vpFeatureDisplay
+#include <visp3/core/vpPoint.h>              // for vpPoint, operator<<
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
+
 void vpPoint::init()
 {
   const unsigned int index_2 = 2;

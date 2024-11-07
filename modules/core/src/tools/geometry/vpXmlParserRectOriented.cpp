@@ -36,14 +36,20 @@
   \brief Definition of the vpXmlParserRectOriented class member functions.
 */
 
-#include <visp3/core/vpXmlParserRectOriented.h>
-
-#include <map>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
 
-#include <visp3/core/vpIoTools.h>
+#include <map>                                   // for map, operator!=, _Rb...
+#include <pugixml.hpp>                           // for xml_node, xml_text
+#include <string>                                // for basic_string, operator<
+#include <utility>                               // for pair
+
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpImagePoint.h>             // for vpImagePoint
+#include <visp3/core/vpIoTools.h>                // for vpIoTools
+#include <visp3/core/vpRectOriented.h>           // for vpRectOriented
+#include <visp3/core/vpXmlParserRectOriented.h>  // for vpXmlParserRectOriented
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

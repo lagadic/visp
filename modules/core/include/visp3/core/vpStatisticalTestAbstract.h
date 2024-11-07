@@ -34,15 +34,11 @@
  * \brief Base class for Statistical Process Control methods implementation.
  */
 
-#ifndef _vpStatisticalTestAbstract_h_
-#define _vpStatisticalTestAbstract_h_
+#ifndef VP_STATISTICAL_TEST_ABSTRACT_H
+#define VP_STATISTICAL_TEST_ABSTRACT_H
 
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <string>
-
-#include <visp3/core/vpConfig.h>
+#include <string>                 // for basic_string, string
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 BEGIN_VISP_NAMESPACE
 /**

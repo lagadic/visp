@@ -34,11 +34,36 @@
 #ifndef VP_EIGEN_CONVERSION_H
 #define VP_EIGEN_CONVERSION_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                      // for VISP_EXPORT
+
 #ifdef VISP_HAVE_EIGEN3
-#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/src/Core/DenseBase.h>                 // for DenseBase<>::Co...
+#include <Eigen/src/Core/DenseCoeffsBase.h>           // for inner_stride_at...
+#include <Eigen/src/Core/Map.h>                       // for traits<>::Flags
+#include <Eigen/src/Core/MapBase.h>                   // for MapBase<>::Size...
+#include <Eigen/src/Core/Matrix.h>                    // for traits<>::ColsA...
+#include <Eigen/src/Core/NumTraits.h>                 // for GenericNumTrait...
+#include <Eigen/src/Core/Stride.h>                    // for Stride, Stride<...
+#include <Eigen/src/Core/arch/NEON/PacketMath.h>      // for packet_traits<>...
+#include <Eigen/src/Core/util/Constants.h>            // for StorageOptions
+#include <Eigen/src/Core/util/ForwardDeclarations.h>  // for accessors_level...
+#include <Eigen/src/Core/util/Meta.h>                 // for is_arithmetic<>...
+#include <Eigen/src/Core/util/XprHelper.h>            // for is_lvalue<>::value
+#include <Eigen/src/Geometry/AngleAxis.h>             // for AngleAxis
+#include <Eigen/src/Geometry/RotationBase.h>          // for RotationBase
+#include <Eigen/src/Geometry/Quaternion.h>            // for Quaternion
+
+namespace Eigen { template <typename Derived> class MatrixBase; }
+namespace Eigen { template <typename _Scalar> class AngleAxis; }
 #endif
-#include <visp3/core/vpMatrix.h>
+
+#include <visp3/core/vpMatrix.h>                      // for vpMatrix, opera...
+#include <visp3/core/vpColVector.h>                   // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>           // for vpHomogeneousMa...
+#include <visp3/core/vpQuaternionVector.h>            // for vpQuaternionVector
+#include <visp3/core/vpRowVector.h>                   // for vpRowVector
+#include <visp3/core/vpThetaUVector.h>                // for vpThetaUVector
 
 namespace VISP_NAMESPACE_NAME
 {

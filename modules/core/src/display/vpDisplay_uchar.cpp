@@ -29,18 +29,35 @@
  *
  * Description:
  * Display implementation.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpDisplay.h>
+#include <stddef.h>                    // for size_t
+#include <cmath>                       // for fabs, M_PI
+#include <limits>                      // for numeric_limits
+#include <list>                        // for list, _List_const_iterator
+#include <string>                      // for string
+#include <vector>                      // for vector
 
-#include "vpDisplay_impl.h"
+#include <visp3/core/vpConfig.h>       // for BEGIN_VISP_NAMESPACE, END_VISP...
+#include <visp3/core/vpDisplay.h>      // for vpDisplay
+#include <visp3/core/vpImage.h>        // for vpImage
+#include <visp3/core/vpImageCircle.h>  // for vpImageCircle
+#include <visp3/core/vpImagePoint.h>   // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>  // for vpMouseButton
+#include "vpDisplay_impl.h"            // for vp_display_display_line, vp_di...
 
 //************************************************************************
 // Modifications done in this file should be reported in all vpDisplay_*.cpp
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpHomogeneousMatrix;
+class vpPolygon;
+class vpRect;
+
 /*!
   Close the display attached to I.
 */

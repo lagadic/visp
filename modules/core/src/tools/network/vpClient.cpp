@@ -33,6 +33,9 @@
 
 #include <visp3/core/vpConfig.h>
 
+// inet_ntop() not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
+
 // Specific case for UWP to introduce a workaround
 // error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
 #if defined(WINRT) || defined(_WIN32)
@@ -41,11 +44,22 @@
 #endif
 #endif
 
-// inet_ntop() not supported on win XP
-#ifdef VISP_HAVE_FUNC_INET_NTOP
+#include <iostream>                // for basic_ostream, operator<<, basic_ios
+#include <string>                  // for basic_string, char_traits, string
+#include <vector>                  // for vector
 
-#include <visp3/core/vpClient.h>
-#include <visp3/core/vpDebug.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <arpa/inet.h>             // for htons, inet_addr, inet_ntoa
+#include <netdb.h>                 // for hostent, gethostbyname, h_addr
+#include <netinet/in.h>            // for sockaddr_in, in_addr
+#include <string.h>                // for memset, memmove
+#include <sys/socket.h>            // for AF_INET, shutdown, socket, SHUT_RDWR
+#endif
+
+#include <visp3/core/vpDebug.h>    // for vpERROR_TRACE
+#include <visp3/core/vpNetwork.h>  // for vpNetwork
+#include <visp3/core/vpTime.h>     // for wait
+#include <visp3/core/vpClient.h>   // for vpClient
 
 BEGIN_VISP_NAMESPACE
 vpClient::vpClient() : vpNetwork(), m_numberOfAttempts(0) { }
@@ -101,18 +115,18 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
   return connectServer(serv);
-  }
+}
 
-  /*!
-    Connect to the server represented by the given ip, and at a given port.
+/*!
+  Connect to the server represented by the given ip, and at a given port.
 
-    \sa vpClient::connectToHostname()
+  \sa vpClient::connectToHostname()
 
-    \param ip : IP of the server.
-    \param port_serv : Port used for the connection.
+  \param ip : IP of the server.
+  \param port_serv : Port used for the connection.
 
-    \return True if the connection has been etablished, false otherwise.
-  */
+  \return True if the connection has been etablished, false otherwise.
+*/
 bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
 {
   vpNetwork::vpReceptor serv;
@@ -134,13 +148,13 @@ bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
   serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
 
   return connectServer(serv);
-  }
+}
 
-  /*!
-    Deconnect from the server at a specific index.
+/*!
+  Deconnect from the server at a specific index.
 
-    \param index : Index of the server.
-  */
+  \param index : Index of the server.
+*/
 void vpClient::deconnect(const unsigned int &index)
 {
   if (index < receptor_list.size()) {

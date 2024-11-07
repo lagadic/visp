@@ -29,22 +29,26 @@
  *
  * Description:
  * Time management and measurement.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpTime.cpp
   \brief Time management and measurement
 */
+#include <string>                 // for basic_string, string
 
-#include <ctime>
-
-#include <visp3/core/vpTime.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
+#include <visp3/core/vpTime.h>    // for vpChrono, wait, getDateTime, getMin...
 
 // https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                                                       \
     (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
 #define USE_CXX11_CHRONO 1
+
+#include <chrono>                 // for duration, system_clock, operator-
+#include <ratio>                  // for milli, micro
+#include <ctime>                  // for localtime, strftime, time
+
 #else
 #define USE_CXX11_CHRONO 0
 #endif
@@ -52,8 +56,8 @@
 // Unix depend version
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <sys/time.h>
-#include <unistd.h>
+#include <sys/types.h>            // for useconds_t, time_t
+#include <unistd.h>               // for usleep
 #elif defined(_WIN32)
 //#include <winbase.h>
 #include <windows.h>

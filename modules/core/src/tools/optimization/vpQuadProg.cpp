@@ -31,9 +31,21 @@
  * Quadratic Programming
  */
 
-#include <algorithm>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpQuadProg.h>
+#include <math.h>                          // for sqrt
+#include <algorithm>                       // for find
+#include <iostream>                        // for basic_ostream, operator<<
+#include <string>                          // for char_traits, basic_string
+#include <vector>                          // for vector
+
+#include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#include <visp3/core/vpQuadProg.h>         // for vpQuadProg
+#include <visp3/core/vpArray2D.h>          // for vpArray2D
+#include <visp3/core/vpColVector.h>        // for vpColVector, operator*
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpLinProg.h>          // for vpLinProg
+#include <visp3/core/vpMatrix.h>           // for vpMatrix, operator*
+#include <visp3/core/vpRowVector.h>        // for vpRowVector
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 BEGIN_VISP_NAMESPACE

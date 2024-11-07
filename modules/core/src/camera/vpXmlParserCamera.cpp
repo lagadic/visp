@@ -29,8 +29,7 @@
  *
  * Description:
  * XML parser to load and save camera intrinsic parameters.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpXmlParserCamera.cpp
@@ -38,17 +37,24 @@
   Class vpXmlParserCamera allowed to load and save intrinsic camera parameters
 */
 
-#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
 
-/* --------------------------------------------------------------------------
- */
- /* --- LABEL XML ------------------------------------------------------------
-  */
-  /* --------------------------------------------------------------------------
-   */
+#include <stdlib.h>                         // for abs
+#include <math.h>                           // for abs
+#include <string.h>                         // for strcmp
+#include <iostream>                         // for basic_ostream, operator<<
+#include <pugixml.hpp>                      // for xml_node, xml_text, xml_n...
+#include <string>                           // for basic_string, string, ope...
+#include <vector>                           // for vector
+
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters, vpCam...
+#include <visp3/core/vpXmlParserCamera.h>   // for vpXmlParserCamera
+
+/* -------------------------------------------------------------------------- */
+/* --- LABEL XML ------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 #define LABEL_XML_ROOT "root"
 #define LABEL_XML_CAMERA "camera"

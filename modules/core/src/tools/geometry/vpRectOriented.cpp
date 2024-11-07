@@ -30,9 +30,15 @@
  * Description:
  * Defines a (possibly oriented) rectangle in the plane.
  */
-#include <visp3/core/vpRectOriented.h>
 
-#include <cmath>
+#include <cmath>                      // for cos, sin, sqrt, fabs, atan2
+#include <limits>                     // for numeric_limits
+
+#include <visp3/core/vpConfig.h>      // for VISP_CXX_STANDARD, BEGIN_VISP_N...
+#include <visp3/core/vpRectOriented.h>
+#include <visp3/core/vpException.h>   // for vpException
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint, operator-
+#include <visp3/core/vpRect.h>        // for vpRect
 
 BEGIN_VISP_NAMESPACE
 /// Default constructor.

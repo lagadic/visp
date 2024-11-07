@@ -31,7 +31,7 @@
  * TCP Server
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
 
 // Specific case for UWP to introduce a workaround
 // error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
@@ -44,10 +44,25 @@
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
-#include <sstream>
+#include <iostream>                // for cout
+#include <sstream>                 // for basic_ostream, char_traits, basic_...
+#include <string>                  // for basic_string, allocator, string
+#include <vector>                  // for vector
 
-#include <visp3/core/vpServer.h>
-#include <visp3/core/vpDebug.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <arpa/inet.h>             // for inet_ntoa, htons, inet_addr
+#include <netinet/in.h>            // for sockaddr_in, in_addr, INADDR_ANY
+#include <stdio.h>                 // for printf
+#include <sys/select.h>            // for FD_ISSET, FD_SET, select, FD_ZERO
+#include <sys/socket.h>            // for AF_INET, socket, SOCK_STREAM, accept
+#include <sys/time.h>              // for timeval
+#include <sys/types.h>             // for ssize_t
+#include <unistd.h>                // for close
+#endif
+
+#include <visp3/core/vpNetwork.h>  // for vpNetwork
+#include <visp3/core/vpDebug.h>    // for vpERROR_TRACE
+#include <visp3/core/vpServer.h>   // for vpServer
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro

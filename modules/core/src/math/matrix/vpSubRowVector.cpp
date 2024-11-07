@@ -31,10 +31,14 @@
  * Mask on a vpRowVector .
  */
 
-#include <stdlib.h>
+#include <stdlib.h>                     // for free, malloc
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpSubRowVector.h>
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
+#include <visp3/core/vpException.h>     // for vpException
+#include <visp3/core/vpSubRowVector.h>  // for vpSubRowVector
+#include <visp3/core/vpArray2D.h>       // for vpArray2D
+#include <visp3/core/vpMatrix.h>        // for vpMatrix
+#include <visp3/core/vpRowVector.h>     // for vpRowVector
 
 BEGIN_VISP_NAMESPACE
 //! Default constructor that creates an empty vector.

@@ -31,10 +31,28 @@
  * Image Canny filtering.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpCannyEdgeDetection.h>
+#include <algorithm>                          // for max
+#include <string>                             // for basic_string, string
+#include <sstream>                            // for basic_ostream, basic_st...
+
+#include <visp3/core/vpConfig.h>              // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpCannyEdgeDetection.h>  // for vpCannyEdgeDetection
+#include <visp3/core/vpException.h>           // for vpException
+#include <visp3/core/vpImage.h>               // for vpImage
+#include <visp3/core/vpImageConvert.h>        // for vpImageConvert
+#include <visp3/core/vpImage_operators.h>     // for vpImage::operator=
+#include <visp3/core/vpImageFilter.h>         // for vpImageFilter
+#include <visp3/core/vpIoTools.h>             // for vpIoTools
+
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/core.hpp>                   // for convertScaleAbs, addWei...
+#include <opencv2/core/hal/interface.h>       // for CV_8U
+#include <opencv2/core/mat.hpp>               // for Mat, _InputArray, _Outp...
+#include <opencv2/core/mat.inl.hpp>           // for _InputArray::_InputArray
+#include <opencv2/imgproc.hpp>                // for Canny, calcHist
+#include <opencv2/opencv_modules.hpp>         // for HAVE_OPENCV_IMGPROC
+#endif
+
 
 BEGIN_VISP_NAMESPACE
 

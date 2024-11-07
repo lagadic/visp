@@ -31,23 +31,27 @@
  * Matrix Cholesky decomposition.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <algorithm>                                  // for min
+#include <cstring>                                    // for memcpy, size_t
+#include <new>                                        // for operator new
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
+#include <visp3/core/vpConfig.h>                      // for VISP_HAVE_GSL
+#include <visp3/core/vpArray2D.h>                     // for vpArray2D
+#include <visp3/core/vpException.h>                   // for vpException
+#include <visp3/core/vpMatrix.h>                      // for vpMatrix
+#include <visp3/core/vpMatrixException.h>             // for vpMatrixException
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
-#include <opencv2/core/core.hpp>
+#include <opencv2/core/base.hpp>                      // for Cholesky, Decom...
+#include <opencv2/core/hal/interface.h>               // for CV_64F
+#include <opencv2/core/mat.hpp>                       // for Mat, MatExpr
+#include <opencv2/core/mat.inl.hpp>                   // for Mat::ptr, MatEx...
 #endif
 
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
-#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_linalg.h>                           // for gsl_linalg_chol...
+#include <gsl/gsl_matrix_double.h>                    // for gsl_matrix
 #endif
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>
@@ -64,7 +68,7 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
-#include <Eigen/Dense>
+#include <Eigen/Cholesky>
 #endif
 
 BEGIN_VISP_NAMESPACE

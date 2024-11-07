@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,19 +30,20 @@
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
  * estimation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpScale.cpp
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <stdlib.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpScale.h>
+#include <cmath>                     // for fabs, M_PI
+#include <limits>                    // for numeric_limits
+
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpScale.h>      // for vpScale
+#include <visp3/core/vpException.h>  // for vpException
 
 #define DEBUG_LEVEL2 0
 

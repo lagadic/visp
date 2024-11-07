@@ -31,9 +31,24 @@
  * Io tools dedicated to npy.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpEndian.h>
-#include <visp3/core/vpIoTools.h>
+#include <stdint.h>                  // for int16_t, int32_t, uint16_t, uint...
+#include <stdlib.h>                  // for size_t, atof, atoi
+#include <algorithm>                 // for find_if, transform
+#include <cctype>                    // for isspace, tolower
+#include <cmath>                     // for M_PI, fabs
+#include <fstream>                   // for basic_ostream, basic_ifstream
+#include <iostream>                  // for cout
+#include <limits>                    // for numeric_limits
+#include <sstream>                   // for basic_stringstream, basic_istrin...
+#include <string>                    // for basic_string, char_traits, alloc...
+#include <vector>                    // for vector
+
+#include <visp3/core/vpConfig.h>     // for VISP_CXX_STANDARD, VISP_CXX_STAN...
+#include <visp3/core/vpIoTools.h>    // for vpIoTools
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpColor.h>      // for vpColor
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMath.h>       // for vpMath
 
 BEGIN_VISP_NAMESPACE
 

@@ -29,21 +29,24 @@
  *
  * Description:
  * Image display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplay.cpp
   \brief Generic class for image display.
 */
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayException.h>
-#include <visp3/core/vpImageConvert.h>
+#include <math.h>                          // for ceil
+#include <algorithm>                       // for max
+#include <iostream>                        // for basic_ostream, char_traits
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpDisplay.h>          // for vpDisplay, vpDisplay::SCAL...
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImageConvert.h>     // for vpImageConvert
+#include <visp3/core/vpImage_operators.h>  // for vpImage::operator=
+
+class vpRGBa;
 
 BEGIN_VISP_NAMESPACE
 /*!

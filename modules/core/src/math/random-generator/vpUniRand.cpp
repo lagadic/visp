@@ -29,8 +29,8 @@
  *
  * Description:
  * Pseudo random number generator.
- *
-*****************************************************************************/
+ */
+
 /*
  * PCG Random Number Generation for C.
  *
@@ -65,8 +65,10 @@
 
 #define __STDC_LIMIT_MACROS
 
-#include <stdint.h>
-#include <visp3/core/vpUniRand.h>
+#include <stdint.h>                // for uint32_t, uint64_t, UINT32_MAX
+
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
+#include <visp3/core/vpUniRand.h>  // for vpUniRand
 
 BEGIN_VISP_NAMESPACE
 vpUniRand::vpUniRand()

@@ -40,14 +40,14 @@
 #define VP_IMAGE_CIRCLE_H
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRect.h>
 
 #if defined(VISP_HAVE_OPENCV)
-#include <opencv2/core/core.hpp>
+#include <opencv2/core/matx.hpp>       // for Vec3f
 #endif
+
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 /**

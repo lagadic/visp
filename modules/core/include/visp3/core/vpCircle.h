@@ -39,13 +39,18 @@
 #ifndef VP_CIRCLE_H
 #define VP_CIRCLE_H
 
-#include <math.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpForwardProjection.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpConfig.h>             // for VP_OVERRIDE, VP_DEPRECATED
+#include <visp3/core/vpForwardProjection.h>  // for vpForwardProjection
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
  * \class vpCircle
  * \ingroup group_core_geometry

@@ -48,25 +48,29 @@
 // should be done before any other includes; in vpConfig.h there is cstdlib that is included), the other way
 // that was retained is to add to vpIoTools.cpp COMPILE_DEFINTIONS _FILE_OFFSET_BITS=64 (see CMakeLists.txt)
 
-#include <algorithm>
-#include <cctype>
-#include <cmath>
-#include <errno.h>
-#include <fcntl.h>
-#include <fstream>
-#include <functional>
-#include <limits> // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <visp3/core/vpEndian.h>
-#include <visp3/core/vpIoException.h>
-#include <visp3/core/vpIoTools.h>
+#include <errno.h>                     // for errno, EEXIST, ENAMETOOLONG
+#include <limits.h>                    // for PATH_MAX
+#include <stdio.h>                     // for size_t, FILENAME_MAX, remove
+#include <stdlib.h>                    // for atoi, free, system, getenv
+#include <string.h>                    // for strcpy
+#include <sys/stat.h>                  // for stat, mkdir, S_IRUSR, mkfifo
+#include <sys/types.h>                 // for mode_t
+#include <algorithm>                   // for max, sort
+#include <cctype>                      // for tolower, toupper
+#include <iostream>                    // for basic_ostream, operator<<, str...
+#include <sstream>                     // for basic_stringstream, basic_istr...
+#include <string>                      // for basic_string, string, char_traits
+#include <utility>                     // for pair
+#include <vector>                      // for vector
+
+#include <visp3/core/vpConfig.h>       // for VISP_CXX_STANDARD, VISP_CXX_ST...
+#include <visp3/core/vpException.h>    // for vpException
+#include <visp3/core/vpIoException.h>  // for vpIoException
+#include <visp3/core/vpIoTools.h>      // for vpIoTools
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <dirent.h>
-#include <unistd.h>
+#include <dirent.h>                    // for scandir, dirent
+#include <unistd.h>                    // for mkdtemp
 #elif defined(_WIN32)
 #include <direct.h>
 #include <windows.h>
@@ -75,7 +79,7 @@
 #ifdef __ANDROID__
 // Like IOS, wordexp.cpp is not defined for Android
 #else
-#include <wordexp.h>
+#include <wordexp.h>                   // for wordexp, wordfree, wordexp_t
 #endif
 #endif
 
@@ -509,11 +513,11 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
         if (errno != EEXIST) {
           return -1;
         }
-    }
+      }
       cpy_path.erase(0, pos + 1);
-  }
+    }
     pos = cpy_path.find(vpIoTools::separator);
-}
+  }
 
   if (!cpy_path.empty()) {
     sub_path += cpy_path;
@@ -527,7 +531,7 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
       if (errno != EEXIST) {
         return -1;
       }
-  }
+    }
   }
 
   return 0;
@@ -579,7 +583,7 @@ void vpIoTools::makeDirectory(const std::string &dirname)
     if (vpIoTools::mkdir_p(v_dirname, 0755) != 0) {
       throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
     }
-}
+  }
 
   if (checkDirectory(dirname) == false) {
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
@@ -803,7 +807,7 @@ bool vpIoTools::checkFilename(const std::string &filename)
 #endif
   {
     return false;
-}
+  }
   if ((stbuf.st_mode & S_IFREG) == 0) {
     return false;
   }
@@ -906,18 +910,18 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     std::cout << "Cannot copy: " << src << " in " << dst << std::endl;
     return false;
   }
-  }
+}
 
-  /*!
+/*!
 
-    Remove a file or a directory.
+  Remove a file or a directory.
 
-    \param file_or_dir : File name or directory to remove.
+  \param file_or_dir : File name or directory to remove.
 
-    \return true if the file or the directory was removed, false otherwise.
+  \return true if the file or the directory was removed, false otherwise.
 
-    \sa makeDirectory(), makeTempDirectory()
-  */
+  \sa makeDirectory(), makeTempDirectory()
+*/
 bool vpIoTools::remove(const std::string &file_or_dir)
 {
   // Check if we have to consider a file or a directory
@@ -971,17 +975,17 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     std::cout << "Cannot remove: " << file_or_dir << std::endl;
     return false;
   }
-  }
+}
 
-  /*!
+/*!
 
-    Rename an existing file \e oldfilename in \e newfilename.
+  Rename an existing file \e oldfilename in \e newfilename.
 
-    \param oldfilename : File to rename.
-    \param newfilename : New file name.
+  \param oldfilename : File to rename.
+  \param newfilename : New file name.
 
-    \return true if the file was renamed, false otherwise.
-  */
+  \return true if the file was renamed, false otherwise.
+*/
 bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
 {
   if (::rename(oldfilename.c_str(), newfilename.c_str()) != 0) {

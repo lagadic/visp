@@ -31,19 +31,24 @@
  * Descriptor for various invariants used to drive space rotations around X and
  * Y axis.
  */
+
 /*!
   \file vpMomentCInvariant.h
   \brief Descriptor for various invariants used to drive space rotations around
   X and Y axis.
 */
-#ifndef _vpMomentCInvariant_h_
-#define _vpMomentCInvariant_h_
+#ifndef VP_MOMENT_CINVARIANT_H
+#define VP_MOMENT_CINVARIANT_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMoment.h>
-#include <visp3/core/vpMomentDatabase.h>
+#include <iosfwd>                 // for ostream
+#include <string>                 // for basic_string, string
+#include <vector>                 // for vector
+
+#include <visp3/core/vpConfig.h>  // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMoment.h>  // for vpMoment
 
 BEGIN_VISP_NAMESPACE
+
 class vpMomentCentered;
 class vpMomentBasic;
 

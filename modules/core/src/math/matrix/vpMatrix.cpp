@@ -36,35 +36,36 @@
   \brief Definition of the vpMatrix class
 */
 
-#include <algorithm>
-#include <assert.h>
-#include <cmath> // std::fabs
-#include <fstream>
-#include <limits> // numeric_limits
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
-#include <vector>
+#include <string.h>                  // for memcpy, size_t
+#include <algorithm>                 // for min
+#include <cmath>                     // for fabs, sqrt
+#include <initializer_list>          // for initializer_list
+#include <iostream>                  // for cerr
+#include <limits>                    // for numeric_limits
+#include <sstream>                   // for basic_ostream, operator<<, basic...
+#include <string>                    // for basic_string, char_traits, alloc...
+#include <vector>                    // for vector
 
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpTranslationVector.h>
+#include <visp3/core/vpConfig.h>     // for VISP_HAVE_GSL, VISP_HAVE_LAPACK
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpMatrix.h>     // for vpMatrix, vpMatrix::LU_DECOMPOSI...
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
 
-#if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
-#endif
+class vpForceTwistMatrix;
+class vpHomogeneousMatrix;
+class vpRotationMatrix;
+class vpTranslationVector;
+class vpVelocityTwistMatrix;
 
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_math.h>
+#include <gsl/gsl_eigen.h>           // for gsl_eigen_symmv, gsl_eigen_symmv...
+#include <gsl/gsl_linalg.h>          // for gsl_linalg_exponential_ss
+#include <gsl/gsl_matrix_double.h>   // for gsl_matrix_alloc, gsl_matrix_free
+#include <gsl/gsl_vector_double.h>   // for gsl_vector_alloc, gsl_vector_free
 #elif defined(VISP_HAVE_MKL)
 #include <mkl.h>
 #endif

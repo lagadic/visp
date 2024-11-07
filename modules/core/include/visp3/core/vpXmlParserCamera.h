@@ -44,6 +44,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PUGIXML)
+
+#include <string>
 #include <visp3/core/vpCameraParameters.h>
 
 BEGIN_VISP_NAMESPACE

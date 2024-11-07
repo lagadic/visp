@@ -31,23 +31,23 @@
  * Serial communication.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #if !defined(_WIN32)
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <termios.h>
-#include <unistd.h>
+#include <errno.h>                   // for EINTR, EMFILE, ENFILE, errno
+#include <fcntl.h>                   // for open, O_NOCTTY, O_NONBLOCK, O_RDWR
+#include <stdio.h>                   // for size_t
+#include <sys/ioctl.h>               // for TIOCINQ, ioctl
+#include <sys/select.h>              // for fd_set, select, FD_SET, FD_SETSIZE
+#include <sys/time.h>                // for timeval
+#include <sys/types.h>               // for ssize_t
+#include <termios.h>                 // for termios, tcflag_t, B0, B110, B1200
+#include <unistd.h>                  // for close, read, write
+#include <string>                    // for basic_string, string, operator==
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpSerial.h>
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpSerial.h>     // for vpSerial, vpSerial::eightbits
 
 #ifndef TIOCINQ
 #ifdef FIONREAD

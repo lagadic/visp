@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,24 @@
  *
  * Description:
  * Tool to automatize the creation of xml parser based on the libXML2.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpXmlParser.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #ifdef VISP_HAVE_XML2
 
-#include <libxml/parser.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
+#include <stdio.h>                   // for snprintf, remove
+#include <stdlib.h>                  // for strtod, strtol, strtoul, strtof
+#include <iostream>                  // for basic_ostream, cerr, endl
+#include <string>                    // for basic_string, operator+, char_tr...
 
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <typeinfo>
+#include <libxml/parser.h>           // for xmlNodePtr, _xmlNode, xmlAddChild
+#include <libxml/globals.h>          // for xmlFree
+#include <libxml/xmlstring.h>        // for xmlChar
+
+#include <visp3/core/vpDebug.h>      // for vpERROR_TRACE
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpXmlParser.h>  // for vpXmlParser
 
 BEGIN_VISP_NAMESPACE
 /*!

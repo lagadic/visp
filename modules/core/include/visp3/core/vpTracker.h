@@ -39,10 +39,8 @@
 #ifndef VP_TRACKER_H
 #define VP_TRACKER_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,14 +29,25 @@
  *
  * Description:
  * Pre-filled moment database with all commonly used moments.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpMomentObject.h>
+#include <iostream>                                      // for basic_ostream
+#include <string>                                        // for char_traits
+#include <vector>                                        // for vector
+
+#include <visp3/core/vpException.h>                      // for vpException
+#include <visp3/core/vpMomentAlpha.h>                    // for vpMomentAlpha
+#include <visp3/core/vpMomentArea.h>                     // for vpMomentArea
+#include <visp3/core/vpMomentAreaNormalized.h>           // for vpMomentArea...
+#include <visp3/core/vpMomentBasic.h>                    // for vpMomentBasic
+#include <visp3/core/vpMomentCInvariant.h>               // for vpMomentCInv...
+#include <visp3/core/vpMomentCentered.h>                 // for vpMomentCent...
+#include <visp3/core/vpMomentCommon.h>                   // for vpMomentCommon
+#include <visp3/core/vpMomentDatabase.h>                 // for vpMomentData...
+#include <visp3/core/vpMomentGravityCenter.h>            // for vpMomentGrav...
+#include <visp3/core/vpMomentGravityCenterNormalized.h>  // for vpMomentGrav...
+#include <visp3/core/vpMomentObject.h>                   // for vpMomentObject
+#include <visp3/core/vpConfig.h>                         // for BEGIN_VISP_N...
 
 BEGIN_VISP_NAMESPACE
 /*!

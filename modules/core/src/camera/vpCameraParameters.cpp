@@ -37,15 +37,20 @@
   Class vpCameraParameters define the camera intrinsic parameters
 */
 
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <limits>
-#include <sstream>
+#include <cmath>                            // for fabs, atan, tan
+#include <iostream>                         // for basic_ostream, char_traits
+#include <limits>                           // for numeric_limits
+#include <vector>                           // for vector
+#include <stddef.h>                         // for size_t
+
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRotationMatrix.h>
 
 BEGIN_VISP_NAMESPACE
 

@@ -31,7 +31,7 @@
  * Frame grabbing.
  */
 
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpFrameGrabber.h>
 
 BEGIN_VISP_NAMESPACE

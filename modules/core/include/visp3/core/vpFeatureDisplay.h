@@ -39,17 +39,15 @@
 #ifndef VP_FEATURE_DISPLAY_H
 #define VP_FEATURE_DISPLAY_H
 
+#include <visp3/core/vpColor.h>
 #include <visp3/core/vpConfig.h>
 
-// Color / image / display
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-
-// Meter/pixel conversion
-#include <visp3/core/vpCameraParameters.h>
-
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
   \class vpFeatureDisplay
 

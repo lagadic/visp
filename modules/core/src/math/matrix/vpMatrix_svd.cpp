@@ -31,27 +31,33 @@
  * Matrix SVD decomposition.
  */
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMatrixException.h>
+#include <algorithm>                                          // for fill_n
+#include <cmath>                                              // for abs, sqrt
+#include <new>                                                // for operato...
+#include <utility>                                            // for swap
+#include <string.h>                                           // for memcpy
 
-#include <cmath> // std::fabs
-#include <iostream>
+#include <visp3/core/vpConfig.h>                              // for VISP_HA...
+#include <visp3/core/vpColVector.h>                           // for vpColVe...
+#include <visp3/core/vpMatrix.h>                              // for vpMatrix
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>
 #endif
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>                                   // for SVD
+#include <opencv2/core/hal/interface.h>                       // for CV_64F
+#include <opencv2/core/mat.hpp>                               // for Mat
+#include <opencv2/core/mat.inl.hpp>                           // for _InputA...
+#include <opencv2/core/operations.hpp>                        // for SVD::SVD
 #endif
 
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
-#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_linalg.h>                                   // for gsl_lin...
+#include <gsl/gsl_matrix_double.h>                            // for gsl_matrix
+#include <gsl/gsl_vector_double.h>                            // for gsl_vector
 #endif
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>
@@ -66,7 +72,6 @@ extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *l
                        double *vt, integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #include <stdio.h>
-#include <string.h>
 #endif
 #endif
 

@@ -36,11 +36,15 @@
 * mean drift test.
 */
 
+#include <cstring>                                 // for memcpy, memset
+#include <string>                                  // for basic_string, string
+#include <vector>                                  // for vector
+
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpStatisticalTestShewhart.h>
-
-#include<cstring>
-
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpMath.h>                     // for vpMath
+#include <visp3/core/vpStatisticalTestAbstract.h>  // for vpStatisticalTestA...
+#include <visp3/core/vpStatisticalTestSigma.h>     // for vpStatisticalTestS...
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpStatisticalTestShewhart::NB_DATA_SIGNAL;

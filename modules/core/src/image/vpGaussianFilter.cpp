@@ -31,12 +31,17 @@
  * Gaussian filter class
  */
 
+
+#include <stddef.h>                       // for size_t
+
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.h>
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

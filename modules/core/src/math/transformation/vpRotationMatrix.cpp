@@ -37,17 +37,30 @@
   the particular case of rotation matrix
 */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
+#include <math.h>                            // for cos, sin, sqrt, fabs
+#include <stddef.h>                          // for size_t
+#include <algorithm>                         // for copy
+#include <initializer_list>                  // for initializer_list
+#include <iostream>                          // for char_traits, basic_ostream
+#include <vector>                            // for vector
 
-// Rotation classes
-#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix, operator*
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for VISP_CXX_STANDARD, VISP_...
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpQuaternionVector.h>   // for vpQuaternionVector
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRxyzVector.h>         // for vpRxyzVector
+#include <visp3/core/vpRzyxVector.h>         // for vpRzyxVector
+#include <visp3/core/vpRzyzVector.h>         // for vpRzyzVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
-// Exception
-#include <visp3/core/vpException.h>
-
-// Debug trace
-#include <math.h>
+class vpPoseVector;
 
 BEGIN_VISP_NAMESPACE
 /*!

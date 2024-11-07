@@ -36,10 +36,14 @@
  * \brief Base class for all 2D moments.
  */
 
-#include <cstring>
-#include <visp3/core/vpMoment.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentObject.h>
+#include <ostream>                        // for basic_ostream, operator<<
+#include <string>                         // for char_traits, basic_string
+#include <vector>                         // for vector
+
+#include <visp3/core/vpMoment.h>          // for vpMoment, operator<<
+#include <visp3/core/vpMomentDatabase.h>  // for vpMomentDatabase
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+class vpMomentObject;
 
 BEGIN_VISP_NAMESPACE
 /*!

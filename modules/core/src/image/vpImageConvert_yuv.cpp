@@ -36,9 +36,9 @@
   \brief Various yuv formats to RGB and RGBa conversion.
 */
 
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
+#include <visp3/core/vpImageConvert.h>  // for vpImageConvert
+#include <visp3/core/vpRGBa.h>          // for vpRGBa
 
 namespace
 {
@@ -49,7 +49,6 @@ void vpSAT(int &c)
     c = 0;
   }
   else if (c > val_255) {
-
     c = val_255;
   }
 }

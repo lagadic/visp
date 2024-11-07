@@ -74,7 +74,7 @@ int main()
 
     double t2 = vpTime::measureTimeMs();
 
-// Sleep 10ms
+    // Sleep 10ms
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(10 * 1000);
 #elif defined(_WIN32)
@@ -83,7 +83,7 @@ int main()
 
     double t3 = vpTime::measureTimeMs();
 
-// Sleep 2ms
+    // Sleep 2ms
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(2 * 1000);
 #elif defined(_WIN32)

@@ -29,16 +29,23 @@
  *
  * Description:
  * Defines a rectangle in the plane.
- *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRect.cpp
   \brief Defines a rectangle in the plane.
 */
 
-#include <visp3/core/vpRect.h>
+#include <stddef.h>                   // for size_t
+#include <cmath>                      // for fabs
+#include <limits>                     // for numeric_limits
+#include <ostream>                    // for basic_ostream, char_traits, ope...
+#include <vector>                     // for vector
+
+#include <visp3/core/vpConfig.h>      // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>   // for vpException
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpRect.h>        // for vpRect, inRectangle, operator<<
 
 BEGIN_VISP_NAMESPACE
 /*!

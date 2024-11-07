@@ -37,16 +37,26 @@
   the C mathematics library (math.h)
 */
 
-#include <cmath>
-#include <functional>
-#include <numeric>
-#include <stdint.h>
-#include <cassert>
-#include <ctype.h>
+#include <ctype.h>                           // for isdigit
+#include <stddef.h>                          // for size_t
+#include <algorithm>                         // for nth_element, transform
+#include <cassert>                           // for assert
+#include <cmath>                             // for cos, sin, fabs, sqrt, M_PI
+#include <functional>                        // for minus, bind, _1
+#include <numeric>                           // for accumulate, inner_product
+#include <string>                            // for basic_string, string
+#include <utility>                           // for pair, make_pair
+#include <vector>                            // for vector
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for VISP_HAVE_FUNC_STD_ISFINITE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
 
 #if defined(VISP_HAVE_FUNC__FINITE)
 #include <float.h>

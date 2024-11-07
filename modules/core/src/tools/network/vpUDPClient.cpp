@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,25 @@
  *
  * Description:
  * UDP Client
- *
-*****************************************************************************/
+ */
 
-#include <cstring>
-#include <sstream>
-
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#include <cstring>                   // for memset, size_t
+#include <iostream>                  // for cerr
+#include <sstream>                   // for basic_ostream, char_traits, basi...
+#include <string>                    // for basic_string, allocator, string
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netdb.h>
-#include <unistd.h>
+#include <netdb.h>                   // for addrinfo, freeaddrinfo, getaddrinfo
+#include <netinet/in.h>              // for sockaddr_in, IPPROTO_UDP
+#include <sys/select.h>              // for select, FD_SET, FD_ZERO, fd_set
+#include <sys/socket.h>              // for recvfrom, sendto, AF_INET, SOCK_...
+#include <sys/time.h>                // for timeval
+#include <unistd.h>                  // for close
 #define DWORD int
 #else
 #if defined(__MINGW32__)
@@ -56,7 +58,8 @@
 #include <Ws2tcpip.h>
 #endif
 
-#include <visp3/core/vpUDPClient.h>
+#include <visp3/core/vpUDPClient.h>  // for vpUDPClient, VP_MAX_UDP_PAYLOAD
+#include <visp3/core/vpException.h>  // for vpException
 
 BEGIN_VISP_NAMESPACE
 /*!

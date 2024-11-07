@@ -37,10 +37,21 @@
   functions. Class vpXmlParserHomogeneousMatrix allowed to load and save an
   homogeneous matrix in a XML file.
 */
-#include <visp3/core/vpXmlParserHomogeneousMatrix.h>
+
+#include <visp3/core/vpConfig.h>                      // for BEGIN_VISP_NAME...
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
+#include <string.h>                                   // for strcmp
+#include <iostream>                                   // for basic_ostream
+#include <pugixml.hpp>                                // for xml_node, xml_text
+#include <string>                                     // for basic_string
+
+#include <visp3/core/vpArray2D.h>                     // for vpArray2D
+#include <visp3/core/vpHomogeneousMatrix.h>           // for vpHomogeneousMa...
+#include <visp3/core/vpRotationMatrix.h>              // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>              // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>                // for vpThetaUVector
+#include <visp3/core/vpXmlParserHomogeneousMatrix.h>  // for vpXmlParserHomo...
 
 /* ----------------------------- LABEL XML ----------------------------- */
 /* --------------------------------------------------------------------- */

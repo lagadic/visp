@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +28,20 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Descriptor for various invariants used to drive space rotations around X and
- *Y axis.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ * Descriptor for various invariants used to drive space rotations around X and Y axis.
+ */
 
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentObject.h>
+#include <cmath>                            // for fabs, sqrt
+#include <iostream>                         // for basic_ostream, char_traits
+#include <string>                           // for basic_string
+#include <vector>                           // for vector
+
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
+#include <visp3/core/vpException.h>         // for vpException
+#include <visp3/core/vpMomentCInvariant.h>  // for vpMomentCInvariant, opera...
+#include <visp3/core/vpMomentCentered.h>    // for vpMomentCentered
+#include <visp3/core/vpMomentDatabase.h>    // for vpMomentDatabase
+#include <visp3/core/vpMomentObject.h>      // for vpMomentObject, vpMomentO...
 
 BEGIN_VISP_NAMESPACE
 /*!

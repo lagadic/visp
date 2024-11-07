@@ -31,11 +31,15 @@
  * Matrix LU decomposition.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <cmath>                                              // for fabs
+#include <limits>                                             // for numeric...
+#include <new>                                                // for operato...
+#include <string.h>                                           // for memcpy
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpConfig.h>                              // for VISP_HA...
+#include <visp3/core/vpException.h>                           // for vpExcep...
+#include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#include <visp3/core/vpArray2D.h>                             // for vpArray2D
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/LU>
@@ -43,8 +47,9 @@
 
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_permutation.h>
+#include <gsl/gsl_linalg.h>                                   // for gsl_lin...
+#include <gsl/gsl_matrix_double.h>                            // for gsl_mat...
+#include <gsl/gsl_permutation.h>                              // for gsl_per...
 #endif
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>
@@ -62,15 +67,12 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
 #endif
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>                                   // for determi...
+#include <opencv2/core/base.hpp>                              // for DecompT...
+#include <opencv2/core/hal/interface.h>                       // for CV_64F
+#include <opencv2/core/mat.hpp>                               // for Mat
+#include <opencv2/core/mat.inl.hpp>                           // for MatExpr...
 #endif
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 
 BEGIN_VISP_NAMESPACE
 /*--------------------------------------------------------------------

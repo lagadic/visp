@@ -36,13 +36,13 @@
   \brief Convert image types
 */
 
-#include <map>
-#include <sstream>
+#include <utility>                        // for pair
+#include <map>                            // for map, _Rb_tree_iterator
+#include <stdint.h>                       // for uint16_t, uint8_t
 
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
-
 
 #include <visp3/core/vpConfig.h>
 
@@ -54,6 +54,12 @@
 #include <Simd/SimdLib.h>
 #endif
 #include <visp3/core/vpImageConvert.h>
+
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImage_getters.h>
+#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpRGBf.h>
 
 BEGIN_VISP_NAMESPACE
 bool vpImageConvert::YCbCrLUTcomputed = false;

@@ -31,8 +31,10 @@
  * Image XY filtering.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpConfig.h>       // for BEGIN_VISP_NAMESPACE, END_VISP...
+#include <visp3/core/vpImageFilter.h>  // for vpImageFilter
+#include <visp3/core/vpImage.h>        // for vpImage
+#include <visp3/core/vpRGBa.h>         // for vpRGBa
 
 BEGIN_VISP_NAMESPACE
 

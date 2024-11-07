@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,23 +29,30 @@
  *
  * Description:
  * Make the complete tracking of an object by using its CAD model
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 /*!
  \file vpPolygon3D.cpp
  \brief Implements a polygon of the model used by the model-based tracker.
 */
 
-#include <limits.h>
+#include <limits.h>                             // for INT_MAX
+#include <math.h>                               // for acos, M_PI
+#include <utility>                              // for pair, make_pair
+#include <vector>                               // for vector
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpPolygon3D.h>             // for vpPolygon3D, vpPolygo...
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRowVector.h>             // for vpRowVector
 
-#include <visp3/core/vpPolygon.h>
-#include <visp3/core/vpPolygon3D.h>
+class vpHomogeneousMatrix;
 
 BEGIN_VISP_NAMESPACE
 /*!

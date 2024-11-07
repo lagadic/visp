@@ -34,13 +34,16 @@
 #ifndef VP_COLOR_DEPTH_CONVERSION_H
 #define VP_COLOR_DEPTH_CONVERSION_H
 
+#include <stdint.h>                          // for uint16_t
 #include <visp3/core/vpConfig.h>
-
-// Internal
-#include "vpCameraParameters.h"
-#include "vpImage.h"
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImagePoint.h>
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+template <class Type> class vpImage;
+
 class VISP_EXPORT vpColorDepthConversion
 {
 public:

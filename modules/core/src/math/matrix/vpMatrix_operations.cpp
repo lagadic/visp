@@ -31,11 +31,19 @@
  * Stack matrix.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
+#include <string.h>                          // for memcpy
+#include <string>                            // for basic_string, operator==
+
+#include <visp3/core/vpConfig.h>             // for VISP_HAVE_GSL, VISP_HAVE...
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
 
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
+#include <Simd/SimdLib.h>                    // for SimdMatTranspose, SimdVe...
 #endif
 
 BEGIN_VISP_NAMESPACE

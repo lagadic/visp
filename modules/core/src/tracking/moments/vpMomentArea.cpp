@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,19 @@
  *
  * Description:
  * 2D area of the object
- *
- * Authors:
- * Manikandan Bakthavatchalam
- *
-*****************************************************************************/
-#include <cmath>
-#include <visp3/core/vpMomentArea.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentObject.h>
+ */
+
+#include <ostream>                        // for basic_ostream, operator<<
+#include <string>                         // for char_traits, basic_string
+#include <vector>                         // for vector
+
+#include <visp3/core/vpMomentArea.h>      // for vpMomentArea, operator<<
+#include <visp3/core/vpMomentCentered.h>  // for vpMomentCentered
+#include <visp3/core/vpMomentDatabase.h>  // for vpMomentDatabase
+#include <visp3/core/vpMomentObject.h>    // for vpMomentObject, vpMomentObj...
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+#include <visp3/core/vpException.h>       // for vpException
+#include <visp3/core/vpMoment.h>          // for vpMoment
 
 BEGIN_VISP_NAMESPACE
 /*!

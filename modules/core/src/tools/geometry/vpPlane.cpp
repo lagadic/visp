@@ -29,18 +29,24 @@
  *
  * Description:
  * Plane geometrical structure.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPlane.cpp
   \brief definition of the vpPlane class member functions
 */
 
-#include <visp3/core/vpPlane.h>
+#include <cmath>                             // for fabs, sqrt
+#include <limits>                            // for numeric_limits
+#include <ostream>                           // for basic_ostream, char_traits
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpPlane.h>
+#include <visp3/core/vpPoint.h>              // for vpPoint
+
 
 BEGIN_VISP_NAMESPACE
 /*!

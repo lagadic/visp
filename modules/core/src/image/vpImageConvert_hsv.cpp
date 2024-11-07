@@ -29,8 +29,7 @@
  *
  * Description:
  * Convert image types.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageConvert_hsv.cpp
@@ -41,8 +40,14 @@
 #include <omp.h>
 #endif
 
+#include <algorithm>                    // for max, min
+#include <limits>                       // for numeric_limits
+#include <vector>                       // for vector
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRGBa.h>
 
 BEGIN_VISP_NAMESPACE
 /*!

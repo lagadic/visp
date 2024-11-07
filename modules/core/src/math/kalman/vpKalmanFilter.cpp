@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +29,21 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpKalmanFilter.cpp
-  \brief Generic kalman filtering implementation.
+  \brief Generic Kalman filtering implementation.
 */
 
-#include <visp3/core/vpKalmanFilter.h>
+#include <iostream>                     // for basic_ostream, char_traits, endl
 
-#include <math.h>
-#include <stdlib.h>
+#include <visp3/core/vpArray2D.h>       // for operator<<
+#include <visp3/core/vpColVector.h>     // for vpColVector
+#include <visp3/core/vpException.h>     // for vpException
+#include <visp3/core/vpKalmanFilter.h>  // for vpKalmanFilter
+#include <visp3/core/vpMatrix.h>        // for vpMatrix
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
 
 BEGIN_VISP_NAMESPACE
 /*!

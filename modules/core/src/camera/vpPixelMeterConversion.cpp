@@ -29,17 +29,37 @@
  *
  * Description:
  * Pixel to meter conversion.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPixelMeterConversion.cpp
   \brief Pixel to meter conversion.
 */
+
+#include <cmath>                                // for pow, atan2, cos, fabs
+#include <vector>                               // for vector
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+
+#if defined(VISP_HAVE_OPENCV)
+
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_CALIB3D
+
+#if defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/calib3d.hpp>                  // for undistortPoints
+#include <opencv2/core/mat.hpp>                 // for Mat, _InputArray, _Ou...
+#include <opencv2/core/mat.inl.hpp>             // for Mat::at, _InputArray:...
+#include <opencv2/core/traits.hpp>              // for Depth<>::value
+#include <opencv2/core/types.hpp>               // for Point2d, Point_, Type...
+#endif
+#endif
 
 BEGIN_VISP_NAMESPACE
 /*!

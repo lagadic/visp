@@ -29,17 +29,31 @@
  *
  * Description:
  * Sphere feature.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpFeatureDisplay.h>
-#include <visp3/core/vpSphere.h>
+#include <math.h>                            // for sqrt, fabs
+
+#include <visp3/core/vpFeatureDisplay.h>     // for vpFeatureDisplay
+#include <visp3/core/vpSphere.h>             // for vpSphere
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>               // for vpMath
+
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
  * Initialize internal sphere parameters.
  */
-  void vpSphere::init()
+void vpSphere::init()
 {
   oP.resize(4);
   cP.resize(4);

@@ -31,22 +31,10 @@
  * Pseudo inverse computation.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
-
-#if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
-#endif
-
-#ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_math.h>
-#elif defined(VISP_HAVE_MKL)
-#include <mkl.h>
-#endif
-#endif
+#include <visp3/core/vpConfig.h>     // for VISP_HAVE_LAPACK, BEGIN_VISP_NAM...
+#include <visp3/core/vpMatrix.h>     // for vpMatrix, operator*
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpColVector.h>  // for vpColVector
 
 BEGIN_VISP_NAMESPACE
 

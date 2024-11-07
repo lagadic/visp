@@ -35,6 +35,12 @@
 * \brief Definition of the vpStatisticalTestAbstract base class.
 */
 
+#include <algorithm>              // for max
+#include <cmath>                  // for sqrt
+#include <iostream>               // for basic_ostream, basic_ios, operator<<
+#include <string>                 // for basic_string, string
+
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 #include <visp3/core/vpStatisticalTestAbstract.h>
 
 BEGIN_VISP_NAMESPACE

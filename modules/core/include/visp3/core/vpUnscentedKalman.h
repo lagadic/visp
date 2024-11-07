@@ -34,15 +34,20 @@
 #ifndef VP_UNSCENTED_KALMAN_H
 #define VP_UNSCENTED_KALMAN_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpUKSigmaDrawerAbstract.h>
 
-#include <functional> // std::function
-#include <memory> // std::shared_ptr
+#include <stddef.h>                  // for size_t
+#include <functional>                // for function
+#include <memory>                    // for shared_ptr
+#include <vector>                    // for vector
+
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpException.h>  // for vpException
+
+class vpUKSigmaDrawerAbstract;
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -31,31 +31,34 @@
  * Matrix QR decomposition.
  */
 
-#include <algorithm> // for (std::min) and (std::max)
-#include <cmath>     // For std::abs() on iOS
-#include <cstdlib>   // For std::abs() on iOS
-#include <visp3/core/vpConfig.h>
+#include <algorithm>                 // for min
+#include <cstdlib>                   // for size_t, abs
+#include <iostream>                  // for char_traits, basic_ostream, basi...
+#include <string.h>                  // for memcpy
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
+#include <visp3/core/vpConfig.h>     // for VISP_HAVE_GSL, VISP_HAVE_LAPACK
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
 
 BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
+#include <gsl/gsl_version.h>
 #if !(GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
 // Needed for GSL_VERSION < 2.2 where gsl_linalg_tri_*_invert() not present
-#include <gsl/gsl_blas.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_blas.h>            // for gsl_blas_dscal, gsl_blas_dtrmv
 #endif
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_permutation.h>
+#include <gsl/gsl_blas.h>            // for gsl_blas_dscal, gsl_blas_dtrmv
+#include <gsl/gsl_cblas.h>           // for CBLAS_TRANSPOSE, CBLAS_DIAG, CBL...
+#include <gsl/gsl_linalg.h>          // for gsl_linalg_QR_unpack, gsl_linalg...
+#include <gsl/gsl_matrix_double.h>   // for gsl_matrix_alloc, gsl_matrix_free
+#include <gsl/gsl_permutation.h>     // for gsl_permutation_alloc, gsl_permu...
+#include <gsl/gsl_vector_double.h>   // for gsl_vector_alloc, gsl_vector_free
 #endif
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>

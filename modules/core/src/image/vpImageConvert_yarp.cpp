@@ -35,11 +35,16 @@
   \file vpImageConvert_yarp.cpp
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
 
 #ifdef VISP_HAVE_YARP
+#include <string.h>                     // for memcpy
 
-#include <visp3/core/vpImageConvert.h>
+#include <yarp/sig/Image.h>             // for ImageOf, PixelRgb, PixelRgba
+
+#include <visp3/core/vpImageConvert.h>  // for vpImageConvert
+#include <visp3/core/vpImage.h>         // for vpImage
+#include <visp3/core/vpRGBa.h>          // for vpRGBa
 
 BEGIN_VISP_NAMESPACE
 /*!

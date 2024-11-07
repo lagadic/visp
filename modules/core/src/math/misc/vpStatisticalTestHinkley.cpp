@@ -36,14 +36,14 @@
 * cumulative sum test.
 */
 
-#include <visp3/core/vpStatisticalTestHinkley.h>
-#include <visp3/core/vpMath.h>
+#include <cmath>                                   // for fabs
+#include <limits>                                  // for numeric_limits
 
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpStatisticalTestHinkley.h>
+#include <visp3/core/vpMath.h>                     // for vpMath
+#include <visp3/core/vpException.h>                // for vpException
+#include <visp3/core/vpStatisticalTestAbstract.h>  // for vpStatisticalTestA...
 
 BEGIN_VISP_NAMESPACE
 vpStatisticalTestHinkley::vpStatisticalTestHinkley()

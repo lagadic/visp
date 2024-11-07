@@ -40,21 +40,25 @@
 #ifndef VP_DISPLAY_H
 #define VP_DISPLAY_H
 
-#include <list>
-#include <sstream>
-#include <string>
+#include <list>                              // for list
+#include <string>                            // for string, basic_string
+#include <vector>                            // for vector
 
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMouseButton.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/core/vpConfig.h>
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
  * \class vpDisplay
  *

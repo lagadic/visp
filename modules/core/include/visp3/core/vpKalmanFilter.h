@@ -39,8 +39,9 @@
 #ifndef vpKalmanFilter_h
 #define vpKalmanFilter_h
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
 
 #include <math.h>
 
