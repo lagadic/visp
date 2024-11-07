@@ -85,12 +85,13 @@ ViSP 3.x.x (Version in development)
     . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
     . [#1320] Broken links in the documentation
-    . [#1337] The pose of the automatic datageneration pipeline from blenderproc seems wrong
+    . [#1337] The pose of the automatic data generation pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
     . [#1424] Unable to detect Yarp 3.9.0
     . [#1485] Build issue around nlohmann_json usage with VTK 9.2.0 or more recent version used as an embedded
               3rdparty by PCL
+    . [#1487] Segfault with vpCannyEdgeDetection with a certain image
     . [#1494] Memory management issue in vpArray2D::resize()
     . [#1495] vpMeLine is unable to seek extremities
 ----------------------------------------------

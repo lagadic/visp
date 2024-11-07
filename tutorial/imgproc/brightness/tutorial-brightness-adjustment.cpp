@@ -173,7 +173,7 @@ int main(int argc, const char **argv)
   std::stringstream ss_gray;
   ss_gray << input_name << "_adjust_alpha=" << alpha << "_beta=" << beta << "_gray.png";
   display(I_display, I_color_res, I_color_adjust, I_gray_res, I_gray_adjust, I_gray_display,
-    "Brightness and contrast adjustment. Click to continue.", ss_color.str(), ss_gray.str());
+          "Brightness and contrast adjustment. Click to continue.", ss_color.str(), ss_gray.str());
 
   //! [Gamma correction]
   if (method != VISP_NAMESPACE_NAME::GAMMA_MANUAL) {

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2024 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1896,7 +1896,7 @@ endif()
 status("")
 status("  Library dirs:")
 if(USE_EIGEN3)
-  status("    Eigen3 include dir:" "${Eigen3_DIR}")
+  status("    Eigen3 dir:" "${Eigen3_DIR}")
 endif()
 if(USE_MKL)
   status("    MKL include dir:" "${MKL_INCLUDE_DIRS}")
@@ -1909,6 +1909,16 @@ if(USE_OPENCV)
 endif()
 if(USE_PCL)
   status("    PCL dir:" "${PCL_DIR}")
+endif()
+if(USE_PANDA3D)
+  if(Panda3D_DIR)
+    status("    Panda3D dir:" "${Panda3D_DIR}")
+  else()
+    status("    Panda3D dir:" "$ENV{Panda3D_DIR}")
+  endif()
+endif()
+if(USE_YARP)
+  status("    Yarp dir:" "${YARP_DIR}")
 endif()
 
 # ========================== auxiliary ==========================
