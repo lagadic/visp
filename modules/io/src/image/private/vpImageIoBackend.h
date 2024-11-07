@@ -36,9 +36,10 @@
   \brief Backend functions implementation for image I/O operations.
 */
 
-#ifndef _vpImageIoBackend_h_
-#define _vpImageIoBackend_h_
+#ifndef VP_IMAGE_IO_BACKEND_H
+#define VP_IMAGE_IO_BACKEND_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
 BEGIN_VISP_NAMESPACE

@@ -36,22 +36,21 @@
   \brief Libjpeg backend for JPEG image I/O operations.
 */
 
+#include "vpImageIoBackend.h"
 #include <visp3/core/vpConfig.h>          // for VISP_HAVE_JPEG, BEGIN_VISP_...
+#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
 
 #if defined(VISP_HAVE_JPEG)
-#include <jmorecfg.h>                     // for TRUE
-#include <jpeglib.h>                      // for jpeg_decompress_struct, jpe...
+#include <jerror.h>
+#include <jpeglib.h>
 
 #include <stdio.h>                        // for fclose, fopen, FILE
 #include <string.h>                       // for memcpy
 #include <string>                         // for basic_string, string
 
 #include <visp3/core/vpImage.h>           // for vpImage
-#include <visp3/core/vpImageConvert.h>    // for vpImageConvert
 #include <visp3/core/vpImageException.h>  // for vpImageException
 #include <visp3/core/vpRGBa.h>            // for vpRGBa
-
-#include "vpImageIoBackend.h"             // for readJPEGLibjpeg, writeJPEGL...
 
 //--------------------------------------------------------------------------
 // JPEG
@@ -110,6 +109,7 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
     }
     jpeg_write_scanlines(&cinfo, &line, 1);
   }
+  std::cout << "DEBUG FS - on est dans writeJPEGLibjpeg() 1" << std::endl; exit(-1);
 
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
@@ -174,7 +174,7 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
     }
     jpeg_write_scanlines(&cinfo, &line, 1);
   }
-
+  std::cout << "DEBUG FS - on est dans writeJPEGLibjpeg() 2" << std::endl; exit(-1);
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
   delete[] line;
