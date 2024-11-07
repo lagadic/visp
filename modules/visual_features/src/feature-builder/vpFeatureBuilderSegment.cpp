@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,23 @@
  * \brief Segment creation out of dots.
  */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <math.h>                                    // for atan2, sqrt
+
+#include <visp3/visual_features/vpFeatureBuilder.h>  // for vpFeatureBuilder
+#include <visp3/blob/vpDot.h>                        // for vpDot
+#include <visp3/blob/vpDot2.h>                       // for vpDot2
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpPixelMeterConversion.h>       // for vpPixelMeterConv...
+#include <visp3/core/vpPoint.h>                      // for vpPoint
+#include <visp3/visp_modules.h>                      // for VISP_HAVE_MODULE...
+#include <visp3/visual_features/vpFeatureSegment.h>  // for vpFeatureSegment
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpImagePoint;
+
 #ifdef VISP_HAVE_MODULE_BLOB
 
 /*!
@@ -50,7 +63,7 @@ BEGIN_VISP_NAMESPACE
  * \param d1 : The dot corresponding to the first point of the segment.
  * \param d2 : The dot corresponding to the second point of the segment.
  */
-  void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 

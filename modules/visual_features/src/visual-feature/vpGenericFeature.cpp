@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +29,18 @@
  *
  * Description:
  * Generic feature (used to create new feature not implemented in ViSP).
- *
-*****************************************************************************/
+ */
+
+#include <iostream>                                    // for basic_ostream
 
 #include <visp3/visual_features/vpGenericFeature.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDebug.h>                        // for vpERROR_TRACE
+#include <visp3/visual_features/vpFeatureException.h>  // for vpFeatureExcep...
+#include <visp3/core/vpArray2D.h>                      // for operator<<
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
 
 BEGIN_VISP_NAMESPACE
 void vpGenericFeature::init() { s = 0; }

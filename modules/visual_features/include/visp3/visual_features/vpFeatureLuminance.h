@@ -38,11 +38,12 @@
  * For more details see \cite Collewet08c.
  */
 
-#ifndef vpFeatureLuminance_h
-#define vpFeatureLuminance_h
+#ifndef VP_FEATURE_LUMINANCE_H
+#define VP_FEATURE_LUMINANCE_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 

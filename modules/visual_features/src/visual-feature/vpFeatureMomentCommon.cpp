@@ -31,11 +31,21 @@
  * Pre-filled pseudo-database used to handle dependencies between common
  * moment features.
  */
-
-#include <visp3/core/vpMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/visual_features/vpFeatureMomentAlpha.h>
+#include <visp3/visual_features/vpFeatureMomentArea.h>
+#include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
+#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
+#include <visp3/visual_features/vpFeatureMomentCentered.h>
+#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
+#include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
 BEGIN_VISP_NAMESPACE
+
+class vpMomentDatabase;
+
 /*!
  * Constructor which initializes and links all common features in the database
  * \param moments : database for moment primitives

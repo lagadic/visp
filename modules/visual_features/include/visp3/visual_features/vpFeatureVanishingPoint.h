@@ -36,8 +36,8 @@
  * point visual feature (Z coordinate in 3D space is infinity)
  */
 
-#ifndef vpFeatureVanishingPoint_H
-#define vpFeatureVanishingPoint_H
+#ifndef VP_FEATURE_VANISHING_POINT_H
+#define VP_FEATURE_VANISHING_POINT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

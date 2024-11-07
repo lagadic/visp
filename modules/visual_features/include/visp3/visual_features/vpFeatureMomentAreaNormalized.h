@@ -36,8 +36,8 @@
  * \brief Implementation of the interaction matrix computation for
  * vpMomentAreaNormalized.
  */
-#ifndef _vpFeatureMomentAreaNormalized_h_
-#define _vpFeatureMomentAreaNormalized_h_
+#ifndef VP_FEATURE_MOMENT_AREA_NORMALIZED_H
+#define VP_FEATURE_MOMENT_AREA_NORMALIZED_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,24 @@
  *
  * Description:
  * Implementation of vpFeatureMomentArea associated to vpMomentArea
- *
- * Authors:
- * Manikandan Bakthavatchalam
- *
-*****************************************************************************/
-#include <cassert>
-#include <limits> // numeric_limits
-#include <vector>
-#include <visp3/core/vpConfig.h>
+ */
 
-#include <visp3/core/vpMomentArea.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/visual_features/vpFeatureMomentArea.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <cassert>                                          // for assert
+#include <string>                                           // for basic_string
+#include <vector>                                           // for vector
+
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/core/vpMomentArea.h>                        // for vpMomentArea
+#include <visp3/core/vpMomentGravityCenter.h>               // for vpMomentG...
+#include <visp3/core/vpMomentObject.h>                      // for vpMomentO...
+#include <visp3/visual_features/vpFeatureMomentArea.h>      // for vpFeature...
+#include <visp3/visual_features/vpFeatureMomentCentered.h>  // for vpFeature...
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>  // for vpFeature...
+#include <visp3/core/vpArray2D.h>                           // for vpArray2D
+#include <visp3/core/vpException.h>                         // for vpException
+#include <visp3/core/vpMatrix.h>                            // for vpMatrix
+#include <visp3/core/vpMoment.h>                            // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>                    // for vpMomentD...
 
 BEGIN_VISP_NAMESPACE
 /*!

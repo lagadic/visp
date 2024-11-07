@@ -36,8 +36,8 @@
  * \brief Class that defines 2D ellipse visual feature
  */
 
-#ifndef vpFeatureEllipse_H
-#define vpFeatureEllipse_H
+#ifndef VP_FEATURE_ELLIPSE_H
+#define VP_FEATURE_ELLIPSE_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

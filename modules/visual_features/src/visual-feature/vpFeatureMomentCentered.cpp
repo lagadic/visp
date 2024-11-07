@@ -31,20 +31,31 @@
  * Implementation for all supported moment features.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <cmath>                                            // for pow
+#include <ostream>                                          // for basic_ost...
+#include <string>                                           // for char_traits
+#include <vector>                                           // for vector
 
-#include <vector>
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
-#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/core/vpDebug.h>                             // for vpTRACE
+#include <visp3/core/vpMomentCentered.h>                    // for vpMomentC...
+#include <visp3/core/vpMomentGravityCenter.h>               // for vpMomentG...
+#include <visp3/core/vpMomentObject.h>                      // for vpMomentO...
+#include <visp3/visual_features/vpFeatureMomentBasic.h>     // for vpFeature...
+#include <visp3/visual_features/vpFeatureMomentCentered.h>  // for vpFeature...
+#include <visp3/core/vpArray2D.h>                           // for vpArray2D
+#include <visp3/core/vpException.h>                         // for vpException
+#include <visp3/core/vpMath.h>                              // for vpMath
+#include <visp3/core/vpMatrix.h>                            // for vpMatrix
+#include <visp3/core/vpMoment.h>                            // for vpMoment
+#include <visp3/core/vpMomentBasic.h>                       // for vpMomentB...
+#include <visp3/core/vpMomentDatabase.h>                    // for vpMomentD...
+#include <visp3/visual_features/vpFeatureMoment.h>          // for vpFeature...
 
 BEGIN_VISP_NAMESPACE
+
+class vpFeatureMomentDatabase;
+
 /*!
  * Default constructor.
  * \param moments_ : Database of moment primitives.
@@ -53,8 +64,8 @@ BEGIN_VISP_NAMESPACE
  * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param featureMoments : Database of features.
  */
-  vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
-                                                   vpFeatureMomentDatabase *featureMoments)
+vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
+                                                 vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(moments_, A_, B_, C_, featureMoments), order(0)
 { }
 

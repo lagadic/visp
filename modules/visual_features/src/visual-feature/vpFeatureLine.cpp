@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,37 +29,25 @@
  *
  * Description:
  * 2D line visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureLine.cpp
   \brief Class that defines 2D line visual feature
 */
 
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureLine.h>
+#include <math.h>                                      // for M_PI, cos, fabs
+#include <iostream>                                    // for basic_ostream
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
-// simple math function (round)
-#include <visp3/core/vpMath.h>
-
-// Display Issue
-
-// Meter/pixel conversion
-#include <visp3/core/vpCameraParameters.h>
-
-// Color / image / display
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpDebug.h>                        // for vpTRACE, vpERR...
+#include <visp3/core/vpFeatureDisplay.h>               // for vpFeatureDisplay
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureException.h>  // for vpFeatureExcep...
+#include <visp3/visual_features/vpFeatureLine.h>       // for vpFeatureLine
+#include <visp3/core/vpArray2D.h>                      // for vpArray2D
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
 
 /*
 attributes and members directly related to the vpBasicFeature needs

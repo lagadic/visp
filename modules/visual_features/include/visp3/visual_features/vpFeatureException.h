@@ -36,8 +36,8 @@
  *  \brief error that can be emitted by the vpFeature class and its derivatives
  */
 
-#ifndef _vpFeatureException_h_
-#define _vpFeatureException_h_
+#ifndef VP_FEATURE_EXCEPTION_H
+#define VP_FEATURE_EXCEPTION_H
 
 #include <iostream>
 #include <string>

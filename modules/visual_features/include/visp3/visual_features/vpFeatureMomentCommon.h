@@ -38,8 +38,9 @@
  * moment features.
  */
 
-#ifndef _vpFeatureMomentCommon_h_
-#define _vpFeatureMomentCommon_h_
+#ifndef VP_FEATURE_MOMENT_COMMON_H
+#define VP_FEATURE_MOMENT_COMMON_H
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMomentAlpha.h>
 #include <visp3/visual_features/vpFeatureMomentArea.h>
@@ -47,14 +48,14 @@
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentCInvariant.h>
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentCommon.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
 BEGIN_VISP_NAMESPACE
+
 class vpMomentDatabase;
-class vpServo;
+
 /*!
  * \class vpFeatureMomentCommon
  *

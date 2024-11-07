@@ -30,8 +30,11 @@
  * Description:
  * Implementation for all supported moment features.
  */
-#include <visp3/core/vpMomentObject.h>
+
+#include <visp3/core/vpConfig.h>                              // for BEGIN_V...
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
@@ -407,17 +410,24 @@ BEGIN_VISP_NAMESPACE
 }
 END_VISP_NAMESPACE
 #else
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
-#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
 
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <cmath>                                              // for pow, sqrt
+#include <iostream>                                           // for basic_o...
+#include <string>                                             // for basic_s...
+#include <vector>                                             // for vector
 
-#include <cmath>
-#include <iostream>
-#include <vector>
+#include <visp3/core/vpMomentCInvariant.h>                    // for vpMomen...
+#include <visp3/core/vpMomentCentered.h>                      // for vpMomen...
+#include <visp3/core/vpMomentObject.h>                        // for vpMomen...
+#include <visp3/visual_features/vpFeatureMomentBasic.h>       // for vpFeatu...
+#include <visp3/visual_features/vpFeatureMomentCInvariant.h>  // for vpFeatu...
+#include <visp3/visual_features/vpFeatureMomentCentered.h>    // for vpFeatu...
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>    // for vpFeatu...
+#include <visp3/core/vpArray2D.h>                             // for vpArray2D
+#include <visp3/core/vpException.h>                           // for vpExcep...
+#include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#include <visp3/core/vpMoment.h>                              // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>                      // for vpMomen...
 
 BEGIN_VISP_NAMESPACE
 /*!

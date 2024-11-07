@@ -36,8 +36,8 @@
   \brief class that defines the translation visual feature.
 */
 
-#ifndef vpFeatureTranslation_H
-#define vpFeatureTranslation_H
+#ifndef VP_FEATURE_TRANSLATION_H
+#define VP_FEATURE_TRANSLATION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>

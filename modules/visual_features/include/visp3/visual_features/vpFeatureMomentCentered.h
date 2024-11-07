@@ -35,8 +35,8 @@
  * \file vpFeatureMomentCentered.h
  * \brief Implementation of the interaction matrix computation for vpMomentCentered.
  */
-#ifndef _vpFeatureMomentCentered_h_
-#define _vpFeatureMomentCentered_h_
+#ifndef VP_FEATURE_MOMENT_CENTERED_H
+#define VP_FEATURE_MOMENT_CENTERED_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>

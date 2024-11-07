@@ -31,14 +31,22 @@
  * Implementation for alpha moment features.
  */
 
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/visual_features/vpFeatureMomentAlpha.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <math.h>                                        // for M_PI
+#include <string>                                        // for basic_string
+#include <vector>                                        // for vector
 
-#include <vector>
+#include <visp3/core/vpMomentCentered.h>                 // for vpMomentCent...
+#include <visp3/core/vpMomentGravityCenter.h>            // for vpMomentGrav...
+#include <visp3/core/vpMomentObject.h>                   // for vpMomentObject
+#include <visp3/visual_features/vpFeatureMomentAlpha.h>  // for vpFeatureMom...
+#include <visp3/core/vpArray2D.h>                        // for vpArray2D
+#include <visp3/core/vpColVector.h>                      // for vpColVector
+#include <visp3/core/vpConfig.h>                         // for BEGIN_VISP_N...
+#include <visp3/core/vpException.h>                      // for vpException
+#include <visp3/core/vpMatrix.h>                         // for vpMatrix
+#include <visp3/core/vpMoment.h>                         // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>                 // for vpMomentData...
+#include <visp3/visual_features/vpBasicFeature.h>        // for vpBasicFeature
 
 BEGIN_VISP_NAMESPACE
 #ifdef VISP_MOMENTS_COMBINE_MATRICES

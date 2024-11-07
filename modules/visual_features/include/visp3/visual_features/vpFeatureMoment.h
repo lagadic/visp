@@ -38,8 +38,8 @@
  * Handles common system operations like selection, duplication. Functionality is
  * computed in derived classes.
  */
-#ifndef _vpFeatureMoment_h_
-#define _vpFeatureMoment_h_
+#ifndef VP_FEATURE_MOMENT_H
+#define VP_FEATURE_MOMENT_H
 
 #include <vector>
 #include <string>

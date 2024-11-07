@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,33 +29,30 @@
  *
  * Description:
  * 2D point visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeaturePoint.cpp
   \brief Class that defines 2D point visual feature
 */
 
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
+#include <math.h>                                      // for fabs
+#include <iostream>                                    // for basic_ostream
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
-// math
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpDebug.h>                        // for vpERROR_TRACE
+#include <visp3/core/vpFeatureDisplay.h>               // for vpFeatureDisplay
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureException.h>  // for vpFeatureExcep...
+#include <visp3/visual_features/vpFeaturePoint.h>      // for vpFeaturePoint
+#include <visp3/core/vpArray2D.h>                      // for vpArray2D
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
 
 /*
 
-attributes and members directly related to the vpBasicFeature needs
-other functionalities ar useful but not mandatory
+  attributes and members directly related to the vpBasicFeature needs
+  other functionalities ar useful but not mandatory
 
 */
 

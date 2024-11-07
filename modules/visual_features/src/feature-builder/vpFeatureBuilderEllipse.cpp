@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +29,30 @@
  *
  * Description:
  * Conversion between tracker and visual feature ellipse.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderEllipse.cpp
   \brief  conversion between tracker
   and visual feature Ellipse
 */
-
-#include <visp3/core/vpMath.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/core/vpMath.h>                       // for vpMath
+#include <visp3/visual_features/vpFeatureBuilder.h>  // for vpFeatureBuilder
+#include <visp3/blob/vpDot.h>                        // for vpDot
+#include <visp3/blob/vpDot2.h>                       // for vpDot2
+#include <visp3/core/vpCircle.h>                     // for vpCircle
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpPixelMeterConversion.h>       // for vpPixelMeterConv...
+#include <visp3/core/vpSphere.h>                     // for vpSphere
+#include <visp3/me/vpMeEllipse.h>                    // for vpMeEllipse
+#include <visp3/visp_modules.h>                      // for VISP_HAVE_MODULE...
+#include <visp3/visual_features/vpFeatureEllipse.h>  // for vpFeatureEllipse
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 /*!
   Initialize an ellipse feature thanks to a vpCircle.
   The vpFeatureEllipse is initialized thanks to the parameters of the circle

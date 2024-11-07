@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Conversion between tracker and visual feature line.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderLine.cpp
@@ -39,11 +37,23 @@
   and visual feature Line
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <math.h>                                    // for M_PI, fabs
+#include <visp3/core/vpDebug.h>                      // for vpERROR_TRACE
+#include <visp3/core/vpMath.h>                       // for vpMath
+#include <visp3/visual_features/vpFeatureBuilder.h>  // for vpFeatureBuilder
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpCylinder.h>                   // for vpCylinder, vpCy...
+#include <visp3/core/vpLine.h>                       // for vpLine
+#include <visp3/core/vpPixelMeterConversion.h>       // for vpPixelMeterConv...
+#include <visp3/me/vpMeLine.h>                       // for vpMeLine
+#include <visp3/visp_modules.h>                      // for VISP_HAVE_MODULE_ME
+#include <visp3/visual_features/vpFeatureLine.h>     // for vpFeatureLine
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 /*!
   Initialize a line feature thanks to a vpLine.
   A vpFeatureLine contains the parameters \f$(\rho,\theta)\f$ which are

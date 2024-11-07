@@ -37,8 +37,8 @@
  * vpMomentAlpha.
  */
 
-#ifndef _vpFeatureMomentAlpha_h_
-#define _vpFeatureMomentAlpha_h_
+#ifndef VP_FEATURE_MOMENT_ALPHA_H
+#define VP_FEATURE_MOMENT_ALPHA_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>

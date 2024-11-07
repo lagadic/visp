@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,28 +29,24 @@
  *
  * Description:
  * 2D ellipse visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureEllipse.cpp
   \brief Class that defines 2D ellipse visual feature
 */
 
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureEllipse.h>
+#include <iostream>                                  // for basic_ostream
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
-// math
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpDebug.h>                      // for vpTRACE
+#include <visp3/core/vpFeatureDisplay.h>             // for vpFeatureDisplay
+#include <visp3/core/vpMath.h>                       // for vpMath
+#include <visp3/visual_features/vpBasicFeature.h>    // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureEllipse.h>  // for vpFeatureEllipse
+#include <visp3/core/vpArray2D.h>                    // for vpArray2D
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpConfig.h>                     // for VP_DEPRECATED
+#include <visp3/core/vpMatrix.h>                     // for vpMatrix
 
 /*
 

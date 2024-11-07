@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,22 +29,33 @@
  *
  * Description:
  * Conversion between tracker and visual feature vanishing point.
- *
- * Authors:
- * Odile Bourquardez
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderVanishingPoint.cpp
   \brief  conversion between vpPoint
   and visual feature vanishing point.
 */
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureException.h>
+
+#include <math.h>                                           // for sin, cos
+#include <ostream>                                          // for char_traits
+
+#include <visp3/core/vpException.h>                         // for vpException
+#include <visp3/visual_features/vpFeatureBuilder.h>         // for vpFeature...
+#include <visp3/visual_features/vpFeatureException.h>       // for vpFeature...
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/core/vpDebug.h>                             // for vpCERROR
+#include <visp3/core/vpPixelMeterConversion.h>              // for vpPixelMe...
+#include <visp3/core/vpPoint.h>                             // for vpPoint
+#include <visp3/visual_features/vpFeatureLine.h>            // for vpFeature...
+#include <visp3/visual_features/vpFeatureVanishingPoint.h>  // for vpFeature...
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpImagePoint;
+class vpLine;
+
 /*!
   Initialize a vpFeatureVanishingPoint thanks to a vpPoint.
   The vpFeatureVanishingPoint is initialized thanks to the parameters of the

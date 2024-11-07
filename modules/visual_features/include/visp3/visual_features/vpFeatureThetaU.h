@@ -38,8 +38,8 @@
   \brief class that defines the ThetaU visual feature
 */
 
-#ifndef vpFeatureThetaU_H
-#define vpFeatureThetaU_H
+#ifndef VP_FEATURE_THETAU_H
+#define VP_FEATURE_THETAU_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

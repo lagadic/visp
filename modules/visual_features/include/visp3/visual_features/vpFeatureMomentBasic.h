@@ -37,8 +37,8 @@
  * vpMomentBasic.
  */
 
-#ifndef _vpFeatureMomentBasic_h_
-#define _vpFeatureMomentBasic_h_
+#ifndef VP_FEATURE_MOMENT_BASIC_H
+#define VP_FEATURE_MOMENT_BASIC_H
 
 #include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>

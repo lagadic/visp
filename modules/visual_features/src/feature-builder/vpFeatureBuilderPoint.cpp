@@ -36,12 +36,27 @@
   \brief  conversion between tracker
   and visual feature Point
 */
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureException.h>
+#include <math.h>                                      // for fabs
+#include <iostream>                                    // for basic_ostream
+
+#include <visp3/core/vpDebug.h>                        // for vpERROR_TRACE
+#include <visp3/visual_features/vpFeatureBuilder.h>    // for vpFeatureBuilder
+#include <visp3/visual_features/vpFeatureException.h>  // for vpFeatureExcep...
+#include <visp3/blob/vpDot.h>                          // for vpDot
+#include <visp3/blob/vpDot2.h>                         // for vpDot2
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpImagePoint.h>                   // for vpImagePoint
+#include <visp3/core/vpMeterPixelConversion.h>         // for vpMeterPixelCo...
+#include <visp3/core/vpPixelMeterConversion.h>         // for vpPixelMeterCo...
+#include <visp3/core/vpPoint.h>                        // for vpPoint
+#include <visp3/visp_modules.h>                        // for VISP_HAVE_MODU...
+#include <visp3/visual_features/vpFeaturePoint.h>      // for vpFeaturePoint
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
   Create a vpFeaturePoint thanks to a vpDot and the parameters of the camera.

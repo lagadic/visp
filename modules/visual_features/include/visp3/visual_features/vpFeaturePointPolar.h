@@ -36,8 +36,8 @@
  * \brief Class that defines a 2D point visual feature with polar coordinates.
  */
 
-#ifndef vpFeaturePointPolar_H
-#define vpFeaturePointPolar_H
+#ifndef VP_FEATURE_POINT_POLAR_H
+#define VP_FEATURE_POINT_POLAR_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

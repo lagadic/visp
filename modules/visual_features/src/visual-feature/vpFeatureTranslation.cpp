@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,25 +29,24 @@
  *
  * Description:
  * 3D translation visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureTranslation.cpp
   \brief class that defines 3D translation visual feature
 */
 
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureTranslation.h>
+#include <iostream>                                      // for basic_ostream
 
-#include <visp3/core/vpMath.h>
-
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDebug.h>                          // for vpERROR_TRACE
+#include <visp3/visual_features/vpBasicFeature.h>        // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureException.h>    // for vpFeatureExc...
+#include <visp3/visual_features/vpFeatureTranslation.h>  // for vpFeatureTra...
+#include <visp3/core/vpArray2D.h>                        // for vpArray2D
+#include <visp3/core/vpColVector.h>                      // for vpColVector
+#include <visp3/core/vpConfig.h>                         // for BEGIN_VISP_N...
+#include <visp3/core/vpHomogeneousMatrix.h>              // for vpHomogeneou...
+#include <visp3/core/vpMatrix.h>                         // for vpMatrix
 
 /*
 

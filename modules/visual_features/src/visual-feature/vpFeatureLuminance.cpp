@@ -38,16 +38,18 @@
   For more details see \cite Collewet08c.
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-
-#include <visp3/visual_features/vpFeatureLuminance.h>
+#include <visp3/core/vpDebug.h>                        // for vpERROR_TRACE
+#include <visp3/core/vpException.h>                    // for vpException
+#include <visp3/core/vpImageFilter.h>                  // for vpImageFilter
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
+#include <visp3/core/vpPixelMeterConversion.h>         // for vpPixelMeterCo...
+#include <visp3/visual_features/vpFeatureLuminance.h>  // for vpFeatureLumin...
+#include <visp3/core/vpArray2D.h>                      // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>             // for vpCameraParame...
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpImage.h>                        // for vpImage
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
 
 BEGIN_VISP_NAMESPACE
 

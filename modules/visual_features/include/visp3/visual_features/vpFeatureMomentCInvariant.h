@@ -35,8 +35,8 @@
  * \file vpFeatureMomentCInvariant.h
  * \brief Implementation of the interaction matrix computation for vpMomentCInvariant.
  */
-#ifndef _vpFeatureMomentCInvariant_h_
-#define _vpFeatureMomentCInvariant_h_
+#ifndef VP_FEATURE_MOMENT_CINVARIANT_H
+#define VP_FEATURE_MOMENT_CINVARIANT_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/visual_features/vpFeatureMoment.h>

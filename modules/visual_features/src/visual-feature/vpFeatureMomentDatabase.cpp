@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,13 @@
  * Pseudo-database used to handle dependencies between moment features.
  */
 
-#include <iostream>
-#include <typeinfo>
-#include <visp3/core/vpConfig.h>
-#include <visp3/visual_features/vpFeatureMoment.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <map>                                              // for map, oper...
+#include <string>                                           // for basic_string
+#include <utility>                                          // for pair
+
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/visual_features/vpFeatureMoment.h>          // for vpFeature...
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>  // for vpFeature...
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -44,7 +46,7 @@ BEGIN_VISP_NAMESPACE
  * \param name : the feature's name, usually the string naming it's class. Each
  * name must be unique
  */
-void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, const std::string &name)
+  void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, const std::string &name)
 {
   featureMomentsDataBase.insert(std::pair<const std::string, vpFeatureMoment *>(name, &featureMoment));
 }

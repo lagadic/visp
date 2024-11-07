@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,24 +29,29 @@
  *
  * Description:
  * ThetaU visual feature.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureThetaU.cpp
   \brief class that defines the ThetaU visual feature
 */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <math.h>                                      // for fabs, sqrt
+#include <iostream>                                    // for basic_ostream
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDebug.h>                        // for vpTRACE, vpERR...
+#include <visp3/core/vpMath.h>                         // for vpMath
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureException.h>  // for vpFeatureExcep...
+#include <visp3/visual_features/vpFeatureThetaU.h>     // for vpFeatureThetaU
+#include <visp3/core/vpArray2D.h>                      // for vpArray2D
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpHomogeneousMatrix.h>            // for vpHomogeneousM...
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix, oper...
+#include <visp3/core/vpRotationMatrix.h>               // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>               // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>                 // for vpThetaUVector
 
 /*
 

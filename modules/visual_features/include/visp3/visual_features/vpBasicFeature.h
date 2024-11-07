@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,33 +29,20 @@
  *
  * Description:
  * Visual feature.
- *
- * Authors:
- * Nicolas Mansard
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpBasicFeature.h
   \brief class that defines what is a visual feature
 */
 
-#ifndef vpBasicFeature_H
-#define vpBasicFeature_H
+#ifndef VP_BASIC_FEATURE_H
+#define VP_BASIC_FEATURE_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
-
-// Display Issue
-
-// Meter/pixel conversion
-#include <visp3/core/vpCameraParameters.h>
-
-// Color / image / display
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpColor.h>      // for vpColor
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
 
 // #define FEATURE_ALL 0xff
 
@@ -70,6 +56,11 @@
 // #define FEATURE_LINE8 0x80
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
+
 /*!
  * \class vpBasicFeature
  * \ingroup group_visual_features

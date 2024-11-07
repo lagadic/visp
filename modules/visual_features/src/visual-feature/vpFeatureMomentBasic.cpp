@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,21 @@
  * Implementation for all supported moment features.
  */
 
-#include <vector>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <vector>                                        // for vector
+
+#include <visp3/core/vpMomentObject.h>                   // for vpMomentObject
+#include <visp3/visual_features/vpFeatureMomentBasic.h>  // for vpFeatureMom...
+#include <visp3/core/vpArray2D.h>                        // for vpArray2D
+#include <visp3/core/vpConfig.h>                         // for BEGIN_VISP_N...
+#include <visp3/core/vpException.h>                      // for vpException
+#include <visp3/core/vpMatrix.h>                         // for vpMatrix
+#include <visp3/core/vpMoment.h>                         // for vpMoment
+#include <visp3/visual_features/vpFeatureMoment.h>       // for vpFeatureMoment
 
 BEGIN_VISP_NAMESPACE
+
+class vpFeatureMomentDatabase;
+class vpMomentDatabase;
 /*!
  * Default constructor.
  * \param data_base : Database of moment primitives.
@@ -45,8 +54,8 @@ BEGIN_VISP_NAMESPACE
  * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param featureMoments : Database of features.
  */
-  vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                                             vpFeatureMomentDatabase *featureMoments)
+vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                                           vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(data_base, A_, B_, C_, featureMoments), order(0)
 { }
 

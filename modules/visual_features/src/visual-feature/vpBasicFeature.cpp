@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Visual feature.
- *
- * Authors:
- * Nicolas Mansard
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpBasicFeature.cpp
@@ -42,6 +37,8 @@
 */
 
 #include <visp3/visual_features/vpBasicFeature.h>
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpBasicFeature::FEATURE_LINE[32] = {

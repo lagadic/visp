@@ -36,8 +36,8 @@
  * \brief Class that defines 2D line visual feature
  */
 
-#ifndef _vpFeatureLine_h_
-#define _vpFeatureLine_h_
+#ifndef VP_FEATURE_LINE_H
+#define VP_FEATURE_LINE_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

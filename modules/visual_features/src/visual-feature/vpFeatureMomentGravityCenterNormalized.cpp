@@ -93,14 +93,19 @@ BEGIN_VISP_NAMESPACE
 END_VISP_NAMESPACE
 #else
 
+#include <string>
 #include <vector>
 
 #include <visp3/core/vpMomentAreaNormalized.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
+#include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpMoment.h>
+#include <visp3/core/vpMomentDatabase.h>
 
 BEGIN_VISP_NAMESPACE
 /*!

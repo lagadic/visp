@@ -38,9 +38,8 @@
   \brief  class  that defines conversion between tracker and visual feature
 */
 
-#ifndef vpFeatureBuilder_H
-#define vpFeatureBuilder_H
-
+#ifndef VP_FEATURE_BUILDER_H
+#define VP_FEATURE_BUILDER_H
 
 #include <visp3/core/vpConfig.h>
 

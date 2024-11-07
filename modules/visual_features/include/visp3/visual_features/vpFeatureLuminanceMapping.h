@@ -33,17 +33,27 @@
 
 #ifndef VP_FEATURE_LUMINANCE_MAPPING_H
 #define VP_FEATURE_LUMINANCE_MAPPING_H
-#include <visp3/core/vpConfig.h>
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#include <array>
-#include <memory>
 
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureLuminance.h>
+#include <visp3/core/vpConfig.h>                       // for VP_OVERRIDE
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
+#include <array>                                       // for array
+#include <memory>                                      // for shared_ptr
+#include <string>                                      // for string
+#include <vector>                                      // for vector
+
+#include <visp3/core/vpImage.h>                        // for vpImage
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
+#include <visp3/visual_features/vpBasicFeature.h>      // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureLuminance.h>  // for vpFeatureLumin...
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpColor.h>                        // for vpColor
+#include <visp3/visp_modules.h>                        // for VISP_HAVE_MODU...
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 /*!
  * \brief Base class for functions that map an image and its interaction matrix to a different domain.

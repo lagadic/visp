@@ -38,12 +38,27 @@
   \brief Conversion between tracker and visual feature point with
   polar coordinates.
 */
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureException.h>
+
+#include <math.h>                                       // for atan2, sqrt
+#include <iostream>                                     // for basic_ostream
+
+#include <visp3/core/vpDebug.h>                         // for vpERROR_TRACE
+#include <visp3/visual_features/vpFeatureBuilder.h>     // for vpFeatureBuilder
+#include <visp3/visual_features/vpFeatureException.h>   // for vpFeatureExce...
+#include <visp3/blob/vpDot.h>                           // for vpDot
+#include <visp3/blob/vpDot2.h>                          // for vpDot2
+#include <visp3/core/vpConfig.h>                        // for BEGIN_VISP_NA...
+#include <visp3/core/vpImagePoint.h>                    // for vpImagePoint
+#include <visp3/core/vpMeterPixelConversion.h>          // for vpMeterPixelC...
+#include <visp3/core/vpPixelMeterConversion.h>          // for vpPixelMeterC...
+#include <visp3/core/vpPoint.h>                         // for vpPoint
+#include <visp3/visp_modules.h>                         // for VISP_HAVE_MOD...
+#include <visp3/visual_features/vpFeaturePointPolar.h>  // for vpFeaturePoin...
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
 

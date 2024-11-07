@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,30 +29,25 @@
  *
  * Description:
  * 2D vanishing point visual feature (Z coordinate in 3D space is infinity)
- *
- * Authors:
- * Odile Bourquardez
- *
-*****************************************************************************/
+ */
 
-/*!  \file vpFeatureVanishingPoint.cpp
+/*!
+  \file vpFeatureVanishingPoint.cpp
   \brief Class that defines 2D vanishing
   point visual feature (Z coordinate in 3D space is infinity)
 */
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureVanishingPoint.h>
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
+#include <math.h>                                           // for cos, sin
+#include <iostream>                                         // for basic_ost...
 
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
-// math
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpDebug.h>                             // for vpTRACE
+#include <visp3/core/vpFeatureDisplay.h>                    // for vpFeature...
+#include <visp3/visual_features/vpBasicFeature.h>           // for vpBasicFe...
+#include <visp3/visual_features/vpFeatureVanishingPoint.h>  // for vpFeature...
+#include <visp3/core/vpArray2D.h>                           // for vpArray2D
+#include <visp3/core/vpColVector.h>                         // for vpColVector
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/core/vpMatrix.h>                            // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 /*!

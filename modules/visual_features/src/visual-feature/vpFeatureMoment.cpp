@@ -31,25 +31,26 @@
  * Base for all moment features
  */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMoment.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/visual_features/vpFeatureMoment.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <iostream>                                         // for basic_ost...
+#include <string>                                           // for char_traits
+#include <vector>                                           // for vector
 
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureException.h>
-
-#include <vector>
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>                         // for vpException
+#include <visp3/core/vpMoment.h>                            // for vpMoment
+#include <visp3/core/vpMomentDatabase.h>                    // for vpMomentD...
+#include <visp3/visual_features/vpFeatureMoment.h>          // for vpFeature...
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>  // for vpFeature...
+#include <visp3/core/vpColVector.h>                         // for vpColVector
+#include <visp3/core/vpConfig.h>                            // for BEGIN_VIS...
+#include <visp3/core/vpMatrix.h>                            // for vpMatrix
+#include <visp3/visual_features/vpBasicFeature.h>           // for vpBasicFe...
 
 BEGIN_VISP_NAMESPACE
-class vpBasicFeature;
 
 /*!
  * Initialize common parameters for moment features.
  */
-void vpFeatureMoment::init()
+  void vpFeatureMoment::init()
 {
   // feature dimension
   /*

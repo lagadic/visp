@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Conversion between tracker and visual feature 3D Point.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderPoint3D.cpp
@@ -39,10 +37,12 @@
   and visual feature 3D Point
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureException.h>
+#include <visp3/core/vpDebug.h>                      // for vpERROR_TRACE
+#include <visp3/visual_features/vpFeatureBuilder.h>  // for vpFeatureBuilder
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpPoint.h>                      // for vpPoint
+#include <visp3/visual_features/vpFeaturePoint3D.h>  // for vpFeaturePoint3D
 
 BEGIN_VISP_NAMESPACE
 /*!

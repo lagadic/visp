@@ -36,8 +36,8 @@
  * \brief class that defines the 3D point visual feature.
  */
 
-#ifndef vpFeaturePoint3d_H
-#define vpFeaturePoint3d_H
+#ifndef VP_FEATURE_POINT_3D_H
+#define VP_FEATURE_POINT_3D_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>

@@ -36,19 +36,21 @@
  * \brief class that defines the vpFeatureSegment visual feature
  */
 
-#include <cmath>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/visual_features/vpFeatureSegment.h>
+#include <cmath>                                     // for M_PI, atan2, sqrt
+#include <iostream>                                  // for basic_ostream
 
-// Exception
-#include <visp3/core/vpException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDebug.h>                      // for vpTRACE
+#include <visp3/core/vpDisplay.h>                    // for vpDisplay
+#include <visp3/core/vpImagePoint.h>                 // for vpImagePoint
+#include <visp3/core/vpMath.h>                       // for vpMath
+#include <visp3/core/vpMeterPixelConversion.h>       // for vpMeterPixelConv...
+#include <visp3/visual_features/vpBasicFeature.h>    // for vpBasicFeature
+#include <visp3/visual_features/vpFeatureSegment.h>  // for vpFeatureSegment
+#include <visp3/core/vpArray2D.h>                    // for vpArray2D
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpColor.h>                      // for vpColor
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpMatrix.h>                     // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 

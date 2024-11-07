@@ -31,12 +31,36 @@
  * Luminance dimensionality reduction features
  */
 
-#include <visp3/visual_features/vpFeatureLuminanceMapping.h>
+#include <visp3/core/vpConfig.h>                              // for BEGIN_V...
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <string.h>                                           // for memcpy
+#include <algorithm>                                          // for max, min
+#include <array>                                              // for array
+#include <cmath>                                              // for sqrt, cos
+#include <iostream>                                           // for basic_o...
+#include <memory>                                             // for shared_ptr
+#include <sstream>                                            // for basic_s...
+#include <string>                                             // for string
+#include <vector>                                             // for vector
+
+#include <visp3/core/vpArray2D.h>                             // for vpArray2D
+#include <visp3/core/vpColVector.h>                           // for vpColVe...
+#include <visp3/core/vpException.h>                           // for vpExcep...
+#include <visp3/core/vpImage.h>                               // for vpImage
+#include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#include <visp3/visp_modules.h>                               // for VISP_HA...
+#include <visp3/visual_features/vpBasicFeature.h>             // for vpBasic...
+#include <visp3/visual_features/vpFeatureLuminance.h>         // for vpFeatu...
+#include <visp3/visual_features/vpFeatureLuminanceMapping.h>  // for vpFeatu...
+
 #ifdef VISP_HAVE_MODULE_IO
-#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>                               // for vpImageIo
 #endif
+
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 // vpLuminanceMapping
 
