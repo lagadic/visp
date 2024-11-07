@@ -31,10 +31,15 @@
  * Freeman chain dedicated functions.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/blob/vpDot2.h>
+#include <iostream>               // for basic_ostream, char_traits, operator<<
+#include <list>                   // for list
+
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
+#include <visp3/blob/vpDot2.h>    // for vpDot2
 
 BEGIN_VISP_NAMESPACE
+
+template <class Type> class vpImage;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace

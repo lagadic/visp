@@ -36,20 +36,30 @@
   \brief Track a dot.
 */
 
-#include <visp3/core/vpDisplay.h>
+#include <cmath>                             // for fabs, pow, cos, sin, sqrt
+#include <iostream>                          // for basic_ostream, char_traits
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, operator!=, _List_...
+#include <string>                            // for basic_string, operator<<
+#include <vector>                            // for vector
 
-// exception handling
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpTrackingException.h>
-
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
-#include <math.h>
-#include <visp3/blob/vpDot2.h>
+#include <visp3/blob/vpDot2.h>               // for vpDot2, operator<<
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpIoTools.h>            // for vpIoTools
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint, operator<<
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpRect.h>               // for vpRect
+#include <visp3/core/vpTracker.h>            // for vpTracker
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 /******************************************************************************
  *

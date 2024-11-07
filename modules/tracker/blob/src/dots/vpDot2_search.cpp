@@ -31,18 +31,28 @@
  * Search a dot in an area.
  */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/blob/vpDot2.h>
+#include <cmath>                      // for fabs, sqrt
+#include <limits>                     // for numeric_limits
+#include <list>                       // for list, operator!=, _List_iterator
+
+#include <visp3/blob/vpDot2.h>        // for vpDot2
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/core/vpDisplay.h>     // for vpDisplay
+#include <visp3/core/vpColor.h>       // for vpColor
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpMath.h>        // for vpMath
+#include <visp3/core/vpRect.h>        // for vpRect
 
 BEGIN_VISP_NAMESPACE
+
+template <class Type> class vpImage;
 
 /**
  * \brief Performs the research of dots in the area when the point u, v is a good germ.
  *
  * \param data The data required for the algorithm.
  */
-  void vpDot2::searchDotsAreaGoodGerm(vpSearchDotsInAreaGoodGermData &data)
+void vpDot2::searchDotsAreaGoodGerm(vpSearchDotsInAreaGoodGermData &data)
 {
 // Compute the right border position for this possible germ
   unsigned int border_u;

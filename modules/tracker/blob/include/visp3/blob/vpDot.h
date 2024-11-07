@@ -39,24 +39,25 @@
 #ifndef VP_DOT_H
 #define VP_DOT_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpPolygon.h>
-#include <visp3/core/vpRect.h>
-#include <visp3/core/vpTracker.h>
-
-#include <fstream>
-#include <list>
-#include <math.h>
-#include <vector>
+#include <visp3/core/vpColVector.h>   // for vpColVector
+#include <visp3/core/vpColor.h>       // for vpColor
+#include <visp3/core/vpConfig.h>      // for VISP_BUILD_DEPRECATED_FUNCTIONS
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpPolygon.h>     // for vpPolygon
+#include <visp3/core/vpRect.h>        // for vpRect
+#include <visp3/core/vpTracker.h>     // for vpTracker
+#include <fstream>                    // for basic_ostream, ostream, endl
+#include <list>                       // for list
+#include <vector>                     // for vector
 
 #ifdef VISP_USE_MSVC
 #pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+template <class Type> class vpImage;
 
 /*!
  * \class vpDot

@@ -36,14 +36,23 @@
   \brief Track a white dot
 */
 
-#include <visp3/blob/vpDot.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpTrackingException.h>
+#include <math.h>                            // for pow
+#include <iostream>                          // for basic_ostream, char_traits
+#include <list>                              // for list, operator!=, _List_...
+#include <vector>                            // for vector
 
-#include <vector>
+#include <visp3/blob/vpDot.h>                // for vpDot, vpDot::CONNEXITY_4
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint, operator!=
+#include <visp3/core/vpTracker.h>            // for vpTracker
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 /*
   \class vpDot
