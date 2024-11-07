@@ -31,17 +31,20 @@
  * Class for Munkres Assignment Algorithm.
  */
 
+
+
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
+
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+
 #include <algorithm>               // for find, for_each, count, find_if
 #include <iterator>                // for begin, end, distance, pair
 #include <optional>                // for optional, make_optional, nullopt
 #include <utility>                 // for pair
 #include <vector>                  // for vector, operator!=
 
-#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
 #include <visp3/core/vpMunkres.h>  // for vpMunkres
-
-// Check if std:c++17 or higher
-#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 BEGIN_VISP_NAMESPACE
 /*!
