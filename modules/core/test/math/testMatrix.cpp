@@ -37,17 +37,27 @@
   Test some vpMatrix functionalities.
 */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpGEMM.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
+#include <stdlib.h>                            // for EXIT_FAILURE, size_t
+#include <algorithm>                           // for transform
+#include <cmath>                               // for fabs
+#include <functional>                          // for multiplies
+#include <iostream>                            // for basic_ostream, operator<<
+#include <iterator>                            // for back_insert_iterator
+#include <limits>                              // for numeric_limits
+#include <string>                              // for char_traits, basic_string
+#include <vector>                              // for vector
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <iterator> // for std::back_inserter
+#include <visp3/core/vpConfig.h>               // for VISP_CXX_STANDARD, VIS...
+#include <visp3/core/vpGEMM.h>                 // for vpGEMM, VP_GEMM_A_T
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/core/vpArray2D.h>              // for operator<<, vpArray2D
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpException.h>            // for operator<<, vpException
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>       // for vpRotationMatrix
+#include <visp3/core/vpRowVector.h>            // for vpRowVector
+#include <visp3/core/vpTime.h>                 // for measureTimeMs
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

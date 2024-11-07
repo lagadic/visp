@@ -36,9 +36,20 @@
   \brief Test matrix determinant computation.
 */
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/io/vpParseArgv.h>
+#include <stdio.h>                   // for fprintf, stderr, stdout
+#include <stdlib.h>                  // for atoi, EXIT_FAILURE, rand, EXIT_S...
+#include <cmath>                     // for fabs
+#include <fstream>                   // for basic_ostream, operator<<, basic...
+#include <iostream>                  // for cout, cerr
+#include <string>                    // for char_traits, basic_string, opera...
+#include <vector>                    // for vector
+
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpTime.h>       // for measureTimeMs
+#include <visp3/io/vpParseArgv.h>    // for vpParseArgv
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpConfig.h>     // for VISP_HAVE_EIGEN3, VISP_HAVE_LAPACK
+#include <visp3/core/vpException.h>  // for vpException
 
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"

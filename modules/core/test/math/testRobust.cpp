@@ -37,14 +37,18 @@
   Test some vpMath functionalities.
 */
 
-#include <fstream>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/io/vpParseArgv.h>
+#include <math.h>                    // for fabs
+#include <stdio.h>                   // for fprintf, stdout
+#include <stdlib.h>                  // for EXIT_FAILURE, EXIT_SUCCESS
+#include <fstream>                   // for basic_ostream, operator<<, endl
+#include <iostream>                  // for cerr, cout
+#include <string>                    // for char_traits, basic_string, alloc...
+
+#include <visp3/core/vpIoTools.h>    // for vpIoTools
+#include <visp3/io/vpParseArgv.h>    // for vpParseArgv
+#include <visp3/core/vpException.h>  // for operator<<, vpException
+#include <visp3/core/vpMath.h>       // for vpMath
+
 // List of allowed command line options
 #define GETOPTARGS "cdho:"
 

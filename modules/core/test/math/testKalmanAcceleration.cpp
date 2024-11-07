@@ -38,9 +38,18 @@
   with constant acceleration state model.
 */
 
-#include <fstream>
-#include <iostream>
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+#include <math.h>                                          // for sin
+#include <stdlib.h>                                        // for EXIT_FAILURE
+#include <fstream>                                         // for basic_ostream
+#include <iostream>                                        // for cout
+#include <string>                                          // for basic_string
+
+#include <visp3/core/vpLinearKalmanFilterInstantiation.h>  // for vpLinearKa...
+#include <visp3/core/vpArray2D.h>                          // for operator<<
+#include <visp3/core/vpColVector.h>                        // for vpColVector
+#include <visp3/core/vpException.h>                        // for operator<<
+#include <visp3/core/vpMath.h>                             // for vpMath
+#include <visp3/core/vpRowVector.h>                        // for vpRowVector
 
 int main()
 {

@@ -36,10 +36,11 @@
   \brief Tests matrix exception
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>                  // for EXIT_SUCCESS
+#include <iostream>                  // for basic_ostream, char_traits, oper...
 
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpException.h>  // for operator<<, vpException
 
 int main()
 {

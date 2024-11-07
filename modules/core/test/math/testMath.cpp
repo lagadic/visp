@@ -37,15 +37,19 @@
    Test some vpMath functionalities.
  */
 
-#include <cfloat>
-#include <iostream>
-#include <limits>
+#include <limits.h>                   // for SCHAR_MAX, UCHAR_MAX, SHRT_MAX
+#include <math.h>                     // for exp, NAN
+#include <stdlib.h>                   // for EXIT_FAILURE, EXIT_SUCCESS, size_t
+#include <cfloat>                     // for DBL_MIN
+#include <iostream>                   // for basic_ostream, operator<<, char...
+#include <limits>                     // for numeric_limits
+#include <string>                     // for basic_string
+#include <vector>                     // for vector
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpRxyzVector.h>
-
-#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpConfig.h>      // for VISP_CXX_STANDARD, VISP_CXX_STA...
+#include <visp3/core/vpColVector.h>   // for vpColVector
+#include <visp3/core/vpMath.h>        // for vpMath
+#include <visp3/core/vpRxyzVector.h>  // for vpRxyzVector
 
 #if defined _MSC_VER && _MSC_VER >= 1200
 #pragma warning(disable : 4723)

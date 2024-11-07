@@ -36,10 +36,24 @@
  \brief Test for vpImageDraw class.
 */
 
-#include <iostream>
-#include <visp3/core/vpFont.h>
-#include <visp3/core/vpImageDraw.h>
-#include <visp3/io/vpImageIo.h>
+#include <stdlib.h>                          // for EXIT_SUCCESS
+#include <iostream>                          // for basic_ostream, char_traits
+#include <string>                            // for basic_string, operator==
+#include <vector>                            // for vector
+
+#include <visp3/core/vpCameraParameters.h>   // for vpCameraParameters
+#include <visp3/core/vpFont.h>               // for vpFont
+#include <visp3/core/vpImageDraw.h>          // for vpImageDraw
+#include <visp3/io/vpImageIo.h>              // for vpImageIo
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpRGBa.h>               // for vpRGBa
+#include <visp3/core/vpRect.h>               // for vpRect
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRxyzVector.h>         // for vpRxyzVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
 int main(int argc, char *argv[])
 {

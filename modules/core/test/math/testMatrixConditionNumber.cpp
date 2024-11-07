@@ -36,9 +36,14 @@
   \brief Test matrix condition number computation.
 */
 
-#include <iostream>
-#include <stdlib.h>
-#include <visp3/core/vpMatrix.h>
+#include <stdlib.h>                // for EXIT_FAILURE, EXIT_SUCCESS
+#include <iostream>                // for basic_ostream, operator<<, char_tr...
+#include <string>                  // for basic_string, string
+
+#include <visp3/core/vpMatrix.h>   // for vpMatrix
+#include <visp3/core/vpArray2D.h>  // for vpArray2D
+#include <visp3/core/vpConfig.h>   // for VISP_HAVE_EIGEN3, VISP_HAVE_LAPACK
+#include <visp3/core/vpMath.h>     // for vpMath
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

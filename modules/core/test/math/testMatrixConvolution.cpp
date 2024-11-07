@@ -36,8 +36,15 @@
   \brief Test matrix convolution.
 */
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpTime.h>
+#include <stdlib.h>                  // for EXIT_FAILURE
+#include <iostream>                  // for basic_ostream, operator<<, cout
+#include <limits>                    // for numeric_limits
+#include <string>                    // for char_traits, basic_string
+
+#include <visp3/core/vpArray2D.h>    // for operator<<, vpArray2D
+#include <visp3/core/vpException.h>  // for vpException
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

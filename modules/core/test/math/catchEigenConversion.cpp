@@ -38,10 +38,10 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpEigenConversion.h>
 
 #if defined(VISP_HAVE_EIGEN3) && defined(VISP_HAVE_CATCH2)
 
+#include <visp3/core/vpEigenConversion.h>
 #include <catch_amalgamated.hpp>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -123,7 +123,7 @@ TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]")
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-    }
+}
 
 TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -152,7 +152,7 @@ TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-    }
+}
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -181,7 +181,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conve
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-    }
+}
 
 TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conversion", "[eigen_conversion]")
 {
@@ -210,7 +210,7 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conve
   VISP_NAMESPACE_NAME::eigen2visp(eigen_m2, visp_m2);
   REQUIRE(visp_m == visp_m2);
   std::cout << std::endl;
-    }
+}
 
 TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_conversion]")
 {

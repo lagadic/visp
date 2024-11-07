@@ -37,14 +37,21 @@
   Test for vpMomentAlpha class.
 */
 
-#include <string>
-#include <visp3/core/vpMomentAlpha.h>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/io/vpImageIo.h>
+#include <stdlib.h>                            // for EXIT_FAILURE, EXIT_SUC...
+#include <iostream>                            // for basic_ostream, operator<<
+#include <sstream>                             // for basic_stringstream
+#include <string>                              // for char_traits, basic_string
+#include <vector>                              // for vector
+
+#include <visp3/core/vpMomentAlpha.h>          // for vpMomentAlpha
+#include <visp3/core/vpMomentCentered.h>       // for vpMomentCentered
+#include <visp3/core/vpMomentDatabase.h>       // for vpMomentDatabase
+#include <visp3/core/vpMomentGravityCenter.h>  // for vpMomentGravityCenter
+#include <visp3/core/vpMomentObject.h>         // for vpMomentObject, vpMome...
+#include <visp3/io/vpImageIo.h>                // for vpImageIo
+#include <visp3/core/vpCameraParameters.h>     // for vpCameraParameters
+#include <visp3/core/vpImage.h>                // for vpImage
+#include <visp3/core/vpMath.h>                 // for vpMath
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

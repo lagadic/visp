@@ -36,17 +36,20 @@
   \brief Test various matrix inversions.
 */
 
-#include <cmath>
-#include <fstream>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
+#include <stdio.h>                   // for fprintf, stderr, stdout
+#include <stdlib.h>                  // for atoi, rand, EXIT_FAILURE, EXIT_S...
+#include <cmath>                     // for fabs, sqrt
+#include <fstream>                   // for basic_ostream, char_traits, oper...
+#include <iostream>                  // for cout, cerr
+#include <string>                    // for basic_string, operator<<, string
+#include <vector>                    // for vector
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/io/vpParseArgv.h>
+#include <visp3/core/vpMatrix.h>     // for vpMatrix, operator*
+#include <visp3/core/vpTime.h>       // for measureTimeMs
+#include <visp3/io/vpParseArgv.h>    // for vpParseArgv
+#include <visp3/core/vpArray2D.h>    // for operator<<, vpArray2D
+#include <visp3/core/vpConfig.h>     // for VISP_HAVE_LAPACK, VISP_HAVE_OPENCV
+#include <visp3/core/vpException.h>  // for vpException
 
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"

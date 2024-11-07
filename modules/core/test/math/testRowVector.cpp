@@ -37,11 +37,17 @@
   Test some vpRowVector functionalities.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>                  // for EXIT_FAILURE, size_t, EXIT_SUCCESS
+#include <cmath>                     // for fabs
+#include <iostream>                  // for basic_ostream, operator<<, cout
+#include <limits>                    // for numeric_limits
+#include <string>                    // for basic_string, char_traits, opera...
+#include <vector>                    // for vector
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRowVector.h>
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
+#include <visp3/core/vpArray2D.h>    // for operator<<, vpArray2D
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

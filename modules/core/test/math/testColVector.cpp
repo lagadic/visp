@@ -37,12 +37,19 @@
   Test some vpColVector functionalities.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>                  // for EXIT_FAILURE, size_t, rand, EXIT...
+#include <cmath>                     // for fabs
+#include <iostream>                  // for basic_ostream, operator<<, endl
+#include <limits>                    // for numeric_limits
+#include <string>                    // for char_traits, basic_string, opera...
+#include <vector>                    // for vector
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpGaussRand.h>
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpArray2D.h>    // for operator<<, vpArray2D
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
+#include <visp3/core/vpTime.h>       // for measureTimeMs
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;

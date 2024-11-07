@@ -38,6 +38,7 @@
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 namespace Eigen { template <typename Derived> class MatrixBase; }
 namespace Eigen { template <typename _Scalar> class AngleAxis; }

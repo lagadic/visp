@@ -35,16 +35,26 @@
   \example perfMatrixTranspose.cpp
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                      // for VISP_HAVE_EIGEN3
 
 #if defined(VISP_HAVE_CATCH2)
 
-#include <catch_amalgamated.hpp>
+#include <iterator>                                   // for pair
+#include <new>                                        // for operator new
+#include <sstream>                                    // for basic_ostream
+#include <string>                                     // for char_traits
+#include <utility>                                    // for pair, move
+#include <vector>                                     // for vector
 
-#include <visp3/core/vpMatrix.h>
+#include <catch_amalgamated.hpp>                      // for Benchmark, Sour...
+
+#include <visp3/core/vpMatrix.h>                      // for vpMatrix
+#include <visp3/core/vpArray2D.h>                     // for vpArray2D
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-#include <opencv2/core.hpp>
+#include <opencv2/core/hal/interface.h>               // for CV_64FC1
+#include <opencv2/core/mat.hpp>                       // for Mat, MatExpr
+#include <opencv2/core/mat.inl.hpp>                   // for Mat::at, MatExp...
 #endif
 
 #ifdef VISP_HAVE_EIGEN3

@@ -37,7 +37,26 @@
   Test Matrix initialization
 */
 
-#include <visp3/core/vpMatrix.h>
+#include <math.h>                            // for M_PI, M_PI_2
+#include <stdlib.h>                          // for EXIT_FAILURE, EXIT_SUCCESS
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <iostream>                          // for basic_ostream, operator<<
+#include <utility>                           // for move
+
+#include <visp3/core/vpArray2D.h>            // for operator<<, vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for VISP_CXX_STANDARD, VISP_...
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpQuaternionVector.h>   // for vpQuaternionVector
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpRxyzVector.h>         // for vpRxyzVector
+#include <visp3/core/vpRzyxVector.h>         // for vpRzyxVector
+#include <visp3/core/vpRzyzVector.h>         // for vpRzyzVector
+#include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
