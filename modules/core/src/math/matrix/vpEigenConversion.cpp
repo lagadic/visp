@@ -42,24 +42,7 @@
 #include <visp3/core/vpRowVector.h>                   // for vpRowVector
 
 #ifdef VISP_HAVE_EIGEN3
-#include <Eigen/src/Core/Assign.h>                    // for MatrixBase::ope...
-#include <Eigen/src/Core/AssignEvaluator.h>           // for call_assignment
-#include <Eigen/src/Core/CoreEvaluators.h>            // for evaluator<>::Flags
-#include <Eigen/src/Core/DenseBase.h>                 // for DenseBase<>::Ma...
-#include <Eigen/src/Core/DenseCoeffsBase.h>           // for inner_stride_at...
-#include <Eigen/src/Core/GenericPacketMath.h>         // for ploadt, pstoret
-#include <Eigen/src/Core/Map.h>                       // for traits<>::Flags
-#include <Eigen/src/Core/MapBase.h>                   // for MapBase<>::Size...
-#include <Eigen/src/Core/Matrix.h>                    // for traits<>::ColsA...
-#include <Eigen/src/Core/NumTraits.h>                 // for GenericNumTrait...
-#include <Eigen/src/Core/Stride.h>                    // for Stride, Stride<...
-#include <Eigen/src/Core/arch/NEON/PacketMath.h>      // for unpacket_traits...
-#include <Eigen/src/Core/util/Constants.h>            // for AlignmentType
-#include <Eigen/src/Core/util/ForwardDeclarations.h>  // for accessors_level...
-#include <Eigen/src/Core/util/Macros.h>               // for EIGEN_MAJOR_VER...
-#include <Eigen/src/Core/util/Memory.h>               // for conditional_ali...
-#include <Eigen/src/Core/util/Meta.h>                 // for is_arithmetic<>...
-#include <Eigen/src/Core/util/XprHelper.h>            // for size_at_compile...
+#include <Eigen/Core>
 #endif
 
 namespace VISP_NAMESPACE_NAME
@@ -95,7 +78,7 @@ void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
@@ -109,7 +92,7 @@ void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void visp2eigen(const  vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 
