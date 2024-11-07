@@ -222,15 +222,11 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     m_previousFrame.IRGB = input.IRGB;
   }
 
-
-
   m_logger.startTimer();
   if (m_mask) {
     m_mask->updateMask(input, m_previousFrame, input.mask);
   }
   m_logger.setMaskTime(m_logger.endTimer());
-
-
 
   bool requiresSilhouetteCandidates = false;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
@@ -293,7 +289,6 @@ void vpRBTracker::track(vpRBFeatureTrackerInput &input)
     updateRender(input);
     m_logger.setOdometryTime(m_logger.endTimer());
   }
-
 
   id = 0;
   for (std::shared_ptr<vpRBFeatureTracker> &tracker : m_trackers) {
