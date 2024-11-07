@@ -40,6 +40,7 @@
 #include <visp3/core/vpConfig.h>                              // for VISP_HA...
 #include <visp3/core/vpColVector.h>                           // for vpColVe...
 #include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#include <visp3/core/vpMatrixException.h>                     // for vpMatrixException
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>

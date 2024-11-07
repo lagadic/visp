@@ -31,16 +31,17 @@
  * Matrix QR decomposition.
  */
 
-#include <algorithm>                 // for min
-#include <cstdlib>                   // for size_t, abs
-#include <iostream>                  // for char_traits, basic_ostream, basi...
-#include <string.h>                  // for memcpy
+#include <algorithm>                       // for min
+#include <cstdlib>                         // for size_t, abs
+#include <iostream>                        // for char_traits, basic_ostream, basi...
+#include <string.h>                        // for memcpy
 
-#include <visp3/core/vpConfig.h>     // for VISP_HAVE_GSL, VISP_HAVE_LAPACK
-#include <visp3/core/vpColVector.h>  // for vpColVector
-#include <visp3/core/vpException.h>  // for vpException
-#include <visp3/core/vpMatrix.h>     // for vpMatrix
-#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpConfig.h>           // for VISP_HAVE_GSL, VISP_HAVE_LAPACK
+#include <visp3/core/vpColVector.h>        // for vpColVector
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
+#include <visp3/core/vpArray2D.h>          // for vpArray2D
 
 BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
