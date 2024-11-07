@@ -32,6 +32,9 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <visp3/core/vpRGBf.h>
+#include <visp3/core/vpImage.h>
+
 #include <lightRampAttrib.h>
 
 BEGIN_VISP_NAMESPACE

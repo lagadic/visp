@@ -34,9 +34,16 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PANDA3D)
+
+#include <string>
+
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
+
 #include "cardMaker.h"
 #include "orthographicLens.h"
+
+class vpRGBf;
+template <class Type> class vpImage;
 
 BEGIN_VISP_NAMESPACE
 /**
