@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,12 @@
  * Description:
  * Interface for Kinova Jaco robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+ * \file vpRobotKinova.cpp
+ * \brief Interface for Kinova Jaco2 robot.
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -43,20 +45,16 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotException.h>
 
-/*!
- * \file vpRobotKinova.cpp
- * \brief Interface for Kinova Jaco2 robot.
- */
-
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotKinova.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that consider a 6 DoF Jaco arm. Use setDoF() to change the degrees of freedom.
  */
 vpRobotKinova::vpRobotKinova()
   : m_eMc(), m_plugin_location("./"), m_verbose(false), m_plugin_loaded(false), m_devices_count(0),
-    m_devices_list(NULL), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
+  m_devices_list(nullptr), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
 {
   init();
 }
@@ -81,7 +79,8 @@ void vpRobotKinova::setDoF(unsigned int dof)
 {
   if (dof == 4 || dof == 6 || dof == 7) {
     nDof = dof;
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError,
                       "Unsupported Kinova Jaco degrees of freedom: %d. Possible values are 4, 6 or 7.", dof));
   }
@@ -521,7 +520,8 @@ void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   if (frame == JOINT_STATE) {
     getJointPosition(position);
-  } else if (frame == END_EFFECTOR_FRAME) {
+  }
+  else if (frame == END_EFFECTOR_FRAME) {
     CartesianPosition currentCommand;
     // We get the actual cartesian position of the robot
     KinovaGetCartesianCommand(currentCommand);
@@ -532,7 +532,8 @@ void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position[3] = currentCommand.Coordinates.ThetaX;
     position[4] = currentCommand.Coordinates.ThetaY;
     position[5] = currentCommand.Coordinates.ThetaZ;
-  } else {
+  }
+  else {
     std::cout << "Not implemented ! " << std::endl;
   }
 }
@@ -638,7 +639,8 @@ void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const v
       std::cout << "Move robot to joint position [rad rad rad rad rad rad]: " << q.t() << std::endl;
     }
     KinovaSendBasicTrajectory(pointToSend);
-  } else if (frame == vpRobot::END_EFFECTOR_FRAME) {
+  }
+  else if (frame == vpRobot::END_EFFECTOR_FRAME) {
     if (q.size() != 6) {
       throw(vpException(vpException::fatalError,
                         "Cannot move robot to cartesian position of dim %d that is not a 6-dim vector", q.size()));
@@ -662,7 +664,8 @@ void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const v
     }
     KinovaSendBasicTrajectory(pointToSend);
 
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError,
                       "Cannot move robot to a cartesian position. Only joint positioning is implemented"));
   }
@@ -710,7 +713,7 @@ void vpRobotKinova::loadPlugin()
 #ifdef __linux__
   // We load the API
   std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("Kinova.API.USBCommandLayerUbuntu.so")
-                                                               : std::string("Kinova.API.EthCommandLayerUbuntu.so");
+    : std::string("Kinova.API.EthCommandLayerUbuntu.so");
   std::string plugin = vpIoTools::createFilePath(m_plugin_location, plugin_name);
   if (m_verbose) {
     std::cout << "Load plugin: \"" << plugin << "\"" << std::endl;
@@ -721,7 +724,7 @@ void vpRobotKinova::loadPlugin()
   // We load the functions from the library
   KinovaCloseAPI = (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("CloseAPI")).c_str());
   KinovaGetAngularCommand =
-      (int (*)(AngularPosition &))dlsym(m_command_layer_handle, (prefix + std::string("GetAngularCommand")).c_str());
+    (int (*)(AngularPosition &))dlsym(m_command_layer_handle, (prefix + std::string("GetAngularCommand")).c_str());
   KinovaGetCartesianCommand = (int (*)(CartesianPosition &))dlsym(
       m_command_layer_handle, (prefix + std::string("GetCartesianCommand")).c_str());
   KinovaGetDevices = (int (*)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result))dlsym(
@@ -730,17 +733,17 @@ void vpRobotKinova::loadPlugin()
   KinovaInitFingers = (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("InitFingers")).c_str());
   KinovaMoveHome = (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("MoveHome")).c_str());
   KinovaSendBasicTrajectory =
-      (int (*)(TrajectoryPoint))dlsym(m_command_layer_handle, (prefix + std::string("SendBasicTrajectory")).c_str());
+    (int (*)(TrajectoryPoint))dlsym(m_command_layer_handle, (prefix + std::string("SendBasicTrajectory")).c_str());
   KinovaSetActiveDevice =
-      (int (*)(KinovaDevice devices))dlsym(m_command_layer_handle, (prefix + std::string("SetActiveDevice")).c_str());
+    (int (*)(KinovaDevice devices))dlsym(m_command_layer_handle, (prefix + std::string("SetActiveDevice")).c_str());
   KinovaSetAngularControl =
-      (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("SetAngularControl")).c_str());
+    (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("SetAngularControl")).c_str());
   KinovaSetCartesianControl =
-      (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("SetCartesianControl")).c_str());
+    (int (*)())dlsym(m_command_layer_handle, (prefix + std::string("SetCartesianControl")).c_str());
 #elif _WIN32
   // We load the API.
   std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("CommandLayerWindows.dll")
-                                                               : std::string("CommandLayerEthernet.dll");
+    : std::string("CommandLayerEthernet.dll");
   std::string plugin = vpIoTools::createFilePath(m_plugin_location, plugin_name);
   if (m_verbose) {
     std::cout << "Load plugin: \"" << plugin << "\"" << std::endl;
@@ -751,9 +754,9 @@ void vpRobotKinova::loadPlugin()
   KinovaCloseAPI = (int (*)())GetProcAddress(m_command_layer_handle, "CloseAPI");
   KinovaGetAngularCommand = (int (*)(AngularPosition &))GetProcAddress(m_command_layer_handle, "GetAngularCommand");
   KinovaGetCartesianCommand =
-      (int (*)(CartesianPosition &))GetProcAddress(m_command_layer_handle, "GetCartesianCommand");
+    (int (*)(CartesianPosition &))GetProcAddress(m_command_layer_handle, "GetCartesianCommand");
   KinovaGetDevices =
-      (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))GetProcAddress(m_command_layer_handle, "GetDevices");
+    (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))GetProcAddress(m_command_layer_handle, "GetDevices");
   KinovaInitAPI = (int (*)())GetProcAddress(m_command_layer_handle, "InitAPI");
   KinovaInitFingers = (int (*)())GetProcAddress(m_command_layer_handle, "InitFingers");
   KinovaMoveHome = (int (*)())GetProcAddress(m_command_layer_handle, "MoveHome");
@@ -764,10 +767,10 @@ void vpRobotKinova::loadPlugin()
 #endif
 
   // Verify that all functions has been loaded correctly
-  if ((KinovaCloseAPI == NULL) || (KinovaGetAngularCommand == NULL) || (KinovaGetAngularCommand == NULL) ||
-      (KinovaGetCartesianCommand == NULL) || (KinovaGetDevices == NULL) || (KinovaInitAPI == NULL) ||
-      (KinovaInitFingers == NULL) || (KinovaMoveHome == NULL) || (KinovaSendBasicTrajectory == NULL) ||
-      (KinovaSetActiveDevice == NULL) || (KinovaSetAngularControl == NULL) || (KinovaSetCartesianControl == NULL)) {
+  if ((KinovaCloseAPI == nullptr) || (KinovaGetAngularCommand == nullptr) || (KinovaGetAngularCommand == nullptr) ||
+      (KinovaGetCartesianCommand == nullptr) || (KinovaGetDevices == nullptr) || (KinovaInitAPI == nullptr) ||
+      (KinovaInitFingers == nullptr) || (KinovaMoveHome == nullptr) || (KinovaSendBasicTrajectory == nullptr) ||
+      (KinovaSetActiveDevice == nullptr) || (KinovaSetAngularControl == nullptr) || (KinovaSetCartesianControl == nullptr)) {
     throw(vpException(vpException::fatalError, "Cannot load plugin from \"%s\" folder", m_plugin_location.c_str()));
   }
   if (m_verbose) {
@@ -872,9 +875,9 @@ void vpRobotKinova::setActiveDevice(int device)
     KinovaSetActiveDevice(m_devices_list[m_active_device]);
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotKinova.cpp.o) has
 // no symbols
-void dummy_vpRobotKinova(){};
+void dummy_vpRobotKinova() { };
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,23 +34,23 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
-  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(NULL),
-    ptTemplatePyr(NULL), ptTemplateInit(false), templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL),
-    ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL),
-    ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
-    pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
-    HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true),
-    useBrent(false), nbIterBrent(3), taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
-    lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true),
-    useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(nullptr),
+  ptTemplatePyr(nullptr), ptTemplateInit(false), templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr),
+  ptTemplateSelectPyr(nullptr), ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(nullptr),
+  ptTemplateSuppPyr(nullptr), ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr),
+  pyr_IDes(nullptr), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
+  HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true),
+  useBrent(false), nbIterBrent(3), taillef(7), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
+  lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true),
+  useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
 {
   nbParam = Warp->getNbParam();
   p.resize(nbParam);
@@ -126,7 +126,8 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
         if (pt.dx * pt.dx + pt.dy * pt.dy > thresholdGradient) {
           ptTemplateSelect[cpt_point] = true;
           templateSelectSize++;
-        } else {
+        }
+        else {
           ptTemplateSelect[cpt_point] = false;
         }
         pt.val = vpTemplateTrackerBSpline::getSubPixBspline4(GaussI, i, j);
@@ -170,7 +171,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplatePyr;
-      ptTemplatePyr = NULL;
+      ptTemplatePyr = nullptr;
     }
 
     if (ptTemplateCompoPyr) {
@@ -183,7 +184,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplateCompoPyr;
-      ptTemplateCompoPyr = NULL;
+      ptTemplateCompoPyr = nullptr;
     }
 
     if (ptTemplateSuppPyr) {
@@ -201,7 +202,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplateSuppPyr;
-      ptTemplateSuppPyr = NULL;
+      ptTemplateSuppPyr = nullptr;
     }
 
     if (ptTemplateSelectPyr) {
@@ -210,46 +211,47 @@ void vpTemplateTracker::resetTracker()
           delete[] ptTemplateSelectPyr[i];
       }
       delete[] ptTemplateSelectPyr;
-      ptTemplateSelectPyr = NULL;
+      ptTemplateSelectPyr = nullptr;
     }
 
     if (templateSizePyr) {
       delete[] templateSizePyr;
-      templateSizePyr = NULL;
+      templateSizePyr = nullptr;
     }
 
     if (HdesirePyr) {
       delete[] HdesirePyr;
-      HdesirePyr = NULL;
+      HdesirePyr = nullptr;
     }
 
     if (HLMdesirePyr) {
       delete[] HLMdesirePyr;
-      HLMdesirePyr = NULL;
+      HLMdesirePyr = nullptr;
     }
 
     if (HLMdesireInversePyr) {
       delete[] HLMdesireInversePyr;
-      HLMdesireInversePyr = NULL;
+      HLMdesireInversePyr = nullptr;
     }
 
     if (zoneTrackedPyr) {
       delete[] zoneTrackedPyr;
-      zoneTrackedPyr = NULL;
+      zoneTrackedPyr = nullptr;
     }
 
     if (pyr_IDes) {
       delete[] pyr_IDes;
-      pyr_IDes = NULL;
+      pyr_IDes = nullptr;
     }
-  } else {
+  }
+  else {
     if (ptTemplateInit) {
       for (unsigned int point = 0; point < templateSize; point++) {
         delete[] ptTemplate[point].dW;
         delete[] ptTemplate[point].HiG;
       }
       delete[] ptTemplate;
-      ptTemplate = NULL;
+      ptTemplate = nullptr;
       ptTemplateInit = false;
     }
     if (ptTemplateCompo) {
@@ -257,7 +259,7 @@ void vpTemplateTracker::resetTracker()
         delete[] ptTemplateCompo[point].dW;
       }
       delete[] ptTemplateCompo;
-      ptTemplateCompo = NULL;
+      ptTemplateCompo = nullptr;
     }
     if (ptTemplateSupp) {
       for (unsigned int point = 0; point < templateSize; point++) {
@@ -269,12 +271,12 @@ void vpTemplateTracker::resetTracker()
         delete[] ptTemplateSupp[point].d2Wy;
       }
       delete[] ptTemplateSupp;
-      ptTemplateSupp = NULL;
+      ptTemplateSupp = nullptr;
     }
     if (ptTemplateSelectInit) {
       if (ptTemplateSelect) {
         delete[] ptTemplateSelect;
-        ptTemplateSelect = NULL;
+        ptTemplateSelect = nullptr;
       }
     }
   }
@@ -289,28 +291,32 @@ void vpTemplateTracker::resetTracker()
 
   The following code shows how to use display capabilities:
   \code
-#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+  #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+  #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vpTemplateTrackerWarpHomography warp;
-  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
-  vpTemplateTrackerZone zoneRef, zoneWarped;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Display the warped zone
-  tracker.display(I, vpColor::red);
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vpTemplateTrackerWarpHomography warp;
+    vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+    vpTemplateTrackerZone zoneRef, zoneWarped;
 
-  // Display the reference zone
-  zoneRef = tracker.getZoneRef();
-  zoneRef.display(I, vpColor::green);
+    // Display the warped zone
+    tracker.display(I, vpColor::red);
 
-  // Display the warped zone
-  vpColVector p = tracker.getp();
-  warp.warpZone(zoneRef, p, zoneWarped);
-  zoneWarped.display(I, vpColor::blue);
-}
+    // Display the reference zone
+    zoneRef = tracker.getZoneRef();
+    zoneRef.display(I, vpColor::green);
+
+    // Display the warped zone
+    vpColVector p = tracker.getp();
+    warp.warpZone(zoneRef, p, zoneWarped);
+    zoneWarped.display(I, vpColor::blue);
+  }
   \endcode
  */
 void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
@@ -331,28 +337,32 @@ void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &
 
   The following code shows how to use display capabilities:
   \code
-#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+  #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+  #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vpTemplateTrackerWarpHomography warp;
-  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
-  vpTemplateTrackerZone zoneRef, zoneWarped;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Display the warped zone
-  tracker.display(I, vpColor::red);
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vpTemplateTrackerWarpHomography warp;
+    vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+    vpTemplateTrackerZone zoneRef, zoneWarped;
 
-  // Display the reference zone
-  zoneRef = tracker.getZoneRef();
-  zoneRef.display(I, vpColor::green);
+    // Display the warped zone
+    tracker.display(I, vpColor::red);
 
-  // Display the warped zone
-  vpColVector p = tracker.getp();
-  warp.warpZone(zoneRef, p, zoneWarped);
-  zoneWarped.display(I, vpColor::blue);
-}
+    // Display the reference zone
+    zoneRef = tracker.getZoneRef();
+    zoneRef.display(I, vpColor::green);
+
+    // Display the warped zone
+    vpColVector p = tracker.getp();
+    warp.warpZone(zoneRef, p, zoneWarped);
+    zoneWarped.display(I, vpColor::blue);
+  }
   \endcode
  */
 void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness)
@@ -383,7 +393,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
     else
       dpt = direction;
     Warp->pRondp(tp, dpt, p1);
-  } else {
+  }
+  else {
     p1 = tp + direction;
   }
 
@@ -395,7 +406,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
     else
       dpt = adpt;
     Warp->pRondp(tp, dpt, p2);
-  } else {
+  }
+  else {
     p2 = tp + alpha * direction;
   }
   vpColVector p3(nbParam);
@@ -432,7 +444,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
     // If convexe
     if (parabol[0] > 0) {
       talpha[3] = -0.5 * parabol[1] / parabol[0];
-    } else { // If concave
+    }
+    else { // If concave
       int tindic_x_min = 0;
       int tindic_x_max = 0;
       for (int i = 1; i < 3; i++) {
@@ -444,7 +457,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
 
       if (Cost[tindic_x_max] < Cost[tindic_x_min]) {
         talpha[3] = talpha[tindic_x_max] + 1.;
-      } else {
+      }
+      else {
         talpha[3] = talpha[tindic_x_min] - 1.;
       }
     }
@@ -470,7 +484,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
       else
         dpt = adpt;
       Warp->pRondp(tp, dpt, p3);
-    } else {
+    }
+    else {
       p3 = tp + talpha[3] * direction;
     }
 
@@ -484,7 +499,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
       *ptp[indice_f_max] = *ptp[3];
       Cost[indice_f_max] = Cost[3];
       talpha[indice_f_max] = talpha[3];
-    } else
+    }
+    else
       break;
   }
 
@@ -520,10 +536,10 @@ void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
   ptTemplateSuppPyr = new vpTemplateTrackerPointSuppMIInv *[nbLvlPyr];
   ptTemplateCompoPyr = new vpTemplateTrackerPointCompo *[nbLvlPyr];
   for (unsigned int i = 0; i < nbLvlPyr; i++) {
-    ptTemplatePyr[i] = NULL;
-    ptTemplateSuppPyr[i] = NULL;
-    ptTemplateSelectPyr[i] = NULL;
-    ptTemplateCompoPyr[i] = NULL;
+    ptTemplatePyr[i] = nullptr;
+    ptTemplateSuppPyr[i] = nullptr;
+    ptTemplateSelectPyr[i] = nullptr;
+    ptTemplateCompoPyr[i] = nullptr;
   }
   templateSizePyr = new unsigned int[nbLvlPyr];
   HdesirePyr = new vpMatrix[nbLvlPyr];
@@ -587,7 +603,8 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay
     initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
-  } else {
+  }
+  else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
   }
@@ -613,7 +630,8 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const st
     initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
-  } else {
+  }
+  else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
   }
@@ -633,7 +651,8 @@ void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTe
     initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
-  } else {
+  }
+  else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
   }
@@ -651,7 +670,8 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
     HdesirePyr[0] = Hdesire;
     HLMdesirePyr[0] = HLMdesire;
     HLMdesireInversePyr[0] = HLMdesireInverse;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     ptTemplateSuppPyr[0] = ptTemplateSupp;
     ptTemplateCompoPyr[0] = ptTemplateCompo;
     HdesirePyr[0] = Hdesire;
@@ -676,7 +696,8 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
         HdesirePyr[i] = Hdesire;
         HLMdesirePyr[i] = HLMdesire;
         HLMdesireInversePyr[i] = HLMdesireInverse;
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         ptTemplateSuppPyr[i] = ptTemplateSupp;
         ptTemplateCompoPyr[i] = ptTemplateCompo;
         HdesirePyr[i] = Hdesire;
@@ -734,11 +755,13 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
           zoneTracked = &zoneTrackedPyr[i - 1];
         }
       }
-    } else {
+    }
+    else {
       trackRobust(I);
     }
     delete[] pyr_I;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     delete[] pyr_I;
     throw(vpTrackingException(vpTrackingException::badValue, e.getMessage()));
   }
@@ -758,7 +781,8 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
     if (pre_fcost < post_fcost) {
       p = p_pre_estimation;
     }
-  } else {
+  }
+  else {
     trackNoPyr(I);
   }
 }
@@ -824,3 +848,4 @@ void vpTemplateTracker::initPosEvalRMS(const vpColVector &param)
     }
   }
 }
+END_VISP_NAMESPACE

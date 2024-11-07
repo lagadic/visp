@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D ellipse visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeatureEllipse.cpp
@@ -63,6 +60,8 @@ other functionalities ar useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
+
 void vpFeatureEllipse::init()
 {
   // feature dimension
@@ -71,7 +70,7 @@ void vpFeatureEllipse::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -82,6 +81,8 @@ void vpFeatureEllipse::init()
 }
 
 vpFeatureEllipse::vpFeatureEllipse() : A(0), B(0), C(0) { init(); }
+vpFeatureEllipse::vpFeatureEllipse(double x, double y, double n20, double n11, double n02) { this->buildFrom(x, y, n20, n11, n02); }
+
 
 //! compute the interaction matrix from a subset a the possible features
 vpMatrix vpFeatureEllipse::interaction(unsigned int select)
@@ -253,7 +254,8 @@ vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, unsigned int s
       e = vpColVector::stack(e, ey);
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -278,7 +280,7 @@ void vpFeatureEllipse::print(unsigned int select) const
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02)
+vpFeatureEllipse &vpFeatureEllipse::buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02)
 {
   s[0] = x;
   s[1] = y;
@@ -286,11 +288,13 @@ void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, dou
   s[3] = n11;
   s[4] = n02;
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02, double a, double b, double c)
+vpFeatureEllipse &vpFeatureEllipse::buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &a, const double &b, const double &c)
 {
   s[0] = x;
   s[1] = y;
@@ -302,8 +306,10 @@ void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, dou
   this->B = b;
   this->C = c;
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 void vpFeatureEllipse::set_x(double x)
@@ -443,19 +449,20 @@ unsigned int vpFeatureEllipse::select_n02() { return FEATURE_LINE[4]; }
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_20 = mu_20/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
 /*!
  * \deprecated You should rather use select_n20().
  * This function is incorrectly named and is confusing since it
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_11 = mu_11/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
 /*!
  * \deprecated You should rather use select_n20().
  * This function is incorrectly named and is confusing since it
  * intends to select as visual feature second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_02 = mu_02/a\f$.
  */
-vp_deprecated unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
+VP_DEPRECATED unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
 #endif
+END_VISP_NAMESPACE

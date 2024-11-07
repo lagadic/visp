@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * Hand-eye calibration.
- *
- * Authors:
- * Francois Chaumette
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -44,6 +38,8 @@
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \brief Compute the distances of the data to the mean obtained.
@@ -77,9 +73,9 @@ void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMa
     std::cout << "Translation: " << meanTrans.t() << std::endl;
     vpThetaUVector P(meanRot);
     std::cout << "Rotation : theta (deg) = " << vpMath::deg(sqrt(P.sumSquare())) << " Matrice : " << std::endl
-              << meanRot << std::endl;
+      << meanRot << std::endl;
     std::cout << "theta U (deg): " << vpMath::deg(P[0]) << " " << vpMath::deg(P[1]) << " " << vpMath::deg(P[2])
-              << std::endl;
+      << std::endl;
   }
 #endif
 
@@ -100,7 +96,7 @@ void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMa
   // standard deviation, translational part
   double resTrans = 0.0;
   for (unsigned int i = 0; i < nbPose; i++) {
-    vpColVector errTrans = ((vpColVector)rTo[i]) - meanTrans;
+    vpColVector errTrans = vpColVector(rTo[i] - meanTrans);
     resTrans += errTrans.sumSquare();
     std::cout << "Distance d between rMo(" << i << ") and mean (m) = " << sqrt(errTrans.sumSquare()) << std::endl;
   }
@@ -152,16 +148,17 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
 
         vpRotationMatrix ejRei = rRej.t() * rRei;
         vpThetaUVector ejPei(ejRei);
-        vpColVector xe = ejPei;
+        vpColVector xe = vpColVector(ejPei);
 
         vpRotationMatrix cjRci = cjRo * ciRo.t();
         vpThetaUVector cjPci(cjRci);
-        vpColVector xc = cjPci;
+        vpColVector xc = vpColVector(cjPci);
 
         if (k == 0) {
           Et = xe.t();
           Ct = xc.t();
-        } else {
+        }
+        else {
           Et.stack(xe.t());
           Ct.stack(xc.t());
         }
@@ -187,7 +184,7 @@ int vpHandEyeCalibration::calibrationRotationProcrustes(const std::vector<vpHomo
     vpThetaUVector ePc(eRc);
     std::cout << "Rotation from Procrustes method " << std::endl;
     std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2])
-              << std::endl;
+      << std::endl;
     // Residual
     vpMatrix residual;
     residual = A * Ct.t() - Et.t();
@@ -250,7 +247,8 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
         if (k == 0) {
           A = As;
           B = b;
-        } else {
+        }
+        else {
           A = vpMatrix::stack(A, As);
           B = vpColVector::stack(B, b);
         }
@@ -293,7 +291,7 @@ int vpHandEyeCalibration::calibrationRotationTsai(const std::vector<vpHomogeneou
   {
     std::cout << "Rotation from Tsai method" << std::endl;
     std::cout << "theta U (deg): " << vpMath::deg(x[0]) << " " << vpMath::deg(x[1]) << " " << vpMath::deg(x[2])
-              << std::endl;
+      << std::endl;
     // Residual
     for (unsigned int i = 0; i < 3; i++)
       x[i] /= norm; /* original x */
@@ -377,7 +375,8 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
         if (k == 0) {
           A = As;
           B = b;
-        } else {
+        }
+        else {
           A = vpMatrix::stack(A, As);
           B = vpColVector::stack(B, b);
         }
@@ -401,19 +400,6 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   x = Ap * A.t() * B;
   vpColVector x2 = x; /* pour calcul residu */
 
-  //     {
-  //       // Residual
-  //       vpColVector residual;
-  //       residual = A*x-B;
-  //       std::cout << "Residual: " << std::endl << residual << std::endl;
-
-  //       double res = 0;
-  //       for (int i=0; i < residual.getRows(); i++)
-  // 	res += residual[i]*residual[i];
-  //       res = sqrt(res/residual.getRows());
-  //       printf("Mean residual = %lf\n",res);
-  //     }
-
   // extraction of theta and U
   double theta;
   double d = x.sumSquare();
@@ -425,7 +411,8 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   if (std::fabs(theta) > std::numeric_limits<double>::epsilon()) {
     for (unsigned int i = 0; i < 3; i++)
       x[i] *= theta / (2 * sin(theta / 2));
-  } else
+  }
+  else
     x = 0;
 
   // Building of the rotation matrix eRc
@@ -436,7 +423,7 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   {
     std::cout << "Rotation from Old Tsai method" << std::endl;
     std::cout << "theta U (deg): " << vpMath::deg(x[0]) << " " << vpMath::deg(x[1]) << " " << vpMath::deg(x[2])
-              << std::endl;
+      << std::endl;
     // Residual
     vpColVector residual;
     residual = A * x2 - B;
@@ -494,9 +481,10 @@ int vpHandEyeCalibration::calibrationTranslation(const std::vector<vpHomogeneous
         if (k == 0) {
           A = a;
           B = b;
-        } else {
+        }
+        else {
           A = vpMatrix::stack(A, a);
-          B = vpColVector::stack(B, b);
+          B = vpColVector::stack(B, vpColVector(b));
         }
         k++;
       }
@@ -588,9 +576,10 @@ int vpHandEyeCalibration::calibrationTranslationOld(const std::vector<vpHomogene
         if (k == 0) {
           A = a;
           B = b;
-        } else {
+        }
+        else {
           A = vpMatrix::stack(A, a);
-          B = vpColVector::stack(B, b);
+          B = vpColVector::stack(B, vpColVector(b));
         }
         k++;
       }
@@ -676,7 +665,8 @@ double vpHandEyeCalibration::calibrationErrVVS(const std::vector<vpHomogeneousMa
         s = vpMatrix(eRc) * vpColVector(cjPci) - vpColVector(ejPei);
         if (k == 0) {
           errVVS = s;
-        } else {
+        }
+        else {
           errVVS = vpColVector::stack(errVVS, s);
         }
         k++;
@@ -775,7 +765,8 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
             }
           if (k == 0) {
             L = Ls;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, Ls);
           }
           k++;
@@ -809,10 +800,10 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
   } // end while
 #if DEBUG_LEVEL2
   {
-    printf(" Iteration number for NL hand-eye minimisation : %d\n", it);
+    printf(" Iteration number for NL hand-eye minimization : %d\n", it);
     vpThetaUVector ePc(eRc);
     std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2])
-              << std::endl;
+      << std::endl;
     std::cout << "Translation: " << eTc[0] << " " << eTc[1] << " " << eTc[2] << std::endl;
     // Residual
     double res = err.sumSquare();
@@ -836,20 +827,6 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
 #define HE_PROCRUSTES_OT 5
 #define HE_PROCRUSTES_NT 6
 
-/*!
-  Compute extrinsic camera parameters : the constant transformation from
-  the effector to the camera frames (eMc).
-
-  \param[in] cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene.
-  \param[in] rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator). Must be the same size as cMo.
-  \param[out] eMc : homogeneous matrix representing the transformation
-  between the effector and the camera (output)
-
-  \return 0 if calibration succeed, -1 if the system is not full rank, 1 if the algorithm doesn't converge.
-*/
 int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
                                     const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
 {
@@ -1031,7 +1008,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       printf("Best method : PROCRUSTES_NT, vmin = %lf\n", vmin);
     vpThetaUVector ePc(eMc);
     std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2])
-              << std::endl;
+      << std::endl;
     std::cout << "Translation: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
   }
 #endif
@@ -1047,6 +1024,8 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   }
   return err;
 }
+
+END_VISP_NAMESPACE
 
 #undef HE_I
 #undef HE_TSAI_OROT

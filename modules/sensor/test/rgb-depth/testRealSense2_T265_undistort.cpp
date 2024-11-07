@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,9 +29,8 @@
  *
  * Description:
  * Image acquisition with RealSense T265 sensor and librealsense2 and
- * undistorting it using vpImageTools
- *
- *****************************************************************************/
+ * undistorting it using vpImageTools.
+ */
 
 /*!
   \example testRealSense2_T265_undistort.cpp
@@ -48,11 +46,14 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpCameraParameters cam_left;
     unsigned int display_scale = 2;
@@ -72,7 +73,7 @@ int main()
     config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
     rs.open(config);
     cam_left =
-        rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
+      rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
 
     vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
@@ -105,7 +106,7 @@ int main()
     while (true) {
       double t = vpTime::measureTimeMs();
 
-      rs.acquire(&I, NULL, NULL); // Acquire only left image
+      rs.acquire(&I, nullptr, nullptr); // Acquire only left image
 
       vpDisplay::display(I);
 
@@ -124,9 +125,11 @@ int main()
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -140,10 +143,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
 #elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,19 +29,19 @@
  *
  * Description:
  * Image storage helper.
- *
- *****************************************************************************/
+ */
 
 #ifndef vpImageStorageWorker_h
 #define vpImageStorageWorker_h
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpImageQueue.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpImageStorageWorker
 
@@ -83,7 +82,8 @@ public:
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;
-        } else if (m_cpt == 1) {
+        }
+        else if (m_cpt == 1) {
           std::cout << "Started sequence saving: " << m_seqname << std::endl;
         }
         vpImageIo::write(I, filename);
@@ -107,13 +107,15 @@ public:
 
         m_cpt++;
       }
-    } catch (const vpImageQueue<vpRGBa>::cancelled &) {
+    }
+    catch (const vpImageQueue<vpRGBa>::vpCancelled_t &) {
       std::cout << "Receive cancel during color image saving." << std::endl;
       if (m_data_file_created) {
         std::cout << "Close data file: " << m_dataname << std::endl;
         m_ofs_data.close();
       }
-    } catch (const vpImageQueue<unsigned char>::cancelled &) {
+    }
+    catch (const vpImageQueue<unsigned char>::vpCancelled_t &) {
       std::cout << "Receive cancel during gray image saving." << std::endl;
       if (m_data_file_created) {
         std::cout << "Close data file: " << m_dataname << std::endl;
@@ -131,6 +133,6 @@ private:
   std::ofstream m_ofs_data;
   bool m_data_file_created;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

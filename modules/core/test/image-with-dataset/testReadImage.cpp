@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Read images on the disk.
- *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
@@ -50,6 +45,10 @@
   \brief Read images on the disk.
 
 */
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:h"
@@ -73,9 +72,9 @@ Read images on the disk.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -124,7 +123,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       ppath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], nullptr, ipath);
       return false;
       break;
 
@@ -141,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], nullptr, ipath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -177,13 +176,13 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -223,12 +222,14 @@ int main(int argc, const char **argv)
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.png");
       vpImageIo::read(Irgb, filename);
       printf("Read png ok\n");
-    } else {
+    }
+    else {
       filename = opt_ppath;
       vpImageIo::read(I, filename);
       printf("Image \"%s\" read successfully\n", filename.c_str());
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

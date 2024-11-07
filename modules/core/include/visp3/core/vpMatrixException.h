@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,70 +28,59 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpMatrix class and its derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpMatrixException_h_
-#define _vpMatrixException_h_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Exceptions that can be emitted by the vpMatrix class and its derivatives.
  */
 
-/* Classes standards. */
-//
+#ifndef VP_MATRIX_EXCEPTION_H
+#define VP_MATRIX_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpMatrixException
-  \ingroup group_core_debug
-  \brief error that can be emited by the vpMatrix class and its derivates
- */
+ * \class vpMatrixException
+ * \ingroup group_core_debug
+ * \brief error that can be emitted by the vpMatrix class and its derivatives
+*/
 class VISP_EXPORT vpMatrixException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpMatrix member
- */
-  enum errorCodeEnum {
-    //! error returns by a constructor
+   * \brief Lists the possible error than can be emitted while calling
+   * vpMatrix member
+   */
+  enum errorCodeEnum
+  {
+    //! Error returns by a constructor
     constructionError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedError,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
-    //! iterative algorithm doesn't converge (ex SVD)
+    //! Iterative algorithm doesn't converge (ex SVD)
     convergencyError,
+    //! Incorrect matrix size
     incorrectMatrixSizeError,
+    //! Forbidden operation
     forbiddenOperatorError,
+    //! Sub operation matrix error
     subMatrixError,
+    //! Matrix operation error
     matrixError,
+    //! Rank deficient
     rankDeficient
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpMatrixException(int id, const char *format, ...)
   {
     this->code = id;
@@ -101,9 +89,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpMatrixException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpMatrixException(int id) : vpException(id) { ; }
-  // vpMatrixException() : vpException() { ;}
-};
 
+  /*!
+   * Constructor.
+   */
+  vpMatrixException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpMatrixException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

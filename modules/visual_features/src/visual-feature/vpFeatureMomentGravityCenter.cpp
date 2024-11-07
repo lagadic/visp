@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,17 +29,12 @@
  *
  * Description:
  * Implementation for all supported moment features.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentObject.h>
@@ -48,20 +42,21 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Computes interaction matrix for gravity center moment. Called internally.
-  The moment primitives must be computed before calling this.
-  This feature depends on:
-  - vpFeatureMomentBasic
-
-  Minimum vpMomentObject order needed to compute this feature: 2.
-*/
-void vpFeatureMomentGravityCenter::compute_interaction()
+ * Computes interaction matrix for gravity center moment. Called internally.
+ * The moment primitives must be computed before calling this.
+ * This feature depends on:
+ * - vpFeatureMomentBasic
+ *
+ $ Minimum vpMomentObject order needed to compute this feature: 2.
+ */
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_featuremoment_basic;
 
   vpFeatureMomentBasic &featureMomentBasic = (static_cast<vpFeatureMomentBasic &>(
-      featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
+    featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
   const vpMomentObject &momentObject = moment->getObject();
 
   if (!found_featuremoment_basic)
@@ -71,16 +66,15 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   interaction_matrices[1].resize(1, 6);
 
   interaction_matrices[0] =
-      featureMomentBasic.interaction(1, 0) / momentObject.get(0, 0) -
-      momentObject.get(1, 0) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
+    featureMomentBasic.interaction(1, 0) / momentObject.get(0, 0) -
+    momentObject.get(1, 0) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
   interaction_matrices[1] =
-      featureMomentBasic.interaction(0, 1) / momentObject.get(0, 0) -
-      momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
+    featureMomentBasic.interaction(0, 1) / momentObject.get(0, 0) -
+    momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
 }
-
+END_VISP_NAMESPACE
 #else
 
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpMomentCentered.h>
@@ -89,24 +83,25 @@ void vpFeatureMomentGravityCenter::compute_interaction()
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Computes interaction matrix for gravity center moment. Called internally.
-  The moment primitives must be computed before calling this.
-  This feature depends on:
-  - vpMomentCentered
-  - vpMomentGravityCenter
-
-  Minimum vpMomentObject order needed to compute this feature: 2.
-*/
-void vpFeatureMomentGravityCenter::compute_interaction()
+ * Computes interaction matrix for gravity center moment. Called internally.
+ * The moment primitives must be computed before calling this.
+ * This feature depends on:
+ * - vpMomentCentered
+ * - vpMomentGravityCenter
+ *
+ * Minimum vpMomentObject order needed to compute this feature: 2.
+ */
+  void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
 
   const vpMomentObject &momentObject = moment->getObject();
 
@@ -120,7 +115,8 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   int epsilon;
   if (momentObject.getType() == vpMomentObject::DISCRETE) {
     epsilon = 1;
-  } else {
+  }
+  else {
     epsilon = 4;
   }
   double n11 = momentCentered.get(1, 1) / momentObject.get(0, 0);
@@ -159,5 +155,5 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   interaction_matrices[1][0][WY] = Ygwy;
   interaction_matrices[1][0][WZ] = -Xg;
 }
-
+END_VISP_NAMESPACE
 #endif

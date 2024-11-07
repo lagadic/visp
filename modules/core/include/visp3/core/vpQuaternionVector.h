@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,28 +29,24 @@
  *
  * Description:
  * Quaternion definition.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
-
-#ifndef _vpQuaternionVector_h_
-#define _vpQuaternionVector_h_
+ */
 
 /*!
-  \file vpQuaternionVector.h
+ * \file vpQuaternionVector.h
+ *
+ * \brief Class that consider the case of a quaternion and basic
+ * operations on it.
+ */
 
-  \brief Class that consider the case of a quaternion and basic
-   operations on it.
-
-*/
+#ifndef VP_QUATERNION_VECTOR_H
+#define VP_QUATERNION_VECTOR_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpThetaUVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpQuaternionVector
 
@@ -68,7 +63,7 @@
 
   This class allows to compute a quaternion from a rotation matrix
   using either vpQuaternionVector(const vpRotationMatrix &) constructor
-  or buildFrom() method.
+  or build() method.
 
   It also defines common operations on a quaternion such as:
   - multiplication (scalar and quaternion)
@@ -106,41 +101,35 @@
   double z = q.z();
   double w = q.w();
   \endcode
-
-  */
+*/
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
-private:
-  static const double minimum;
-
 public:
   vpQuaternionVector();
   vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const double qx, const double qy, const double qz, const double qw);
-  explicit vpQuaternionVector(const vpRotationMatrix &R);
-  explicit vpQuaternionVector(const vpThetaUVector &tu);
-  explicit vpQuaternionVector(const vpColVector &q);
-  explicit vpQuaternionVector(const std::vector<double> &q);
+  VP_EXPLICIT vpQuaternionVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpQuaternionVector(const vpThetaUVector &tu);
+  VP_EXPLICIT vpQuaternionVector(const vpColVector &q);
+  VP_EXPLICIT vpQuaternionVector(const std::vector<double> &q);
 
-  //! Destructor.
-  virtual ~vpQuaternionVector(){};
+  vpQuaternionVector &buildFrom(const double &qx, const double &qy, const double &qz, const double &qw);
+  vpQuaternionVector &buildFrom(const vpRotationMatrix &R);
+  vpQuaternionVector &buildFrom(const vpThetaUVector &tu);
+  vpQuaternionVector &buildFrom(const vpColVector &q);
+  vpQuaternionVector &buildFrom(const std::vector<double> &q);
 
-  vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
-  vpQuaternionVector buildFrom(const vpRotationMatrix &R);
-  vpQuaternionVector buildFrom(const vpThetaUVector &tu);
-  vpQuaternionVector buildFrom(const vpColVector &q);
-  vpQuaternionVector buildFrom(const std::vector<double> &q);
   void set(double x, double y, double z, double w);
 
-  const double& x() const;
-  const double& y() const;
-  const double& z() const;
-  const double& w() const;
+  const double &x() const;
+  const double &y() const;
+  const double &z() const;
+  const double &w() const;
 
-  double& x();
-  double& y();
-  double& z();
-  double& w();
+  double &x();
+  double &y();
+  double &z();
+  double &w();
 
   vpQuaternionVector operator+(const vpQuaternionVector &q) const;
   vpQuaternionVector operator-(const vpQuaternionVector &q) const;
@@ -150,7 +139,7 @@ public:
   vpQuaternionVector operator/(double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;
+  vpQuaternionVector &operator=(const vpQuaternionVector &) = default;
   vpQuaternionVector &operator=(const std::initializer_list<double> &list);
 #endif
 
@@ -159,11 +148,15 @@ public:
   double magnitude() const;
   void normalize();
 
-  static double dot(const vpQuaternionVector& q0, const vpQuaternionVector& q1);
+  static double dot(const vpQuaternionVector &q0, const vpQuaternionVector &q1);
 
-  static vpQuaternionVector lerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
-  static vpQuaternionVector nlerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
-  static vpQuaternionVector slerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
+  static vpQuaternionVector lerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+  static vpQuaternionVector nlerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+  static vpQuaternionVector slerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+
+private:
+  static const double minimum;
+
 };
-
+END_VISP_NAMESPACE
 #endif

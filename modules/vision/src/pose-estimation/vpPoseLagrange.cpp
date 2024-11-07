@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,92 +29,65 @@
  *
  * Description:
  * Pose computation.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- *
- *****************************************************************************/
+ */
 
 #include <visp3/vision/vpPose.h>
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
+BEGIN_VISP_NAMESPACE
 
 /**********************************************************************/
-/*	FONCTION 		:    CalculTranslation       */
-/*	ROLE  			: Calcul de la translation entre la   */
+/*  FONCTION     :    CalculTranslation       */
+/*  ROLE        : Calcul de la translation entre la   */
 /*                                camera et l'outil connaissant la    */
-/*                                rotation			      */
+/*                                rotation            */
 /**********************************************************************/
 
 static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1, unsigned int nc3,
                               vpColVector &x1, vpColVector &x2)
 {
-
-  try {
-    unsigned int i, j;
-
-    vpMatrix ct(3, nl);
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < nl; j++)
-        ct[i][j] = b[j][i + nc3];
+  unsigned int i, j;
+  const unsigned int nbRows = 3;
+  vpMatrix ct(nbRows, nl);
+  for (i = 0; i < nbRows; ++i) {
+    for (j = 0; j < nl; ++j) {
+      ct[i][j] = b[j][i + nc3];
     }
+  }
 
-    vpMatrix c;
-    c = ct.t();
+  vpMatrix c;
+  c = ct.t();
 
-    vpMatrix ctc;
-    ctc = ct * c;
+  vpMatrix ctc;
+  ctc = ct * c;
 
-    vpMatrix ctc1; // (C^T C)^(-1)
-    ctc1 = ctc.inverseByLU();
+  vpMatrix ctc1; // (C^T C)^(-1)
+  ctc1 = ctc.inverseByLU();
 
-    vpMatrix cta;
-    vpMatrix ctb;
-    cta = ct * a; /* C^T A	*/
-    ctb = ct * b; /* C^T B	*/
+  vpMatrix cta;
+  vpMatrix ctb;
+  cta = ct * a; /* C^T A  */
+  ctb = ct * b; /* C^T B  */
 
-#if (DEBUG_LEVEL2)
-    {
-      std::cout << "ctc " << std::endl << ctc;
-      std::cout << "cta " << std::endl << cta;
-      std::cout << "ctb " << std::endl << ctb;
+  vpColVector X2(nc3);
+  vpMatrix CTB(nc1, nc3);
+  for (i = 0; i < nc1; ++i) {
+    for (j = 0; j < nc3; ++j) {
+      CTB[i][j] = ctb[i][j];
     }
-#endif
+  }
 
-    vpColVector X2(nc3);
-    vpMatrix CTB(nc1, nc3);
-    for (i = 0; i < nc1; i++) {
-      for (j = 0; j < nc3; j++)
-        CTB[i][j] = ctb[i][j];
-    }
+  for (j = 0; j < nc3; ++j) {
+    X2[j] = x2[j];
+  }
 
-    for (j = 0; j < nc3; j++)
-      X2[j] = x2[j];
+  vpColVector sv;           // C^T A X1 + C^T B X2)
+  sv = (cta * x1) + (CTB * X2); // C^T A X1 + C^T B X2)
 
-    vpColVector sv;           // C^T A X1 + C^T B X2)
-    sv = cta * x1 + CTB * X2; // C^T A X1 + C^T B X2)
+  vpColVector X3; /* X3 = - (C^T C )^{-1} C^T (A X1 + B X2) */
+  X3 = -ctc1 * sv;
 
-#if (DEBUG_LEVEL2)
-    std::cout << "sv " << sv.t();
-#endif
-
-    vpColVector X3; /* X3 = - (C^T C )^{-1} C^T (A X1 + B X2) */
-    X3 = -ctc1 * sv;
-
-#if (DEBUG_LEVEL2)
-    std::cout << "x3 " << X3.t();
-#endif
-
-    for (i = 0; i < nc1; i++)
-      x2[i + nc3] = X3[i];
-  } catch (...) {
-
-    // en fait il y a des dizaines de raisons qui font que cette fonction
-    // rende une erreur (matrice pas inversible, pb de memoire etc...)
-    vpERROR_TRACE(" ");
-    throw;
+  for (i = 0; i < nc1; ++i) {
+    x2[i + nc3] = X3[i];
   }
 }
 
@@ -123,497 +95,380 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 //   FONCTION LAGRANGE :
 //   -------------------
 // Resolution d'un systeme lineaire de la forme A x1 + B x2 = 0
-//  		sous la contrainte || x1 || = 1
-//  		ou A est de dimension nl x nc1 et B nl x nc2
+//      sous la contrainte || x1 || = 1
+//      ou A est de dimension nl x nc1 et B nl x nc2
 //*********************************************************************
-
-//#define EPS 1.e-5
-
 static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
-#endif
+  unsigned int i, imin;
 
-  try {
-    unsigned int i, imin;
+  vpMatrix ata; // A^T A
+  ata = a.t() * a;
+  vpMatrix btb; // B^T B
+  btb = b.t() * b;
 
-    vpMatrix ata; // A^T A
-    ata = a.t() * a;
-    vpMatrix btb; // B^T B
-    btb = b.t() * b;
+  vpMatrix bta; // B^T A
+  bta = b.t() * a;
 
-    vpMatrix bta; // B^T A
-    bta = b.t() * a;
+  vpMatrix btb1; // (B^T B)^(-1)
 
-    vpMatrix btb1; // (B^T B)^(-1)
+  /* Warning:
+  when using btb.inverseByLU() that call cv::inv(cv::DECOMP_LU) with
+  OpenCV 3.1.0 and 3.2.0 we notice that OpenCV is not able to compute the
+  inverse of the following matrix:
 
-    /* Warning:
-   when using btb.inverseByLU() that call cv::inv(cv::DECOMP_LU) with
-   OpenCV 3.1.0 and 3.2.0 we notice that OpenCV is not able to compute the
-   inverse of the following matrix:
+  btb[9,9]=
+  0.015925   0.0        0.0030866  0.00035    0.0        0.000041   0.105
+  0.0        0.0346242 0.0        0.015925  -0.0050979  0.0        0.00035
+  -0.000063   0.0        0.105     -0.0637464 0.0030866 -0.0050979  0.0032301
+  0.000041  -0.000063   0.000016   0.0346242 -0.0637464  0.0311185 0.00035
+  0.0        0.000041   0.0001     0.0        0.000012   0.01       0.0
+  0.0011594 0.0        0.00035   -0.000063   0.0        0.0001    -0.000018
+  0.0        0.01      -0.0018040 0.000041  -0.000063   0.000016   0.000012
+  -0.000018   0.000005   0.0011594 -0.0018040  0.0004599 0.105      0.0
+  0.0346242  0.01       0.0        0.0011594  5.0        0.0        0.13287
+  0.0        0.105     -0.0637464  0.0        0.01      -0.0018040  0.0
+  5.0       -0.731499 0.0346242 -0.0637464  0.0311185  0.0011594 -0.0018040
+  0.0004599  0.13287   -0.731499   0.454006
 
-   btb[9,9]=
-   0.015925   0.0        0.0030866  0.00035    0.0        0.000041   0.105
-   0.0        0.0346242 0.0        0.015925  -0.0050979  0.0        0.00035
-   -0.000063   0.0        0.105     -0.0637464 0.0030866 -0.0050979  0.0032301
-   0.000041  -0.000063   0.000016   0.0346242 -0.0637464  0.0311185 0.00035
-   0.0        0.000041   0.0001     0.0        0.000012   0.01       0.0
-   0.0011594 0.0        0.00035   -0.000063   0.0        0.0001    -0.000018
-   0.0        0.01      -0.0018040 0.000041  -0.000063   0.000016   0.000012
-   -0.000018   0.000005   0.0011594 -0.0018040  0.0004599 0.105      0.0
-   0.0346242  0.01       0.0        0.0011594  5.0        0.0        0.13287
-   0.0        0.105     -0.0637464  0.0        0.01      -0.0018040  0.0
-   5.0       -0.731499 0.0346242 -0.0637464  0.0311185  0.0011594 -0.0018040
-   0.0004599  0.13287   -0.731499   0.454006
-
-   That's why instead of using inverseByLU() we are now using pseudoInverse()
-   */
+  That's why instead of using inverseByLU() we are now using pseudoInverse()
+  */
 #if 0
-    if (b.getRows() >= b.getCols()) {
-      btb1 = btb.inverseByLU();
-    }
-    else {
-      btb1 = btb.pseudoInverse();
-    }
-#else
-    btb1 = btb.pseudoInverse();
-#endif
-
-#if (DEBUG_LEVEL1)
-    {
-      std::cout << " BTB1 * BTB : " << std::endl << btb1 * btb << std::endl;
-      std::cout << " BTB * BTB1 : " << std::endl << btb * btb1 << std::endl;
-    }
-#endif
-
-    vpMatrix r; // (B^T B)^(-1) B^T A
-    r = btb1 * bta;
-
-    vpMatrix e; //   - A^T B (B^T B)^(-1) B^T A
-    e = -(a.t() * b) * r;
-
-    e += ata; // calcul E = A^T A - A^T B (B^T B)^(-1) B^T A
-
-#if (DEBUG_LEVEL1)
-    {
-      std::cout << " E :" << std::endl << e << std::endl;
-    }
-#endif
-
-    //   vpColVector sv ;
-    //    vpMatrix v ;
-    e.svd(x1, ata); // destructif sur e
-    // calcul du vecteur propre de E correspondant a la valeur propre min.
-    /* calcul de SVmax	*/
-    imin = 0;
-    // FC : Pourquoi calculer SVmax ??????
-    //     double  svm = 0.0;
-    //    for (i=0;i<x1.getRows();i++)
-    //    {
-    //      if (x1[i] > svm) { svm = x1[i]; imin = i; }
-    //    }
-    //    svm *= EPS;	/* pour le rang	*/
-
-    for (i = 0; i < x1.getRows(); i++)
-      if (x1[i] < x1[imin])
-        imin = i;
-
-#if (DEBUG_LEVEL1)
-    {
-      printf("SV(E) : %.15lf %.15lf %.15lf\n", x1[0], x1[1], x1[2]);
-      std::cout << " i_min " << imin << std::endl;
-    }
-#endif
-    for (i = 0; i < x1.getRows(); i++)
-      x1[i] = ata[i][imin];
-
-    x2 = -(r * x1); // X_2 = - (B^T B)^(-1) B^T A X_1
-
-#if (DEBUG_LEVEL1)
-    {
-      std::cout << " X1 : " << x1.t() << std::endl;
-      std::cout << " V : " << std::endl << ata << std::endl;
-    }
-#endif
-  } catch (...) {
-    vpERROR_TRACE(" ");
-    throw;
+  if (b.getRows() >= b.getCols()) {
+    btb1 = btb.inverseByLU();
   }
-#if (DEBUG_LEVEL1)
-  std::cout << "end (CLagrange.cc)Lagrange(...) " << std::endl;
+  else {
+    btb1 = btb.pseudoInverse();
+  }
+#else
+  btb1 = btb.pseudoInverse();
 #endif
+
+  vpMatrix r; // (B^T B)^(-1) B^T A
+  r = btb1 * bta;
+
+  vpMatrix e; //   - A^T B (B^T B)^(-1) B^T A
+  e = -(a.t() * b) * r;
+
+  e += ata; // calcul E = A^T A - A^T B (B^T B)^(-1) B^T A
+
+  e.svd(x1, ata); // destructif sur e
+  // calcul du vecteur propre de E correspondant a la valeur propre min.
+  imin = 0;
+
+  unsigned int v_x1_rows = x1.getRows();
+  for (i = 0; i < v_x1_rows; ++i) {
+    if (x1[i] < x1[imin]) {
+      imin = i;
+    }
+  }
+
+  unsigned int x1_rows = x1.getRows();
+  for (i = 0; i < x1_rows; ++i) {
+    x1[i] = ata[i][imin];
+  }
+
+  x2 = -(r * x1); // X_2 = - (B^T B)^(-1) B^T A X_1
 }
-
-//#undef EPS
-
-/*!
-  \brief  Compute the pose of a planar object using Lagrange approach.
-
-  \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
-  \param p_isPlan : if different from NULL, indicates if the object is planar or not.
-  \param p_a : if different from NULL, the a coefficient of the plan formed by the points.
-  \param p_b : if different from NULL, the b coefficient of the plan formed by the points.
-  \param p_c : if different from NULL, the c coefficient of the plan formed by the points.
-  \param p_d : if different from NULL, the d coefficient of the plan formed by the points.
-*/
 
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::PoseLagrangePlan(...) " << std::endl;
-#endif
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+
   // determination of the plane equation a X + b Y + c Z + d = 0
   double a, b, c, d;
-  
+
   // Checking if coplanar has already been called and if the plan coefficients have been given
-  if((p_isPlan != NULL) && (p_a != NULL) && (p_b != NULL) && (p_c != NULL) && (p_d != NULL))
-  {
-    if(*p_isPlan)
-    {
-      // All the pointers towards the plan coefficients are different from NULL => using them in the rest of the method
+  bool p_isplan_and_p_a_no_null = (p_isPlan != nullptr) && (p_a != nullptr);
+  bool p_b_p_c_p_d_no_null = (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr);
+  if (p_isplan_and_p_a_no_null && p_b_p_c_p_d_no_null) {
+    if (*p_isPlan) {
+      // All the pointers towards the plan coefficients are different from nullptr => using them in the rest of the method
       a = *p_a;
       b = *p_b;
       c = *p_c;
       d = *p_d;
     }
-    else
-    {
+    else {
       // The call to coplanar that was performed outside vpPose::poseLagrangePlan indicated that the points are not coplanar.
       throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but the call to vpPose::coplanar done outside the method indicated that the points are not coplanar");
     }
   }
-  else
-  {
-    // At least one of the coefficient is a NULL pointer => calling coplanar by ourselves
+  else {
+    // At least one of the coefficient is a nullptr pointer => calling coplanar by ourselves
     int coplanarType;
     bool areCoplanar = coplanar(coplanarType, &a, &b, &c, &d);
-    if(!areCoplanar)
-    {
+    if (!areCoplanar) {
       throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but call to vpPose::coplanar indicates that the points are not coplanar");
     }
   }
-  
 
-  if (c < 0.0) { // imposing c >= 0
+  if (c < 0.0) { // imposing c greater than or equal to 0
     a = -a;
     b = -b;
     c = -c;
     d = -d;
   }
   // to have (a,b,c) as a unit vector if it was not the case
-  double n = 1.0 / sqrt(a * a + b * b + c * c); // Not possible to have a NaN...
+  double n = 1.0 / sqrt((a * a) + (b * b) + (c * c)); // Not possible to have a NaN...
   a *= n;
   b *= n;
   c *= n;
   d *= n;
-  // printf("a = %lf, b = %lf, c = %lf, d = %lf\n",a,b,c,d);
   // transformation to have object plane with equation Z = 0
-  vpColVector r1(3), r2(3), r3(3);
+  const unsigned int size = 3;
+  vpColVector r1(size), r2(size), r3(size);
 
-  r3[0] = a;
-  r3[1] = b;
-  r3[2] = c;
+  r3[index_0] = a;
+  r3[index_1] = b;
+  r3[index_2] = c;
   // build r1 as a unit vector orthogonal to r3
-  double n1 = sqrt(1.0 - a * a);
-  double n2 = sqrt(1.0 - b * b);
+  double n1 = sqrt(1.0 - (a * a));
+  double n2 = sqrt(1.0 - (b * b));
   if (n1 >= n2) {
-    r1[0] = n1;
-    r1[1] = -a * b / n1;
-    r1[2] = -a * c / n1;
-  } else {
-    r1[0] = -a * b / n2;
-    r1[1] = n2;
-    r1[2] = -b * c / n2;
+    r1[index_0] = n1;
+    r1[index_1] = (-a * b) / n1;
+    r1[index_2] = (-a * c) / n1;
   }
-  // double norm = r1[0]*r1[0] + r1[1]*r1[1] + r1[2]*r1[2];
-  // double crossprod = r1[0]*r3[0] + r1[1]*r3[1] + r1[2]*r3[2];
-  // printf("r1 norm = 1 ?  %lf, r1^T r3 = 0 ?  %lf\n",norm, crossprod);
-  // r2 unit vector orthogonal to r3 and r1
+  else {
+    r1[index_0] = (-a * b) / n2;
+    r1[index_1] = n2;
+    r1[index_2] = (-b * c) / n2;
+  }
+
   r2 = vpColVector::crossProd(r3, r1);
 
   vpHomogeneousMatrix fMo;
-  for (unsigned int i = 0; i < 3; i++) {
-    fMo[0][i] = r1[i];
-    fMo[1][i] = r2[i];
-    fMo[2][i] = r3[i];
+  const unsigned int sizeRotation = 3;
+  const unsigned int idX = 0, idY = 1, idZ = 2, idTranslation = 3;
+  for (unsigned int i = 0; i < sizeRotation; ++i) {
+    fMo[idX][i] = r1[i];
+    fMo[idY][i] = r2[i];
+    fMo[idZ][i] = r3[i];
   }
-  fMo[0][3] = fMo[1][3] = 0.0;
-  fMo[2][3] = d;
+  fMo[idX][idTranslation] = 0.0;
+  fMo[idY][idTranslation] = 0.0;
+  fMo[idZ][idTranslation] = d;
 
-  // std::cout << "fMo : "  << std::endl << fMo  << std::endl;
   // Build and solve the system
   unsigned int k = 0;
   unsigned int nl = npt * 2;
 
-  vpMatrix A(nl, 3);
-  vpMatrix B(nl, 6);
+  const unsigned int nbColsA = 3U, nbColsB = 6U;
+  vpMatrix A(nl, nbColsA);
+  vpMatrix B(nl, nbColsB);
   vpPoint P;
 
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  const unsigned int idHomogeneous = 3U, sizeHomogeneous = 4U;
+  const unsigned int offsetk = 2U;
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
 
     // Transform each point in plane Z = 0
-    vpColVector Xf, X(4);
-    X[0] = P.get_oX();
-    X[1] = P.get_oY();
-    X[2] = P.get_oZ();
-    X[3] = 1.0;
+    vpColVector Xf, X(sizeHomogeneous);
+    X[idX] = P.get_oX();
+    X[idY] = P.get_oY();
+    X[idZ] = P.get_oZ();
+    X[idHomogeneous] = 1.0;
     Xf = fMo * X;
-    // printf("Z = 0 = %lf\n",Xf[2]);
     // build the system
-    A[k][0] = -Xf[0];
-    A[k][1] = 0.0;
-    A[k][2] = Xf[0] * P.get_x();
+    A[k][index_0] = -Xf[0];
+    A[k][index_1] = 0.0;
+    A[k][index_2] = Xf[0] * P.get_x();
 
-    A[k + 1][0] = 0.0;
-    A[k + 1][1] = -Xf[0];
-    A[k + 1][2] = Xf[0] * P.get_y();
+    A[k + 1][index_0] = 0.0;
+    A[k + 1][index_1] = -Xf[0];
+    A[k + 1][index_2] = Xf[0] * P.get_y();
 
-    B[k][0] = -Xf[1];
-    B[k][1] = 0.0;
-    B[k][2] = Xf[1] * P.get_x();
-    B[k][3] = -1.0;
-    B[k][4] = 0.0;
-    B[k][5] = P.get_x();
+    B[k][index_0] = -Xf[1];
+    B[k][index_1] = 0.0;
+    B[k][index_2] = Xf[1] * P.get_x();
+    B[k][index_3] = -1.0;
+    B[k][index_4] = 0.0;
+    B[k][index_5] = P.get_x();
 
-    B[k + 1][0] = 0.0;
-    B[k + 1][1] = -Xf[1];
-    B[k + 1][2] = Xf[1] * P.get_y();
-    B[k + 1][3] = 0.0;
-    B[k + 1][4] = -1.0;
-    B[k + 1][5] = P.get_y();
+    B[k + 1][index_0] = 0.0;
+    B[k + 1][index_1] = -Xf[1];
+    B[k + 1][index_2] = Xf[1] * P.get_y();
+    B[k + 1][index_3] = 0.0;
+    B[k + 1][index_4] = -1.0;
+    B[k + 1][index_5] = P.get_y();
 
-    k += 2;
+    k += offsetk;
   }
-  vpColVector X1(3);
-  vpColVector X2(6);
-
-#if (DEBUG_LEVEL2)
-  {
-    std::cout << "A " << std::endl << A << std::endl;
-    std::cout << "B " << std::endl << B << std::endl;
-  }
-#endif
+  const unsigned int sizeX1 = nbColsA, sizeX2 = nbColsB, lastX2 = sizeX2 - 1; // X1 is of the size of A^T A and X2 of B^T B
+  vpColVector X1(sizeX1);
+  vpColVector X2(sizeX2);
 
   lagrange(A, B, X1, X2);
 
-#if (DEBUG_LEVEL2)
-  {
-    std::cout << "A X1+B X2 (should be 0): " << (A * X1 + B * X2).t() << std::endl;
-    std::cout << " X1 norm: " << X1.sumSquare() << std::endl;
-  }
-#endif
-
-  if (X2[5] < 0.0) { /* to obtain Zo > 0	*/
-    for (unsigned int i = 0; i < 3; i++)
+  if (X2[lastX2] < 0.0) { /* to obtain Zo > 0  */
+    for (unsigned int i = 0; i < sizeX1; ++i) {
       X1[i] = -X1[i];
-    for (unsigned int i = 0; i < 6; i++)
+    }
+
+    for (unsigned int i = 0; i < sizeX2; ++i) {
       X2[i] = -X2[i];
+    }
   }
   double s = 0.0;
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < sizeX1; ++i) {
     s += (X1[i] * X2[i]);
   }
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < sizeX1; ++i) {
     X2[i] -= (s * X1[i]);
-  } /* X1^T X2 = 0	*/
+  } /* X1^T X2 = 0  */
 
-  // s = 0.0;
-  // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-  s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
+  // --comment: s equals 0.0
+  s = (X2[index_0] * X2[index_0]) + (X2[index_1] * X2[index_1]) + (X2[index_2] * X2[index_2]); // To avoid a Coverity copy/past error
 
   if (s < 1e-10) {
-    //      std::cout << "Points that produce an error: " << std::endl;
-    //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
-    //      != listP.end(); ++it)
-    //      {
-    //        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() <<
-    //        " "
-    //                  << (*it).get_oX() << " " << (*it).get_oY() << " " <<
-    //                  (*it).get_oZ() << std::endl;
-    //      }
     throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation "
-                                                      "(planar plane case)"));
+                      "(planar plane case)"));
   }
 
   s = 1.0 / sqrt(s);
-  for (unsigned int i = 0; i < 3; i++) {
+  const unsigned int val_3 = 3, nc1 = 3, nc3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     X2[i] *= s;
-  } /* X2^T X2 = 1	*/
+  } /* X2^T X2 is equal to 1  */
 
-  calculTranslation(A, B, nl, 3, 3, X1, X2);
+  calculTranslation(A, B, nl, nc1, nc3, X1, X2);
 
-  // if (err != OK)
-  {
-    // std::cout << "in (vpCalculPose_plan.cc)CalculTranslation returns " ;
-    // PrintError(err) ;
-    //    return err ;
-  }
   vpHomogeneousMatrix cMf;
   /* X1 x X2 */
-  cMf[0][2] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
-  cMf[1][2] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
-  cMf[2][2] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
-  /* calcul de la matrice de passage	*/
-  for (unsigned int i = 0; i < 3; i++) {
-    cMf[i][0] = X1[i];
-    cMf[i][1] = X2[i];
-    cMf[i][3] = X2[i + 3];
+  cMf[index_0][index_2] = (X1[index_1] * X2[index_2]) - (X1[index_2] * X2[index_1]);
+  cMf[index_1][index_2] = (X1[index_2] * X2[index_0]) - (X1[index_0] * X2[index_2]);
+  cMf[index_2][index_2] = (X1[index_0] * X2[index_1]) - (X1[index_1] * X2[index_0]);
+  /* calcul de la matrice de passage  */
+  for (unsigned int i = 0; i < val_3; ++i) {
+    cMf[i][index_0] = X1[i];
+    cMf[i][index_1] = X2[i];
+    cMf[i][index_3] = X2[i + index_3];
   }
-  // std::cout << "cMf : "  << std::endl << cMf  << std::endl;
 
   // Apply the transform to go back to object frame
   cMo = cMf * fMo;
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpCalculPose::PoseLagrangePlan(...) " << std::endl;
-#endif
-  //  return(OK);
 }
 
 void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 {
-
-#if (DEBUG_LEVEL1)
-  std::cout << "begin CPose::PoseLagrangeNonPlan(...) " << std::endl;
-#endif
   try {
     double s;
     unsigned int i;
 
     unsigned int k = 0;
-    unsigned int nl = npt * 2;
+    const unsigned int twice = 2;
+    unsigned int nl = npt * twice;
+    const unsigned int npt_min = 6;
 
-    if (npt < 6) {
+    if (npt < npt_min) {
       throw(vpException(vpException::dimensionError,
                         "Lagrange, non planar case, insufficient number of points %d < 6\n", npt));
     }
 
-    vpMatrix a(nl, 3);
-    vpMatrix b(nl, 9);
+    const unsigned int nbColsA = 3, nbColsB = 9;
+    vpMatrix a(nl, nbColsA);
+    vpMatrix b(nl, nbColsB);
     b = 0;
 
     vpPoint P;
     i = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    std::list<vpPoint>::const_iterator listp_end = listP.end();
+    const unsigned int id0 = 0, id1 = 1, id2 = 2;
+    const unsigned int id3 = 3, id4 = 4, id5 = 5;
+    const unsigned int id6 = 6, id7 = 7, id8 = 8;
+    const unsigned int offsetk = 2U;
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
-      a[k][0] = -P.get_oX();
-      a[k][1] = 0.0;
-      a[k][2] = P.get_oX() * P.get_x();
+      a[k][id0] = -P.get_oX();
+      a[k][id1] = 0.0;
+      a[k][id2] = P.get_oX() * P.get_x();
 
-      a[k + 1][0] = 0.0;
-      a[k + 1][1] = -P.get_oX();
-      a[k + 1][2] = P.get_oX() * P.get_y();
+      a[k + 1][id0] = 0.0;
+      a[k + 1][id1] = -P.get_oX();
+      a[k + 1][id2] = P.get_oX() * P.get_y();
 
-      b[k][0] = -P.get_oY();
-      b[k][1] = 0.0;
-      b[k][2] = P.get_oY() * P.get_x();
+      b[k][id0] = -P.get_oY();
+      b[k][id1] = 0.0;
+      b[k][id2] = P.get_oY() * P.get_x();
 
-      b[k][3] = -P.get_oZ();
-      b[k][4] = 0.0;
-      b[k][5] = P.get_oZ() * P.get_x();
+      b[k][id3] = -P.get_oZ();
+      b[k][id4] = 0.0;
+      b[k][id5] = P.get_oZ() * P.get_x();
 
-      b[k][6] = -1.0;
-      b[k][7] = 0.0;
-      b[k][8] = P.get_x();
+      b[k][id6] = -1.0;
+      b[k][id7] = 0.0;
+      b[k][id8] = P.get_x();
 
-      b[k + 1][0] = 0.0;
-      b[k + 1][1] = -P.get_oY();
-      b[k + 1][2] = P.get_oY() * P.get_y();
+      b[k + 1][id0] = 0.0;
+      b[k + 1][id1] = -P.get_oY();
+      b[k + 1][id2] = P.get_oY() * P.get_y();
 
-      b[k + 1][3] = 0.0;
-      b[k + 1][4] = -P.get_oZ();
-      b[k + 1][5] = P.get_oZ() * P.get_y();
+      b[k + 1][id3] = 0.0;
+      b[k + 1][id4] = -P.get_oZ();
+      b[k + 1][id5] = P.get_oZ() * P.get_y();
 
-      b[k + 1][6] = 0.0;
-      b[k + 1][7] = -1.0;
-      b[k + 1][8] = P.get_y();
+      b[k + 1][id6] = 0.0;
+      b[k + 1][id7] = -1.0;
+      b[k + 1][id8] = P.get_y();
 
-      k += 2;
+      k += offsetk;
     }
-    vpColVector X1(3);
-    vpColVector X2(9);
-
-#if (DEBUG_LEVEL2)
-    {
-      std::cout << "a " << a << std::endl;
-      std::cout << "b " << b << std::endl;
-    }
-#endif
+    vpColVector X1(nbColsA); // X1 is of size A^T A
+    vpColVector X2(nbColsB); // X2 is of size B^T B
 
     lagrange(a, b, X1, X2);
-    //  if (err != OK)
-    {
-        //      std::cout << "in (CLagrange.cc)Lagrange returns " ;
-        //    PrintError(err) ;
-        //    return err ;
-    }
 
-#if (DEBUG_LEVEL2)
-    {
-      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t() << std::endl;
-      std::cout << "norme X1 " << X1.sumSquare() << std::endl;
-    }
-#endif
-
-    if (X2[8] < 0.0) { /* car Zo > 0	*/
+    if (X2[id8] < 0.0) { /* because Zo greater than 0  */
       X1 *= -1;
       X2 *= -1;
     }
     s = 0.0;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < nbColsA; ++i) {
       s += (X1[i] * X2[i]);
     }
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < nbColsA; ++i) {
       X2[i] -= (s * X1[i]);
-    } /* X1^T X2 = 0	*/
+    } /* X1^T X2 is null  */
 
-    // s = 0.0;
-    // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-    s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
+    s = (X2[id0] * X2[id0]) + (X2[id1] * X2[id1]) + (X2[id2] * X2[id2]); // To avoid a Coverity copy/past error
 
     if (s < 1e-10) {
-      //      std::cout << "Points that produce an error: " << std::endl;
-      //      for (std::list<vpPoint>::const_iterator it = listP.begin(); it
-      //      != listP.end(); ++it)
-      //      {
-      //        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() <<
-      //        " "
-      //                  << (*it).get_oX() << " " << (*it).get_oY() << " " <<
-      //                  (*it).get_oZ() << std::endl;
-      //      }
-      // vpERROR_TRACE(" division par zero " ) ;
       throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation (non "
-                                                        "planar plane case)"));
+                        "planar plane case)"));
     }
 
     s = 1.0 / sqrt(s);
-    for (i = 0; i < 3; i++) {
+    const unsigned int istop = 3;
+    for (i = 0; i < istop; ++i) {
       X2[i] *= s;
-    } /* X2^T X2 = 1	*/
+    } /* X2^T X2 = 1  */
 
-    X2[3] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
-    X2[4] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
-    X2[5] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
+    X2[id3] = (X1[id1] * X2[id2]) - (X1[id2] * X2[id1]);
+    X2[id4] = (X1[id2] * X2[id0]) - (X1[id0] * X2[id2]);
+    X2[id5] = (X1[id0] * X2[id1]) - (X1[id1] * X2[id0]);
 
-    calculTranslation(a, b, nl, 3, 6, X1, X2);
+    const unsigned int nc1 = 3, nc3 = 6;
+    calculTranslation(a, b, nl, nc1, nc3, X1, X2);
 
-    for (i = 0; i < 3; i++) {
-      cMo[i][0] = X1[i];
-      cMo[i][1] = X2[i];
-      cMo[i][2] = X2[i + 3];
-      cMo[i][3] = X2[i + 6];
+    for (i = 0; i < id3; ++i) {
+      cMo[i][id0] = X1[i];
+      cMo[i][id1] = X2[i];
+      cMo[i][id2] = X2[i + id3];
+      cMo[i][id3] = X2[i + id6];
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpCalculPose::PoseLagrangeNonPlan(...) " << std::endl;
-#endif
 }
 
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2
+END_VISP_NAMESPACE

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,7 +30,7 @@
 #
 # Description:
 # Try to find SoQt library.
-# Once run this will define: 
+# Once run this will define:
 #
 # SOWIN_FOUND
 # SOWIN_INCLUDE_DIRS
@@ -38,9 +38,6 @@
 # SOWIN_LIBRARY_RELEASE
 # SOWIN_LIBRARY_DEBUG
 #
-# Authors:
-# Fabien Spindler
-# Anthony Saunier
 #
 #############################################################################
 
@@ -60,14 +57,14 @@ if(WIN32)
     "$ENV{COINDIR}/lib"
     "$ENV{COIN_DIR}/lib"
     "$ENV{SOWIN_DIR}/lib"
-    )  
+    )
 
   FIND_PATH(SOWIN_INCLUDE_DIR Inventor/Win/SoWin.h
     "$ENV{COINDIR}/include"
     "$ENV{COIN_DIR}/include"
     "$ENV{SOWIN_DIR}/include"
     )
- 
+
   ## --------------------------------
   set(SOWIN_LIBRARIES "")
 

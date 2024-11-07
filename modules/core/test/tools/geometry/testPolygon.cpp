@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,11 @@
  *
  * Description:
  * Example which test the polygon.
- *
- * Author:
- * Romain Tallonneau
- *
- *****************************************************************************/
+ */
+
+/*!
+  \example testPolygon.cpp
+ */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPolygon.h>
@@ -71,9 +70,9 @@ void usage(const char *name, const char *badparam)
 test the generic 2D polygons.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n						      \
+  %s [-c] [-d] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS: \n\
@@ -106,6 +105,9 @@ OPTIONS: \n\
 */
 bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click, int &method)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
@@ -121,7 +123,7 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
       method = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -134,7 +136,7 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -145,12 +147,15 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
 
 /* --------------------------------------------------------------------------
  */
-/*                               MAIN FUNCTION */
-/* --------------------------------------------------------------------------
- */
+ /*                               MAIN FUNCTION */
+ /* --------------------------------------------------------------------------
+  */
 
 int main(int argc, const char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     bool opt_display = true;
     bool opt_click = true;
@@ -316,7 +321,8 @@ int main(int argc, const char **argv)
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  *   Tests the control law
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file movePtu46.cpp
 
@@ -62,6 +59,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpRobotPtu46 robot;
     vpColVector q(2);
@@ -86,21 +87,21 @@ int main()
     vpColVector qdot(2);
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 #if 0
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(10) ;
-    qdot[1] = vpMath::rad(10) ;
-    vpCTRACE << "Set camera frame velocity " << qdot.t() ;
+    qdot = 0;
+    qdot[0] = vpMath::rad(10);
+    qdot[1] = vpMath::rad(10);
+    vpCTRACE << "Set camera frame velocity " << qdot.t();
 
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot);
+    sleep(2);
 
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(-10) ;
-    qdot[1] = vpMath::rad(-10) ;
+    qdot = 0;
+    qdot[0] = vpMath::rad(-10);
+    qdot[1] = vpMath::rad(-10);
 
-    vpCTRACE << "Set camera frame velocity " << qdot.t() ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
+    vpCTRACE << "Set camera frame velocity " << qdot.t();
+    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot);
+    sleep(2);
 #endif
 
     qdot = 0;
@@ -117,7 +118,8 @@ int main()
     vpCTRACE << "Set articular frame velocity " << qdot.t();
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
     sleep(2);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
     return EXIT_FAILURE
   }

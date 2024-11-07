@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,11 +34,11 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 2 parameters for translation initialized to zero.
  */
@@ -195,3 +195,4 @@ void vpTemplateTrackerWarpTranslation::pRondp(const vpColVector &p1, const vpCol
   p12[0] = p1[0] + p2[0];
   p12[1] = p1[1] + p2[1];
 }
+END_VISP_NAMESPACE

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -38,7 +38,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpMyio_h
 #define vpMyio_h
@@ -49,11 +49,12 @@
 
 #include "vpMy.h"
 
+BEGIN_VISP_NAMESPACE
 void fscanf_float(float *fp);
 void fscanf_Index(Index *ip);
 void fscanf_int(int *ip);
 void fscanf_string(char **str);
 void fscanf_Type(Type *ip);
-
+END_VISP_NAMESPACE
 #endif
 #endif

@@ -1,4 +1,5 @@
 //! \example tutorial-mb-tracker.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -13,6 +14,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   try {
     std::string opt_videoname = "teabox.mp4";
@@ -28,9 +32,9 @@ int main(int argc, char **argv)
         opt_tracker = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--video <video name>] [--model <model name>] "
-                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
-                  << std::endl;
+          << " [--video <video name>] [--model <model name>] "
+          "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
     g.setFileName(opt_videoname);
     g.open(I);
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
 #if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
@@ -78,8 +82,8 @@ int main(int argc, char **argv)
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available "
-                   "since visp_klt module is missing"
-                << std::endl;
+        "since visp_klt module is missing"
+        << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -91,7 +95,8 @@ int main(int argc, char **argv)
       me.setMaskSize(5);
       me.setMaskNumber(180);
       me.setRange(8);
-      me.setThreshold(10000);
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+      me.setThreshold(20);
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
@@ -154,10 +159,11 @@ int main(int argc, char **argv)
     delete display;
     delete tracker;
     //! [Cleanup]
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
-  }
+}
 #else
   (void)argc;
   (void)argv;

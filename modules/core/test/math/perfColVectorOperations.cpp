@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,22 +29,29 @@
  *
  * Description:
  * Benchmark column vector operations.
- *
- *****************************************************************************/
+ */
+
+/*!
+  \example perfColVectorOperations.cpp
+ */
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#if defined(VISP_HAVE_CATCH2)
+
+#include <numeric>
+#include <catch_amalgamated.hpp>
 
 #include <visp3/core/vpColVector.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
 static bool g_runBenchmark = false;
-static const std::vector<unsigned int> g_sizes = {23, 127, 233, 419, 1153, 2749};
+static const std::vector<unsigned int> g_sizes = { 23, 127, 233, 419, 1153, 2749 };
 
 double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
 
@@ -66,7 +72,8 @@ double stddev(const std::vector<double> &vec)
   double mean = sum / vec.size();
 
   std::vector<double> diff(vec.size());
-  std::transform(vec.begin(), vec.end(), diff.begin(), [mean](double x) { return x - mean; });
+  std::transform(vec.begin(), vec.end(), diff.begin(), [mean](double x) {
+    return x - mean; });
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return std::sqrt(sq_sum / vec.size());
 }
@@ -136,7 +143,7 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]")
   {
     const double val = 11;
     vpColVector v(1, val);
-    CHECK(v.sum() == Approx(val).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sum() == Catch::Approx(val).epsilon(std::numeric_limits<double>::epsilon()));
   }
   {
     const unsigned int size = 11;
@@ -146,8 +153,7 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]")
       vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
-    CHECK(v.sum() ==
-          Approx(std::accumulate(vec.begin(), vec.end(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sum() == Catch::Approx(std::accumulate(vec.begin(), vec.end(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
   }
 
   if (g_runBenchmark) {
@@ -172,7 +178,7 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]")
         std_sum = std::accumulate(vec.begin(), vec.end(), 0.0);
         return std_sum;
       };
-      CHECK(vp_sum == Approx(std_sum));
+      CHECK(vp_sum == Catch::Approx(std_sum));
 
       oss.str("");
       oss << "Benchmark naive sum() with size: " << size;
@@ -182,7 +188,7 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]")
         naive_sum = computeRegularSum(v);
         return naive_sum;
       };
-      CHECK(naive_sum == Approx(std_sum));
+      CHECK(naive_sum == Catch::Approx(std_sum));
     }
   }
 }
@@ -193,7 +199,7 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]")
   {
     const double val = 11;
     vpColVector v(1, val);
-    CHECK(v.sumSquare() == Approx(val * val).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sumSquare() == Catch::Approx(val * val).epsilon(std::numeric_limits<double>::epsilon()));
   }
   {
     const unsigned int size = 11;
@@ -203,7 +209,7 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]")
       vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
-    CHECK(v.sumSquare() == Approx(std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0))
+    CHECK(v.sumSquare() == Catch::Approx(std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0))
                                .epsilon(std::numeric_limits<double>::epsilon()));
   }
 
@@ -229,7 +235,7 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]")
         std_sq_sum = std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0);
         return std_sq_sum;
       };
-      CHECK(vp_sq_sum == Approx(std_sq_sum));
+      CHECK(vp_sq_sum == Catch::Approx(std_sq_sum));
 
       oss.str("");
       oss << "Benchmark naive sumSquare() with size: " << size;
@@ -239,7 +245,7 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]")
         naive_sq_sum = computeRegularSumSquare(v);
         return naive_sq_sum;
       };
-      CHECK(naive_sq_sum == Approx(std_sq_sum));
+      CHECK(naive_sq_sum == Catch::Approx(std_sq_sum));
     }
   }
 }
@@ -252,7 +258,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]")
     v[0] = 11;
     v[1] = 16;
     std::vector<double> vec = v.toStdVector();
-    CHECK(vpColVector::stdev(v) == Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(vpColVector::stdev(v) == Catch::Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
   }
   {
     const unsigned int size = 11;
@@ -262,7 +268,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]")
       vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
-    CHECK(vpColVector::stdev(v) == Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(vpColVector::stdev(v) == Catch::Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
   }
 
   if (g_runBenchmark) {
@@ -287,7 +293,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]")
         std_stddev = stddev(vec);
         return std_stddev;
       };
-      CHECK(vp_stddev == Approx(std_stddev));
+      CHECK(vp_stddev == Catch::Approx(std_stddev));
 
       oss.str("");
       oss << "Benchmark naive stdev() with size: " << size;
@@ -297,7 +303,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]")
         naive_stddev = computeRegularStdev(v);
         return naive_stddev;
       };
-      CHECK(naive_stddev == Approx(std_stddev));
+      CHECK(naive_stddev == Catch::Approx(std_stddev));
     }
   }
 }
@@ -364,26 +370,14 @@ int main(int argc, char *argv[])
   // If rand() is used before any calls to srand(), rand() behaves as if it was seeded with srand(1).
   srand(1);
 
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
+  auto cli = session.cli()
+    | Catch::Clara::Opt(g_runBenchmark)["--benchmark"]("run benchmark?");
 
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
-  auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(g_runBenchmark) // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark?");   // description string for the help output
-
-  // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
-
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
   int numFailed = session.run();
-
-  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
   return numFailed;
 }
 #else

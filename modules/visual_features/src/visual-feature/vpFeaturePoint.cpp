@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D point visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeaturePoint.cpp
@@ -63,6 +60,7 @@ other functionalities ar useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 2D point visual feature.
 */
@@ -74,7 +72,7 @@ void vpFeaturePoint::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -343,7 +341,8 @@ vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, unsigned int sel
       ey[0] = s[1] - s_star[1];
       e = vpColVector::stack(e, ey);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -392,7 +391,7 @@ void vpFeaturePoint::print(unsigned int select) const
   \param y_ : The \f$ y \f$ parameter.
   \param Z_ : The \f$ Z \f$ parameter.
 */
-void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
+vpFeaturePoint &vpFeaturePoint::buildFrom(const double &x_, const double &y_, const double &Z_)
 {
 
   s[0] = x_;
@@ -414,8 +413,10 @@ void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -438,7 +439,8 @@ void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<unsign
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -464,7 +466,8 @@ void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<vpRGBa
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -525,3 +528,4 @@ unsigned int vpFeaturePoint::selectX() { return FEATURE_LINE[0]; }
   \endcode
 */
 unsigned int vpFeaturePoint::selectY() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

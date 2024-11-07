@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,14 @@
  * Description:
  * Sick LD-MRS laser driver.
  *
- * Authors:
- * Fabien Spindler
+*****************************************************************************/
+
+/*!
+ * \file vpSickLDMRS.h
  *
- *****************************************************************************/
+ * \brief Driver for the Sick LD-MRS laser scanner.
+ */
+
 #ifndef vpSickLDMRS_h
 #define vpSickLDMRS_h
 
@@ -53,78 +57,79 @@
 #include <visp3/sensor/vpLaserScanner.h>
 #include <visp3/sensor/vpScanPoint.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-
-  \file vpSickLDMRS.h
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-*/
-
-/*!
-
-  \class vpSickLDMRS
-
-  \ingroup group_sensor_laserscanner
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-
-  \warning For the moment, this driver works only on UNIX platform.
-
-  The code below shows how the four laser scan provided by the Sick
-  LD-MRS could be acquired.
-
-  \code
-#include "visp3/sensor/vpSickLDMRS.h"
-
-int main()
-{
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
-(defined(__APPLE__) && defined(__MACH__))) // UNIX std::string ip =
-"131.254.12.119";
-
-  vpSickLDMRS laser;
-  laser.setIpAddress(ip);
-  laser.setup();
-
-  vpLaserScan laserscan[4];
-  for ( ; ; ) {
-    // Get the measured points in the four layers
-    laser.measure(laserscan);
-
-    // Prints all the measured points
-    for (int layer=0; layer<4; layer++) {
-      std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints(); vpScanPoint p;
-
-      for (unsigned int i=0; i < pointsInLayer.size(); i++) {
-        std::cout << pointsInLayer[i] << std::endl;
-      }
-    }
-  }
-#endif
-}
-  \endcode
+ * \class vpSickLDMRS
+ *
+ * \ingroup group_sensor_laserscanner
+ *
+ * \brief Driver for the Sick LD-MRS laser scanner.
+ *
+ * \warning For the moment, this driver works only on UNIX platform.
+ *
+ * The code below shows how the four laser scan provided by the Sick
+ * LD-MRS could be acquired.
+ *
+ * \code
+ * #include "visp3/sensor/vpSickLDMRS.h"
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
+ * int main()
+ * {
+ * #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
+ * (defined(__APPLE__) && defined(__MACH__))) // UNIX std::string ip =
+ * "131.254.12.119";
+ *
+ *   vpSickLDMRS laser;
+ *   laser.setIpAddress(ip);
+ *   laser.setup();
+ *
+ *   vpLaserScan laserscan[4];
+ *   for ( ; ; ) {
+ *     // Get the measured points in the four layers
+ *     laser.measure(laserscan);
+ *
+ *     // Prints all the measured points
+ *     for (int layer=0; layer<4; layer++) {
+ *       std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints(); vpScanPoint p;
+ *
+ *       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
+ *         std::cout << pointsInLayer[i] << std::endl;
+ *       }
+ *     }
+ *   }
+ * #endif
+ * }
+ * \endcode
 */
 class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 {
 public:
-  enum MagicWord {
+  enum MagicWord
+  {
     MagicWordC2 = 0xAFFEC0C2 ///< The magic word that allows to identify the
                              ///< messages that are sent by the Sick LD-MRS.
   };
-  enum DataType {
+  enum DataType
+  {
     MeasuredData = 0x2202 ///< Flag to indicate that the body of a message
                           ///< contains measured data.
   };
   vpSickLDMRS();
+
   /*! Copy constructor. */
   vpSickLDMRS(const vpSickLDMRS &sick)
-    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true),
-      maxlen_body(104000)
+    : vpLaserScanner(sick), socket_fd(-1), body(nullptr), vAngle(), time_offset(0), isFirstMeasure(true),
+    maxlen_body(104000)
   {
     *this = sick;
   };
-  virtual ~vpSickLDMRS();
-  /*! Copy constructor. */
+  virtual ~vpSickLDMRS() VP_OVERRIDE;
+
+  /*! Copy operator. */
   vpSickLDMRS &operator=(const vpSickLDMRS &sick)
   {
     if (this != &sick) {
@@ -157,7 +162,7 @@ protected:
   bool isFirstMeasure;
   size_t maxlen_body;
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

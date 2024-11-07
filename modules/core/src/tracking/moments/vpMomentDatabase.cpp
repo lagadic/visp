@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iostream>
 #include <typeinfo>
@@ -42,57 +42,61 @@
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-        Adds a moment to the database.
-        \param moment : moment to add
-        \param : name of the moment's class
-
-        \attention You cannot add two moments with the same name. The rules
-   for insersion are the same as those of std::map.
-*/
-void vpMomentDatabase::add(vpMoment &moment, const char *name)
+ * Adds a moment to the database.
+ * \param moment : Moment to add.
+ * \param name : Name of the moment's class.
+ *
+ * \attention You cannot add two moments with the same name. The rules
+ * for insertion are the same as those of std::map.
+ */
+void vpMomentDatabase::add(vpMoment &moment, const std::string &name)
 {
-  moments.insert(std::pair<const char *, vpMoment *>((const char *)name, &moment));
+  moments.insert(std::pair<const std::string, vpMoment *>(name, &moment));
 }
 
 /*!
-  Retrieves a moment from the database.
-  \param type : Name of the moment's class.
-  \param found : true if the moment's type exists in the database, false
-  otherwise. \return Moment corresponding to \e type.
-*/
-const vpMoment &vpMomentDatabase::get(const char *type, bool &found) const
+ * Retrieves a moment from the database.
+ * \param moment_name : Name of the moment's class.
+ * \param found : true if the moment's type exists in the database, false otherwise.
+ * \return Moment corresponding to \e type.
+ */
+const vpMoment &vpMomentDatabase::get(const std::string &moment_name, bool &found) const
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator it = moments.find(type);
+  std::map<const std::string, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator it = moments.find(moment_name);
 
   found = (it != moments.end());
   return *(it->second);
 }
 
 /*!
-        Updates the moment object for all moments in the database
-  \param object : Moment object for which all the moments in the database
-  should be updated.
-
-    Sometimes, it might be useful to update the whole database when computing
-  only one moment when this moment depends on other moments. The example
-  provided in the header of this class gives an example that shows how to
-  compute gravity center moment and the centered moment using a mass update.
-*/
+ * Updates the moment object for all moments in the database
+ * \param object : Moment object for which all the moments in the database
+ * should be updated.
+ *
+ * Sometimes, it might be useful to update the whole database when computing
+ * only one moment when this moment depends on other moments. The example
+ * provided in the header of this class gives an example that shows how to
+ * compute gravity center moment and the centered moment using a mass update.
+ */
 void vpMomentDatabase::updateAll(vpMomentObject &object)
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const std::string, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator itr;
   for (itr = moments.begin(); itr != moments.end(); ++itr) {
     (*itr).second->update(object);
   }
 }
 
 /*!
-        Outputs all the moments values in the database to a stream.
-*/
+ * Outputs all the moments values in the database to a stream.
+ */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m)
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  std::map<const std::string, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator itr;
   os << "{";
 
   for (itr = m.moments.begin(); itr != m.moments.end(); ++itr) {
@@ -102,3 +106,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m
 
   return os;
 }
+END_VISP_NAMESPACE

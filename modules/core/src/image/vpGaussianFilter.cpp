@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,29 +29,30 @@
  *
  * Description:
  * Gaussian filter class
- *
- *****************************************************************************/
+ */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.h>
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageConvert.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpGaussianFilter::Impl
 {
 public:
   Impl(unsigned int width, unsigned int height, float sigma, bool deinterleave)
-    : m_funcPtrGray(NULL), m_funcPtrRGBa(NULL), m_deinterleave(deinterleave)
+    : m_funcPtrGray(nullptr), m_funcPtrRGBa(nullptr), m_deinterleave(deinterleave)
   {
     const float epsilon = 0.001f;
-    {
-      const size_t channels = 1;
-      m_funcPtrGray = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
-    {
-      const size_t channels = 4;
-      m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
-    }
+
+    const size_t channels_1 = 1;
+    m_funcPtrGray = SimdGaussianBlurInit(width, height, channels_1, &sigma, &epsilon);
+
+    const size_t channels_4 = 4;
+    m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels_4, &sigma, &epsilon);
 
     if (m_deinterleave) {
       m_red.resize(height, width);
@@ -86,9 +86,11 @@ public:
   {
     I_blur.resize(I.getHeight(), I.getWidth());
     if (!m_deinterleave) {
-      SimdGaussianBlurRun(m_funcPtrRGBa, reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth() * 4,
-                          reinterpret_cast<unsigned char *>(I_blur.bitmap), I_blur.getWidth() * 4);
-    } else {
+      const unsigned int rgba_size = 4;
+      SimdGaussianBlurRun(m_funcPtrRGBa, reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth() * rgba_size,
+                          reinterpret_cast<unsigned char *>(I_blur.bitmap), I_blur.getWidth() * rgba_size);
+    }
+    else {
       vpImageConvert::split(I, &m_red, &m_green, &m_blue);
       SimdGaussianBlurRun(m_funcPtrGray, m_red.bitmap, m_red.getWidth(), m_redBlurred.bitmap, m_redBlurred.getWidth());
       SimdGaussianBlurRun(m_funcPtrGray, m_green.bitmap, m_green.getWidth(), m_greenBlurred.bitmap,
@@ -96,7 +98,7 @@ public:
       SimdGaussianBlurRun(m_funcPtrGray, m_blue.bitmap, m_blue.getWidth(), m_blueBlurred.bitmap,
                           m_blueBlurred.getWidth());
 
-      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, NULL, I_blur);
+      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, nullptr, I_blur);
     }
   }
 
@@ -125,8 +127,7 @@ protected:
 */
 vpGaussianFilter::vpGaussianFilter(unsigned int width, unsigned int height, float sigma, bool deinterleave)
   : m_impl(new Impl(width, height, sigma, deinterleave))
-{
-}
+{ }
 
 vpGaussianFilter::~vpGaussianFilter() { delete m_impl; }
 
@@ -148,3 +149,9 @@ void vpGaussianFilter::apply(const vpImage<unsigned char> &I, vpImage<unsigned c
   \param[out] I_blur : output blurred color image.
 */
 void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) { m_impl->apply(I, I_blur); }
+END_VISP_NAMESPACE
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+ // Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
+void dummy_vpGaussianFilter() { };
+
+#endif

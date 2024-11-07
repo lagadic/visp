@@ -3,30 +3,36 @@ name: Ubuntu-isolated
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
-  build-ubuntu-dep-apt:
+  build-ubuntu-dep-apt-isolated:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
-        compiler: [ {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+        os: [ubuntu-latest]
+        compiler: [ {CC: /usr/bin/gcc, CXX: /usr/bin/g++} ]
         standard: [ 17 ]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
+      # Install OpenMP and turn-off some dependencies (below) to try to have a similar env compared to the ROS buildbot
+    - name: Install OpenMP
+      run: |
+        sudo apt-get update
+        sudo apt-get install libomp-dev
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: lscpu
@@ -47,7 +53,9 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD \
+                 -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
         cat ViSP-third-party.txt
 
     - name: Compile

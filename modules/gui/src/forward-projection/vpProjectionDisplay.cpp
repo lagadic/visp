@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +30,7 @@
  * Description:
  * Interface with the image for feature display.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpProjectionDisplay.cpp
@@ -59,6 +55,8 @@
 #include <visp3/gui/vpProjectionDisplay.h>
 
 //#include <visp3/visual_features/vpBasicFeature.h>
+
+BEGIN_VISP_NAMESPACE
 
 void vpProjectionDisplay::insert(vpForwardProjection &fp)
 {
@@ -91,7 +89,7 @@ void vpProjectionDisplay::init(const int select)
   init();
 }
 
-void vpProjectionDisplay::close() {}
+void vpProjectionDisplay::close() { }
 
 void vpProjectionDisplay::display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
                                   const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &color,
@@ -148,8 +146,10 @@ void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomog
   vpDisplay::displayArrow(I, ipo, ip, vpColor::blue, 4 + thickness, 2 + thickness, thickness);
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpProjectionDisplay.cpp.o)
+// Work around to avoid warning: libvisp_gui.a(vpProjectionDisplay.cpp.o)
 // has no symbols
-void dummy_vpProjectionDisplay(){};
+void dummy_vpProjectionDisplay() { };
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Firewire cameras video capture.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vp1394TwoGrabber.h
@@ -58,6 +58,20 @@
 
 #if defined(VISP_HAVE_DC1394)
 
+/*
+ * Interface with libdc1394 2.x
+ */
+#include <string.h>
+
+#include <dc1394/control.h>
+#include <dc1394/utils.h>
+#include <dc1394/vendor/avt.h>
+
+#include <visp3/core/vpFrameGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vp1394TwoGrabber
 
@@ -72,114 +86,103 @@
   This class was tested with Marlin F033C and F131B cameras and with
   Point Grey Dragonfly 2, Flea 2 and Flea 3 cameras.
 
-  \ingroup libdevice
-
   This grabber allows single or multi camera acquisition.
 
   - Here you will find an example of single capture from the first camera
-found on the bus. This example is available in tutorial-grabber-1394.cpp:
+    found on the bus. This example is available in tutorial-grabber-1394.cpp:
     \include tutorial-grabber-1394.cpp
     A line by line explanation of this example is provided in \ref
-tutorial-grabber. An other example that shows how to use format 7 and the
-auto-shutter is provided in vp1394TwoGrabber() constructor:
+    tutorial-grabber. An other example that shows how to use format 7 and the
+    auto-shutter is provided in vp1394TwoGrabber() constructor:
 
   - If more than one camera is connected, it is also possible to select a
-specific camera by its GUID:
-\code
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+    specific camera by its GUID:
+    \code
+    #include <visp3/core/vpImage.h>
+    #include <visp3/io/vpImageIo.h>
+    #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I; // Create a gray level image container
-  bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
-  unsigned int ncameras; // Number of cameras on the bus
-  ncameras = g.getNumCameras();
-  std::cout << ncameras << " cameras found:" << std::endl;
+    int main()
+    {
+    #if defined(VISP_HAVE_DC1394)
+      vpImage<unsigned char> I; // Create a gray level image container
+      bool reset = false; // Disable bus reset during construction
+      vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
 
-  for(unsigned int i=0; i< ncameras; i++)
-  {
-    g.setCamera(i);
-    uint64_t guid = g.getGuid();
-    printf("camera %d with guid 0x%lx\n", i, (long unsigned int)guid);
-  }
+      unsigned int ncameras; // Number of cameras on the bus
+      ncameras = g.getNumCameras();
+      std::cout << ncameras << " cameras found:" << std::endl;
 
-  // produce:
-  // 2 cameras found:
-  // camera 0 with guid 0xb09d01009b329c
-  // camera 1 with guid 0xb09d01007e0ee7
-  g.setCamera( (uint64_t)0xb09d01009b329cULL );
+      for(unsigned int i=0; i< ncameras; i++)
+      {
+        g.setCamera(i);
+        uint64_t guid = g.getGuid();
+        printf("camera %d with guid 0x%lx\n", i, (long unsigned int)guid);
+      }
 
-  printf("Use camera with GUID: 0x%lx\n", (long unsigned int)g.getGuid());
-  g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
+      // produce:
+      // 2 cameras found:
+      // camera 0 with guid 0xb09d01009b329c
+      // camera 1 with guid 0xb09d01007e0ee7
+      g.setCamera( (uint64_t)0xb09d01009b329cULL );
 
-  vpImageIo::write(I, "image.pgm"); // Write image on the disk
-#endif
-}
-  \endcode
+      printf("Use camera with GUID: 0x%lx\n", (long unsigned int)g.getGuid());
+      g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
 
-  - Here an example of multi camera capture.  An other example is available in
-setCamera():
-\code
-#include <sstream>
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+      vpImageIo::write(I, "image.pgm"); // Write image on the disk
+    #endif
+    }
+    \endcode
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394)
-  bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on libdc1394-2.x third party lib.
-  unsigned int ncameras; // Number of cameras on the bus
-  ncameras = g.getNumCameras();
+  - Here an example of multi camera capture.  An other example is available in setCamera():
+    \code
+    #include <sstream>
+    #include <visp3/core/vpImage.h>
+    #include <visp3/io/vpImageIo.h>
+    #include <visp3/sensor/vp1394TwoGrabber.h>
 
-  // Create an image container for each camera
-  vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
-  char filename[FILENAME_MAX];
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
-  // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
-  g.setCamera(0);
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
+    int main()
+    {
+    #if defined(VISP_HAVE_DC1394)
+      bool reset = false; // Disable bus reset during construction
+      vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on libdc1394-2.x third party lib.
+      unsigned int ncameras; // Number of cameras on the bus
+      ncameras = g.getNumCameras();
 
-  // If the second camera support 30 fps acquisition
-  g.setCamera(1);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+      // Create an image container for each camera
+      vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
+      char filename[FILENAME_MAX];
 
-  // Acquire an image from each camera
-  for (unsigned int camera=0; camera < ncameras; camera ++) {
-    g.setCamera(camera);
-    g.acquire(I[camera]);
-    std::stringstream ss;
-    ss << image-cam << camera << ".pgm";
-    vpImageIo::write(I[camera], ss.str());
-  }
-  delete [] I;
-#endif
-}
-  \endcode
+      // If the first camera supports vpVIDEO_MODE_640x480_YUV422 video mode
+      g.setCamera(0);
+      g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422);
 
-  \author  Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
+      // If the second camera support 30 fps acquisition
+      g.setCamera(1);
+      g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+
+      // Acquire an image from each camera
+      for (unsigned int camera=0; camera < ncameras; camera ++) {
+        g.setCamera(camera);
+        g.acquire(I[camera]);
+        std::stringstream ss;
+        ss << image-cam << camera << ".pgm";
+        vpImageIo::write(I[camera], ss.str());
+      }
+      delete [] I;
+    #endif
+    }
+    \endcode
 
 */
-
-/*
- * Interface with libdc1394 2.x
- */
-#include <string.h>
-
-#include <dc1394/control.h>
-#include <dc1394/utils.h>
-#include <dc1394/vendor/avt.h>
-
-#include <visp3/core/vpFrameGrabber.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-
 class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 {
 
@@ -192,7 +195,8 @@ public:
     Enumeration of iso speed. See libdc1394 2.x header file
     dc1394/control.h
   */
-  typedef enum {
+  typedef enum
+  {
     vpISO_SPEED_100 = DC1394_ISO_SPEED_100,
     vpISO_SPEED_200 = DC1394_ISO_SPEED_200,
     vpISO_SPEED_400 = DC1394_ISO_SPEED_400,
@@ -205,7 +209,8 @@ public:
     Enumeration of video modes. See libdc1394 2.x header file
     dc1394/control.h
   */
-  typedef enum {
+  typedef enum
+  {
     vpVIDEO_MODE_160x120_YUV444 = DC1394_VIDEO_MODE_160x120_YUV444,
     vpVIDEO_MODE_320x240_YUV422 = DC1394_VIDEO_MODE_320x240_YUV422,
     vpVIDEO_MODE_640x480_YUV411 = DC1394_VIDEO_MODE_640x480_YUV411,
@@ -244,7 +249,8 @@ public:
     Enumeration of framerates. See libdc1394 2.x header file
     dc1394/control.h
   */
-  typedef enum {
+  typedef enum
+  {
     vpFRAMERATE_1_875 = DC1394_FRAMERATE_1_875,
     vpFRAMERATE_3_75 = DC1394_FRAMERATE_3_75,
     vpFRAMERATE_7_5 = DC1394_FRAMERATE_7_5,
@@ -259,7 +265,8 @@ public:
     Enumeration of color codings. See libdc1394 2.x header file
     dc1394/control.h
   */
-  typedef enum {
+  typedef enum
+  {
     vpCOLOR_CODING_MONO8 = DC1394_COLOR_CODING_MONO8,
     vpCOLOR_CODING_YUV411 = DC1394_COLOR_CODING_YUV411,
     vpCOLOR_CODING_YUV422 = DC1394_COLOR_CODING_YUV422,
@@ -277,7 +284,8 @@ public:
     Enumeration of the parameters that can be modified. See libdc1394 2.x
     header file dc1394/control.h
   */
-  typedef enum {
+  typedef enum
+  {
     vpFEATURE_BRIGHTNESS = DC1394_FEATURE_BRIGHTNESS,
     vpFEATURE_EXPOSURE = DC1394_FEATURE_EXPOSURE,
     vpFEATURE_SHARPNESS = DC1394_FEATURE_SHARPNESS,
@@ -306,7 +314,8 @@ private:
   /*!
     Control structure of the values that can be modified during the execution.
   */
-  typedef struct {
+  typedef struct
+  {
     uint32_t brightness;
     uint32_t exposure;
     uint32_t sharpness;
@@ -334,13 +343,13 @@ private:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vp1394TwoGrabber(const vp1394TwoGrabber &)
-  //    : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0),
-  //    verbose(false), camIsOpen(NULL),
+  //    : camera(nullptr), cameras(nullptr), num_cameras(0), camera_id(0),
+  //    verbose(false), camIsOpen(nullptr),
   //      num_buffers(4), // ring buffer size
-  //      isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
+  //      isDataModified(nullptr), initialShutterMode(nullptr), dataCam(nullptr)
   //    #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-  //    libdc1394-2.0.0-rc7 , d(NULL),
-  //      list(NULL)
+  //    libdc1394-2.0.0-rc7 , d(nullptr),
+  //      list(nullptr)
   //    #endif
   //  {
   //    throw vpException(vpException::functionNotImplementedError,"Not
@@ -353,7 +362,7 @@ private:
   //#endif
 
 public:
-  explicit vp1394TwoGrabber(bool reset = true);
+  VP_EXPLICIT vp1394TwoGrabber(bool reset = true);
   virtual ~vp1394TwoGrabber();
 
   void acquire(vpImage<unsigned char> &I);
@@ -459,6 +468,6 @@ private:
   dc1394camera_list_t *list;
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

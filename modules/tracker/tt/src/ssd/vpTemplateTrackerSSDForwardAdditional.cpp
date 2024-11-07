@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,15 +34,15 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <limits> // numeric_limits
 
 #include <visp3/core/vpImageTools.h>
 #include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>
 
+BEGIN_VISP_NAMESPACE
 vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
@@ -125,7 +125,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       dp = HLM.inverseByLU() * G;
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       delete[] tempt;
       throw(e);
     }
@@ -139,7 +140,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
       if (erreur_LMA < erreur) {
         p = p_test_LMA;
         lambda = (lambda / 10. < 1e-6) ? lambda / 10. : 1e-6;
-      } else {
+      }
+      else {
         lambda = (lambda * 10. < 1e6) ? 1e6 : lambda * 10.;
       }
     } break;
@@ -200,3 +202,4 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
 
   nbIteration = iteration;
 }
+END_VISP_NAMESPACE

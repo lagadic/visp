@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,19 +29,22 @@
  *
  * Description:
  * Gaussian filter class.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpGaussianFilter.h
   \brief Gaussian filter class
 */
 
-#ifndef vpGaussianFilter_H
-#define vpGaussianFilter_H
+#ifndef VP_GAUSSIAN_FILTER_H
+#define VP_GAUSSIAN_FILTER_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
+#if defined(VISP_HAVE_SIMDLIB)
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpGaussianFilter
 
@@ -62,12 +64,13 @@ public:
   virtual ~vpGaussianFilter();
 
 private:
-  vpGaussianFilter(const vpGaussianFilter &);
-  vpGaussianFilter &operator=(const vpGaussianFilter &);
+  vpGaussianFilter(const vpGaussianFilter &gf);
+  vpGaussianFilter &operator=(const vpGaussianFilter &gf);
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
-
+END_VISP_NAMESPACE
+#endif
 #endif

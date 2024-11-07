@@ -1,0 +1,72 @@
+{
+  "numpy_seed": 19,
+  "blenderproc_seed": "69",
+
+  "models_path": "./megapose-models",
+  "cc_textures_path": "./cc0",
+  "camera": {
+    "px": 600,
+    "py": 600,
+    "u0": 320,
+    "v0": 240,
+    "h": 480,
+    "w": 640,
+    "randomize_params_percent": 5.0
+  },
+  "rendering": {
+    "max_num_samples": 32,
+    "denoiser": "OPTIX"
+  },
+  "scene": {
+    "room_size_multiplier_min": 5.0,
+    "room_size_multiplier_max": 10.0,
+    "simulate_physics": false,
+    "max_num_textures": 50,
+    "distractors": {
+      "min_count": 20,
+      "max_count": 50,
+      "min_size_rel_scene": 0.05,
+      "max_size_rel_scene": 0.1,
+      "custom_distractors": "./megapose-distractors",
+      "custom_distractor_proba": 0.5,
+      "displacement_max_amount": 0.0,
+      "pbr_noise": 0.5,
+      "emissive_prob": 0.0,
+      "emissive_min_strength": 2.0,
+      "emissive_max_strength": 5.0
+    },
+    "lights": {
+      "min_count": 3,
+      "max_count": 6,
+      "min_intensity": 50,
+      "max_intensity": 200
+    },
+    "objects": {
+      "min_count": 2,
+      "max_count": 5,
+      "multiple_occurences": true,
+      "scale_noise": 0.2,
+      "displacement_max_amount": 0.0,
+      "pbr_noise": 0.3,
+      "cam_min_dist_rel": 1.0,
+      "cam_max_dist_rel": 3.0
+    }
+  },
+  "dataset": {
+    "save_path": "./output_blenderproc",
+    "scenes_per_run": 1,
+    "num_scenes": 100,
+    "images_per_scene": 10,
+    "empty_images_per_scene": 2,
+    "pose": true,
+    "depth": false,
+    "normals": false,
+    "segmentation": false,
+    "detection": true,
+    "detection_params": {
+      "min_side_size_px": 10,
+      "min_visibility_percentage": 0.3,
+      "points_sampling_occlusion": 100
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
 
@@ -44,6 +43,7 @@
 #include <omp.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
@@ -123,7 +123,8 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
     vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
     try {
       HLMdesireInverse = HLMdesire.inverseByLU();
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       throw(e);
     }
   }
@@ -217,7 +218,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-    } else {
+    }
+    else {
       computeProba(Nbpoint);
       computeMI(MI);
       computeHessien(H);
@@ -239,7 +241,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
           dp = gain * 0.2 * HLM.inverseByLU() * G;
           break;
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         throw(e);
       }
     }
@@ -256,7 +259,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       if (MI_LMA > MI) {
         p = p_test_LMA;
         lambda = (lambda / 10. < 1e-6) ? lambda / 10. : 1e-6;
-      } else {
+      }
+      else {
         lambda = (lambda * 10. < 1e6) ? 1e6 : lambda * 10.;
       }
     } break;
@@ -326,3 +330,4 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     MI_postEstimation = -1;
   }
 }
+END_VISP_NAMESPACE

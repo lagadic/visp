@@ -2,10 +2,16 @@ name: iOS
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
+
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-ios:
@@ -13,17 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11]
+        os: [macos-latest]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: |
@@ -40,4 +40,6 @@ jobs:
       run: |
         mkdir build
         cd build
-        python ../platforms/ios/build_framework.py ios
+        # cf: doc\tutorial\ios\tutorial-install-iOS.dox
+        python ../platforms/ios/build_framework.py ios --iphoneos_deployment_target 12.0 --iphoneos_archs arm64 \
+                --build_only_specified_archs True

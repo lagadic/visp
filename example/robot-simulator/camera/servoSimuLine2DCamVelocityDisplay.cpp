@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Simulation of a 2D visual servoing on a line.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoSimuLine2DCamVelocityDisplay.cpp
@@ -72,6 +68,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdh"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
@@ -139,7 +139,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
       display = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
 
     default:
@@ -150,7 +150,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -194,7 +194,8 @@ int main(int argc, const char **argv)
         // display variable.
         vpDisplay::display(I);
         vpDisplay::flush(I);
-      } catch (...) {
+      }
+      catch (...) {
         vpERROR_TRACE("Error while displaying the image");
         return EXIT_FAILURE;
       }
@@ -312,7 +313,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -328,7 +330,7 @@ int main()
 int main()
 {
   std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * IBVS on Pioneer P3DX mobile platform
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -83,6 +80,10 @@
 #if defined(VISP_HAVE_PIONEER) && defined(VISP_HAVE_BICLOPS)
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   try {
@@ -106,7 +107,7 @@ int main(int argc, char **argv)
     double qm_pan = 0; // Measured pan position (tilt is not handled in that example)
 
 #ifdef USE_REAL_ROBOT
-    // Initialize the biclops head
+    // Initialize the Biclops head
 
     vpRobotBiclops biclops("/usr/share/BiclopsDefault.cfg");
     biclops.setDenavitHartenbergModel(vpBiclops::DH1);
@@ -161,7 +162,7 @@ int main(int argc, char **argv)
 #endif
 
     vpPioneerPan robot_pan; // Generic robot that computes the velocities for
-                            // the pioneer and the biclops head
+                            // the pioneer and the Biclops head
 
     // Camera parameters. In this experiment we don't need a precise
     // calibration of the camera
@@ -269,7 +270,7 @@ int main(int argc, char **argv)
 
     // Use here a feature segment builder
     vpFeatureSegment s_segment(normalized),
-        s_segment_d(normalized); // From the segment feature we use only alpha
+      s_segment_d(normalized); // From the segment feature we use only alpha
     vpFeatureBuilder::create(s_segment, cam, dot[0], dot[1]);
     s_segment.setZ1(Z[0]);
     s_segment.setZ2(Z[1]);
@@ -381,8 +382,8 @@ int main(int argc, char **argv)
         v_biclops[1] = 0;
 
         std::cout << "Send velocity to the pionner: " << v_pioneer[0] << " m/s " << vpMath::deg(v_pioneer[1])
-                  << " deg/s" << std::endl;
-        std::cout << "Send velocity to the biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
+          << " deg/s" << std::endl;
+        std::cout << "Send velocity to the Biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
 
         pioneer.setVelocity(vpRobot::REFERENCE_FRAME, v_pioneer);
         biclops.setVelocity(vpRobot::ARTICULAR_FRAME, v_biclops);
@@ -400,7 +401,8 @@ int main(int argc, char **argv)
         iter++;
         // break;
       }
-    } catch (...) {
+    }
+    catch (...) {
     }
 
 #ifdef USE_REAL_ROBOT
@@ -414,7 +416,8 @@ int main(int argc, char **argv)
     // Kill the servo task
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

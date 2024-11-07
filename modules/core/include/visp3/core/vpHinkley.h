@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,23 +29,24 @@
  *
  * Description:
  * Hinkley's cumulative sum test implementation.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef vpHinkley_H
-#define vpHinkley_H
+ */
 
 /*!
   \file vpHinkley.h
   \brief class for Hinkley's cumulative test computation.
 */
+
+#ifndef vpHinkley_H
+#define vpHinkley_H
+
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHinkley
+  \deprecated This class is deprecated. You should rather use vpStatisticalTestHinkley.
 
   \ingroup group_core_math_tools
   \brief This class implements the Hinkley's cumulative sum test.
@@ -99,16 +99,17 @@ public:
   /*! \enum vpHinkleyJumpType
     Indicates if a jump is detected by the Hinkley test.
   */
-  typedef enum {
+  typedef enum
+  {
     noJump,       /*!< No jump is detected by the Hinkley test. */
     downwardJump, /*!< A downward jump is detected by the Hinkley test. */
     upwardJump    /*!< An upward jump is detected by the Hinkley test. */
   } vpHinkleyJumpType;
 
 public:
-  vpHinkley();
+  VP_DEPRECATED vpHinkley();
   virtual ~vpHinkley();
-  vpHinkley(double alpha, double delta);
+  VP_DEPRECATED vpHinkley(double alpha, double delta);
 
   void init();
   void init(double alpha, double delta);
@@ -167,5 +168,6 @@ private:
   double Tk;
   double Nk;
 };
-
+END_VISP_NAMESPACE
+#endif
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Image acquisition with Structure Core sensor and libStructure.
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testOccipitalStructure_Core_images.cpp
@@ -43,8 +41,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                           \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && ( VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 ) \
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -53,6 +51,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     double t;
     unsigned int display_scale = 1;
@@ -79,12 +80,12 @@ int main()
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     I_visible =
-        vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), 0);
+      vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), 0);
     display_visible.setDownScalingFactor(display_scale);
     display_visible.init(I_visible, 10, 10, "Visible image");
 
     I_depth_raw =
-        vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
+      vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
     I_depth = vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth));
     display_depth.setDownScalingFactor(display_scale);
     display_depth.init(I_depth, static_cast<int>(I_visible.getWidth() / display_scale) + 20, 10, "Depth image");
@@ -109,9 +110,11 @@ int main()
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Structure SDK error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -125,7 +128,7 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;

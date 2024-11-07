@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,24 +29,31 @@
  *
  * Description:
  * TCP Network
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
-#include <visp3/core/vpNetwork.h>
+#include <visp3/core/vpConfig.h>
+
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT) || defined(_WIN32)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#include <visp3/core/vpNetwork.h>
+#include <visp3/core/vpDebug.h>
+BEGIN_VISP_NAMESPACE
 vpNetwork::vpNetwork()
   : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(), max_size_message(999999),
-    separator("[*@*]"), beginning("[*start*]"), end("[*end*]"), param_sep("[*|*]"), currentMessageReceived(), tv(),
-    tv_sec(0), tv_usec(10), verboseMode(false)
+  separator("[*@*]"), beginning("[*start*]"), end("[*end*]"), param_sep("[*|*]"), currentMessageReceived(), tv(),
+  tv_sec(0), tv_usec(10), verboseMode(false)
 {
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -92,8 +98,8 @@ void vpNetwork::addDecodingRequest(vpRequest *req)
 
   if (alreadyHas)
     std::cout << "Server already has one request with the similar ID. "
-                 "Request hasn't been added."
-              << std::endl;
+    "Request hasn't been added."
+    << std::endl;
   else
     request_list.push_back(req);
 }
@@ -139,7 +145,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 {
   struct hostent *server = gethostbyname(name);
 
-  if (server == NULL) {
+  if (server == nullptr) {
     std::string noSuchHostMessage("ERROR, ");
     noSuchHostMessage.append(name);
     noSuchHostMessage.append(": no such host\n");
@@ -168,7 +174,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
 
@@ -184,7 +190,7 @@ int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -236,7 +242,7 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendAndEncodeRequest(vpRequest &req)
 {
@@ -256,7 +262,7 @@ int vpNetwork::sendAndEncodeRequest(vpRequest &req)
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occured.
+  \return The number of bytes that have been sent, -1 if an error occurred.
 */
 int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -265,7 +271,7 @@ int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 }
 
 /*!
-  Receive requests untils there is requests to receive.
+  Receive requests until there is requests to receive.
 
   \warning Requests will be received but not decoded.
 
@@ -280,12 +286,12 @@ int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 */
 std::vector<int> vpNetwork::receiveRequest()
 {
-  _receiveRequest();
-  return _handleRequests();
+  privReceiveRequest();
+  return privHandleRequests();
 }
 
 /*!
-  Receives requests, from a specific emitter, untils there is request to
+  Receives requests, from a specific emitter, until there is request to
   receive.
 
   \warning Requests will be received but not decoded.
@@ -303,8 +309,8 @@ std::vector<int> vpNetwork::receiveRequest()
 */
 std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
 {
-  _receiveRequestFrom(receptorEmitting);
-  return _handleRequests();
+  privReceiveRequestFrom(receptorEmitting);
+  return privHandleRequests();
 }
 
 /*!
@@ -323,12 +329,12 @@ std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitt
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveRequestOnce()
 {
-  _receiveRequestOnce();
-  return _handleFirstRequest();
+  privReceiveRequestOnce();
+  return privHandleFirstRequest();
 }
 
 /*!
@@ -350,16 +356,16 @@ int vpNetwork::receiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
-  _receiveRequestOnceFrom(receptorEmitting);
-  return _handleFirstRequest();
+  privReceiveRequestOnceFrom(receptorEmitting);
+  return privHandleFirstRequest();
 }
 
 /*!
-  Receives and decode requests untils there is requests to receive.
+  Receives and decode requests until there is requests to receive.
 
   \warning Requests will be received but not decoded.
 
@@ -383,7 +389,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
 }
 
 /*!
-  Receives and decode requests, from a specific emitter, untils there is
+  Receives and decode requests, from a specific emitter, until there is
   request to receive.
 
   \warning Requests will be received but not decoded.
@@ -427,7 +433,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveAndDecodeRequestOnce()
 {
@@ -457,7 +463,7 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
 int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting)
 {
@@ -483,14 +489,14 @@ int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitt
   \return : The list of index corresponding to the requests that have been
   handled.
 */
-std::vector<int> vpNetwork::_handleRequests()
+std::vector<int> vpNetwork::privHandleRequests()
 {
   std::vector<int> resIndex;
-  int index = _handleFirstRequest();
+  int index = privHandleFirstRequest();
 
   while (index != -1) {
     resIndex.push_back(index);
-    index = _handleFirstRequest();
+    index = privHandleFirstRequest();
   }
 
   return resIndex;
@@ -506,7 +512,7 @@ std::vector<int> vpNetwork::_handleRequests()
 
   \return : The index of the request that has been handled.
 */
-int vpNetwork::_handleFirstRequest()
+int vpNetwork::privHandleFirstRequest()
 {
   size_t indStart = currentMessageReceived.find(beginning);
   size_t indSep = currentMessageReceived.find(separator);
@@ -587,7 +593,7 @@ int vpNetwork::_handleFirstRequest()
 }
 
 /*!
-  Receive requests untils there is requests to receive.
+  Receive requests until there is requests to receive.
 
   \warning Requests will be received but not decoded.
 
@@ -600,14 +606,14 @@ int vpNetwork::_handleFirstRequest()
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 */
-void vpNetwork::_receiveRequest()
+void vpNetwork::privReceiveRequest()
 {
-  while (_receiveRequestOnce() > 0) {
+  while (privReceiveRequestOnce() > 0) {
   };
 }
 
 /*!
-  Receives requests, from a specific emitter, untils there is request to
+  Receives requests, from a specific emitter, until there is request to
   receive.
 
   \warning Requests will be received but not decoded.
@@ -623,9 +629,9 @@ void vpNetwork::_receiveRequest()
 
   \param receptorEmitting : Index of the receptor emitting the message
 */
-void vpNetwork::_receiveRequestFrom(const unsigned int &receptorEmitting)
+void vpNetwork::privReceiveRequestFrom(const unsigned int &receptorEmitting)
 {
-  while (_receiveRequestOnceFrom(receptorEmitting) > 0) {
+  while (privReceiveRequestOnceFrom(receptorEmitting) > 0) {
   };
 }
 
@@ -645,9 +651,9 @@ void vpNetwork::_receiveRequestFrom(const unsigned int &receptorEmitting)
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
-int vpNetwork::_receiveRequestOnce()
+int vpNetwork::privReceiveRequestOnce()
 {
   if (receptor_list.size() == 0) {
     if (verboseMode)
@@ -656,7 +662,7 @@ int vpNetwork::_receiveRequestOnce()
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -673,17 +679,19 @@ int vpNetwork::_receiveRequestOnce()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
-    // Timeout
+  }
+  else if (value == 0) {
+ // Timeout
     return 0;
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < receptor_list.size(); i++) {
       if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
         char *buf = new char[max_size_message];
@@ -698,7 +706,8 @@ int vpNetwork::_receiveRequestOnce()
           receptor_list.erase(receptor_list.begin() + (int)i);
           delete[] buf;
           return numbytes;
-        } else {
+        }
+        else {
           std::string returnVal(buf, (unsigned int)numbytes);
           currentMessageReceived.append(returnVal);
         }
@@ -730,9 +739,9 @@ int vpNetwork::_receiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occured.
+  \return The number of bytes received, -1 if an error occurred.
 */
-int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
+int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   int size = (int)receptor_list.size();
   int sizeMinusOne = (int)receptor_list.size() - 1;
@@ -743,7 +752,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -754,16 +763,18 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
   if (value == -1) {
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
-    // Timeout
+  }
+  else if (value == 0) {
+ // Timeout
     return 0;
-  } else {
+  }
+  else {
     if (FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor)) {
       char *buf = new char[max_size_message];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -774,11 +785,12 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 #endif
       if (numbytes <= 0) {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr)
-                  << std::endl;
+          << std::endl;
         receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
         delete[] buf;
         return numbytes;
-      } else {
+      }
+      else {
         std::string returnVal(buf, (unsigned int)numbytes);
         currentMessageReceived.append(returnVal);
       }
@@ -788,8 +800,8 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 
   return numbytes;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpNetwork.cpp.o) has no symbols
-void dummy_vpNetwork(){};
+void dummy_vpNetwork() { };
 #endif

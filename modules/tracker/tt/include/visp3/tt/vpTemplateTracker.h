@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpTemplateTracker.h
  \brief
@@ -47,11 +46,13 @@
 
 #include <math.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTracker
   \ingroup group_tt_tracker
@@ -146,19 +147,18 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTracker()
-    : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
-      templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
-      ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
-      ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
-      Hdesire(), HdesirePyr(NULL), HLM(), HLMdesire(), HLMdesirePyr(NULL), HLMdesireInverse(),
-      HLMdesireInversePyr(NULL), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
-      useBrent(false), nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(0), mod_j(0),
-      nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
-      useCompositionnal(false), useInverse(false), Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
-      zoneRef_()
-  {
-  }
-  explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
+    : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(nullptr), ptTemplatePyr(nullptr), ptTemplateInit(false),
+    templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr), ptTemplateSelectPyr(nullptr),
+    ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(nullptr), ptTemplateSuppPyr(nullptr),
+    ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr), pyr_IDes(nullptr), H(),
+    Hdesire(), HdesirePyr(nullptr), HLM(), HLMdesire(), HLMdesirePyr(nullptr), HLMdesireInverse(),
+    HLMdesireInversePyr(nullptr), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
+    useBrent(false), nbIterBrent(0), taillef(0), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(0), mod_j(0),
+    nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
+    useCompositionnal(false), useInverse(false), Warp(nullptr), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
+    zoneRef_()
+  { }
+  VP_EXPLICIT vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
   void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
@@ -233,7 +233,7 @@ public:
     l0Pyr = level_to_stop;
     if (l0Pyr >= nlevels) {
       std::cout << "Warning: level_to_stop: " << level_to_stop << " higher than level_to_start: " << nlevels - 1
-                << " (nlevels-1)" << std::endl;
+        << " (nlevels-1)" << std::endl;
       std::cout << "Level to stop put to: " << nlevels - 1 << std::endl;
       l0Pyr = nlevels - 1;
     }
@@ -279,7 +279,7 @@ public:
     Use rather setThresholdResidualDerivative()
     \param threshold : Unused value.
    */
-  vp_deprecated void setThresholdRMS(double threshold) { (void)threshold; }
+  VP_DEPRECATED void setThresholdRMS(double threshold) { (void)threshold; }
   //@}
 #endif
 
@@ -298,4 +298,5 @@ protected:
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   virtual void trackPyr(const vpImage<unsigned char> &I);
 };
+END_VISP_NAMESPACE
 #endif

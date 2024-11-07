@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -39,16 +39,18 @@
 
 #include <iostream>
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
    Basic constructor.
  */
-vp1394CMUGrabber::vp1394CMUGrabber()
+  vp1394CMUGrabber::vp1394CMUGrabber()
   : index(0), // If a camera was not selected the first one (index = 0) will
               // be used
-    _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)
+  _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)
 {
   // public members
   init = false;
@@ -69,7 +71,7 @@ vp1394CMUGrabber::~vp1394CMUGrabber()
   // delete camera instance
   if (camera) {
     delete camera;
-    camera = NULL;
+    camera = nullptr;
   }
 }
 
@@ -206,7 +208,7 @@ void vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
 {
   // get image data
   unsigned long length;
-  unsigned char *rawdata = NULL;
+  unsigned char *rawdata = nullptr;
   int dropped;
   unsigned int size;
 
@@ -244,7 +246,7 @@ void vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
-                                                                       "Acquisition failed."));
+                                  "Acquisition failed."));
     break;
   };
 
@@ -268,7 +270,7 @@ void vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
 {
   // get image data
   unsigned long length;
-  unsigned char *rawdata = NULL;
+  unsigned char *rawdata = nullptr;
   int dropped;
   unsigned int size;
 
@@ -308,7 +310,7 @@ void vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
-                                                                       "Acquisition failed."));
+                                  "Acquisition failed."));
     break;
   };
 }
@@ -397,20 +399,21 @@ void vp1394CMUGrabber::setGain(unsigned short gain)
   if (_gain < min) {
     _gain = min;
     std::cout << "vp1394CMUGrabber warning: Desired gain register value of "
-                 "IEEE 1394 camera number "
-              << index << " can't be less than " << _gain << std::endl;
-  } else if (_gain > max) {
+      "IEEE 1394 camera number "
+      << index << " can't be less than " << _gain << std::endl;
+  }
+  else if (_gain > max) {
     _gain = max;
     std::cout << "vp1394CMUGrabber warning: Desired gain register value of "
-                 "IEEE 1394 camera number "
-              << index << " can't be greater than " << _gain << std::endl;
+      "IEEE 1394 camera number "
+      << index << " can't be greater than " << _gain << std::endl;
   }
 
   Control->SetAutoMode(false);
   if (Control->SetValue(_gain) != CAM_SUCCESS) {
     std::cout << "vp1394CMUGrabber warning: Can't set gain register value of "
-                 "IEEE 1394 camera number "
-              << index << std::endl;
+      "IEEE 1394 camera number "
+      << index << std::endl;
   }
 }
 
@@ -460,19 +463,20 @@ void vp1394CMUGrabber::setShutter(unsigned short shutter)
   if (_shutter < min) {
     _shutter = min;
     std::cout << "vp1394CMUGrabber warning: Desired exposure time register "
-                 "value of IEEE 1394 camera number "
-              << index << " can't be less than " << _shutter << std::endl;
-  } else if (_shutter > max) {
+      "value of IEEE 1394 camera number "
+      << index << " can't be less than " << _shutter << std::endl;
+  }
+  else if (_shutter > max) {
     _shutter = max;
     std::cout << "vp1394CMUGrabber warning: Desired exposure time register "
-                 "value of IEEE 1394 camera number "
-              << index << " can't be greater than " << _shutter << std::endl;
+      "value of IEEE 1394 camera number "
+      << index << " can't be greater than " << _shutter << std::endl;
   }
   Control->SetAutoMode(false);
   if (Control->SetValue(_shutter) != CAM_SUCCESS) {
     std::cout << "vp1394CMUGrabber warning: Can't set exposure time register "
-                 "value of IEEE 1394 camera number "
-              << index << std::endl;
+      "value of IEEE 1394 camera number "
+      << index << std::endl;
   }
 }
 
@@ -486,7 +490,8 @@ void vp1394CMUGrabber::displayCameraDescription(int cam_id)
     camera->GetNodeDescription(cam_id, buf, 512);
     std::cout << "Camera " << cam_id << ": " << buf << std::endl;
 
-  } else {
+  }
+  else {
     std::cout << "Camera " << cam_id << ": camera not found" << std::endl;
   }
 }
@@ -517,7 +522,7 @@ void vp1394CMUGrabber::displayCameraModel()
   \param format : Camera video format.
   \param mode : Camera video mode.
 
-  See the following table for the correspondances between the input
+  See the following table for the correspondences between the input
   format and mode and the resulting video color coding.
 
   <TABLE BORDER="1">
@@ -617,7 +622,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
   Set camera framerate rate. This method has to be called before open().
 
   \param fps : Value between 0 to 7 used to select a specific camera
-  framerate. See the following table for the correspondances between the input
+  framerate. See the following table for the correspondences between the input
   value and the framerate.
 
   <TABLE BORDER="1">
@@ -682,7 +687,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
   Get the video framerate.
 
   \return Value between 0 to 7 corresponding to a specific camera framerate.
-  See the following table for the correspondances between the returned
+  See the following table for the correspondences between the returned
   value and the framerate.
 
   <TABLE BORDER="1">
@@ -712,14 +717,18 @@ int vp1394CMUGrabber::getFramerate()
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
@@ -734,14 +743,18 @@ vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
    \param I : The captured image.
 
    \code
-#include <visp3/sensor/vp1394CMUGrabber.h>
+  #include <visp3/sensor/vp1394CMUGrabber.h>
 
-int main()
-{
-  vpImage<vpRGBa> I;
-  vp1394CMUGrabber g;
-  g >> I;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<vpRGBa> I;
+    vp1394CMUGrabber g;
+    g >> I;
+  }
    \endcode
  */
 vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)
@@ -749,9 +762,9 @@ vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)
   this->acquire(I);
   return *this;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vp1394CMUGrabber.cpp.o) has
 // no symbols
-void dummy_vp1394CMUGrabber(){};
+void dummy_vp1394CMUGrabber() { };
 #endif

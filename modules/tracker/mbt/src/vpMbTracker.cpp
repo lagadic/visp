@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Generic model based tracker
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMbTracker.cpp
@@ -43,9 +43,13 @@
 #include <limits>
 #include <sstream>
 
-#include <Simd/SimdLib.hpp>
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
@@ -90,22 +94,23 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
 #include <mutex>
 #endif
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 namespace
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::mutex g_mutex_cout;
+#if defined(VISP_HAVE_THREADS)
+std::mutex g_mutex_cout;
 #endif
 /*!
   Structure to store info about segment in CAO model files.
  */
-struct SegmentInfo {
-  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {}
+struct SegmentInfo
+{
+  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) { }
 
   std::vector<vpPoint> extremities;
   std::string name;
@@ -117,11 +122,11 @@ struct SegmentInfo {
   Structure to store info about a polygon face represented by a vpPolygon and
   by a list of vpPoint representing the corners of the polygon face in 3D.
  */
-struct PolygonFaceInfo {
+struct PolygonFaceInfo
+{
   PolygonFaceInfo(double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
     : distanceToCamera(dist), polygon(poly), faceCorners(corners)
-  {
-  }
+  { }
 
   bool operator<(const PolygonFaceInfo &pfi) const { return distanceToCamera < pfi.distanceToCamera; }
 
@@ -154,16 +159,19 @@ std::istream &safeGetline(std::istream &is, std::string &t)
     int c = sb->sbumpc();
     if (c == '\n') {
       return is;
-    } else if (c == '\r') {
+    }
+    else if (c == '\r') {
       if (sb->sgetc() == '\n')
         sb->sbumpc();
       return is;
-    } else if (c == std::streambuf::traits_type::eof()) {
-      // Also handle the case when the last line has no line ending
+    }
+    else if (c == std::streambuf::traits_type::eof()) {
+   // Also handle the case when the last line has no line ending
       if (t.empty())
         is.setstate(std::ios::eofbit);
       return is;
-    } else { // default case
+    }
+    else { // default case
       t += (char)c;
     }
   }
@@ -178,18 +186,18 @@ std::istream &safeGetline(std::istream &is, std::string &t)
 */
 vpMbTracker::vpMbTracker()
   : m_cam(), m_cMo(), oJo(6, 6), m_isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
-    computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
-    displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
-    angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
-    useOgre(false), ogreShowConfigDialog(false), useScanLine(false), nbPoints(0), nbLines(0), nbPolygonLines(0),
-    nbPolygonPoints(0), nbCylinders(0), nbCircles(0), useLodGeneral(false), applyLodSettingInConfig(false),
-    minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames(),
-    m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
-    m_projectionErrorLines(), m_projectionErrorCylinders(), m_projectionErrorCircles(), m_projectionErrorFaces(),
-    m_projectionErrorOgreShowConfigDialog(false), m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5, 5),
-    m_SobelY(5, 5), m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20),
-    m_projectionErrorDisplayThickness(1), m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false),
-    m_rand()
+  computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
+  displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
+  angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
+  useOgre(false), ogreShowConfigDialog(false), useScanLine(false), nbPoints(0), nbLines(0), nbPolygonLines(0),
+  nbPolygonPoints(0), nbCylinders(0), nbCircles(0), useLodGeneral(false), applyLodSettingInConfig(false),
+  minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames(),
+  m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
+  m_projectionErrorLines(), m_projectionErrorCylinders(), m_projectionErrorCircles(), m_projectionErrorFaces(),
+  m_projectionErrorOgreShowConfigDialog(false), m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5, 5),
+  m_SobelY(5, 5), m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20),
+  m_projectionErrorDisplayThickness(1), m_projectionErrorCam(), m_mask(nullptr), m_I(), m_sodb_init_called(false),
+  m_rand()
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -208,25 +216,25 @@ vpMbTracker::~vpMbTracker()
   for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
        it != m_projectionErrorLines.end(); ++it) {
     vpMbtDistanceLine *l = *it;
-    if (l != NULL)
+    if (l != nullptr)
       delete l;
-    l = NULL;
+    l = nullptr;
   }
 
   for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
        it != m_projectionErrorCylinders.end(); ++it) {
     vpMbtDistanceCylinder *cy = *it;
-    if (cy != NULL)
+    if (cy != nullptr)
       delete cy;
-    cy = NULL;
+    cy = nullptr;
   }
 
   for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
        it != m_projectionErrorCircles.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
-    if (ci != NULL)
+    if (ci != nullptr)
       delete ci;
-    ci = NULL;
+    ci = nullptr;
   }
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   if (m_sodb_init_called) {
@@ -261,14 +269,16 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
     finitpos.open(str_pose.c_str(), std::ios::in);
     ss << str_pose;
-  } else {
+  }
+  else {
     finitpos.open(poseSavingFilename.c_str(), std::ios::in);
     ss << poseSavingFilename;
   }
   if (finitpos.fail()) {
     std::cout << "Cannot read " << ss.str() << std::endl << "cMo set to identity" << std::endl;
     last_cMo.eye();
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < 6; i += 1) {
       finitpos >> init_pos[i];
     }
@@ -283,7 +293,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       display(*I, last_cMo, m_cam, vpColor::green, 1, true);
       vpDisplay::displayFrame(*I, last_cMo, m_cam, 0.05, vpColor::green);
       vpDisplay::flush(*I);
-    } else {
+    }
+    else {
       vpDisplay::display(*I_color);
       display(*I_color, last_cMo, m_cam, vpColor::green, 1, true);
       vpDisplay::displayFrame(*I_color, last_cMo, m_cam, 0.05, vpColor::green);
@@ -300,7 +311,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       while (!vpDisplay::getClick(*I, ip, button)) {
       }
-    } else {
+    }
+    else {
       vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose",
                              vpColor::red);
 
@@ -313,13 +325,15 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
   if (!finitpos.fail() && button == vpMouseButton::button1) {
     m_cMo = last_cMo;
-  } else {
-    vpDisplay *d_help = NULL;
+  }
+  else {
+    vpDisplay *d_help = nullptr;
 
     if (I) {
       vpDisplay::display(*I);
       vpDisplay::flush(*I);
-    } else {
+    }
+    else {
       vpDisplay::display(*I_color);
       vpDisplay::flush(*I_color);
     }
@@ -337,13 +351,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     // X Y Z
     if (pos != std::string::npos) {
       ss << initFile;
-    } else {
+    }
+    else {
       ss << initFile;
       ss << ".init";
     }
 
     std::cout << "Load 3D points from: " << ss.str() << std::endl;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     finit.open(ss.str());
 #else
     finit.open(ss.str().c_str());
@@ -357,7 +372,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     // Display window creation and initialisation
     try {
       if (displayHelp) {
-        const std::string imgExtVec[] = {".ppm", ".pgm", ".jpg", ".jpeg", ".png"};
+        const std::string imgExtVec[] = { ".ppm", ".pgm", ".jpg", ".jpeg", ".png" };
         std::string dispF;
         bool foundHelpImg = false;
         if (pos != std::string::npos) {
@@ -365,7 +380,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
             dispF = initFile.substr(0, pos) + imgExtVec[i];
             foundHelpImg = vpIoTools::checkFilename(dispF);
           }
-        } else {
+        }
+        else {
           for (size_t i = 0; i < 5 && !foundHelpImg; i++) {
             dispF = initFile + imgExtVec[i];
             foundHelpImg = vpIoTools::checkFilename(dispF);
@@ -385,19 +401,20 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
           vpImage<vpRGBa> Iref;
           vpImageIo::read(Iref, dispF);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          const int winXPos = I != NULL ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
-          const int winYPos = I != NULL ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
-          unsigned int width = I != NULL ? I->getWidth() : I_color->getWidth();
+          const int winXPos = I != nullptr ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
+          const int winYPos = I != nullptr ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
+          unsigned int width = I != nullptr ? I->getWidth() : I_color->getWidth();
           d_help->init(Iref, winXPos + (int)width + 80, winYPos, "Where to initialize...");
           vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
 #endif
         }
       }
-    } catch (...) {
-      if (d_help != NULL) {
+    }
+    catch (...) {
+      if (d_help != nullptr) {
         delete d_help;
-        d_help = NULL;
+        d_help = nullptr;
       }
     }
 #else  //#ifdef VISP_HAVE_MODULE_IO
@@ -428,7 +445,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpColVector pt_3d_tf = T * pt_3d;
       std::cout << "Point " << i + 1 << " with 3D coordinates: " << pt_3d_tf[0] << " " << pt_3d_tf[1] << " "
-                << pt_3d_tf[2] << std::endl;
+        << pt_3d_tf[2] << std::endl;
 
       P[i].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]); // (X,Y,Z)
     }
@@ -448,7 +465,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
             vpDisplay::displayCross(*I, mem_ip[k], 10, vpColor::green, 2);
           }
           vpDisplay::flush(*I);
-        } else {
+        }
+        else {
           vpDisplay::display(*I_color);
           vpDisplay::displayText(*I_color, 15, 10, text.str(), vpColor::red);
           for (unsigned int k = 0; k < mem_ip.size(); k++) {
@@ -463,7 +481,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
           vpDisplay::getClick(*I, ip);
           mem_ip.push_back(ip);
           vpDisplay::flush(*I);
-        } else {
+        }
+        else {
           vpDisplay::getClick(*I_color, ip);
           mem_ip.push_back(ip);
           vpDisplay::flush(*I_color);
@@ -479,7 +498,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       if (I) {
         vpDisplay::flush(*I);
         vpDisplay::display(*I);
-      } else {
+      }
+      else {
         vpDisplay::flush(*I_color);
         vpDisplay::display(*I_color);
       }
@@ -498,12 +518,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
         if (button == vpMouseButton::button1) {
           isWellInit = true;
-        } else {
+        }
+        else {
           pose.clearPoint();
           vpDisplay::display(*I);
           vpDisplay::flush(*I);
         }
-      } else {
+      }
+      else {
         display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
         vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
                                vpColor::red);
@@ -516,7 +538,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
         if (button == vpMouseButton::button1) {
           isWellInit = true;
-        } else {
+        }
+        else {
           pose.clearPoint();
           vpDisplay::display(*I_color);
           vpDisplay::flush(*I_color);
@@ -534,9 +557,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     else
       savePose(poseSavingFilename);
 
-    if (d_help != NULL) {
+    if (d_help != nullptr) {
       delete d_help;
-      d_help = NULL;
+      d_help = nullptr;
     }
   }
 
@@ -559,13 +582,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I : Input grayscale image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -584,7 +607,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp,
                             const vpHomogeneousMatrix &T)
 {
-  initClick(&I, NULL, initFile, displayHelp, T);
+  initClick(&I, nullptr, initFile, displayHelp, T);
 }
 
 /*!
@@ -596,13 +619,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I_color : Input color image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -621,7 +644,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, bool displayHelp,
                             const vpHomogeneousMatrix &T)
 {
-  initClick(NULL, &I_color, initFile, displayHelp, T);
+  initClick(nullptr, &I_color, initFile, displayHelp, T);
 }
 
 void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
@@ -630,12 +653,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   if (I) {
     vpDisplay::display(*I);
     vpDisplay::flush(*I);
-  } else {
+  }
+  else {
     vpDisplay::display(*I_color);
     vpDisplay::flush(*I_color);
   }
 
-  vpDisplay *d_help = NULL;
+  vpDisplay *d_help = nullptr;
 
   vpPose pose;
   std::vector<vpPoint> P;
@@ -661,17 +685,19 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       if (I) {
         d_help->init(Iref, I->display->getWindowXPosition() + (int)I->getWidth() + 80, I->display->getWindowYPosition(),
                      "Where to initialize...");
-      } else {
+      }
+      else {
         d_help->init(Iref, I_color->display->getWindowXPosition() + (int)I_color->getWidth() + 80,
                      I_color->display->getWindowYPosition(), "Where to initialize...");
       }
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
 #endif
-    } catch (...) {
-      if (d_help != NULL) {
+    }
+    catch (...) {
+      if (d_help != nullptr) {
         delete d_help;
-        d_help = NULL;
+        d_help = nullptr;
       }
     }
   }
@@ -689,7 +715,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
         vpDisplay::getClick(*I, ip);
         vpDisplay::displayCross(*I, ip, 5, vpColor::green);
         vpDisplay::flush(*I);
-      } else {
+      }
+      else {
         vpDisplay::getClick(*I_color, ip);
         vpDisplay::displayCross(*I_color, ip, 5, vpColor::green);
         vpDisplay::flush(*I_color);
@@ -702,14 +729,16 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       if (I) {
         vpDisplay::displayPoint(*I, ip, vpColor::green); // display target point
-      } else {
+      }
+      else {
         vpDisplay::displayPoint(*I_color, ip, vpColor::green); // display target point
       }
       pose.addPoint(P[i]); // and added to the pose computation point list
     }
     if (I) {
       vpDisplay::flush(*I);
-    } else {
+    }
+    else {
       vpDisplay::flush(*I_color);
     }
 
@@ -727,12 +756,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;
-      } else {
+      }
+      else {
         pose.clearPoint();
         vpDisplay::display(*I);
         vpDisplay::flush(*I);
       }
-    } else {
+    }
+    else {
       display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
       vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
                              vpColor::red);
@@ -745,7 +776,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       if (button == vpMouseButton::button1) {
         isWellInit = true;
-      } else {
+      }
+      else {
         pose.clearPoint();
         vpDisplay::display(*I_color);
         vpDisplay::flush(*I_color);
@@ -755,13 +787,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
   if (I) {
     vpDisplay::displayFrame(*I, m_cMo, m_cam, 0.05, vpColor::red);
-  } else {
+  }
+  else {
     vpDisplay::displayFrame(*I_color, m_cMo, m_cam, 0.05, vpColor::red);
   }
 
-  if (d_help != NULL) {
+  if (d_help != nullptr) {
     delete d_help;
-    d_help = NULL;
+    d_help = nullptr;
   }
 
   if (I)
@@ -786,7 +819,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                             const std::string &displayFile)
 {
-  initClick(&I, NULL, points3D_list, displayFile);
+  initClick(&I, nullptr, points3D_list, displayFile);
 }
 
 /*!
@@ -803,7 +836,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<v
 void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::vector<vpPoint> &points3D_list,
                             const std::string &displayFile)
 {
-  initClick(NULL, &I_color, points3D_list, displayFile);
+  initClick(nullptr, &I_color, points3D_list, displayFile);
 }
 #endif //#ifdef VISP_HAVE_MODULE_GUI
 
@@ -818,7 +851,8 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
 
   if (pos == initFile.size() - ext.size() && pos != 0) {
     ss << initFile;
-  } else {
+  }
+  else {
     ss << initFile;
     ss << ".init";
   }
@@ -929,7 +963,8 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
 
   if (I) {
     init(*I);
-  } else {
+  }
+  else {
     vpImageConvert::convert(*I_color, m_I);
     init(m_I);
   }
@@ -942,7 +977,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -953,15 +988,15 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
  as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		       #  /
-  \endcode
+ 50 10             #  /
+  \endverbatim
 
   \param I : Input grayscale image
   \param initFile : Path to the file containing all the points.
 */
 void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::string &initFile)
 {
-  initFromPoints(&I, NULL, initFile);
+  initFromPoints(&I, nullptr, initFile);
 }
 
 /*!
@@ -971,7 +1006,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -982,15 +1017,15 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
  as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		       #  /
-  \endcode
+ 50 10             #  /
+  \endverbatim
 
   \param I_color : Input color image
   \param initFile : Path to the file containing all the points.
 */
 void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::string &initFile)
 {
-  initFromPoints(NULL, &I_color, initFile);
+  initFromPoints(nullptr, &I_color, initFile);
 }
 
 void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
@@ -1018,7 +1053,8 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
 
   if (I) {
     init(*I);
-  } else {
+  }
+  else {
     vpImageConvert::convert(*I_color, m_I);
     init(m_I);
   }
@@ -1035,7 +1071,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
 void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &points2D_list,
                                  const std::vector<vpPoint> &points3D_list)
 {
-  initFromPoints(&I, NULL, points2D_list, points3D_list);
+  initFromPoints(&I, nullptr, points2D_list, points3D_list);
 }
 
 /*!
@@ -1049,7 +1085,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vec
 void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::vector<vpImagePoint> &points2D_list,
                                  const std::vector<vpPoint> &points3D_list)
 {
-  initFromPoints(NULL, &I_color, points2D_list, points3D_list);
+  initFromPoints(nullptr, &I_color, points2D_list, points3D_list);
 }
 
 void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
@@ -1064,7 +1100,8 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
 
   if (pos == initFile.size() - ext.size() && pos != 0) {
     ss << initFile;
-  } else {
+  }
+  else {
     ss << initFile;
     ss << ".pos";
   }
@@ -1083,7 +1120,8 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
 
   if (I) {
     init(*I);
-  } else {
+  }
+  else {
     vpImageConvert::convert(*I_color, m_I);
     init(m_I);
   }
@@ -1096,7 +1134,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
   // The six value of the pose vector
   0.0000    //  \
   0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  1.0000    //  | Example of value for the pose vector where Z = 1 meter
   0.0000    //  |
   0.0000    //  |
   0.0000    //  /
@@ -1109,7 +1147,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
 */
 void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::string &initFile)
 {
-  initFromPose(&I, NULL, initFile);
+  initFromPose(&I, nullptr, initFile);
 }
 
 /*!
@@ -1119,7 +1157,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::strin
   // The six value of the pose vector
   0.0000    //  \
   0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  1.0000    //  | Example of value for the pose vector where Z = 1 meter
   0.0000    //  |
   0.0000    //  |
   0.0000    //  /
@@ -1132,7 +1170,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::strin
 */
 void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const std::string &initFile)
 {
-  initFromPose(NULL, &I_color, initFile);
+  initFromPose(nullptr, &I_color, initFile);
 }
 
 /*!
@@ -1438,13 +1476,16 @@ void vpMbTracker::loadModel(const std::string &modelFile, bool verbose, const vp
       nbCylinders = 0;
       nbCircles = 0;
       loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true, odTo);
-    } else if ((*(it - 1) == 'l' && *(it - 2) == 'r' && *(it - 3) == 'w' && *(it - 4) == '.') ||
-               (*(it - 1) == 'L' && *(it - 2) == 'R' && *(it - 3) == 'W' && *(it - 4) == '.')) {
+    }
+    else if ((*(it - 1) == 'l' && *(it - 2) == 'r' && *(it - 3) == 'w' && *(it - 4) == '.') ||
+            (*(it - 1) == 'L' && *(it - 2) == 'R' && *(it - 3) == 'W' && *(it - 4) == '.')) {
       loadVRMLModel(modelFile);
-    } else {
+    }
+    else {
       throw vpException(vpException::ioError, "Error: File %s doesn't contain a cao or wrl model", modelFile.c_str());
     }
-  } else {
+  }
+  else {
     throw vpException(vpException::ioError, "Error: File %s doesn't exist", modelFile.c_str());
   }
 
@@ -1487,7 +1528,7 @@ void vpMbTracker::loadVRMLModel(const std::string &modelFile)
 
   if (!in.isFileVRML2()) {
     SoSeparator *sceneGraph = SoDB::readAll(&in);
-    if (sceneGraph == NULL) { /*return -1;*/
+    if (sceneGraph == nullptr) { /*return -1;*/
     }
     sceneGraph->ref();
 
@@ -1497,9 +1538,10 @@ void vpMbTracker::loadVRMLModel(const std::string &modelFile)
     sceneGraphVRML2 = tovrml2.getVRML2SceneGraph();
     sceneGraphVRML2->ref();
     sceneGraph->unref();
-  } else {
+  }
+  else {
     sceneGraphVRML2 = SoDB::readAllVRML(&in);
-    if (sceneGraphVRML2 == NULL) { /*return -1;*/
+    if (sceneGraphVRML2 == nullptr) { /*return -1;*/
     }
     sceneGraphVRML2->ref();
   }
@@ -1561,7 +1603,8 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
             if (pos != std::string::npos) {
               mapOfParams[it->first] = endLine.substr(0, pos);
               endLine = endLine.substr(pos + 1);
-            } else {
+            }
+            else {
               parseQuote = false;
             }
           }
@@ -1653,7 +1696,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     char c;
     // Extraction of the version (remove empty line and commented ones
     // (comment line begin with the #)).
-    // while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    // while ((fileId.get(c) != nullptr) && (c == '#')) fileId.ignore(256, '\n');
     removeComment(fileId);
 
     //////////////////////////Read CAO Version (V1, V2,...)//////////////////////////
@@ -1662,9 +1705,10 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     if (c == 'V') {
       fileId >> caoVersion;
       fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
-    } else {
+    }
+    else {
       std::cout << "in vpMbTracker::loadCAOModel() -> Bad parameter header "
-                   "file : use V0, V1, ...";
+        "file : use V0, V1, ...";
       throw vpException(vpException::badValue, "in vpMbTracker::loadCAOModel() -> Bad parameter "
                                                "header file : use V0, V1, ...");
     }
@@ -1771,12 +1815,14 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
             if (vpIoTools::checkFilename(headerPath)) {
               header = true;
               loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, odTo * oTo_local);
-            } else {
+            }
+            else {
               throw vpException(vpException::ioError, "file cannot be open");
             }
-          } else {
+          }
+          else {
             std::cout << "WARNING Cyclic dependency detected with file " << headerPath << " declared in " << modelFile
-                      << std::endl;
+              << std::endl;
           }
         }
       }
@@ -1793,7 +1839,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPoints += caoNbrPoint;
     if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
@@ -1840,9 +1886,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
 
     nbLines += caoNbrLine;
-    unsigned int *caoLinePoints = NULL;
+    unsigned int *caoLinePoints = nullptr;
     if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
@@ -1903,7 +1949,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           std::pair<unsigned int, unsigned int> key(index1, index2);
 
           segmentTemporaryMap[key] = segmentInfo;
-        } else {
+        }
+        else {
           vpTRACE(" line %d has wrong coordinates.", k);
         }
       }
@@ -1923,7 +1970,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonLines += caoNbrPolygonLine;
     if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
@@ -2012,7 +2059,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonPoints += caoNbrPolygonPoint;
     if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
@@ -2085,7 +2132,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCylinders += caoNbCylinder;
       if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
@@ -2142,7 +2189,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         }
       }
 
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
       std::cerr << "Cannot get the number of cylinders. Defaulting to zero." << std::endl;
       std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCylinder = 0;
@@ -2166,7 +2214,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCircles += caoNbCircle;
       if (verbose || (parent && !header)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
@@ -2217,7 +2265,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         }
       }
 
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
       std::cerr << "Cannot get the number of circles. Defaulting to zero." << std::endl;
       std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCircle = 0;
@@ -2230,7 +2279,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     if (header && parent) {
       if (verbose) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
@@ -2240,8 +2289,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "Total nb of polygon points : " << nbPolygonPoints << std::endl;
         std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
         std::cout << "Total nb of circles : " << nbCircles << std::endl;
-      } else {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      }
+      else {
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
 #endif
         std::cout << "> " << nbPoints << " points" << std::endl;
@@ -2255,7 +2305,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     // Go up: remove current model
     vectorOfModelFilename.pop_back();
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << "Cannot read line!" << std::endl;
     std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "cannot read line");
@@ -2336,7 +2387,8 @@ void vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix
           face_set = (SoVRMLIndexedFaceSet *)child2list->get(j);
           if (!strncmp(face_set->getName().getString(), "cyl", 3)) {
             extractCylinders(face_set, transform, idFace, name);
-          } else {
+          }
+          else {
             extractFaces(face_set, transform, idFace, name);
           }
         }
@@ -2382,7 +2434,8 @@ void vpMbTracker::extractFaces(SoVRMLIndexedFaceSet *face_set, vpHomogeneousMatr
         initProjectionErrorFaceFromCorners(*(m_projectionErrorFaces.getPolygon().back()));
         corners.resize(0);
       }
-    } else {
+    }
+    else {
       coord = (SoVRMLCoordinate *)(face_set->coord.getValue());
       int index = face_set->coordIndex[i];
       pointTransformed[0] = coord->point[index].getValue()[0];
@@ -2445,7 +2498,8 @@ void vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet *face_set, vpHomogeneous
 
     if (i < (int)corners_c1.size()) {
       corners_c1[(unsigned int)i] = pt;
-    } else {
+    }
+    else {
       corners_c2[(unsigned int)i - corners_c1.size()] = pt;
     }
   }
@@ -2518,7 +2572,8 @@ void vpMbTracker::extractLines(SoVRMLIndexedLineSet *line_set, int &idFace, cons
         initProjectionErrorFaceFromCorners(*(m_projectionErrorFaces.getPolygon().back()));
         corners.resize(0);
       }
-    } else {
+    }
+    else {
       coord = (SoVRMLCoordinate *)(line_set->coord.getValue());
       int index = line_set->coordIndex[i];
       point[0] = coord->point[index].getValue()[0];
@@ -2593,7 +2648,8 @@ vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPo
 
         if (clipPolygon) {
           faces.getPolygon()[i]->getRoiClipped(m_cam, roiPts, m_cMo);
-        } else {
+        }
+        else {
           roiPts = faces.getPolygon()[i]->getRoi(m_cam, m_cMo);
         }
 
@@ -2606,7 +2662,8 @@ vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPo
         std::vector<vpPoint> polyPts;
         if (clipPolygon) {
           faces.getPolygon()[i]->getPolygonClipped(polyPts);
-        } else {
+        }
+        else {
           for (unsigned int j = 0; j < faces.getPolygon()[i]->nbpt; j++) {
             polyPts.push_back(faces.getPolygon()[i]->p[j]);
           }
@@ -2650,7 +2707,8 @@ vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPo
 
     pairOfPolygonFaces.first = polygonsTmp;
     pairOfPolygonFaces.second = roisPtTmp;
-  } else {
+  }
+  else {
     pairOfPolygonFaces.first = polygonsTmp;
     pairOfPolygonFaces.second = roisPtTmp;
   }
@@ -2673,8 +2731,8 @@ void vpMbTracker::setOgreVisibilityTest(const bool &v)
 #ifndef VISP_HAVE_OGRE
     useOgre = false;
     std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test "
-                 "will be used. setOgreVisibilityTest() set to false."
-              << std::endl;
+      "will be used. setOgreVisibilityTest() set to false."
+      << std::endl;
 #endif
   }
 }
@@ -2809,7 +2867,8 @@ void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity, const vpC
     // computation efficiency
     if (isoJoIdentity) {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, L_true, D);
-    } else {
+    }
+    else {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, LVJ_true, D);
     }
   }
@@ -2834,8 +2893,19 @@ void vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &err
   }
 
   JTR.resize(6, false);
-
+#if defined(VISP_HAVE_SIMDLIB)
   SimdComputeJtR(interaction.data, interaction.getRows(), error.data, JTR.data);
+#else
+  const unsigned int N = interaction.getRows();
+
+  for (unsigned int i = 0; i < 6; i += 1) {
+    double ssum = 0;
+    for (unsigned int j = 0; j < N; j += 1) {
+      ssum += interaction[j][i] * error[j];
+    }
+    JTR[i] = ssum;
+  }
+#endif
 }
 
 void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error,
@@ -2852,7 +2922,7 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
 
       m_cMo = cMoPrev;
       error = m_error_prev;
-      if (w != NULL && m_w_prev != NULL) {
+      if (w != nullptr && m_w_prev != nullptr) {
         *w = *m_w_prev;
       }
       reStartFromLastIncrement = true;
@@ -2880,7 +2950,7 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned in
         mu /= 10.0;
 
       error_prev = error;
-      if (w != NULL && m_w_prev != NULL)
+      if (w != nullptr && m_w_prev != nullptr)
         *m_w_prev = *w;
       break;
     }
@@ -2890,7 +2960,8 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned in
       v = -m_lambda * LTL.pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR;
       break;
     }
-  } else {
+  }
+  else {
     vpVelocityTwistMatrix cVo;
     cVo.buildFrom(m_cMo);
     vpMatrix LVJ = (L * (cVo * oJo));
@@ -2910,7 +2981,7 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned in
         mu /= 10.0;
 
       error_prev = error;
-      if (w != NULL && m_w_prev != NULL)
+      if (w != nullptr && m_w_prev != nullptr)
         *m_w_prev = *w;
       break;
     }
@@ -2953,7 +3024,7 @@ vpColVector vpMbTracker::getEstimatedDoF() const
   frame that are estimated by the tracker. When set to 1, all the 6 dof are
   estimated.
 
-  Below we give the correspondance between the index of the vector and the
+  Below we give the correspondence between the index of the vector and the
   considered dof:
   - v[0] = 1 if translation along X is estimated, 0 otherwise;
   - v[1] = 1 if translation along Y is estimated, 0 otherwise;
@@ -2971,7 +3042,8 @@ void vpMbTracker::setEstimatedDoF(const vpColVector &v)
       // if(v[i] != 0){
       if (std::fabs(v[i]) > std::numeric_limits<double>::epsilon()) {
         oJo[i][i] = 1.0;
-      } else {
+      }
+      else {
         oJo[i][i] = 0.0;
         m_isoJoIdentity = false;
       }
@@ -3326,7 +3398,7 @@ void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2,
     if ((samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P2) && samePoint(*(ci->p3), P3)) ||
         (samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P3) && samePoint(*(ci->p3), P2))) {
       already_here =
-          (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
+        (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
     }
   }
 
@@ -3357,7 +3429,7 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
     if ((samePoint(*(cy->p1), P1) && samePoint(*(cy->p2), P2)) ||
         (samePoint(*(cy->p1), P2) && samePoint(*(cy->p2), P1))) {
       already_here =
-          (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
+        (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
     }
   }
 
@@ -3503,7 +3575,7 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
       for (size_t a = 0; a < l->meline.size(); a++) {
-        if (l->meline[a] != NULL) {
+        if (l->meline[a] != nullptr) {
           double lineNormGradient;
           unsigned int lineNbFeatures;
           l->meline[a]->computeProjectionError(I, lineNormGradient, lineNbFeatures, m_SobelX, m_SobelY,
@@ -3520,7 +3592,7 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
        it != m_projectionErrorCylinders.end(); ++it) {
     vpMbtDistanceCylinder *cy = *it;
     if (cy->isVisible() && cy->isTracked()) {
-      if (cy->meline1 != NULL) {
+      if (cy->meline1 != nullptr) {
         double cylinderNormGradient = 0;
         unsigned int cylinderNbFeatures = 0;
         cy->meline1->computeProjectionError(I, cylinderNormGradient, cylinderNbFeatures, m_SobelX, m_SobelY,
@@ -3530,7 +3602,7 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
         nbFeatures += cylinderNbFeatures;
       }
 
-      if (cy->meline2 != NULL) {
+      if (cy->meline2 != nullptr) {
         double cylinderNormGradient = 0;
         unsigned int cylinderNbFeatures = 0;
         cy->meline2->computeProjectionError(I, cylinderNormGradient, cylinderNbFeatures, m_SobelX, m_SobelY,
@@ -3545,7 +3617,7 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
   for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
        it != m_projectionErrorCircles.end(); ++it) {
     vpMbtDistanceCircle *c = *it;
-    if (c->isVisible() && c->isTracked() && c->meEllipse != NULL) {
+    if (c->isVisible() && c->isTracked() && c->meEllipse != nullptr) {
       double circleNormGradient = 0;
       unsigned int circleNbFeatures = 0;
       c->meEllipse->computeProjectionError(I, circleNormGradient, circleNbFeatures, m_SobelX, m_SobelY,
@@ -3566,7 +3638,8 @@ void vpMbTracker::projectionErrorVisibleFace(unsigned int width, unsigned int he
   if (!useOgre) {
     m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears,
                                       changed);
-  } else {
+  }
+  else {
 #ifdef VISP_HAVE_OGRE
     m_projectionErrorFaces.setVisibleOgre(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears,
                                           changed);
@@ -3582,9 +3655,9 @@ void vpMbTracker::projectionErrorResetMovingEdges()
   for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
        it != m_projectionErrorLines.end(); ++it) {
     for (size_t a = 0; a < (*it)->meline.size(); a++) {
-      if ((*it)->meline[a] != NULL) {
+      if ((*it)->meline[a] != nullptr) {
         delete (*it)->meline[a];
-        (*it)->meline[a] = NULL;
+        (*it)->meline[a] = nullptr;
       }
     }
 
@@ -3595,13 +3668,13 @@ void vpMbTracker::projectionErrorResetMovingEdges()
 
   for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
        it != m_projectionErrorCylinders.end(); ++it) {
-    if ((*it)->meline1 != NULL) {
+    if ((*it)->meline1 != nullptr) {
       delete (*it)->meline1;
-      (*it)->meline1 = NULL;
+      (*it)->meline1 = nullptr;
     }
-    if ((*it)->meline2 != NULL) {
+    if ((*it)->meline2 != nullptr) {
       delete (*it)->meline2;
-      (*it)->meline2 = NULL;
+      (*it)->meline2 = nullptr;
     }
 
     (*it)->nbFeature = 0;
@@ -3611,9 +3684,9 @@ void vpMbTracker::projectionErrorResetMovingEdges()
 
   for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
        it != m_projectionErrorCircles.end(); ++it) {
-    if ((*it)->meEllipse != NULL) {
+    if ((*it)->meEllipse != nullptr) {
       delete (*it)->meEllipse;
-      (*it)->meEllipse = NULL;
+      (*it)->meEllipse = nullptr;
     }
     (*it)->nbFeature = 0;
   }
@@ -3648,10 +3721,11 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
       l->updateTracked();
       if (l->meline.empty() && l->isTracked())
         l->initMovingEdge(I, _cMo, doNotTrack, m_mask);
-    } else {
+    }
+    else {
       l->setVisible(false);
       for (size_t a = 0; a < l->meline.size(); a++) {
-        if (l->meline[a] != NULL)
+        if (l->meline[a] != nullptr)
           delete l->meline[a];
         if (a < l->nbFeature.size())
           l->nbFeature[a] = 0;
@@ -3679,18 +3753,19 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
     if (isvisible) {
       cy->setVisible(true);
-      if (cy->meline1 == NULL || cy->meline2 == NULL) {
+      if (cy->meline1 == nullptr || cy->meline2 == nullptr) {
         if (cy->isTracked())
           cy->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
-    } else {
+    }
+    else {
       cy->setVisible(false);
-      if (cy->meline1 != NULL)
+      if (cy->meline1 != nullptr)
         delete cy->meline1;
-      if (cy->meline2 != NULL)
+      if (cy->meline2 != nullptr)
         delete cy->meline2;
-      cy->meline1 = NULL;
-      cy->meline2 = NULL;
+      cy->meline1 = nullptr;
+      cy->meline2 = nullptr;
       cy->nbFeature = 0;
       cy->nbFeaturel1 = 0;
       cy->nbFeaturel2 = 0;
@@ -3712,15 +3787,16 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
     if (isvisible) {
       ci->setVisible(true);
-      if (ci->meEllipse == NULL) {
+      if (ci->meEllipse == nullptr) {
         if (ci->isTracked())
           ci->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
-    } else {
+    }
+    else {
       ci->setVisible(false);
-      if (ci->meEllipse != NULL)
+      if (ci->meEllipse != nullptr)
         delete ci->meEllipse;
-      ci->meEllipse = NULL;
+      ci->meEllipse = nullptr;
       ci->nbFeature = 0;
     }
   }
@@ -3728,6 +3804,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
@@ -3738,7 +3815,8 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
       std::cout << " *********** Parsing XML for ME projection error ************ " << std::endl;
     }
     xmlp.parse(configFile);
-  } catch (...) {
+  }
+  catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }
 
@@ -3747,6 +3825,11 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 /*!
@@ -3792,3 +3875,4 @@ void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
   m_SobelY.resize(size * 2 + 1, size * 2 + 1, false, false);
   vpImageFilter::getSobelKernelY(m_SobelY.data, size);
 }
+END_VISP_NAMESPACE

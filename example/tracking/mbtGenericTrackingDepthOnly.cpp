@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Example of tracking with vpGenericTracker on Castel.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example mbtGenericTrackingDepthOnly.cpp
@@ -62,8 +62,11 @@
 
 #define GETOPTARGS "X:M:i:n:dchfolwvpT:e:u:"
 
-#define USE_XML 1
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -201,7 +204,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
       break;
 
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
     default:
@@ -213,7 +216,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -222,7 +225,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
   return true;
 }
 
-struct rs_intrinsics {
+struct vpRealsenseIntrinsics_t
+{
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
                       as a pixel offset from the left edge */
   float ppy;       /**< Vertical coordinate of the principal point of the image, as
@@ -234,7 +238,7 @@ struct rs_intrinsics {
   float coeffs[5]; /**< Distortion coefficients */
 };
 
-void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, const float pixel[2], float depth)
+void rs_deproject_pixel_to_point(float point[3], const vpRealsenseIntrinsics_t &intrin, const float pixel[2], float depth)
 {
   float x = (pixel[0] - intrin.ppx) / intrin.fx;
   float y = (pixel[1] - intrin.ppy) / intrin.fy;
@@ -310,7 +314,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
   // Only for Creative SR300
   const float depth_scale = 0.000124986647f;
-  rs_intrinsics depth_intrinsic;
+  vpRealsenseIntrinsics_t depth_intrinsic;
   depth_intrinsic.ppx = 311.484558f;
   depth_intrinsic.ppy = 246.283234f;
   depth_intrinsic.fx = 476.053619f;
@@ -325,7 +329,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
     for (unsigned int j = 0; j < width; j++) {
       float scaled_depth = I_depth_raw[i][j] * depth_scale;
       float point[3];
-      float pixel[2] = {(float)j, (float)i};
+      float pixel[2] = { (float)j, (float)i };
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
 
       vpColVector data_3D(3);
@@ -341,12 +345,12 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 }
 
 void loadConfiguration(vpMbTracker *const tracker, const std::string &
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
                                                        configFile_depth
 #endif
 )
 {
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
   // From the xml file
   dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile_depth);
 #else
@@ -445,12 +449,12 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -469,26 +473,26 @@ int main(int argc, const char **argv)
       configFile_depth = opt_configFile_depth;
     else
       configFile_depth =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
 
     std::string modelFile_depth;
     if (!opt_modelFile_depth.empty())
       modelFile_depth = opt_modelFile_depth;
     else
       modelFile_depth =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
 
     std::string vrml_ext = ".wrl";
     bool use_vrml =
-        (modelFile_depth.compare(modelFile_depth.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0);
+      (modelFile_depth.compare(modelFile_depth.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0);
 
     if (use_vrml) {
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
       std::cout << "use_vrml: " << use_vrml << std::endl;
 #else
       std::cerr << "Error: vrml model file is only supported if ViSP is "
-                   "build with Coin3D 3rd party"
-                << std::endl;
+        "build with Coin3D 3rd party"
+        << std::endl;
       return EXIT_FAILURE;
 #endif
     }
@@ -572,7 +576,7 @@ int main(int argc, const char **argv)
     cam_color.initPersProjWithoutDistortion(615.1674804688, 615.1675415039, 312.1889953613, 243.4373779297);
     vpHomogeneousMatrix depth_M_color;
     std::string depth_M_color_filename =
-        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
     {
       std::ifstream depth_M_color_file(depth_M_color_filename.c_str());
       depth_M_color.load(depth_M_color_file);
@@ -596,7 +600,8 @@ int main(int argc, const char **argv)
       dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(cMo);
       // display the 3D model at the given pose
       dynamic_cast<vpMbGenericTracker *>(tracker)->display(I_depth, cMo, cam, vpColor::red);
-    } else {
+    }
+    else {
       vpHomogeneousMatrix cMoi(0.04431452054, 0.09294637757, 0.3357760654, -2.677922443, 0.121297639, -0.6028463357);
       dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I_depth, cMoi);
     }
@@ -757,26 +762,27 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-    }
+      }
 
     std::cout << "\nFinal poses, cMo:\n" << cMo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
-              << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
-              << std::endl;
+      << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
+      << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I_depth);
     }
 
     delete tracker;
-    tracker = NULL;
+    tracker = nullptr;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+      }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-}
+    }
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

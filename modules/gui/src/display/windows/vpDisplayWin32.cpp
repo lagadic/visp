@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Windows 32 display base class
- *
- * Authors:
- * Bruno Renier
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
@@ -42,6 +37,8 @@
 #include <string>
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/gui/vpDisplayWin32.h>
+
+BEGIN_VISP_NAMESPACE
 
 const int vpDisplayWin32::MAX_INIT_DELAY = 5000;
 
@@ -57,9 +54,23 @@ void vpCreateWindow(threadParam *param)
 }
 
 /*!
-  Constructor.
+  Constructors.
 */
-vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) {}
+vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) { }
+
+vpDisplayWin32::vpDisplayWin32(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title)
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx, int winy, const std::string &title)
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+
 
 /*!
   Destructor.
@@ -79,7 +90,6 @@ vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
 void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    vpERROR_TRACE("Image not initialized ");
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
@@ -103,7 +113,6 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::st
 void vpDisplayWin32::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    vpERROR_TRACE("Image not initialized ");
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
@@ -147,10 +156,10 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height, int x, int y,
   param->title = this->m_title;
 
   // creates the window in a separate thread
-  hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
+  hThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
 
   // the initialization worked
-  iStatus = (hThread != (HANDLE)NULL);
+  iStatus = (hThread != (HANDLE)nullptr);
 
   m_displayHasBeenInitialized = true;
 }
@@ -301,7 +310,8 @@ bool vpDisplayWin32::getClick(bool blocking)
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
   }
 
@@ -339,7 +349,8 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
   }
 
@@ -383,7 +394,8 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
 
   u = window.clickX;
@@ -432,7 +444,8 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonTy
     WaitForSingleObject(window.semaClick, 0); // to erase previous events
     WaitForSingleObject(window.semaClickUp, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, 0));
 
   u = window.clickXUp;
@@ -471,7 +484,8 @@ bool vpDisplayWin32::getKeyboardEvent(bool blocking)
     WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
 
   return ret;
@@ -507,7 +521,8 @@ bool vpDisplayWin32::getKeyboardEvent(std::string &key, bool blocking)
     WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   }
   //  printf("key: %ud\n", window.key);
@@ -609,7 +624,10 @@ void vpDisplayWin32::setTitle(const std::string &windowtitle)
   \param fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const std::string & /* fontname */) { vpERROR_TRACE("Not yet implemented"); }
+void vpDisplayWin32::setFont(const std::string & /* fontname */)
+{
+  // Not yet implemented
+}
 
 /*!
   \brief flush the Win32 buffer
@@ -664,7 +682,8 @@ void vpDisplayWin32::displayPoint(const vpImagePoint &ip, const vpColor &color, 
   waitForInit();
   if (thickness == 1) {
     window.renderer->setPixel(ip, color);
-  } else {
+  }
+  else {
     window.renderer->drawRect(ip, thickness * m_scale, thickness * m_scale, color, true, 1);
   }
 }
@@ -788,11 +807,11 @@ void vpDisplayWin32::displayCircle(const vpImagePoint &center, unsigned int radi
   \param text : The string to display
   \param color : The text's color
 */
-void vpDisplayWin32::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
+void vpDisplayWin32::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   // wait if the window is not initialized
   waitForInit();
-  window.renderer->drawText(ip, text, color);
+  window.renderer->drawText(ip, text.c_str(), color);
 }
 
 /*!
@@ -898,8 +917,10 @@ unsigned int vpDisplayWin32::getScreenHeight()
   getScreenSize(width, height);
   return height;
 }
+
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no
-// symbols
-void dummy_vpDisplayWin32(){};
+// Work around to avoid warning: libvisp_gui.a(vpDisplayWin32.cpp.o) has no symbols
+void dummy_vpDisplayWin32() { };
 #endif

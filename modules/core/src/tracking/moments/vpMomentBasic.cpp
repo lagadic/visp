@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,14 +34,16 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentObject.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */
-vpMomentBasic::vpMomentBasic() : vpMoment() {}
+vpMomentBasic::vpMomentBasic() : vpMoment() { }
 
 /*!
   Retrieve all moments of all orders computed. vpMomentBasic::get()[j*order+i]
@@ -64,7 +66,20 @@ double vpMomentBasic::get(unsigned int i, unsigned int j) const { return getObje
 /*!
   Dummy function. Everything is already done in object.
 */
-void vpMomentBasic::compute() {}
+void vpMomentBasic::compute() { }
+
+/*!
+No dependencies on other vpMoments, since basic moments are computed in
+vpMomentObject Just prints the basic moments in vpMomentObject with indices
+*/
+void vpMomentBasic::printDependencies(std::ostream &os) const
+{
+  os << (__FILE__) << std::endl;
+  os << "No dependencies on other vpMoments, since basic moments are "
+    "computed in vpMomentObject"
+    << std::endl;
+  vpMomentObject::printWithIndices(getObject(), os);
+}
 
 /*!
   Outputs the moment's values to a stream.
@@ -76,16 +91,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &m)
   vpMomentObject::printWithIndices(m.getObject(), os);
   return os;
 }
-
-/*!
-No dependencies on other vpMoments, since basic moments are computed in
-vpMomentObject Just prints the basic moments in vpMomentObject with indices
-*/
-void vpMomentBasic::printDependencies(std::ostream &os) const
-{
-  os << (__FILE__) << std::endl;
-  os << "No dependencies on other vpMoments, since basic moments are "
-        "computed in vpMomentObject"
-     << std::endl;
-  vpMomentObject::printWithIndices(getObject(), os);
-}
+END_VISP_NAMESPACE

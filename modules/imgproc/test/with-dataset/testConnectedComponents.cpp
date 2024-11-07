@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,14 @@
  *
  * Description:
  * Test connected components.
- *
- *****************************************************************************/
+ */
+
+/*!
+  \example testConnectedComponents.cpp
+
+  \brief Test connected components.
+*/
+
 #include <map>
 #include <set>
 #include <visp3/core/vpImageTools.h>
@@ -40,14 +45,12 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \example testConnectedComponents.cpp
-
-  \brief Test connected components.
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
@@ -71,7 +74,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n                 \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -122,7 +125,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, opath, user);
+      usage(argv[0], nullptr, ipath, opath, user);
       return false;
       break;
 
@@ -139,7 +142,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user);
+    usage(argv[0], nullptr, ipath, opath, user);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -158,8 +161,8 @@ bool checkLabels(const vpImage<int> &label1, const vpImage<int> &label2)
     for (unsigned int j = 0; j < label1.getWidth(); j++) {
       if ((label1[i][j] > 0 && label2[i][j] == 0) || (label1[i][j] == 0 && label2[i][j] > 0)) {
         std::cerr << "label1[i][j] > 0 && label2[i][j] == 0 || label1[i][j] "
-                     "== 0 && label2[i][j] > 0"
-                  << std::endl;
+          "== 0 && label2[i][j] > 0"
+          << std::endl;
         return false;
       }
 
@@ -244,8 +247,9 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
+      }
+      catch (...) {
+        usage(argv[0], nullptr, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
@@ -254,24 +258,24 @@ int main(int argc, const char **argv)
     }
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username);
+      usage(argv[0], nullptr, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -291,7 +295,7 @@ int main(int argc, const char **argv)
     vpImage<int> labels_connex4;
     int nbComponents = 0;
     double t = vpTime::measureTimeMs();
-    vp::connectedComponents(I, labels_connex4, nbComponents, vpImageMorphology::CONNEXITY_4);
+    VISP_NAMESPACE_NAME::connectedComponents(I, labels_connex4, nbComponents, vpImageMorphology::CONNEXITY_4);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\n4-connexity connected components:" << std::endl;
     std::cout << "Time: " << t << " ms" << std::endl;
@@ -299,7 +303,7 @@ int main(int argc, const char **argv)
 
     vpImage<int> labels_connex8;
     t = vpTime::measureTimeMs();
-    vp::connectedComponents(I, labels_connex8, nbComponents, vpImageMorphology::CONNEXITY_8);
+    VISP_NAMESPACE_NAME::connectedComponents(I, labels_connex8, nbComponents, vpImageMorphology::CONNEXITY_8);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\n8-connexity connected components:" << std::endl;
     std::cout << "Time: " << t << " ms" << std::endl;
@@ -395,7 +399,8 @@ int main(int argc, const char **argv)
 #endif
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

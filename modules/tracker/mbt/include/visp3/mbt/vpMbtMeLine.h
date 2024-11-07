@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,42 +29,37 @@
  *
  * Description:
  * Implementation of a line used by the model-based tracker.
- *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
- \file vpMbtMeLine.h
- \brief Implementation of a line used by the model-based tracker.
-*/
+ * \file vpMbtMeLine.h
+ * \brief Implementation of a line used by the model-based tracker.
+ */
 
 #ifndef vpMbtMeLine_HH
 #define vpMbtMeLine_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeTracker.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpMbtMeLine
-  \brief Implementation of a line used by the model-based tracker.
-  \ingroup group_mbt_features
-
- */
+ * \class vpMbtMeLine
+ * \brief Implementation of a line used by the model-based tracker.
+ * \ingroup group_mbt_features
+*/
 class VISP_EXPORT vpMbtMeLine : public vpMeTracker
 {
 private:
-  vpMeSite PExt[2];
-  double rho, theta, theta_1;
-  double delta, delta_1;
-  int sign;
-  double a, b, c;
+  vpMeSite m_PExt[2];
+  double m_rho, m_theta, m_theta_1;
+  double m_delta, m_delta_1;
+  int m_sign;
+  double m_a, m_b, m_c;
 
 public:
   int imin, imax;
@@ -74,7 +68,7 @@ public:
 
 public:
   vpMbtMeLine();
-  virtual ~vpMbtMeLine();
+  virtual ~vpMbtMeLine() VP_OVERRIDE;
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
@@ -84,28 +78,28 @@ public:
   using vpMeTracker::display;
 
   /*!
-  Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
-  \; sin(\theta) - \rho = 0 \f$
-
-  \return : The a coefficient of the moving edge
- */
-  inline double get_a() const { return this->a; }
-
-  /*!
-  Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
-  \; sin(\theta) - \rho = 0 \f$
-
-  \return : The b coefficient of the moving edge
- */
-  inline double get_b() const { return this->b; }
+   * Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
+   * \; sin(\theta) - \rho = 0 \f$
+   *
+   * \return : The a coefficient of the moving edge
+   */
+  inline double get_a() const { return m_a; }
 
   /*!
-  Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
-  \; sin(\theta) - \rho = 0 \f$
+   * Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
+   * \; sin(\theta) - \rho = 0 \f$
+   *
+   * \return : The b coefficient of the moving edge
+   */
+  inline double get_b() const { return m_b; }
 
-  \return : The c coefficient of the moving edge
- */
-  inline double get_c() const { return this->c; }
+  /*!
+   * Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
+   * \; sin(\theta) - \rho = 0 \f$
+   *
+   * \return : The c coefficient of the moving edge
+   */
+  inline double get_c() const { return m_c; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
                     double theta, bool doNoTrack);
@@ -119,7 +113,7 @@ public:
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
+  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) VP_OVERRIDE;
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);
@@ -127,7 +121,7 @@ private:
   void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
   void updateDelta();
 };
-
+END_VISP_NAMESPACE
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

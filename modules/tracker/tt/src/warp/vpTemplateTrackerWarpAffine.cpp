@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,11 +34,11 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpAffine.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 6 affine parameters initialized to zero.
  */
@@ -222,7 +222,7 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &p, vpColVec
   double det = r_00 * r_11 - r_01 * r_10;
   if (std::fabs(det) < std::numeric_limits<double>::epsilon()) {
     throw(vpException(vpException::fatalError, "In vpTemplateTrackerWarpAffine::getParamInverse() "
-                                               "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
+                      "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
   }
 
   double ri_11 = r_00 / det;
@@ -264,3 +264,4 @@ void vpTemplateTrackerWarpAffine::pRondp(const vpColVector &p1, const vpColVecto
   p12[4] = r1_00 * u2 + r1_01 * v2 + u1;
   p12[5] = r1_10 * u2 + r1_11 * v2 + v1;
 }
+END_VISP_NAMESPACE

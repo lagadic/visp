@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,31 +29,30 @@
  *
  * Description:
  * Homography estimation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
-/*!
-  \file vpHomographyMalis.cpp
+ /*!
+   \file vpHomographyMalis.cpp
 
-  This file implements the fonctions related with the homography
-  estimation from non planar points using the Malis algorithms \cite Malis00b.
+   This file implements the fonctions related with the homography
+   estimation from non planar points using the Malis algorithms \cite Malis00b.
 
-  The algorithm for 2D scene implemented in this file is described in Ezio
-  Malis PhD thesis \cite TheseMalis.
+   The algorithm for 2D scene implemented in this file is described in Ezio
+   Malis PhD thesis \cite TheseMalis.
 
-*/
+ */
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/vision/vpHomography.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace
+{
 const double eps = 1e-6;
 
 /**************************************************************************
@@ -66,21 +64,21 @@ const double eps = 1e-6;
  *
  ****************************************************************************
  * ENTREES :
- * int pts_ref[4]	: Definit quels sont les points de reference, ils ne
- *			  seront pas affectes par le changement de repere
- * int nb_pts		: nombre de points a changer de repere
- * double **pd	: La matrice des coordonnees des points desires
- * double **p	: La matrice des coordonnees des points courants
+ * int pts_ref[4]  : Definit quels sont les points de reference, ils ne
+ *        seront pas affectes par le changement de repere
+ * int nb_pts    : nombre de points a changer de repere
+ * double **pd  : La matrice des coordonnees des points desires
+ * double **p  : La matrice des coordonnees des points courants
  *
  *
  * SORTIES :
  *
- * double **pt_des_nr 	: La matrice des coordonnees des points desires
- *			  dans le nouveau repere.
- * double **pt_cour_nr	: La matrice des coordonnees des points courants
- *			  dans le nouveau repere
- * double **M	: ??
- * double **Mpd	: pseudo inverse de M  ..
+ * double **pt_des_nr   : La matrice des coordonnees des points desires
+ *        dans le nouveau repere.
+ * double **pt_cour_nr  : La matrice des coordonnees des points courants
+ *        dans le nouveau repere
+ * double **M  : ??
+ * double **Mpd  : pseudo inverse de M  ..
  *
  *
  ****************************************************************************
@@ -88,11 +86,9 @@ const double eps = 1e-6;
 
 void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &pnd, vpMatrix &pn,
                  vpMatrix &M, vpMatrix &Mdp);
-void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H);
-void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H);
-void HLM(unsigned int q_cible, unsigned int nbpt, double *xm, double *ym, double *xmi, double *ymi, vpMatrix &H);
-
-void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
+void hlm2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H);
+void hlm3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H);
+void hlm(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
          const std::vector<double> &xmi, const std::vector<double> &ymi, vpMatrix &H);
 
 void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &pnd, vpMatrix &pn,
@@ -102,8 +98,9 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
   vpMatrix Md(3, 3);
   vpMatrix Mp(3, 3);
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       M[j][i] = p[pts_ref[i]][j];
       Md[j][i] = pd[pts_ref[i]][j];
     }
@@ -117,15 +114,15 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
     double lamb_des[3];
     double lamb_cour[3];
 
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         lamb_cour[i] = Mp[i][j] * p[pts_ref[3]][j];
         lamb_des[i] = Mdp[i][j] * pd[pts_ref[3]][j];
       }
     }
 
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         M[i][j] = M[i][j] * lamb_cour[j];
         Md[i][j] = Md[i][j] * lamb_des[j];
       }
@@ -138,14 +135,14 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
      les trois points de reference */
 
   unsigned int cont_pts = 0;
-  for (unsigned int k = 0; k < nb_pts; k++) {
+  for (unsigned int k = 0; k < nb_pts; ++k) {
     if ((pts_ref[0] != k) && (pts_ref[1] != k) && (pts_ref[2] != k)) {
-      for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int i = 0; i < val_3; ++i) {
         pn[cont_pts][i] = 0.0;
         pnd[cont_pts][i] = 0.0;
-        for (unsigned int j = 0; j < 3; j++) {
-          pn[cont_pts][i] = pn[cont_pts][i] + Mp[i][j] * p[k][j];
-          pnd[cont_pts][i] = pnd[cont_pts][i] + Mdp[i][j] * pd[k][j];
+        for (unsigned int j = 0; j < val_3; ++j) {
+          pn[cont_pts][i] = pn[cont_pts][i] + (Mp[i][j] * p[k][j]);
+          pnd[cont_pts][i] = pnd[cont_pts][i] + (Mdp[i][j] * pd[k][j]);
         }
       }
       cont_pts = cont_pts + 1;
@@ -164,13 +161,13 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
  *
  ****************************************************************************
  * ENTREES :
- * int 	Nb_pts : nombre de points
- * double	**pd : tableau des coordonnees des points desires
- * couble	**p : tableau des coordonnees des points courants
+ * int   Nb_pts : nombre de points
+ * double  **pd : tableau des coordonnees des points desires
+ * couble  **p : tableau des coordonnees des points courants
  *
  * SORTIES :
  *
- * double **H 			matrice d homographie
+ * double **H       matrice d homographie
  *
  ****************************************************************************
  * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
@@ -180,7 +177,7 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
  * DATES DE MISE A JOUR :
  *
  ****************************************************************************/
-void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H)
+void hlm2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H)
 {
   double vals_inf;
   unsigned int contZeros, vect;
@@ -191,7 +188,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
   vpColVector sv(9);
 
   /** construction de la matrice M des coefficients dans le cas general **/
-  for (unsigned int j = 0; j < nb_pts; j++) {
+  for (unsigned int j = 0; j < nb_pts; ++j) {
     M[3 * j][0] = 0;
     M[3 * j][1] = 0;
     M[3 * j][2] = 0;
@@ -202,25 +199,25 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
     M[3 * j][7] = points_des[j][1] * points_cour[j][1];
     M[3 * j][8] = points_des[j][2] * points_cour[j][1];
 
-    M[3 * j + 1][0] = points_des[j][0] * points_cour[j][2];
-    M[3 * j + 1][1] = points_des[j][1] * points_cour[j][2];
-    M[3 * j + 1][2] = points_des[j][2] * points_cour[j][2];
-    M[3 * j + 1][3] = 0;
-    M[3 * j + 1][4] = 0;
-    M[3 * j + 1][5] = 0;
-    M[3 * j + 1][6] = -points_des[j][0] * points_cour[j][0];
-    M[3 * j + 1][7] = -points_des[j][1] * points_cour[j][0];
-    M[3 * j + 1][8] = -points_des[j][2] * points_cour[j][0];
+    M[(3 * j) + 1][0] = points_des[j][0] * points_cour[j][2];
+    M[(3 * j) + 1][1] = points_des[j][1] * points_cour[j][2];
+    M[(3 * j) + 1][2] = points_des[j][2] * points_cour[j][2];
+    M[(3 * j) + 1][3] = 0;
+    M[(3 * j) + 1][4] = 0;
+    M[(3 * j) + 1][5] = 0;
+    M[(3 * j) + 1][6] = -points_des[j][0] * points_cour[j][0];
+    M[(3 * j) + 1][7] = -points_des[j][1] * points_cour[j][0];
+    M[(3 * j) + 1][8] = -points_des[j][2] * points_cour[j][0];
 
-    M[3 * j + 2][0] = -points_des[j][0] * points_cour[j][1];
-    M[3 * j + 2][1] = -points_des[j][1] * points_cour[j][1];
-    M[3 * j + 2][2] = -points_des[j][2] * points_cour[j][1];
-    M[3 * j + 2][3] = points_des[j][0] * points_cour[j][0];
-    M[3 * j + 2][4] = points_des[j][1] * points_cour[j][0];
-    M[3 * j + 2][5] = points_des[j][2] * points_cour[j][0];
-    M[3 * j + 2][6] = 0;
-    M[3 * j + 2][7] = 0;
-    M[3 * j + 2][8] = 0;
+    M[(3 * j) + 2][0] = -points_des[j][0] * points_cour[j][1];
+    M[(3 * j) + 2][1] = -points_des[j][1] * points_cour[j][1];
+    M[(3 * j) + 2][2] = -points_des[j][2] * points_cour[j][1];
+    M[(3 * j) + 2][3] = points_des[j][0] * points_cour[j][0];
+    M[(3 * j) + 2][4] = points_des[j][1] * points_cour[j][0];
+    M[(3 * j) + 2][5] = points_des[j][2] * points_cour[j][0];
+    M[(3 * j) + 2][6] = 0;
+    M[(3 * j) + 2][7] = 0;
+    M[(3 * j) + 2][8] = 0;
   }
 
   /** calcul de la pseudo-inverse V de M et des valeurs singulieres **/
@@ -228,7 +225,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
 
   /*****
         La meilleure solution est le vecteur de V associe
-        a la valeur singuliere la plus petite en valeur	absolu.
+        a la valeur singuliere la plus petite en valeur  absolu.
         Pour cela on parcourt la matrice des valeurs singulieres
         et on repere la plus petite valeur singuliere, on en profite
         pour effectuer un controle sur le rang de la matrice : pas plus
@@ -240,7 +237,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
   if (sv[0] < eps) {
     contZeros = contZeros + 1;
   }
-  for (unsigned int j = 1; j < 9; j++) {
+  for (unsigned int j = 1; j < 9; ++j) {
     if (sv[j] < vals_inf) {
       vals_inf = sv[j];
       vect = j;
@@ -258,9 +255,10 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
 
   H.resize(3, 3);
   /** construction de la matrice H **/
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      H[i][j] = V[3 * i + j][vect];
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
+      H[i][j] = V[(3 * i) + j][vect];
     }
   }
 }
@@ -277,18 +275,18 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
  *
  ****************************************************************************
  * ENTREES :
- * int 	Nb_pts : nombre de points
- * double	**pd : tableau des coordonnees des points desires
- * couble	**p : tableau des coordonnees des points courants
+ * int   Nb_pts : nombre de points
+ * double  **pd : tableau des coordonnees des points desires
+ * couble  **p : tableau des coordonnees des points courants
  *
  * SORTIES :
  *
- * double **H 			matrice d'homographie
- * double epipole[3]		epipole
+ * double **H       matrice d'homographie
+ * double epipole[3]    epipole
  *
  ****************************************************************************
  **/
-void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
+void hlm3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 {
   unsigned int pts_ref[4]; /*** definit lesquels des points de
                         l'image sont les points de reference***/
@@ -327,16 +325,17 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
     throw(vpMatrixException(vpMatrixException::matrixError, "Not enough point to compute the homography"));
   }
 
-  // nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
-  unsigned int nc = 7;
+  unsigned int nc = 7; // nb cols
 
   /* Allocation matrice CtC */
   vpMatrix CtC(nc, nc);
 
   /* Initialisation matrice CtC */
-  for (unsigned int i = 0; i < nc; i++)
-    for (unsigned int j = 0; j < nc; j++)
+  for (unsigned int i = 0; i < nc; ++i) {
+    for (unsigned int j = 0; j < nc; ++j) {
       CtC[i][j] = 0.0;
+    }
+  }
 
   /* Allocation matrice M */
   vpColVector C(nc); // Matrice des coefficients
@@ -352,72 +351,72 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
        v5 = x3*x5 ; v6 = x3*x4 ;
   ****/
   unsigned int cont = 0;
-  for (unsigned int i = 0; i < nb_pts - 5; i++) {
-    for (unsigned int j = i + 1; j < nb_pts - 4; j++) {
-      for (unsigned int k = j + 1; k < nb_pts - 3; k++) {
+  for (unsigned int i = 0; i < (nb_pts - 5); ++i) {
+    for (unsigned int j = i + 1; j < (nb_pts - 4); ++j) {
+      for (unsigned int k = j + 1; k < (nb_pts - 3); ++k) {
         /* coeff a^2*b  */
-        C[0] = pn[i][2] * pn[j][2] * pn[k][1] * pnd[k][0]               //
-                   * (pnd[j][0] * pnd[i][1] - pnd[j][1] * pnd[i][0])    //
-               + pn[i][2] * pn[k][2] * pn[j][1] * pnd[j][0]             //
-                     * (pnd[i][0] * pnd[k][1] - pnd[i][1] * pnd[k][0])  //
-               + pn[j][2] * pn[k][2] * pn[i][1] * pnd[i][0]             //
-                     * (pnd[k][0] * pnd[j][1] - pnd[k][1] * pnd[j][0]); //
+        C[0] = (pn[i][2] * pn[j][2] * pn[k][1] * pnd[k][0]               //
+                * ((pnd[j][0] * pnd[i][1]) - (pnd[j][1] * pnd[i][0])))    //
+          + (pn[i][2] * pn[k][2] * pn[j][1] * pnd[j][0]             //
+             * ((pnd[i][0] * pnd[k][1]) - (pnd[i][1] * pnd[k][0])))  //
+          + (pn[j][2] * pn[k][2] * pn[i][1] * pnd[i][0]             //
+             * ((pnd[k][0] * pnd[j][1]) - (pnd[k][1] * pnd[j][0]))); //
         /* coeff a*b^2 */
-        C[1] = pn[i][2] * pn[j][2] * pn[k][0] * pnd[k][1]               //
-                   * (pnd[i][0] * pnd[j][1] - pnd[i][1] * pnd[j][0])    //
-               + pn[i][2] * pn[k][2] * pn[j][0] * pnd[j][1]             //
-                     * (pnd[k][0] * pnd[i][1] - pnd[k][1] * pnd[i][0])  //
-               + pn[j][2] * pn[k][2] * pn[i][0] * pnd[i][1]             //
-                     * (pnd[j][0] * pnd[k][1] - pnd[j][1] * pnd[k][0]); //
+        C[1] = (pn[i][2] * pn[j][2] * pn[k][0] * pnd[k][1]               //
+                * ((pnd[i][0] * pnd[j][1]) - (pnd[i][1] * pnd[j][0])))    //
+          + (pn[i][2] * pn[k][2] * pn[j][0] * pnd[j][1]             //
+             * ((pnd[k][0] * pnd[i][1]) - (pnd[k][1] * pnd[i][0])))  //
+          + (pn[j][2] * pn[k][2] * pn[i][0] * pnd[i][1]             //
+             * ((pnd[j][0] * pnd[k][1]) - (pnd[j][1] * pnd[k][0]))); //
         /* coeff a^2 */
-        C[2] = +pn[i][1] * pn[k][1] * pn[j][2] * pnd[j][0]           //
-                   * (pnd[k][2] * pnd[i][0] - pnd[k][0] * pnd[i][2]) //
-               + pn[i][1] * pn[j][1] * pn[k][2] * pnd[k][0]          //
-                     * (pnd[i][2] * pnd[j][0] - pnd[i][0] * pnd[j][2]) +
-               pn[j][1] * pn[k][1] * pn[i][2] * pnd[i][0]             //
-                   * (pnd[j][2] * pnd[k][0] - pnd[j][0] * pnd[k][2]); //
+        C[2] = (pn[i][1] * pn[k][1] * pn[j][2] * pnd[j][0]           //
+                * ((pnd[k][2] * pnd[i][0]) - (pnd[k][0] * pnd[i][2]))) //
+          + (pn[i][1] * pn[j][1] * pn[k][2] * pnd[k][0]          //
+             * ((pnd[i][2] * pnd[j][0]) - (pnd[i][0] * pnd[j][2]))) +
+          (pn[j][1] * pn[k][1] * pn[i][2] * pnd[i][0]             //
+           * ((pnd[j][2] * pnd[k][0]) - (pnd[j][0] * pnd[k][2]))); //
 
         /* coeff b^2 */
-        C[3] = pn[i][0] * pn[j][0] * pn[k][2] * pnd[k][1]               //
-                   * (pnd[i][2] * pnd[j][1] - pnd[i][1] * pnd[j][2])    //
-               + pn[i][0] * pn[k][0] * pn[j][2] * pnd[j][1]             //
-                     * (pnd[k][2] * pnd[i][1] - pnd[k][1] * pnd[i][2])  //
-               + pn[j][0] * pn[k][0] * pn[i][2] * pnd[i][1]             //
-                     * (pnd[j][2] * pnd[k][1] - pnd[j][1] * pnd[k][2]); //
+        C[3] = (pn[i][0] * pn[j][0] * pn[k][2] * pnd[k][1]               //
+                * ((pnd[i][2] * pnd[j][1]) - (pnd[i][1] * pnd[j][2])))    //
+          + (pn[i][0] * pn[k][0] * pn[j][2] * pnd[j][1]             //
+             * ((pnd[k][2] * pnd[i][1]) - (pnd[k][1] * pnd[i][2])))  //
+          + (pn[j][0] * pn[k][0] * pn[i][2] * pnd[i][1]             //
+             * ((pnd[j][2] * pnd[k][1]) - (pnd[j][1] * pnd[k][2]))); //
 
         /* coeff a */
-        C[5] = pn[i][1] * pn[j][1] * pn[k][0] * pnd[k][2]               //
-                   * (pnd[i][0] * pnd[j][2] - pnd[i][2] * pnd[j][0])    //
-               + pn[i][1] * pn[k][1] * pn[j][0] * pnd[j][2]             //
-                     * (pnd[k][0] * pnd[i][2] - pnd[k][2] * pnd[i][0])  //
-               + pn[j][1] * pn[k][1] * pn[i][0] * pnd[i][2]             //
-                     * (pnd[j][0] * pnd[k][2] - pnd[j][2] * pnd[k][0]); //
+        C[5] = (pn[i][1] * pn[j][1] * pn[k][0] * pnd[k][2]               //
+                * ((pnd[i][0] * pnd[j][2]) - (pnd[i][2] * pnd[j][0])))    //
+          + (pn[i][1] * pn[k][1] * pn[j][0] * pnd[j][2]             //
+             * ((pnd[k][0] * pnd[i][2]) - (pnd[k][2] * pnd[i][0])))  //
+          + (pn[j][1] * pn[k][1] * pn[i][0] * pnd[i][2]             //
+             * ((pnd[j][0] * pnd[k][2]) - (pnd[j][2] * pnd[k][0]))); //
         /* coeff b */
-        C[6] = pn[i][0] * pn[j][0] * pn[k][1] * pnd[k][2]               //
-                   * (pnd[i][1] * pnd[j][2] - pnd[i][2] * pnd[j][1])    //
-               + pn[i][0] * pn[k][0] * pn[j][1] * pnd[j][2]             //
-                     * (pnd[k][1] * pnd[i][2] - pnd[k][2] * pnd[i][1])  //
-               + pn[j][0] * pn[k][0] * pn[i][1] * pnd[i][2]             //
-                     * (pnd[j][1] * pnd[k][2] - pnd[j][2] * pnd[k][1]); //
+        C[6] = (pn[i][0] * pn[j][0] * pn[k][1] * pnd[k][2]               //
+                * ((pnd[i][1] * pnd[j][2]) - (pnd[i][2] * pnd[j][1])))    //
+          + (pn[i][0] * pn[k][0] * pn[j][1] * pnd[j][2]             //
+             * ((pnd[k][1] * pnd[i][2]) - (pnd[k][2] * pnd[i][1])))  //
+          + (pn[j][0] * pn[k][0] * pn[i][1] * pnd[i][2]             //
+             * ((pnd[j][1] * pnd[k][2]) - (pnd[j][2] * pnd[k][1]))); //
         /* coeff a*b */
-        C[4] = pn[i][0] * pn[k][1] * pn[j][2]                                                   //
-                   * (pnd[k][0] * pnd[j][1] * pnd[i][2] - pnd[j][0] * pnd[i][1] * pnd[k][2])    //
-               + pn[k][0] * pn[i][1] * pn[j][2]                                                 //
-                     * (pnd[j][0] * pnd[k][1] * pnd[i][2] - pnd[i][0] * pnd[j][1] * pnd[k][2])  //
-               + pn[i][0] * pn[j][1] * pn[k][2]                                                 //
-                     * (pnd[k][0] * pnd[i][1] * pnd[j][2] - pnd[j][0] * pnd[k][1] * pnd[i][2])  //
-               + pn[j][0] * pn[i][1] * pn[k][2]                                                 //
-                     * (pnd[i][0] * pnd[k][1] * pnd[j][2] - pnd[k][0] * pnd[j][1] * pnd[i][2])  //
-               + pn[k][0] * pn[j][1] * pn[i][2]                                                 //
-                     * (pnd[j][0] * pnd[i][1] * pnd[k][2] - pnd[i][0] * pnd[k][1] * pnd[j][2])  //
-               + pn[j][0] * pn[k][1] * pn[i][2]                                                 //
-                     * (pnd[i][0] * pnd[j][1] * pnd[k][2] - pnd[k][0] * pnd[i][1] * pnd[j][2]); //
+        C[4] = (pn[i][0] * pn[k][1] * pn[j][2]                                                   //
+                * ((pnd[k][0] * pnd[j][1] * pnd[i][2]) - (pnd[j][0] * pnd[i][1] * pnd[k][2])))    //
+          + (pn[k][0] * pn[i][1] * pn[j][2]                                                 //
+             * ((pnd[j][0] * pnd[k][1] * pnd[i][2]) - (pnd[i][0] * pnd[j][1] * pnd[k][2])))  //
+          + (pn[i][0] * pn[j][1] * pn[k][2]                                                 //
+             * ((pnd[k][0] * pnd[i][1] * pnd[j][2]) - (pnd[j][0] * pnd[k][1] * pnd[i][2])))  //
+          + (pn[j][0] * pn[i][1] * pn[k][2]                                                 //
+             * ((pnd[i][0] * pnd[k][1] * pnd[j][2]) - (pnd[k][0] * pnd[j][1] * pnd[i][2])))  //
+          + (pn[k][0] * pn[j][1] * pn[i][2]                                                 //
+             * ((pnd[j][0] * pnd[i][1] * pnd[k][2]) - (pnd[i][0] * pnd[k][1] * pnd[j][2])))  //
+          + (pn[j][0] * pn[k][1] * pn[i][2]                                                 //
+             * ((pnd[i][0] * pnd[j][1] * pnd[k][2]) - (pnd[k][0] * pnd[i][1] * pnd[j][2]))); //
 
         cont = cont + 1;
         /* construction de la matrice CtC */
-        for (unsigned int ii = 0; ii < nc; ii++) {
-          for (unsigned int jj = ii; jj < nc; jj++) {
-            CtC[ii][jj] = CtC[ii][jj] + C[ii] * C[jj];
+        for (unsigned int ii = 0; ii < nc; ++ii) {
+          for (unsigned int jj = ii; jj < nc; ++jj) {
+            CtC[ii][jj] = CtC[ii][jj] + (C[ii] * C[jj]);
           }
         }
       }
@@ -425,12 +424,12 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   }
 
   /* calcul de CtC */
-  for (unsigned int i = 0; i < nc; i++) {
-    for (unsigned int j = i + 1; j < nc; j++)
+  for (unsigned int i = 0; i < nc; ++i) {
+    for (unsigned int j = i + 1; j < nc; ++j) {
       CtC[j][i] = CtC[i][j];
+    }
   }
 
-  // nl = cont ;   /* nombre de lignes   */
   nc = 7; /* nombre de colonnes */
 
   /* Creation de matrice CtC termine */
@@ -464,29 +463,30 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   unsigned int vect = 0;
   int cont_zeros = 0;
   cont = 0;
-  for (unsigned int j = 0; j < nc; j++) {
-    // if (fabs(sv[j]) == svSorted[cont]) vect = j ;
-    if (std::fabs(sv[j] - svSorted[cont]) <= std::fabs(vpMath::maximum(sv[j], svSorted[cont])))
+  for (unsigned int j = 0; j < nc; ++j) {
+    if (std::fabs(sv[j] - svSorted[cont]) <= std::fabs(vpMath::maximum(sv[j], svSorted[cont]))) {
       vect = j;
-    if (std::fabs(sv[j] / svSorted[nc - 1]) < eps)
+    }
+    if (std::fabs(sv[j] / svSorted[nc - 1]) < eps) {
       cont_zeros = cont_zeros + 1;
+    }
   }
 
   if (cont_zeros > 5) {
-    //    printf("erreur dans le rang de la matrice: %d \r\n ",7-cont_zeros);
-    HLM2D(nb_pts, pd, p, H);
-  } else {
+    hlm2D(nb_pts, pd, p, H);
+  }
+  else {
 
     //     estimation de a = 1,b,c ; je cherche le min de somme(i=1:n)
     //     (0.5*(ei)^2)
-    // 	  e1 = V[1][.] * b - V[3][.] = 0 ;
-    // 	  e2 = V[2][.] * c - V[3][.] = 0 ;
-    // 	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
-    // 	  e4 = V[4][.] * b - V[5][.] = 0 ;
-    // 	  e5 = V[4][.] * c - V[6][.] = 0 ;
-    // 	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
-    // 	  e7 = V[7][.] * b - V[8][.] = 0 ;
-    // 	  e8 = V[7][.] * c - V[9][.] = 0 ;
+    //     e1 = V[1][.] * b - V[3][.] = 0 ;
+    //     e2 = V[2][.] * c - V[3][.] = 0 ;
+    //     e3 = V[2][.] * b - V[3][.] * c = 0 ;
+    //     e4 = V[4][.] * b - V[5][.] = 0 ;
+    //     e5 = V[4][.] * c - V[6][.] = 0 ;
+    //     e6 = V[6][.] * b - V[5][.] * c = 0 ;
+    //     e7 = V[7][.] * b - V[8][.] = 0 ;
+    //     e8 = V[7][.] * c - V[9][.] = 0 ;
     d[0] = V[2][vect];
     d[1] = V[4][vect];
     d[2] = V[1][vect];
@@ -546,18 +546,20 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
     T[8][2] = V[2][vect];
 
     vpMatrix Hd(3, 3); //  diag(gu,gv,gw)
-    for (unsigned int i = 0; i < 3; i++)
+    const unsigned int val_3 = 3;
+    for (unsigned int i = 0; i < val_3; ++i) {
       Hd[i][i] = H_nr[i];
+    }
 
-    // H = M diag(gu,gv,gw) M*-1
+    // H is equal to M diag(gu,gv,gw) M*-1
     H = M * Hd * Mdp;
   }
 }
 
-void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
+void hlm(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
          const std::vector<double> &xmi, const std::vector<double> &ymi, vpMatrix &H)
 {
-  unsigned int nbpt = (unsigned int)xm.size();
+  unsigned int nbpt = static_cast<unsigned int>(xm.size());
 
   /****
        on regarde si il y a au moins un point mais pour l'homographie
@@ -566,7 +568,7 @@ void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<
   vpMatrix pd(nbpt, 3);
   vpMatrix p(nbpt, 3);
 
-  for (unsigned int i = 0; i < nbpt; i++) {
+  for (unsigned int i = 0; i < nbpt; ++i) {
     /****
    on assigne les points fournies par la structure robot
    pour la commande globale
@@ -580,66 +582,53 @@ void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<
   }
 
   switch (q_cible) {
-  case (1):
-  case (2):
+  case 1:
+  case 2:
     /* La cible est planaire  de type points   */
 
-    HLM2D(nbpt, pd, p, H);
+    hlm2D(nbpt, pd, p, H);
 
     break;
-  case (3): /* cible non planaire : chateau */
+  case 3: /* cible non planaire : chateau */
     /* cible non planaire  de type points   */
-    HLM3D(nbpt, pd, p, H);
+    hlm3D(nbpt, pd, p, H);
+    break;
+  default:
     break;
   } /* fin switch */
 
 } /* fin procedure calcul_homogaphie */
 
+} // end namespace
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/*!
-  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
-  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
-  computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
-  ^b{\bf p}\f$ using Ezio Malis linear method (HLM) \cite Malis00b.
-
-  This method can consider points that are planar or non planar. The algorithm
-  for planar scene implemented in this file is described in Ezio Malis PhD
-  thesis \cite TheseMalis.
-
-  \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  isplanar : If true the points are assumed to be in a plane, otherwise there
-  are assumed to be non planar. \param aHb : Estimated homography that relies
-  the transformation from image a to image b.
-
-  If the boolean isplanar is true the points are assumed to be in a plane
-  otherwise there are assumed to be non planar.
-
-  \sa DLT() when the scene is planar.
-*/
 void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                        const std::vector<double> &ya, bool isplanar, vpHomography &aHb)
 {
-  unsigned int n = (unsigned int)xb.size();
-  if (yb.size() != n || xa.size() != n || ya.size() != n)
+  unsigned int n = static_cast<unsigned int>(xb.size());
+  if ((yb.size() != n) || (xa.size() != n) || (ya.size() != n)) {
     throw(vpException(vpException::dimensionError, "Bad dimension for HLM shomography estimation"));
+  }
 
   // 4 point are required
-  if (n < 4)
+  if (n < 4) {
     throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
+  }
 
   // The reference plane is the plane build from the 3 first points.
   unsigned int q_cible;
   vpMatrix H; // matrice d'homographie en metre
 
-  if (isplanar)
+  if (isplanar) {
     q_cible = 1;
-  else
+  }
+  else {
     q_cible = 3;
+  }
 
-  ::HLM(q_cible, xa, ya, xb, yb, H);
+  hlm(q_cible, xa, ya, xb, yb, H);
 
   aHb = H;
 }
+
+END_VISP_NAMESPACE

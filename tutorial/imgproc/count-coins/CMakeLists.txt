@@ -1,6 +1,6 @@
-project(tutorial-)
+project(tutorial-counting-coins)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui visp_imgproc)
 
@@ -8,8 +8,8 @@ find_package(VISP REQUIRED visp_core visp_io visp_gui visp_imgproc)
 set(tutorial_cpp
   tutorial-count-coins.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins1.pgm")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins2.pgm")
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins1.jpg")
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins2.jpg")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

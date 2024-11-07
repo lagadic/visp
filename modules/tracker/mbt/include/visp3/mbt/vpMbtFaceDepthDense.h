@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Manage depth dense features for a particular face.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpMbtFaceDepthDense_h_
 #define _vpMbtFaceDepthDense_h_
@@ -39,7 +39,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #endif
@@ -50,10 +50,12 @@
 
 #define DEBUG_DISPLAY_DEPTH_DENSE 0
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpMbtFaceDepthDense
 {
 public:
-  enum vpDepthDenseFilteringType {
+  enum vpDepthDenseFilteringType
+  {
     NO_FILTERING = 0,                         ///< Face is used if visible
     DEPTH_OCCUPANCY_RATIO_FILTERING = 1 << 1, ///< Face is used if there is
                                               ///< enough depth information in
@@ -87,7 +89,7 @@ public:
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, unsigned int stepX,
                               unsigned int stepY
@@ -96,7 +98,7 @@ public:
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
                               ,
-                              const vpImage<bool> *mask = NULL);
+                              const vpImage<bool> *mask = nullptr);
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, unsigned int stepX, unsigned int stepY
@@ -105,7 +107,15 @@ public:
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
                               ,
-                              const vpImage<bool> *mask = NULL);
+                              const vpImage<bool> *mask = nullptr);
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
+                              const vpMatrix &point_cloud, unsigned int stepX, unsigned int stepY
+#if DEBUG_DISPLAY_DEPTH_DENSE
+                              ,
+                              vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
+#endif
+                              ,
+                              const vpImage<bool> *mask = nullptr);
 
   void computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &error);
 
@@ -146,7 +156,8 @@ public:
   {
     if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
       std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
-    } else {
+    }
+    else {
       m_depthDenseFilteringOccupancyRatio = occupancyRatio;
     }
   }
@@ -168,10 +179,10 @@ private:
     //! The second extremity clipped in the image frame
     vpImagePoint m_imPt2;
 
-    PolygonLine() : m_p1(NULL), m_p2(NULL), m_poly(), m_imPt1(), m_imPt2() {}
+    PolygonLine() : m_p1(nullptr), m_p2(nullptr), m_poly(), m_imPt1(), m_imPt2() { }
 
     PolygonLine(const PolygonLine &polyLine)
-      : m_p1(NULL), m_p2(NULL), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
+      : m_p1(nullptr), m_p2(nullptr), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
     {
       m_p1 = &m_poly.p[0];
       m_p2 = &m_poly.p[1];
@@ -229,4 +240,5 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+END_VISP_NAMESPACE
 #endif

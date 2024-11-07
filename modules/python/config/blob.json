@@ -1,0 +1,103 @@
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": ["blob.hpp"],
+  "classes": {
+    "vpDot": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        }
+      ]
+    },
+    "vpDot2": {
+      "additional_bindings": "bindings_vpDot2",
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        },
+        {
+          "static": true,
+          "signature": "vpMatrix defineDots(vpDot2[], const unsigned int&, const std::string&, vpImage<unsigned char>&, vpColor, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void trackAndDisplay(vpDot2[], const unsigned int&, vpImage<unsigned char>&, std::vector<vpImagePoint>&, vpImagePoint*)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void getFreemanChain(std::list<unsigned int>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void searchDotsInArea(const vpImage<unsigned char>&, int, int, unsigned int, unsigned int, std::list<vpDot2>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void searchDotsInArea(const vpImage<unsigned char>&, std::list<vpDot2>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void getEdges(std::list<vpImagePoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        }
+      ]
+    }
+  },
+  "enums": {}
+}

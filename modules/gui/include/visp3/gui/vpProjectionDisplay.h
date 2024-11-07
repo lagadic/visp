@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,14 +29,10 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
-#ifndef vpProjectionDisplay_H
-#define vpProjectionDisplay_H
+#ifndef VP_PROJECTION_DISPLAY_H
+#define VP_PROJECTION_DISPLAY_H
 
 /*!
   \file vpProjectionDisplay.h
@@ -59,6 +54,8 @@
 #include <visp3/gui/vpDisplayX.h>
 
 #include <list>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpProjectionDisplay
@@ -98,18 +95,18 @@ public:
   vpProjectionDisplay()
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
-      dIcam(), dIext(),
+    dIcam(), dIext(),
 #endif
-      listFp(), o(), x(), y(), z(), traj()
+    listFp(), o(), x(), y(), z(), traj()
   {
     init();
   }
-  explicit vpProjectionDisplay(int select)
+  VP_EXPLICIT vpProjectionDisplay(int select)
     : Icam(), Iext(),
 #if defined(VISP_HAVE_DISPLAY)
-      dIcam(), dIext(),
+    dIcam(), dIext(),
 #endif
-      listFp(), o(), x(), y(), z(), traj()
+    listFp(), o(), x(), y(), z(), traj()
   {
     init(select);
   }
@@ -130,11 +127,7 @@ private:
   vpMatrix traj;
 };
 
-#endif
-#endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+END_VISP_NAMESPACE
+#endif
+#endif

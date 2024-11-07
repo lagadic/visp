@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include <visp3/core/vpConfig.h>
 // Display
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -19,17 +20,20 @@
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+  // Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #if defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 
   // Generate random points
   //! [Rand_Img_Pts]
-  vpUniRand rand{};
-  std::vector<vpImagePoint> rand_ips{};
+  vpUniRand rand {};
+  std::vector<vpImagePoint> rand_ips {};
   while (rand_ips.size() < 10) {
     rand_ips.emplace_back(rand.uniform(10, I.getHeight() - 10), rand.uniform(10, I.getWidth() - 10));
   }
@@ -56,11 +60,11 @@ int main()
     // Local helper to display a point in the image
     auto display_point = [&I](const vpImagePoint &ip, const vpColor &color) {
       I.display->displayCircle(ip, 5, color, true, 1);
-    };
+      };
 
     vpDisplay::display(I);
 
-    auto disp_lane{0};
+    auto disp_lane { 0 };
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Left click to add a point", vpColor::black);
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Middle click to continue (run Munkres)", vpColor::black);
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Right click to quit", vpColor::black);
@@ -70,14 +74,15 @@ int main()
 
     // Ask user to clic on point
     //! [User_Img_Pts]
-    std::vector<vpImagePoint> user_ips{};
-    vpMouseButton::vpMouseButtonType button{};
+    std::vector<vpImagePoint> user_ips {};
+    vpMouseButton::vpMouseButtonType button {};
     while (button != vpMouseButton::button2) {
-      vpImagePoint ip{};
+      vpImagePoint ip {};
       vpDisplay::getClick(I, ip, button, true);
       if (button == vpMouseButton::button1) {
         user_ips.push_back(ip);
-      } else if (button == vpMouseButton::button3) {
+      }
+      else if (button == vpMouseButton::button3) {
         return EXIT_SUCCESS;
       }
 
@@ -112,7 +117,8 @@ int main()
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif // defined(VISP_HAVE_DISPLAY)

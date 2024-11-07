@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Tool to automatize the creation of xml parser based on the libXML2.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpXmlParser.h>
@@ -47,12 +47,13 @@
 #include <string>
 #include <typeinfo>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
   Initialise the main tag with default value.
 */
-vpXmlParser::vpXmlParser() : nodeMap(), main_tag("config") {}
+vpXmlParser::vpXmlParser() : nodeMap(), main_tag("config") { }
 
 /*!
   Basic destructor that does nothing.
@@ -79,7 +80,7 @@ vpXmlParser::~vpXmlParser()
 
   \param _twin : The parser to copy.
 */
-vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag) {}
+vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag) { }
 
 /* utilities functions to read/write data from an xml document */
 
@@ -96,7 +97,7 @@ vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), mai
 */
 char *vpXmlParser::xmlReadCharChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read char*";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -116,7 +117,7 @@ char *vpXmlParser::xmlReadCharChild(xmlDocPtr doc, xmlNodePtr node)
 
 std::string vpXmlParser::xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read std::string";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -140,7 +141,7 @@ std::string vpXmlParser::xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node)
 */
 int vpXmlParser::xmlReadIntChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -174,7 +175,7 @@ int vpXmlParser::xmlReadIntChild(xmlDocPtr doc, xmlNodePtr node)
 */
 unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read unsigned int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -208,7 +209,7 @@ unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node
 */
 double vpXmlParser::xmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read double";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -241,7 +242,7 @@ double vpXmlParser::xmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node)
 */
 float vpXmlParser::xmlReadFloatChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read float";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -278,7 +279,7 @@ float vpXmlParser::xmlReadFloatChild(xmlDocPtr doc, xmlNodePtr node)
 */
 bool vpXmlParser::xmlReadBoolChild(xmlDocPtr doc, xmlNodePtr node)
 {
-  if (node->xmlChildrenNode == NULL) {
+  if (node->xmlChildrenNode == nullptr) {
     std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read bool";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
@@ -303,7 +304,7 @@ bool vpXmlParser::xmlReadBoolChild(xmlDocPtr doc, xmlNodePtr node)
 void vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value)
 {
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)value);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)value);
   xmlAddChild(node, tmp);
 }
 
@@ -317,7 +318,7 @@ void vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char *label, const ch
 void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const std::string &value)
 {
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)value.c_str());
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)value.c_str());
   xmlAddChild(node, tmp);
 }
 
@@ -333,7 +334,7 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value
   char str[100];
   snprintf(str, 100, "%d", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -349,7 +350,7 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, u
   char str[100];
   snprintf(str, 100, "%u", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -365,7 +366,7 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double
   char str[100];
   snprintf(str, 100, "%lf", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -381,7 +382,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float v
   char str[100];
   snprintf(str, 100, "%f", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -397,7 +398,7 @@ void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool val
   char str[2];
   snprintf(str, 2, "%d", (int)value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
+  tmp = xmlNewChild(node, nullptr, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -421,13 +422,13 @@ void vpXmlParser::parse(const std::string &filename)
   xmlNodePtr root_node;
 
   doc = xmlParseFile(filename.c_str());
-  if (doc == NULL) {
+  if (doc == nullptr) {
     vpERROR_TRACE("cannot open file");
     throw vpException(vpException::ioError, "cannot open file");
   }
 
   root_node = xmlDocGetRootElement(doc);
-  if (root_node == NULL) {
+  if (root_node == nullptr) {
     vpERROR_TRACE("cannot get root element");
     throw vpException(vpException::ioError, "cannot get root element");
   }
@@ -452,25 +453,26 @@ void vpXmlParser::save(const std::string &filename, bool append)
   xmlDocPtr doc;
   xmlNodePtr root_node;
 
-  doc = xmlReadFile(filename.c_str(), NULL, XML_PARSE_NOWARNING + XML_PARSE_NOERROR + XML_PARSE_NOBLANKS);
-  if (doc == NULL) {
+  doc = xmlReadFile(filename.c_str(), nullptr, XML_PARSE_NOWARNING + XML_PARSE_NOERROR + XML_PARSE_NOBLANKS);
+  if (doc == nullptr) {
     doc = xmlNewDoc((xmlChar *)"1.0");
-    root_node = xmlNewNode(NULL, (xmlChar *)main_tag.c_str());
+    root_node = xmlNewNode(nullptr, (xmlChar *)main_tag.c_str());
     xmlDocSetRootElement(doc, root_node);
-  } else {
+  }
+  else {
     if (!append) {
       xmlFreeDoc(doc);
       if (remove(filename.c_str()) != 0)
         throw vpException(vpException::ioError, "Cannot remove existing xml file");
 
       doc = xmlNewDoc((xmlChar *)"1.0");
-      root_node = xmlNewNode(NULL, (xmlChar *)main_tag.c_str());
+      root_node = xmlNewNode(nullptr, (xmlChar *)main_tag.c_str());
       xmlDocSetRootElement(doc, root_node);
     }
   }
 
   root_node = xmlDocGetRootElement(doc);
-  if (root_node == NULL) {
+  if (root_node == nullptr) {
     vpERROR_TRACE("problem to get the root node");
     throw vpException(vpException::ioError, "problem to get the root node");
   }
@@ -480,9 +482,8 @@ void vpXmlParser::save(const std::string &filename, bool append)
   xmlSaveFormatFile(filename.c_str(), doc, 1);
   xmlFreeDoc(doc);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no
-// symbols
-void dummy_vpXmlParser(){};
+// Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no symbols
+void dummy_vpXmlParser() { };
 #endif

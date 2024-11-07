@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Mutex protection.
- *
- * Authors:
- * Celine Teuliere
- *
- *****************************************************************************/
+ */
 
 #ifndef _vpMutex_h_
 #define _vpMutex_h_
@@ -42,7 +37,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && (defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0)))
 
 #if defined(VISP_HAVE_PTHREAD)
 #include <pthread.h>
@@ -53,11 +48,16 @@
 #include <windows.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
 
    \class vpMutex
 
    \ingroup group_core_threading
+   \deprecated Use rather std::mutex.
 
    Class that allows protection by mutex.
 
@@ -65,28 +65,24 @@
    native Windows threading capabilities if pthread is not available under
    Windows.
 
-   An example of vpMutex usage is given in testMutex.cpp.
-
-   More examples are provided in \ref tutorial-multi-threading.
-
    \sa vpScopedLock
 */
-class vpMutex
+class VP_DEPRECATED vpMutex
 {
 public:
   vpMutex() : m_mutex()
   {
 #if defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_init(&m_mutex, NULL);
+    pthread_mutex_init(&m_mutex, nullptr);
 #elif defined(_WIN32)
 #ifdef WINRT_8_1
-    m_mutex = CreateMutexEx(NULL, NULL, 0, NULL);
+    m_mutex = CreateMutexEx(nullptr, nullptr, 0, nullptr);
 #else
-    m_mutex = CreateMutex(NULL,                   // default security attributes
+    m_mutex = CreateMutex(nullptr,                   // default security attributes
                           FALSE,                  // initially not owned
-                          NULL);                  // unnamed mutex
+                          nullptr);                  // unnamed mutex
 #endif
-    if (m_mutex == NULL) {
+    if (m_mutex == nullptr) {
       std::cout << "CreateMutex error: " << GetLastError() << std::endl;
       return;
     }
@@ -125,7 +121,7 @@ public:
 
     \class vpScopedLock
 
-    \ingroup group_core_mutex
+    \ingroup group_core_threading
 
     \brief Class that allows protection by mutex.
 
@@ -133,37 +129,43 @@ public:
     code from concurrent access. The scope of the mutex lock/unlock is determined
     by the constructor/destructor.
 
-\code
- #include <visp3/core/vpMutex.h>
+    \code
+    #include <visp3/core/vpMutex.h>
 
-int main()
-{
-  vpMutex mutex;
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
-  {
-    vpMutex::vpScopedLock lock(mutex);
-    // shared var to protect
-  }
-}
+    int main()
+    {
+      vpMutex mutex;
+
+      {
+        vpMutex::vpScopedLock lock(mutex);
+        // shared var to protect
+      }
+    }
     \endcode
 
     Without using vpScopedLock, the previous example would become:
     \code
-#include <visp3/core/vpMutex.h>
+    #include <visp3/core/vpMutex.h>
 
-int main()
-{
-  vpMutex mutex;
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
-  {
-    mutex.lock();
-    // shared var to protect
-    mutex.unlock()
-  }
-}
+    int main()
+    {
+      vpMutex mutex;
+
+      {
+        mutex.lock();
+        // shared var to protect
+        mutex.unlock()
+      }
+    }
     \endcode
-
-    More examples are provided in \ref tutorial-multi-threading.
 
     \sa vpMutex
   */
@@ -194,6 +196,8 @@ private:
   HANDLE m_mutex;
 #endif
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

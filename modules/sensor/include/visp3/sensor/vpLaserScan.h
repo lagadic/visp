@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Laser scan data structure.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-#ifndef vpLaserScan_h
-#define vpLaserScan_h
+*****************************************************************************/
 
 /*!
   \file vpLaserScan.h
@@ -45,10 +40,15 @@
 
 */
 
+#ifndef vpLaserScan_h
+#define vpLaserScan_h
+
+#include <visp3/core/vpConfig.h>
 #include "visp3/sensor/vpScanPoint.h"
 
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpLaserScan
@@ -60,21 +60,20 @@
 
   Other data as the start/stop angle, the start/end timestamp are
   also considered.
- */
-class VISP_EXPORT vpLaserScan
+*/
+class /*VISP_EXPORT*/ vpLaserScan
 {
 public:
   /*! Default constructor that initialize all the internal variable to zero.
    */
   vpLaserScan()
     : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0), startAngle(0), stopAngle(0),
-      numPoints(0)
-  {
-  }
+    numPoints(0)
+  { }
   /*! Copy constructor. */
   vpLaserScan(const vpLaserScan &scan)
     : listScanPoints(scan.listScanPoints), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0),
-      startAngle(0), stopAngle(0), numPoints(0)
+    startAngle(0), stopAngle(0), numPoints(0)
   {
     startTimestamp = scan.startTimestamp;
     endTimestamp = scan.endTimestamp;
@@ -85,7 +84,7 @@ public:
     numPoints = scan.numPoints;
   }
   /*! Default destructor that does nothing. */
-  virtual ~vpLaserScan(){};
+  virtual ~vpLaserScan() { };
   /*! Add the scan point at the end of the list. */
   inline void addPoint(const vpScanPoint &p) { listScanPoints.push_back(p); }
   /*! Drop the list of points. */
@@ -93,12 +92,11 @@ public:
   /*! Get the list of points. */
   inline std::vector<vpScanPoint> getScanPoints() { return listScanPoints; }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpLaserScan &operator=(const vpLaserScan &scan) = default;
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+  vpLaserScan &operator=(const vpLaserScan &) = default;
 #endif
 
-  /*! Specifies the id of former measurements and increases with
-      every measurement. */
+  /*! Specifies the id of former measurements and increases with every measurement. */
   inline void setMeasurementId(const unsigned short &id) { this->measurementId = id; }
   /*! Start time of measurement. */
   inline void setStartTimestamp(const double &start_timestamp) { this->startTimestamp = start_timestamp; }
@@ -127,5 +125,5 @@ private:
   short stopAngle;
   unsigned short numPoints;
 };
-
+END_VISP_NAMESPACE
 #endif

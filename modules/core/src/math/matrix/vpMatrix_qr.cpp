@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * Matrix QR decomposition.
- *
- * Authors:
- * Filip Novotny
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 #include <algorithm> // for (std::min) and (std::max)
 #include <cmath>     // For std::abs() on iOS
@@ -50,9 +44,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #if !(GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
@@ -108,9 +100,9 @@ int allocate_work(double **work)
 void display_gsl(gsl_matrix *M)
 {
   // display
-  for (unsigned int i = 0; i < M->size1; i++) {
+  for (unsigned int i = 0; i < M->size1; ++i) {
     unsigned int k = i * M->tda;
-    for (unsigned int j = 0; j < M->size2; j++) {
+    for (unsigned int j = 0; j < M->size2; ++j) {
       std::cout << M->data[k + j] << " ";
     }
     std::cout << std::endl;
@@ -128,23 +120,27 @@ void display_gsl(gsl_matrix *M)
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByQRLapack();
-  std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByQRLapack();
+    std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByQR()
@@ -161,7 +157,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     gsl_A = gsl_matrix_alloc(rowNum, colNum);
     gsl_Q = gsl_matrix_alloc(rowNum, rowNum); // M by M
     gsl_R = gsl_matrix_alloc(rowNum, colNum); // M by N
-    gsl_tau = gsl_vector_alloc(std::min(rowNum, colNum));
+    gsl_tau = gsl_vector_alloc(std::min<unsigned int>(rowNum, colNum));
 
     gsl_inv.size1 = inv.rowNum;
     gsl_inv.size2 = inv.colNum;
@@ -173,7 +169,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     // copy input matrix since gsl_linalg_QR_decomp() is destructive
     unsigned int Atda = static_cast<unsigned int>(gsl_A->tda);
     size_t len = sizeof(double) * colNum;
-    for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int i = 0; i < rowNum; ++i) {
       unsigned int k = i * Atda;
       memcpy(&gsl_A->data[k], (*this)[i], len);
     }
@@ -185,7 +181,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         double *Tii = gsl_matrix_ptr(gsl_R, i, i);
         *Tii = 1.0 / (*Tii);
         double aii = -(*Tii);
@@ -203,7 +199,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, gsl_R, gsl_Q, 0, &gsl_inv);
     unsigned int gsl_inv_tda = static_cast<unsigned int>(gsl_inv.tda);
     size_t inv_len = sizeof(double) * inv.colNum;
-    for (unsigned int i = 0; i < inv.rowNum; i++) {
+    for (unsigned int i = 0; i < inv.rowNum; ++i) {
       unsigned int k = i * gsl_inv_tda;
       memcpy(inv[i], &gsl_inv.data[k], inv_len);
     }
@@ -225,7 +221,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     integer rowNum_ = (integer)this->getRows();
     integer colNum_ = (integer)this->getCols();
     integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
-    integer dimTau = (std::min)(rowNum_, colNum_);
+    integer dimTau = std::min<integer>(rowNum_, colNum_);
     integer dimWork = -1;
     double *tau = new double[dimTau];
     double *work = new double[1];
@@ -295,9 +291,9 @@ vpMatrix vpMatrix::inverseByQRLapack() const
           std::cout << "dtrtri_:" << -info << "th element had an illegal value" << std::endl;
         else if (info > 0) {
           std::cout << "dtrtri_:R(" << info << "," << info << ")"
-                    << " is exactly zero.  The triangular matrix is singular "
-                       "and its inverse can not be computed."
-                    << std::endl;
+            << " is exactly zero.  The triangular matrix is singular "
+            "and its inverse can not be computed."
+            << std::endl;
           std::cout << "R=" << std::endl << C << std::endl;
         }
         throw vpMatrixException::badValue;
@@ -307,8 +303,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const
       // the matrix is upper triangular for lapack but lower triangular for visp
       // we fill it with zeros above the diagonal (where we don't need the
       // values)
-      for (unsigned int i = 0; i < C.getRows(); i++)
-        for (unsigned int j = 0; j < C.getRows(); j++)
+      for (unsigned int i = 0; i < C.getRows(); ++i)
+        for (unsigned int j = 0; j < C.getRows(); ++j)
           if (j > i)
             C[i][j] = 0.;
 
@@ -336,7 +332,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const
       }
       delete[] tau;
       delete[] work;
-    } catch (vpMatrixException &) {
+    }
+    catch (vpMatrixException &) {
       delete[] tau;
       delete[] work;
       throw;
@@ -357,23 +354,27 @@ vpMatrix vpMatrix::inverseByQRLapack() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByQR();
-  std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByQR();
+    std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByLU(), inverseByCholesky()
@@ -410,33 +411,37 @@ vpMatrix vpMatrix::inverseByQR() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-double residual(vpMatrix M1, vpMatrix M2)
-{
-    return (M1 - M2).frobeniusNorm();
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-int main()
-{
-  vpMatrix A(4,3);
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+      return (M1 - M2).frobeniusNorm();
+  }
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.;
+  int main()
+  {
+    vpMatrix A(4,3);
 
-  // Economic QR (Q 4x3, R 3x3)
-  vpMatrix Q, R;
-  int r = A.qr(A, R);
-  std::cout << "QR Residual: "
-            << residual(A, Q*R) << std::endl;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.;
 
-  // Full QR (Q 4x4, R 3x3)
-  r = A.qr(Q, R, true);
-  std::cout << "Full QR Residual: "
-            << residual(A, Q.extract(0, 0, 4, 3)*R) << std::endl;
-}
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R;
+    int r = A.qr(A, R);
+    std::cout << "QR Residual: "
+              << residual(A, Q*R) << std::endl;
+
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qr(Q, R, true);
+    std::cout << "Full QR Residual: "
+              << residual(A, Q.extract(0, 0, 4, 3)*R) << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -447,7 +452,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 #if defined(VISP_HAVE_GSL)
   unsigned int m = rowNum;         // also rows of Q
   unsigned int n = colNum;         // also columns of R
-  unsigned int r = std::min(n, m); // a priori non-null rows of R = rank of R
+  unsigned int r = std::min<unsigned int>(n, m); // a priori non-null rows of R = rank of R
   unsigned int q = r;              // columns of Q and rows of R
   unsigned int na = n;             // columns of A
 
@@ -471,15 +476,15 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   gsl_A = gsl_matrix_alloc(rowNum, colNum);
   gsl_R = gsl_matrix_alloc(rowNum, colNum); // M by N
-  gsl_tau = gsl_vector_alloc(std::min(rowNum, colNum));
+  gsl_tau = gsl_vector_alloc(std::min<unsigned int>(rowNum, colNum));
 
   // copy input matrix since gsl_linalg_QR_decomp() is destructive
   unsigned int Atda = static_cast<unsigned int>(gsl_A->tda);
   size_t len = sizeof(double) * colNum;
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     unsigned int k = i * Atda;
     memcpy(&gsl_A->data[k], (*this)[i], len);
-    //    for (unsigned int j = 0; j < colNum; j++)
+    //    for (unsigned int j = 0; j < colNum; ++j)
     //      gsl_A->data[k + j] = (*this)[i][j];
   }
 
@@ -498,7 +503,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     gsl_linalg_QR_unpack(gsl_A, gsl_tau, &gsl_Qfull, gsl_R);
     //    std::cout << "gsl_Qfull:\n "; display_gsl(&gsl_Qfull);
     //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
-  } else {
+  }
+  else {
     gsl_Q = gsl_matrix_alloc(rowNum, rowNum); // M by M
 
     gsl_linalg_QR_unpack(gsl_A, gsl_tau, gsl_Q, gsl_R);
@@ -507,10 +513,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
     unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
     size_t len = sizeof(double) * Q.colNum;
-    for (unsigned int i = 0; i < Q.rowNum; i++) {
+    for (unsigned int i = 0; i < Q.rowNum; ++i) {
       unsigned int k = i * Qtda;
       memcpy(Q[i], &gsl_Q->data[k], len);
-      //      for(unsigned int j = 0; j < Q.colNum; j++) {
+      //      for(unsigned int j = 0; j < Q.colNum; ++j) {
       //        Q[i][j] = gsl_Q->data[k + j];
       //      }
     }
@@ -518,13 +524,13 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   }
 
   // copy useful part of R and update rank
-  na = std::min(m, n);
+  na = std::min<unsigned int>(m, n);
   unsigned int Rtda = static_cast<unsigned int>(gsl_R->tda);
   size_t Rlen = sizeof(double) * R.colNum;
-  for (unsigned int i = 0; i < na; i++) {
+  for (unsigned int i = 0; i < na; ++i) {
     unsigned int k = i * Rtda;
     memcpy(R[i], &gsl_R->data[k], Rlen);
-    //      for(unsigned int j = i; j < na; j++)
+    //      for(unsigned int j = i; j < na; ++j)
     //        R[i][j] = gsl_R->data[k + j];
     if (std::abs(gsl_R->data[k + i]) < tol)
       r--;
@@ -538,7 +544,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 #else
   integer m = (integer)rowNum; // also rows of Q
   integer n = (integer)colNum; // also columns of R
-  integer r = std::min(n, m);  // a priori non-null rows of R = rank of R
+  integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;               // columns of Q and rows of R
   integer na = n;              // columns of A
 
@@ -559,7 +565,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   integer dimWork = -1;
   double *qrdata = new double[m * na];
-  double *tau = new double[std::min(m, q)];
+  double *tau = new double[std::min<integer>(m, q)];
   double *work = new double[1];
   integer info;
 
@@ -611,17 +617,18 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   // data now contains the R matrix in its upper triangular (in lapack convention)
 
   // copy useful part of R from Q and update rank
-  na = std::min(m, n);
+  na = std::min<integer>(m, n);
   if (squareR) {
-    for (int i = 0; i < na; i++) {
-      for (int j = i; j < na; j++)
+    for (int i = 0; i < na; ++i) {
+      for (int j = i; j < na; ++j)
         R[i][j] = qrdata[i + m * j];
       if (std::abs(qrdata[i + m * i]) < tol)
         r--;
     }
-  } else {
-    for (int i = 0; i < na; i++) {
-      for (int j = i; j < n; j++)
+  }
+  else {
+    for (int i = 0; i < na; ++i) {
+      for (int j = i; j < n; ++j)
         R[i][j] = qrdata[i + m * j];
       if (std::abs(qrdata[i + m * i]) < tol)
         r--;
@@ -659,6 +666,413 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 #endif
 }
 
+#if defined(VISP_HAVE_LAPACK)
+#if !defined(VISP_HAVE_GSL)
+/*!
+  Compute the QR pivot decomposition of a (m x n) matrix of rank r when
+  Lapack 3rd party is available.
+
+  \param Q : orthogonal matrix (will be modified).
+  \param R : upper-triangular matrix (will be modified).
+  \param P : the (n x n) permutation matrix.
+  \param full : whether or not we want full decomposition.
+  \param squareR : will return only the (r x r) part of R and the (r x n) part of P.
+  \param tol : tolerance to test the rank of R.
+
+  \return The rank r of the matrix.
+
+  If full is false (default) then Q is (m x min(n,m)) and R is (min(n,m) x n).
+  We then have this.P = Q.R.
+
+  If full is true and m > n then Q is (m x m) and R is (n x n).
+  In this case this.P = Q (R, 0)^T
+
+  If squareR is true then R is (r x r) invertible.
+
+  Here an example:
+  \code
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+    return (M1 - M2).frobeniusNorm();
+  }
+
+  int main()
+  {
+    vpMatrix A(4,3);
+
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
+    // A is (4x3) but rank 2
+
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R, P;
+    int r = A.qrPivot(Q, R, P);
+    std::cout << "A rank: " << r << std::endl;
+    std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
+
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qrPivot(Q, R, P, true);
+    std::cout << "QRPivot Residual: " <<
+    residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
+
+    // Using permutation matrix: keep only non-null part of R
+    Q.resize(4, r, false);            // Q is 4 x 2
+    R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
+    std::cout << "Full QRPivot Residual: " <<
+    residual(A, Q*R) << std::endl;
+  }
+  \endcode
+
+  \sa qrPivot()
+*/
+unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
+{
+  integer m = static_cast<integer>(rowNum); // also rows of Q
+  integer n = static_cast<integer>(colNum); // also columns of R
+  integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
+  integer q = r;               // columns of Q and rows of R
+  integer na = n;              // columns of A
+
+  // cannot be full decomposition if m < n
+  // cannot be full decomposition if m < n
+  if (full && m > n) {
+    q = m;  // Q is square
+    na = m; // A is square
+  }
+
+  // prepare Q and deal with r = 0
+  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
+  if (r == 0) {
+    if (squareR) {
+      R.resize(0, 0);
+      P.resize(0, static_cast<unsigned int>(n));
+    }
+    else {
+      R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
+      P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
+    }
+    return 0;
+  }
+
+  integer dimWork = -1;
+  integer min_q_m = std::min<integer>(q, m);
+  double *qrdata = new double[m * na];
+  double *tau = new double[min_q_m];
+  double *work = new double[1];
+  integer *p = new integer[na];
+  for (int i = 0; i < na; ++i) {
+    p[i] = 0;
+  }
+
+  integer info;
+
+  // copy this to qrdata in Lapack convention
+  for (integer i = 0; i < m; ++i) {
+    for (integer j = 0; j < n; ++j) {
+      qrdata[i + m * j] = data[j + n * i];
+    }
+    for (integer j = n; j < na; ++j) {
+      qrdata[i + m * j] = 0;
+    }
+  }
+
+  // 1) Extract householder reflections (useful to compute Q) and R
+  // m: The number of rows of the matrix A.  M >= 0.
+  // na: The number of columns of the matrix A.  N >= 0.
+  // qrdata: On entry, the M-by-N matrix A.
+  // m: The leading dimension of the array A.  LDA >= max(1,M).
+  // p: Dimension N
+  // tau: dimension (min(M,N))
+  // work: Internal working array. dimension (3*N)
+  // info: status
+  dgeqp3_(&m, &na, qrdata, &m, p, tau, work, &dimWork, &info);
+
+  if (info != 0) {
+    std::cout << "dgeqp3_:Preparation:" << -info << "th element had an illegal value" << std::endl;
+    delete[] qrdata;
+    delete[] work;
+    delete[] tau;
+    delete[] p;
+    throw vpMatrixException::badValue;
+  }
+
+  dimWork = allocate_work(&work);
+
+  // m: The number of rows of the matrix A.  M >= 0.
+  // na: The number of columns of the matrix A.  N >= 0.
+  // qrdata: On entry, the M-by-N matrix A.
+  // m: The leading dimension of the array A.  LDA >= max(1,M).
+  // p: Dimension N
+  // tau: Dimension (min(M,N))
+  // work: Internal working array. dimension (3*N)
+  // info: status
+  dgeqp3_(&m, &na, qrdata, &m, p, tau, work, &dimWork, &info);
+
+  if (info != 0) {
+    std::cout << "dgeqp3_:" << -info << " th element had an illegal value" << std::endl;
+    delete[] qrdata;
+    delete[] work;
+    delete[] tau;
+    delete[] p;
+    throw vpMatrixException::badValue;
+  }
+
+  // data now contains the R matrix in its upper triangular (in lapack convention)
+  // get rank of R in r
+  na = std::min<integer>(n, m);
+  for (int i = 0; i < na; ++i) {
+    if (std::abs(qrdata[i + m * i]) < tol) {
+      --r;
+    }
+  }
+
+  // write R
+  if (squareR) // R r x r
+  {
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
+    for (int i = 0; i < r; ++i) {
+      for (int j = i; j < r; ++j) {
+        R[i][j] = qrdata[i + m * j];
+      }
+    }
+
+    // write P
+    P.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
+    for (int i = 0; i < r; ++i) {
+      P[i][p[i] - 1] = 1;
+    }
+  }
+  else // R is min(m,n) x n of rank r
+  {
+    R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
+    for (int i = 0; i < na; ++i) {
+      for (int j = i; j < n; ++j) {
+        R[i][j] = qrdata[i + m * j];
+      }
+    }
+    // write P
+    P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
+    for (int i = 0; i < n; ++i) {
+      P[i][p[i] - 1] = 1;
+    }
+  }
+
+  // extract Q
+  // m: The number of rows of the matrix Q. M >= 0.
+  // q: The number of columns of the matrix Q. M >= N >= 0.
+  // m: The leading dimension of the array A.  LDA >= max(1,M).
+  // ork: Internal working array. dimension (MAX(1,LWORK))
+  // dimWork: The dimension of the array WORK.  LWORK >= max(1,N).
+  // info; status
+  dorgqr_(&m, &q, &q, qrdata, &m, tau, work, &dimWork, &info);
+
+  // write qrdata into Q
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < q; ++j) {
+      Q[i][j] = qrdata[i + m * j];
+    }
+  }
+
+  delete[] qrdata;
+  delete[] work;
+  delete[] tau;
+  delete[] p;
+  return static_cast<unsigned int>(r);
+}
+#endif // VISP_HAVE_GSL
+
+#ifdef VISP_HAVE_GSL
+/*!
+  Compute the QR pivot decomposition of a (m x n) matrix of rank when Lapack and
+  GSL are available.
+
+  \param Q : orthogonal matrix (will be modified).
+  \param R : upper-triangular matrix (will be modified).
+  \param P : the (n x n) permutation matrix.
+  \param full : whether or not we want full decomposition.
+  \param squareR : will return only the (r x r) part of R and the (r x n) part of P.
+  \param tol : tolerance to test the rank of R.
+
+  \return The rank r of the matrix.
+
+  If full is false (default) then Q is (m x min(n,m)) and R is (min(n,m) x n).
+  We then have this.P = Q.R.
+
+  If full is true and m > n then Q is (m x m) and R is (n x n).
+  In this case this.P = Q (R, 0)^T
+
+  If squareR is true then R is (r x r) invertible.
+
+  Here an example:
+  \code
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+      return (M1 - M2).frobeniusNorm();
+  }
+
+  int main()
+  {
+    vpMatrix A(4,3);
+
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
+    // A is (4x3) but rank 2
+
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R, P;
+    int r = A.qrPivot(Q, R, P);
+    std::cout << "A rank: " << r << std::endl;
+    std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
+
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qrPivot(Q, R, P, true);
+    std::cout << "QRPivot Residual: " <<
+    residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
+
+    // Using permutation matrix: keep only non-null part of R
+    Q.resize(4, r, false);            // Q is 4 x 2
+    R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
+    std::cout << "Full QRPivot Residual: " <<
+    residual(A, Q*R) << std::endl;
+  }
+  \endcode
+
+  \sa qrPivot()
+*/
+unsigned int vpMatrix::qrPivotLapackGSL(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
+{
+  unsigned int m = rowNum;         // also rows of Q
+  unsigned int n = colNum;         // also columns of R
+  unsigned int r = std::min<unsigned int>(n, m); // a priori non-null rows of R = rank of R
+  unsigned int q = r;              // columns of Q and rows of R
+  unsigned int na = n;             // columns of A
+
+  // cannot be full decomposition if m < n
+  if (full && m > n) {
+    q = m;  // Q is square
+    na = m; // A is square
+  }
+
+  // prepare Q and deal with r = 0
+  Q.resize(m, q, false);
+  if (r == 0) {
+    if (squareR) {
+      R.resize(0, 0, false);
+      P.resize(0, n, false);
+    }
+    else {
+      R.resize(r, n, false);
+      P.resize(n, n);
+    }
+    return 0;
+  }
+
+  gsl_matrix gsl_A, *gsl_Q, *gsl_R, gsl_Qfull;
+  gsl_vector *gsl_tau;
+  gsl_permutation *gsl_p;
+  gsl_vector *gsl_norm;
+  int gsl_signum;
+
+  gsl_A.size1 = rowNum;
+  gsl_A.size2 = colNum;
+  gsl_A.tda = gsl_A.size2;
+  gsl_A.data = this->data;
+  gsl_A.owner = 0;
+  gsl_A.block = 0;
+
+  gsl_R = gsl_matrix_alloc(rowNum, colNum); // M by N
+  gsl_tau = gsl_vector_alloc(std::min<unsigned int>(rowNum, colNum));
+  gsl_norm = gsl_vector_alloc(colNum);
+  gsl_p = gsl_permutation_alloc(n);
+
+  if (full) {
+    // Q is M by M as expected by gsl_linalg_QR_unpack()
+    // for performance purpose dont allocate gsl_Q, but rather use gsl_Qfull = Q
+    gsl_Qfull.size1 = Q.rowNum;
+    gsl_Qfull.size2 = Q.colNum;
+    gsl_Qfull.tda = gsl_Qfull.size2;
+    gsl_Qfull.data = Q.data;
+    gsl_Qfull.owner = 0;
+    gsl_Qfull.block = 0;
+
+    gsl_linalg_QRPT_decomp2(&gsl_A, &gsl_Qfull, gsl_R, gsl_tau, gsl_p, &gsl_signum, gsl_norm);
+    //    std::cout << "gsl_Qfull:\n "; display_gsl(&gsl_Qfull);
+    //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
+  }
+  else {
+    gsl_Q = gsl_matrix_alloc(rowNum, rowNum); // M by M
+
+    gsl_linalg_QRPT_decomp2(&gsl_A, gsl_Q, gsl_R, gsl_tau, gsl_p, &gsl_signum, gsl_norm);
+    //    std::cout << "gsl_Q:\n "; display_gsl(gsl_Q);
+    //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
+
+    unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
+    size_t len = sizeof(double) * Q.colNum;
+    for (unsigned int i = 0; i < Q.rowNum; ++i) {
+      unsigned int k = i * Qtda;
+      memcpy(Q[i], &gsl_Q->data[k], len);
+      //      for(unsigned int j = 0; j < Q.colNum; ++j) {
+      //        Q[i][j] = gsl_Q->data[k + j];
+      //      }
+    }
+    gsl_matrix_free(gsl_Q);
+  }
+
+  // update rank
+  na = std::min<unsigned int>(m, n);
+  unsigned int Rtda = static_cast<unsigned int>(gsl_R->tda);
+  for (unsigned int i = 0; i < na; ++i) {
+    unsigned int k = i * Rtda;
+    if (std::abs(gsl_R->data[k + i]) < tol)
+      r--;
+  }
+
+  if (squareR) {
+    R.resize(r, r, false); // R r x r
+    P.resize(r, n);
+    for (unsigned int i = 0; i < r; ++i)
+      P[i][gsl_p->data[i]] = 1;
+  }
+  else {
+    R.resize(na, n, false); // R is min(m,n) x n of rank r
+    P.resize(n, n);
+    for (unsigned int i = 0; i < n; ++i)
+      P[i][gsl_p->data[i]] = 1;
+  }
+
+  // copy useful part of R
+  size_t Rlen = sizeof(double) * R.colNum;
+  for (unsigned int i = 0; i < na; ++i) {
+    unsigned int k = i * Rtda;
+    memcpy(R[i], &gsl_R->data[k], Rlen);
+  }
+
+  gsl_matrix_free(gsl_R);
+  gsl_vector_free(gsl_tau);
+  gsl_vector_free(gsl_norm);
+  gsl_permutation_free(gsl_p);
+
+  return r;
+}
+#endif
+#endif
+
 /*!
   Compute the QR pivot decomposition of a (m x n) matrix of rank r.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
@@ -683,40 +1097,44 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-double residual(vpMatrix M1, vpMatrix M2)
-{
-    return (M1 - M2).frobeniusNorm();
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-int main()
-{
-  vpMatrix A(4,3);
+  double residual(vpMatrix M1, vpMatrix M2)
+  {
+      return (M1 - M2).frobeniusNorm();
+  }
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
-  // A is (4x3) but rank 2
+  int main()
+  {
+    vpMatrix A(4,3);
 
-  // Economic QR (Q 4x3, R 3x3)
-  vpMatrix Q, R, P;
-  int r = A.qrPivot(Q, R, P);
-  std::cout << "A rank: " << r << std::endl;
-  std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/2.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/4.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/5.;
+    // A is (4x3) but rank 2
 
-  // Full QR (Q 4x4, R 3x3)
-  r = A.qrPivot(Q, R, P, true);
-  std::cout << "QRPivot Residual: " <<
-  residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
+    // Economic QR (Q 4x3, R 3x3)
+    vpMatrix Q, R, P;
+    int r = A.qrPivot(Q, R, P);
+    std::cout << "A rank: " << r << std::endl;
+    std::cout << "Residual: " << residual(A*P, Q*R) << std::endl;
 
-  // Using permutation matrix: keep only non-null part of R
-  Q.resize(4, r, false);            // Q is 4 x 2
-  R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
-  std::cout << "Full QRPivot Residual: " <<
-  residual(A, Q*R) << std::endl;
-}
+    // Full QR (Q 4x4, R 3x3)
+    r = A.qrPivot(Q, R, P, true);
+    std::cout << "QRPivot Residual: " <<
+    residual(A*P, Q.extract(0, 0, 4, 3)*R) << std::endl;
+
+    // Using permutation matrix: keep only non-null part of R
+    Q.resize(4, r, false);            // Q is 4 x 2
+    R = R.extract(0, 0, r, 3)*P.t();  // R is 2 x 3
+    std::cout << "Full QRPivot Residual: " <<
+    residual(A, Q*R) << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -725,257 +1143,9 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 {
 #if defined(VISP_HAVE_LAPACK)
 #if defined(VISP_HAVE_GSL)
-  unsigned int m = rowNum;         // also rows of Q
-  unsigned int n = colNum;         // also columns of R
-  unsigned int r = std::min(n, m); // a priori non-null rows of R = rank of R
-  unsigned int q = r;              // columns of Q and rows of R
-  unsigned int na = n;             // columns of A
-
-  // cannot be full decomposition if m < n
-  if (full && m > n) {
-    q = m;  // Q is square
-    na = m; // A is square
-  }
-
-  // prepare Q and deal with r = 0
-  Q.resize(m, q, false);
-  if (r == 0) {
-    if (squareR) {
-      R.resize(0, 0, false);
-      P.resize(0, n, false);
-    } else {
-      R.resize(r, n, false);
-      P.resize(n, n);
-    }
-    return 0;
-  }
-
-  gsl_matrix gsl_A, *gsl_Q, *gsl_R, gsl_Qfull;
-  gsl_vector *gsl_tau;
-  gsl_permutation *gsl_p;
-  gsl_vector *gsl_norm;
-  int gsl_signum;
-
-  gsl_A.size1 = rowNum;
-  gsl_A.size2 = colNum;
-  gsl_A.tda = gsl_A.size2;
-  gsl_A.data = this->data;
-  gsl_A.owner = 0;
-  gsl_A.block = 0;
-
-  gsl_R = gsl_matrix_alloc(rowNum, colNum); // M by N
-  gsl_tau = gsl_vector_alloc(std::min(rowNum, colNum));
-  gsl_norm = gsl_vector_alloc(colNum);
-  gsl_p = gsl_permutation_alloc(n);
-
-  if (full) {
-    // Q is M by M as expected by gsl_linalg_QR_unpack()
-    // for performance purpose dont allocate gsl_Q, but rather use gsl_Qfull = Q
-    gsl_Qfull.size1 = Q.rowNum;
-    gsl_Qfull.size2 = Q.colNum;
-    gsl_Qfull.tda = gsl_Qfull.size2;
-    gsl_Qfull.data = Q.data;
-    gsl_Qfull.owner = 0;
-    gsl_Qfull.block = 0;
-
-    gsl_linalg_QRPT_decomp2(&gsl_A, &gsl_Qfull, gsl_R, gsl_tau, gsl_p, &gsl_signum, gsl_norm);
-    //    std::cout << "gsl_Qfull:\n "; display_gsl(&gsl_Qfull);
-    //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
-  } else {
-    gsl_Q = gsl_matrix_alloc(rowNum, rowNum); // M by M
-
-    gsl_linalg_QRPT_decomp2(&gsl_A, gsl_Q, gsl_R, gsl_tau, gsl_p, &gsl_signum, gsl_norm);
-    //    std::cout << "gsl_Q:\n "; display_gsl(gsl_Q);
-    //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
-
-    unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
-    size_t len = sizeof(double) * Q.colNum;
-    for (unsigned int i = 0; i < Q.rowNum; i++) {
-      unsigned int k = i * Qtda;
-      memcpy(Q[i], &gsl_Q->data[k], len);
-      //      for(unsigned int j = 0; j < Q.colNum; j++) {
-      //        Q[i][j] = gsl_Q->data[k + j];
-      //      }
-    }
-    gsl_matrix_free(gsl_Q);
-  }
-
-  // update rank
-  na = std::min(m, n);
-  unsigned int Rtda = static_cast<unsigned int>(gsl_R->tda);
-  for (unsigned int i = 0; i < na; i++) {
-    unsigned int k = i * Rtda;
-    if (std::abs(gsl_R->data[k + i]) < tol)
-      r--;
-  }
-
-  if (squareR) {
-    R.resize(r, r, false); // R r x r
-    P.resize(r, n);
-    for (unsigned int i = 0; i < r; ++i)
-      P[i][gsl_p->data[i]] = 1;
-  } else {
-    R.resize(na, n, false); // R is min(m,n) x n of rank r
-    P.resize(n, n);
-    for (unsigned int i = 0; i < n; ++i)
-      P[i][gsl_p->data[i]] = 1;
-  }
-
-  // copy useful part of R
-  size_t Rlen = sizeof(double) * R.colNum;
-  for (unsigned int i = 0; i < na; i++) {
-    unsigned int k = i * Rtda;
-    memcpy(R[i], &gsl_R->data[k], Rlen);
-  }
-
-  gsl_matrix_free(gsl_R);
-  gsl_vector_free(gsl_tau);
-  gsl_vector_free(gsl_norm);
-  gsl_permutation_free(gsl_p);
-
-  return r;
+  return qrPivotLapackGSL(Q, R, P, full, squareR, tol);
 #else
-  integer m = (integer)rowNum; // also rows of Q
-  integer n = (integer)colNum; // also columns of R
-  integer r = std::min(n, m);  // a priori non-null rows of R = rank of R
-  integer q = r;               // columns of Q and rows of R
-  integer na = n;              // columns of A
-
-  // cannot be full decomposition if m < n
-  // cannot be full decomposition if m < n
-  if (full && m > n) {
-    q = m;  // Q is square
-    na = m; // A is square
-  }
-
-  // prepare Q and deal with r = 0
-  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
-  if (r == 0) {
-    if (squareR) {
-      R.resize(0, 0);
-      P.resize(0, static_cast<unsigned int>(n));
-    } else {
-      R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
-      P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
-    }
-    return 0;
-  }
-
-  integer dimWork = -1;
-  double *qrdata = new double[m * na];
-  double *tau = new double[std::min(q, m)];
-  double *work = new double[1];
-  integer *p = new integer[na];
-  for (int i = 0; i < na; ++i)
-    p[i] = 0;
-
-  integer info;
-
-  // copy this to qrdata in Lapack convention
-  for (integer i = 0; i < m; ++i) {
-    for (integer j = 0; j < n; ++j)
-      qrdata[i + m * j] = data[j + n * i];
-    for (integer j = n; j < na; ++j)
-      qrdata[i + m * j] = 0;
-  }
-
-  // 1) Extract householder reflections (useful to compute Q) and R
-  dgeqp3_(&m,     // The number of rows of the matrix A.  M >= 0.
-          &na,    // The number of columns of the matrix A.  N >= 0.
-          qrdata, /*On entry, the M-by-N matrix A.        */
-          &m,     // The leading dimension of the array A.  LDA >= max(1,M).
-          p,      // Dimension N
-          tau,    /*Dimension (min(M,N))        */
-          work,   // Internal working array. dimension (3*N)
-
-          &dimWork,
-          &info // status
-  );
-
-  if (info != 0) {
-    std::cout << "dgeqp3_:Preparation:" << -info << "th element had an illegal value" << std::endl;
-    delete[] qrdata;
-    delete[] work;
-    delete[] tau;
-    delete[] p;
-    throw vpMatrixException::badValue;
-  }
-
-  dimWork = allocate_work(&work);
-
-  dgeqp3_(&m,     // The number of rows of the matrix A.  M >= 0.
-          &na,    // The number of columns of the matrix A.  N >= 0.
-          qrdata, /*On entry, the M-by-N matrix A.        */
-          &m,     // The leading dimension of the array A.  LDA >= max(1,M).
-          p,      // Dimension N
-          tau,    /*Dimension (min(M,N))        */
-          work,   // Internal working array. dimension (3*N)
-
-          &dimWork,
-          &info // status
-  );
-
-  if (info != 0) {
-    std::cout << "dgeqp3_:" << -info << " th element had an illegal value" << std::endl;
-    delete[] qrdata;
-    delete[] work;
-    delete[] tau;
-    delete[] p;
-    throw vpMatrixException::badValue;
-  }
-
-  // data now contains the R matrix in its upper triangular (in lapack convention)
-  // get rank of R in r
-  na = std::min(n, m);
-  for (int i = 0; i < na; ++i)
-    if (std::abs(qrdata[i + m * i]) < tol)
-      r--;
-
-  // write R
-  if (squareR) // R r x r
-  {
-    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
-    for (int i = 0; i < r; i++)
-      for (int j = i; j < r; j++)
-        R[i][j] = qrdata[i + m * j];
-
-    // write P
-    P.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
-    for (int i = 0; i < r; ++i)
-      P[i][p[i] - 1] = 1;
-  } else // R is min(m,n) x n of rank r
-  {
-    R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
-    for (int i = 0; i < na; i++)
-      for (int j = i; j < n; j++)
-        R[i][j] = qrdata[i + m * j];
-    // write P
-    P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
-    for (int i = 0; i < n; ++i)
-      P[i][p[i] - 1] = 1;
-  }
-
-  // extract Q
-  dorgqr_(&m, // The number of rows of the matrix Q. M >= 0.
-          &q, // The number of columns of the matrix Q. M >= N >= 0.
-          &q, qrdata,
-          &m, // The leading dimension of the array A.  LDA >= max(1,M).
-          tau,
-          work,     // Internal working array. dimension (MAX(1,LWORK))
-          &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
-          &info     // status
-  );
-
-  // write qrdata into Q
-  for (int i = 0; i < m; ++i)
-    for (int j = 0; j < q; ++j)
-      Q[i][j] = qrdata[i + m * j];
-
-  delete[] qrdata;
-  delete[] work;
-  delete[] tau;
-  delete[] p;
-  return (unsigned int)r;
+  return qrPivotLapack(Q, R, P, full, squareR, tol);
 #endif
 #else
   (void)Q;
@@ -1001,7 +1171,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-  if (rowNum != colNum || rowNum == 0) {
+  if ((rowNum != colNum) || (rowNum == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot inverse a triangular matrix (%d, %d) that is not square",
                       rowNum, colNum));
   }
@@ -1020,7 +1190,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   unsigned int tda = static_cast<unsigned int>(gsl_inv.tda);
   size_t len = sizeof(double) * inv.colNum;
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     unsigned int k = i * tda;
     memcpy(&gsl_inv.data[k], (*this)[i], len);
   }
@@ -1032,7 +1202,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         double *Tii = gsl_matrix_ptr(&gsl_inv, i, i);
         *Tii = 1.0 / *Tii;
         double aii = -(*Tii);
@@ -1045,14 +1215,15 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
       }
     }
 #endif
-  } else {
+  }
+  else {
 #if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
     gsl_linalg_tri_lower_invert(&gsl_inv);
 #else
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         size_t j = rowNum - i - 1;
         double *Tjj = gsl_matrix_ptr(&gsl_inv, j, j);
         *Tjj = 1.0 / (*Tjj);
@@ -1086,9 +1257,9 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
       std::cout << "dtrtri_:" << -info << "th element had an illegal value" << std::endl;
     else if (info > 0) {
       std::cout << "dtrtri_:R(" << info << "," << info << ")"
-                << " is exactly zero.  The triangular matrix is singular "
-                   "and its inverse can not be computed."
-                << std::endl;
+        << " is exactly zero.  The triangular matrix is singular "
+        "and its inverse can not be computed."
+        << std::endl;
       throw vpMatrixException::rankDeficient;
     }
     throw vpMatrixException::badValue;
@@ -1114,31 +1285,36 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   Here an example:
   \code
-    #include <visp3/core/vpColVector.h>
-    #include <visp3/core/vpMatrix.h>
-    int main()
-    {
-      vpMatrix A(3,3);
-      A[0][0] = 4.64;
-      A[0][1] = 0.288;
-      A[0][2] = -0.384;
-      A[1][0] = 0.288;
-      A[1][1] = 7.3296;
-      A[1][2] = 2.2272;
-      A[2][0] = -0.384;
-      A[2][1] = 2.2272;
-      A[2][2] = 6.0304;
-      vpColVector X(3), B(3);
-      B[0] = 1;
-      B[1] = 2;
-      B[2] = 3;
-      A.solveByQR(B, X);
-      // Obtained values of X
-      // X[0] = 0.2468;
-      // X[1] = 0.120782;
-      // X[2] = 0.468587;
-      std::cout << "X:\n" << X << std::endl;
-    }
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    A.solveByQR(B, X);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -1164,31 +1340,36 @@ void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
 
   Here an example:
   \code
-    #include <visp3/core/vpColVector.h>
-    #include <visp3/core/vpMatrix.h>
-    int main()
-    {
-      vpMatrix A(3,3);
-      A[0][0] = 4.64;
-      A[0][1] = 0.288;
-      A[0][2] = -0.384;
-      A[1][0] = 0.288;
-      A[1][1] = 7.3296;
-      A[1][2] = 2.2272;
-      A[2][0] = -0.384;
-      A[2][1] = 2.2272;
-      A[2][2] = 6.0304;
-      vpColVector X(3), B(3);
-      B[0] = 1;
-      B[1] = 2;
-      B[2] = 3;
-      X = A.solveByQR(B);
-      // Obtained values of X
-      // X[0] = 0.2468;
-      // X[1] = 0.120782;
-      // X[2] = 0.468587;
-      std::cout << "X:\n" << X << std::endl;
-    }
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    X = A.solveByQR(B);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+  }
   \endcode
 
   \sa qrPivot()
@@ -1199,3 +1380,4 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
+END_VISP_NAMESPACE

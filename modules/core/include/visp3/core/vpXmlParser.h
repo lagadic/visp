@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,20 +28,16 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tools to automatise the creation of xml parser based on the libXML2
- *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
-
-#ifndef vpXmlParser_HH
-#define vpXmlParser_HH
+ * Tools to automatize the creation of xml parser based on the libXML2
+ */
 
 /*!
   \file vpXmlParser.h
   \brief Tools to simplify the creation of xml parser based on the libXML2
 */
+
+#ifndef vpXmlParser_HH
+#define vpXmlParser_HH
 
 #include <visp3/core/vpConfig.h>
 
@@ -59,6 +54,7 @@
 #include <string>
 #include <typeinfo>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParser
 
@@ -132,7 +128,7 @@
   void
   vpDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   {
-    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL; tmpNode = tmpNode->next) {
+    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != nullptr; tmpNode = tmpNode->next) {
       if(tmpNode->type == XML_ELEMENT_NODE) {
 
         std::map<std::string, int>::iterator iter = this->nodeMap.find((char*)tmpNode->name);
@@ -314,7 +310,7 @@ public:
   static void cleanup() { xmlCleanupParser(); }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif /* VISP_HAVE_XML2 */
 
 #endif

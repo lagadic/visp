@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Libjpeg backend for JPEG image I/O operations.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageIoLibjpeg.cpp
@@ -52,6 +50,7 @@
 
 #if defined(VISP_HAVE_JPEG)
 
+BEGIN_VISP_NAMESPACE
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
@@ -76,7 +75,7 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -98,7 +97,7 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
   line = new unsigned char[width];
   unsigned char *input = (unsigned char *)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < width; ++i) {
       line[i] = *(input);
       input++;
     }
@@ -135,7 +134,7 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -157,7 +156,7 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
   line = new unsigned char[3 * width];
   unsigned char *input = (unsigned char *)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < width; ++i) {
       line[i * 3] = *(input);
       input++;
       line[i * 3 + 1] = *(input);
@@ -206,7 +205,7 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -229,7 +228,7 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
     unsigned char *output = (unsigned char *)Ic.bitmap;
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
+      for (unsigned int i = 0; i < width; ++i) {
         *(output++) = buffer[0][i * 3];
         *(output++) = buffer[0][i * 3 + 1];
         *(output++) = buffer[0][i * 3 + 2];
@@ -286,7 +285,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -309,7 +308,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
     unsigned char *output = (unsigned char *)I.bitmap;
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
+      for (unsigned int i = 0; i < width; ++i) {
         *(output++) = buffer[0][i * 3];
         *(output++) = buffer[0][i * 3 + 1];
         *(output++) = buffer[0][i * 3 + 2];
@@ -334,4 +333,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
   jpeg_destroy_decompress(&cinfo);
   fclose(file);
 }
+
+END_VISP_NAMESPACE
+
 #endif

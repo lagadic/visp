@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test various determinant computation methods.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testMatrixDeterminant.cpp
@@ -47,6 +42,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdn:i:pf:R:C:vh"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -121,7 +120,7 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
 
     switch (c) {
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
     case 'n':
@@ -160,7 +159,7 @@ bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -293,22 +292,22 @@ int main(int argc, const char *argv[])
     if (use_plot_file) {
       of.open(plotfile.c_str());
       of << "iter"
-         << "\t";
+        << "\t";
 
       of << "\"Determinant default\""
-         << "\t";
+        << "\t";
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"Determinant Lapack\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_EIGEN3)
       of << "\"Determinant Eigen3\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_OPENCV)
       of << "\"Determinant OpenCV\""
-         << "\t";
+        << "\t";
 #endif
       of << std::endl;
     }
@@ -353,7 +352,7 @@ int main(int argc, const char *argv[])
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {
           std::cout << "Determinant differ between Lapack and OpenCV: " << result_lapack[i] << " " << result_opencv[i]
-                    << std::endl;
+            << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -363,7 +362,7 @@ int main(int argc, const char *argv[])
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_opencv[i]) > 1e-6) {
           std::cout << "Determinant differ between Eigen3 and OpenCV: " << result_eigen3[i] << " " << result_opencv[i]
-                    << std::endl;
+            << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -373,7 +372,7 @@ int main(int argc, const char *argv[])
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_lapack[i]) > 1e-6) {
           std::cout << "Determinant differ between Eigen3 and Lapack: " << result_eigen3[i] << " " << result_lapack[i]
-                    << std::endl;
+            << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -386,7 +385,8 @@ int main(int argc, const char *argv[])
 
     if (ret == EXIT_SUCCESS) {
       std::cout << "Test succeed" << std::endl;
-    } else {
+    }
+    else {
       std::cout << "Test failed" << std::endl;
     }
 
@@ -397,7 +397,8 @@ int main(int argc, const char *argv[])
     std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

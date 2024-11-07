@@ -1,7 +1,7 @@
 //! \example ClassUsingPclViewer.cpp
 #include "ClassUsingPclViewer.h"
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO)
 // PCL
 #include <pcl/io/pcd_io.h>
 
@@ -11,6 +11,10 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/io/vpKeyboard.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 //! [Z coordinates computation]
 double zFunction(const double &x, const double &y, const unsigned int order)

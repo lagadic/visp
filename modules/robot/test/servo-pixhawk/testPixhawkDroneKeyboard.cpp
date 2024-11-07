@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test to control from keyboard a drone equipped with a Pixhawk thanks to mavsdk.
- *
- *****************************************************************************/
+ */
 
 /*!
  * \example testPixhawkDroneKeyboard.cpp
@@ -46,13 +44,17 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpKeyboard.h>
 #include <visp3/robot/vpRobotMavsdk.h>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &lastCommandTime)
 {
   bool running = true;
@@ -171,7 +173,8 @@ bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &la
       break;
     }
     vpTime::wait(40); // We wait 40ms to give the drone the time to process the command
-  } else {
+  }
+  else {
     running = false;
   }
   return running;
@@ -186,35 +189,37 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--co" && i + 1 < argc) {
         opt_connecting_info = std::string(argv[i + 1]);
         i++;
-      } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+      }
+      else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
         std::cout << "\nUsage:\n"
-                  << "  " << argv[0] << "[--co <connection information>] [--help] [-h]\n"
-                  << std::endl
-                  << "Description:\n"
-                  << "  --co <connection information>\n"
-                  << "      - UDP: udp://[host][:port]\n"
-                  << "      - TCP: tcp://[host][:port]\n"
-                  << "      - serial: serial://[path][:baudrate]\n"
-                  << "      - Default: udp://192.168.30.111:14552).\n\n"
-                  << "      For example, to connect to the simulator use URL: udp://:14552\n"
-                  << "  --help, -h\n"
-                  << "      Print help message.\n"
-                  << std::endl;
+          << "  " << argv[0] << "[--co <connection information>] [--help] [-h]\n"
+          << std::endl
+          << "Description:\n"
+          << "  --co <connection information>\n"
+          << "      - UDP: udp://[host][:port]\n"
+          << "      - TCP: tcp://[host][:port]\n"
+          << "      - serial: serial://[path][:baudrate]\n"
+          << "      - Default: udp://192.168.30.111:14552).\n\n"
+          << "      For example, to connect to the simulator use URL: udp://:14552\n"
+          << "  --help, -h\n"
+          << "      Print help message.\n"
+          << std::endl;
         return EXIT_SUCCESS;
-      } else {
+      }
+      else {
         std::cout << "Error : unknown parameter " << argv[i] << std::endl
-                  << "See " << argv[0] << " --help" << std::endl;
+          << "See " << argv[0] << " --help" << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
     std::cout << std::endl
-              << "WARNING: this program does no sensing or avoiding of obstacles, "
-              << "the drone WILL collide with any objects in the way! Make sure the "
-              << "drone has approximately 3 meters of free space on all sides." << std::endl
-              << std::endl;
+      << "WARNING: this program does no sensing or avoiding of obstacles, "
+      << "the drone WILL collide with any objects in the way! Make sure the "
+      << "drone has approximately 3 meters of free space on all sides." << std::endl
+      << std::endl;
 
-    // Connect to the drone
+// Connect to the drone
     vpRobotMavsdk drone(opt_connecting_info);
 
     if (drone.isRunning()) {
@@ -229,10 +234,10 @@ int main(int argc, char **argv)
 
       vpKeyboard keyboard;
       std::cout << "\n| Control the drone with the keyboard :\n"
-                   "|   't' to takeoff / 'l' to land / 'e' for emergency stop\n"
-                   "|   ('space','u','d','g') and ('i','k','j','l') to move\n"
-                   "|   'q' to quit.\n"
-                << std::endl;
+        "|   't' to takeoff / 'l' to land / 'e' for emergency stop\n"
+        "|   ('space','u','d','g') and ('i','k','j','l') to move\n"
+        "|   'q' to quit.\n"
+        << std::endl;
 
       while (running && drone.isRunning()) {
 
@@ -244,11 +249,13 @@ int main(int argc, char **argv)
       }
       std::cout << "\nQuitting ...\n" << std::endl;
 
-    } else {
+    }
+    else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;
       return EXIT_FAILURE;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "\nCaught an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -260,13 +267,13 @@ int main()
 {
 #ifndef VISP_HAVE_MAVSDK
   std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
-            << std::endl;
+    << std::endl;
 #endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   std::cout
-      << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
-         "rebuild ViSP.\n"
-      << std::endl;
+    << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
+    "rebuild ViSP.\n"
+    << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

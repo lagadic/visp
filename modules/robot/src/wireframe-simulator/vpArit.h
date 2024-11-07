@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpArit_h
 #define vpArit_h
 
@@ -149,23 +149,29 @@
 #define M_POLY2(x, a, b, c) (M_POLY1((x), (a), (b)) * (x) + (c))
 #define M_POLY3(x, a, b, c, d) (M_POLY2((x), (a), (b), (c)) * (x) + (d))
 
-typedef struct {
+BEGIN_VISP_NAMESPACE
+typedef struct
+{
   int x, y;
 } Point2i;
 
-typedef struct {
+typedef struct
+{
   short x, y;
 } Point2s;
 
-typedef struct {
+typedef struct
+{
   int x, y, z;
 } Point3i;
 
-typedef struct {
+typedef struct
+{
   float x, y, z, w;
 } Point4f;
 
-typedef struct {
+typedef struct
+{
   float x, y, z;
 } Vector;
 
@@ -175,20 +181,21 @@ typedef struct {
   }
 
 /*
- * 				POSITION
- *				________
+ *         POSITION
+ *        ________
  *
  * La structure "Position" definit le positionnement d'un objet.
  * Matrice de positionnement = R.S.T
- * avec R = Rx.Ry.Rz	Matrice de rotation autour des axes (Ox,Oy,Oz),
- *			Les angles sont donnes en degres;
- *	S = Sx.Sy.Sz	Matrice d'homothetie sur les axes;
- *	T = Tx.Ty.Tz	Matrice de translation sur les axes.
+ * avec R = Rx.Ry.Rz  Matrice de rotation autour des axes (Ox,Oy,Oz),
+ *      Les angles sont donnes en degres;
+ *  S = Sx.Sy.Sz  Matrice d'homothetie sur les axes;
+ *  T = Tx.Ty.Tz  Matrice de translation sur les axes.
  */
-typedef struct {
-  Vector rotate;    /* vecteur rotation	*/
-  Vector scale;     /* vecteur homothetie	*/
-  Vector translate; /* vecteur translation	*/
+typedef struct
+{
+  Vector rotate;    /* vecteur rotation  */
+  Vector scale;     /* vecteur homothetie  */
+  Vector translate; /* vecteur translation  */
 } AritPosition;
 
 #define IDENTITY_ROTATE                                                                                                \
@@ -242,6 +249,6 @@ void Translate_to_Matrix(Vector *vp, Matrix m);
 
 void fscanf_Point3f(Point3f *pp);
 void fscanf_Vector(Vector *vp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

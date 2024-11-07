@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test serial port communication.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testSerialWrite.cpp
@@ -47,6 +42,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if !defined(_WIN32)
   std::string port;
 
@@ -56,7 +54,8 @@ int main(int argc, char **argv)
       port = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--baud") {
       baud = (unsigned long)atol(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help") {
+    }
+    else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;
       return EXIT_SUCCESS;
     }

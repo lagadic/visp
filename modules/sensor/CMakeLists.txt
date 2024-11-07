@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,13 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 #vp_define_module(sensor)
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
 
 # camera devices: v4l, dc1394, cmu1394, directshow ?, freenect,
@@ -61,7 +59,7 @@ if(USE_DIRECTSHOW)
   list(APPEND opt_libs ${DIRECTSHOW_LIBRARIES})
 endif()
 if(USE_LIBFREENECT)
-  list(APPEND opt_incs ${LIBFREENECT_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${LIBFREENECT_INCLUDE_DIRS})
   list(APPEND opt_libs ${LIBFREENECT_LIBRARIES})
 endif()
 if(USE_LIBUSB_1)
@@ -89,7 +87,7 @@ if(USE_REALSENSE)
   list(APPEND opt_libs ${REALSENSE_LIBRARIES})
 endif()
 if(USE_REALSENSE2)
-  list(APPEND opt_incs ${REALSENSE2_INCLUDE_DIRS})
+  list(APPEND opt_system_incs ${REALSENSE2_INCLUDE_DIRS})
   list(APPEND opt_libs ${REALSENSE2_LIBRARIES})
 endif()
 if(USE_OCCIPITAL_STRUCTURE)
@@ -102,22 +100,8 @@ if(USE_FTIITSDK)
 endif()
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
-
-  # list(APPEND opt_libs ${PCL_LIBRARIES})
-  # Using PCL_LIBRARIES works to build visp library, examples, demos and test thanks to the components,
-  # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
-  # ViSP as a 3rd party.
-  # To be clear PCL_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
-  # full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
-  # The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
-  # is able to find the real name and location of the libraries.
-  # But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
-  # PCL_LIBRARIES and especially with VTK_LIBRARIES.
-  # The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
-  # with these names.
-  # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
-  # will be not able to give the names of PCL libraries when used without CMake.
-  vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+  # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
+  # and PCL_DEPS_LIBRARIES instead
   list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
@@ -140,128 +124,9 @@ endif()
 vp_add_module(sensor visp_core PRIVATE_OPTIONAL ${ATIDAQ_LIBRARIES})
 vp_glob_module_sources()
 
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(CTEST_EXCLUDE_PATH force-torque framegrabber mocap rgb-depth DEPENDS_ON visp_io visp_gui)
 
 # Add configuration file for IIT FT sensor besides testForceTorqueIitSensor.cpp binary
 configure_file(test/force-torque/configurationSettings.ini configurationSettings.ini COPYONLY)
-
-if(USE_FLYCAPTURE)
-  # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unknown-pragmas)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-ignored-qualifiers)
-endif()
-
-if(USE_PYLON)
-  # Add specific build flag to turn off warnings coming from Basler
-  # pylon headers
-  if(MSVC)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS /wd4244)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS /wd4267)
-  else()
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unknown-pragmas)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-parameter)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-overloaded-virtual)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-deprecated-copy)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-variable)
-  endif()
-endif()
-
-if(USE_REALSENSE)
-  # Add specific build flag to turn off warnings coming from RealSense 3rd party
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-strict-aliasing)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-pessimizing-move)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-parameter)
-endif()
-
-if(USE_REALSENSE2)
-  if(UNIX)
-    # Add specific build flag to turn off warnings coming from PCL 3rd party
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-reorder)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-function)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-sign-compare)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-overloaded-virtual)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-deprecated-declarations)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-inconsistent-missing-override)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-sign-conversion)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-float-equal)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-pessimizing-move)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-parameter)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-comment)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-ignored-qualifiers)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-deprecated-copy)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unqualified-std-cast-call)
-  else()
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS /wd4244)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS /wd4267)
-  endif()
-endif()
-
-if(USE_LIBFREENECT)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-parameter)
-endif()
-
-if(USE_UEYE)
-  if(UNIX)
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-deprecated-declarations)
-  else()
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS /wd4996)
-  endif()
-endif()
-
-if(USE_OPENCV)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-float-equal)
-endif()
-
-if(USE_OCCIPITAL_STRUCTURE)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-reorder)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-function)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-unused-parameter)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-sign-compare)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-overloaded-virtual)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-ignored-qualifiers)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-maybe-uninitialized)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-deprecated-declarations)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-inconsistent-missing-override)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-sign-conversion)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-float-equal)
-  list(APPEND CXX_FLAGS_MUTE_WARNINGS -Wno-pessimizing-move)
-endif()
-
-vp_set_source_file_compile_flag(src/force-torque/vpForceTorqueAtiNetFTSensor.cpp -Wno-strict-aliasing)
-
-if(CXX_FLAGS_MUTE_WARNINGS)
-  # Add specific build flag to turn off warnings
-  vp_set_source_file_compile_flag(src/framegrabber/1394/vp1394TwoGrabber.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/directshow/vpDirectShowSampleGrabberI.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/flycapture/vpFlyCaptureGrabber.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonFactory.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberGigE.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberUsb.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/framegrabber/ueye/vpUeyeGrabber.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/rgb-depth/kinect/vpKinect.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/rgb-depth/occipital_structure/vpOccipitalStructure.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-
-  vp_set_source_file_compile_flag(test/framegrabber/test1394TwoResetBus.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/framegrabber/test1394TwoGrabber.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/framegrabber/testPylonGrabber.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testOccipitalStructure_Core_images.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testOccipitalStructure_Core_imu.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testOccipitalStructure_Core_pcl.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435_align.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435_opencv.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435_pcl.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry_async.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_imu.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_odometry.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_undistort.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-endif()

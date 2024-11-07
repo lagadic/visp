@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * RGBA pixel.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpRGBa.cpp
@@ -44,17 +38,47 @@
 */
 
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Copy operator (from an unsigned char value)
+  Copy operator that initializes all the components to `v`.
 
-  \param v : Input color ( R = G = B = v )
+  \param v : Value used to initialize the object ( R = G = B = v ).
 */
 vpRGBa &vpRGBa::operator=(const unsigned char &v)
 {
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
+  return *this;
+}
+
+/*!
+  Copy operator that initializes all the components to `v`.
+
+  \param v : Value used to initialize the object ( R = G = B = v ).
+*/
+vpRGBa &vpRGBa::operator=(const unsigned int &v)
+{
+  assert(v < 256);
+  this->R = v;
+  this->G = v;
+  this->B = v;
+  this->A = v;
+  return *this;
+}
+
+/*!
+  Copy operator that initializes all the components to `v`.
+
+  \param v : Value used to initialize the object ( R = G = B = v ).
+*/
+vpRGBa &vpRGBa::operator=(const int &v)
+{
+  assert(v < 256);
   this->R = v;
   this->G = v;
   this->B = v;
@@ -95,18 +119,21 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
   relation with respectively R, G, B and A.
 
   \exception vpException::dimensionError : If v is not a 4 four
-  dimention vector.
+  dimension vector.
 */
 vpRGBa &vpRGBa::operator=(const vpColVector &v)
 {
   if (v.getRows() != 4) {
-    vpERROR_TRACE("Bad vector dimension ");
     throw(vpException(vpException::dimensionError, "Bad vector dimension "));
   }
-  R = (unsigned char)v[0];
-  G = (unsigned char)v[1];
-  B = (unsigned char)v[2];
-  A = (unsigned char)v[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  R = static_cast<unsigned char>(v[index_0]);
+  G = static_cast<unsigned char>(v[index_1]);
+  B = static_cast<unsigned char>(v[index_2]);
+  A = static_cast<unsigned char>(v[index_3]);
   return *this;
 }
 
@@ -117,14 +144,14 @@ vpRGBa &vpRGBa::operator=(const vpColVector &v)
 */
 bool vpRGBa::operator==(const vpRGBa &v) const
 {
-  return R == v.R && G == v.G && B == v.B && A == v.A;
+  return (R == v.R) && (G == v.G) && (B == v.B) && (A == v.A);
 }
 /*!
   Compare two color pixels.
 
   \return true if the images are different, false if they are the same.
 */
-bool vpRGBa::operator!=(const vpRGBa &v) const { return (R != v.R || G != v.G || B != v.B || A != v.A); }
+bool vpRGBa::operator!=(const vpRGBa &v) const { return ((R != v.R) || (G != v.G) || (B != v.B) || (A != v.A)); }
 
 /*!
   subtraction operator : "this" - v.
@@ -134,10 +161,14 @@ bool vpRGBa::operator!=(const vpRGBa &v) const { return (R != v.R || G != v.G ||
 vpColVector vpRGBa::operator-(const vpRGBa &v) const
 {
   vpColVector n(4); // new color
-  n[0] = (double)R - (double)v.R;
-  n[1] = (double)G - (double)v.G;
-  n[2] = (double)B - (double)v.B;
-  n[3] = (double)A - (double)v.A;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[index_1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[index_2] = static_cast<double>(B) - static_cast<double>(v.B);
+  n[index_3] = static_cast<double>(A) - static_cast<double>(v.A);
   return n;
 }
 
@@ -165,10 +196,14 @@ vpRGBa vpRGBa::operator+(const vpRGBa &v) const
 vpColVector vpRGBa::operator-(const vpColVector &v) const
 {
   vpColVector n(4); // new color
-  n[0] = R - v[0];
-  n[1] = G - v[1];
-  n[2] = B - v[2];
-  n[3] = A - v[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R - v[index_0];
+  n[index_1] = G - v[index_1];
+  n[index_2] = B - v[index_2];
+  n[index_3] = A - v[index_3];
   return n;
 }
 
@@ -180,10 +215,14 @@ vpColVector vpRGBa::operator-(const vpColVector &v) const
 vpColVector vpRGBa::operator+(const vpColVector &v) const
 {
   vpColVector n(4); // new color
-  n[0] = R + v[0];
-  n[1] = G + v[1];
-  n[2] = B + v[2];
-  n[3] = A + v[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R + v[index_0];
+  n[index_1] = G + v[index_1];
+  n[index_2] = B + v[index_2];
+  n[index_3] = A + v[index_3];
   return n;
 }
 
@@ -195,10 +234,14 @@ vpColVector vpRGBa::operator+(const vpColVector &v) const
 vpColVector vpRGBa::operator*(const float &v) const
 {
   vpColVector n(4);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
-  n[3] = A * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
+  n[index_3] = A * v;
   return n;
 }
 
@@ -210,33 +253,51 @@ vpColVector vpRGBa::operator*(const float &v) const
 vpColVector vpRGBa::operator*(const double &v) const
 {
   vpColVector n(4);
-  n[0] = R * v;
-  n[1] = G * v;
-  n[2] = B * v;
-  n[3] = A * v;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  n[index_0] = R * v;
+  n[index_1] = G * v;
+  n[index_2] = B * v;
+  n[index_3] = A * v;
   return n;
 }
 
 bool vpRGBa::operator<(const vpRGBa &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 < gray2);
 }
 
 bool vpRGBa::operator>(const vpRGBa &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 > gray2);
 }
 
-vpRGBa operator*(const double &x, const vpRGBa &rgb) { return rgb * x; }
+/*!
+ * Scale RGB components by x. Alpha component remain unchanged.
+ *
+ * @param x : Value used to scale RGB color components.
+ * @param rgb : RGB color components to rescale.
+ * @return Rescaled components with RGB * x.
+ */
+vpRGBa operator*(const double &x, const  vpRGBa &rgb)
+{
+  vpRGBa rgba;
+  rgba.R = static_cast<unsigned char>(rgb.R * x);
+  rgba.G = static_cast<unsigned char>(rgb.G * x);
+  rgba.B = static_cast<unsigned char>(rgb.B * x);
+  rgba.A = rgb.A;
+  return rgba;
+}
 
 /*!
-
   \relates vpRGBa
 
   Writes the RGBA values to the stream \e os, and
@@ -244,21 +305,26 @@ vpRGBa operator*(const double &x, const vpRGBa &rgb) { return rgb * x; }
   coordinates are separated by a comma.
 
   The following code prints the intensity of the pixel in the middle of the image:
-\code
-#include <visp3/core/vpImage.h>
+  \code
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<vpRGBa> I(480,640);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "RGB: " << I[240][320] << std::endl;
+  int main()
+  {
+    vpImage<vpRGBa> I(480,640);
 
-  return 0;
-}
+    std::cout << "RGB: " << I[240][320] << std::endl;
+
+    return 0;
+  }
   \endcode
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)
 {
-  os << "(" << (int)rgba.R << "," << (int)rgba.G << "," << (int)rgba.B << "," << (int)rgba.A << ")";
+  os << "(" << static_cast<int>(rgba.R) << "," << static_cast<int>(rgba.G) << "," << static_cast<int>(rgba.B) << "," << static_cast<int>(rgba.A) << ")";
   return os;
 }
+END_VISP_NAMESPACE

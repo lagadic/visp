@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in articular
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp
@@ -78,6 +78,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpRobotViper850 robot;
 
@@ -337,7 +341,6 @@ int main()
         unsigned int k = 0;
 
         for (unsigned int j = 0; j < 6; j++) // j is the joint
-          // if (pb[j]==1)	{
           if (std::fabs(pb[j] - 1) <= std::numeric_limits<double>::epsilon()) {
             for (unsigned int i = 0; i < dimKernelL; i++)
               E[k][i] = kernelJ1[j][i];
@@ -352,7 +355,8 @@ int main()
 
         e2 = (kernelJ1 * a0);
         // cout << "e2 " << e2.t() ;
-      } else {
+      }
+      else {
         e2 = 0;
       }
       //  std::cout << "e2: " << e2.t() << std::endl;
@@ -396,7 +400,8 @@ int main()
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

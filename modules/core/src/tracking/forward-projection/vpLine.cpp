@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,23 +30,20 @@
  * Description:
  * Line feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#include <visp3/core/vpLine.h>
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-
-#include <visp3/core/vpFeatureDisplay.h>
+*****************************************************************************/
 
 /*!
   \file vpLine.cpp
   \brief   class that defines what is a line
 */
 
+#include <visp3/core/vpLine.h>
+
+#include <visp3/core/vpMath.h>
+
+#include <visp3/core/vpFeatureDisplay.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialize the memory space requested for the 2D line parameters (\e
@@ -56,9 +52,11 @@
 */
 void vpLine::init()
 {
-  oP.resize(8);
-  cP.resize(8);
-  p.resize(2);
+  const unsigned int val_2 = 2;
+  const unsigned int val_8 = 8;
+  oP.resize(val_8);
+  cP.resize(val_8);
+  p.resize(val_2);
 }
 
 /*!
@@ -85,15 +83,23 @@ vpLine::vpLine() { init(); }
 void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const double &oC1, const double &oD1,
                                  const double &oA2, const double &oB2, const double &oC2, const double &oD2)
 {
-  oP[0] = oA1;
-  oP[1] = oB1;
-  oP[2] = oC1;
-  oP[3] = oD1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
+  oP[index_0] = oA1;
+  oP[index_1] = oB1;
+  oP[index_2] = oC1;
+  oP[index_3] = oD1;
 
-  oP[4] = oA2;
-  oP[5] = oB2;
-  oP[6] = oC2;
-  oP[7] = oD2;
+  oP[index_4] = oA2;
+  oP[index_5] = oB2;
+  oP[index_6] = oC2;
+  oP[index_7] = oD2;
 }
 
 /*!
@@ -116,9 +122,9 @@ void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const dou
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP_)
 {
-  if (oP_.getRows() != 8)
+  if (oP_.getRows() != 8) {
     throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
-
+  }
   this->oP = oP_;
 }
 
@@ -145,13 +151,14 @@ void vpLine::setWorldCoordinates(const vpColVector &oP_)
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
 {
-  if (oP1.getRows() != 4)
+  if (oP1.getRows() != 4) {
     throw vpException(vpException::dimensionError, "Size of oP1 is not equal to 4 as it should be");
-
-  if (oP2.getRows() != 4)
+  }
+  if (oP2.getRows() != 4) {
     throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
-
-  for (unsigned int i = 0; i < 4; i++) {
+  }
+  const unsigned int val_4 = 4;
+  for (unsigned int i = 0; i < val_4; ++i) {
     oP[i] = oP1[i];
     oP[i + 4] = oP2[i];
   }
@@ -215,26 +222,34 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
   p_.resize(2, false);
   // projection
 
-  if (cP.getRows() != 8)
+  if (cP.getRows() != 8) {
     throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
-
+  }
   double A1, A2, B1, B2, C1, C2, D1, D2;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
 
-  A1 = cP_[0];
-  B1 = cP_[1];
-  C1 = cP_[2];
-  D1 = cP_[3];
+  A1 = cP_[index_0];
+  B1 = cP_[index_1];
+  C1 = cP_[index_2];
+  D1 = cP_[index_3];
 
-  A2 = cP_[4];
-  B2 = cP_[5];
-  C2 = cP_[6];
-  D2 = cP_[7];
+  A2 = cP_[index_4];
+  B2 = cP_[index_5];
+  C2 = cP_[index_6];
+  D2 = cP_[index_7];
 
   double a, b, c, s;
-  a = A2 * D1 - A1 * D2;
-  b = B2 * D1 - B1 * D2;
-  c = C2 * D1 - C1 * D2;
-  s = a * a + b * b;
+  a = (A2 * D1) - (A1 * D2);
+  b = (B2 * D1) - (B1 * D2);
+  c = (C2 * D1) - (C1 * D2);
+  s = (a * a) + (b * b);
   if (s <= 1e-8) // seuil pas terrible
   {
     printf("Degenerate case: the image of the straight line is a point!\n");
@@ -333,48 +348,49 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
   double A1, A2, B1, B2, C1, C2, D1, D2;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_7 = 7;
 
   // in case of verification
   // double x,y,z,ap1,ap2,bp1,bp2,cp1,cp2,dp1,dp2;
 
-  a1 = oP[0];
-  b1 = oP[1];
-  c1 = oP[2];
-  d1 = oP[3];
+  a1 = oP[index_0];
+  b1 = oP[index_1];
+  c1 = oP[index_2];
+  d1 = oP[index_3];
 
-  a2 = oP[4];
-  b2 = oP[5];
-  c2 = oP[6];
-  d2 = oP[7];
+  a2 = oP[index_4];
+  b2 = oP[index_5];
+  c2 = oP[index_6];
+  d2 = oP[index_7];
 
-  A1 = cMo[0][0] * a1 + cMo[0][1] * b1 + cMo[0][2] * c1;
-  B1 = cMo[1][0] * a1 + cMo[1][1] * b1 + cMo[1][2] * c1;
-  C1 = cMo[2][0] * a1 + cMo[2][1] * b1 + cMo[2][2] * c1;
-  D1 = d1 - (cMo[0][3] * A1 + cMo[1][3] * B1 + cMo[2][3] * C1);
+  A1 = (cMo[index_0][0] * a1) + (cMo[index_0][1] * b1) + (cMo[index_0][index_2] * c1);
+  B1 = (cMo[index_1][0] * a1) + (cMo[index_1][1] * b1) + (cMo[index_1][index_2] * c1);
+  C1 = (cMo[index_2][0] * a1) + (cMo[index_2][1] * b1) + (cMo[index_2][index_2] * c1);
+  D1 = d1 - ((cMo[index_0][index_3] * A1) + (cMo[index_1][index_3] * B1) + (cMo[index_2][index_3] * C1));
 
-  A2 = cMo[0][0] * a2 + cMo[0][1] * b2 + cMo[0][2] * c2;
-  B2 = cMo[1][0] * a2 + cMo[1][1] * b2 + cMo[1][2] * c2;
-  C2 = cMo[2][0] * a2 + cMo[2][1] * b2 + cMo[2][2] * c2;
-  D2 = d2 - (cMo[0][3] * A2 + cMo[1][3] * B2 + cMo[2][3] * C2);
-
-  // in case of verification
-  // ap1 = A1; bp1 = B1; cp1 = C1; dp1 = D1;
-  // ap2 = A2; bp2 = B2; cp2 = C2; dp2 = D2;
-
-  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
+  A2 = (cMo[index_0][0] * a2) + (cMo[index_0][1] * b2) + (cMo[index_0][index_2] * c2);
+  B2 = (cMo[index_1][0] * a2) + (cMo[index_1][1] * b2) + (cMo[index_1][index_2] * c2);
+  C2 = (cMo[index_2][0] * a2) + (cMo[index_2][1] * b2) + (cMo[index_2][index_2] * c2);
+  D2 = d2 - ((cMo[index_0][index_3] * A2) + (cMo[index_1][index_3] * B2) + (cMo[index_2][index_3] * C2));
 
   // Adding constraints on the straight line to have a unique representation
 
   // direction of the straight line = N1 x N2
-  a2 = B1 * C2 - C1 * B2;
-  b2 = C1 * A2 - A1 * C2;
-  c2 = A1 * B2 - B1 * A2;
+  a2 = (B1 * C2) - (C1 * B2);
+  b2 = (C1 * A2) - (A1 * C2);
+  c2 = (A1 * B2) - (B1 * A2);
 
   // Constraint D1 = 0 (the origin belongs to P1)
-  a1 = A2 * D1 - A1 * D2;
-  b1 = B2 * D1 - B1 * D2;
-  c1 = C2 * D1 - C1 * D2;
+  a1 = (A2 * D1) - (A1 * D2);
+  b1 = (B2 * D1) - (B1 * D2);
+  c1 = (C2 * D1) - (C1 * D2);
 
   if (fabs(D2) < fabs(D1)) // to be sure that D2 <> 0
   {
@@ -385,26 +401,30 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   }
 
   // Constraint A1^2 + B1^2 + C1^2 = 1
-  d1 = 1.0 / sqrt(a1 * a1 + b1 * b1 + c1 * c1);
-  cP_[0] = A1 = a1 * d1;
-  cP_[1] = B1 = b1 * d1;
-  cP_[2] = C1 = c1 * d1;
-  cP_[3] = 0;
+  d1 = 1.0 / sqrt((a1 * a1) + (b1 * b1) + (c1 * c1));
+  A1 = a1 * d1;
+  B1 = b1 * d1;
+  C1 = c1 * d1;
+  cP_[index_0] = A1;
+  cP_[index_1] = B1;
+  cP_[index_2] = C1;
+
+  cP_[index_3] = 0;
 
   // Constraint A1 A2 + B1 B2 + C1 C2 = 0 (P2 orthogonal to P1)
   // N2_new = (N1 x N2) x N1_new
-  a1 = b2 * C1 - c2 * B1;
-  b1 = c2 * A1 - a2 * C1;
-  c1 = a2 * B1 - b2 * A1;
+  a1 = (b2 * C1) - (c2 * B1);
+  b1 = (c2 * A1) - (a2 * C1);
+  c1 = (a2 * B1) - (b2 * A1);
 
   // Constraint A2^2 + B2^2 + C2^2 = 1
-  d1 = 1.0 / sqrt(a1 * a1 + b1 * b1 + c1 * c1);
+  d1 = 1.0 / sqrt((a1 * a1) + (b1 * b1) + (c1 * c1));
   a1 *= d1;
   b1 *= d1;
   c1 *= d1;
 
   // D2_new = D2 / (N2^T . N2_new)
-  D2 /= (A2 * a1 + B2 * b1 + C2 * c1);
+  D2 /= ((A2 * a1) + (B2 * b1) + (C2 * c1));
   A2 = a1;
   B2 = b1;
   C2 = c1;
@@ -416,34 +436,11 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
     C2 = -C2;
     D2 = -D2;
   }
-  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
   cP_[4] = A2;
   cP_[5] = B2;
   cP_[6] = C2;
   cP_[7] = D2;
-
-  // in case of verification
-  /*
-  x = -A2*D2;
-  y = -B2*D2;
-  z = -C2*D2;
-  d1 = ap1*x+bp1*y+cp1*z+dp1;
-  d2 = ap2*x+bp2*y+cp2*z+dp2;
-  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
-    {
-      printf("PB in VPline: P1 : 0 = %lf, P2: 0 = %lf\n",d1,d2);
-      return EXIT_FAILURE;
-    }
-  d1 = A1*x+B1*y+C1*z+D1;
-  d2 = A2*x+B2*y+C2*z+D2;
-  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
-    {
-      printf("PB in VPline: Pn1 : 0 = %lf, Pn2: 0 = %lf\n",d1,d2);
-      return EXIT_FAILURE;
-    }
-  */
 }
 
 /*!
@@ -514,13 +511,14 @@ void vpLine::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, co
 void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                      const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
   try {
-    projection(_cP, _p);
-    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
-  } catch (...) {
-    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
+    projection(v_cP, v_p);
+    vpFeatureDisplay::displayLine(v_p[0], v_p[1], cam, I, color, thickness);
+  }
+  catch (...) {
+ // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }
 
@@ -549,13 +547,14 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix 
 void vpLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                      const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
   try {
-    projection(_cP, _p);
-    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
-  } catch (...) {
-    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
+    projection(v_cP, v_p);
+    vpFeatureDisplay::displayLine(v_p[0], v_p[1], cam, I, color, thickness);
+  }
+  catch (...) {
+ // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }
 
@@ -574,3 +573,4 @@ vpLine *vpLine::duplicate() const
   vpLine *feature = new vpLine(*this);
   return feature;
 }
+END_VISP_NAMESPACE

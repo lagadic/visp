@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test for Afma 4 dof robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file moveAfma4.cpp
 
@@ -66,6 +63,10 @@
 // List of allowed command line options
 #define GETOPTARGS "mh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -78,12 +79,12 @@ void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Example of a positioning control followed by a velocity control \n\
-of the Afma4 robot.\n						   \
+of the Afma4 robot.\n\
 \n\
 SYNOPSIS\n\
-  %s [-m] [-h]\n						      \
+  %s [-m] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -123,7 +124,7 @@ bool getOptions(int argc, const char **argv, bool &control)
       control = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -136,7 +137,7 @@ bool getOptions(int argc, const char **argv, bool &control)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -187,39 +188,39 @@ int main(int argc, const char **argv)
     //
     std::cout << "Velocity control: in articular..." << std::endl;
 
-    q = 0 ;
-    q[0] = vpMath::rad(2) ; // rotation around vertical axis
+    q = 0;
+    q[0] = vpMath::rad(2); // rotation around vertical axis
     std::cout << "  rotation around vertical axis: " << q[0] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[1] = 0.2 ; // Vertical translation
+    q = 0;
+    q[1] = 0.2; // Vertical translation
     std::cout << "  vertical translation: " << q[1] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[1] = -0.2 ; // Vertical translation
+    q = 0;
+    q[1] = -0.2; // Vertical translation
     std::cout << "  vertical translation: " << q[1] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
-    q = 0 ;
-    q[2] = vpMath::rad(3) ; // pan
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
+    q = 0;
+    q[2] = vpMath::rad(3); // pan
     std::cout << "  pan rotation: " << q[2] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 
-    q = 0 ;
-    q[3] = vpMath::rad(2) ; // tilt
+    q = 0;
+    q[3] = vpMath::rad(2); // tilt
     std::cout << "  tilt rotation: " << q[3] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q);
+    sleep(5);
 #endif
     //
     // Velocity control in camera frame
@@ -244,7 +245,8 @@ int main(int argc, const char **argv)
 
     std::cout << "The end" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

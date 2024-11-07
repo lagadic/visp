@@ -189,7 +189,7 @@
 #
 # ------------------------------------------------------------------------------
 
-cmake_minimum_required( VERSION 2.6.3 )
+cmake_minimum_required(VERSION 3.5)
 
 if( DEFINED CMAKE_CROSSCOMPILING )
  # subsequent toolchain loading is not really needed
@@ -1156,9 +1156,6 @@ if( NOT CMAKE_C_COMPILER )
 endif()
 
 set( _CMAKE_TOOLCHAIN_PREFIX "${ANDROID_TOOLCHAIN_MACHINE_NAME}-" )
-if( CMAKE_VERSION VERSION_LESS 2.8.5 )
- set( CMAKE_ASM_COMPILER_ARG1 "-c" )
-endif()
 if( APPLE )
  find_program( CMAKE_INSTALL_NAME_TOOL NAMES install_name_tool )
  if( NOT CMAKE_INSTALL_NAME_TOOL )

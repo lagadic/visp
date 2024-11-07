@@ -1,12 +1,14 @@
 project(tutorial-brightness-adjustment)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui visp_imgproc)
 
 # set the list of source files
 set(tutorial_cpp
-  tutorial-brightness-adjustment.cpp)
+  tutorial-brightness-adjustment.cpp
+  tutorial-compare-auto-gamma.cpp
+)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/Sample_low_brightness.png")
 

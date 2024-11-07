@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example with Kinova Jaco robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoKinovaJacoCart.cpp
@@ -51,6 +48,10 @@
 int main(int argc, char *argv[])
 {
 #ifdef VISP_HAVE_JACOSDK
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   std::string opt_plugin_path = "./";
   vpRobotKinova::CommandLayer opt_command_layer = vpRobotKinova::CMD_LAYER_UNSET;
   bool opt_verbose = false;
@@ -64,44 +65,49 @@ int main(int argc, char *argv[])
     if ((std::string(argv[i]) == "--command_layer" || std::string(argv[i]) == "-l") && i + 1 < argc) {
       if (std::string(argv[i + 1]) == "usb") {
         opt_command_layer = vpRobotKinova::CMD_LAYER_USB;
-      } else if (std::string(argv[i + 1]) == "ethernet") {
+      }
+      else if (std::string(argv[i + 1]) == "ethernet") {
         opt_command_layer = vpRobotKinova::CMD_LAYER_ETHERNET;
-      } else {
+      }
+      else {
         opt_command_layer = vpRobotKinova::CMD_LAYER_UNSET;
       }
-    } else if (std::string(argv[i]) == "--dof") {
+    }
+    else if (std::string(argv[i]) == "--dof") {
       opt_dof = static_cast<unsigned int>(std::atoi(argv[i + 1]));
-    } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+    }
+    else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSYS" << std::endl
-                << "  " << argv[0] << " [--plugin <path>] [--command_layer <name>] [--dof <4,6,7>] "
-                << "[--verbose] [--help] [-v] [-h]\n"
-                << std::endl;
+        << "  " << argv[0] << " [--plugin <path>] [--command_layer <name>] [--dof <4,6,7>] "
+        << "[--verbose] [--help] [-v] [-h]\n"
+        << std::endl;
       std::cout << "DESCRIPTION" << std::endl
-                << "  --plugin <path>" << std::endl
-                << "      Path to Jaco SDK .so or .dll plugin location. Default: \"./\"." << std::endl
-                << std::endl
-                << "  --command_layer <name>, -l <name>" << std::endl
-                << "      Command layer name, either \"usb\" or \"ethernet\"." << std::endl
-                << std::endl
-                << "  --dof" << std::endl
-                << "      Degrees of freedom. Possible values are 4, 6 or 7. Default value: 6." << std::endl
-                << std::endl
-                << "  --verbose, -v" << std::endl
-                << "      Enable verbose mode to print addition information." << std::endl
-                << std::endl
-                << "  --help, -h" << std::endl
-                << "      Print this helper message." << std::endl
-                << std::endl;
+        << "  --plugin <path>" << std::endl
+        << "      Path to Jaco SDK .so or .dll plugin location. Default: \"./\"." << std::endl
+        << std::endl
+        << "  --command_layer <name>, -l <name>" << std::endl
+        << "      Command layer name, either \"usb\" or \"ethernet\"." << std::endl
+        << std::endl
+        << "  --dof" << std::endl
+        << "      Degrees of freedom. Possible values are 4, 6 or 7. Default value: 6." << std::endl
+        << std::endl
+        << "  --verbose, -v" << std::endl
+        << "      Enable verbose mode to print addition information." << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "      Print this helper message." << std::endl
+        << std::endl;
       std::cout << "EXAMPLE" << std::endl
 #ifdef __linux__
-                << "  " << argv[0] << " --plugin /opt/JACO-SDK/API"
+        << "  " << argv[0] << " --plugin /opt/JACO-SDK/API"
 #elif _WIN32
-                << "  " << argv[0] << " --plugin \"C:\\Program Files(x86)\\JACO - SDK\\API\\x64\""
+        << "  " << argv[0] << " --plugin \"C:\\Program Files(x86)\\JACO - SDK\\API\\x64\""
 #endif
-                << " --command_layer usb" << std::endl
-                << std::endl;
+        << " --command_layer usb" << std::endl
+        << std::endl;
 
       return EXIT_SUCCESS;
     }
@@ -159,7 +165,8 @@ int main(int argc, char *argv[])
 
     // Move back to home position
     robot.setPosition(vpRobot::END_EFFECTOR_FRAME, p);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
 

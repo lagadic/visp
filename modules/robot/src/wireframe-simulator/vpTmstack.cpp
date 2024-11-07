@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include "vpTmstack.h"
 #include "vpArit.h"
@@ -50,14 +50,15 @@
 
 #define STACKSIZE 32
 
-static Matrix stack[STACKSIZE] /* = IDENTITY_MATRIX*/; /* pile		*/
-static Matrix *sp = stack;                             /* sommet 	*/
+BEGIN_VISP_NAMESPACE
+static Matrix stack[STACKSIZE] /* = IDENTITY_MATRIX*/; /* pile    */
+static Matrix *sp = stack;                             /* sommet   */
 
 /*
  * La procedure "get_tmstack" retourne la matrice au sommet
  * de la pile des matrices de transformation.
  * Sortie :
- *		Pointeur de la matrice au sommet de la pile.
+ *    Pointeur de la matrice au sommet de la pile.
  */
 Matrix *get_tmstack(void) { return (sp); }
 
@@ -65,7 +66,7 @@ Matrix *get_tmstack(void) { return (sp); }
  * La procedure "load_tmstack" charge une matrice au sommet
  * de la pile des matrices de transformation.
  * Entree :
- * m		Matrice a charger.
+ * m    Matrice a charger.
  */
 void load_tmstack(Matrix m)
 {
@@ -83,7 +84,8 @@ void pop_tmstack(void)
     static char proc_name[] = "pop_tmstack";
     fprintf(stderr, "%s: stack underflow\n", proc_name);
     return;
-  } else
+  }
+  else
     sp--;
 }
 
@@ -112,9 +114,9 @@ void swap_tmstack(void)
   Matrix *mp, tmp;
 
   mp = (sp == stack) ? sp + 1 : sp - 1;
-  // 	bcopy ((char *) *sp, (char *) tmp, sizeof (Matrix));
-  // 	bcopy ((char *) *mp, (char *) *sp, sizeof (Matrix));
-  // 	bcopy ((char *) tmp, (char *) *mp, sizeof (Matrix));
+  //   bcopy ((char *) *sp, (char *) tmp, sizeof (Matrix));
+  //   bcopy ((char *) *mp, (char *) *sp, sizeof (Matrix));
+  //   bcopy ((char *) tmp, (char *) *mp, sizeof (Matrix));
   memmove((char *)tmp, (char *)*sp, sizeof(Matrix));
   memmove((char *)*sp, (char *)*mp, sizeof(Matrix));
   memmove((char *)*mp, (char *)tmp, sizeof(Matrix));
@@ -124,7 +126,7 @@ void swap_tmstack(void)
  * La procedure "postmult_tmstack" postmultiplie la matrice au sommet
  * de la pile des matrices de transformation.
  * Entree :
- * m		Matrice multiplicative.
+ * m    Matrice multiplicative.
  */
 void postmult_tmstack(Matrix m) { postmult_matrix(*sp, m); }
 
@@ -132,7 +134,7 @@ void postmult_tmstack(Matrix m) { postmult_matrix(*sp, m); }
  * La procedure "postrotate_tmstack" postmultiplie la matrice au sommet
  * de la pile des matrices de transformation par une rotation.
  * Entree :
- * vp		Vecteur de rotation.
+ * vp    Vecteur de rotation.
  */
 void postrotate_tmstack(Vector *vp)
 {
@@ -146,7 +148,7 @@ void postrotate_tmstack(Vector *vp)
  * La procedure "postscale_tmstack" postmultiplie la matrice au sommet
  * de la pile des matrices de transformation par une homothetie.
  * Entree :
- * vp		Vecteur d'homothetie.
+ * vp    Vecteur d'homothetie.
  */
 void postscale_tmstack(Vector *vp) { postscale_matrix(*sp, vp); }
 
@@ -154,7 +156,7 @@ void postscale_tmstack(Vector *vp) { postscale_matrix(*sp, vp); }
  * La procedure "posttranslate_tmstack" postmultiplie la matrice au sommet
  * de la pile des matrices de transformation par une translation.
  * Entree :
- * vp		Vecteur de translation.
+ * vp    Vecteur de translation.
  */
 void posttranslate_tmstack(Vector *vp) { posttrans_matrix(*sp, vp); }
 
@@ -162,7 +164,7 @@ void posttranslate_tmstack(Vector *vp) { posttrans_matrix(*sp, vp); }
  * La procedure "premult_tmstack" premultiplie la matrice au sommet
  * de la pile des matrices de transformation.
  * Entree :
- * m		Matrice multiplicative.
+ * m    Matrice multiplicative.
  */
 void premult_tmstack(Matrix m) { premult_matrix(*sp, m); }
 
@@ -170,7 +172,7 @@ void premult_tmstack(Matrix m) { premult_matrix(*sp, m); }
  * La procedure "prerotate_tmstack" premultiplie la matrice au sommet
  * de la pile des matrices de transformation par une rotation.
  * Entree :
- * vp		Vecteur de rotation.
+ * vp    Vecteur de rotation.
  */
 void prerotate_tmstack(Vector *vp)
 {
@@ -184,7 +186,7 @@ void prerotate_tmstack(Vector *vp)
  * La procedure "prescale_tmstack" premultiplie la matrice au sommet
  * de la pile des matrices de transformation par une homothetie.
  * Entree :
- * vp		Vecteur d'homothetie.
+ * vp    Vecteur d'homothetie.
  */
 void prescale_tmstack(Vector *vp) { prescale_matrix(*sp, vp); }
 
@@ -192,8 +194,8 @@ void prescale_tmstack(Vector *vp) { prescale_matrix(*sp, vp); }
  * La procedure "pretranslate_tmstack" premultiplie la matrice au sommet
  * de la pile des matrices de transformation par une translation.
  * Entree :
- * vp		Vecteur de translation.
+ * vp    Vecteur de translation.
  */
 void pretranslate_tmstack(Vector *vp) { pretrans_matrix(*sp, vp); }
-
+END_VISP_NAMESPACE
 #endif

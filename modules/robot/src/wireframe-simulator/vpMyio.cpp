@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -38,7 +38,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include "vpMyio.h"
 #include "vpLex.h"
@@ -50,12 +50,13 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern char *mytext; /* chaine du symbole courant	*/
+extern char *mytext; /* chaine du symbole courant  */
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fscanf_float" lit en ascii un nombre flottant.
  * Entree :
- * fp		Nombre flottant a lire.
+ * fp    Nombre flottant a lire.
  */
 void fscanf_float(float *fp)
 {
@@ -69,7 +70,7 @@ void fscanf_float(float *fp)
 /*
  * La procedure "fscanf_Index" lit en ascii un indice.
  * Entree :
- * ip		Indice a lire.
+ * ip    Indice a lire.
  */
 void fscanf_Index(Index *ip)
 {
@@ -81,7 +82,7 @@ void fscanf_Index(Index *ip)
 /*
  * La procedure "fscanf_int" lit en ascii un nombre entier.
  * Entree :
- * ip		Nombre entier a lire.
+ * ip    Nombre entier a lire.
  */
 void fscanf_int(int *ip)
 {
@@ -93,7 +94,7 @@ void fscanf_int(int *ip)
 /*
  * La procedure "fscanf_string" lit en ascii une chaine de caracteres.
  * Entree :
- * str		Chaine a lire.
+ * str    Chaine a lire.
  */
 void fscanf_string(char **str)
 {
@@ -115,7 +116,7 @@ void fscanf_string(char **str)
 /*
  * La procedure "fscanf_Type" lit en ascii un octet.
  * Entree :
- * ip		Type a lire.
+ * ip    Type a lire.
  */
 void fscanf_Type(Type *ip)
 {
@@ -123,5 +124,5 @@ void fscanf_Type(Type *ip)
     lexerr("start", "integer expected", NULL);
   *ip = (Type)myint;
 }
-
+END_VISP_NAMESPACE
 #endif

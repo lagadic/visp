@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,13 @@
  *
  * Description:
  * Performs various tests on the point class.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
-  \file testPoint.cpp
-  \brief Performs various tests on the the point class.
-*/
+ * \file testPoint.cpp
+ * \example testPoint.cpp
+ * \brief Performs various tests on the the point class.
+ */
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -54,6 +50,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpHomogeneousMatrix cMo;
     cMo[0][3] = 0.1;
@@ -133,9 +132,11 @@ int main()
       vpTRACE("\t selectAll");
       e = p.error(pd, vpFeaturePoint::selectAll());
       std::cout << e << std::endl;
-    } catch (vpFeatureException &me) {
+    }
+    catch (vpFeatureException &me) {
       std::cout << me << std::endl;
-    } catch (const vpException &me) {
+    }
+    catch (const vpException &me) {
       std::cout << me << std::endl;
     }
     std::cout << "------------------------------------------------------" << std::endl;
@@ -161,7 +162,8 @@ int main()
     dim = p.getDimension(vpFeaturePoint::selectAll());
     std::cout << "Dimension = " << dim << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

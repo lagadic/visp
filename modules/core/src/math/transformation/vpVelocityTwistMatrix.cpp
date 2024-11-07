@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,16 +30,7 @@
  * Description:
  * Velocity twist transformation matrix.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#include <assert.h>
-#include <sstream>
-
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
+*****************************************************************************/
 
 /*!
   \file vpVelocityTwistMatrix.cpp
@@ -50,6 +40,13 @@
   transform a velocity skew from one frame to an other.
 */
 
+#include <assert.h>
+#include <sstream>
+
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Copy operator that allow to set a velocity twist matrix from an other one.
 
@@ -57,8 +54,8 @@
 */
 vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
-  for (int i = 0; i < 6; i++) {
-    for (int j = 0; j < 6; j++) {
+  for (int i = 0; i < 6; ++i) {
+    for (int j = 0; j < 6; ++j) {
       rowPtrs[i][j] = V.rowPtrs[i][j];
     }
   }
@@ -71,12 +68,17 @@ vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMat
 */
 void vpVelocityTwistMatrix::eye()
 {
-  for (unsigned int i = 0; i < 6; i++)
-    for (unsigned int j = 0; j < 6; j++)
-      if (i == j)
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
+      if (i == j) {
         (*this)[i][j] = 1.0;
-      else
+      }
+      else {
         (*this)[i][j] = 0.0;
+      }
+    }
+  }
 }
 
 /*!
@@ -112,10 +114,12 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : v
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
 {
-  if (full)
+  if (full) {
     buildFrom(M);
-  else
+  }
+  else {
     buildFrom(M.getRotationMatrix());
+  }
 }
 
 /*!
@@ -219,12 +223,13 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(double tx, double ty, double tz, do
 vpVelocityTwistMatrix vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
 {
   vpVelocityTwistMatrix p;
-
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < 6; j++) {
+  const unsigned int nparam = 6;
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
       double s = 0;
-      for (int k = 0; k < 6; k++)
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * V.rowPtrs[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -240,31 +245,35 @@ corresponding camera velocity skew from the joint velocities knowing the robot
 jacobian.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpSimulatorCamera.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/core/vpVelocityTwistMatrix.h>
+  #include <visp3/robot/vpSimulatorCamera.h>
 
-int main()
-{
-  vpSimulatorCamera robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector q_vel(6); // Joint velocity on the 6 joints
-  // ... q_vel need here to be initialized
+  int main()
+  {
+    vpSimulatorCamera robot;
 
-  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
+    vpColVector q_vel(6); // Joint velocity on the 6 joints
+    // ... q_vel need here to be initialized
 
-  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
-  robot.get_cVe(cVe);
+    vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
 
-  vpMatrix eJe;       // Robot jacobian
-  robot.get_eJe(eJe);
+    vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+    robot.get_cVe(cVe);
 
-  // Compute the velocity in the camera frame
-  c_v = cVe * eJe * q_vel;
+    vpMatrix eJe;       // Robot jacobian
+    robot.get_eJe(eJe);
 
-  return 0;
-}
+    // Compute the velocity in the camera frame
+    c_v = cVe * eJe * q_vel;
+
+    return 0;
+  }
   \endcode
 
   \exception vpException::dimensionError If M is not a 6 rows dimension
@@ -272,17 +281,20 @@ matrix.
 */
 vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 {
-  if (6 != M.getRows()) {
+  const unsigned int nparam = 6;
+  if (nparam != M.getRows()) {
     throw(vpException(vpException::dimensionError, "Cannot multiply a (6x6) velocity twist matrix by a (%dx%d) matrix",
                       M.getRows(), M.getCols()));
   }
 
-  vpMatrix p(6, M.getCols());
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+  vpMatrix p(nparam, M.getCols());
+  unsigned int m_col = M.getCols();
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < m_col; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 6; k++)
+      for (unsigned int k = 0; k < nparam; ++k) {
         s += rowPtrs[i][k] * M[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -302,9 +314,10 @@ vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 */
 vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 {
-  vpColVector c(6);
+  const unsigned int nparam = 6;
+  vpColVector c(nparam);
 
-  if (6 != v.getRows()) {
+  if (nparam != v.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply a (6x6) velocity twist matrix by a "
                       "(%d) column vector",
@@ -313,11 +326,9 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 
   c = 0.0;
 
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < 6; j++) {
-      {
-        c[i] += rowPtrs[i][j] * v[j];
-      }
+  for (unsigned int i = 0; i < nparam; ++i) {
+    for (unsigned int j = 0; j < nparam; ++j) {
+      c[i] += rowPtrs[i][j] * v[j];
     }
   }
 
@@ -335,16 +346,17 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = 0;
     }
   }
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -361,19 +373,20 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
 {
   vpMatrix skewaR = t.skew(t) * R;
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = skewaR[i][j];
     }
   }
 
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -391,10 +404,10 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
 {
   buildFrom(t, vpRotationMatrix(thetau));
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -409,10 +422,10 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
 {
   buildFrom(vpRotationMatrix(thetau));
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -433,14 +446,16 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &the
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
 {
-  if (full)
+  if (full) {
     buildFrom(M.getTranslationVector(), M.getRotationMatrix());
-  else
+  }
+  else {
     buildFrom(M.getRotationMatrix());
+  }
 
-  return (*this);
+  return *this;
 }
 
 //! Invert the velocity twist matrix.
@@ -465,9 +480,12 @@ void vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const { V = invers
 //! Extract the rotation matrix from the velocity twist matrix.
 void vpVelocityTwistMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       R[i][j] = (*this)[i][j];
+    }
+  }
 }
 
 //! Extract the translation vector from the velocity twist matrix.
@@ -476,14 +494,20 @@ void vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
   vpRotationMatrix R;
   extract(R);
   vpMatrix skTR(3, 3);
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
-      skTR[i][j] = (*this)[i][j + 3];
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
+      skTR[i][j] = (*this)[i][j + val_3];
+    }
+  }
 
   vpMatrix skT = skTR * R.t();
-  tv[0] = skT[2][1];
-  tv[1] = skT[0][2];
-  tv[2] = skT[1][0];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  tv[index_0] = skT[index_2][index_1];
+  tv[index_1] = skT[index_0][index_2];
+  tv[index_2] = skT[index_1][index_0];
 }
 
 /*!
@@ -495,7 +519,7 @@ void vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
   \param s Stream used for the printing.
 
   \param length The suggested width of each matrix element.
-  The actual width grows in order to accomodate the whole integral part,
+  The actual width grows in order to accommodate the whole integral part,
   and shrinks if the whole extent is not needed for all the numbers.
   \param intro The introduction which is printed before the matrix.
   Can be set to zero (or omitted), in which case
@@ -517,7 +541,7 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
+  // --comment: could be used ossFixed << std::fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -533,14 +557,15 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
         oss.str(ossFixed.str());
       }
 
-      values[i * n + j] = oss.str();
-      size_type thislen = values[i * n + j].size();
-      size_type p = values[i * n + j].find('.');
+      values[(i * n) + j] = oss.str();
+      size_type thislen = values[(i * n) + j].size();
+      size_type p = values[(i * n) + j].find('.');
 
       if (p == std::string::npos) {
         maxBefore = vpMath::maximum(maxBefore, thislen);
         // maxAfter remains the same
-      } else {
+      }
+      else {
         maxBefore = vpMath::maximum(maxBefore, p);
         maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
       }
@@ -551,33 +576,36 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
+  if (maxAfter == 1) {
     maxAfter = 0;
+  }
 
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (intro) {
     s << intro;
+  }
   s << "[" << m << "," << n << "]=\n";
 
-  for (unsigned int i = 0; i < m; i++) {
+  for (unsigned int i = 0; i < m; ++i) {
     s << "  ";
-    for (unsigned int j = 0; j < n; j++) {
-      size_type p = values[i * n + j].find('.');
+    for (unsigned int j = 0; j < n; ++j) {
+      size_type p = values[(i * n) + j].find('.');
       s.setf(std::ios::right, std::ios::adjustfield);
-      s.width((std::streamsize)maxBefore);
-      s << values[i * n + j].substr(0, p).c_str();
+      s.width(static_cast<std::streamsize>(maxBefore));
+      s << values[(i * n) + j].substr(0, p).c_str();
 
       if (maxAfter > 0) {
         s.setf(std::ios::left, std::ios::adjustfield);
         if (p != std::string::npos) {
-          s.width((std::streamsize)maxAfter);
-          s << values[i * n + j].substr(p, maxAfter).c_str();
-        } else {
+          s.width(static_cast<std::streamsize>(maxAfter));
+          s << values[(i * n) + j].substr(p, maxAfter).c_str();
+        }
+        else {
           assert(maxAfter > 1);
-          s.width((std::streamsize)maxAfter);
+          s.width(static_cast<std::streamsize>(maxAfter));
           s << ".0";
         }
       }
@@ -589,7 +617,7 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
 
   s.flags(original_flags); // restore s to standard state
 
-  return (int)(maxBefore + maxAfter);
+  return static_cast<int>(maxBefore + maxAfter);
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -603,3 +631,4 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
 void vpVelocityTwistMatrix::setIdentity() { eye(); }
 
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+END_VISP_NAMESPACE

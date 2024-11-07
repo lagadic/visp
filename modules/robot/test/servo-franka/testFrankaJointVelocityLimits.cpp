@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- *   Test Franka robot behavior
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ * Test Franka robot behavior
+ */
 
 /*!
   \example testFrankaJointVelocityLimits.cpp
@@ -52,14 +47,18 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string robot_ip = "192.168.1.1";
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
-                << "\n";
+        << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -69,8 +68,8 @@ int main(int argc, char **argv)
     robot.connect(robot_ip);
 
     std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
-              << "Press Enter to continue..." << std::endl;
+      << "Please make sure to have the user stop button at hand!" << std::endl
+      << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
     /*
@@ -95,7 +94,7 @@ int main(int argc, char **argv)
     double delta_t = 10.0; // Time in second
 
     std::cout << "Modify the maximum allowed joint velocity to: " << vel << " rad/s or " << vpMath::deg(vel) << " deg/s"
-              << std::endl;
+      << std::endl;
     robot.setMaxRotationVelocity(vel);
     std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec " << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -125,16 +124,19 @@ int main(int argc, char **argv)
 
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  } catch (const franka::NetworkException &e) {
+  }
+  catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command"
-              << " line option set by default to 192.168.1.1. " << std::endl;
+      << " or if you specified the right IP using --ip command"
+      << " line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

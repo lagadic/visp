@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Defines a robot just to show which function you must implement.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -48,6 +45,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotTemplate.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic initialization.
  */
@@ -280,7 +278,8 @@ void vpRobotTemplate::getPosition(const vpRobot::vpControlFrameType frame, vpCol
 {
   if (frame == JOINT_STATE) {
     getJointPosition(q);
-  } else {
+  }
+  else {
     std::cout << "Not implemented ! " << std::endl;
   }
 }
@@ -310,3 +309,4 @@ void vpRobotTemplate::getDisplacement(const vpRobot::vpControlFrameType frame, v
   (void)q;
   std::cout << "Not implemented ! " << std::endl;
 }
+END_VISP_NAMESPACE

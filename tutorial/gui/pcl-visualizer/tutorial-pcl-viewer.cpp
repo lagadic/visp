@@ -4,7 +4,7 @@
 // System include
 #include <iostream>
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
 
 // ViSP include
 #include <visp3/core/vpIoTools.h>
@@ -13,6 +13,10 @@
 // Tutorial include
 #include "ClassUsingPclViewer.h"
 //! [Class include]
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 //! [Enum for mode choice]
 /**
@@ -91,7 +95,7 @@ std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std:
 }
 //! [Enum for mode choice]
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   //! [Default arguments values]
   const double def_addedNoise = 0.; // Standard deviation of the noise added to the points.
@@ -187,8 +191,8 @@ int main(int argc, char *argv [])
 
 int main()
 {
-  std::cout << "ViSP seems to have been compiled without PCL library." << std::endl;
-  std::cout << "Please install PCL library and recompile ViSP." << std::endl;
+  std::cout << "ViSP seems to have been compiled without PCL visualization module." << std::endl;
+  std::cout << "Please install PCL visualization module and recompile ViSP." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

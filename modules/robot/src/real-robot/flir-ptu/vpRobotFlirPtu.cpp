@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for Flir Ptu Cpi robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -55,6 +52,7 @@ extern "C" {
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotFlirPtu.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Emergency stops the robot if the program is interrupted by a SIGINT
@@ -73,7 +71,7 @@ void vpRobotFlirPtu::emergencyStop(int signo)
   case SIGSEGV:
     msg << "SIGSEGV (stop due to a segmentation fault) ";
     break;
-#ifndef WIN32
+#ifndef _WIN32
   case SIGBUS:
     msg << "SIGBUS (stop due to a bus error) ";
     break;
@@ -110,12 +108,12 @@ void vpRobotFlirPtu::init()
   Default constructor.
  */
 vpRobotFlirPtu::vpRobotFlirPtu()
-  : m_eMc(), m_cer(NULL), m_status(0), m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
-    m_connected(false), m_njoints(2), m_positioning_velocity(20.)
+  : m_eMc(), m_cer(nullptr), m_status(0), m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
+  m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
   signal(SIGINT, vpRobotFlirPtu::emergencyStop);
   signal(SIGSEGV, vpRobotFlirPtu::emergencyStop);
-#ifndef WIN32
+#ifndef _WIN32
   signal(SIGBUS, vpRobotFlirPtu::emergencyStop);
   signal(SIGKILL, vpRobotFlirPtu::emergencyStop);
   signal(SIGQUIT, vpRobotFlirPtu::emergencyStop);
@@ -442,7 +440,8 @@ void vpRobotFlirPtu::getPosition(const vpRobot::vpControlFrameType frame, vpColV
 {
   if (frame == JOINT_STATE) {
     getJointPosition(q);
-  } else {
+  }
+  else {
     std::cout << "Not implemented ! " << std::endl;
   }
 }
@@ -502,8 +501,8 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
                       vpMath::deg(q[1])));
   }
 
-  if (cpi_block_until(m_cer, NULL, NULL, OP_PAN_CURRENT_POS_GET, pos_tics[0]) ||
-      cpi_block_until(m_cer, NULL, NULL, OP_TILT_CURRENT_POS_GET, pos_tics[1])) {
+  if (cpi_block_until(m_cer, nullptr, nullptr, OP_PAN_CURRENT_POS_GET, pos_tics[0]) ||
+      cpi_block_until(m_cer, nullptr, nullptr, OP_TILT_CURRENT_POS_GET, pos_tics[1])) {
     disconnect();
     throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached (deg)",
                       vpMath::deg(q[0]), vpMath::deg(q[1])));
@@ -541,14 +540,14 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
     throw(vpException(vpException::fatalError, "Port name is required to connect to FLIR PTU."));
   }
 
-  if ((m_cer = (struct cerial *)malloc(sizeof(struct cerial))) == NULL) {
+  if ((m_cer = (struct cerial *)malloc(sizeof(struct cerial))) == nullptr) {
     disconnect();
     throw(vpException(vpException::fatalError, "Out of memory during FLIR PTU connection."));
   }
 
   // Open a port
   if (ceropen(m_cer, portname.c_str(), 0)) {
-#if WIN32
+#if _WIN32
     throw(vpException(vpException::fatalError, "Failed to open %s: %s.", portname.c_str(),
                       cerstrerror(m_cer, errstr, sizeof(errstr))));
 #else
@@ -562,7 +561,7 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
   cerioctl(m_cer, CERIAL_IOCTL_BAUDRATE_SET, &baudrate);
 
   // Flush any characters already buffered
-  cerioctl(m_cer, CERIAL_IOCTL_FLUSH_INPUT, NULL);
+  cerioctl(m_cer, CERIAL_IOCTL_FLUSH_INPUT, nullptr);
 
   // Set two second timeout */
   int timeout = 2000;
@@ -599,10 +598,10 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
  */
 void vpRobotFlirPtu::disconnect()
 {
-  if (m_cer != NULL) {
+  if (m_cer != nullptr) {
     cerclose(m_cer);
     free(m_cer);
-    m_cer = NULL;
+    m_cer = nullptr;
     m_connected = false;
   }
 }
@@ -802,9 +801,10 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
         throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
       }
 
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     break;
   }
@@ -835,7 +835,7 @@ void vpRobotFlirPtu::reset()
     return;
   }
 
-  if (cpi_ptcmd(m_cer, &m_status, OP_RESET, NULL)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_RESET, nullptr)) {
     throw(vpException(vpException::fatalError, "Unable to reset PTU."));
   }
 }
@@ -853,7 +853,7 @@ void vpRobotFlirPtu::stopMotion()
     return;
   }
 
-  if (cpi_ptcmd(m_cer, &m_status, OP_HALT, NULL)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_HALT, nullptr)) {
     throw(vpException(vpException::fatalError, "Unable to stop PTU."));
   }
 }
@@ -871,7 +871,7 @@ std::string vpRobotFlirPtu::getNetworkIP()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network IP."));
   }
 
@@ -891,7 +891,7 @@ std::string vpRobotFlirPtu::getNetworkGateway()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network Gateway."));
   }
 
@@ -911,7 +911,7 @@ std::string vpRobotFlirPtu::getNetworkHostName()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network hostname."));
   }
 
@@ -947,9 +947,9 @@ double vpRobotFlirPtu::tics2deg(int axis, int tics) { return (tics * m_res[axis]
    \sa pos2rad()
  */
 double vpRobotFlirPtu::tics2rad(int axis, int tics) { return vpMath::rad(tics2deg(axis, tics)); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFlirPtu.cpp.o) has
 // no symbols
-void dummy_vpRobotFlirPtu(){};
+void dummy_vpRobotFlirPtu() { };
 #endif

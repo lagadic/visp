@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Acquisition of odometry data with RealSense T265 sensor and librealsense2.
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testRealSense2_T265_odometry.cpp
@@ -46,11 +44,14 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpHomogeneousMatrix cMw, cMw_0;
   vpHomogeneousMatrix cextMw(0, 0, 2, 0, 0, 0); // External camera view for pose visualization
   unsigned int confidence;
@@ -58,7 +59,7 @@ int main()
   vpImagePoint origin;
   vpImagePoint frame_origin;
   std::list<std::pair<unsigned int, vpImagePoint> >
-      frame_origins; // Frame origin's history for trajectory visualization
+    frame_origins; // Frame origin's history for trajectory visualization
 
   try {
     vpRealSense2 rs;
@@ -88,7 +89,7 @@ int main()
     display_pose.init(I_pose, 10, 10, "Pose visualizer");
 #endif
 
-    confidence = rs.getOdometryData(&cMw_0, NULL, NULL, &ts); // Acquire first frame (pose only)
+    confidence = rs.getOdometryData(&cMw_0, nullptr, nullptr, &ts); // Acquire first frame (pose only)
 
     vpHomogeneousMatrix cextMc_0 = cextMw * cMw_0.inverse();
     vpMeterPixelConversion::convertPoint(cam, cextMc_0[0][3] / cextMc_0[2][3], cextMc_0[1][3] / cextMc_0[2][3],
@@ -97,7 +98,7 @@ int main()
 
     while (true) {
       double t = vpTime::measureTimeMs();
-      confidence = rs.getOdometryData(&cMw, NULL, NULL, &ts); // Acquire timestamped pose only
+      confidence = rs.getOdometryData(&cMw, nullptr, nullptr, &ts); // Acquire timestamped pose only
 
       vpDisplay::display(I_pose);
 
@@ -132,9 +133,11 @@ int main()
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -148,10 +151,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
 #elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))

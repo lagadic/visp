@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test Intel RealSense acquisition with librealsense2 (OpenCV demo).
- *
- *****************************************************************************/
+ */
 /*!
   \example testRealSense2_D435_opencv.cpp
   Test Intel RealSense D435 acquisition with librealsense2 (OpenCV demo).
@@ -41,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 
 #include <visp3/core/vpImage.h>
@@ -54,10 +52,11 @@
 
 namespace
 {
-struct float3 {
+struct float3
+{
   float x, y, z;
-  float3() : x(0), y(0), z(0) {}
-  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
+  float3() : x(0), y(0), z(0) { }
+  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) { }
 };
 
 void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<float3> &pointcloud)
@@ -102,36 +101,6 @@ unsigned char getDepthColor(const std::vector<uint32_t> &histogram, float z, flo
   return static_cast<unsigned char>(histogram[static_cast<uint32_t>(z * depth_scale)] * 255 / histogram[0xFFFF]);
 }
 
-void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
-{
-  auto vf = frame.as<rs2::video_frame>();
-  int size = vf.get_width() * vf.get_height();
-
-  switch (frame.get_profile().format()) {
-  case RS2_FORMAT_RGB8:
-  case RS2_FORMAT_BGR8:
-    memcpy(data, frame.get_data(), size * 3);
-    break;
-
-  case RS2_FORMAT_RGBA8:
-  case RS2_FORMAT_BGRA8:
-    memcpy(data, frame.get_data(), size * 4);
-    break;
-
-  case RS2_FORMAT_Y16:
-  case RS2_FORMAT_Z16:
-    memcpy(data, frame.get_data(), size * 2);
-    break;
-
-  case RS2_FORMAT_Y8:
-    memcpy(data, frame.get_data(), size);
-    break;
-
-  default:
-    break;
-  }
-}
-
 void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 {
   auto vf = f.as<rs2::video_frame>();
@@ -141,10 +110,12 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
     memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
-  } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, const_cast<void *>(f.get_data()), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
-  } else if (f.get_profile().format() == RS2_FORMAT_Y8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_Y8) {
     memcpy(img.ptr<uchar>(), f.get_data(), size);
   }
 }
@@ -152,6 +123,9 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   const int width = 640, height = 480, fps = 60;
   vpRealSense2 rs;
   rs2::config config;
@@ -222,8 +196,8 @@ int main()
 
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-        int u = std::min(static_cast<int>(width - 1), static_cast<int>(std::max(0.0, imPt.get_u())));
-        int v = std::min(static_cast<int>(height - 1), static_cast<int>(std::max(0.0, imPt.get_v())));
+        int u = std::min<int>(static_cast<int>(width - 1), static_cast<int>(std::max<double>(0.0, imPt.get_u())));
+        int v = std::min<int>(static_cast<int>(height - 1), static_cast<int>(std::max<double>(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram, Z, depth_scale);
         mat_pointcloud.at<uchar>(v, u) = depth_viz;
       }
@@ -232,13 +206,13 @@ int main()
 
     chrono.stop();
     time_vector.push_back(chrono.getDurationMs());
-    if (cv::waitKey(5) == 27) {
+    if (cv::waitKey(5) == 27 || cv::waitKey(5) == 113) { // Esc or q
       break;
     }
   }
 
   std::cout << "Acquisition - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -247,11 +221,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test work"
-            << std::endl;
 #endif
 #if !(VISP_HAVE_OPENCV_VERSION >= 0x030000)
   std::cout << "Install OpenCV version >= 3 to make this test work." << std::endl;

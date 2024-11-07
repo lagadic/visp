@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,15 +29,14 @@
  *
  * Description:
  * Image queue for storage helper.
- *
- *****************************************************************************/
+ */
 
 #ifndef vpImageQueue_h
 #define vpImageQueue_h
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
 
 #include <condition_variable>
 #include <mutex>
@@ -49,6 +47,9 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 
+BEGIN_VISP_NAMESPACE
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
   \class vpImageQueue
 
@@ -63,19 +64,20 @@
 template <class Type> class vpImageQueue
 {
 public:
-  struct cancelled {
-  };
+  struct vpCancelled_t
+  { };
 
   /*!
    * Queue (FIFO) constructor. By default the max queue size is set to 1024*8.
    *
    * \param[in] seqname : Generic sequence name like `"folder/I%04d.png"`. If this name contains a parent folder, it
-   * will be created. \param[in] record_mode : 0 to record a sequence of images, 1 to record single images.
+   * will be created.
+   * \param[in] record_mode : 0 to record a sequence of images, 1 to record single images.
    */
   vpImageQueue(const std::string &seqname, int record_mode)
     : m_cancelled(false), m_cond(), m_queue_image(), m_queue_data(), m_maxQueueSize(1024 * 8), m_mutex(),
-      m_seqname(seqname), m_recording_mode(record_mode), m_start_recording(false), m_directory_to_create(false),
-      m_recording_trigger(false)
+    m_seqname(seqname), m_recording_mode(record_mode), m_start_recording(false), m_directory_to_create(false),
+    m_recording_trigger(false)
   {
     m_directory = vpIoTools::getParent(seqname);
     if (!m_directory.empty()) {
@@ -84,7 +86,7 @@ public:
       }
     }
     m_text_record_mode =
-        std::string("Record mode: ") + (m_recording_mode ? std::string("single") : std::string("continuous"));
+      std::string("Record mode: ") + (m_recording_mode ? std::string("single") : std::string("continuous"));
   }
 
   /*!
@@ -126,13 +128,13 @@ public:
 
     while (m_queue_image.empty()) {
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
 
       m_cond.wait(lock);
 
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
     }
 
@@ -158,7 +160,7 @@ public:
 
     m_queue_image.push(I);
 
-    if (data != NULL) {
+    if (data != nullptr) {
       m_queue_data.push(*data);
     }
 
@@ -167,7 +169,7 @@ public:
       m_queue_image.pop();
     }
 
-    if (data != NULL) {
+    if (data != nullptr) {
       while (m_queue_data.size() > m_maxQueueSize) {
         m_queue_data.pop();
       }
@@ -180,12 +182,12 @@ public:
    * Record helper that display information in the windows associated to the image, pop current image and additional
    * data in the queue.
    * \param[in] I : Image to record.
-   * \param[in] data : Data to record. Set to NULL when no additional data have to be considered.
+   * \param[in] data : Data to record. Set to nullptr when no additional data have to be considered.
    * \param[in] trigger_recording : External trigger to start data saving.
    * \param[in] disable_left_click : Disable left click usage to trigger data saving.
    * \return true when the used asked to quit using a right click in the display window.
    */
-  bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false,
+  bool record(const vpImage<Type> &I, std::string *data = nullptr, bool trigger_recording = false,
               bool disable_left_click = false)
   {
     if (I.display) {
@@ -196,19 +198,22 @@ public:
               vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
                                      10 * vpDisplay::getDownScalingFactor(I), "Left  click: stop recording",
                                      vpColor::red);
-            } else {
+            }
+            else {
               vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
                                      10 * vpDisplay::getDownScalingFactor(I), "Left  click: start recording",
                                      vpColor::red);
             }
-          } else {
+          }
+          else {
             vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
                                    "Left  click: record image", vpColor::red);
           }
         }
         vpDisplay::displayText(I, 40 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
                                "Right click: quit", vpColor::red);
-      } else {
+      }
+      else {
         vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
                                "Click to quit", vpColor::red);
       }
@@ -222,14 +227,17 @@ public:
         if (!m_seqname.empty()) {                                        // Recording requested
           if (button == vpMouseButton::button1 && !disable_left_click) { // enable/disable recording
             m_start_recording = !m_start_recording;
-          } else if (button == vpMouseButton::button3) { // quit
+          }
+          else if (button == vpMouseButton::button3) { // quit
             return true;
           }
-        } else { // any button to quit
+        }
+        else { // any button to quit
           return true;
         }
       }
-    } else if (!m_seqname.empty()) {
+    }
+    else if (!m_seqname.empty()) {
       m_start_recording = true;
     }
 
@@ -278,5 +286,7 @@ private:
   bool m_recording_trigger;
 };
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+END_VISP_NAMESPACE
 #endif
 #endif

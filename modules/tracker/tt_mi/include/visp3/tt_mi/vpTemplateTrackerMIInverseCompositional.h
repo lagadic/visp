@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpTemplateTrackerMIInverseCompositional_hh
 #define vpTemplateTrackerMIInverseCompositional_hh
 
@@ -49,6 +48,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerMIInverseCompositional
   \ingroup group_tt_mi_tracker
@@ -85,14 +85,14 @@ public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
     : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false), p_prec(),
-      G_prec(), KQuasiNewton()
-  {
-  }
-  explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
+    G_prec(), KQuasiNewton()
+  { }
+  VP_EXPLICIT vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
    * this feature is disabled. */
   void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
   void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method) { minimizationMethod = method; }
 };
+END_VISP_NAMESPACE
 #endif

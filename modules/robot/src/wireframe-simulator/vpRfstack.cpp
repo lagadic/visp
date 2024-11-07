@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,7 +35,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -48,19 +48,20 @@
 #include <string.h>
 #define STACKSIZE 32
 
-static int stack[STACKSIZE] = {vpDEFAULT_REMOVE}; /* pile		*/
-static int *sp = stack;                           /* sommet 	*/
+static int stack[STACKSIZE] = { vpDEFAULT_REMOVE }; /* pile    */
+static int *sp = stack;                           /* sommet   */
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "fprintf_rfstack" affiche le sommet
  * de la pile des drapeaux d'elimination de faces.
  * Entree :
- * fp		Fichier en sortie.
+ * fp    Fichier en sortie.
  */
 void fprintf_rfstack(FILE *fp)
 {
   int flg;
-  flg = 0; /* nul si element unique	*/
+  flg = 0; /* nul si element unique  */
 
   if (*sp == IS_INSIDE) {
     fprintf(fp, "(null)\n");
@@ -108,7 +109,7 @@ void fprintf_rfstack(FILE *fp)
  * La procedure "get_rfstack" retourne les drapeaux au sommet
  * de la pile des drapeaux d'elimination de faces.
  * Sortie :
- * 		Pointeur sur les drapeaux d'elimination du sommet de la pile.
+ *     Pointeur sur les drapeaux d'elimination du sommet de la pile.
  */
 int *get_rfstack(void) { return (sp); }
 
@@ -116,7 +117,7 @@ int *get_rfstack(void) { return (sp); }
  * La procedure "load_rfstack" charge des drapeaux au sommet
  * de la pile des drapeaux d'elimination de faces.
  * Entree :
- * i		Niveau a charger.
+ * i    Niveau a charger.
  */
 void load_rfstack(int i) { *sp = i; }
 
@@ -130,7 +131,8 @@ void pop_rfstack(void)
     static char proc_name[] = "pop_rfstack";
     fprintf(stderr, "%s: stack underflow\n", proc_name);
     return;
-  } else
+  }
+  else
     sp--;
 }
 
@@ -176,5 +178,5 @@ void add_rfstack(int i) { *sp |= i; }
  * de la pile des drapeaux d'elimination de faces.
  */
 void sub_rfstack(int i) { *sp &= ~i; }
-
+END_VISP_NAMESPACE
 #endif

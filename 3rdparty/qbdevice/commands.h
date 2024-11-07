@@ -36,7 +36,7 @@
  *  \details
  *  This file is included in the qbMove and qbHand firmware, in its libraries and
  *  applications. It contains all definitions that are necessary for the
- *  contruction of communication packages.
+ *  construction of communication packages.
  *
  *  It includes definitions for all of the device commands, parameters and also
  *  the size of answer packages.
@@ -96,7 +96,7 @@ enum qbmove_command
     CMD_GET_CURR_AND_MEAS       = 134,  ///< Command for asking device's
                                         ///  measurements and currents
     CMD_SET_POS_STIFF           = 135,  ///< Not used in the softhand firmware
-    CMD_GET_EMG                 = 136,  ///< Command for asking device's emg sensors 
+    CMD_GET_EMG                 = 136,  ///< Command for asking device's emg sensors
                                         ///  measurements
     CMD_GET_VELOCITIES          = 137,  ///< Command for asking device's
                                         ///  velocity measurements
@@ -104,12 +104,12 @@ enum qbmove_command
                                         ///  (mostly used for debugging sent commands)
     CMD_GET_ACCEL               = 139,  ///< Command for asking device's
                                         ///  acceleration measurements
-    CMD_GET_CURR_DIFF           = 140,  ///< Command for asking device's 
+    CMD_GET_CURR_DIFF           = 140,  ///< Command for asking device's
                                         ///  current difference between a measured
                                         ///  one and an estimated one (Only for SoftHand)
     CMD_SET_CURR_DIFF           = 141,  ///< Command used to set current difference modality
                                         ///  (Only for Cuff device)
-    CMD_SET_CUFF_INPUTS         = 142,  ///< Command used to set Cuff device inputs 
+    CMD_SET_CUFF_INPUTS         = 142,  ///< Command used to set Cuff device inputs
                                         ///  (Only for Cuff device)
     CMD_SET_WATCHDOG            = 143,  ///< Command for setting watchdog timer
                                         ///  or disable it
@@ -163,7 +163,7 @@ enum qbmove_parameter
     PARAM_DOUBLE_ENC_ON_OFF      = 19,  ///< Double Encoder Y/N
     PARAM_MOT_HANDLE_RATIO       = 20,  ///< Multiplier between handle and motor
     PARAM_MOTOR_SUPPLY           = 21,  ///< Motor supply voltage of the hand
-    PARAM_CURRENT_LOOKUP         = 23,  ///< Table of values used to calculate 
+    PARAM_CURRENT_LOOKUP         = 23,  ///< Table of values used to calculate
                                         ///  an estimated current of the SoftHand
     PARAM_DL_POS_PID             = 24,  ///< Double loop position PID
     PARAM_DL_CURR_PID            = 25   ///< Double loop current PID
@@ -213,7 +213,7 @@ enum qbmove_control_mode {
     CONTROL_CURRENT         = 2,        ///< Current control
     CURR_AND_POS_CONTROL    = 3,        ///< Position and current control
     DEFLECTION_CONTROL      = 4,        ///< Deflection control
-    DEFL_CURRENT_CONTROL    = 5         ///< Deflection and current control   
+    DEFL_CURRENT_CONTROL    = 5         ///< Deflection and current control
 
 };
 

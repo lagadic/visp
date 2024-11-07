@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,9 @@
  * Example that shows how to setup keyboard control of Parrot Bebop 2 drone in ViSP.
  *
  * Authors:
- * Fabien Spindler
  * Gatien Gaumerais
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -48,6 +47,10 @@
 #include <iostream>
 
 #ifdef VISP_HAVE_ARSDK
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -130,7 +133,8 @@ bool handleKeyboardInput(vpRobotBebop2 &drone, int key)
       break;
     }
     vpTime::wait(25); // We wait 25ms to give the drone the time to process the command
-  } else {
+  }
+  else {
     running = false;
   }
   return running;
@@ -160,37 +164,41 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         ip_address = std::string(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--hd_stream") {
+      }
+      else if (std::string(argv[i]) == "--hd_stream") {
         stream_res = 1;
-      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+      }
+      else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         verbose = true;
-      } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+      }
+      else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
         std::cout << "\nUsage:\n"
-                  << "  " << argv[0] << "[--ip <drone ip>] [--hd_stream] [--verbose] [-v] [--help] [-h]\n"
-                  << std::endl
-                  << "Description:\n"
-                  << "  --ip <drone ip>\n"
-                  << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
-                  << "  --hd_stream\n"
-                  << "      Enables HD 720p streaming instead of default 480p.\n"
-                  << "  --verbose, -v\n"
-                  << "      Enables verbose (drone information messages and velocity commands\n"
-                  << "      are then displayed).\n\n"
-                  << "  --help, -h\n"
-                  << "      Print help message.\n"
-                  << std::endl;
+          << "  " << argv[0] << "[--ip <drone ip>] [--hd_stream] [--verbose] [-v] [--help] [-h]\n"
+          << std::endl
+          << "Description:\n"
+          << "  --ip <drone ip>\n"
+          << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
+          << "  --hd_stream\n"
+          << "      Enables HD 720p streaming instead of default 480p.\n"
+          << "  --verbose, -v\n"
+          << "      Enables verbose (drone information messages and velocity commands\n"
+          << "      are then displayed).\n\n"
+          << "  --help, -h\n"
+          << "      Print help message.\n"
+          << std::endl;
         return EXIT_SUCCESS;
-      } else {
+      }
+      else {
         std::cout << "Error : unknown parameter " << argv[i] << std::endl
-                  << "See " << argv[0] << " --help" << std::endl;
+          << "See " << argv[0] << " --help" << std::endl;
         return EXIT_FAILURE;
       }
     }
 
     std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, "
-                 "the drone WILL collide with any objects in the way! Make sure the "
-                 "drone has approximately 3 meters of free space on all sides.\n"
-              << std::endl;
+      "the drone WILL collide with any objects in the way! Make sure the "
+      "drone has approximately 3 meters of free space on all sides.\n"
+      << std::endl;
 
     vpRobotBebop2 drone(verbose, true,
                         ip_address); // Create the drone with low verbose level, settings reset and corresponding IP
@@ -222,10 +230,10 @@ int main(int argc, char **argv)
 
       vpKeyboard keyboard;
       std::cout << "\n| Control the drone with the keyboard :\n"
-                   "|   't' to takeoff / spacebar to land / 'e' for emergency stop\n"
-                   "|   ('r','f','d','g') and ('i','k','j','l') to move\n"
-                   "|   'q' to quit.\n"
-                << std::endl;
+        "|   't' to takeoff / spacebar to land / 'e' for emergency stop\n"
+        "|   ('r','f','d','g') and ('i','k','j','l') to move\n"
+        "|   'q' to quit.\n"
+        << std::endl;
 
       while (running && drone.isRunning() && drone.isStreaming()) {
 
@@ -244,11 +252,13 @@ int main(int argc, char **argv)
       }
       std::cout << "\nQuitting ...\n" << std::endl;
 
-    } else {
+    }
+    else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;
       return EXIT_FAILURE;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "\nCaught an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

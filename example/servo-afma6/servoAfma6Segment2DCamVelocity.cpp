@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
 
 /*!
   \example servoAfma6Segment2DCamVelocity.cpp
@@ -44,7 +39,6 @@
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in camera frame. The visual feature is the segment between two points.
-
 */
 
 #include <stdlib.h>
@@ -66,7 +60,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureSegment.h>
 #include <visp3/vs/vpServo.h>
@@ -74,11 +68,15 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed cam velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured joint velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
+  // - the 6 measured joint velocities (m/s, rad/s)
+  // - the 6 measured joint positions (m, rad)
   // - the 2 values of s - s*
   std::string username;
   // Get the user login name
@@ -93,7 +91,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -110,12 +109,18 @@ int main()
 
     vpImage<unsigned char> I;
 
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
+    rs.open(config);
 
-    g.acquire(I);
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -132,11 +137,13 @@ int main()
     vpFeatureSegment seg_d, seg;
     vpImagePoint cog;
     vpRobotAfma6 robot;
-    vpCameraParameters cam;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
 
-    // Update camera parameters
+    // Get camera intrinsics
+    vpCameraParameters cam;
     robot.getCameraParameters(cam, I);
-    std::cout << "define the initial segment" << std::endl;
+
+    std::cout << "Define the initial segment" << std::endl;
 
     for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end(); ++i) {
       std::cout << "Click on a dot..." << std::endl;
@@ -180,9 +187,10 @@ int main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       // Acquire a new image from the camera
-      g.acquire(I);
+      rs.acquire(I);
 
       // Display this image
       vpDisplay::display(I);
@@ -209,19 +217,26 @@ int main()
       // segments, we have 4 errors (Xc,Yc,l,alpha).
       flog << (task.getError()).t() << std::endl;
 
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
       // Flush the display
       vpDisplay::flush(I);
     }
 
-    flog.close(); // Close the log file
+    // Close the log file
+    flog.close();
 
     // Display task information
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
-    flog.close(); // Close the log file
-    std::cout << "Test failed with exception: " << e << std::endl;
+  }
+  catch (const vpException &e) {
+    // Close the log file
+    flog.close();
+    std::cout << "Visual servo failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }

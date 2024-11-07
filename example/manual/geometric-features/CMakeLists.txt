@@ -1,8 +1,11 @@
-PROJECT(GeometricFeatures)
+cmake_minimum_required(VERSION 3.5)
 
-FIND_PACKAGE(VISP REQUIRED)
-IF(VISP_FOUND)
-  INCLUDE(${VISP_USE_FILE})
-ENDIF(VISP_FOUND)
+project(GeometricFeatures)
 
-ADD_EXECUTABLE(manGeometricFeatures manGeometricFeatures.cpp)
+find_package(VISP REQUIRED)
+if(VISP_FOUND)
+  include(${VISP_USE_FILE})
+endif()
+
+add_executable(manGeometricFeatures manGeometricFeatures.cpp)
+

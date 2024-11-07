@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D point visual feature.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeaturePointPolar.cpp
@@ -63,6 +60,7 @@
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 2D point visual
@@ -80,7 +78,7 @@ void vpFeaturePointPolar::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -411,7 +409,8 @@ vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, unsigned in
       etheta[0] = err;
       e = vpColVector::stack(e, etheta);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -450,24 +449,7 @@ void vpFeaturePointPolar::print(unsigned int select) const
   std::cout << std::endl;
 }
 
-/*!
-
-  Build a 2D image point visual feature with polar coordinates.
-
-  \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
-  the image point.
-
-  \param Z_ : 3D depth of the point in the camera frame.
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is negative. That means that the 3D point is
-  behind the camera which is not possible.
-
-  \exception vpFeatureException::badInitializationError: If the depth
-  (\f$Z\f$ coordinate) is null. That means that the 3D point is
-  on the camera which is not possible.
-*/
-void vpFeaturePointPolar::buildFrom(double rho, double theta, double Z_)
+vpFeaturePointPolar &vpFeaturePointPolar::buildFrom(const double &rho, const double &theta, const double &Z_)
 {
 
   s[0] = rho;
@@ -489,8 +471,10 @@ void vpFeaturePointPolar::buildFrom(double rho, double theta, double Z_)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -516,7 +500,8 @@ void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<u
     y = rho * sin(theta);
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -546,7 +531,8 @@ void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<v
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -617,3 +603,4 @@ unsigned int vpFeaturePointPolar::selectRho() { return FEATURE_LINE[0]; }
   \sa selectRho()
 */
 unsigned int vpFeaturePointPolar::selectTheta() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

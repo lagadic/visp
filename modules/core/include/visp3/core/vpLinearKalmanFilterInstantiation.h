@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,12 @@
  *
  * Description:
  * Kalman filtering.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
+
+/*!
+  \file vpLinearKalmanFilterInstantiation.h
+  \brief Implementation of some specific linear Kalman filters.
+*/
 
 #ifndef vpLinearKalmanFilterInstantiation_h
 #define vpLinearKalmanFilterInstantiation_h
@@ -44,11 +43,7 @@
 
 #include <math.h>
 
-/*!
-  \file vpLinearKalmanFilterInstantiation.h
-  \brief Implementation of some specific linear Kalman filters.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpLinearKalmanFilterInstantiation
   \ingroup group_core_kalman
@@ -61,11 +56,12 @@ public:
   /*!
     Selector used to set the Kalman filter state model.
   */
-  typedef enum {
-    /*! Consider the state as a constant velocity model with white
-        noise. Measures available are the successive positions of the
-        target. To know more about this state model, see
-        initStateConstVel_MeasurePos(). */
+  typedef enum
+  {
+/*! Consider the state as a constant velocity model with white
+    noise. Measures available are the successive positions of the
+    target. To know more about this state model, see
+    initStateConstVel_MeasurePos(). */
     stateConstVel_MeasurePos,
     /*! Consider the state as a constant velocity model with colored noise
         measurements as acceleration terms. Measured available are the
@@ -87,10 +83,8 @@ public:
     By default the state model is unknown and set to
     vpLinearKalmanFilterInstantiation::unknown.
   */
-  vpLinearKalmanFilterInstantiation() : model(unknown){};
+  vpLinearKalmanFilterInstantiation() : model(unknown) { };
 
-  /*! Destructor that does nothng. */
-  virtual ~vpLinearKalmanFilterInstantiation(){};
   /*!
     Return the current state model.
    */
@@ -130,18 +124,22 @@ protected:
   size of the state and measure vectors.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
-  // Value is 2
-  std::cout << "State vector size: " << kalman.getStateSize() << std::endl;
-  // Value is 1
-  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl;
-}
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
+
+    kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
+    // Value is 2
+    std::cout << "State vector size: " << kalman.getStateSize() << std::endl;
+    // Value is 1
+    std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl;
+  }
   \endcode
 */
 void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)
@@ -163,5 +161,5 @@ void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl)
     break;
   }
 }
-
+END_VISP_NAMESPACE
 #endif

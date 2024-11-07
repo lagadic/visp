@@ -1,4 +1,5 @@
 /*! \example tutorial-template-tracker.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -11,6 +12,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::string opt_videoname = "bruegel.mp4";
   unsigned int opt_subsample = 1;
 
@@ -21,7 +25,7 @@ int main(int argc, char **argv)
       opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n"
-                << std::endl;
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -91,8 +95,8 @@ int main(int argc, char **argv)
     vpDisplay::flush(I);
     if (!g.isVideoFormat()) {
       vpTime::wait(t, 40);
-    }
-  }
+}
+}
 #else
   (void)argc;
   (void)argv;

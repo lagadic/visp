@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example of the Ransac homography estimation algorithm.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file homographyRansac2DObject.cpp
@@ -52,6 +49,7 @@
 
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
@@ -68,6 +66,10 @@
 #include <visp3/io/vpParseArgv.h>
 // List of allowed command line options
 #define GETOPTARGS "h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -117,7 +119,7 @@ bool getOptions(int argc, const char **argv)
 
     switch (c) {
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -130,7 +132,7 @@ bool getOptions(int argc, const char **argv)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -224,11 +226,13 @@ int main(int argc, const char **argv)
     if (inliers == inliers_ground_truth) {
       std::cout << "Ransac estimation succeed" << std::endl;
       return EXIT_SUCCESS;
-    } else {
+    }
+    else {
       std::cout << "Ransac estimation fails" << std::endl;
       return EXIT_FAILURE;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -238,4 +242,4 @@ int main(int argc, const char **argv)
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

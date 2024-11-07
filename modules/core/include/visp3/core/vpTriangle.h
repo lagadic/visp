@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,16 @@
  *
  * Description:
  * Defines a 2D triangle.
- *
- * Author:
- * Amaury Dame
- * Nicolas Melchior
- *
- *****************************************************************************/
+ */
 
 #ifndef vpTriangle_h
 #define vpTriangle_h
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTriangle
   \ingroup group_core_geometry
@@ -51,10 +50,6 @@
   vpImagePoint class documentation for more details about the frame.) are \f$
   (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
-
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMatrix.h>
-
 class VISP_EXPORT vpTriangle
 {
 private:
@@ -80,7 +75,7 @@ public:
 
   vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
-  void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
+  vpTriangle &buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
   bool inTriangle(const vpImagePoint &iP, double threshold = 0.00001);
 
@@ -109,5 +104,5 @@ public:
 private:
   void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 };
-
+END_VISP_NAMESPACE
 #endif

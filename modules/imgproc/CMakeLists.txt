@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP configuration file.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -52,19 +49,3 @@ vp_module_include_directories()
 vp_create_module()
 
 vp_add_tests(DEPENDS_ON visp_imgproc visp_io)
-
-vp_set_source_file_compile_flag(src/vpCLAHE.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/vpThreshold.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/vpFloodFill.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(test/testContours.cpp -Wno-strict-overflow)
-
-if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/vpCLAHE.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/vpImgproc.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/with-dataset/testAutoThreshold.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/with-dataset/testImgproc.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/with-dataset/testConnectedComponents.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/with-dataset/testFloodFill.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/with-dataset/testContours.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag( -Wno-float-equal)
-endif()

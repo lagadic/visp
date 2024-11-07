@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,47 +28,37 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpServo class and its derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ * Exception that can be emitted by the vpServo class and its derivatives.
+ */
+
+/*!
+ * \file vpServoException.h
+ * \brief error that can be emitted by the vpServo class and its derivatives
+ */
 
 #ifndef _vpServoException_h_
 #define _vpServoException_h_
 
-/*!
-  \file vpServoException.h
-  \brief error that can be emited by the vpServo class and its derivates
-*/
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpServoException
-  \brief Error that can be emited by the vpServo class and its derivates.
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
- */
+ * \class vpServoException
+ * \brief Error that can be emitted by the vpServo class and its derivatives.
+*/
 class VISP_EXPORT vpServoException : public vpException
 {
 public:
   /*!
-
-  \brief Lists the possible error than can be emmited while calling
-  vpServo member
- */
-  enum errorServoCodeEnum {
+   * \brief Lists the possible error than can be emitted while calling
+   * vpServo member
+   */
+  enum errorServoCodeEnum
+  {
     //! Current or desired feature list is empty
     noFeatureError,
     //! No degree of freedom is available to achieve the secondary task.
@@ -81,6 +70,9 @@ public:
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpServoException(int id, const char *format, ...)
   {
     this->code = id;
@@ -89,8 +81,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpServoException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpServoException(int id) : vpException(id) { ; }
-};
 
+  /*!
+   * Constructor.
+   */
+  vpServoException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpServoException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

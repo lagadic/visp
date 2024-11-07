@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Sick LD-MRS laser driver.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example SickLDMRS-Acq.cpp
@@ -46,6 +43,7 @@
   platforms since the Sick LD-MRS driver was not ported to Windows.
 
 */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpSickLDMRS.h>
@@ -54,6 +52,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpSickLDMRS laser;
     std::string ip = "131.254.12.119";
@@ -72,7 +74,8 @@ int main()
       std::cout << "iter: " << iter << " time: " << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -82,8 +85,8 @@ int main()
 int main()
 {
   std::cout << "This example is only working on unix-like platforms \n"
-            << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
+    << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
 
   return EXIT_SUCCESS;
-}
+  }
 #endif // #ifdef UNIX

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,23 +29,23 @@
  *
  * Description:
  * Read/write images.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpImageIo.h
   \brief Read/write images
 */
 
-#ifndef _vpImageIo_h_
-#define _vpImageIo_h_
+#ifndef VP_IMAGE_IO_H
+#define VP_IMAGE_IO_H
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
 #include <iostream>
 #include <stdio.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpImageIo
@@ -75,20 +74,24 @@
   (".pgm" for PGM P5 and ".ppm" for PPM P6).
 
   \code
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<unsigned char> I;
-#if defined(_WIN32)
-  std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
-#else // UNIX
-  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
-#endif
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImageIo::read(I, filename); // Convert the color image in a gray level image
-  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
-}
+  int main()
+  {
+    vpImage<unsigned char> I;
+  #if defined(_WIN32)
+    std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
+  #else // UNIX
+    std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
+  #endif
+
+    vpImageIo::read(I, filename); // Convert the color image in a gray level image
+    vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
+  }
   \endcode
 
   This other example available in tutorial-image-reader.cpp shows how to
@@ -100,7 +103,8 @@ int main()
 class VISP_EXPORT vpImageIo
 {
 private:
-  typedef enum {
+  typedef enum
+  {
     FORMAT_PGM,
     FORMAT_PPM,
     FORMAT_JPEG,
@@ -120,10 +124,11 @@ private:
 
 public:
   //! Image IO backend for only jpeg and png formats image loading and saving
-  enum vpImageIoBackendType {
+  enum vpImageIoBackendType
+  {
     IO_DEFAULT_BACKEND,    //!< Default backend
-    IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg
-    IO_OPENCV_BACKEND,     //!< Use OpenCV
+    IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg-turbo
+    IO_OPENCV_BACKEND,     //!< Use OpenCV imgcodecs module
     IO_SIMDLIB_BACKEND,    //!< Use embedded simd library
     IO_STB_IMAGE_BACKEND   //!< Use embedded stb_image library
   };
@@ -174,5 +179,18 @@ public:
 
   static void writeEXR(const vpImage<float> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
+
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I,
+      int backend = IO_DEFAULT_BACKEND);
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I,
+      int backend = IO_DEFAULT_BACKEND);
+
+  static void writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND);
+  static void writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
+
+END_VISP_NAMESPACE
+
 #endif

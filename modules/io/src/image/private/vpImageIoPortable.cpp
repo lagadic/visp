@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Backend for portable image format I/O operations.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpImageIoPortable.cpp
@@ -43,6 +41,8 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpEndian.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  * Decode the PNM image header.
@@ -53,8 +53,8 @@
  * \param h[out] : Image height.
  * \param maxval[out] : Maximum pixel value.
  */
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval)
+  void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
+                          unsigned int &h, unsigned int &maxval)
 {
   std::string line;
   unsigned int nb_elt = 4, cpt_elt = 0;
@@ -81,7 +81,7 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
         throw(vpImageException(vpImageException::ioError, "\"%s\" is not a PNM file with magic number %s",
                                filename.c_str(), magic.c_str()));
       }
-      cpt_elt++;
+      ++cpt_elt;
       header.erase(header.begin(),
                    header.begin() + 1); // erase first element that is processed
     }
@@ -89,19 +89,21 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
       if (cpt_elt == 1) { // decode width
         std::istringstream ss(header[0]);
         ss >> w;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 2) {          // decode height
+      }
+      else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 3) {          // decode maxval
+      }
+      else if (cpt_elt == 3) {          // decode maxval
         std::istringstream ss(header[0]);
         ss >> maxval;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
@@ -139,7 +141,7 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
         throw(vpImageException(vpImageException::ioError,
                                "\"%s\" is not a PFM file with PF (RGB) or Pf (gray) magic number", filename.c_str()));
       }
-      cpt_elt++;
+      ++cpt_elt;
       header.erase(header.begin(),
                    header.begin() + 1); // erase first element that is processed
     }
@@ -147,20 +149,22 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
       if (cpt_elt == 1) { // decode width
         std::istringstream ss(header[0]);
         ss >> w;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 2) {          // decode height
+      }
+      else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 3) {          // decode byte order
+      }
+      else if (cpt_elt == 3) {          // decode byte order
         std::istringstream ss(header[0]);
         ss >> scale;
         littleEndian = scale < 0;
-        cpt_elt++;
+        ++cpt_elt;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
       }
@@ -192,7 +196,7 @@ void vp_writePFM(const vpImage<float> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -224,7 +228,7 @@ void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename)
   }
 
   FILE *fd = fopen(filename.c_str(), "wb");
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -260,7 +264,7 @@ void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
   }
 
   FILE *fd = fopen(filename.c_str(), "wb");
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -277,7 +281,7 @@ void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
   size_t nbyte = I.getWidth() * 3;
   for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
     size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
-     if (ierr != nbyte) {
+    if (ierr != nbyte) {
       fclose(fd);
       throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
                              filename.c_str(), ierr, nbyte));
@@ -310,7 +314,7 @@ void vp_writePGM(const vpImage<unsigned char> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
   }
 
@@ -349,7 +353,7 @@ void vp_writePGM(const vpImage<short> &I, const std::string &filename)
 
   Iuc.resize(nrows, ncols);
 
-  for (unsigned int i = 0; i < nrows * ncols; i++)
+  for (unsigned int i = 0; i < nrows * ncols; ++i)
     Iuc.bitmap[i] = (unsigned char)I.bitmap[i];
 
   vp_writePGM(Iuc, filename);
@@ -375,7 +379,7 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
   }
 
@@ -505,7 +509,7 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
     if (swapEndianness) {
-      for (unsigned int j = 0; j < w * channels; j++) {
+      for (unsigned int j = 0; j < w * channels; ++j) {
         I[i][j] = vpEndian::swapFloat(I[i][j]);
       }
     }
@@ -519,8 +523,8 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   fd.close();
 
   if (std::fabs(scale) > 0.0f) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         I[i][j] *= 1.0f / static_cast<float>(std::fabs(scale));
       }
     }
@@ -580,7 +584,7 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
     if (swapEndianness) {
-      for (unsigned int j = 0; j < w; j++) {
+      for (unsigned int j = 0; j < w; ++j) {
         I[i][j].R = vpEndian::swapFloat(I[i][j].R);
         I[i][j].G = vpEndian::swapFloat(I[i][j].G);
         I[i][j].B = vpEndian::swapFloat(I[i][j].B);
@@ -596,8 +600,8 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
   fd.close();
 
   if (std::fabs(scale) > 0.0f) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         I[i][j].R *= 1.0f / static_cast<float>(std::fabs(scale));
         I[i][j].G *= 1.0f / static_cast<float>(std::fabs(scale));
         I[i][j].B *= 1.0f / static_cast<float>(std::fabs(scale));
@@ -752,8 +756,8 @@ void vp_readPPM(vpImage<vpRGBa> &I, const std::string &filename)
     I.resize(h, w);
   }
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       unsigned char rgb[3];
       fd.read((char *)&rgb, 3);
 
@@ -808,7 +812,7 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
 
   f = fopen(filename.c_str(), "wb");
 
-  if (f == NULL) {
+  if (f == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PPM file \"%s\"", filename.c_str()));
   }
 
@@ -816,8 +820,8 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
   fprintf(f, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
   fprintf(f, "%d\n", 255);                            // Max level
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       vpRGBa v = I[i][j];
       unsigned char rgb[3];
       rgb[0] = v.R;
@@ -835,3 +839,5 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
   fflush(f);
   fclose(f);
 }
+
+END_VISP_NAMESPACE

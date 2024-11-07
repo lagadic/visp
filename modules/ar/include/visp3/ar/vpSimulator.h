@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,15 +29,10 @@
  *
  * Description:
  * Simulator based on Coin3d.
- *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+ */
 
-#ifndef vpSimulator_HH
-#define vpSimulator_HH
+#ifndef VP_SIMULATOR_H
+#define VP_SIMULATOR_H
 /*!
   \file vpSimulator.h
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
@@ -83,6 +77,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpSimulator
 
@@ -272,7 +267,7 @@ public:
 protected:
   SbTime *realtime;
   SoOffscreenRenderer *offScreenRenderer;
-  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL, int *width = NULL, int *height = NULL);
+  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL, int *width = nullptr, int *height = nullptr);
 
 public:
   //! image of the internal view
@@ -292,6 +287,6 @@ public:
   //! get the intrinsic parameters of the camera
   void getCameraParameters(vpCameraParameters &cam) { cam = internalCameraParameters; }
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

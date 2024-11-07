@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +29,15 @@
  *
  * Description:
  * Defines a generic 2D polygon.
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpPolygon_h_
-#define _vpPolygon_h_
+#ifndef VP_POLYGON_H
+#define VP_POLYGON_H
 
 #include <list>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -46,6 +45,7 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRect.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPolygon
   \ingroup group_core_geometry
@@ -58,78 +58,69 @@
   \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 
   The code bellow shows how to manipulate a polygon.
-\code
-#include <iostream>
+  \code
+  #include <iostream>
 
-#include <visp3/core/vpPolygon.h>
+  #include <visp3/core/vpPolygon.h>
 
-int main()
-{
-  std::vector<vpImagePoint> corners;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialize the corners vector with 4 points
-  corners.push_back( vpImagePoint( 50, 100) );
-  corners.push_back( vpImagePoint( 50, 300) );
-  corners.push_back( vpImagePoint(200, 300) );
-  corners.push_back( vpImagePoint(200, 100) );
+  int main()
+  {
+    std::vector<vpImagePoint> corners;
 
-  // Initialize a polygon with the corners
-  vpPolygon polygon(corners);
+    // Initialize the corners vector with 4 points
+    corners.push_back( vpImagePoint( 50, 100) );
+    corners.push_back( vpImagePoint( 50, 300) );
+    corners.push_back( vpImagePoint(200, 300) );
+    corners.push_back( vpImagePoint(200, 100) );
 
-  // Get the polygon bounding box
-  vpRect bbox = polygon.getBoundingBox();
-  std::cout << "Bounding box: " << bbox.getTopLeft() << " to "
-            << bbox.getBottomRight() << std::endl;
+    // Initialize a polygon with the corners
+    vpPolygon polygon(corners);
 
-  // Get the polygon surface and center
-  std::cout << "Area: " << polygon.getArea() << std::endl;
-  std::cout << "Center: " << polygon.getCenter() << std::endl;
+    // Get the polygon bounding box
+    vpRect bbox = polygon.getBoundingBox();
+    std::cout << "Bounding box: " << bbox.getTopLeft() << " to "
+              << bbox.getBottomRight() << std::endl;
 
-  // Check if a point is inside the polygon
-  vpImagePoint ip(550, 200);
-  std::cout << "The point " << ip << " is "
-            << (polygon.isInside(ip) ? "inside":"outside")
-            << " the polygon" << std::endl;
+    // Get the polygon surface and center
+    std::cout << "Area: " << polygon.getArea() << std::endl;
+    std::cout << "Center: " << polygon.getCenter() << std::endl;
 
-  return 0;
-}
-\endcode
+    // Check if a point is inside the polygon
+    vpImagePoint ip(550, 200);
+    std::cout << "The point " << ip << " is "
+              << (polygon.isInside(ip) ? "inside":"outside")
+              << " the polygon" << std::endl;
+
+    return 0;
+  }
+  \endcode
 */
 class VISP_EXPORT vpPolygon
 {
-protected:
-  //! Collection of image points containing the corners.
-  std::vector<vpImagePoint> _corners;
-  //! Center of the polygon. It is automatically computed when the corners are
-  //! set.
-  vpImagePoint _center;
-  //! Area of the polygon.
-  double _area;
-  //! Flag set to true when the polygon is a good polygon (ie. it has more
-  //! than two corners) or false otherwise.
-  bool _goodPoly;
-  //! Bounding box containing the polygon.
-  vpRect _bbox;
-
 public:
-  enum PointInPolygonMethod {
+  enum PointInPolygonMethod
+  {
     PnPolySegmentIntersection, /*!< Legacy Point In Polygon test. */
     PnPolyRayCasting           /*!< Point In Polygon test using ray casting method
                                   (faster). */
   };
 
   vpPolygon();
-  explicit vpPolygon(const std::vector<vpImagePoint> &corners);
-  explicit vpPolygon(const std::list<vpImagePoint> &corners);
+  VP_EXPLICIT vpPolygon(const std::vector<vpImagePoint> &corners);
+  VP_EXPLICIT vpPolygon(const std::list<vpImagePoint> &corners);
   vpPolygon(const vpPolygon &poly);
   virtual ~vpPolygon();
 
   vpPolygon &operator=(const vpPolygon &poly);
 
-  void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
-  void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
-  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
-                 const bool create_convex_hull = false);
+  vpPolygon &buildFrom(const std::vector<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &buildFrom(const std::list<vpImagePoint> &corners, const bool &create_convex_hull = false);
+  vpPolygon &buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                       const bool &create_convex_hull = false);
 
   unsigned int getSize() const;
   void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,
@@ -172,12 +163,32 @@ public:
   */
   inline vpRect getBoundingBox() const { return _bbox; }
 
+  //###################
+  // Static Functions
+  //###################
+  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
+                       const PointInPolygonMethod &method = PnPolyRayCasting);
+
 protected:
   void init(const std::vector<vpImagePoint> &corners);
   void init(const std::list<vpImagePoint> &corners);
   void updateArea();
   void updateCenter();
   void updateBoundingBox();
+
+protected:
+  //! Collection of image points containing the corners.
+  std::vector<vpImagePoint> _corners;
+  //! Center of the polygon. It is automatically computed when the corners are
+  //! set.
+  vpImagePoint _center;
+  //! Area of the polygon.
+  double _area;
+  //! Flag set to true when the polygon is a good polygon (ie. it has more
+  //! than two corners) or false otherwise.
+  bool _goodPoly;
+  //! Bounding box containing the polygon.
+  vpRect _bbox;
 
 private:
   bool testIntersectionSegments(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImagePoint &ip3,
@@ -186,14 +197,6 @@ private:
 
   std::vector<double> m_PnPolyConstants;
   std::vector<double> m_PnPolyMultiples;
-
-  //###################
-  // Static Functions
-  //###################
-
-public:
-  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
-                       const PointInPolygonMethod &method = PnPolyRayCasting);
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,8 +30,7 @@
  * Description:
  * Simple example to demonstrate how to control in position using mavsdk
  * a drone equipped with a Pixhawk connected to a Jetson TX2.
- *
- *****************************************************************************/
+ */
 
 /*!
  * \example testPixhawkDronePositionRelativeControl.cpp
@@ -47,22 +45,26 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/robot/vpRobotMavsdk.h>
 
 void usage(const std::string &bin_name)
 {
   std::cerr << "Usage : " << bin_name << " <connection information>\n"
-            << "Connection URL format should be :\n"
-            << "  - For TCP : tcp://[server_host][:server_port]\n"
-            << "  - For UDP : udp://[bind_host][:bind_port]\n"
-            << "  - For Serial : serial:///path/to/serial/dev[:baudrate]\n"
-            << "For example, to connect to the simulator use URL: udp://:14540\n";
+    << "Connection URL format should be :\n"
+    << "  - For TCP : tcp://[server_host][:server_port]\n"
+    << "  - For UDP : udp://[bind_host][:bind_port]\n"
+    << "  - For Serial : serial:///path/to/serial/dev[:baudrate]\n"
+    << "For example, to connect to the simulator use URL: udp://:14540\n";
 }
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   if (argc != 2) {
     usage(argv[0]);
     return EXIT_SUCCESS;
@@ -84,15 +86,15 @@ int main(int argc, char **argv)
   float ned_north, ned_east, ned_down, ned_yaw;
   drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
   std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and "
-            << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
+    << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
 
   vpHomogeneousMatrix ned_M_frd;
   drone.getPosition(ned_M_frd);
   vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
   std::cout << "Vehicle position in NED frame: " << ned_M_frd.getTranslationVector().t() << " [m] and "
-            << vpMath::deg(rxyz).t() << " [deg]" << std::endl;
+    << vpMath::deg(rxyz).t() << " [deg]" << std::endl;
 
-  // Set position in NED frame
+// Set position in NED frame
   drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
 
   drone.setPositionRelative(0.0, 1.0, 0.0, 0.0);  // Right
@@ -110,13 +112,13 @@ int main()
 {
 #ifndef VISP_HAVE_MAVSDK
   std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
-            << std::endl;
+    << std::endl;
 #endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   std::cout
-      << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
-         "rebuild ViSP.\n"
-      << std::endl;
+    << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
+    "rebuild ViSP.\n"
+    << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +29,30 @@
  *
  * Description:
  * Benchmark color image conversion.
- *
-*****************************************************************************/
+ */
 
+/*!
+  \example perfColorConversion.cpp
+ */
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_RUNNER
-#include <catch.hpp>
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_THREADS)
+
+#include <catch_amalgamated.hpp>
 
 #include "common.hpp"
 #include <thread>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
 static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
@@ -306,43 +314,34 @@ TEST_CASE("Benchmark bgra to rgba (ViSP)", "[benchmark]")
 
 int main(int argc, char *argv[])
 {
-  Catch::Session session; // There must be exactly one instance
+  Catch::Session session;
 
   bool runBenchmark = false;
-  // Build a new parser on top of Catch's
-  using namespace Catch::clara;
-  auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark?")    // description string for the help output
-             | Opt(imagePathColor, "imagePathColor")["--imagePathColor"]("Path to color image") |
-             Opt(imagePathGray, "imagePathColor")["--imagePathGray"]("Path to gray image") |
-             Opt(nThreads, "nThreads")["--nThreads"]("Number of threads");
+  auto cli = session.cli()
+    | Catch::Clara::Opt(runBenchmark)["--benchmark"]("run benchmark?")
+    | Catch::Clara::Opt(imagePathColor, "imagePathColor")["--imagePathColor"]("Path to color image")
+    | Catch::Clara::Opt(imagePathGray, "imagePathColor")["--imagePathGray"]("Path to gray image")
+    | Catch::Clara::Opt(nThreads, "nThreads")["--nThreads"]("Number of threads");
 
-  // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
 
-  // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
     vpImage<vpRGBa> I_color;
     vpImageIo::read(I_color, imagePathColor);
     std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight()
-              << std::endl;
+      << std::endl;
 
     vpImage<unsigned char> I_gray;
     vpImageIo::read(I_gray, imagePathGray);
     std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight()
-              << std::endl;
+      << std::endl;
     std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency()
-              << std::endl;
+      << std::endl;
 
     int numFailed = session.run();
 
-    // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-    // This clamping has already been applied, so just return it here
-    // You can also do any post run clean-up here
     return numFailed;
   }
 

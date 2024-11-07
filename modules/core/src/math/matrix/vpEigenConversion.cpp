@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,11 @@
  *
  * Description:
  * ViSP <--> Eigen conversion.
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpEigenConversion.h>
 
-namespace vp
+namespace VISP_NAMESPACE_NAME
 {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
@@ -48,8 +46,8 @@ void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
 
 void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
 {
-  if (src.rows() != 4 || src.cols() != 4) {
-    throw vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
+  if ((src.rows() != 4) || (src.cols() != 4)) {
+    throw  vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
   }
 
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(),
@@ -60,9 +58,11 @@ void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.rows(); i++) {
+  Eigen::DenseIndex src_rows = src.rows();
+  for (Eigen::DenseIndex i = 0; i < src_rows; i++) {
 #else
-  for (Eigen::Index i = 0; i < src.rows(); i++) {
+  Eigen::Index src_rows = src.rows();
+  for (Eigen::Index i = 0; i < src_rows; ++i) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
@@ -72,19 +72,21 @@ void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.cols()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.cols(); i++) {
+  Eigen::DenseIndex src_cols = src.cols();
+  for (Eigen::DenseIndex i = 0; i < src_cols; ++i) {
 #else
-  for (Eigen::Index i = 0; i < src.cols(); i++) {
+  Eigen::Index src_cols = src.cols();
+  for (Eigen::Index i = 0; i < src_cols; ++i) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
 }
 
-void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
+void visp2eigen(const  vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 
-void visp2eigen(const vpRowVector &src, Eigen::RowVectorXd &dst)
+void visp2eigen(const  vpRowVector &src, Eigen::RowVectorXd &dst)
 {
   dst = Eigen::RowVectorXd::Map(src.data, src.size());
 }
 #endif
-} // namespace vp
+} // namespace VISP_NAMESPACE_NAME

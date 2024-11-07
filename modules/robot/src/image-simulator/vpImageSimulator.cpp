@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMatrixException.h>
@@ -45,6 +45,7 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 
@@ -57,9 +58,9 @@
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(col), Ig(), Ic(),
-    rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
+  visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+  vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(col), Ig(), Ic(),
+  rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   for (int i = 0; i < 4; i++)
     X[i].resize(3);
@@ -94,10 +95,10 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(GRAY_SCALED), Ig(),
-    Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
-    needClipping(false)
+  visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+  vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(GRAY_SCALED), Ig(),
+  Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
+  needClipping(false)
 {
   pt.resize(4);
   for (unsigned int i = 0; i < 4; i++) {
@@ -224,11 +225,12 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             unsigned char pixelgrey =
-                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
             *(bitmap + i * width + j) = pixelgrey;
           }
         }
@@ -344,12 +346,13 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               unsigned char pixelgrey =
-                  (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
               *(bitmap + i * width + j) = pixelgrey;
               zBuffer[i][j] = Xinter_optim[2];
             }
@@ -407,7 +410,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
             pixelcolor.B = Ipixelplan;
             *(bitmap + i * width + j) = pixelcolor;
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
@@ -528,7 +532,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
-        } else if (colorI == COLORED) {
+        }
+        else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
@@ -557,17 +562,20 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-    vpImage<vpRGBa> Icamera(480,640,0);
-    vpImage<vpRGBa> Iimage(60,60);
+    vpImage<vpRGBa> Icamera(480, 640, vpRGBa(0));
+    vpImage<vpRGBa> Iimage(60, 60);
 
     // Initialise the image which will be projected into the image Icamera
-    vpRGBa colorb(0,0,255);
-    vpRGBa colorw(255,255,255);
-    vpRGBa colorr(255,0,0);
-    for(int i = 0; i < 60; i++)
-    {
+    vpRGBa colorb(0, 0, 255);
+    vpRGBa colorw(255, 255, 255);
+    vpRGBa colorr(255, 0, 0);
+    for(int i = 0; i < 60; i++) {
       for(int j = 0; j < 20; j++)
         Iimage[i][j] = colorb;
       for(int j = 20; j < 40; j++)
@@ -724,11 +732,12 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
           unsigned char Ipixelplan = 255;
           simList[indice]->getPixel(ip, Ipixelplan);
           *(bitmap + i * width + j) = Ipixelplan;
-        } else if (simList[indice]->colorI == COLORED) {
+        }
+        else if (simList[indice]->colorI == COLORED) {
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           unsigned char pixelgrey =
-              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+            (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
           *(bitmap + i * width + j) = pixelgrey;
         }
       }
@@ -755,17 +764,20 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimu
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-    vpImage<vpRGBa> Icamera(480,640,0);
-    vpImage<vpRGBa> Iimage(60,60);
+    vpImage<vpRGBa> Icamera(480, 640, vpRGBa(0));
+    vpImage<vpRGBa> Iimage(60, 60);
 
     // Initialise the image which will be projected into the image Icamera
-    vpRGBa colorb(0,0,255);
-    vpRGBa colorw(255,255,255);
-    vpRGBa colorr(255,0,0);
-    for(int i = 0; i < 60; i++)
-    {
+    vpRGBa colorb(0, 0, 255);
+    vpRGBa colorw(255, 255, 255);
+    vpRGBa colorr(255, 0, 0);
+    for(int i = 0; i < 60; i++) {
       for(int j = 0; j < 20; j++)
         Iimage[i][j] = colorb;
       for(int j = 20; j < 40; j++)
@@ -926,7 +938,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> 
           pixelcolor.G = Ipixelplan;
           pixelcolor.B = Ipixelplan;
           *(bitmap + i * width + j) = pixelcolor;
-        } else if (simList[indice]->colorI == COLORED) {
+        }
+        else if (simList[indice]->colorI == COLORED) {
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           // unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 *
@@ -977,7 +990,8 @@ void vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
   if (angle > 0) {
     visible = true;
-  } else {
+  }
+  else {
     visible = false;
   }
 
@@ -1241,8 +1255,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelpla
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1263,7 +1277,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelpla
     else if (interp == SIMPLE)
       Ipixelplan = Ig[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1294,8 +1309,8 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1316,7 +1331,8 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint
     else if (interp == SIMPLE)
       Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1346,8 +1362,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1368,7 +1384,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
     else if (interp == SIMPLE)
       Ipixelplan = Ic[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1398,8 +1415,8 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, v
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1420,7 +1437,8 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, v
     else if (interp == SIMPLE)
       Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
-  } else
+  }
+  else
     return false;
 }
 
@@ -1536,3 +1554,4 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImageSimulator & 
   os << "";
   return os;
 }
+END_VISP_NAMESPACE

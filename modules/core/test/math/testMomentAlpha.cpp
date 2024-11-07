@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test some vpMomentAlpha functionalities.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testMomentAlpha.cpp
@@ -50,6 +45,10 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/io/vpImageIo.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<int> &vec_angle, double tolerance_deg,
                       double symmetry_threshold = 1e-6)
@@ -158,8 +157,9 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
         std::cout << "Error: result is not in the tolerance: " << tolerance_deg << std::endl;
         return EXIT_FAILURE;
       }
-    } else {
-      // Tranform input angle from [0; 360] to [0; 180] range
+    }
+    else {
+   // Tranform input angle from [0; 360] to [0; 180] range
       double angle_des1 = vec_angle[i];
       double angle_des2 = vec_angle[i] - 180;
 
@@ -167,7 +167,7 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
       double alpha = vpMath::deg(malpha.get());
 
       std::cout << "alpha expected " << angle_des1 << " or " << angle_des2 << " computed " << alpha << " deg"
-                << std::endl;
+        << std::endl;
 
       if (!vpMath::equal(angle_des1, alpha, tolerance_deg) &&
           !vpMath::equal(angle_des2, alpha, tolerance_deg)) { // 0.5 deg of tolerance

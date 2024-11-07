@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Interface for the ptu-46 robot.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_PTU46
@@ -59,7 +59,7 @@
 /* ------------------------------------------------------------------------ */
 /* --- CLASS ------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpRobotPtu46
@@ -93,17 +93,17 @@ private:
 public:
   static const double defaultPositioningVelocity;
 
-  explicit vpRobotPtu46(const std::string &device = "/dev/ttyS0");
-  explicit vpRobotPtu46(vpRobotPtu46 *pub);
+  VP_EXPLICIT vpRobotPtu46(const std::string &device = "/dev/ttyS0");
+  VP_EXPLICIT vpRobotPtu46(vpRobotPtu46 *pub);
   virtual ~vpRobotPtu46(void);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe);
-  void get_fJe(vpMatrix &_fJe);
+  void get_eJe(vpMatrix &_eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &_fJe) VP_OVERRIDE;
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE;
   double getPositioningVelocity(void);
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
@@ -112,17 +112,17 @@ public:
 
   bool readPositionFile(const std::string &filename, vpColVector &q);
 
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
   void setPosition(const char *filename);
   void setPositioningVelocity(double velocity);
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) VP_OVERRIDE;
 
   void stopMotion();
 };
-
+END_VISP_NAMESPACE
 #endif /* #ifndef _vpRobotPtu46_h_ */
 
 #endif

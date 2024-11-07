@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,13 @@
  * Description:
  * Generic virtual robot.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 const double vpRobot::maxTranslationVelocityDefault = 0.2;
 const double vpRobot::maxRotationVelocityDefault = 0.7;
 
@@ -52,17 +50,16 @@ const double vpRobot::maxRotationVelocityDefault = 0.7;
 
 vpRobot::vpRobot(void)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
-    verbose_(true)
-{
-}
+  maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
+  verbose_(true)
+{ }
 
 vpRobot::vpRobot(const vpRobot &robot)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
-    verbose_(true)
+  maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
+  verbose_(true)
 {
   *this = robot;
 }
@@ -72,13 +69,13 @@ vpRobot::vpRobot(const vpRobot &robot)
  */
 vpRobot::~vpRobot()
 {
-  if (qmin != NULL) {
+  if (qmin != nullptr) {
     delete[] qmin;
-    qmin = NULL;
+    qmin = nullptr;
   }
-  if (qmax != NULL) {
+  if (qmax != nullptr) {
     delete[] qmax;
-    qmax = NULL;
+    qmax = nullptr;
   }
 }
 
@@ -127,37 +124,41 @@ different dimensions.
 velocity skew vector.
 
   \code
-#include <iostream>
+  #include <iostream>
 
-#include <visp3/robot/vpRobot.h>
+  #include <visp3/robot/vpRobot.h>
 
-int main()
-{
-  // Set a velocity skew vector
-  vpColVector v(6);
-  v[0] = 0.1;               // vx in m/s
-  v[1] = 0.2;               // vy
-  v[2] = 0.3;               // vz
-  v[3] = vpMath::rad(10);   // wx in rad/s
-  v[4] = vpMath::rad(-10);  // wy
-  v[5] = vpMath::rad(20);   // wz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the maximal allowed velocities
-  vpColVector v_max(6);
-  for (int i=0; i<3; i++)
-    v_max[i] = 0.3;             // in translation (m/s)
-  for (int i=3; i<6; i++)
-    v_max[i] = vpMath::rad(10); // in rotation (rad/s)
+  int main()
+  {
+    // Set a velocity skew vector
+    vpColVector v(6);
+    v[0] = 0.1;               // vx in m/s
+    v[1] = 0.2;               // vy
+    v[2] = 0.3;               // vz
+    v[3] = vpMath::rad(10);   // wx in rad/s
+    v[4] = vpMath::rad(-10);  // wy
+    v[5] = vpMath::rad(20);   // wz
 
-  // Compute the saturated velocity skew vector
-  vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
+    // Set the maximal allowed velocities
+    vpColVector v_max(6);
+    for (int i=0; i<3; i++)
+      v_max[i] = 0.3;             // in translation (m/s)
+    for (int i=3; i<6; i++)
+      v_max[i] = vpMath::rad(10); // in rotation (rad/s)
 
-  std::cout << "v    : " << v.t() << std::endl;
-  std::cout << "v max: " << v_max.t() << std::endl;
-  std::cout << "v sat: " << v_sat.t() << std::endl;
+    // Compute the saturated velocity skew vector
+    vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
 
-  return 0;
-}
+    std::cout << "v    : " << v.t() << std::endl;
+    std::cout << "v max: " << v_max.t() << std::endl;
+    std::cout << "v sat: " << v_sat.t() << std::endl;
+
+    return 0;
+  }
   \endcode
   */
 vpColVector vpRobot::saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose)
@@ -271,3 +272,4 @@ void vpRobot::setMaxRotationVelocity(double w_max)
   \return Maximum rotation velocity expressed in rad/s.
 */
 double vpRobot::getMaxRotationVelocity(void) const { return this->maxRotationVelocity; }
+END_VISP_NAMESPACE

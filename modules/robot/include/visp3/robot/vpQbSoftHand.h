@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,72 +29,70 @@
  *
  * Description:
  * Interface for the qb robotics qbSoftHand device.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 #ifndef _vpQbSoftHand_h_
 #define _vpQbSoftHand_h_
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_QBDEVICE
+#if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/robot/vpQbDevice.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-
-  \class vpQbSoftHand
-
-  \ingroup group_robot_haptic
-
-  Interface for qbSoftHand [device](https://qbrobotics.com/products/qb-softhand/).
-
-  See https://qbrobotics.com/ for more details.
-
-  \note Before using this class under Linux (Ubuntu, Debian, Fedora...) it is mandatory to add
-  user to the dialout group. To do so, you must execute:
-  \code
-  $ sudo adduser user_name dialout
-  \endcode
-  otherwise you will get an error:
-  \code
-  vpQbDevice fails while opening [/dev/ttyUSB0] and sets errno [Permission denied].
-  \endcode
-
-  The following example shows how to close and open the SoftHand with a given speed factor and stiffness used to stop
-the command applied to the motors when the measured current is larger than the stiffness multiplied by the maximum
-allowed current that can be applied to the motors.
-
-  \code
-#include <visp3/robot/vpQbSoftHand.h>
-
-int main()
-{
-  vpQbSoftHand qbsofthand;
-
-  vpColVector q(1);
-
-  double speed_factor = 0.5; // half speed
-  double stiffness = 0.7;    // 70% of the max allowed current supported by the motors
-  std::cout << "** Close the hand with blocking positioning function" << std::endl;
-  q[0] = 1;
-  qbsofthand.setPosition(q, speed_factor, stiffness);
-
-  std::cout << "** Open the hand with blocking positioning function" << std::endl;
-  q[0] = 0;
-  qbsofthand.setPosition(q, speed_factor, stiffness);
-}
-  \endcode
-
+ * \class vpQbSoftHand
+ *
+ * \ingroup group_robot_haptic
+ *
+ * Interface for qbSoftHand [device](https://qbrobotics.com/products/qb-softhand/).
+ *
+ * See https://qbrobotics.com/ for more details.
+ *
+ * \note Before using this class under Linux (Ubuntu, Debian, Fedora...) it is mandatory to add
+ * user to the dialout group. To do so, you must execute:
+ * \code
+ * $ sudo adduser user_name dialout
+ * \endcode
+ * otherwise you will get an error:
+ * \code
+ * vpQbDevice fails while opening [/dev/ttyUSB0] and sets errno [Permission denied].
+ * \endcode
+ *
+ * The following example shows how to close and open the SoftHand with a given speed factor and stiffness used to stop
+ * the command applied to the motors when the measured current is larger than the stiffness multiplied by the maximum
+ * allowed current that can be applied to the motors.
+ *
+ * \code
+ * #include <visp3/robot/vpQbSoftHand.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
+ * int main()
+ * {
+ *   vpQbSoftHand qbsofthand;
+ *
+ *   vpColVector q(1);
+ *
+ *   double speed_factor = 0.5; // half speed
+ *   double stiffness = 0.7;    // 70% of the max allowed current supported by the motors
+ *   std::cout << "** Close the hand with blocking positioning function" << std::endl;
+ *   q[0] = 1;
+ *   qbsofthand.setPosition(q, speed_factor, stiffness);
+ *
+ *   std::cout << "** Open the hand with blocking positioning function" << std::endl;
+ *   q[0] = 0;
+ *   qbsofthand.setPosition(q, speed_factor, stiffness);
+ * }
+ * \endcode
 */
 class VISP_EXPORT vpQbSoftHand : public vpQbDevice
 {
 public:
   vpQbSoftHand();
-  virtual ~vpQbSoftHand();
 
   void getCurrent(vpColVector &current, const int &id = 1);
   void getPosition(vpColVector &position, const int &id = 1);
@@ -103,6 +100,6 @@ public:
   void setPosition(const vpColVector &position, const int &id = 1);
   void setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id = 1);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

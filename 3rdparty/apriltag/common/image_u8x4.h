@@ -31,7 +31,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "image_types.h"
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 
@@ -61,5 +61,5 @@ image_u8x4_t *image_u8x4_create_from_pam(const char *path);
     void image_u8x4_write_pam(const image_u8x4_t *im, const char *path);
 
 #ifdef __cplusplus
-//}
+}
 #endif

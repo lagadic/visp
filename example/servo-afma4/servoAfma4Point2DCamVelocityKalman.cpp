@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,11 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoAfma4Point2DCamVelocityKalman.cpp
@@ -82,6 +78,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "hK:l:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 typedef enum { K_NONE, K_VELOCITY, K_ACCELERATION } KalmanType;
 
@@ -158,7 +158,7 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptat
       lambda.initFromConstant(atof(optarg));
       break;
     case 'h':
-      usage(argv[0], NULL, kalman);
+      usage(argv[0], nullptr, kalman);
       return false;
       break;
 
@@ -171,7 +171,7 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptat
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, kalman);
+    usage(argv[0], nullptr, kalman);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -197,8 +197,8 @@ int main(int argc, const char **argv)
     // Log file creation in /tmp/$USERNAME/log.dat
     // This file contains by line:
     // - the 6 computed cam velocities (m/s, rad/s) to achieve the task
-    // - the 6 mesured joint velocities (m/s, rad/s)
-    // - the 6 mesured joint positions (m, rad)
+    // - the 6 measured joint velocities (m/s, rad/s)
+    // - the 6 measured joint positions (m, rad)
     // - the 2 values of s - s*
     std::string username;
     // Get the user login name
@@ -213,7 +213,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(logdirname);
-      } catch (...) {
+      }
+      catch (...) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
         return EXIT_FAILURE;
@@ -260,8 +261,8 @@ int main(int argc, const char **argv)
     std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "Test program for target motion compensation using a Kalman "
-                 "filter "
-              << std::endl;
+      "filter "
+      << std::endl;
     std::cout << "Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << "Task : servo a point \n" << std::endl;
 
@@ -272,11 +273,11 @@ int main(int argc, const char **argv)
       break;
     case K_VELOCITY:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-                << "with constant velocity modelization (see -K option)\n";
+        << "with constant velocity modelization (see -K option)\n";
       break;
     case K_ACCELERATION:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-                << "with constant acceleration modelization (see -K option)\n";
+        << "with constant acceleration modelization (see -K option)\n";
       break;
     }
     std::cout << "-------------------------------------------------------" << std::endl;
@@ -436,7 +437,8 @@ int main(int argc, const char **argv)
         err_1 = 0;
         dedt_mes = 0;
         dedt_filt = 0;
-      } else {
+      }
+      else {
         err_1 = err_0;
         err_0 = err;
 
@@ -519,7 +521,8 @@ int main(int argc, const char **argv)
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

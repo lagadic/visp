@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,12 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Example of keybord management.
+ * Example of parallel port management.
  *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example parallelPort.cpp
@@ -57,6 +54,10 @@
 // List of allowed command line options
 #define GETOPTARGS "d:h"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Print the program options.
@@ -74,7 +75,7 @@ Send a data to the parallel port.\n\
 SYNOPSIS\n\
   %s [-d <data>] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -119,13 +120,14 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
         std::cerr << "ERROR: " << std::endl;
         std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl << std::endl;
         return false;
-      } else {
+      }
+      else {
         data = (unsigned char)value;
       }
       break;
     }
     case 'h':
-      usage(argv[0], NULL, data);
+      usage(argv[0], nullptr, data);
       return false;
       break;
 
@@ -138,7 +140,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, data);
+    usage(argv[0], nullptr, data);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -168,7 +170,8 @@ int main(int argc, const char **argv)
     printf("Send data \"%d\" to the parallel port\n", data);
     parport.sendData(data);
 
-  } catch (vpParallelPortException &e) {
+  }
+  catch (vpParallelPortException &e) {
     switch (e.getCode()) {
     case vpParallelPortException::opening:
       printf("Can't open the parallel port\n");
@@ -177,7 +180,8 @@ int main(int argc, const char **argv)
       printf("Can't close the parallel port\n");
       break;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "An error occurs: " << e.getMessage() << std::endl;
   }
   return EXIT_SUCCESS;

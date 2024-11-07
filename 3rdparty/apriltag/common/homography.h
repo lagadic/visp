@@ -31,7 +31,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "zarray.h"
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
     /** Given a 3x3 homography matrix and the focal lengths of the
@@ -148,7 +148,7 @@ static inline void homography_project(const matd_t *H, double x, double y, doubl
 //
 // And that the homography is equal to the projection matrix times the model matrix,
 // recover the model matrix (which is returned). Note that the third column of the model
-// matrix is missing in the expresison below, reflecting the fact that the homography assumes
+// matrix is missing in the expression below, reflecting the fact that the homography assumes
 // all points are at z=0 (i.e., planar) and that the element of z is thus omitted.
 // (3x1 instead of 4x1).
 //
@@ -176,8 +176,8 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 // [ 0  0  C  D ]
 // [ 0  0 -1  0 ]
 
-matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B, double C, double D);
+matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B);
 
 #ifdef __cplusplus
-//}
+}
 #endif

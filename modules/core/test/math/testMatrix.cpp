@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test some vpMatrix functionalities.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testMatrix.cpp
@@ -54,8 +49,35 @@
 
 #include <iterator> // for std::back_inserter
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 namespace
 {
+bool test_memory(unsigned int nrows, unsigned int ncols, const vpMatrix &M, const std::string &matrix_name, bool pointer_is_null)
+{
+  if (pointer_is_null) {
+    if (M.data) {
+      std::cerr << "Wrong data pointer (" << M.data << ") in matrix " << matrix_name << ": should be null" << std::endl;
+    }
+  }
+  else {
+    if (!M.data) {
+      std::cerr << "Wrong data pointer (" << M.data << ") in matrix " << matrix_name << ": should be non null" << std::endl;
+      return false;
+    }
+  }
+
+  if (M.getRows() != nrows || M.getCols() != ncols) {
+    std::cerr << "Wrong matrix " << matrix_name << "(" << nrows << ", " << ncols << " size: "
+      << M.getRows() << " x " << M.getCols() << std::endl;
+    return false;
+  }
+  std::cout << "Test matrix " << matrix_name << " succeed" << std::endl;
+  return true;
+}
+
 bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
@@ -126,6 +148,28 @@ int main(int argc, char *argv[])
     }
 
     {
+      unsigned int nrows = 2, ncols = 3;
+      vpMatrix A(nrows, ncols);
+      if (test_memory(nrows, ncols, A, "A", false) == false) {
+        return EXIT_FAILURE;
+      }
+      vpMatrix B, C;
+      if (test_memory(0, 0, B, "B", true) == false) {
+        return EXIT_FAILURE;
+      }
+      if (test_memory(0, 0, C, "C", true)== false) {
+        return EXIT_FAILURE;
+      }
+      B = A;
+      if (test_memory(nrows, ncols, B, "B", false)== false) {
+        return EXIT_FAILURE;
+      }
+      B = C;
+      if (test_memory(0, 0, C, "C", true)== false) {
+        return EXIT_FAILURE;
+      }
+    }
+    {
       const double val = 10.0;
       vpMatrix M, M2(5, 5, val);
       M.resize(5, 5, false, false);
@@ -151,11 +195,11 @@ int main(int argc, char *argv[])
       vpMatrix M(3, 3);
       M[2][0] = M[1][1] = M[0][2] = 1.;
       vpRotationMatrix R1(M);
-      if (test("R1", R1, bench) == false)
+      if (test("R1", static_cast<vpMatrix>(R1), bench) == false)
         return EXIT_FAILURE;
       vpRotationMatrix R2;
       R2 = M;
-      if (test("R2", R2, bench) == false)
+      if (test("R2", static_cast<vpMatrix>(R2), bench) == false)
         return EXIT_FAILURE;
     }
     {
@@ -245,7 +289,7 @@ int main(int argc, char *argv[])
       std::cout << "M1: \n" << M1 << std::endl;
       vpMatrix M2(M1);
       std::cout << "M2: \n" << M2 << std::endl;
-      vpMatrix M3 = R;
+      vpMatrix M3 = static_cast<vpMatrix>(R);
       std::cout << "M3: \n" << M3 << std::endl;
       vpMatrix M4 = M1;
       std::cout << "M4: \n" << M4 << std::endl;
@@ -417,7 +461,7 @@ int main(int argc, char *argv[])
       unsigned int nb = ctest ? 10 : 100; // 10000;
       const unsigned int size = ctest ? 10 : 100;
 
-      vpMatrix m_big(nb * size, 6);
+      vpMatrix m_big(nb *size, 6);
       std::vector<vpMatrix> submatrices(nb);
       for (size_t cpt = 0; cpt < submatrices.size(); cpt++) {
         vpMatrix m(size, 6);
@@ -565,7 +609,7 @@ int main(int argc, char *argv[])
 
       vpMatrix m_big_stack_static = generateRandomMatrix(ctest ? 100 : 1000, ctest ? 10 : 100, -1000.0, 1000.0);
       std::cout << "m_big_stack_static: " << m_big_stack_static.getRows() << "x" << m_big_stack_static.getCols()
-                << std::endl;
+        << std::endl;
 
       vpMatrix m_big_stack_static_row, m_big_stack_static_row_tmp;
       t = vpTime::measureTimeMs();
@@ -578,8 +622,8 @@ int main(int argc, char *argv[])
 
       if (!equalMatrix(m_big_stack_static, m_big_stack_static_row)) {
         std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpRowVector, "
-                     "vpMatrix)!"
-                  << std::endl;
+          "vpMatrix)!"
+          << std::endl;
         return EXIT_FAILURE;
       }
 
@@ -598,8 +642,8 @@ int main(int argc, char *argv[])
 
       if (!equalMatrix(m_big_stack_static, m_big_stack_static_col)) {
         std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpColVector, "
-                     "vpMatrix)!"
-                  << std::endl;
+          "vpMatrix)!"
+          << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -843,7 +887,8 @@ int main(int argc, char *argv[])
 
     std::cout << "\nAll tests succeeded" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

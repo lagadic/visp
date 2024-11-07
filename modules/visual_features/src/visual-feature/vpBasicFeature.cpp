@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,13 +32,18 @@
  * Visual feature.
  *
  * Authors:
- * Eric Marchand
  * Nicolas Mansard
  *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpBasicFeature.cpp
+  \brief Class that defines what is a visual feature.
+*/
 
 #include <visp3/visual_features/vpBasicFeature.h>
 
+BEGIN_VISP_NAMESPACE
 const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
     (unsigned int)(1 << 0),  (unsigned int)(1 << 1),  (unsigned int)(1 << 2),  (unsigned int)(1 << 3),
     (unsigned int)(1 << 4),  (unsigned int)(1 << 5),  (unsigned int)(1 << 6),  (unsigned int)(1 << 7),
@@ -47,25 +52,22 @@ const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
     (unsigned int)(1 << 16), (unsigned int)(1 << 17), (unsigned int)(1 << 18), (unsigned int)(1 << 19),
     (unsigned int)(1 << 20), (unsigned int)(1 << 21), (unsigned int)(1 << 22), (unsigned int)(1 << 23),
     (unsigned int)(1 << 24), (unsigned int)(1 << 25), (unsigned int)(1 << 26), (unsigned int)(1 << 27),
-    (unsigned int)(1 << 28), (unsigned int)(1 << 29), (unsigned int)(1 << 30), (unsigned int)(1 << 31)};
+    (unsigned int)(1 << 28), (unsigned int)(1 << 29), (unsigned int)(1 << 30), (unsigned int)(1 << 31) };
 
-/*!
-  \file vpBasicFeature.cpp
-  \brief Class that defines what is a visual feature.
-*/
+
 /*!
   Default constructor.
 */
-vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user) {}
+vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user) { }
 
 /*!
   Destructor that free allocated memory.
 */
 vpBasicFeature::~vpBasicFeature()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     delete[] flags;
-    flags = NULL;
+    flags = nullptr;
   }
 }
 
@@ -73,7 +75,7 @@ vpBasicFeature::~vpBasicFeature()
   Copy constructor.
 */
 vpBasicFeature::vpBasicFeature(const vpBasicFeature &f)
-  : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user)
+  : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user)
 {
   *this = f;
 }
@@ -103,7 +105,6 @@ unsigned int vpBasicFeature::getDimension(unsigned int select) const
   if (dim_s > 31)
     return dim_s;
   for (unsigned int i = 0; i < s.getRows(); i++) {
-    //	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
     if (FEATURE_LINE[i] & select)
       dim += 1;
   }
@@ -130,7 +131,7 @@ vpColVector vpBasicFeature::get_s(unsigned int select) const
 
 void vpBasicFeature::resetFlags()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;
   }
@@ -140,7 +141,7 @@ void vpBasicFeature::resetFlags()
 //! interaction matrix without having updated the feature.
 void vpBasicFeature::setFlags()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = true;
   }
@@ -159,7 +160,8 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int sel
         // std::cout << "dim_s <= 31"<<std::endl;
       }
     }
-  } else {
+  }
+  else {
     e.resize(dim_s);
     vpColVector sd = s_star.get_s();
     e = s - sd;
@@ -167,7 +169,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int sel
 
   return e;
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 4

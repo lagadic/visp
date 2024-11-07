@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 202 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test for Afma 6 dof robot.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ * Test for Viper650 6 dof robot.
+ */
 
 /*!
   \example testRobotViper850.cpp
@@ -52,6 +47,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
 
     std::cout << "a test for vpRobotViper850 class..." << std::endl;
@@ -65,8 +63,8 @@ int main()
     std::cout << cam << std::endl;
 
     std::cout << "-- Settings associated to the Marlin F033C camera without "
-                 "distortion ---"
-              << std::endl;
+      "distortion ---"
+      << std::endl;
     viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA);
 
     std::cout << viper850 << std::endl;
@@ -74,8 +72,8 @@ int main()
     std::cout << cam << std::endl;
 
     std::cout << "-- Settings associated to the Marlin F033C camera with "
-                 "distortion ------"
-              << std::endl;
+      "distortion ------"
+      << std::endl;
     viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
@@ -98,11 +96,12 @@ int main()
     rzyz.buildFrom(R);
 
     std::cout << "fMe:" << std::endl
-              << "\tt: " << t.t() << std::endl
-              << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " " << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
-              << std::endl;
+      << "\tt: " << t.t() << std::endl
+      << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " " << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
+      << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,10 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example servoViper650FourPoints2DCamVelocityLs_cur.cpp
 
@@ -79,6 +76,10 @@
 
 #define L 0.05 // to deal with a 10cm by 10cm square
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 /*!
 
   Compute the pose \e cMo from the 3D coordinates of the points \e point and
@@ -115,7 +116,8 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCamer
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-  } else {
+  }
+  else {
     pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
 }
@@ -125,8 +127,8 @@ int main()
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured joint velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
+  // - the 6 measured joint velocities (m/s, rad/s)
+  // - the 6 measured joint positions (m, rad)
   // - the 8 values of s - s*
   std::string username;
   // Get the user login name
@@ -141,7 +143,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -267,13 +270,14 @@ int main()
           vpImagePoint cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Error detected while tracking visual features.." << std::endl;
         break;
       }
 
       // During the servo, we compute the pose using a non linear method. For
-      // the initial pose used in the non linear minimisation we use the pose
+      // the initial pose used in the non linear minimization we use the pose
       // computed at the previous iteration.
       compute_pose(point, dot, cam, cMo, false);
 
@@ -343,7 +347,8 @@ int main()
     task.print();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catched an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

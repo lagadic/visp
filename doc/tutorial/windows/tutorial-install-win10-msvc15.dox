@@ -161,17 +161,17 @@ where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install` is where you have ins
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
 `opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win10-extract-opencv.png
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
 
 \note OpenCV 4.5.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
-and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.5.1\build\x64\vc14` and
-`%%VISP_WS%\opencv-4.5.1\build\x64\vc15` respectively.
+and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc14` and
+`%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc15` respectively.
 
 <b>2. Complete OpenCV installation</b>
 
@@ -179,15 +179,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
+where `%%VISP_WS%\3rdparty\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
 file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 usage in the
 `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%%VISP_WS%\opencv-4.5.1\build\x64\vc15\bin`.
+`%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc15\bin`.
 
 \subsubsection install_win10_msvc15_3rdparty_realsense librealsense 3rd party
 
@@ -545,19 +545,19 @@ C:\> exit
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP
 source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in
 a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from
- http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+ https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`.
-\image html img-win10-visp-images-3.3.0.png
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`.
+\image html  img-win-visp-images-git.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
-`%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+`%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
@@ -568,7 +568,7 @@ C:\> exit
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-\image html img-win10-visp-images.png
+\image html img-win-visp-images-last-release.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run

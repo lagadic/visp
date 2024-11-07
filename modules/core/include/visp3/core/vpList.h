@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,20 +29,15 @@
  *
  * Description:
  * List data structure.
- *
- * Authors:
- * Eric Marchand
- * Nicolas Mansard : Toward const-specification respect
- *
- *****************************************************************************/
+ */
+
+/*!
+ * \file vpList.h
+ * \brief Definition of the list management class
+ */
 
 #ifndef VP_LIST_H
 #define VP_LIST_H
-
-/*!
-  \file vpList.h
-  \brief Definition of the list managment class
-*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -51,17 +45,18 @@
 
 #include <stdio.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /*!
   \class vpListElement
   \brief Each element of a list
 */
 template <class type> class vpListElement
 {
+  /*
   // private:
   //  vpListElement(const vpListElement &)
-  //    : prev(NULL), next(NULL), val()
+  //    : prev(nullptr), next(nullptr), val()
   //  {
   //    throw vpException(vpException::functionNotImplementedError,"Not
   //    implemented!");
@@ -70,9 +65,9 @@ template <class type> class vpListElement
   //    throw vpException(vpException::functionNotImplementedError,"Not
   //    implemented!"); return *this;
   //  }
-
+  */
 public:
-  vpListElement() : prev(NULL), next(NULL), val(){};
+  vpListElement() : prev(nullptr), next(nullptr), val() { };
   vpListElement<type> *prev; ///! pointer to the previous element in the list
   vpListElement<type> *next; ///! pointer to the next element in the list
   type val;                  ///! value of the element
@@ -200,10 +195,10 @@ template <class type> void vpList<type>::init()
   first = x;
   last = y;
 
-  x->prev = NULL;
+  x->prev = nullptr;
   x->next = y;
   y->prev = x;
-  y->next = NULL;
+  y->next = nullptr;
 
   cur = x;
   nb = 0;
@@ -216,8 +211,7 @@ template <class type> void vpList<type>::init()
   \endverbatim
   \sa init()
  */
-template <class type> vpList<type>::vpList() : nb(0), first(NULL), last(NULL), cur(NULL) { init(); }
-
+template <class type> vpList<type>::vpList() : nb(0), first(nullptr), last(nullptr), cur(nullptr) { init(); }
 /*!
   \brief vpList destructor
   \sa kill()
@@ -226,19 +220,19 @@ template <class type> vpList<type>::~vpList()
 {
   kill();
 
-  /*if (first != NULL) */ delete first;
-  /*if (last != NULL)  */ delete last;
+  /*if (first != nullptr) */ delete first;
+  /*if (last != nullptr)  */ delete last;
 }
 
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElement(void) { return (nb); }
+template <class type> unsigned int vpList<type>::nbElement(void) { return nb; }
 
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElements(void) { return (nb); }
+template <class type> unsigned int vpList<type>::nbElements(void) { return nb; }
 
 /*!
   \brief position the current element on the next one
@@ -400,9 +394,11 @@ template <class type> void vpList<type>::addRight(const type &v)
   x->val = v;
   if (empty()) {
     cur = first;
-  } else {
-    if (outside())
+  }
+  else {
+    if (outside()) {
       std::cout << "vpList: outside with addRight " << std::endl;
+    }
   }
   cur->next->prev = x;
   x->next = cur->next;
@@ -430,16 +426,18 @@ template <class type> void vpList<type>::addLeft(const type &v)
 
   if (empty()) {
     cur = last;
-  } else {
-    if (outside())
+  }
+  else {
+    if (outside()) {
       std::cout << "vpList: outside with addLeft " << std::endl;
+    }
   }
   x->next = cur;
   x->prev = cur->prev;
   cur->prev->next = x;
   cur->prev = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -459,16 +457,18 @@ template <class type> void vpList<type>::addRight(type &v)
   x->val = v;
   if (empty()) {
     cur = first;
-  } else {
-    if (outside())
+  }
+  else {
+    if (outside()) {
       std::cout << "vpList: outside with addRight " << std::endl;
+    }
   }
   cur->next->prev = x;
   x->next = cur->next;
   x->prev = cur;
   cur->next = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -489,16 +489,18 @@ template <class type> void vpList<type>::addLeft(type &v)
 
   if (empty()) {
     cur = last;
-  } else {
-    if (outside())
+  }
+  else {
+    if (outside()) {
       std::cout << "vpList: outside with addLeft " << std::endl;
+    }
   }
   x->next = cur;
   x->prev = cur->prev;
   cur->prev->next = x;
   cur->prev = x;
   cur = x;
-  nb++;
+  ++nb;
 }
 
 /*!
@@ -536,7 +538,8 @@ template <class type> void vpList<type>::swapLeft()
 
     prevTmp->prev = cur;
     prevTmp->next = nextTmp;
-  } else {
+  }
+  else {
     std::cout << "vpList: previous element is outside (swapLeft) " << std::endl;
   }
 }
@@ -566,7 +569,8 @@ template <class type> void vpList<type>::swapRight()
 
     nextTmp->prev = prevTmp;
     nextTmp->next = cur;
-  } else {
+  }
+  else {
     std::cout << "vpList: next element is outside (swapRight) " << std::endl;
   }
 }
@@ -607,10 +611,11 @@ template <class type> void vpList<type>::suppress(void)
   x = cur;
   cur = cur->next;
 
-  if (x != NULL)
+  if (x != nullptr) {
     delete x;
+  }
 
-  nb--;
+  --nb;
 }
 
 /*!
@@ -679,7 +684,7 @@ template <class type> void vpList<type>::operator+=(const type &l)
 
   \param l : the list to copy
 */
-template <class type> vpList<type>::vpList(const vpList<type> &l) : nb(0), first(NULL), last(NULL), cur(NULL)
+template <class type> vpList<type>::vpList(const vpList<type> &l) : nb(0), first(nullptr), last(nullptr), cur(nullptr)
 {
   init();
   *this = l;
@@ -695,11 +700,11 @@ template <class type> void vpList<type>::display()
   while (!outside()) {
     std::cout << k << " ---> " << value() << std::endl;
     next();
-    k++;
+    ++k;
   }
   std::cout << std::endl << std::endl;
 }
-
+END_VISP_NAMESPACE
 #endif /* #ifndef VP_LIST_H */
 
 /*

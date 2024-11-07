@@ -1,6 +1,6 @@
 project(tutorial-robot)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
@@ -8,7 +8,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES Window
 
 if(WINRT)
   add_definitions(-DWINRT)
-  
+
   if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
     set(WINRT_PHONE TRUE)
     add_definitions(-DWINRT_PHONE)

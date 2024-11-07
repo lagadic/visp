@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,28 +29,24 @@
  *
  * Description:
  * Pre-filled pseudo-database used to handle dependencies between common
- *moment features.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ * moment features.
+ */
 
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Constructor which initializes and links all common features in the database
-  \param moments : database for moment primitives
-  \param A : first plane coefficient for a plane equation of the following
-  type Ax+By+C=1/Z \param B : second plane coefficient for a plane equation of
-  the following type Ax+By+C=1/Z \param C : third plane coefficient for a
-  plane equation of the following type Ax+By+C=1/Z
-*/
+ * Constructor which initializes and links all common features in the database
+ * \param moments : database for moment primitives
+ * \param A : first plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param B : second plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param C : third plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ */
 vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase &moments, double A, double B, double C)
   : featureGravity(moments, A, B, C), featureGravityNormalized(moments, A, B, C), featureAn(moments, A, B, C),
-    featureCInvariant(moments, A, B, C), featureAlpha(moments, A, B, C), featureCentered(moments, A, B, C),
-    featureMomentBasic(moments, A, B, C), feature_moment_area(moments, A, B, C)
+  featureCInvariant(moments, A, B, C), featureAlpha(moments, A, B, C), featureCentered(moments, A, B, C),
+  featureMomentBasic(moments, A, B, C), feature_moment_area(moments, A, B, C)
 
 {
   featureGravity.linkTo(*this);
@@ -65,12 +60,11 @@ vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase &moments, double A
 }
 
 /*!
-  Update all moment features in the database with plane coefficients
-  \param A : first plane coefficient for a plane equation of the following
-  type Ax+By+C=1/Z \param B : second plane coefficient for a plane equation of
-  the following type Ax+By+C=1/Z \param C : third plane coefficient for a
-  plane equation of the following type Ax+By+C=1/Z
-*/
+ * Update all moment features in the database with plane coefficients
+ * \param A : first plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param B : second plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param C : third plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ */
 void vpFeatureMomentCommon::updateAll(double A, double B, double C)
 {
   featureMomentBasic.update(A, B, C);
@@ -82,3 +76,4 @@ void vpFeatureMomentCommon::updateAll(double A, double B, double C)
   featureAlpha.update(A, B, C);
   feature_moment_area.update(A, B, C);
 }
+END_VISP_NAMESPACE

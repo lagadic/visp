@@ -62,7 +62,9 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfColwvpT:"
 
-#define USE_XML 0
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam)
 {
@@ -79,7 +81,7 @@ SYNOPSIS\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
   [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n\
   [-T <tracker type>]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -156,9 +158,9 @@ OPTIONS:                                               \n\
 }
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
-                bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-                bool &computeCovariance, bool &projectionError, int &trackerType)
+  std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
+  bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
+  bool &computeCovariance, bool &projectionError, int &trackerType)
 {
   const char *optarg_;
   int c;
@@ -214,7 +216,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
       trackerType = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -227,7 +229,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -261,7 +263,7 @@ int main(int argc, const char **argv)
     int trackerType = vpMbGenericTracker::EDGE_TRACKER;
 
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-   std::string ext("png");
+    std::string ext("png");
 #else
     std::string ext("pgm");
 #endif
@@ -283,12 +285,12 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -299,7 +301,7 @@ int main(int argc, const char **argv)
     else
       ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
 
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
     std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
@@ -311,13 +313,15 @@ int main(int argc, const char **argv)
 
     if (!opt_modelFile.empty()) {
       modelFile = opt_modelFile;
-    } else {
+    }
+    else {
       std::string modelFileCao;
       std::string modelFileWrl;
       if (trackCylinder) {
         modelFileCao = "mbt/cube_and_cylinder.cao";
         modelFileWrl = "mbt/cube_and_cylinder.wrl";
-      } else {
+      }
+      else {
         modelFileCao = "mbt/cube.cao";
         modelFileWrl = "mbt/cube.wrl";
       }
@@ -325,7 +329,8 @@ int main(int argc, const char **argv)
       if (!opt_ipath.empty()) {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
@@ -333,10 +338,12 @@ int main(int argc, const char **argv)
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
         }
-      } else {
+      }
+      else {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
@@ -363,7 +370,8 @@ int main(int argc, const char **argv)
       reader.open(I1);
       I2 = I1;
       I3 = I1;
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -379,7 +387,7 @@ int main(int argc, const char **argv)
     mapOfImages["Camera2"] = &I2;
     mapOfImages["Camera3"] = &I3;
 
-// initialise a  display
+    // initialise a  display
 #if defined(VISP_HAVE_X11)
     vpDisplayX display1, display2, display3;
 #elif defined(VISP_HAVE_GDI)
@@ -418,8 +426,8 @@ int main(int argc, const char **argv)
     std::map<std::string, vpHomogeneousMatrix> mapOfCameraPoses;
     std::map<std::string, vpCameraParameters> mapOfCameraParams;
 
-// Initialise the tracker: camera parameters, moving edge and KLT settings
-#if USE_XML
+    // Initialise the tracker: camera parameters, moving edge and KLT settings
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     std::map<std::string, std::string> mapOfConfigFiles;
     mapOfConfigFiles["Camera1"] = configFile;
@@ -438,7 +446,8 @@ int main(int argc, const char **argv)
     me.setMaskSize(5);
     me.setMaskNumber(180);
     me.setRange(7);
-    me.setThreshold(5000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(10);
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
@@ -477,14 +486,14 @@ int main(int argc, const char **argv)
     std::map<std::string, unsigned int> mapOfClippingFlags;
     dynamic_cast<vpMbGenericTracker *>(tracker)->getClipping(mapOfClippingFlags);
     for (std::map<std::string, unsigned int>::iterator it = mapOfClippingFlags.begin(); it != mapOfClippingFlags.end();
-         ++it) {
+      ++it) {
       it->second = (it->second | vpMbtPolygon::FOV_CLIPPING);
     }
 
     dynamic_cast<vpMbGenericTracker *>(tracker)->setClipping(mapOfClippingFlags);
-//   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
-//   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
-//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+    //   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
+    //   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+    //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
     // Display the moving edges, and the Klt points
@@ -534,8 +543,9 @@ int main(int argc, const char **argv)
 
       // display the 3D model at the given pose
       dynamic_cast<vpMbGenericTracker *>(tracker)->display(mapOfImages, mapOfCameraPoses, mapOfCameraParams,
-                                                           vpColor::red);
-    } else {
+        vpColor::red);
+    }
+    else {
       vpHomogeneousMatrix c1Moi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
       std::map<std::string, vpHomogeneousMatrix> mapOfInitPoses;
       mapOfInitPoses["Camera1"] = c1Moi;
@@ -584,7 +594,7 @@ int main(int argc, const char **argv)
         }
 
         tracker->resetTracker();
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
         dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(mapOfConfigFiles);
 #else
         // By setting the parameters:
@@ -596,7 +606,8 @@ int main(int argc, const char **argv)
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(7);
-        me.setThreshold(5000);
+        me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me.setThreshold(10);
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
@@ -633,14 +644,14 @@ int main(int argc, const char **argv)
 
         dynamic_cast<vpMbGenericTracker *>(tracker)->getClipping(mapOfClippingFlags);
         for (std::map<std::string, unsigned int>::iterator it = mapOfClippingFlags.begin();
-             it != mapOfClippingFlags.end(); ++it) {
+          it != mapOfClippingFlags.end(); ++it) {
           it->second = (it->second | vpMbtPolygon::FOV_CLIPPING);
         }
 
         dynamic_cast<vpMbGenericTracker *>(tracker)->setClipping(mapOfClippingFlags);
-//   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
-//   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
-//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        //   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
+        //   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+        //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker->loadModel(modelFile);
         dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(mapOfCameraParams);
@@ -664,7 +675,7 @@ int main(int argc, const char **argv)
 
       // track the object: stop tracking from frame 40 to 50
       if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 ||
-          reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
+        reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
         dynamic_cast<vpMbGenericTracker *>(tracker)->track(mapOfImages);
         dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(mapOfCameraPoses);
         if (opt_display) {
@@ -675,10 +686,11 @@ int main(int argc, const char **argv)
             mapOfSubImages["Camera2"] = &I2;
 
             dynamic_cast<vpMbGenericTracker *>(tracker)->display(mapOfSubImages, mapOfCameraPoses, mapOfCameraParams,
-                                                                 vpColor::red, 3);
-          } else {
+              vpColor::red, 3);
+          }
+          else {
             dynamic_cast<vpMbGenericTracker *>(tracker)->display(mapOfImages, mapOfCameraPoses, mapOfCameraParams,
-                                                                 vpColor::red, 3);
+              vpColor::red, 3);
           }
           // display the frame
           vpDisplay::displayFrame(I1, mapOfCameraPoses["Camera1"], mapOfCameraParams["Camera1"], 0.05);
@@ -723,9 +735,9 @@ int main(int argc, const char **argv)
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
     std::cout << "\nFinal poses, c1Mo:\n"
-              << mapOfCameraPoses["Camera1"] << "\nc2Mo:\n"
-              << mapOfCameraPoses["Camera2"] << "\nc3Mo:\n"
-              << mapOfCameraPoses["Camera3"] << std::endl;
+      << mapOfCameraPoses["Camera1"] << "\nc2Mo:\n"
+      << mapOfCameraPoses["Camera2"] << "\nc3Mo:\n"
+      << mapOfCameraPoses["Camera3"] << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I1);
@@ -733,10 +745,11 @@ int main(int argc, const char **argv)
     reader.close();
 
     delete tracker;
-    tracker = NULL;
+    tracker = nullptr;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,14 @@
  *
  * Description:
  * Define a curve for the vpPlot class.
- *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+ */
+
+#ifndef VP_PLOT_CURVE_H
+#define VP_PLOT_CURVE_H
+
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#ifndef vpPlotCurve_H
-#define vpPlotCurve_H
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
@@ -54,6 +51,8 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
+BEGIN_VISP_NAMESPACE
+
 class vpPlotCurve
 {
 public:
@@ -62,9 +61,6 @@ public:
   vpColor color;
   vpCurveStyle curveStyle;
   unsigned int thickness;
-  // vpMarkerStyle markerStyle;
-  // char lineStyle[20];
-  // vpList<vpImagePoint> pointList;
   unsigned int nbPoint;
   vpImagePoint lastPoint;
   std::list<double> pointListx;
@@ -83,6 +79,8 @@ public:
   void plotList(const vpImage<unsigned char> &I, double xorg, double yorg, double zoomx, double zoomy);
 };
 
+
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,14 +30,11 @@
 #
 # Description:
 # Try to find Aria libraries and headers to control Pioneer mobile robots.
-# Once run this will define: 
+# Once run this will define:
 #
 # ARIA_FOUND
 # ARIA_INCLUDE_DIRS
 # ARIA_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -51,12 +48,12 @@ find_path(ARIA_INCLUDE_DIR Aria.h
   /usr/local/include/Aria
   "C:/Program Files/MobileRobots/Aria/include"
 )
-#MESSAGE("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")  
+#MESSAGE("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")
 
-if(UNIX)  
+if(UNIX)
   find_library(ARIA_LIBRARY
     NAMES Aria
-    PATHS 
+    PATHS
     $ENV{ARIA_HOME}/lib
     /usr/local/Aria/lib
     /usr/Aria/lib
@@ -80,7 +77,7 @@ else()
   else()
     set(ARIA_SUFFIX_NAME "")
   endif()
-  
+
   set(ARIA_LIB_SEARCH_PATH "")
   if(CMAKE_CL_64)
     list(APPEND ARIA_LIB_SEARCH_PATH "C:/Program Files/MobileRobots/Aria/lib64")
@@ -92,17 +89,17 @@ else()
 
   find_library(ARIA_LIBRARY_DEBUG
     NAMES AriaDebug${ARIA_SUFFIX_NAME}
-    PATHS 
+    PATHS
       ${ARIA_LIB_SEARCH_PATH}
   )
   find_library(ARIA_LIBRARY_RELEASE
     NAMES Aria${ARIA_SUFFIX_NAME}
-    PATHS 
+    PATHS
       ${ARIA_LIB_SEARCH_PATH}
   )
 endif()
-    
-if(UNIX)  
+
+if(UNIX)
   if(ARIA_LIBRARY AND ARIA_INCLUDE_DIR)
     set(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
     set(ARIA_LIBRARIES ${ARIA_LIBRARY})
@@ -124,7 +121,7 @@ else()
   endif()
 
 endif()
-  
+
 mark_as_advanced(
   ARIA_INCLUDE_DIR
   ARIA_LIBRARY

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Irisa's Afma4 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRobotAfma4_h
 #define vpRobotAfma4_h
@@ -57,6 +54,7 @@ extern "C" {
 #include "trycatch.h"
 }
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotAfma4
 
@@ -218,11 +216,11 @@ public: /* Constantes */
   static const double defaultPositioningVelocity; // = 20.0;
 
 public: /* Methode publiques */
-  explicit vpRobotAfma4(bool verbose = true);
+  VP_EXPLICIT vpRobotAfma4(bool verbose = true);
   virtual ~vpRobotAfma4(void);
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) VP_OVERRIDE;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
 
   double getPositioningVelocity(void);
@@ -239,8 +237,8 @@ public: /* Methode publiques */
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_cVf(vpVelocityTwistMatrix &cVf) const;
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void init(void);
 
@@ -253,7 +251,7 @@ public: /* Methode publiques */
   static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, const double q1, const double q2, const double q4,
                    const double q5);
   void setPosition(const char *filename);
@@ -265,10 +263,10 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif /* #ifndef vpRobotAfma4_h */

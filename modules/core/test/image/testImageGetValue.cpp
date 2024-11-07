@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test for vpImagePoint::getValue().
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example testImageGetValue.cpp
 
@@ -40,6 +40,10 @@
 
 #include <iostream>
 #include <visp3/core/vpImage.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -61,8 +65,8 @@ template <> vpRGBa checkPixelAccess(unsigned int height, unsigned int width, dou
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
       I[i][j] =
-          vpRGBa(static_cast<unsigned char>(i * I.getWidth() + j), static_cast<unsigned char>(i * I.getWidth() + j),
-                 static_cast<unsigned char>(i * I.getWidth() + j));
+        vpRGBa(static_cast<unsigned char>(i * I.getWidth() + j), static_cast<unsigned char>(i * I.getWidth() + j),
+               static_cast<unsigned char>(i * I.getWidth() + j));
     }
   }
 
@@ -101,12 +105,12 @@ template <class PixelType> PixelType getValue(const vpImage<PixelType> &I, doubl
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(I.getHeight() - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(I.getWidth() - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(I.getHeight() - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(I.getWidth() - 1, jround + 1);
 
   double value =
-      (static_cast<double>(I[iround][jround]) * rfrac + static_cast<double>(I[iround_1][jround]) * rratio) * cfrac +
-      (static_cast<double>(I[iround][jround_1]) * rfrac + static_cast<double>(I[iround_1][jround_1]) * rratio) * cratio;
+    (static_cast<double>(I[iround][jround]) * rfrac + static_cast<double>(I[iround_1][jround]) * rratio) * cfrac +
+    (static_cast<double>(I[iround][jround_1]) * rfrac + static_cast<double>(I[iround_1][jround_1]) * rratio) * cratio;
 
   return static_cast<PixelType>(roundValue ? vpMath::round(value) : value);
 }
@@ -119,21 +123,23 @@ int main()
   {
     // unsigned char
     std::cout << "checkPixelAccess<unsigned char>(3, 4, 2, 3): "
-              << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 2, 3)) << std::endl;
+      << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 2, 3)) << std::endl;
     try {
       std::cout << "checkPixelAccess<unsigned char>(3, 4, -2, -3): "
-                << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, -2, -3)) << std::endl;
+        << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, -2, -3)) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
     try {
       std::cout << "checkPixelAccess<unsigned char>(3, 4, 3, 4): "
-                << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 3, 4)) << std::endl;
+        << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 3, 4)) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
 
@@ -143,14 +149,16 @@ int main()
       std::cout << "checkPixelAccess<vpRGBa>(3, 4, -2, -3): " << checkPixelAccess<vpRGBa>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
     try {
       std::cout << "checkPixelAccess<vpRGBa>(3, 4, 3, 4): " << checkPixelAccess<vpRGBa>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
 
@@ -160,14 +168,16 @@ int main()
       std::cout << "checkPixelAccess<int>(3, 4, -2, -3): " << checkPixelAccess<int>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
     try {
       std::cout << "checkPixelAccess<int>(3, 4, 3, 4): " << checkPixelAccess<int>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
 
@@ -177,14 +187,16 @@ int main()
       std::cout << "checkPixelAccess<double>(3, 4, -2, -3): " << checkPixelAccess<double>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
     try {
       std::cout << "checkPixelAccess<double>(3, 4, 3, 4): " << checkPixelAccess<double>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "\n";
     }
   }
@@ -222,7 +234,7 @@ int main()
     const double maxInterpolationErrorDiff = 1.0;
     if (std::fabs(meanDiffRound) > maxInterpolationErrorDiff) {
       std::cerr << "Too much pixel difference between fixed-point vpImage::getValue(double, double) and old method."
-                << std::endl;
+        << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -252,7 +264,7 @@ int main()
     }
     t_optim = vpTime::measureTimeMs() - t_optim;
     std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms"
-              << std::endl;
+      << std::endl;
 
     int sum2 = 0;
     double t_old = vpTime::measureTimeMs();
@@ -291,7 +303,7 @@ int main()
     }
     t_optim = vpTime::measureTimeMs() - t_optim;
     std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms"
-              << std::endl;
+      << std::endl;
 
     int sum2 = 0;
     double t_old = vpTime::measureTimeMs();
@@ -327,7 +339,7 @@ int main()
 
     bool same = (I == I_copy);
     std::cout << "\nCheck that getValue returns correct results for integer coordinates\n(I == I_copy)? " << same
-              << std::endl;
+      << std::endl;
     if (!same) {
       std::cerr << "Issue with vpImage::getValue(double, double)!" << std::endl;
       return EXIT_FAILURE;

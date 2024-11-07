@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * BLAS subroutines.
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
@@ -44,6 +42,7 @@
 // or vector content in a gsl_matrix or gsl_vector. This is not acceptable here.
 // that's why we prefer use naive code when VISP_HAVE_GSL is defined.
 #if defined(VISP_HAVE_LAPACK)
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MKL
 #include <mkl.h>
 typedef MKL_INT integer;
@@ -112,10 +111,11 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M_, unsigned int N_, double a
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
 #endif
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
-void dummy_vpMatrix_blas(){};
+void dummy_vpMatrix_blas() { };
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

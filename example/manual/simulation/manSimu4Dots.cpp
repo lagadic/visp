@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Simulation of a visual servoing with visualization and image generation.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file manSimu4Dots.cpp
@@ -80,6 +76,10 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 static void *mainLoop(void *_simu)
 {
@@ -138,7 +138,7 @@ static void *mainLoop(void *_simu)
   // Create a greyscale image
   vpImage<unsigned char> I(height, width);
 
-// Display initialization
+  // Display initialization
 #if defined(VISP_HAVE_X11)
   vpDisplayX disp;
 #elif defined(VISP_HAVE_GDI)
@@ -240,7 +240,7 @@ static void *mainLoop(void *_simu)
   task.print();
   simu->closeMainApplication();
 
-  void *a = NULL;
+  void *a = nullptr;
   return a;
 }
 
@@ -279,7 +279,8 @@ int main()
     // Run the simulator
     simu.mainLoop();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -289,8 +290,8 @@ int main()
 int main()
 {
   std::cout
-      << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
-      << std::endl;
+    << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

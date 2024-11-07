@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
  * Description:
  * Basic class used to make robot simulators.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -46,29 +43,26 @@
 #include "../wireframe-simulator/vpScene.h"
 #include "../wireframe-simulator/vpVwstack.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
-    artCoord(), artVel(), velocity(),
-#if defined(_WIN32)
-#elif defined(VISP_HAVE_PTHREAD)
-    thread(), attr(),
-#endif
-    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
-    displayBusy(false),
-    robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
+  artCoord(), artVel(), velocity(), m_thread(), m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(),
+  m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(),
+  m_mutex_scene(), displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false),
+  singularityManagement(true), cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
-    display(),
+  display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
-    verbose_(false)
+  displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
+  verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480, 640);
-  I = 255;
+  I = vpRGBa(255);
 #if defined(VISP_HAVE_DISPLAY)
   display.init(I, 0, 0, "The External view");
 #endif
@@ -79,37 +73,26 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   \param do_display : When true, enables the display of the external view.
   */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
-    artCoord(), artVel(), velocity(),
-#if defined(_WIN32)
-#elif defined(VISP_HAVE_PTHREAD)
-    thread(), attr(),
-#endif
-    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
-    displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
-    cameraParam(),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
+  artCoord(), artVel(), velocity(), m_thread(), m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(),
+  m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
+  displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
+  cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
-    display(),
+  display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
-    verbose_(false)
+  displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
+  verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480, 640);
-  I = 255;
+  I = vpRGBa(255);
 
 #if defined(VISP_HAVE_DISPLAY)
   if (do_display)
     this->display.init(I, 0, 0, "The External view");
 #endif
-}
-
-/*!
-  Basic destructor
-*/
-vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator()
-{
 }
 
 /*!
@@ -234,7 +217,8 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I_)
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_int);
     v = (double)I_.getHeight() / (2 * py_int);
-  } else {
+  }
+  else {
     u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
     v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
@@ -307,7 +291,8 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I_)
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I.getWidth() / (2 * px_int);
     v = (double)I.getHeight() / (2 * py_int);
-  } else {
+  }
+  else {
     u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
     v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
@@ -370,9 +355,9 @@ vpHomogeneousMatrix vpRobotWireFrameSimulator::get_cMo()
   delete[] fMit;
   return cMoTemp;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotWireFrameSimulator.cpp.o) has no symbols
-void dummy_vpRobotWireFrameSimulator(){};
+void dummy_vpRobotWireFrameSimulator() { };
 #endif

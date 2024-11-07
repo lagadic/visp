@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +30,7 @@
  * Description:
  * Pseudo random number generator.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*
  * PCG Random Number Generation for C.
  *
@@ -69,10 +68,10 @@
 #include <stdint.h>
 #include <visp3/core/vpUniRand.h>
 
+BEGIN_VISP_NAMESPACE
 vpUniRand::vpUniRand()
   : m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
-{
-}
+{ }
 
 /*!
   Create a pseudorandom number generator with uniform distribution.
@@ -122,7 +121,7 @@ uint32_t vpUniRand::boundedRand(uint32_t bound)
   // because this version will calculate the same modulus, but the LHS
   // value is less than 2^32.
 
-  uint32_t threshold = -bound % bound;
+  uint32_t threshold = static_cast<uint64_t>(-static_cast<int64_t>(bound) % bound);
 
   // Uniformity guarantees that this loop will terminate.  In practice, it
   // should usually terminate quickly; on average (assuming all bounds are
@@ -146,10 +145,10 @@ uint32_t vpUniRand::boundedRand(uint32_t bound)
 uint32_t vpUniRand::next()
 {
   uint64_t oldstate = m_rng.state;
-  m_rng.state = oldstate * 6364136223846793005ULL + m_rng.inc;
+  m_rng.state = (oldstate * 6364136223846793005ULL) + m_rng.inc;
   uint32_t xorshifted = static_cast<uint32_t>(((oldstate >> 18u) ^ oldstate) >> 27u);
   uint32_t rot = oldstate >> 59u;
-  return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+  return (xorshifted >> rot) | (xorshifted << (static_cast<uint32_t>((-static_cast<int64_t>(rot)) & 31)));
 }
 
 /*!
@@ -170,14 +169,14 @@ int vpUniRand::uniform(int a, int b)
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-float vpUniRand::uniform(float a, float b) { return next() * m_maxInvFlt * (b - a) + a; }
+float vpUniRand::uniform(float a, float b) { return (next() * m_maxInvFlt * (b - a)) + a; }
 
 /*!
   Generates a pseudorandom uniformly distributed double number between [a, b) range.
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-double vpUniRand::uniform(double a, double b) { return next() * m_maxInvDbl * (b - a) + a; }
+double vpUniRand::uniform(double a, double b) { return (next() * m_maxInvDbl * (b - a)) + a; }
 
 /*!
   Initialize the random number generator.
@@ -208,3 +207,4 @@ void vpUniRand::setSeed(uint64_t initstate, uint64_t initseq)
   m_rng.state += initstate;
   next();
 }
+END_VISP_NAMESPACE

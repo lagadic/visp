@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +30,7 @@
  * Description:
  * Use to display an image behind the internal view of the simulator
  * used for augmented reality application
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpAR.cpp
@@ -49,6 +43,7 @@
 #ifdef VISP_HAVE_COIN3D_AND_GUI
 
 #include <visp3/ar/vpAR.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
 /* Objets OIV. */
@@ -68,18 +63,18 @@
 #include <Inventor/nodes/SoGroup.h>            /* Groupement de noeuds (sans separation)*/
 #include <Inventor/nodes/SoMaterial.h>         /* Matiere (couleur) des objets.     */
 
+BEGIN_VISP_NAMESPACE
 /*!
-        Basic Destructor that calls the kill() method of the vpSimulator
-   class.
+  Basic Destructor that calls the kill() method of the vpSimulator class.
 */
 vpAR::~vpAR() { kill(); }
 
 /*!
-        Initialisation of the internal view of the simulator.
+  Initialisation of the internal view of the simulator.
 
-        \param width : Width of the internal view.
-        \param height : Height of the internal view.
-        \param type : Type of background image ie gray scaled or color.
+  \param width : Width of the internal view.
+  \param height : Height of the internal view.
+  \param type : Type of background image ie gray scaled or color.
 */
 void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageType type)
 {
@@ -89,9 +84,9 @@ void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageTy
   // no image is loaded
   background = false;
 
-  if (image_background != NULL) {
+  if (image_background != nullptr) {
     free(image_background);
-    image_background = NULL;
+    image_background = nullptr;
   }
 
   typeImage = type;
@@ -102,9 +97,9 @@ void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageTy
 }
 
 /*!
-        Set the background image and turn it to deal with the frame of OpenGL.
+  Set the background image and turn it to deal with the frame of OpenGL.
 
-        \param I : Gray scaled image for the background.
+  \param I : Gray scaled image for the background.
 */
 // Grey pictures SetBackGroundImage
 void vpAR::setImage(vpImage<unsigned char> &I)
@@ -125,14 +120,13 @@ void vpAR::setImage(vpImage<unsigned char> &I)
 }
 
 /*!
-        Set the background image and turn it to deal with the frame of OpenGL.
+  Set the background image and turn it to deal with the frame of OpenGL.
 
-        \param I : Color image for the background.
+  \param I : Color image for the background.
 */
 // Color pictures SetBackGroundImage
 void vpAR::setImage(vpImage<vpRGBa> &I)
 {
-
   if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
     throw(vpException(vpException::dimensionError), "The image size is different from the view size");
@@ -152,8 +146,8 @@ void vpAR::setImage(vpImage<vpRGBa> &I)
     }
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAR.cpp.o) has no symbols
-void dummy_vpAR(){};
+void dummy_vpAR() { };
 #endif

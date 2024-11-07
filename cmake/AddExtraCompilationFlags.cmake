@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,9 +31,6 @@
 # Description:
 # ViSP overall configuration file. Add extra compilation flags.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 # Warning: here ViSPDetectPlatform.cmake should be called before this file to set ARM var used below
@@ -45,14 +42,14 @@ macro(add_extra_compiler_option option)
   if(CMAKE_BUILD_TYPE)
     set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
   endif()
-  vp_check_flag_support(CXX "${option}" _varname "")
+  vp_check_flag_support(CXX "${option}" _varname "${VISP_EXTRA_CXX_FLAGS} ${ARGN}")
   if(_varname)
-    list(APPEND VISP_EXTRA_CXX_FLAGS ${option})
+    set(VISP_EXTRA_CXX_FLAGS "${VISP_EXTRA_CXX_FLAGS} ${option}")
   endif()
 
-  vp_check_flag_support(C "${option}" _varname "")
+  vp_check_flag_support(C "${option}" _varname "${VISP_EXTRA_C_FLAGS} ${ARGN}")
   if(_varname)
-    list(APPEND VISP_EXTRA_C_FLAGS ${option})
+    set(VISP_EXTRA_C_FLAGS "${VISP_EXTRA_C_FLAGS} ${option}")
   endif()
 endmacro()
 
@@ -86,14 +83,21 @@ if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #
   add_extra_compiler_option_enabling(-Wfloat-equal       ACTIVATE_WARNING_FLOAT_EQUAL     OFF)
   add_extra_compiler_option_enabling(-Wsign-conversion   ACTIVATE_WARNING_SIGN_CONVERSION OFF)
   add_extra_compiler_option_enabling(-Wshadow            ACTIVATE_WARNING_SHADOW          OFF)
+  add_extra_compiler_option_enabling(-ffast-math         ENABLE_FAST_MATH                 OFF)
 elseif(MSVC)
   # Add specific compilation flags for Windows Visual
   add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             OFF)
+  add_extra_compiler_option_enabling(/fp:fast            ENABLE_FAST_MATH                 OFF)
   if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.
     add_extra_compiler_option("/EHa")
   endif()
+endif()
+
+if((NOT VISP_HAVE_NULLPTR) AND (VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98) AND (NOT MSVC))
+  add_extra_compiler_option("-Wno-c++11-compat")
+  add_extra_compiler_option("-Wno-c++0x-compat")
 endif()
 
 # Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var
@@ -112,6 +116,13 @@ endif()
 
 if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
+endif()
+
+if(USE_THREADS OR USE_PTHREAD)
+  # Condider the case of Apriltags on Unix that needs pthread
+  if(THREADS_HAVE_PTHREAD_ARG)
+    add_extra_compiler_option("-pthread")
+  endif()
 endif()
 
 if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)

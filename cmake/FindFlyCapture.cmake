@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -35,9 +35,6 @@
 # FLYCAPTURE_INCLUDE_DIRS
 # FLYCAPTURE_LIBRARIES
 # FLYCAPTURE_VERSION
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -67,7 +64,7 @@ find_path(FLYCAPTURE_INCLUDE_DIRS FlyCapture2.h
 
 find_library(FLYCAPTURE_LIBRARIES
   NAMES flycapture FlyCapture2 FlyCapture2_v100
-  PATHS 
+  PATHS
     ${FLYCAPTURE_LIB_SEARCH_PATH}
   NO_DEFAULT_PATH
 )
@@ -77,7 +74,7 @@ if(FLYCAPTURE_LIBRARIES AND FLYCAPTURE_INCLUDE_DIRS)
 else()
   set(FLYCAPTURE_FOUND FALSE)
 endif()
-  
+
 mark_as_advanced(
   FLYCAPTURE_INCLUDE_DIRS
   FLYCAPTURE_LIBRARIES

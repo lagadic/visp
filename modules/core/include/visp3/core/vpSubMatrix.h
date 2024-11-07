@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,51 +28,33 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Mask on a vpMatrix .
- *
- * Authors:
- * Laneurit Jean
- *
- *****************************************************************************/
+ * Mask on a vpMatrix.
+ */
 
-#ifndef _vpSubMatrix_h_
-#define _vpSubMatrix_h_
+/*!
+ * \file vpSubMatrix.h
+ *
+ * \brief Definition of the vpSubMatrix class
+ */
 
+#ifndef VP_SUB_MATRIX_H
+#define VP_SUB_MATRIX_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \file vpSubMatrix.h
-
-  \brief Definition of the vpSubMatrix class
-*/
-
-/*!
-  \class vpSubMatrix
-  \ingroup group_core_matrices
-  \brief Definition of the vpSubMatrix
-  vpSubMatrix class provides a mask on a vpMatrix
-  all properties of vpMatrix are available with
-  a vpSubMatrix
-
-  \author Jean Laneurit (IRISA - INRIA Rennes)
-
-  \sa vpMatrix vpColvector vpRowVector
+ * \class vpSubMatrix
+ * \ingroup group_core_matrices
+ * \brief Definition of the vpSubMatrix class that provides a mask on a vpMatrix.
+ * All properties of vpMatrix are available with a vpSubMatrix.
+ *
+ *
+ * \sa vpMatrix vpColVector vpRowVector
 */
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
-
-private:
-  //! Eye method unavailable
-  void eye(unsigned int n);
-  //! Eye method unavailable
-  void eye(unsigned int m, unsigned int n);
-  //! Copy constructor unavailable
-  vpSubMatrix(const vpSubMatrix & /* m */);
-
-protected:
-  unsigned int pRowNum;
-  unsigned int pColNum;
-  vpMatrix *parent;
 
 public:
   //! Default constructor
@@ -82,7 +63,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  virtual ~vpSubMatrix();
+  virtual ~vpSubMatrix() VP_OVERRIDE;
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
@@ -97,6 +78,19 @@ public:
   vpSubMatrix &operator=(const vpMatrix &B);
   //! Operation such as subA = x
   vpSubMatrix &operator=(const double &x);
-};
 
+protected:
+  unsigned int pRowNum;
+  unsigned int pColNum;
+  vpMatrix *parent;
+
+private:
+  //! Eye method unavailable
+  void eye(unsigned int n);
+  //! Eye method unavailable
+  void eye(unsigned int m, unsigned int n);
+  //! Copy constructor unavailable
+  vpSubMatrix(const vpSubMatrix &m /* m */);
+};
+END_VISP_NAMESPACE
 #endif

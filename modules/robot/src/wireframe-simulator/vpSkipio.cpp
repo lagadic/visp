@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -47,11 +47,12 @@
 #include "vpToken.h"
 #include <stdio.h>
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "skip_cmd" saute les structures d'une commande
  * jusqu'a reconnaitre le debut d'une nouvelle commande.
  * Entree :
- * f		Fichier en sortie.
+ * f    Fichier en sortie.
  */
 void skip_cmd(void)
 {
@@ -68,19 +69,19 @@ void skip_cmd(void)
  * La procedure "skip_keyword" saute les structures des articles
  * jusqu'a reconnaitre le mot cle de jeton "token".
  * Entree :
- * token	Jeton du mot cle a reconnaitre.
- * err		Message d'erreur si le mot cle n'est pas reconnu.
+ * token  Jeton du mot cle a reconnaitre.
+ * err    Message d'erreur si le mot cle n'est pas reconnu.
  */
 void skip_keyword(int token, const char *err)
 {
   int t;
 
   switch (t = lex()) {
-  case T_IDENT: /* saute le mot cle inconnu	*/
+  case T_IDENT: /* saute le mot cle inconnu  */
     while ((t = lex()) != 0) {
       switch (t) {
-      case '$':   /* nouvelle commande		*/
-      case T_EOF: /* fin de fichier		*/
+      case '$':   /* nouvelle commande    */
+      case T_EOF: /* fin de fichier    */
         lexerr("start", err, NULL);
         break;
       default:
@@ -97,5 +98,5 @@ void skip_keyword(int token, const char *err)
   }
   lexerr("start", err, NULL);
 }
-
+END_VISP_NAMESPACE
 #endif

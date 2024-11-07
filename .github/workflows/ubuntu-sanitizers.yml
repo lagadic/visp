@@ -1,13 +1,19 @@
 name: Ubuntu-sanitizers
 
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
     # * is a special character in YAML so you have to quote this string
     # every Sunday at 2 am
     - cron:  '0 2 * * SUN'
+
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-ubuntu-sanitizers:
@@ -18,14 +24,8 @@ jobs:
         flags: ["-fsanitize=address", "-fsanitize=leak", "-fsanitize=thread", "-fsanitize=undefined"]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: lscpu
@@ -47,7 +47,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Configure CMake
@@ -82,4 +82,12 @@ jobs:
         # SUMMARY: AddressSanitizer: odr-violation: global 'ALIGNMENT' at /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
         ASAN_OPTIONS: detect_odr_violation=0
       working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
+      # When running ctest we got a lot of segfault
+      # This seems a bug reported in
+      # - https://stackoverflow.com/questions/77894856/possible-bug-in-gcc-sanitizers
+      # - https://stackoverflow.com/questions/77850769/fatal-threadsanitizer-unexpected-memory-mapping-when-running-on-linux-kernels
+      # The workaround seems to be to set vm.mmap_rnd_bits=28
+      run: |
+        sudo cat /proc/sys/vm/mmap_rnd_bits
+        sudo sysctl vm.mmap_rnd_bits=28
+        ctest -j$(nproc) --output-on-failure -V

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -185,28 +182,40 @@ endfunction()
 # adds include directories in such way that directories from the ViSP source tree go first
 function(vp_target_include_directories target)
   set(__params "")
+  set(__system_params "")
+  set(__var_name __params)
+
   foreach(dir ${ARGN})
-    get_filename_component(__abs_dir "${dir}" ABSOLUTE)
-    string(REPLACE "+" "\\+" __VISP_BINARY_DIR_filtered ${VISP_BINARY_DIR})
-#   if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}" OR "${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")  # not compatible with cmake 2.8.12.2
-    if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}")
-      list(APPEND __params "${__abs_dir}")
-    elseif("${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")
-      list(APPEND __params "${__abs_dir}")
+    if("${dir}" STREQUAL "SYSTEM")
+        set(__var_name __system_params)
     else()
-      list(APPEND __params "${dir}")
+      get_filename_component(__abs_dir "${dir}" ABSOLUTE)
+      string(REPLACE "+" "\\+" __VISP_BINARY_DIR_filtered ${VISP_BINARY_DIR})
+  #   if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}" OR "${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")  # not compatible with cmake 2.8.12.2
+      if("${__abs_dir}" MATCHES "^${VISP_SOURCE_DIR}")
+        list(APPEND ${__var_name} "${__abs_dir}")
+      elseif("${__abs_dir}" MATCHES "^${__VISP_BINARY_DIR_filtered}")
+        list(APPEND ${__var_name} "${__abs_dir}")
+      else()
+        list(APPEND ${__var_name} "${dir}")
+      endif()
     endif()
   endforeach()
+
   if(__params)
-    if(CMAKE_VERSION VERSION_LESS 2.8.11)
-      include_directories(${__params})
+    if(TARGET ${target})
+      target_include_directories(${target} PRIVATE ${__params})
     else()
-      if(TARGET ${target})
-        target_include_directories(${target} PRIVATE ${__params})
-      else()
-        set(__new_inc "${VP_TARGET_INCLUDE_DIRS_${target}};${__params}")
-        set(VP_TARGET_INCLUDE_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
-      endif()
+      set(__new_inc "${VP_TARGET_INCLUDE_DIRS_${target}};${__params}")
+      set(VP_TARGET_INCLUDE_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
+    endif()
+  endif()
+  if(__system_params)
+    if(TARGET ${target})
+      target_include_directories(${target} SYSTEM PRIVATE ${__system_params})
+    else()
+      set(__new_inc "${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}};${__system_params}")
+      set(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
     endif()
   endif()
 endfunction()
@@ -282,13 +291,11 @@ set(${list_var}_DST_${__id} \"${${list_var}_DST_${__id}}\")
   endforeach()
 endmacro()
 
-
 macro(vp_copyfiles_make_config_file filename_var list_var)
   vp_copyfiles_make_config_string(${list_var}_CONFIG ${list_var})
   set(${filename_var} "${CMAKE_CURRENT_BINARY_DIR}/copyfiles-${list_var}.cmake")
   file(WRITE "${${filename_var}}" "${${list_var}_CONFIG}")
 endmacro()
-
 
 macro(vp_copyfiles_add_forced_target target list_var comment_str)
   vp_copyfiles_make_config_file(CONFIG_FILE ${list_var})
@@ -372,6 +379,17 @@ macro(vp_list_remove_empty __lst)
   endif()
 endmacro()
 
+# list directory elements removal macro
+macro(vp_list_remove_directory lst)
+  if(${lst})
+    foreach(item ${${lst}})
+      if(IS_DIRECTORY ${item})
+        list(REMOVE_ITEM ${lst} "${item}")
+      endif()
+    endforeach()
+  endif()
+endmacro()
+
 # needed by visp-java
 if(CMAKE_VERSION VERSION_LESS "3.2")
   macro(vp_cmake_byproducts var_name)
@@ -432,14 +450,14 @@ macro(vp_list_remove_separator __lst)
   endif()
 endmacro()
 
-# remove cmake ; list separator
+# replace cmake ; list separator
 macro(vp_list_replace_separator __lst __separator)
   if(${__lst})
     list(GET ${__lst} 0 __lst_reformated)
-    list(LENGTH ${__lst} __lenght)
-    if(__lenght GREATER 1)
-      MATH(EXPR __lenght "${__lenght} - 1")
-      foreach(_i RANGE 1 ${__lenght}-1)
+    list(LENGTH ${__lst} __length)
+    if(__length GREATER 1)
+      MATH(EXPR __length "${__length} - 1")
+      foreach(_i RANGE 1 ${__length}-1)
         list(GET ${__lst} ${_i} element)
        set(__lst_reformated "${__lst_reformated}${__separator}${element}")
       endforeach()
@@ -461,7 +479,6 @@ endmacro()
 # Example:
 #   VP_OPTION(USE_VTK "VTK" "QUIET" "Include vtk support" "" ON)
 #   VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources" "" "Include vtk support" "" ON)
-
 macro(VP_OPTION variable package quiet description advanced value)
   set(__option TRUE)
   set(__value ${value})
@@ -775,9 +792,15 @@ function(vp_target_link_libraries target)
 endfunction()
 
 function(_vp_append_target_includes target)
+  # Only defined for visp_<module> targets
   if(DEFINED VP_TARGET_INCLUDE_DIRS_${target})
     target_include_directories(${target} PRIVATE ${VP_TARGET_INCLUDE_DIRS_${target}})
     unset(VP_TARGET_INCLUDE_DIRS_${target} CACHE)
+  endif()
+  # Only defined for visp_<module> targets
+  if(DEFINED VP_TARGET_INCLUDE_SYSTEM_DIRS_${target})
+    target_include_directories(${target} SYSTEM PRIVATE ${VP_TARGET_INCLUDE_SYSTEM_DIRS_${target}})
+    unset(VP_TARGET_INCLUDE_SYSTEM_DIRS_${target} CACHE)
   endif()
 endfunction()
 
@@ -925,12 +948,34 @@ macro(vp_check_compiler_flag LANG FLAG RESULT)
       else()
         set(__msg "")
       endif()
+      if(CMAKE_REQUIRED_LIBRARIES)
+        set(__link_libs LINK_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+      else()
+        set(__link_libs)
+      endif()
+      set(__cmake_flags "")
+      if(CMAKE_EXE_LINKER_FLAGS)  # CMP0056 do this on new CMake
+        list(APPEND __cmake_flags "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}")
+      endif()
+
+      # CMP0067 do this on new CMake
+      if(DEFINED CMAKE_CXX_STANDARD)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}")
+      endif()
+      if(DEFINED CMAKE_CXX_STANDARD_REQUIRED)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}")
+      endif()
+      if(DEFINED CMAKE_CXX_EXTENSIONS)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}")
+      endif()
+
       message(STATUS "Performing Test ${RESULT}${__msg}")
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
-        CMAKE_FLAGS "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}"   # CMP0056 do this on new CMake
+        CMAKE_FLAGS ${__cmake_flags}
         COMPILE_DEFINITIONS "${FLAG}"
+        ${__link_libs}
         OUTPUT_VARIABLE OUTPUT)
 
       if(${RESULT})
@@ -990,8 +1035,10 @@ macro(vp_check_flag_support lang flag varname base_options)
   endif()
   string(TOUPPER "${flag}" ${varname})
   string(REGEX REPLACE "^(/|-)" "HAVE_${_lang}_" ${varname} "${${varname}}")
-  string(REGEX REPLACE " -|-|=| |\\." "_" ${varname} "${${varname}}")
-  vp_check_compiler_flag("${_lang}" "${base_options} ${flag}" ${${varname}} ${ARGN})
+  string(REGEX REPLACE " -|-|=| |\\.|," "_" ${varname} "${${varname}}")
+  if(DEFINED CMAKE_${_lang}_COMPILER)
+    vp_check_compiler_flag("${_lang}" "${base_options} ${flag}" ${${varname}} ${ARGN})
+  endif()
 endmacro()
 
 # turns off warnings
@@ -1072,7 +1119,10 @@ macro(vp_add_subdirectories lst subdir)
         file(GLOB __subdirs RELATIVE "${__path}/${subdir}" "${__path}/${subdir}/*")
         foreach(__s ${__subdirs})
           if(EXISTS "${__path}/${subdir}/${__s}/CMakeLists.txt")
-            add_subdirectory("${__path}/${subdir}/${__s}" "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+            # Add subdir only if ut doesn't exist
+            if(NOT EXISTS "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+              add_subdirectory("${__path}/${subdir}/${__s}" "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+            endif()
           endif()
         endforeach()
       endif()
@@ -1198,6 +1248,14 @@ function(status text)
 endfunction()
 
 # read set of version defines from the header file
+# This macro allows to get defines values from a header file.
+# For example if the header.hpp file contains
+#   #define LIB_VERSION_MAJOR 1
+#   #define LIB_VERSION_MINOR 2
+#   #define LIB_VERSION_PATCH 3
+# to retrieve the values of these defines and compose a string version you may use
+#   vp_parse_header("header.hpp" LIB_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_PATCH)
+#   set(LIB_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH}")
 macro(vp_parse_header FILENAME FILE_VAR)
   set(vars_regex "")
   set(__parent_scope OFF)
@@ -1239,6 +1297,9 @@ macro(vp_parse_header FILENAME FILE_VAR)
 endmacro()
 
 # read single version define from the header file
+# Example to detect the version in header.hpp file that contains:
+#   #define MyLIB_VERSION_STR "1.2.3"
+# use vp_parse_header2(MyLIB "header.hpp" LIB_VERSION_STR)
 macro(vp_parse_header2 LIBNAME HDR_PATH VARNAME)
   vp_clear_vars(${LIBNAME}_VERSION_MAJOR
                 ${LIBNAME}_VERSION_MAJOR
@@ -1250,7 +1311,6 @@ macro(vp_parse_header2 LIBNAME HDR_PATH VARNAME)
   if(EXISTS "${HDR_PATH}")
     file(STRINGS "${HDR_PATH}" ${LIBNAME}_H REGEX "^#define[ \t]+${VARNAME}[ \t]+\"[^\"]*\".*$" LIMIT_COUNT 1)
   endif()
-
   if(${LIBNAME}_H)
     string(REGEX REPLACE "^.*[ \t]${VARNAME}[ \t]+\"([0-9]+).*$" "\\1" ${LIBNAME}_VERSION_MAJOR "${${LIBNAME}_H}")
     string(REGEX REPLACE "^.*[ \t]${VARNAME}[ \t]+\"[0-9]+\\.([0-9]+).*$" "\\1" ${LIBNAME}_VERSION_MINOR  "${${LIBNAME}_H}")
@@ -1308,11 +1368,24 @@ macro(vp_parse_header4 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
   endif()
 endmacro()
 
-# read single version info from the pkg file
+# Get package version from pkg-config
 macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   if(EXISTS "${PKG_PATH}/${LIBNAME}.pc")
+    # Consider the case where pkg-config is not installed
     file(STRINGS "${PKG_PATH}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
     string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+  else()
+    find_package(PkgConfig)
+    if(PkgConfig_FOUND)
+      string(TOUPPER ${LIBNAME} LIBNAME_UPPER)
+      pkg_get_variable(${LIBNAME_UPPER}_PCFILEDIR ${LIBNAME} pcfiledir)
+      if(EXISTS "${${LIBNAME_UPPER}_PCFILEDIR}/${LIBNAME}.pc")
+        file(STRINGS "${${LIBNAME_UPPER}_PCFILEDIR}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
+        string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+        unset(LIBNAME_UPPER)
+        mark_as_advanced(${LIBNAME_UPPER}_PCFILEDIR)
+      endif()
+    endif()
   endif()
 endmacro()
 
@@ -1352,12 +1425,16 @@ macro(vp_get_interface_link_libraries libs link_libraries)
   set(__imported_libs ${${libs}})
   set(__libs ${${libs}})
   foreach(lib_ ${${libs}})
-#    message("lib_: ${lib_}")
     if(TARGET ${lib_})
       get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
       if(imported_libs_)
-        list(APPEND __imported_libs ${imported_libs_})
-        list(APPEND __libs ${lib_})
+        foreach(imp_ ${imported_libs_})
+          if(NOT imp_ MATCHES "^\\$<")
+            list(APPEND __imported_libs ${imported_libs_})
+            list(APPEND __libs ${lib_})
+          endif()
+        endforeach()
+
       else()
         list(APPEND __libs ${lib_})
       endif()
@@ -1365,76 +1442,79 @@ macro(vp_get_interface_link_libraries libs link_libraries)
       list(APPEND __libs ${lib_})
     endif()
   endforeach()
-#  message("__imported_libs: ${__imported_libs}")
-#  message("__libs: ${__libs}")
   vp_list_unique(__imported_libs)
   vp_list_unique(__libs)
-#  message("fin __imported_libs: ${__imported_libs}")
-#  message("fin __libs: ${__libs}")
-
 
   while(__imported_libs)
-#    message("begin while __imported_libs: ${__imported_libs}")
     vp_list_pop_front(__imported_libs elt)
-#    message("Process elt: ${elt}")
     if(TARGET ${elt} AND NOT elt MATCHES "^-framework") # to avoid precessing -framework ApplicationServices -framework CoreServices
-#      message("elt is a target and not framework: ${elt}")
       get_target_property(imported_libs_ ${elt} INTERFACE_LINK_LIBRARIES)
       if(imported_libs_)
         list(APPEND __imported_libs ${imported_libs_})
       else()
         list(APPEND __libs ${elt})
       endif()
-    else()
+    elseif(NOT elt MATCHES "^\\$<")
       list(APPEND __libs ${elt})
     endif()
+
     vp_list_unique(__imported_libs)
   endwhile()
   vp_list_unique(__libs)
-#  message("fin2 __imported_libs: ${__imported_libs}")
-#  message("fin2 __libs: ${__libs}")
 
   set(__config "RELEASE" "DEBUG")
   foreach(config_ ${__config})
     foreach(lib_ ${__libs})
-#      message("lib_: ${lib_}")
-    if(TARGET ${lib_})
-      get_target_property(imported_libs_ ${lib_} IMPORTED_IMPLIB_${config_})
-      if(NOT EXISTS ${imported_libs_})
-        get_target_property(lib_location_ ${lib_} IMPORTED_LOCATION_${config_})
-      endif()
-#      message("lib_location_: ${lib_location_}")
-      if(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-        list(APPEND ${link_libraries} optimized "${lib_location_}")
-      elseif(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "DEBUG")
-        list(APPEND ${link_libraries} debug     "${lib_location_}")
-      elseif(EXISTS ${lib_location_})
-        list(APPEND ${link_libraries} ${lib_location_})
-      endif()
+      if(TARGET ${lib_})
 
-      get_target_property(lib_deps_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${config_})
-#      message("lib_deps_ ---------: ${lib_deps_}")
-      if(lib_deps_)
-        foreach(deps_ ${lib_deps_})
-          get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${config_})
-          if(EXISTS "${deps_location_}")
-            if(WIN32 AND "${config_}" MATCHES "RELEASE")
-              list(APPEND ${link_libraries} optimized ${deps_location_})
-            elseif(WIN32 AND "${config_}" MATCHES "DEBUG")
-              list(APPEND ${link_libraries} debug ${deps_location_})
-            else()
-              list(APPEND ${link_libraries} ${deps_location_})
+        get_target_property(imported_libs_ ${lib_} IMPORTED_IMPLIB_${config_})
+        if(NOT EXISTS ${imported_libs_})
+          get_target_property(lib_location_ ${lib_} IMPORTED_LOCATION_${config_})
+        endif()
+        if(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+          list(APPEND ${link_libraries} optimized "${lib_location_}")
+        elseif(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "DEBUG")
+          list(APPEND ${link_libraries} debug     "${lib_location_}")
+        elseif(EXISTS ${lib_location_})
+          list(APPEND ${link_libraries} ${lib_location_})
+        endif()
+
+        get_target_property(lib_deps_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${config_})
+        if(lib_deps_)
+          foreach(deps_ ${lib_deps_})
+            get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${config_})
+            if(EXISTS "${deps_location_}")
+              if(WIN32 AND "${config_}" MATCHES "RELEASE")
+                list(APPEND ${link_libraries} optimized ${deps_location_})
+              elseif(WIN32 AND "${config_}" MATCHES "DEBUG")
+                list(APPEND ${link_libraries} debug ${deps_location_})
+              else()
+                list(APPEND ${link_libraries} ${deps_location_})
+              endif()
             endif()
+          endforeach()
+        endif()
+      else()
+        # VTK_LIBRARIES does import /Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib/libz.tbd
+        # that doesn't exist and that does lied to a link error when building ustk_gui module:
+        #   No rule to make target `/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/lib/libz.tbd',
+        #   needed by `lib/libvisp_ustk_gui.3.6.1.dylib'.  Stop.
+        # Here we introduce an additional check to ensure that libraries suffixed by .tbd exist
+        if(${lib_} MATCHES "/([^/]+)\\.tbd$")
+          if(EXISTS ${lib_})
+            # Add only if .tbd file exists
+            list(APPEND ${link_libraries} ${lib_})
           endif()
-        endforeach()
+        else()
+          list(APPEND ${link_libraries} ${lib_})
+        endif()
       endif()
-    else()
-      list(APPEND ${link_libraries} ${lib_})
-    endif()
 
     endforeach()
   endforeach()
   vp_list_unique(${link_libraries})
+  # Additional check to remove directories like /usr/X11R6/lib that can be exported by VTK
+  vp_list_remove_directory(${link_libraries})
 #  message("link_libraries: ${link_libraries}")
 
 endmacro()
@@ -1573,6 +1653,8 @@ macro(vp_get_all_includes _includes_modules _includes_extra _system_include_dirs
 
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_INC_DEPS})
+    list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_SYSTEM_INC_DEPS})
+
     if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
       list(INSERT ${_includes_modules} 0 "${VISP_MODULE_${m}_LOCATION}/include")
     endif()
@@ -1618,7 +1700,7 @@ macro(vp_get_all_libs _modules _extra_opt _extra_dbg _3rdparty)
       endif()
     endforeach()
 
-    foreach (dep ${deps} ${VISP_LINKER_LIBS})
+    foreach (dep ${deps}) # Should be remove ? ${VISP_LINKER_LIBS})
       if (NOT DEFINED VISP_MODULE_${dep}_LOCATION)
         if(dep MATCHES "^\\$<LINK_ONLY:([^>]+)>$")
           set(dep_dbg "${CMAKE_MATCH_1}")
@@ -1918,4 +2000,50 @@ macro(vp_system_information NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOT
   set(${IS_64BIT} ${__IS_64BIT})
   set(${HAS_FPU} ${__HAS_FPU})
   set(${CPU_OPTIM} ${__CPU_OPTIM})
+endmacro()
+
+# Replace regular expression in a var
+macro(vp_replace_string var_in var_out regular_expression replacement_expression)
+  set(__var_out ${var_out})
+  if(${var_in} MATCHES "${regular_expression}")
+    string(REGEX REPLACE "${regular_expression}" "${replacement_expression}" ${var_out} ${${var_in}})
+  else()
+    set(${__var_out} ${${var_in}})
+  endif()
+endmacro()
+
+macro(vp_list_replace_string list_in list_out regular_expression replacement_expression)
+  set(__list_out ${var_out})
+  foreach(item ${${list_in}})
+    if(item MATCHES "${regular_expression}")
+      string(REGEX REPLACE "${regular_expression}" "${replacement_expression}" var_out ${item})
+    else()
+      set(var_out ${item})
+    endif()
+    list(APPEND __list_out ${var_out})
+  endforeach()
+  set(${list_out} ${__list_out})
+endmacro()
+
+macro(vp_git_describe var_name path)
+  if(GIT_FOUND)
+    execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --exact-match --dirty
+      WORKING_DIRECTORY "${path}"
+      OUTPUT_VARIABLE ${var_name}
+      RESULT_VARIABLE GIT_RESULT
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT GIT_RESULT EQUAL 0)
+      execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "v[0-9].[0-9].[0-9]*"
+        WORKING_DIRECTORY "${path}"
+        OUTPUT_VARIABLE ${var_name}
+        RESULT_VARIABLE GIT_RESULT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    endif()
+  else()
+    set(${var_name} "unknown")
+  endif()
 endmacro()

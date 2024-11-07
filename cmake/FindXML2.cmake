@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,15 +30,12 @@
 #
 # Description:
 # Try to find XML library.
-# Once run this will define: 
+# Once run this will define:
 #
 # XML2_FOUND
 # XML2_INCLUDE_DIRS
 # XML2_LIBRARIES
 # XML2_VERSION_STRING
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -70,7 +67,7 @@ if(WIN32)
       "c:/libxml2/lib"
     )
   endif()
-else(WIN32) 
+else(WIN32)
   find_path(XML2_INCLUDE_DIR libxml/xmlmemory.h
     "$ENV{XML2_DIR}/include/libxml2"
     "$ENV{XML2_HOME}/include/libxml2"

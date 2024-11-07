@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test Matrix initialization.
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testMatrixInitialization.cpp
@@ -40,6 +38,10 @@
 */
 
 #include <visp3/core/vpMatrix.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 bool equal(const vpArray2D<double> &a1, const vpArray2D<double> &a2, double epsilon)
 {
@@ -106,11 +108,12 @@ bool equal(const vpRowVector &a1, const vpRowVector &a2, double epsilon)
 int main()
 {
   double epsilon = 1e-10;
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   {
-    vpArray2D<float> a{1.f, 2.f, 3.f};
+    vpArray2D<float> a { 1.f, 2.f, 3.f };
     std::cout << "a:\n" << a << std::endl;
-    a = {-1, -2, -3, 4, 5.5, 6.0f};
+    a = { -1, -2, -3, 4, 5.5, 6.0f };
     std::cout << "a:\n" << a << std::endl;
     a.reshape(2, 3);
     std::cout << "a.reshape(2,3):\n" << a << std::endl;
@@ -119,40 +122,40 @@ int main()
 
     vpArray2D<float> a2;
     a2.resize(2, 2);
-    a2 = {1, 2, 3, 4};
+    a2 = { 1, 2, 3, 4 };
     std::cout << "a2:\n" << a2 << std::endl;
 
-    vpArray2D<double> a3(2, 3, {1, 2, 3, 4, 5, 6});
+    vpArray2D<double> a3(2, 3, { 1, 2, 3, 4, 5, 6 });
     std::cout << "a3:\n" << a3 << std::endl;
 
-    vpArray2D<int> a4{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    vpArray2D<int> a4 { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
     std::cout << "a4:\n" << a4 << std::endl;
 
     vpArray2D<int> a5;
-    a5 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    a5 = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
     std::cout << "a5:\n" << a5 << std::endl;
 
-    vpArray2D<int> a6{a5};
+    vpArray2D<int> a6 { a5 };
     std::cout << "a6:\n" << a6 << std::endl;
 
-    vpMatrix m{1, 2, 3};
+    vpMatrix m { 1, 2, 3 };
     std::cout << "m:\n" << m << std::endl;
-    m = {-1, -2, -3, -4};
+    m = { -1, -2, -3, -4 };
     std::cout << "m:\n" << m << std::endl;
     m.reshape(2, 2);
     std::cout << "m:\n" << m << std::endl;
 
-    vpMatrix m2(3, 2, {1, 2, 3, 4, 5, 6});
+    vpMatrix m2(3, 2, { 1, 2, 3, 4, 5, 6 });
     std::cout << "m2:\n" << m2 << std::endl;
 
-    vpMatrix m3{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    vpMatrix m3 { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
     std::cout << "m3:\n" << m3 << std::endl;
 
     vpMatrix m4;
-    m4 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    m4 = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
     std::cout << "m4:\n" << m4 << std::endl;
 
-    vpMatrix m5{m4};
+    vpMatrix m5 { m4 };
     std::cout << "m5:\n" << m5 << std::endl;
 
     //    vpMatrix m6;
@@ -191,7 +194,7 @@ int main()
     std::cout << "c_ref: " << c_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpColVector c{0, 1, 2, 3, 4, 5};
+      vpColVector c { 0, 1, 2, 3, 4, 5 };
       std::cout << "c: " << c.t() << std::endl;
       if (!equal(c_ref, c, epsilon)) {
         return EXIT_FAILURE;
@@ -199,7 +202,7 @@ int main()
       c_ref.resize(3, false);
       c_ref *= -1;
       std::cout << "c_ref: " << c_ref.t() << std::endl;
-      c = {0, -1, -2};
+      c = { 0, -1, -2 };
       std::cout << "c: " << c.t() << std::endl;
       if (!equal(c_ref, c, epsilon)) {
         return EXIT_FAILURE;
@@ -232,7 +235,8 @@ int main()
         std::cout << "after c.reshape(2, 2): " << c.t() << std::endl;
         c = c.reshape(2, 2);
         std::cout << "c:" << c << std::endl;
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         std::cerr << "Exception expected: c = c.reshape(2, 2);\n" << e.what() << std::endl;
       }
 
@@ -255,7 +259,7 @@ int main()
     std::cout << "r_ref: " << r_ref << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpRowVector r{0, 1, 2, 3, 4, 5};
+      vpRowVector r { 0, 1, 2, 3, 4, 5 };
       std::cout << "r: " << r << std::endl;
       if (!equal(r_ref, r, epsilon)) {
         return EXIT_FAILURE;
@@ -263,7 +267,7 @@ int main()
       r_ref.resize(3, false);
       r_ref *= -1;
       std::cout << "r_ref: " << r_ref << std::endl;
-      r = {0, -1, -2};
+      r = { 0, -1, -2 };
       std::cout << "r: " << r << std::endl;
       if (!equal(r_ref, r, epsilon)) {
         return EXIT_FAILURE;
@@ -297,7 +301,8 @@ int main()
       try {
         r.reshape(3, 1);
         std::cout << "after r.reshape(3, 1): " << r << std::endl;
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         std::cerr << "Exception: r.reshape(3, 1);\n" << e.what() << std::endl;
       }
     }
@@ -309,7 +314,7 @@ int main()
     std::cout << "tu_ref: " << tu_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpThetaUVector tu = {0, M_PI_2, M_PI};
+      vpThetaUVector tu = { 0, M_PI_2, M_PI };
       std::cout << "tu: " << tu.t() << std::endl;
       if (!equal(tu_ref, tu, epsilon)) {
         return EXIT_FAILURE;
@@ -338,7 +343,7 @@ int main()
     std::cout << "rxyz_ref: " << rxyz_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpRxyzVector rxyz = {0, M_PI_2, M_PI};
+      vpRxyzVector rxyz = { 0, M_PI_2, M_PI };
       std::cout << "rxyz: " << rxyz.t() << std::endl;
       if (!equal(rxyz_ref, rxyz, epsilon)) {
         return EXIT_FAILURE;
@@ -367,7 +372,7 @@ int main()
     std::cout << "rzyx_ref: " << rzyx_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpRzyxVector rzyx = {0, M_PI_2, M_PI};
+      vpRzyxVector rzyx = { 0, M_PI_2, M_PI };
       std::cout << "rzyx: " << rzyx.t() << std::endl;
       if (!equal(rzyx_ref, rzyx, epsilon)) {
         return EXIT_FAILURE;
@@ -396,7 +401,7 @@ int main()
     std::cout << "rzyz_ref: " << rzyz_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpRzyzVector rzyz = {0, M_PI_2, M_PI};
+      vpRzyzVector rzyz = { 0, M_PI_2, M_PI };
       std::cout << "rzyz: " << rzyz.t() << std::endl;
       if (!equal(rzyz_ref, rzyz, epsilon)) {
         return EXIT_FAILURE;
@@ -426,7 +431,7 @@ int main()
     std::cout << "q_ref: " << q_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpQuaternionVector q = {q_ref[0], q_ref[1], q_ref[2], q_ref[3]};
+      vpQuaternionVector q = { q_ref[0], q_ref[1], q_ref[2], q_ref[3] };
       std::cout << "q: " << q.t() << std::endl;
       if (!equal(q_ref, q, epsilon)) {
         return EXIT_FAILURE;
@@ -455,7 +460,7 @@ int main()
     std::cout << "t_ref: " << t_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpTranslationVector t = {t_ref[0], t_ref[1], t_ref[2]};
+      vpTranslationVector t = { t_ref[0], t_ref[1], t_ref[2] };
       std::cout << "t: " << t.t() << std::endl;
       if (!equal(t_ref, t, epsilon)) {
         return EXIT_FAILURE;
@@ -484,7 +489,7 @@ int main()
     std::cout << "R_ref:\n" << R_ref << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      vpRotationMatrix R({0, 0, -1, 0, -1, 0, -1, 0, 0});
+      vpRotationMatrix R({ 0, 0, -1, 0, -1, 0, -1, 0, 0 });
       std::cout << "R:\n" << R << std::endl;
       if (!equal(R_ref, R, epsilon)) {
         return EXIT_FAILURE;
@@ -492,7 +497,7 @@ int main()
     }
     {
       vpRotationMatrix R;
-      R = {0, 0, -1, 0, -1, 0, -1, 0, 0};
+      R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
       std::cout << "R:\n" << R << std::endl;
       if (!equal(R_ref, R, epsilon)) {
         return EXIT_FAILURE;

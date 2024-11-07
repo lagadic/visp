@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,21 +29,19 @@
  *
  * Description:
  * Conversion between tracker and visual feature point.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderPoint.cpp
   \brief  conversion between tracker
   and visual feature Point
 */
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
   Create a vpFeaturePoint thanks to a vpDot and the parameters of the camera.
@@ -102,7 +99,8 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, 
 
     s.set_x(x);
     s.set_y(y);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -162,7 +160,8 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, 
 
     s.set_x(x);
     s.set_y(y);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -220,7 +219,8 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, 
 
     s.set_x(x);
     s.set_y(y);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -262,7 +262,8 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
       throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -314,8 +315,10 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &goodC
 
     s.set_x(x);
     s.set_y(y);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
+END_VISP_NAMESPACE

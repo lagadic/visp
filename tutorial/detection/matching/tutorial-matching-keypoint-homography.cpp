@@ -1,4 +1,5 @@
 //! \example tutorial-matching-keypoint-homography.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpVideoReader.h>
@@ -8,6 +9,9 @@
 int main(int argc, const char **argv)
 {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   //! [Select method]
   int method = 0;
 
@@ -76,8 +80,8 @@ int main(int argc, const char **argv)
     //! [Matching]
 
     std::vector<vpImagePoint> iPref(nbMatch),
-        iPcur(nbMatch); // Coordinates in pixels (for display only)
-    //! [Allocation]
+      iPcur(nbMatch); // Coordinates in pixels (for display only)
+  //! [Allocation]
     std::vector<double> mPref_x(nbMatch), mPref_y(nbMatch);
     std::vector<double> mPcur_x(nbMatch), mPcur_y(nbMatch);
     std::vector<bool> inliers(nbMatch);
@@ -99,7 +103,8 @@ int main(int argc, const char **argv)
                              (unsigned int)(mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
       else
         vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual, 0.4, 4, true);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot compute homography from matches..." << std::endl;
     }
 
@@ -132,7 +137,7 @@ int main(int argc, const char **argv)
 
     if (vpDisplay::getClick(Idisp, false))
       break;
-  }
+}
 
   vpDisplay::getClick(Idisp);
 #else

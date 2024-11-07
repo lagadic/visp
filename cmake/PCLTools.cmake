@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,42 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
+
+# Remove BUILD_INTERFACE from __include_dirs
+# IN/OUT: __include_dirs
+#
+# If __include_dirs contains "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" as input,
+# it will be filtered as output to /home/VTK/install/include/vtk-9.3
+macro(vp_filter_build_interface __include_dirs)
+  if(${__include_dirs})
+    set(__include_dirs_filtered)
+    foreach(inc_ ${${__include_dirs}})
+      string(REGEX REPLACE "\\$<BUILD_INTERFACE:" "" inc_ ${inc_})
+      string(REGEX REPLACE ">" "" inc_ ${inc_})
+      list(APPEND __include_dirs_filtered ${inc_})
+    endforeach()
+
+    set(${__include_dirs} ${__include_dirs_filtered})
+  endif()
+endmacro()
 
 # Find pcl libraries and dependencies
 # IN: pcl_libraries
 # OUT: pcl_deps_include_dirs
 # OUT: pcl_deps_libraries
+#
+# PCL_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
+# full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
+# The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
+# is able to find the real name and location of the libraries.
+# But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
+# PCL_LIBRARIES and especially with VTK_LIBRARIES.
+# The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
+# with these names.
+# An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
+# will be not able to give the names of PCL libraries when used without CMake.
+#
 macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
@@ -100,6 +127,10 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
@@ -162,6 +193,10 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       while(PCL_VTK_IMPORTED_LIBS)
@@ -222,6 +257,21 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endif()
     endforeach()
 
+    find_path(VTK_NLOHMANN_JSON_INCLUDE_DIR vtknlohmannjson/include/vtknlohmann/json.hpp
+      PATHS
+        ${PCL_VTK_IMPORTED_INCS}
+    )
+    mark_as_advanced(VTK_NLOHMANN_JSON_INCLUDE_DIR)
+    if(VTK_NLOHMANN_JSON_INCLUDE_DIR)
+      vp_parse_header("${VTK_NLOHMANN_JSON_INCLUDE_DIR}/vtknlohmannjson/include/vtknlohmann/json.hpp" NLOHMANN_JSON_VERSION_LINES NLOHMANN_JSON_VERSION_MAJOR NLOHMANN_JSON_VERSION_MINOR NLOHMANN_JSON_VERSION_PATCH)
+      set(VTK_NLOHMANN_JSON_VERSION "${NLOHMANN_JSON_VERSION_MAJOR}.${NLOHMANN_JSON_VERSION_MINOR}.${NLOHMANN_JSON_VERSION_PATCH}")
+      list(APPEND ${pcl_deps_include_dirs} "${VTK_NLOHMANN_JSON_INCLUDE_DIR}/vtknlohmannjson/include")
+      set(VISP_HAVE_NLOHMANN_JSON_FROM_VTK TRUE)
+    else()
+      set(VISP_HAVE_NLOHMANN_JSON_FROM_VTK FALSE)
+      set(VTK_NLOHMANN_JSON_VERSION "n/a")
+    endif()
+
     # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
     # Here we explicitly add opengl
     if(OPENGL_LIBRARIES)
@@ -257,6 +307,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
 
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
 
+  mark_as_advanced(flann_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIRS)
   mark_as_advanced(FLANN_LIBRARY)
@@ -277,6 +328,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(HDF5_C_LIBRARY_crypto)
   mark_as_advanced(HDF5_C_LIBRARY_curl)
   mark_as_advanced(HDF5_C_LIBRARY_pthread)
+  mark_as_advanced(HDF5_DIR)
 
   mark_as_advanced(ICU_INCLUDE_DIR)            # Requested on macOS with pcl 1.12.1
 
@@ -286,6 +338,9 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(QHULL_INCLUDE_DIRS)
   mark_as_advanced(QHULL_LIBRARY)
   mark_as_advanced(QHULL_LIBRARY_DEBUG)
+  mark_as_advanced(QHULL_LIBRARY_STATIC)       # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_DEBUG_STATIC) # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_SHARED)       # Requested for pcl 1.13.1 on windows
   mark_as_advanced(Qhull_DIR)                  # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
@@ -295,6 +350,18 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(Qt5Quick_DIR)               # Requested on macOS with pcl 1.12.1
   mark_as_advanced(Qt5_DIR)                    # Requested on macOS with pcl 1.12.1
 
+  # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(Qt6CoreTools_DIR Qt6Core_DIR Qt6BusTools_DIR Qt6GuiTools_DIR Qt6Gui_DIR Qt6OpenGLWidgets_DIR)
+  mark_as_advanced(Qt6OpenGL_DIR Qt6WidgetsTools_DIR Qt6Widgets_DIR)
+  mark_as_advanced(Qt6DBusTools_DIR Qt6DBus_DIR Qt6Network_DIR Qt6QmlCompilerPlusPrivate_DIR)
+  mark_as_advanced(Qt6QmlIntegration_DIR Qt6QmlModels_DIR Qt6QmlTools_DIR Qt6Qml_DIR Qt6Quick_DIR Qt6Sql_DIR)
+  mark_as_advanced(Qt6QmlBuiltins_DIR Qt6QuickTools_DIR)
+  mark_as_advanced(Qt6_DIR)
+  mark_as_advanced(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(QT_ADDITIONAL_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(MACDEPLOYQT_EXECUTABLE)
+  mark_as_advanced(WrapOpenGL_AGL)
+
   mark_as_advanced(OPENNI2_INCLUDE_DIR)
   mark_as_advanced(OPENNI2_INCLUDE_DIRS)
   mark_as_advanced(OPENNI2_LIBRARY)
@@ -303,16 +370,22 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENNI_INCLUDE_DIRS)
   mark_as_advanced(OPENNI_LIBRARY)
 
+  mark_as_advanced(PCAP_INCLUDE_DIR)                        # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(PCAP_LIBRARY)                            # Requested on macOS with pcl 1.13.1
+
   mark_as_advanced(USB_10_INCLUDE_DIR)
   mark_as_advanced(USB_10_LIBRARY)
 
-  mark_as_advanced(Boost_THREAD_LIBRARY_RELEASE)        # Requested on Ubuntu 20.04
-  mark_as_advanced(Boost_DATE_TIME_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_FILESYSTEM_LIBRARY_RELEASE)    # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_INCLUDE_DIR)                   # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_IOSTREAMS_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SERIALIZATION_LIBRARY_RELEASE) # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SYSTEM_LIBRARY_RELEASE)        # Requested on macOS with pcl 1.12.1
+  mark_as_advanced(Boost_INCLUDE_DIR)                       # Requested on macOS with pcl 1.12.1
+  set(configuration "RELEASE;DEBUG")                        # Requested for pcl 1.13.1 on windows
+  foreach(config ${configuration})
+    mark_as_advanced(Boost_THREAD_LIBRARY_${config})        # Requested on Ubuntu 20.04
+    mark_as_advanced(Boost_DATE_TIME_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_FILESYSTEM_LIBRARY_${config})    # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_IOSTREAMS_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SERIALIZATION_LIBRARY_${config}) # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SYSTEM_LIBRARY_${config})        # Requested on macOS with pcl 1.12.1
+  endforeach()
 
   mark_as_advanced(libusb_INCLUDE_DIR)                  # Requested on macOS with pcl 1.12.1
   mark_as_advanced(netCDF_DIR)                          # Requested on macOS with pcl 1.12.1
@@ -322,6 +395,27 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENGL_GLES3_INCLUDE_DIR)
 
   mark_as_advanced(VTK_MPI_NUMPROCS)
+  mark_as_advanced(VTK_DIR)                             # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(TBB_DIR)
+  mark_as_advanced(Tiff_DIR)
+  mark_as_advanced(tiff_DIR)
+  mark_as_advanced(CLI11_DIR)
+
+  mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)            # Requested for pcl 1.13.1 on windows
+endmacro()
+
+# Find pcl modules
+# IN: pcl_components
+# OUT: none
+#
+macro(vp_detect_required_pcl_components pcl_components)
+  foreach(component_ ${${pcl_components}})
+    string(TOUPPER "${component_}" COMPONENT)
+    if(PCL_${COMPONENT}_FOUND)
+      set(VISP_HAVE_PCL_${COMPONENT} TRUE)
+    endif()
+  endforeach()
 endmacro()

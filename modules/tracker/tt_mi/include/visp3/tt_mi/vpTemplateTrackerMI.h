@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,13 +29,7 @@
  *
  * Description:
  * Example of template tracking.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 #ifndef vpTemplateTrackerMI_hh
 #define vpTemplateTrackerMI_hh
 
@@ -46,15 +39,17 @@
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpTemplateTrackerMI
-  \ingroup group_tt_mi_tracker
+ * \class vpTemplateTrackerMI
+ * \ingroup group_tt_mi_tracker
 */
 class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
 {
 public:
   /*! Hessian approximation. */
-  typedef enum {
+  typedef enum
+  {
     HESSIAN_NONSECOND = -1,
     HESSIAN_0,
     HESSIAN_d2I,
@@ -121,12 +116,10 @@ protected:
   void computeMI(double &MI);
   void computeProba(int &nbpoint);
 
-  double getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
+  double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) VP_OVERRIDE;
   double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
   double getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getNormalizedCost(const vpImage<unsigned char> &I) { return getNormalizedCost(I, p); }
-  virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
-  virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   void zeroProbabilities();
 
   // private:
@@ -134,8 +127,8 @@ protected:
   //  vpTemplateTrackerMI(const vpTemplateTrackerMI &)
   //    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL),
   //    ApproxHessian(HESSIAN_0), lambda(0),
-  //      temp(NULL), Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL),
-  //      PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
+  //      temp(nullptr), Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr),
+  //      PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
   //      influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(),
   //      MI_preEstimation(0), MI_postEstimation(0), NMI_preEstimation(0),
   //      NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
@@ -150,18 +143,16 @@ protected:
   //#endif
 
 public:
-  // constructeur
   //! Default constructor.
   vpTemplateTrackerMI()
-    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(NULL),
-      Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
-      influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false), m_du(), m_dv(), m_A(),
-      m_dB(), m_d2u(), m_d2v(), m_dA()
-  {
-  }
-  explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
-  virtual ~vpTemplateTrackerMI();
+    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(nullptr),
+    Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr), PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
+    influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+    NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false), m_du(), m_dv(), m_A(),
+    m_dB(), m_d2u(), m_d2v(), m_dA()
+  { }
+  VP_EXPLICIT vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
+  virtual ~vpTemplateTrackerMI() VP_OVERRIDE;
   vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const { return MI_postEstimation; }
   double getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline, vpColVector &tp);
@@ -175,5 +166,5 @@ public:
   void setLambda(double _l) { lambda = _l; }
   void setNc(int newNc);
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Directory management.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpIoTools.cpp
@@ -57,13 +55,12 @@
 #include <fcntl.h>
 #include <fstream>
 #include <functional>
-#include <limits>
+#include <limits> // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
@@ -94,12 +91,15 @@
 #endif
 #endif
 
-std::string vpIoTools::baseName = "";
-std::string vpIoTools::baseDir = "";
-std::string vpIoTools::configFile = "";
-std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
-std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
-
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#define VP_STAT stat
+#elif defined(_WIN32) && defined(__MINGW32__)
+#define VP_STAT stat
+#elif defined(_WIN32)
+#define VP_STAT _stat
+#else
+#define VP_STAT stat
+#endif
 namespace
 {
 // The following code is not working on iOS since wordexp() is not available
@@ -117,32 +117,13 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 }
 #endif
 #endif
-
-std::string &ltrim(std::string &s)
-{
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
-#else
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-#endif
-  return s;
-}
-
-std::string &rtrim(std::string &s)
-{
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
-#else
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-#endif
-  return s;
-}
 } // namespace
 
+BEGIN_VISP_NAMESPACE
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
-const std::string &vpIoTools::getBuildInformation()
+  const std::string &vpIoTools::getBuildInformation()
 {
   static std::string build_info =
 #include "version_string.inc"
@@ -160,6 +141,10 @@ const std::string &vpIoTools::getBuildInformation()
   The following sample shows how to use this function to create unique temporary directories:
   \code
   include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -237,34 +222,6 @@ std::string vpIoTools::getTempPath()
 }
 
 /*!
-  Sets the base name (prefix) of the experiment files.
-
-  \param s : Prefix of the experiment files.
-*/
-void vpIoTools::setBaseName(const std::string &s) { baseName = s; }
-
-/*!
-  Sets the base directory of the experiment files.
-
-  \param dir : Directory where the data will be saved.
-*/
-void vpIoTools::setBaseDir(const std::string &dir) { baseDir = dir + "/"; }
-
-/*!
-  Gets the base name (prefix) of the experiment files.
-
-  \return the base name of the experiment files.
-*/
-std::string vpIoTools::getBaseName() { return baseName; }
-
-/*!
-  Gets the full path of the experiment files : baseDir/baseName
-
-  \return the full path of the experiment files.
-*/
-std::string vpIoTools::getFullName() { return baseDir + baseName; }
-
-/*!
   Get the user name.
 
   - Under unix, get the content of the LOGNAME environment variable.  For most
@@ -282,12 +239,12 @@ void vpIoTools::getUserName(std::string &username)
   // With MinGW, UNIX and _WIN32 are defined
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
-  char *_username = ::getenv("LOGNAME");
-  if (!_username) {
+  char *logname = ::getenv("LOGNAME");
+  if (!logname) {
     username = "unknown";
   }
   else {
-    username = _username;
+    username = logname;
   }
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -301,7 +258,7 @@ void vpIoTools::getUserName(std::string &username)
   else {
     username = infoBuf;
   }
-  delete [] infoBuf;
+  delete[] infoBuf;
 #else
   // Universal platform
   username = "unknown";
@@ -342,39 +299,43 @@ std::string vpIoTools::getUserName()
   getting the environment variable value.
 
   \code
-#include <iostream>
-#include <string>
-#include <visp3/core/vpIoTools.h>
+  #include <iostream>
+  #include <string>
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::string envvalue;
-  try {
-    std::string env = "HOME";
-    envvalue = vpIoTools::getenv(env);
-    std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    std::string envvalue;
+    try {
+      std::string env = "HOME";
+      envvalue = vpIoTools::getenv(env);
+      std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
+    }
+    catch (const vpException &e) {
+      std::cout << e.getMessage() << std::endl;
+      return -1;
+    }
+    return 0;
   }
-  catch (const vpException &e) {
-    std::cout << e.getMessage() << std::endl;
-    return -1;
-  }
-  return 0;
-}
   \endcode
 */
 std::string vpIoTools::getenv(const std::string &env)
 {
 #if defined(_WIN32) && defined(WINRT)
   throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not "
-    "implemented on Universal Windows Platform"));
+                      "implemented on Universal Windows Platform"));
 #else
   std::string value;
   // Get the environment variable value.
-  char *_value = ::getenv(env.c_str());
-  if (!_value) {
+  char *v_value = ::getenv(env.c_str());
+  if (!v_value) {
     throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value"));
   }
-  value = _value;
+  value = v_value;
 
   return value;
 #endif
@@ -446,23 +407,23 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
     return false;
   }
 
-  std::string _dirname = path(dirname);
+  std::string path_dirname = path(dirname);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  if (stat(_dirname.c_str(), &stbuf) != 0)
-#elif defined(_WIN32) && defined(__MINGW32__)
-  // Remove trailing separator character if any
-  // AppVeyor: Windows 6.3.9600 AMD64 ; C:/MinGW/bin/g++.exe  (ver 5.3.0) ;
-  // GNU Make 3.82.90 Built for i686-pc-mingw32
-  if (_dirname.at(_dirname.size() - 1) == vpIoTools::separator)
-    _dirname = _dirname.substr(0, _dirname.size() - 1);
-  if (stat(_dirname.c_str(), &stbuf) != 0)
-#elif defined(_WIN32)
-  if (_stat(_dirname.c_str(), &stbuf) != 0)
-#endif
-  {
-    return false;
+  if (VP_STAT(path_dirname.c_str(), &stbuf) != 0) {
+    // Test adding the separator if not already present
+    if (path_dirname.at(path_dirname.size() - 1) != separator) {
+      if (VP_STAT((path_dirname + separator).c_str(), &stbuf) != 0) {
+        return false;
+      }
+    }
+    // Test removing the separator if already present
+    if (path_dirname.at(path_dirname.size() - 1) == separator) {
+      if (VP_STAT((path_dirname.substr(0, path_dirname.size() - 1)).c_str(), &stbuf) != 0) {
+        return false;
+      }
+    }
   }
+
 #if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   if ((stbuf.st_mode & S_IFDIR) == 0)
 #endif
@@ -497,8 +458,8 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
 
-  std::string _filename = path(fifofilename);
-  if (stat(_filename.c_str(), &stbuf) != 0) {
+  std::string v_filename = path(fifofilename);
+  if (stat(v_filename.c_str(), &stbuf) != 0) {
     return false;
   }
   if ((stbuf.st_mode & S_IFIFO) == 0) {
@@ -517,57 +478,61 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-// See:
-// https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
-int vpIoTools::mkdir_p(const char *path, int mode)
+int vpIoTools::mkdir_p(const std::string &path, int mode)
 {
-  /* Adapted from http://stackoverflow.com/a/2336245/119527 */
-  const size_t len = strlen(path);
-  char _path[PATH_MAX];
-  const char sep = vpIoTools::separator;
-
-  std::fill(_path, _path + PATH_MAX, 0);
-
   errno = 0;
-  if (len > sizeof(_path) - 1) {
+  if (path.size() > PATH_MAX) {
     errno = ENAMETOOLONG;
     return -1;
   }
-  /* Copy string so its mutable */
-  strcpy(_path, path);
 
-  /* Iterate over the string */
-  for (char *p = _path + 1; *p; p++) { // path cannot be empty
-    if (*p == sep) {
-      /* Temporarily truncate */
-      *p = '\0';
-
+  // Iterate over the string
+  std::string cpy_path = path;
+  std::string sub_path;
+  size_t pos = 0;
+  while (pos != std::string::npos) {
+    sub_path += cpy_path.substr(0, pos + 1);
+    // Continue if sub_path = separator
+    bool stop_for_loop = false;
+    if (pos == 0) {
+      cpy_path.erase(0, pos + 1);
+      stop_for_loop = true;
+    }
+    if (!stop_for_loop) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-      if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
+      if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
       (void)mode; // var not used
-      if (!checkDirectory(_path) && _mkdir(_path) != 0)
+      if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
 #endif
       {
-        if (errno != EEXIST)
+        if (errno != EEXIST) {
           return -1;
-      }
-      *p = sep;
+        }
     }
+      cpy_path.erase(0, pos + 1);
   }
+    pos = cpy_path.find(vpIoTools::separator);
+}
 
+  if (!cpy_path.empty()) {
+    sub_path += cpy_path;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-  if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
+    if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
-  if (_mkdir(_path) != 0)
+
+    if (_mkdir(sub_path.c_str()) != 0)
 #endif
-  {
-    if (errno != EEXIST)
-      return -1;
+    {
+      if (errno != EEXIST) {
+        return -1;
+      }
+  }
   }
 
   return 0;
 }
+
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -601,20 +566,20 @@ void vpIoTools::makeDirectory(const std::string &dirname)
     throw(vpIoException(vpIoException::invalidDirectoryName, "invalid directory name"));
   }
 
-  std::string _dirname = path(dirname);
+  std::string v_dirname = path(dirname);
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  if (stat(_dirname.c_str(), &stbuf) != 0)
+  if (stat(v_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32) && defined(__MINGW32__)
-  if (stat(_dirname.c_str(), &stbuf) != 0)
+  if (stat(v_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
-  if (_stat(_dirname.c_str(), &stbuf) != 0)
+  if (_stat(v_dirname.c_str(), &stbuf) != 0)
 #endif
   {
-    if (vpIoTools::mkdir_p(_dirname.c_str(), 0755) != 0) {
+    if (vpIoTools::mkdir_p(v_dirname, 0755) != 0) {
       throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
     }
-  }
+}
 
   if (checkDirectory(dirname) == false) {
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
@@ -640,18 +605,18 @@ void vpIoTools::makeFifo(const std::string &fifoname)
   // If dirname is a directory, we throw an error
   if (vpIoTools::checkDirectory(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName,
-      "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
+                        "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
   }
 
   // If dirname refers to an already existing file, we throw an error
   else if (vpIoTools::checkFilename(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. File already exists.",
-      fifoname.c_str()));
+                        fifoname.c_str()));
     // If dirname refers to an already existing fifo, we throw an error
   }
   else if (vpIoTools::checkFifo(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. Fifo already exists.",
-      fifoname.c_str()));
+                        fifoname.c_str()));
   }
 
   else if (mkfifo(fifoname.c_str(), 0666) < 0) {
@@ -695,6 +660,10 @@ std::string getUuid()
   The following sample shows how to use this function to create unique temporary directories:
   \code
   include <visp3/core/vpIoTools.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -757,8 +726,8 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
       try {
         vpIoTools::makeDirectory(dirname_cpy);
       }
-      catch (const vpException &e) {
-        throw e;
+      catch (...) {
+        throw(vpException(vpException::fatalError, "Cannot create temp directory %s", dirname_cpy.c_str()));
       }
 
       dirname_cpy = dirname_cpy + "XXXXXX";
@@ -791,12 +760,12 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   char *computedDirname = mkdtemp(dirname_char);
 
   if (!computedDirname) {
-    delete [] dirname_char;
+    delete[] dirname_char;
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname_cpy.c_str()));
   }
 
   std::string res(computedDirname);
-  delete [] dirname_char;
+  delete[] dirname_char;
   return res;
 #elif defined(_WIN32) && !defined(WINRT)
   makeDirectory(dirname_cpy);
@@ -826,15 +795,15 @@ bool vpIoTools::checkFilename(const std::string &filename)
     return false;
   }
 
-  std::string _filename = path(filename);
+  std::string v_filename = path(filename);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  if (stat(_filename.c_str(), &stbuf) != 0)
+  if (stat(v_filename.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
-  if (_stat(_filename.c_str(), &stbuf) != 0)
+  if (_stat(v_filename.c_str(), &stbuf) != 0)
 #endif
   {
     return false;
-  }
+}
   if ((stbuf.st_mode & S_IFREG) == 0) {
     return false;
   }
@@ -860,7 +829,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 {
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(src)) {
-    // std::cout << "copy file: " << src << " in " << dst << std::endl;
+    // --comment: std::cout "copy file: " src " in " dst std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -871,12 +840,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << dst;
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
-      dst.c_str()));
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -892,12 +861,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-      src.c_str(), dst.c_str()));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   }
   else if (vpIoTools::checkDirectory(src)) {
-    // std::cout << "copy directory: " << src << " in " << dst << std::endl;
+    // --comment: std::cout  "copy directory: "  src  " in "  dst
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -908,12 +877,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << dst;
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
-      dst.c_str()));
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -929,7 +898,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-      src.c_str(), dst.c_str()));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   }
@@ -937,18 +906,18 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     std::cout << "Cannot copy: " << src << " in " << dst << std::endl;
     return false;
   }
-}
+  }
 
-/*!
+  /*!
 
-  Remove a file or a directory.
+    Remove a file or a directory.
 
-  \param file_or_dir : File name or directory to remove.
+    \param file_or_dir : File name or directory to remove.
 
-  \return true if the file or the directory was removed, false otherwise.
+    \return true if the file or the directory was removed, false otherwise.
 
-  \sa makeDirectory(), makeTempDirectory()
-*/
+    \sa makeDirectory(), makeTempDirectory()
+  */
 bool vpIoTools::remove(const std::string &file_or_dir)
 {
   // Check if we have to consider a file or a directory
@@ -957,14 +926,14 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     || vpIoTools::checkFifo(std::string(file_or_dir))
 #endif
     ) {
-    // std::cout << "remove file: " << file_or_dir << std::endl;
-    if (::remove(file_or_dir.c_str()) != 0)
+    if (::remove(file_or_dir.c_str()) != 0) {
       return false;
-    else
+    }
+    else {
       return true;
+    }
   }
   else if (vpIoTools::checkDirectory(file_or_dir)) {
-    // std::cout << "remove directory: " << file_or_dir << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -974,12 +943,12 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     cmd << "\"";
     int ret = system(cmd.str().c_str());
     if (ret) {
-    }; // to avoid a warning
+    } // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform",
-      file_or_dir.c_str()));
+                        file_or_dir.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -994,7 +963,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform",
-      file_or_dir.c_str()));
+                        file_or_dir.c_str()));
 #endif
 #endif
   }
@@ -1002,23 +971,25 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     std::cout << "Cannot remove: " << file_or_dir << std::endl;
     return false;
   }
-}
+  }
 
-/*!
+  /*!
 
-  Rename an existing file \e oldfilename in \e newfilename.
+    Rename an existing file \e oldfilename in \e newfilename.
 
-  \param oldfilename : File to rename.
-  \param newfilename : New file name.
+    \param oldfilename : File to rename.
+    \param newfilename : New file name.
 
-  \return true if the file was renamed, false otherwise.
-*/
+    \return true if the file was renamed, false otherwise.
+  */
 bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
 {
-  if (::rename(oldfilename.c_str(), newfilename.c_str()) != 0)
+  if (::rename(oldfilename.c_str(), newfilename.c_str()) != 0) {
     return false;
-  else
+  }
+  else {
     return true;
+  }
 }
 
 /*!
@@ -1036,13 +1007,16 @@ std::string vpIoTools::path(const std::string &pathname)
   std::string path(pathname);
 
 #if defined(_WIN32)
-  for (unsigned int i = 0; i < path.length(); i++)
+  for (unsigned int i = 0; i < path.length(); ++i)
     if (path[i] == '/')
       path[i] = '\\';
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
-  for (unsigned int i = 0; i < path.length(); i++)
-    if (path[i] == '\\')
+  unsigned int path_length = path.length();
+  for (unsigned int i = 0; i < path_length; ++i) {
+    if (path[i] == '\\') {
       path[i] = '/';
+    }
+  }
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
   // wordexp() is not available
 #ifdef __ANDROID__
@@ -1064,337 +1038,17 @@ std::string vpIoTools::path(const std::string &pathname)
 }
 
 /*!
- Reads the configuration file and parses it.
+  Get ViSP images data path. ViSP images data can be installed from Debian or
+  Ubuntu \e visp-images-data package. It can be also installed from
+  visp-images-3.x.y.zip that can be found on https://visp.inria.fr/download page.
 
- \param confFile : path to the file containing the configuration parameters to
- parse.
-
- \return true if succeed, false otherwise.
- */
-bool vpIoTools::loadConfigFile(const std::string &confFile)
-{
-  configFile = path(confFile);
-  configVars.clear();
-  configValues.clear();
-  std::ifstream confContent(configFile.c_str(), std::ios::in);
-
-  if (confContent.is_open()) {
-    std::string line, var, val;
-    long unsigned int k;
-    int c;
-    std::string stop[3] = { " ", "\t", "#" };
-    while (std::getline(confContent, line)) {
-      if ((line.compare(0, 1, "#") != 0) && (line.size() > 2)) {
-        try {
-          // name of the variable
-          k = static_cast<unsigned long>(line.find(" "));
-          var = line.substr(0, k);
-          // look for the end of the actual value
-          c = 200;
-          for (unsigned i = 0; i < 3; ++i)
-            c = vpMath::minimum(c,
-              static_cast<int>(line.find(stop[i], static_cast<size_t>(k) + static_cast<size_t>(1))));
-          if (c == -1)
-            c = static_cast<int>(line.size());
-          long unsigned int c_ = static_cast<long unsigned int>(c);
-          val = line.substr(static_cast<size_t>(k) + static_cast<size_t>(1),
-            static_cast<size_t>(c_) - static_cast<size_t>(k) - static_cast<size_t>(1));
-          configVars.push_back(var);
-          configValues.push_back(val);
-        }
-        catch (...) {
-        }
-      }
-    }
-    confContent.close();
-  }
-  else {
-    return false;
-  }
-  return true;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e float.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, float &value)
-{
-  bool found = false;
-  for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
-    if (configVars[k] == var) {
-      if (configValues[k].compare("PI") == 0)
-        value = static_cast<float>(M_PI);
-      else if (configValues[k].compare("PI/2") == 0)
-        value = static_cast<float>(M_PI / 2.0);
-      else if (configValues[k].compare("-PI/2") == 0)
-        value = static_cast<float>(-M_PI / 2.0);
-      else
-        value = static_cast<float>(atof(configValues[k].c_str()));
-      found = true;
-    }
-  }
-  if (found == false)
-    std::cout << var << " not found in config file" << std::endl;
-  return found;
-}
-/*!
-  Tries to read the parameter named \e var as a \e double.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, double &value)
-{
-  bool found = false;
-  for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
-    if (configVars[k] == var) {
-      if (configValues[k].compare("PI") == 0)
-        value = M_PI;
-      else if (configValues[k].compare("PI/2") == 0)
-        value = M_PI / 2;
-      else if (configValues[k].compare("-PI/2") == 0)
-        value = -M_PI / 2;
-      else
-        value = atof(configValues[k].c_str());
-      found = true;
-    }
-  }
-  if (found == false)
-    std::cout << var << " not found in config file" << std::endl;
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e int.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, int &value)
-{
-  bool found = false;
-  for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
-    if (configVars[k] == var) {
-      value = atoi(configValues[k].c_str());
-      found = true;
-    }
-  }
-  if (found == false)
-    std::cout << var << " not found in config file" << std::endl;
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e unsigned int.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
-{
-  int v = 0;
-  bool found = readConfigVar(var, v);
-  value = static_cast<unsigned int>(v);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e bool.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, bool &value)
-{
-  int v = 0;
-  bool found = readConfigVar(var, v);
-  value = (v != 0);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e vpColor.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read. See vpColor.cpp for the color number.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
-{
-  unsigned int v = 0;
-  bool found = readConfigVar(var, v);
-  value = vpColor::getColor(v);
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e std::string.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
-{
-  bool found = false;
-  for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
-    if (configVars[k] == var) {
-      value = configValues[k];
-      found = true;
-    }
-  }
-  if (found == false)
-    std::cout << var << " not found in config file" << std::endl;
-  return found;
-}
-
-/*!
-  Tries to read the parameter named \e var as a \e vpMatrix.
-  If \e nCols and \e nRows are indicated, will resize the matrix.
-  Otherwise, will try to read as many values as indicated by the dimension of
-  \e value.
-
-  \param var : Name of the parameter in the configuration file.
-  \param value : Value to be read.
-  \param nCols : Column dimension if resized.
-  \param nRows : Row dimension if resized
-
-  \return true if the parameter could be read.
-*/
-bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols,
-  const unsigned int &nRows)
-{
-  bool found = false;
-  std::string nb;
-  for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
-    if (configVars[k] == var) {
-      found = true;
-      // resize or not
-      if (nCols != 0 && nRows != 0)
-        value.resize(nRows, nCols);
-      size_t ind = 0, ind2;
-      for (unsigned int i = 0; i < value.getRows(); ++i)
-        for (unsigned int j = 0; j < value.getCols(); ++j) {
-          ind2 = configValues[k].find(",", ind);
-          nb = configValues[k].substr(ind, ind2 - ind);
-          if (nb.compare("PI") == 0)
-            value[i][j] = M_PI;
-          else if (nb.compare("PI/2") == 0)
-            value[i][j] = M_PI / 2;
-          else if (nb.compare("-PI/2") == 0)
-            value[i][j] = -M_PI / 2;
-          else
-            value[i][j] = atof(nb.c_str());
-          ind = ind2 + 1;
-        }
-    }
-  }
-  if (found == false)
-    std::cout << var << " not found in config file" << std::endl;
-  return found;
-}
-
-// construct experiment filename & path
-
-/*!
-  Augments the prefix of the experiment files by \e strTrue if \e cond is
-  verified, and by \e strFalse otherwise.
-
-  \param strTrue : String to add if \e cond is true
-  \param cond : Condition managing the file name
-  \param strFalse : String to add if \e cond is false (default "")
-*/
-void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond, const std::string &strFalse)
-{
-  if (cond)
-    baseName += "_" + strTrue;
-  else if (strFalse != "")
-    baseName += "_" + strFalse;
-}
-
-/*!
-  Augments the prefix of the experiment files by \e strTrue followed by \e
-  val.
-
-  \param strTrue : String to add
-  \param val : Value to add
-
-*/
-void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
-{
-  // if(val != 0.)
-  if (std::fabs(val) < std::numeric_limits<double>::epsilon()) {
-    std::stringstream valS;
-    valS.precision(4);
-    valS << val;
-    baseName += "_" + strTrue + valS.str();
-  }
-}
-
-/*!
-  Creates the directory \e baseDir/baseName. If already exists, empties
-  it if \e empty is true.
-  Useful to save the images corresponding to a particular experiment.
-
-  \param empty : Indicates if the new directory has to be emptied
-
-*/
-void vpIoTools::createBaseNamePath(const bool &empty)
-{
-  if (vpIoTools::checkDirectory(baseDir + baseName) == false) {
-    vpIoTools::makeDirectory(baseDir + baseName);
-    std::cout << "creating directory " + baseDir + baseName << std::endl;
-  }
-  else {
-    if (empty) {
-      std::cout << "emptying directory " + baseDir + baseName << std::endl;
-      vpIoTools::remove(baseDir + baseName + "/*");
-    }
-  }
-}
-
-/*!
-  Copy the initial configuration file to the experiment directory.
-
-  \param actuallySave : If false, do not copy the file.
-
-*/
-void vpIoTools::saveConfigFile(const bool &actuallySave)
-{
-  if (actuallySave) {
-    std::string dest = baseDir + "/" + baseName + "_config.txt";
-    // file copy
-    vpIoTools::copy(configFile, dest);
-  }
-}
-
-/*!
- Get ViSP images data path. ViSP images data can be installed from Debian or
- Ubuntu \e visp-images-data package. It can be also installed from
- visp-images-3.x.y.zip that can be found on https://visp.inria.fr/download page.
-
- This function returns the path to the folder that contains the data.
- - It checks first if VISP_INPUT_IMAGE_PATH environment variable that gives the
- location of the data is set. In that case returns the content of this
- environment var.
- - Otherwise it checks if \e visp-images-data binary package (Ubuntu, Debian) is installed.
- In that case returns then \e /usr/share/visp-images-data".
- - If the path is not found, returns an empty string.
+  This function returns the path to the folder that contains the data.
+  - It checks first if VISP_INPUT_IMAGE_PATH environment variable that gives the
+  location of the data is set. In that case returns the content of this
+  environment var.
+  - Otherwise it checks if \e visp-images-data binary package (Ubuntu, Debian) is installed.
+  In that case returns then \e /usr/share/visp-images-data".
+  - If the path is not found, returns an empty string.
  */
 std::string vpIoTools::getViSPImagesDataPath()
 {
@@ -1402,69 +1056,74 @@ std::string vpIoTools::getViSPImagesDataPath()
   std::string file_to_test("mbt/cube.cao");
   std::string filename;
   // Test if VISP_INPUT_IMAGE_PATH env var is set
-  try {
-    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
-    filename = data_path + "/" + file_to_test;
-    if (vpIoTools::checkFilename(filename))
-      return data_path;
-    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/ViSP-images";
-    filename = data_path + "/" + file_to_test;
-    if (vpIoTools::checkFilename(filename))
-      return data_path;
-    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/visp-images";
-    filename = data_path + "/" + file_to_test;
-    if (vpIoTools::checkFilename(filename))
-      return data_path;
+  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename)) {
+    return data_path;
   }
-  catch (...) {
+  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/ViSP-images";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename)) {
+    return data_path;
   }
+  data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/visp-images";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename)) {
+    return data_path;
+  }
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Test if visp-images-data package is installed (Ubuntu and Debian)
   data_path = "/usr/share/visp-images-data/ViSP-images";
   filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename))
+  if (vpIoTools::checkFilename(filename)) {
     return data_path;
+  }
   data_path = "/usr/share/visp-images-data/visp-images";
   filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename))
+  if (vpIoTools::checkFilename(filename)) {
     return data_path;
+  }
 #endif
   data_path = "";
   return data_path;
 }
 
 /*!
-   Returns the extension of the file or an empty string if the file has no
-   extension. If checkFile flag is set, it will check first if the pathname
-   denotes a directory and so return an empty string and second it will check
-   if the file denoted by the pathanme exists. If so, it will return the
-   extension if present.
+  Returns the extension of the file or an empty string if the file has no
+  extension. If checkFile flag is set, it will check first if the pathname
+  denotes a directory and so return an empty string and second it will check
+  if the file denoted by the pathanme exists. If so, it will return the
+  extension if present.
 
-   \param pathname : The pathname of the file we want to get the extension.
-   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
-   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
-pathname is empty.
+  \param pathname : The pathname of the file we want to get the extension.
+  \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+  \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
+  pathname is empty.
 
-   The following code shows how to use this function:
-   \code
-#include <visp3/core/vpIoTools.h>
+  The following code shows how to use this function:
+  \code
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::string filename = "my/path/to/file.xml"
-  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
-  std::cout << "ext: " << ext << std::endl;
-}
-   \endcode
-   It produces the following output:
-   \code
-ext: .xml
-   \endcode
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
+  int main()
+  {
+    std::string filename = "my/path/to/file.xml"
+    std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+    std::cout << "ext: " << ext << std::endl;
+  }
+  \endcode
+  It produces the following output:
+  \code
+  ext: .xml
+  \endcode
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkFile)
 {
-  if (checkFile && (vpIoTools::checkDirectory(pathname) || !vpIoTools::checkFilename(pathname))) {
+  if (checkFile && (vpIoTools::checkDirectory(pathname) || (!vpIoTools::checkFilename(pathname)))) {
     return "";
   }
 
@@ -1512,15 +1171,15 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkF
   int sepIndex = static_cast<int>(pathname.rfind(sep));
   if (!altsep.empty()) {
     int altsepIndex = static_cast<int>(pathname.rfind(altsep));
-    sepIndex = ((std::max))(sepIndex, altsepIndex);
+    sepIndex = std::max<int>(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);
   if (dotIndex != std::string::npos) {
     // The extsep character exists
     size_t npos = std::string::npos;
-    if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) ||
-      sepIndex == static_cast<int>(npos)) {
+    if (((sepIndex != static_cast<int>(npos)) && (static_cast<int>(dotIndex) > sepIndex)) ||
+      (sepIndex == static_cast<int>(npos))) {
       if (sepIndex == static_cast<int>(npos)) {
         sepIndex = 0;
       }
@@ -1586,24 +1245,28 @@ std::string vpIoTools::getNameWE(const std::string &pathname)
 
   The following sample code shows how to use this function:
   \code
-#include <visp3/core/vpIoTools.h>
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
-  std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
-  std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
+    std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-1
-40
--1
-3
--1
+  1
+  40
+  -1
+  3
+  -1
   \endcode
 */
 long vpIoTools::getIndex(const std::string &filename, const std::string &format)
@@ -1612,7 +1275,7 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
   size_t indexEnd = format.find_first_of('d', indexBegin);
   size_t suffixLength = format.length() - indexEnd - 1;
   // Extracting index
-  if (filename.length() <= suffixLength + indexBegin) {
+  if (filename.length() <= (suffixLength + indexBegin)) {
     return -1;
   }
   size_t indexLength = filename.length() - suffixLength - indexBegin;
@@ -1620,7 +1283,7 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
   std::istringstream ss(indexSubstr);
   long index = 0;
   ss >> index;
-  if (ss.fail() || index < 0 || !ss.eof()) {
+  if (ss.fail() || (index < 0) || (!ss.eof())) {
     return -1;
   }
 
@@ -1676,55 +1339,55 @@ std::string vpIoTools::getParent(const std::string &pathname)
 std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  for (size_t i = 0; i < input.size(); i++) {
-    out += std::tolower(input[i]);
-  }
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  const std::string::const_iterator it_end = input.cend();
+  for (std::string::const_iterator it = input.cbegin(); it != it_end; ++it) {
 #else
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  const std::string::const_iterator it_end = input.end();
+  for (std::string::const_iterator it = input.begin(); it != it_end; ++it) {
+#endif
     out += std::tolower(*it);
   }
-#endif
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  for (size_t i = 0; i < input.size(); i++) {
-    out += std::toupper(input[i]);
-  }
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  const std::string::const_iterator it_end = input.cend();
+  for (std::string::const_iterator it = input.cbegin(); it != it_end; ++it) {
 #else
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  const std::string::const_iterator it_end = input.end();
+  for (std::string::const_iterator it = input.begin(); it != it_end; ++it) {
+#endif
     out += std::toupper(*it);
   }
-#endif
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::string real_path_str = pathname;
-  char *real_path = realpath(pathname.c_str(), NULL);
+  char *real_path = realpath(pathname.c_str(), nullptr);
 
   if (real_path) {
     real_path_str = real_path;
@@ -1744,9 +1407,9 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
   return real_path_str;
 #else
   throw(vpIoException(vpException::fatalError,
-    "Cannot get absolute path of %s: not implemented on "
-    "Universal Windows Platform",
-    pathname.c_str()));
+                      "Cannot get absolute path of %s: not implemented on "
+                      "Universal Windows Platform",
+                      pathname.c_str()));
 #endif
 #endif
 }
@@ -1763,7 +1426,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
  */
 std::string vpIoTools::createFilePath(const std::string &parent, const std::string &child)
 {
-  if (child.size() == 0 && parent.size() == 0) {
+  if ((child.size() == 0) && (parent.size() == 0)) {
     return "";
   }
 
@@ -1816,7 +1479,7 @@ bool vpIoTools::isAbsolutePathname(const std::string &pathname)
   //     s = splitdrive(s)[1]
   //     return s != '' and s[:1] in '/\\'
   std::string path = splitDrive(pathname).second;
-  return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
+  return (path.size() > 0) && ((path.substr(0, 1) == "/") || (path.substr(0, 1) == "\\"));
 }
 
 /*!
@@ -1944,52 +1607,56 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pat
 }
 
 /*!
- Split a chain.
- \param chain : Input chain to split.
- \param sep : Character separator.
- \return A vector that contains all the subchains.
+  Split a chain.
+  \param chain : Input chain to split.
+  \param sep : Character separator.
+  \return A vector that contains all the subchains.
 
- The following code shows how to use this function:
- \code
-#include <visp3/core/vpIoTools.h>
+  The following code shows how to use this function:
+  \code
+  #include <visp3/core/vpIoTools.h>
 
-int main()
-{
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
   {
-    std::string chain("/home/user;/usr/local/include;/usr/include");
-    std::string sep = ";";
+    {
+      std::string chain("/home/user;/usr/local/include;/usr/include");
+      std::string sep = ";";
 
-    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
-    std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
-      std::cout << subChain[i] << std::endl;
+      std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+      std::cout << "Found the following subchains: " << std::endl;
+      for (size_t i=0; i < subChain.size(); ++i)
+        std::cout << subChain[i] << std::endl;
+    }
+
+    {
+      std::string chain("This is an other example");
+      std::string sep = " ";
+
+      std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+      std::cout << "Found the following subchains: " << std::endl;
+      for (size_t i=0; i < subChain.size(); ++i)
+        std::cout << subChain[i] << std::endl;
+    }
   }
+  \endcode
 
-  {
-    std::string chain("This is an other example");
-    std::string sep = " ";
-
-    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
-    std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
-      std::cout << subChain[i] << std::endl;
-  }
-}
- \endcode
-
- It produces the following output:
- \code
-Found the following subchains:
-/home/user
-/usr/local/include
-/usr/include
-Found the following subchains:
-This
-is
-an
-other
-example
- \endcode
+  It produces the following output:
+  \code
+  Found the following subchains:
+  /home/user
+  /usr/local/include
+  /usr/include
+  Found the following subchains:
+  This
+  is
+  an
+  other
+  example
+  \endcode
  */
 std::vector<std::string> vpIoTools::splitChain(const std::string &chain, const std::string &sep)
 {
@@ -2001,14 +1668,16 @@ std::vector<std::string> vpIoTools::splitChain(const std::string &chain, const s
 
   while (sepIndex != std::string::npos) {
     std::string sub = chainToSplit.substr(startIndex, sepIndex);
-    if (!sub.empty())
+    if (!sub.empty()) {
       subChain.push_back(sub);
+    }
     chainToSplit = chainToSplit.substr(sepIndex + 1, chain.size() - 1);
 
     sepIndex = chainToSplit.find(sep);
   }
-  if (!chainToSplit.empty())
+  if (!chainToSplit.empty()) {
     subChain.push_back(chainToSplit);
+  }
 
   return subChain;
 }
@@ -2031,14 +1700,14 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
   std::vector<std::string> files;
-  struct dirent **list = NULL;
-  int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
+  struct dirent **list = nullptr;
+  int filesCount = scandir(dirName.c_str(), &list, nullptr, nullptr);
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
-  for (int i = 0; i < filesCount; i++) {
+  for (int i = 0; i < filesCount; ++i) {
     std::string fileName = list[i]->d_name;
-    if (fileName != "." && fileName != "..") {
+    if ((fileName != ".") && (fileName != "..")) {
       files.push_back(fileName);
     }
     free(list[i]);
@@ -2074,187 +1743,11 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 
 #else
   throw(vpIoException(vpException::fatalError,
-    "Cannot read files of directory %s: not implemented on "
-    "Universal Windows Platform",
-    dirName.c_str()));
+                      "Cannot read files of directory %s: not implemented on "
+                      "Universal Windows Platform",
+                      dirName.c_str()));
 #endif
 #endif
 }
 
-/*!
-   Read a 16-bits integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, int16_t &short_value)
-{
-  file.read((char *)(&short_value), sizeof(short_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  short_value = vpEndian::swap16bits((uint16_t)short_value);
-#endif
-}
-
-/*!
-   Read a 16-bits unsigned integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, uint16_t &ushort_value)
-{
-  file.read((char *)(&ushort_value), sizeof(ushort_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  ushort_value = vpEndian::swap16bits(ushort_value);
-#endif
-}
-
-/*!
-   Read a 32-bits integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, int32_t &int_value)
-{
-  file.read((char *)(&int_value), sizeof(int_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  int_value = vpEndian::swap32bits((uint32_t)int_value);
-#endif
-}
-
-/*!
-   Read a 32-bits unsigned integer value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, uint32_t &uint_value)
-{
-  file.read((char *)(&uint_value), sizeof(uint_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  uint_value = vpEndian::swap32bits(uint_value);
-#endif
-}
-
-/*!
-   Read a float value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, float &float_value)
-{
-  file.read((char *)(&float_value), sizeof(float_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  float_value = vpEndian::swapFloat(float_value);
-#endif
-}
-
-/*!
-   Read a double value stored in little endian.
- */
-void vpIoTools::readBinaryValueLE(std::ifstream &file, double &double_value)
-{
-  file.read((char *)(&double_value), sizeof(double_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  double_value = vpEndian::swapDouble(double_value);
-#endif
-}
-
-/*!
-   Write a 16-bits integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int16_t short_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint16_t swap_short = vpEndian::swap16bits((uint16_t)short_value);
-  file.write((char *)(&swap_short), sizeof(swap_short));
-#else
-  file.write((char *)(&short_value), sizeof(short_value));
-#endif
-}
-
-/*!
-   Write a 16-bits unsigned integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint16_t swap_ushort = vpEndian::swap16bits(ushort_value);
-  file.write((char *)(&swap_ushort), sizeof(swap_ushort));
-#else
-  file.write((char *)(&ushort_value), sizeof(ushort_value));
-#endif
-}
-
-/*!
-   Write a 32-bits integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int32_t int_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint32_t swap_int = vpEndian::swap32bits((uint32_t)int_value);
-  file.write((char *)(&swap_int), sizeof(swap_int));
-#else
-  file.write((char *)(&int_value), sizeof(int_value));
-#endif
-}
-
-/*!
-   Write a 32-bits unsigned integer value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint32_t uint_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  uint32_t swap_int = vpEndian::swap32bits(uint_value);
-  file.write((char *)(&swap_int), sizeof(swap_int));
-#else
-  file.write((char *)(&uint_value), sizeof(uint_value));
-#endif
-}
-
-/*!
-   Write a float value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, float float_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  float swap_float = vpEndian::swapFloat(float_value);
-  file.write((char *)(&swap_float), sizeof(swap_float));
-#else
-  file.write((char *)(&float_value), sizeof(float_value));
-#endif
-}
-
-/*!
-   Write a double value in little endian.
- */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, double double_value)
-{
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order to little endian
-  double swap_double = vpEndian::swapDouble(double_value);
-  file.write((char *)(&swap_double), sizeof(swap_double));
-#else
-  file.write((char *)(&double_value), sizeof(double_value));
-#endif
-}
-
-bool vpIoTools::parseBoolean(std::string input)
-{
-  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-  std::istringstream is(input);
-  bool b;
-  // Parse string to boolean either in the textual representation
-  // (True/False)  or in numeric representation (1/0)
-  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
-  return b;
-}
-
-/*!
-   Remove leading and trailing whitespaces from a string.
- */
-std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }
+END_VISP_NAMESPACE

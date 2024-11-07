@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,30 +29,28 @@
  *
  * Description:
  * 2D ellipse visual feature.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
+
+/*!
+ * \file vpFeatureEllipse.h
+ * \brief Class that defines 2D ellipse visual feature
+ */
 
 #ifndef vpFeatureEllipse_H
 #define vpFeatureEllipse_H
 
-/*!
-  \file vpFeatureEllipse.h
-  \brief Class that defines 2D ellipse visual feature
-*/
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpFeatureEllipse
-  \ingroup group_visual_features
-  \brief Class that defines 2D ellipse visual feature.
+ * \class vpFeatureEllipse
+ * \ingroup group_visual_features
+ * \brief Class that defines 2D ellipse visual feature.
 */
 class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature
 {
@@ -69,8 +66,6 @@ private:
 public:
   //! Default constructor.
   vpFeatureEllipse();
-  //! Destructor.
-  virtual ~vpFeatureEllipse() {}
 
   /*!
     \section Set coordinates
@@ -78,22 +73,19 @@ public:
   //! basic constructor
   vpFeatureEllipse(double x, double y, double n20, double n11, double n02);
 
-  // void buildFrom(const vpEllipse &p) ;
-  void buildFrom(double x, double y, double n20, double n11, double n02);
-  void buildFrom(double x, double y, double n20, double n11, double n02, double A, double B, double C);
+  vpFeatureEllipse &buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02);
+  vpFeatureEllipse &buildFrom(const double &x, const double &y, const double &n20, const double &n11, const double &n02, const double &A, const double &B, const double &C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   //! Feature duplication
-  vpFeatureEllipse *duplicate() const;
+  vpFeatureEllipse *duplicate() const VP_OVERRIDE;
 
   //! compute the error between two visual features from a subset
   //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
-  //! compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
   /*!
    * Returns the visual feature corresponding to the ellipse centroid coordinate along camera x-axis.
@@ -120,12 +112,12 @@ public:
   double get_n02() const { return s[4]; }
 
   //! Default initialization.
-  void init();
+  void init() VP_OVERRIDE;
   //! compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 
-  //! print the name of the feature
-  void print(unsigned int select = FEATURE_ALL) const;
+  //! Print the name of the feature
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   void set_x(double x);
   void set_y(double y);
@@ -149,34 +141,34 @@ public:
     @name Deprecated functions
   */
   //@{
-  vp_deprecated void setMu(double mu20, double mu11, double mu02);
-  vp_deprecated static unsigned int selectMu20();
-  vp_deprecated static unsigned int selectMu11();
-  vp_deprecated static unsigned int selectMu02();
+  VP_DEPRECATED void setMu(double mu20, double mu11, double mu02);
+  VP_DEPRECATED static unsigned int selectMu20();
+  VP_DEPRECATED static unsigned int selectMu11();
+  VP_DEPRECATED static unsigned int selectMu02();
   /*!
    * \deprecated You should rather use get_n20().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_20 = mu_20/a\f$.
    */
-  vp_deprecated double getMu20() const { return s[2]; }
+  VP_DEPRECATED double getMu20() const { return s[2]; }
   /*!
    * \deprecated You should rather use get_n11().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_11 = mu_11/a\f$.
    */
-  vp_deprecated double getMu11() const { return s[3]; }
+  VP_DEPRECATED double getMu11() const { return s[3]; }
   /*!
    * \deprecated You should rather use get_n02().
    * This function is incorrectly named and is confusing since it
    * returns the visual feature corresponding to the second order centered moments
    * of the ellipse normalized by its area \f$n_02 = mu_02/a\f$.
    */
-  vp_deprecated double getMu02() const { return s[4]; }
+  VP_DEPRECATED double getMu02() const { return s[4]; }
 
   //@}
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif

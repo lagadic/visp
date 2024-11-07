@@ -1,24 +1,30 @@
 #pragma once
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
+
 
 #include "apriltag.h"
 #include "common/matd.h"
 
 typedef struct {
     apriltag_detection_t* det;
-    double tagsize;
-    double fx;
-    double fy;
-    double cx;
-    double cy;
+    double tagsize; // In meters.
+    double fx; // In pixels.
+    double fy; // In pixels.
+    double cx; // In pixels.
+    double cy; // In pixels.
 } apriltag_detection_info_t;
 
+/**
+ * This struct holds the transformation from the camera optical frame to
+ * the April tag frame. The pose refers to the position of the tag within
+ * the camera frame.
+ */
 typedef struct {
-    matd_t* R;
-    matd_t* t;
+    matd_t* R; // Rotation matrix 3x3 of doubles.
+    matd_t* t; // Translation matrix 3x1 of doubles.
 } apriltag_pose_t;
 
 /**
@@ -71,5 +77,6 @@ double estimate_tag_pose(apriltag_detection_info_t* info, apriltag_pose_t* pose)
 void get_second_solution(matd_t* v[4], matd_t* p[4], apriltag_pose_t* solution1, apriltag_pose_t* solution2, int nIters, double* err2);
 
 #ifdef __cplusplus
-//}
+}
 #endif
+

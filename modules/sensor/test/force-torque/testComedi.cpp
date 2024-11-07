@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,12 @@
  *
  * Description:
  * Test force/torque ATI sensor.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testComedi.cpp
   This example shows how to retrieve data from a sensor connected to a DAQ
-  board. He we have 1 signe main threads that acquires physical values at 100
+  board. Here we have 1 single main threads that acquires physical values at 100
   Hz (10 ms) and records data in recorded-physical-data-sync.txt file.
 
 */
@@ -51,6 +46,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_COMEDI
   vpComedi comedi;
   comedi.setDevice("/dev/comedi0");
@@ -61,9 +59,11 @@ int main()
   vpPlot scope(1, 700, 700, 100, 200,
                std::string("ATI physical sensor data (") + comedi.getPhyDataUnits() + std::string(")"));
   scope.initGraph(0, comedi.getNChannel());
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   for (unsigned int i = 0; i < comedi.getNChannel(); i++) {
     scope.setLegend(0, i, "G" + ((std::ostringstream() << i)).str());
   }
+#endif
 #endif
 
   std::string file("recorded-physical-data-sync.txt");

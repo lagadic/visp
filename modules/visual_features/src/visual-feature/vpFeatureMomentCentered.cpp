@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,17 +29,13 @@
  *
  * Description:
  * Implementation for all supported moment features.
- *
- * Authors:
- * Filip Novotny
- * Manikandan Bakthavatchalam
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
-#include <limits>
 #include <vector>
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
@@ -49,27 +44,26 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Default constructor
-  \param moments_ : Database of moment primitives.
-  \param A_ : First plane coefficient for a plane equation of the following
-  type Ax+By+C=1/Z. \param B_ : Second plane coefficient for a plane equation
-  of the following type Ax+By+C=1/Z. \param C_ : Third plane coefficient for a
-  plane equation of the following type Ax+By+C=1/Z. \param featureMoments :
-  Database of features.
-*/
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
-                                                 vpFeatureMomentDatabase *featureMoments)
+ * Default constructor.
+ * \param moments_ : Database of moment primitives.
+ * \param A_ : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+ * \param B_ : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+ * \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+ * \param featureMoments : Database of features.
+ */
+  vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, double A_, double B_, double C_,
+                                                   vpFeatureMomentDatabase *featureMoments)
   : vpFeatureMoment(moments_, A_, B_, C_, featureMoments), order(0)
-{
-}
+{ }
 
 /*!
-Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment
-\param select_one : first index (i)
-\param select_two : second index (j)
-\return Interaction matrix corresponding to the moment
-*/
+ * Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment.
+ * \param select_one : first index (i).
+ * \param select_two : second index (j).
+ * \return Interaction matrix corresponding to the moment.
+ */
 vpMatrix vpFeatureMomentCentered::interaction(unsigned int select_one, unsigned int select_two) const
 {
   if (select_one + select_two > moment->getObject().getOrder())
@@ -80,9 +74,9 @@ vpMatrix vpFeatureMomentCentered::interaction(unsigned int select_one, unsigned 
 }
 
 /*!
- *   Core function for the interaction matrix computation for moment m_pq
- *   Given its dependent moment and interaction matrices, computes the
- * interaction matrix of centred moments
+ * Core function for the interaction matrix computation for moment m_pq
+ * Given its dependent moment and interaction matrices, computes the
+ * interaction matrix of centred moments.
  */
 vpMatrix vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int &p, const unsigned int &q, const double &xg,
                                                  const double &yg, const vpMatrix &L_xg, const vpMatrix &L_yg,
@@ -131,16 +125,17 @@ vpMatrix vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int &p, const un
 }
 
 /*!
-  Interface to the interaction matrix computation for centered moments. Called
-internally. Calls compute_Lmu_pq() for main computation moments (upto order-1)
-Dependencies:
-  Moment classes
-  - vpMomentBasic
-  Interaction matrix classes
-  - vpMomentGravityCenter
-  - vpFeatureMomentBasic
-  - vpFeatureMomentGravityCenter
-*/
+ * Interface to the interaction matrix computation for centered moments. Called
+ * internally. Calls compute_Lmu_pq() for main computation moments (upto order-1)
+ *
+ * Dependencies to moment classes:
+ * - vpMomentBasic
+ *
+ * Dependencies to interaction matrix classes:
+ * - vpMomentGravityCenter
+ * - vpFeatureMomentBasic
+ * - vpFeatureMomentGravityCenter
+ */
 void vpFeatureMomentCentered::compute_interaction()
 {
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
@@ -152,7 +147,7 @@ void vpFeatureMomentCentered::compute_interaction()
 
   bool found_moment_gravity;
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
   if (!found_moment_gravity)
     throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   double xg = momentGravity.get()[0];
@@ -160,7 +155,7 @@ void vpFeatureMomentCentered::compute_interaction()
 
   bool found_feature_gravity_center;
   vpFeatureMomentGravityCenter &featureMomentGravityCenter = (static_cast<vpFeatureMomentGravityCenter &>(
-      featureMomentsDataBase->get("vpFeatureMomentGravityCenter", found_feature_gravity_center)));
+    featureMomentsDataBase->get("vpFeatureMomentGravityCenter", found_feature_gravity_center)));
   if (!found_feature_gravity_center)
     throw vpException(vpException::notInitialized, "vpFeatureMomentGravityCenter not found");
   vpMatrix Lxg = featureMomentGravityCenter.interaction(1 << 0);
@@ -168,13 +163,13 @@ void vpFeatureMomentCentered::compute_interaction()
 
   bool found_moment_basic;
   const vpMomentBasic &momentbasic =
-      static_cast<const vpMomentBasic &>(moments.get("vpMomentBasic", found_moment_basic));
+    static_cast<const vpMomentBasic &>(moments.get("vpMomentBasic", found_moment_basic));
   if (!found_moment_basic)
     throw vpException(vpException::notInitialized, "vpMomentBasic not found");
 
   bool found_featuremoment_basic;
   vpFeatureMomentBasic &featureMomentBasic = (static_cast<vpFeatureMomentBasic &>(
-      featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
+    featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
   if (!found_featuremoment_basic)
     throw vpException(vpException::notInitialized, "vpFeatureMomentBasic not found");
 
@@ -182,7 +177,7 @@ void vpFeatureMomentCentered::compute_interaction()
   for (int i = 0; i < (int)order - 1; i++) {
     for (int j = 0; j < (int)order - 1 - i; j++) {
       interaction_matrices[(unsigned int)j * order + (unsigned int)i] =
-          compute_Lmu_pq(i, j, xg, yg, Lxg, Lyg, momentbasic, featureMomentBasic);
+        compute_Lmu_pq(i, j, xg, yg, Lxg, Lyg, momentbasic, featureMomentBasic);
     }
   }
 #else  // #ifdef VISP_MOMENTS_COMBINE_MATRICES
@@ -190,9 +185,9 @@ void vpFeatureMomentCentered::compute_interaction()
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -209,7 +204,8 @@ void vpFeatureMomentCentered::compute_interaction()
   if (momentObject.getType() == vpMomentObject::DISCRETE) {
     delta = 0;
     epsilon = 1;
-  } else {
+  }
+  else {
     delta = 1;
     epsilon = 4;
   }
@@ -237,7 +233,7 @@ void vpFeatureMomentCentered::compute_interaction()
   interaction_matrices[0][0][WX] = (3 * delta) * Yg * mu00;
   interaction_matrices[0][0][WY] = -(3 * delta) * Xg * mu00;
   interaction_matrices[0][0][VZ] =
-      -A * interaction_matrices[0][0][WY] + B * interaction_matrices[0][0][WX] + (2 * delta) * C * mu00;
+    -A * interaction_matrices[0][0][WY] + B * interaction_matrices[0][0][WX] + (2 * delta) * C * mu00;
   interaction_matrices[0][0][WZ] = 0.;
 
   for (int i = 1; i < (int)order - 1; i++) {
@@ -255,11 +251,11 @@ void vpFeatureMomentCentered::compute_interaction()
     interaction_matrices[i_][0][VY] = -(delta)*B * mu_i0;
 
     interaction_matrices[i_][0][WX] =
-        (i + 3 * delta) * mu_i1 + (i + 3 * delta) * Yg * mu_i0 + i * Xg * mu_im11 - i * epsilon * n11 * mu_im10;
+      (i + 3 * delta) * mu_i1 + (i + 3 * delta) * Yg * mu_i0 + i * Xg * mu_im11 - i * epsilon * n11 * mu_im10;
     interaction_matrices[i_][0][WY] =
-        -(i + 3 * delta) * mu_ip10 - (2 * i + 3 * delta) * Xg * mu_i0 + i * epsilon * n20 * mu_im10;
+      -(i + 3 * delta) * mu_ip10 - (2 * i + 3 * delta) * Xg * mu_i0 + i * epsilon * n20 * mu_im10;
     interaction_matrices[i_][0][VZ] =
-        -A * interaction_matrices[i_][0][WY] + B * interaction_matrices[i_][0][WX] + (i + 2 * delta) * C * mu_i0;
+      -A * interaction_matrices[i_][0][WY] + B * interaction_matrices[i_][0][WX] + (i + 2 * delta) * C * mu_i0;
     interaction_matrices[i_][0][WZ] = i * mu_im11;
   }
 
@@ -278,11 +274,11 @@ void vpFeatureMomentCentered::compute_interaction()
     interaction_matrices[j_ * order][0][VY] = -j * A * mu_1jm1 - (j + delta) * B * mu_0j;
 
     interaction_matrices[j_ * order][0][WX] =
-        (j + 3 * delta) * mu_0jp1 + (2 * j + 3 * delta) * Yg * mu_0j - j * epsilon * n02 * mu_0jm1;
+      (j + 3 * delta) * mu_0jp1 + (2 * j + 3 * delta) * Yg * mu_0j - j * epsilon * n02 * mu_0jm1;
     interaction_matrices[j_ * order][0][WY] =
-        -(j + 3 * delta) * mu_1j - (j + 3 * delta) * Xg * mu_0j - j * Yg * mu_1jm1 + j * epsilon * n11 * mu_0jm1;
+      -(j + 3 * delta) * mu_1j - (j + 3 * delta) * Xg * mu_0j - j * Yg * mu_1jm1 + j * epsilon * n11 * mu_0jm1;
     interaction_matrices[j_ * order][0][VZ] = -A * interaction_matrices[j_ * order][0][WY] +
-                                              B * interaction_matrices[j_ * order][0][WX] + (j + 2 * delta) * C * mu_0j;
+      B * interaction_matrices[j_ * order][0][WX] + (j + 2 * delta) * C * mu_0j;
     interaction_matrices[j_ * order][0][WZ] = -j * mu_1jm1;
   }
 
@@ -307,14 +303,14 @@ void vpFeatureMomentCentered::compute_interaction()
       interaction_matrices[j_ * order + i_][0][VY] = -j * A * mu_ip1jm1 - (j + delta) * B * mu_ij;
 
       interaction_matrices[j_ * order + i_][0][WX] = (i + j + 3 * delta) * mu_ijp1 +
-                                                     (i + 2 * j + 3 * delta) * Yg * mu_ij + i * Xg * mu_im1jp1 -
-                                                     i * epsilon * n11 * mu_im1j - j * epsilon * n02 * mu_ijm1;
+        (i + 2 * j + 3 * delta) * Yg * mu_ij + i * Xg * mu_im1jp1 -
+        i * epsilon * n11 * mu_im1j - j * epsilon * n02 * mu_ijm1;
       interaction_matrices[j_ * order + i_][0][WY] = -(i + j + 3 * delta) * mu_ip1j -
-                                                     (2 * i + j + 3 * delta) * Xg * mu_ij - j * Yg * mu_ip1jm1 +
-                                                     i * epsilon * n20 * mu_im1j + j * epsilon * n11 * mu_ijm1;
+        (2 * i + j + 3 * delta) * Xg * mu_ij - j * Yg * mu_ip1jm1 +
+        i * epsilon * n20 * mu_im1j + j * epsilon * n11 * mu_ijm1;
       interaction_matrices[j_ * order + i_][0][VZ] = -A * interaction_matrices[j_ * order + i_][0][WY] +
-                                                     B * interaction_matrices[j_ * order + i_][0][WX] +
-                                                     (i + j + 2 * delta) * C * mu_ij;
+        B * interaction_matrices[j_ * order + i_][0][WX] +
+        (i + j + 2 * delta) * C * mu_ij;
       interaction_matrices[j_ * order + i_][0][WZ] = i * mu_im1jp1 - j * mu_ip1jm1;
     }
   }
@@ -322,8 +318,8 @@ void vpFeatureMomentCentered::compute_interaction()
 }
 
 /*!
-  \relates vpFeatureMomentCentered
-  Print all the interaction matrices of visual features
+ * \relates vpFeatureMomentCentered
+ * Print all the interaction matrices of visual features
  */
 std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
 {
@@ -337,3 +333,4 @@ std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &mu)
   }
   return os;
 }
+END_VISP_NAMESPACE

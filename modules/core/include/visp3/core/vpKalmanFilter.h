@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,12 @@
  *
  * Description:
  * Kalman filtering.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
+
+/*!
+  \file vpKalmanFilter.h
+  \brief Generic kalman filtering implementation
+*/
 
 #ifndef vpKalmanFilter_h
 #define vpKalmanFilter_h
@@ -45,11 +44,7 @@
 
 #include <math.h>
 
-/*!
-  \file vpKalmanFilter.h
-  \brief Generic kalman filtering implementation
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpKalmanFilter
   \ingroup group_core_kalman
@@ -128,10 +123,10 @@ protected:
 
 public:
   vpKalmanFilter();
-  explicit vpKalmanFilter(unsigned int n_signal);
+  VP_EXPLICIT vpKalmanFilter(unsigned int n_signal);
   vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int n_signal);
   /*! Destructor that does noting. */
-  virtual ~vpKalmanFilter(){};
+  virtual ~vpKalmanFilter() { };
   /*!
     Set the number of signal to filter.
   */
@@ -217,5 +212,5 @@ protected:
   //! Identity matrix \f$ \bf I\f$.
   vpMatrix I;
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Interface for the Irisa's Viper S650 robot controlled by an Adept
  *MotionBlox.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRobotViper650_h
 #define vpRobotViper650_h
@@ -58,6 +55,7 @@ extern "C" {
 #include "trycatch.h"
 }
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotViper650
 
@@ -138,14 +136,18 @@ extern "C" {
   class by calling the default constructor:
 
   \code
-#include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
+  #endif
+  }
   \endcode
 
   This initialize the robot kinematics with the \f$^e{\bf M}_c\f$
@@ -155,47 +157,55 @@ int main()
   distortion you need to initialize the robot with:
 
   \code
-#include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distortion parameter
-  robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
-       vpCameraParameters::perspectiveProjWithDistortion);
-#endif
-}
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
+
+    // Set the extrinsic camera parameters obtained with a perspective
+    // projection model including a distortion parameter
+    robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
+        vpCameraParameters::perspectiveProjWithDistortion);
+  #endif
+  }
   \endcode
 
   You can get the intrinsic camera parameters of an image
   acquired by the camera attached to the robot, with:
 
   \code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/robot/vpRobotViper650.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/sensor/vp1394TwoGrabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_DC1394)
-  vpImage<unsigned char> I;
-  vp1394TwoGrabber g;
-  g.acquire(I);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRobotViper650 robot;
+  int main()
+  {
+  #if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_DC1394)
+    vpImage<unsigned char> I;
+    vp1394TwoGrabber g;
+    g.acquire(I);
 
-  // ...
+    vpRobotViper650 robot;
 
-  vpCameraParameters cam;
-  robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model
-  // with distortion.
-#endif
-}
+    // ...
+
+    vpCameraParameters cam;
+    robot.getCameraParameters(cam, I);
+    // In cam, you get the intrinsic parameters of the projection model
+    // with distortion.
+  #endif
+  }
   \endcode
 
   To control the robot in position, you may set the controller
@@ -203,31 +213,35 @@ int main()
   frame like here in the joint space:
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector q(6);
-  // Set a joint position
-  q[0] = vpMath::rad(10); // Joint 1 position, in rad
-  q[1] = 0.2;             // Joint 2 position, in rad
-  q[2] = 0.3;             // Joint 3 position, in rad
-  q[3] = M_PI/8;          // Joint 4 position, in rad
-  q[4] = M_PI/4;          // Joint 5 position, in rad
-  q[5] = M_PI;            // Joint 6 position, in rad
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
 
-  // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpColVector q(6);
+    // Set a joint position
+    q[0] = vpMath::rad(10); // Joint 1 position, in rad
+    q[1] = 0.2;             // Joint 2 position, in rad
+    q[2] = 0.3;             // Joint 3 position, in rad
+    q[3] = M_PI/8;          // Joint 4 position, in rad
+    q[4] = M_PI/4;          // Joint 5 position, in rad
+    q[5] = M_PI;            // Joint 6 position, in rad
 
-  // Moves the robot in the joint space
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-#endif
-}
+    // Initialize the controller to position control
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+    // Moves the robot in the joint space
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  #endif
+  }
   \endcode
 
   The robot moves to the specified position with the default
@@ -236,28 +250,32 @@ int main()
   velocity used to reach the desired position.
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector q(6);
-  // Set q[i] with i in [0:5]
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
 
-  // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpColVector q(6);
+    // Set q[i] with i in [0:5]
 
-  // Set the max velocity to 40%
-  robot.setPositioningVelocity(40);
+    // Initialize the controller to position control
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-  // Moves the robot in the joint space
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-#endif
-}
+    // Set the max velocity to 40%
+    robot.setPositioningVelocity(40);
+
+    // Moves the robot in the joint space
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+  #endif
+  }
   \endcode
 
   To control the robot in velocity, you may set the controller to
@@ -267,38 +285,42 @@ int main()
   space:
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpRobotViper650.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector qvel(6);
-  // Set a joint velocity
-  qvel[0] = 0.1;             // Joint 1 velocity in rad/s
-  qvel[1] = vpMath::rad(15); // Joint 2 velocity in rad/s
-  qvel[2] = 0;               // Joint 3 velocity in rad/s
-  qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
-  qvel[4] = 0;               // Joint 5 velocity in rad/s
-  qvel[5] = 0;               // Joint 6 velocity in rad/s
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
 
-  // Initialize the controller to position control
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpColVector qvel(6);
+    // Set a joint velocity
+    qvel[0] = 0.1;             // Joint 1 velocity in rad/s
+    qvel[1] = vpMath::rad(15); // Joint 2 velocity in rad/s
+    qvel[2] = 0;               // Joint 3 velocity in rad/s
+    qvel[3] = M_PI/8;          // Joint 4 velocity in rad/s
+    qvel[4] = 0;               // Joint 5 velocity in rad/s
+    qvel[5] = 0;               // Joint 6 velocity in rad/s
 
-  for ( ; ; ) {
-    // Apply a velocity in the joint space
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+    // Initialize the controller to position control
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    // Compute new velocities qvel...
+    for ( ; ; ) {
+      // Apply a velocity in the joint space
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
+
+      // Compute new velocities qvel...
+    }
+
+    // Stop the robot
+    robot.setRobotState(vpRobot::STATE_STOP);
+  #endif
   }
-
-  // Stop the robot
-  robot.setRobotState(vpRobot::STATE_STOP);
-#endif
-}
   \endcode
 
   It is also possible to specify the position of a custom tool cartesian
@@ -306,24 +328,28 @@ int main()
   frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
   the robot thanks to init(vpViper650::vpToolType, const vpHomogeneousMatrix &)
   or init(vpViper650::vpToolType, const std::string &) or using set_eMc(). The
-  following example illustrates this usecase:
+  following example illustrates this use case:
 
-\code
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotViper650.h>
+  \code
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/robot/vpRobotViper650.h>
 
-int main()
-{
-#ifdef VISP_HAVE_VIPER650
-  vpRobotViper650 robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the transformation between the end-effector frame
-  // and the tool frame.
-  vpHomogeneousMatrix eMc(0.001, 0.0, 0.1, 0.0, 0.0, M_PI/2);
+  int main()
+  {
+  #ifdef VISP_HAVE_VIPER650
+    vpRobotViper650 robot;
 
-  robot.init(vpViper650::TOOL_CUSTOM, eMc);
-#endif
-}
+    // Set the transformation between the end-effector frame
+    // and the tool frame.
+    vpHomogeneousMatrix eMc(0.001, 0.0, 0.1, 0.0, 0.0, M_PI/2);
+
+    robot.init(vpViper650::TOOL_CUSTOM, eMc);
+  #endif
+  }
   \endcode
 
   It is also possible to measure the robot current position with
@@ -339,7 +365,8 @@ class VISP_EXPORT vpRobotViper650 : public vpViper650, public vpRobot
 
 public: /* Constantes */
   /*! \enum vpControlModeType Control mode. */
-  typedef enum {
+  typedef enum
+  {
     AUTO,   //!< Automatic control mode (default).
     MANUAL, //!< Manual control mode activated when the dead man switch is in
             //!< use.
@@ -384,7 +411,7 @@ private: /* Attributs prives. */
   vpControlModeType m_controlMode;
 
 public: /* Methode publiques */
-  explicit vpRobotViper650(bool verbose = true);
+  VP_EXPLICIT vpRobotViper650(bool verbose = true);
   virtual ~vpRobotViper650(void);
 
   // Force/Torque control
@@ -424,13 +451,13 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
+  void get_fJe(vpMatrix &fJe) VP_OVERRIDE;
 
   void init(void);
   void
-  init(vpViper650::vpToolType tool,
-       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+    init(vpViper650::vpToolType tool,
+         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper650::vpToolType tool, const std::string &filename);
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
@@ -451,7 +478,7 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) VP_OVERRIDE;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -460,13 +487,13 @@ public: /* Methode publiques */
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) VP_OVERRIDE;
 
   void stopMotion();
 
 private:
   double m_maxRotationVelocity_joint6;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif /* #ifndef vpRobotViper650_h */

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpMy_H
 #define vpMy_H
 
@@ -69,12 +69,7 @@
 
 #define M_EPSILON 1E-06
 
-//#define	ABS(X)		(((X) < 0)   ? -(X) : (X))
 #define FABS(X) (((X) < 0.0) ? -(X) : (X))
-//#define	MAX(A,B)	(((A) > (B)) ? (A) : (B))
-//#define	MAX3(A,B,C)	(MAX(MAX(A,B),C))
-//#define	MIN(A,B)	(((A) < (B)) ? (A) : (B))
-//#define	MIN3(A,B,C)	(MIN(MIN(A,B),C))
 
 #define MIN_MAX(M, MIN, MAX)                                                                                           \
   if ((M) < (MIN))                                                                                                     \
@@ -90,7 +85,8 @@
     (B) = (T);                                                                                                         \
   }
 
+BEGIN_VISP_NAMESPACE
 typedef unsigned char Byte;
-
+END_VISP_NAMESPACE
 #endif
 #endif

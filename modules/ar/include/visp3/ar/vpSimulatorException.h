@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,39 +28,38 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the simulator classes.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpSimulatorException_h_
-#define _vpSimulatorException_h_
-
-/* \file vpSimulatorException.h
-   \brief error that can be emited by the vpSimulator class and its derivates
+ * Exceptions that can be emitted by the simulator classes.
  */
-/* Classes standards. */
 
+/*!
+ * \file vpSimulatorException.h
+ *  \brief Error that can be emitted by the vpSimulator class and its derivatives
+ */
+
+#ifndef VP_SIMULATOR_EXCEPTION_H
+#define VP_SIMULATOR_EXCEPTION_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #include <iostream> /* Classe std::ostream.    */
 #include <string>   /* Classe string.     */
 
+BEGIN_VISP_NAMESPACE
 /*!
-
-  \class vpSimulatorException
-  \brief Error that can be emited by the vpSimulator class and its derivates.
- */
+ * \class vpSimulatorException
+ * \brief Error that can be emitted by the vpSimulator class and its derivatives.
+*/
 class VISP_EXPORT vpSimulatorException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpSimulator member
- */
-  enum errorSimulatorCodeEnum {
+   * Lists the possible error than can be emitted while calling
+   * vpSimulator member
+   */
+  enum errorSimulatorCodeEnum
+  {
     ioError,                       //!< I/O error
     noFileNameError,               //!< Filename error
     notInitializedError,           //!< Initialization error
@@ -70,9 +68,21 @@ public:
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpSimulatorException(int id, const char *format, ...);
-  vpSimulatorException(int id, const std::string &msg);
-  explicit vpSimulatorException(int id);
-};
 
+  /*!
+   * Constructor.
+   */
+  vpSimulatorException(int id, const std::string &msg);
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpSimulatorException(int id);
+};
+END_VISP_NAMESPACE
+#endif
 #endif

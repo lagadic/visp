@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * XML parser to load and save Homogeneous Matrix in a XML file.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpXmlParserHomogeneousMatrix.h
@@ -41,13 +39,15 @@
 
 */
 
-#ifndef vpXMLPARSERHOMOGENEOUSMATRIX_H
-#define vpXMLPARSERHOMOGENEOUSMATRIX_H
+#ifndef VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
+#define VP_XML_PARSER_HOMOGENEOUS_MATRIX_H
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpXmlParserHomogeneousMatrix
 
@@ -165,11 +165,13 @@ public:
   void setHomogeneousMatrixName(const std::string &name);
 
 private:
-  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &);            // noncopyable
+  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &hm);            // noncopyable
   vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &); //
 
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
 };
+END_VISP_NAMESPACE
+#endif
 #endif

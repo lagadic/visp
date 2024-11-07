@@ -1,5 +1,5 @@
 /* cpu_x86_Windows.ipp
- * 
+ *
  * Author           : Alexander J. Yee
  * Date Created     : 04/12/2014
  * Last Modified    : 04/12/2014
@@ -17,8 +17,10 @@
 //  Dependencies
 #include <Windows.h>
 #include <intrin.h>
+#include <memory.h>
 #include "cpu_x86.h"
-namespace FeatureDetector{
+namespace FeatureDetector
+{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +41,7 @@ uint64_t _xgetbv(unsigned int ext_ctrl_reg)
     mov ecx, [ext_ctrl_reg]
     __asm _emit 0x0f __asm _emit 0x01 __asm _emit 0xd0 /* xgetbv() */
     mov eax_, eax
-    mov edx_, edx
+      mov edx_, edx
   }
   return ((uint64_t)edx_ << 32) | eax_;
 }
@@ -53,69 +55,80 @@ uint64_t _xgetbv(unsigned int)
 unsigned __int64 _xgetbv(unsigned int index)
 {
 #if defined(__x86_64__) || defined(_AMD64_)
-   unsigned __int64 val1, val2;
+  unsigned __int64 val1, val2;
 #else
-   unsigned __LONG32 val1, val2;
+  unsigned __LONG32 val1, val2;
 #endif /* defined(__x86_64__) || defined(_AMD64_) */
 
-   __asm__ __volatile__(
-      "xgetbv"
-      : "=a" (val1), "=d" (val2)
-      : "c" (index));
+  __asm__ __volatile__(
+     "xgetbv"
+     : "=a" (val1), "=d" (val2)
+     : "c" (index));
 
-   return (((unsigned __int64)val2) << 32) | val1;
+  return (((unsigned __int64)val2) << 32) | val1;
 }
 #endif
 #if defined(__MINGW32__)
-void __cpuidex(int CPUInfo[4], int function_id, int subfunction_id) {
-   __asm__ __volatile__ (
-      "cpuid"
-      : "=a" (CPUInfo [0]), "=b" (CPUInfo [1]), "=c" (CPUInfo [2]), "=d" (CPUInfo [3])
-      : "a" (function_id), "c" (subfunction_id));
+void __cpuidex(unsigned int CPUInfo[4], unsigned int function_id, unsigned int subfunction_id)
+{
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  __asm__ __volatile__(
+     "cpuid"
+     : "=a" (CPUInfo[index_0]), "=b" (CPUInfo[index_1]), "=c" (CPUInfo[index_2]), "=d" (CPUInfo[index_3])
+     : "a" (function_id), "c" (subfunction_id));
 }
 #endif
-void cpu_x86::cpuid(int32_t out[4], int32_t x){
-    __cpuidex(out, x, 0);
+void cpuX86::cpuid(uint32_t out[4], uint32_t x)
+{
+#if defined(__MINGW32__)
+  __cpuidex(out, x, 0U);
+#else
+  int32_t out_as_int[4];
+  __cpuidex(out_as_int, x, 0U);
+  memcpy(out, out_as_int, sizeof(int32_t) * 4);
+#endif
 }
-__int64 xgetbv(unsigned int x){
-    return _xgetbv(x);
+__int64 xgetbv(unsigned int x)
+{
+  return _xgetbv(x);
 }
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //  Detect 64-bit - Note that this snippet of code for detecting 64-bit has been copied from MSDN.
-typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 BOOL IsWow64()
 {
-    BOOL bIsWow64 = FALSE;
+  BOOL bIsWow64 = FALSE;
 
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
-    if (!IsWow64Process(GetCurrentProcess(), &bIsWow64))
-	{
-		printf("Error Detecting Operating System.\n");
-		printf("Defaulting to 32-bit OS.\n\n");
-		bIsWow64 = FALSE;
-	}
+  if (!IsWow64Process(GetCurrentProcess(), &bIsWow64)) {
+    printf("Error Detecting Operating System.\n");
+    printf("Defaulting to 32-bit OS.\n\n");
+    bIsWow64 = FALSE;
+  }
 #elif !defined(WINRT) // Turned off on UWP where GetModuleHandle() doesn't exist
-    LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
-        GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+  LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
+      GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
-    if (NULL != fnIsWow64Process)
-    {
-        if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64))
-        {
-            printf("Error Detecting Operating System.\n");
-            printf("Defaulting to 32-bit OS.\n\n");
-            bIsWow64 = FALSE;
-        }
+  if (nullptr != fnIsWow64Process) {
+    if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64)) {
+      printf("Error Detecting Operating System.\n");
+      printf("Defaulting to 32-bit OS.\n\n");
+      bIsWow64 = FALSE;
     }
+  }
 #endif
-    return bIsWow64;
+  return bIsWow64;
 }
-bool cpu_x86::detect_OS_x64(){
+bool cpuX86::detect_OS_x64()
+{
 #ifdef _M_X64
-    return true;
+  return true;
 #else
-    return IsWow64() != 0;
+  return IsWow64() != 0;
 #endif
 }
 ////////////////////////////////////////////////////////////////////////////////

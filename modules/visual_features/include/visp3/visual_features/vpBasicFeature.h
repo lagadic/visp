@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,19 +32,19 @@
  * Visual feature.
  *
  * Authors:
- * Eric Marchand
  * Nicolas Mansard
  *
- *****************************************************************************/
-
-#ifndef vpBasicFeature_H
-#define vpBasicFeature_H
+*****************************************************************************/
 
 /*!
   \file vpBasicFeature.h
   \brief class that defines what is a visual feature
 */
 
+#ifndef vpBasicFeature_H
+#define vpBasicFeature_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
 
@@ -69,22 +69,22 @@
 // #define FEATURE_LINE7 0x40
 // #define FEATURE_LINE8 0x80
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpBasicFeature
-  \ingroup group_core_features
-  \brief class that defines what is a visual feature
+ * \class vpBasicFeature
+ * \ingroup group_visual_features
+ * \brief class that defines what is a visual feature
 */
 class VISP_EXPORT vpBasicFeature
 {
-public: // Public constantes
+public:
   static const unsigned int FEATURE_LINE[32];
 
-  enum { FEATURE_ALL = 0xffff };
+  enum vpBasicFeatureSelect { FEATURE_ALL = 0xffff };
   /*!
-    \enum vpBasicFeatureDeallocatorType
-    Indicates who should deallocate the feature.
-
-  */
+   * \enum vpBasicFeatureDeallocatorType
+   * Indicates who should deallocate the feature.
+   */
   typedef enum { user, vpServo } vpBasicFeatureDeallocatorType;
 
 protected:
@@ -93,7 +93,7 @@ protected:
   //! Dimension of the visual feature.
   unsigned int dim_s;
   // int featureLine[8] ;
-  //! Ensure that all the parameters needed to compute the iteraction matrix
+  //! Ensure that all the parameters needed to compute the interaction matrix
   //! are set.
   bool *flags;
   //! Number of parameters needed to compute the interaction matrix.
@@ -147,5 +147,5 @@ protected:
 protected:
   vpBasicFeatureDeallocatorType deallocate;
 };
-
+END_VISP_NAMESPACE
 #endif

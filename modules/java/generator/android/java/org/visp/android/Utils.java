@@ -42,7 +42,7 @@ public class Utils {
             e.printStackTrace();
             Log.e("VISP::Utils.java","Failed to export resource " + resName + ". Exception thrown: " + e);
         }
-				return null;
+        return null;
     }
 
     public static VpImageUChar loadResource(Context context, int resourceId) throws IOException
@@ -61,7 +61,7 @@ public class Utils {
         return encoded;
     }
 
-	// Converts Android Bitmap to ViSP VpImageUChar
+  // Converts Android Bitmap to ViSP VpImageUChar
     public static void bitmapToVpImageUChar(Bitmap bmp, VpImageUChar image) {
         if (bmp == null)
             throw new java.lang.IllegalArgumentException("bmp == null");
@@ -70,7 +70,7 @@ public class Utils {
         bitmapToVpImageUChar(bmp, image.nativeObj);
     }
 
-	// Converts VpImageUChar to Android Bitmap
+  // Converts VpImageUChar to Android Bitmap
     public static void vpImageUCharToBitmap(VpImageUChar image, Bitmap bmp) {
         if (image == null)
             throw new java.lang.IllegalArgumentException("image == null");
@@ -79,7 +79,7 @@ public class Utils {
         vpImageUCharToBitmap(image.nativeObj, bmp);
     }
 
-	// Converts Android Bitmap to ViSP VpImageRGBa
+  // Converts Android Bitmap to ViSP VpImageRGBa
     public static void bitmapToVpImageRGBa(Bitmap bmp, VpImageRGBa image) {
         if (bmp == null)
             throw new java.lang.IllegalArgumentException("bmp == null");
@@ -88,7 +88,7 @@ public class Utils {
         bitmapToVpImageRGBa(bmp, image.nativeObj);
     }
 
-	// Converts VpImageRGBa to Android Bitmap
+  // Converts VpImageRGBa to Android Bitmap
     public static void vpImageRGBaToBitmap(VpImageRGBa image, Bitmap bmp) {
         if (image == null)
             throw new java.lang.IllegalArgumentException("image == null");

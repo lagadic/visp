@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
 # Description:
 # ViSP overall configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
-project(ViSP-examples)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(ViSP-examples)
 
 find_package(VISP)
 
@@ -73,14 +70,15 @@ visp_add_subdirectory(device/light             REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(direct-visual-servoing   REQUIRED_DEPS visp_core visp_robot visp_visual_features visp_io visp_gui)
 visp_add_subdirectory(homography               REQUIRED_DEPS visp_core visp_vision visp_io)
 visp_add_subdirectory(image                    REQUIRED_DEPS visp_core visp_io)
-visp_add_subdirectory(key-point                REQUIRED_DEPS visp_core visp_vision visp_sensor visp_io visp_gui)
+visp_add_subdirectory(kalman                   REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(manual                   REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision visp_io visp_gui)
-visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_vision visp_io)
+visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_io)
 visp_add_subdirectory(moments/image            REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)
 visp_add_subdirectory(moments/points           REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)
 visp_add_subdirectory(moments/polygon          REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)
 visp_add_subdirectory(ogre-simulator           REQUIRED_DEPS visp_core visp_vision visp_ar visp_blob visp_io visp_gui)
 visp_add_subdirectory(parse-argv               REQUIRED_DEPS visp_core visp_io)
+visp_add_subdirectory(particle-filter          REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(pose-estimation          REQUIRED_DEPS visp_core visp_blob visp_vision visp_io visp_gui)
 visp_add_subdirectory(reflex-takktile          REQUIRED_DEPS visp_core visp_robot)
 visp_add_subdirectory(robot-simulator/afma6    REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
@@ -88,18 +86,19 @@ visp_add_subdirectory(robot-simulator/camera   REQUIRED_DEPS visp_core visp_vs v
 visp_add_subdirectory(robot-simulator/viper850 REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
 visp_add_subdirectory(servo-afma4              REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-afma6              REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
-visp_add_subdirectory(servo-biclops            REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
+visp_add_subdirectory(servo-biclops            REQUIRED_DEPS visp_core visp_detection visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-bebop2             REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui visp_detection)
 visp_add_subdirectory(servo-flir-ptu           REQUIRED_DEPS visp_core visp_robot visp_vision visp_gui visp_vs visp_visual_features visp_detection visp_sensor)
 visp_add_subdirectory(servo-franka             REQUIRED_DEPS visp_core visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 visp_add_subdirectory(servo-kinova             REQUIRED_DEPS visp_core visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 visp_add_subdirectory(servo-pioneer            REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-pixhawk            REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui visp_detection visp_sensor)
+visp_add_subdirectory(servo-pololu-ptu         REQUIRED_DEPS visp_core visp_robot visp_vision visp_gui visp_vs visp_visual_features visp_detection visp_sensor)
 visp_add_subdirectory(servo-ptu46              REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-universal-robots   REQUIRED_DEPS visp_core visp_robot visp_io)
 visp_add_subdirectory(servo-viper650           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(servo-viper850           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(tools                    REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)
-visp_add_subdirectory(tracking                 REQUIRED_DEPS visp_core visp_io visp_gui)
+visp_add_subdirectory(tracking                 REQUIRED_DEPS visp_core visp_core visp_blob visp_io visp_gui visp_mbt visp_me visp_tt visp_tt_mi)
 visp_add_subdirectory(video                    REQUIRED_DEPS visp_core visp_io visp_gui)
 visp_add_subdirectory(wireframe-simulator      REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)

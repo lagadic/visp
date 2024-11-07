@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Kalman filtering.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpLinearKalmanFilterInstantiation.cpp
@@ -49,6 +45,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialize the Kalman filter material depending on the selected
@@ -58,7 +55,7 @@
   initStateConstVelWithColoredNoise_MeasureVel(),
   initStateConstAccWithColoredNoise_MeasureVel().
 
-  \warning It is requiered to set the state model before using this method.
+  \warning It is required to set the state model before using this method.
 
   \param n_signal : Number of signal to filter.
 
@@ -81,9 +78,9 @@
   second. Depending on the filter modelization, this value may not be
   used. This is for example the case for the
   vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel
-model implemented in initStateConstVelWithColoredNoise_MeasureVel().
+  model implemented in initStateConstVelWithColoredNoise_MeasureVel().
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   \exception vpException::notInitialized : If the state model is not
   initialized. To initialize it you need to call setStateModel().
@@ -92,24 +89,28 @@ model implemented in initStateConstVelWithColoredNoise_MeasureVel().
   dimensional signal.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
-  // Select a constant velocity state model with colored noise
-  // Measures are velocities
-  kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialise the filter for a one dimension signal
-  int signal = 1;
-  vpColVector sigma_state(2);   // State vector size is 2
-  vpColVector sigma_measure(1); // Measure vector size is 1
-  double rho = 0.9;
-  double dummy = 0; // non used parameter for the selected state model
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
+    // Select a constant velocity state model with colored noise
+    // Measures are velocities
+    kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
 
-  kalman.initFilter(signal, sigma_state, sigma_measure, rho, dummy);
-}
+    // Initialise the filter for a one dimension signal
+    int signal = 1;
+    vpColVector sigma_state(2);   // State vector size is 2
+    vpColVector sigma_measure(1); // Measure vector size is 1
+    double rho = 0.9;
+    double dummy = 0; // non used parameter for the selected state model
+
+    kalman.initFilter(signal, sigma_state, sigma_measure, rho, dummy);
+  }
   \endcode
 
   The example below shows a more complete example to filter a two
@@ -117,62 +118,66 @@ int main()
   velocities from velocity measures.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set the constant velocity state model used for the filtering
-  vpLinearKalmanFilterInstantiation::vpStateModel model;
-  model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
-  kalman.setStateModel(model);
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
 
-  // We are now able to retrieve the size of the state vector and measure vector
-  int state_size = kalman.getStateSize();
+    // Set the constant velocity state model used for the filtering
+    vpLinearKalmanFilterInstantiation::vpStateModel model;
+    model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
+    kalman.setStateModel(model);
 
-  // Filter the x and y velocities of a target (2 signals are to consider)
-  int nsignal = 2;
+    // We are now able to retrieve the size of the state vector and measure vector
+    int state_size = kalman.getStateSize();
 
-  // Initialize the filter parameters:
-  // - Firstly, the state variance
-  int size = state_size*nsignal;
-  vpColVector sigma_state(size);
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
-  sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
-  // - Secondly, the measures variance
-  vpColVector sigma_measure(nsignal); // 2 velocity measures available
-  sigma_measure[0] = 0.03; // Variance on the x velocity measure
-  sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between successive accelerations
-  double rho = 0.9;
+    // Filter the x and y velocities of a target (2 signals are to consider)
+    int nsignal = 2;
 
-  double dummy = 0; // non used parameter for the selected state model
+    // Initialize the filter parameters:
+    // - Firstly, the state variance
+    int size = state_size*nsignal;
+    vpColVector sigma_state(size);
+    sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+    sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
+    // - Secondly, the measures variance
+    vpColVector sigma_measure(nsignal); // 2 velocity measures available
+    sigma_measure[0] = 0.03; // Variance on the x velocity measure
+    sigma_measure[1] = 0.06; // Variance on the y velocity measure
+    // - Thirdly, the correlation between successive accelerations
+    double rho = 0.9;
 
-  // Initialize the filter
-  // The state model was set before
-  kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
+    double dummy = 0; // non used parameter for the selected state model
 
-  // Does the filtering
-  vpColVector vm(2); // Measured velocities
-  for ( ; ; ) {
-    // Get the two dimentional velocity measures
-    // vm[0] = ...;
-    // vm[1] = ...;
+    // Initialize the filter
+    // The state model was set before
+    kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
 
-    // Compute the filtering and the prediction
-    kalman.filter(vm);
-    // Print the estimation of the velocities (1st value of the state vector)
-    std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
-    std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
-              << std::endl;
-    // The one step prediction is available in kalman.Xpre variable
+    // Does the filtering
+    vpColVector vm(2); // Measured velocities
+    for ( ; ; ) {
+      // Get the two dimensional velocity measures
+      // vm[0] = ...;
+      // vm[1] = ...;
+
+      // Compute the filtering and the prediction
+      kalman.filter(vm);
+      // Print the estimation of the velocities (1st value of the state vector)
+      std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
+      std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
+                << std::endl;
+      // The one step prediction is available in kalman.Xpre variable
+    }
   }
-}
   \endcode
  */
-void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal, vpColVector &sigma_state,
-                                                   vpColVector &sigma_measure, double rho, double delta_t)
+  void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal, vpColVector &sigma_state,
+                                                     vpColVector &sigma_measure, double rho, double delta_t)
 {
   switch (model) {
   case stateConstVelWithColoredNoise_MeasureVel:
@@ -191,7 +196,7 @@ void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal, vpColV
 }
 
 /*!
-  Modelisation of a constant speed state model with white noise. The
+  Modelization of a constant speed state model with white noise. The
   measure is assumed to be the position of the target.
 
   The considered state model is the following
@@ -340,7 +345,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned in
 
 /*!
 
-  Modelisation of a constant speed state model with colored noise. The
+  Modelization of a constant speed state model with colored noise. The
   measure is assumed to be the velocity of the target.
 
   This state model assume that there is some memory associated with
@@ -443,52 +448,56 @@ by the number of signal to filter.
   \param rho : Degree of correlation between successive accelerations. Values
   are in [0:1[.
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   The example below shows how to filter a two dimensional target
   trajectory with an estimation of the target velocity from velocity
   measures.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
-  // Filter the x and y velocities of a target (2 signals are to consider)
-  int nsignal = 2;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialize the filter parameters:
-  // - Firstly, the state variance
-  vpColVector sigma_state(4); // 4 = 2 for the state size x 2 signal
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
-  sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
-  // - Secondly, the measures variance
-  vpColVector sigma_measure(nsignal); // 2 velocity measures available
-  sigma_measure[0] = 0.03; // Variance on the x velocity measure
-  sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between successive accelerations
-  double rho = 0.9;
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
+    // Filter the x and y velocities of a target (2 signals are to consider)
+    int nsignal = 2;
 
-  // Initialize the filter
-  kalman.initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho);
+    // Initialize the filter parameters:
+    // - Firstly, the state variance
+    vpColVector sigma_state(4); // 4 = 2 for the state size x 2 signal
+    sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+    sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
+    // - Secondly, the measures variance
+    vpColVector sigma_measure(nsignal); // 2 velocity measures available
+    sigma_measure[0] = 0.03; // Variance on the x velocity measure
+    sigma_measure[1] = 0.06; // Variance on the y velocity measure
+    // - Thirdly, the correlation between successive accelerations
+    double rho = 0.9;
 
-  // Does the filtering
-  vpColVector vm(2); // Measured velocities
-  for ( ; ; ) {
-    // Get the two dimentional velocity measures
-    // vm[0] = ...;
-    // vm[1] = ...;
+    // Initialize the filter
+    kalman.initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho);
 
-    // Compute the filtering and the prediction
-    kalman.filter(vm);
-    // Print the estimation of the velocities (1st value of the state vector)
-    std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
-    std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
-              << std::endl;
-    // The one step prediction is available in kalman.Xpre variable
+    // Does the filtering
+    vpColVector vm(2); // Measured velocities
+    for ( ; ; ) {
+      // Get the two dimensional velocity measures
+      // vm[0] = ...;
+      // vm[1] = ...;
+
+      // Compute the filtering and the prediction
+      kalman.filter(vm);
+      // Print the estimation of the velocities (1st value of the state vector)
+      std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
+      std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
+                << std::endl;
+      // The one step prediction is available in kalman.Xpre variable
+    }
   }
-}
   \endcode
 */
 void vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(unsigned int n_signal,
@@ -548,7 +557,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_Measur
 
 /*!
 
-  Modelisation of a constant acceleration state model with colored noise. The
+  Modelization of a constant acceleration state model with colored noise. The
   measure is assumed to be the velocity of the target.
 
   This state model assume that there is some memory associated with
@@ -658,56 +667,60 @@ mutually uncorrelated stationary random variables with variance
 
   \param delta_t : Sampling time \f$\Delta t\f$ expressed is second.
 
-  \exception vpException::badValue : Bad rho value wich is not in [0:1[.
+  \exception vpException::badValue : Bad rho value which is not in [0:1[.
 
   The example below shows how to filter a two dimensional target
   trajectory with an estimation of the target velocity from velocity
   measures.
 
   \code
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+  #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
-  // Filter the x and y velocities of a target (2 signals are to consider)
-  int nsignal = 2;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialize the filter parameters:
-  // - Firstly, the state variance
-  vpColVector sigma_state(6); // 6 = 3 for the state size x 2 signal
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
-  sigma_state[2] = 0.001; // Variance on the acceleration for the 1st signal (x)
-  sigma_state[4] = 0.002; // Variance on the acceleration for the 2nd signal (y)
-  sigma_state[5] = 0.002; // Variance on the acceleration for the 2nd signal (y)
-  // - Secondly, the measures variance
-  vpColVector sigma_measure(nsignal); // 2 velocity measures available
-  sigma_measure[0] = 0.03; // Variance on the x velocity measure
-  sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between successive accelerations
-  double rho = 0.9;
-  // - Lastly, the sampling time
-  double dt = 0.020; // 20 ms
+  int main()
+  {
+    vpLinearKalmanFilterInstantiation kalman;
+    // Filter the x and y velocities of a target (2 signals are to consider)
+    int nsignal = 2;
 
-  // Initialize the filter
-  kalman.initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho, dt);
+    // Initialize the filter parameters:
+    // - Firstly, the state variance
+    vpColVector sigma_state(6); // 6 = 3 for the state size x 2 signal
+    sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+    sigma_state[2] = 0.001; // Variance on the acceleration for the 1st signal (x)
+    sigma_state[4] = 0.002; // Variance on the acceleration for the 2nd signal (y)
+    sigma_state[5] = 0.002; // Variance on the acceleration for the 2nd signal (y)
+    // - Secondly, the measures variance
+    vpColVector sigma_measure(nsignal); // 2 velocity measures available
+    sigma_measure[0] = 0.03; // Variance on the x velocity measure
+    sigma_measure[1] = 0.06; // Variance on the y velocity measure
+    // - Thirdly, the correlation between successive accelerations
+    double rho = 0.9;
+    // - Lastly, the sampling time
+    double dt = 0.020; // 20 ms
 
-  // Does the filtering
-  vpColVector vm(2); // Measured velocities
-  for ( ; ; ) {
-    // Get the two dimentional velocity measures
-    // vm[0] = ...;
-    // vm[1] = ...;
+    // Initialize the filter
+    kalman.initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho, dt);
 
-    // Compute the filtering and the prediction
-    kalman.filter(vm);
-    // Print the estimation of the velocities (1st value of the state vector)
-    std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
-    std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
-              << std::endl;
-    // The one step prediction is available in kalman.Xpre variable
+    // Does the filtering
+    vpColVector vm(2); // Measured velocities
+    for ( ; ; ) {
+      // Get the two dimensional velocity measures
+      // vm[0] = ...;
+      // vm[1] = ...;
+
+      // Compute the filtering and the prediction
+      kalman.filter(vm);
+      // Print the estimation of the velocities (1st value of the state vector)
+      std::cout << "Estimated x velocity: kalman.Xest[0]" << std::endl;
+      std::cout << "Estimated y velocity: kalman.Xest[kalman.getStateSize()]"
+                << std::endl;
+      // The one step prediction is available in kalman.Xpre variable
+    }
   }
-}
   \endcode
 
 */
@@ -810,16 +823,15 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
     case unknown:
       vpERROR_TRACE("Kalman state model is not set");
       throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
-      break;
     }
     iter++;
 
     return;
-  } else if (iter == 1) {
+  }
+  else if (iter == 1) {
     if (model == stateConstVel_MeasurePos) {
       for (unsigned int i = 0; i < size_measure * nsignal; i++) {
-        double z_prev = Xest[size_state * i]; // Previous mesured position
-        //	std::cout << "Mesure pre: " << z_prev << std::endl;
+        double z_prev = Xest[size_state * i]; // Previous measured position
         Xest[size_state * i] = z[i];
         Xest[size_state * i + 1] = (z[i] - z_prev) / dt;
       }
@@ -833,3 +845,4 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
   filtering(z);
   prediction();
 }
+END_VISP_NAMESPACE

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpHistogram.h
@@ -43,22 +38,20 @@
 
 */
 
-#ifndef vpHistogram_h
-#define vpHistogram_h
+#ifndef VP_HISTOGRAM_H
+#define VP_HISTOGRAM_H
 
 #include <sstream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpHistogramPeak.h>
 #include <visp3/core/vpHistogramValey.h>
 #include <visp3/core/vpImage.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#include <visp3/core/vpList.h>
-#endif
-
 #include <list>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogram
   \ingroup group_core_histogram
@@ -114,7 +107,8 @@ class VISP_EXPORT vpHistogram
 public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
-  explicit vpHistogram(const vpImage<unsigned char> &I);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I);
+  VP_EXPLICIT vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
   virtual ~vpHistogram();
 
   vpHistogram &operator=(const vpHistogram &h);
@@ -134,19 +128,19 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h[i]);
     \endcode
 
   */
   inline unsigned operator[](const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
   /*!
@@ -164,19 +158,19 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h(i));
     \endcode
 
   */
   inline unsigned operator()(const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
   /*!
@@ -194,19 +188,19 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h.get(i));
     \endcode
 
   */
   inline unsigned get(const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
 
@@ -222,23 +216,40 @@ public:
     vpHistogram h;
 
     // Set histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       h.set(i, i*2); // for each level i, set a value of 2*i
     \endcode
 
   */
   inline void set(const unsigned char level, unsigned int value)
   {
-    if (level < size) {
-      histogram[level] = value;
-    } else {
+    if (level < m_size) {
+      m_histogram[level] = value;
+    }
+    else {
       std::stringstream ss;
-      ss << "Level is > to size (" << size << ") !";
+      ss << "Level is > to size (" << m_size << ") !";
       throw vpException(vpException::dimensionError, ss.str().c_str());
     }
   };
 
+  /**
+   * \brief Set a mask to ignore pixels for which the mask is false.
+   *
+   * \warning The mask must be reset manually by the user (either for another mask
+   * or set to \b nullptr ) before computing the histogram of another image.
+   *
+   * @param p_mask If different of \b nullptr , a mask of booleans where \b true
+   * indicates that a pixel must be considered and \b false that the pixel should
+   * be ignored.
+   */
+  inline void setMask(const vpImage<bool> *p_mask)
+  {
+    mp_mask = p_mask;
+  }
+
   void calculate(const vpImage<unsigned char> &I, unsigned int nbins = 256, unsigned int nbThreads = 1);
+  void equalize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Iout);
 
   void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, unsigned int thickness = 2,
                unsigned int maxValue_ = 0);
@@ -264,7 +275,7 @@ public:
 
     \sa getValues()
   */
-  inline unsigned getSize() const { return size; };
+  inline unsigned getSize() const { return m_size; };
 
   /*!
 
@@ -281,25 +292,28 @@ public:
 
     // Print the histogram values
     unsigned char *values = h.getValues();
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, values[i]);
     \endcode
 
     \sa getSize()
   */
-  inline unsigned *getValues() { return histogram; };
+  inline unsigned *getValues() { return m_histogram; };
+
+  /**
+   * \brief Get the total number of pixels in the input image.
+   *
+   * \return unsigned int Cumulated number of pixels in the input image.
+   */
+  inline unsigned int getTotal() { return m_total; };
 
 private:
   void init(unsigned size = 256);
 
-  unsigned int *histogram;
-  unsigned size; // Histogram size (max allowed 256)
+  unsigned int *m_histogram; /*!< The storage for the histogram.*/
+  unsigned m_size; /*!< Histogram size (max allowed 256).*/
+  const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
+  unsigned int m_total; /*!< Cumulated number of pixels in the input image. */
 };
-
+END_VISP_NAMESPACE
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

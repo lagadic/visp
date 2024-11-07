@@ -2,29 +2,29 @@ name: Ubuntu-contrib
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
-  build-ubuntu-dep-apt:
+  build-ubuntu-dep-apt-contrib:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-latest]
         compiler: [ {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: lscpu
@@ -35,12 +35,12 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
-    - name: Install dependencies for ubuntu 18.04 and 20.04
-      if: matrix.os != 'ubuntu-22.04'
+    - name: Install dependencies for ubuntu 20.04
+      if: matrix.os == 'ubuntu-20.04'
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
-    - name: Install dependencies for ubuntu 22.04
-      if: matrix.os == 'ubuntu-22.04'
+    - name: Install dependencies for ubuntu-latest
+      if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Clone visp_contrib

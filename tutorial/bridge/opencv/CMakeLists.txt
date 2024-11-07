@@ -1,6 +1,6 @@
-project(tutorial-bridge-opencv)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-bridge-opencv)
 
 find_package(VISP REQUIRED visp_core visp_io)
 

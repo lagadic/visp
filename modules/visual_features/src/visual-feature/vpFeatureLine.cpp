@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D line visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeatureLine.cpp
@@ -70,6 +67,7 @@ attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 2D line visual feature.
 */
@@ -84,7 +82,7 @@ void vpFeatureLine::init()
   // s[0] = rho
   // s[1] = theta
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -331,7 +329,8 @@ vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, unsigned int sele
       etheta[0] = err;
       e = vpColVector::stack(e, etheta);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -384,12 +383,14 @@ void vpFeatureLine::print(unsigned int select) const
   \param theta : The \f$ \theta \f$ parameter.
 
 */
-void vpFeatureLine::buildFrom(double rho, double theta)
+vpFeatureLine &vpFeatureLine::buildFrom(const double &rho, const double &theta)
 {
   s[0] = rho;
   s[1] = theta;
-  for (int i = 0; i < 2; i++)
+  for (int i = 0; i < 2; i++) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -420,7 +421,7 @@ void vpFeatureLine::buildFrom(double rho, double theta)
   \param D_ : D parameter of the plan equation.
 
 */
-void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, double C_, double D_)
+vpFeatureLine &vpFeatureLine::buildFrom(const double &rho, const double &theta, const double &A_, const double &B_, const double &C_, const double &D_)
 {
   s[0] = rho;
   s[1] = theta;
@@ -428,8 +429,10 @@ void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, do
   this->B = B_;
   this->C = C_;
   this->D = D_;
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -468,7 +471,8 @@ void vpFeatureLine::display(const vpCameraParameters &cam, const vpImage<unsigne
 
     vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -494,7 +498,8 @@ void vpFeatureLine::display(const vpCameraParameters &cam, const vpImage<vpRGBa>
 
     vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -540,3 +545,4 @@ unsigned int vpFeatureLine::selectRho() { return FEATURE_LINE[0]; }
   \endcode
 */
 unsigned int vpFeatureLine::selectTheta() { return FEATURE_LINE[1]; }
+END_VISP_NAMESPACE

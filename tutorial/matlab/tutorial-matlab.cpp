@@ -1,7 +1,7 @@
-/*! \example tutorial-matlab.cpp */
-/*
- *	Tutorial using ViSP and MATLAB
- *	Determine column-wise sum of ViSP matrix using MATLAB Engine
+/*! \example tutorial-matlab.cpp
+ *
+ * Tutorial using ViSP and MATLAB
+ * Determine column-wise sum of ViSP matrix using MATLAB Engine
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,11 +9,16 @@
 //! [Include]
 #include <engine.h>
 #include <matrix.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 //! [Include]
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // ViSP matrix containing input data
   //! [InputData]
   vpMatrix x(3, 3, 0);
@@ -38,7 +43,7 @@ int main()
   mxArray *T = mxCreateDoubleMatrix(xRows, xCols, mxREAL);
 
   // MATLAB array to store output data from MATLAB
-  mxArray *D = NULL;
+  mxArray *D = nullptr;
   //! [MATLABVariables]
 
   // Temporary variable to hold Output data

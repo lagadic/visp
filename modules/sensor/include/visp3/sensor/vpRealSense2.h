@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * librealSense2 interface.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRealSense2_h_
 #define _vpRealSense2_h_
@@ -43,14 +43,15 @@
 #include <librealsense2/rs.hpp>
 #include <librealsense2/rsutil.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/common_headers.h>
 #endif
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
 
-/*!
+BEGIN_VISP_NAMESPACE
+ /*!
   \class vpRealSense2
 
   \ingroup group_sensor_rgbd
@@ -78,14 +79,15 @@
   uses vpRealSense2 class.
 
   \code
-project(sample)
-cmake_minimum_required(VERSION 3.0)
+  cmake_minimum_required(VERSION 3.5)
 
-find_package(VISP REQUIRED)
-include_directories(${VISP_INCLUDE_DIRS})
+  project(sample)
 
-add_executable(sample-realsense sample-realsense.cpp)
-target_link_libraries(sample-realsense ${VISP_LIBRARIES})
+  find_package(VISP REQUIRED)
+  include_directories(${VISP_INCLUDE_DIRS})
+
+  add_executable(sample-realsense sample-realsense.cpp)
+  target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   \endcode
 
   To acquire images from the RealSense color camera and convert them into grey
@@ -93,31 +95,35 @@ target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   the content of sample-realsense.cpp:
 
   \code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main()
-{
-  vpRealSense2 rs;
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-#ifdef VISP_HAVE_X11
-  vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
-#endif
+  int main()
+  {
+    vpRealSense2 rs;
+    rs.open();
 
-  while (true) {
-    rs.acquire(I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
+    vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  #ifdef VISP_HAVE_X11
+    vpDisplayX d(I);
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d(I);
+  #endif
+
+    while (true) {
+      rs.acquire(I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   If you want to acquire color images, in the previous sample replace:
@@ -134,125 +140,139 @@ int main()
   visualize the point cloud
 
   \code
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <visp3/sensor/vpRealSense2.h>
+  #include <pcl/visualization/cloud_viewer.h>
+  #include <pcl/visualization/pcl_visualizer.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main()
-{
-  vpRealSense2 rs;
-  rs.open();
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+  int main()
+  {
+    vpRealSense2 rs;
+    rs.open();
 
-  rs.acquire(NULL, NULL, NULL, pointcloud);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
-  viewer->setBackgroundColor(0, 0, 0);
-  viewer->initCameraParameters();
-  viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
+    rs.acquire(nullptr, nullptr, nullptr, pointcloud);
 
-  while (true) {
-    rs.acquire(NULL, NULL, NULL, pointcloud);
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->initCameraParameters();
+    viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
-    static bool update = false;
-    if (!update) {
-      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-      viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-      update = true;
-    } else {
-      viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+    while (true) {
+      rs.acquire(nullptr, nullptr, nullptr, pointcloud);
+
+      static bool update = false;
+      if (!update) {
+        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+        viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+        update = true;
+      } else {
+        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      }
+
+      viewer->spinOnce(30);
     }
-
-    viewer->spinOnce(30);
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   If you want to change the default stream parameters, refer to the
   librealsense2 `rs2::config` documentation. The following code allows to
   capture the color stream in 1920x1080 at 30 Hz:
 
-\code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+  \code
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main() {
-  vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, 1920, 1080, RS2_FORMAT_RGBA8, 30);
-  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
-  rs.open(config);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  vpImage<unsigned char> Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-                            rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+  int main()
+  {
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 1920, 1080, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX di(Ii, 100, 100, "Infrared");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI di(Ii, 100, 100, "Infrared");
-#endif
+    vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+    vpImage<unsigned char> Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                              rs.getIntrinsics(RS2_STREAM_INFRARED).width);
 
-  while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ii);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ii);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
-      break;
+  #ifdef VISP_HAVE_X11
+    vpDisplayX dc(Ic, 0, 0, "Color");
+    vpDisplayX di(Ii, 100, 100, "Infrared");
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(Ic, 0, 0, "Color");
+    vpDisplayGDI di(Ii, 100, 100, "Infrared");
+  #endif
+
+    while (true) {
+      rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
+      vpDisplay::display(Ic);
+      vpDisplay::display(Ii);
+      vpDisplay::flush(Ic);
+      vpDisplay::flush(Ii);
+      if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   This other example shows how to get depth stream aligned on color stream:
   \code
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main() {
-  vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
-  rs.open(config);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  vpImage<uint16_t> Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
-  vpImage<vpRGBa> Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+  int main()
+  {
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    rs.open(config);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
-#endif
+    vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+    vpImage<uint16_t> Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+    vpImage<vpRGBa> Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
 
-  rs2::align align_to(RS2_STREAM_COLOR);
-  while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, &align_to);
-    vpImageConvert::createDepthHistogram(Id_raw, Id);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Id);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Id);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
-      break;
+  #ifdef VISP_HAVE_X11
+    vpDisplayX dc(Ic, 0, 0, "Color");
+    vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(Ic, 0, 0, "Color");
+    vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
+  #endif
+
+    rs2::align align_to(RS2_STREAM_COLOR);
+    while (true) {
+      rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, &align_to);
+      vpImageConvert::createDepthHistogram(Id_raw, Id);
+      vpDisplay::display(Ic);
+      vpDisplay::display(Id);
+      vpDisplay::flush(Ic);
+      vpDisplay::flush(Id);
+      if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
+        break;
+    }
+    return 0;
   }
-  return 0;
-}
   \endcode
 
   References to `rs2::pipeline_profile` and `rs2::pipeline` can be retrieved
@@ -264,16 +284,21 @@ int main() {
 
   Information about the sensor can be printed with:
   \code
-#include <visp3/sensor/vpRealSense2.h>
+  #include <visp3/sensor/vpRealSense2.h>
 
-int main() {
-  vpRealSense2 rs;
-  rs.open();
-  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  return 0;
-}
-  \endcode
+  int main()
+  {
+    vpRealSense2 rs;
+    rs.open();
+    std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+
+    return 0;
+  }
+   \endcode
 
   It is also possible to use several RealSense sensors at the same time. In that case, you need to create a
   vpRealSense2 object for each device and use vpRealSense2::enable_device(const std::string &serial_number)
@@ -289,39 +314,39 @@ public:
   vpRealSense2();
   virtual ~vpRealSense2();
 
-  void acquire(vpImage<unsigned char> &grey, double *ts = NULL);
-  void acquire(vpImage<vpRGBa> &color, double *ts = NULL);
+  void acquire(vpImage<unsigned char> &grey, double *ts = nullptr);
+  void acquire(vpImage<vpRGBa> &color, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
-               rs2::align *const align_to = NULL, double *ts = NULL);
+               rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
-               unsigned char *const data_infrared2, rs2::align *const align_to, double *ts = NULL);
+               unsigned char *const data_infrared2, rs2::align *const align_to, double *ts = nullptr);
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = nullptr);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
-               vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence = NULL, double *ts = NULL);
+               vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence = nullptr, double *ts = nullptr);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
                vpColVector *odo_vel, vpColVector *odo_acc, vpColVector *imu_vel, vpColVector *imu_acc,
-               unsigned int *tracker_confidence = NULL, double *ts = NULL);
+               unsigned int *tracker_confidence = nullptr, double *ts = nullptr);
 #endif
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
                unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to,
-               double *ts = NULL);
+               double *ts = nullptr);
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
                unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to,
-               double *ts = NULL);
+               double *ts = nullptr);
 #endif
 
   void close();
@@ -351,7 +376,7 @@ public:
   inline float getMaxZ() const { return m_max_Z; }
 
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = NULL);
+  unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = nullptr);
 #endif
 
   //! Get a reference to `rs2::pipeline`.
@@ -361,6 +386,8 @@ public:
   rs2::pipeline_profile &getPipelineProfile() { return m_pipelineProfile; }
 
   std::string getProductLine();
+
+  std::string getSensorInfo();
 
   vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index = -1) const;
 
@@ -396,12 +423,12 @@ protected:
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);
   void getNativeFrameData(const rs2::frame &frame, unsigned char *const data);
   void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void getPointcloud(const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
                      pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

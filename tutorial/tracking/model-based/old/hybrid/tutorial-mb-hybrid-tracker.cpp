@@ -1,4 +1,5 @@
 /*! \example tutorial-mb-hybrid-tracker.cpp */
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -10,6 +11,9 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
   try {
     std::string videoname = "teabox.mp4";
@@ -30,8 +34,8 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-              << "xml,"
-              << "cao or wrl]" << std::endl;
+      << "xml,"
+      << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     vpImage<unsigned char> I;
@@ -54,16 +58,19 @@ int main(int argc, char **argv)
 
     vpMbEdgeKltTracker tracker;
     bool usexml = false;
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     if (!usexml) {
       vpMe me;
       me.setMaskSize(5);
       me.setMaskNumber(180);
       me.setRange(8);
-      me.setThreshold(10000);
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+      me.setThreshold(20);
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
@@ -107,7 +114,8 @@ int main(int argc, char **argv)
         break;
     }
     vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
 #ifdef VISP_HAVE_OGRE

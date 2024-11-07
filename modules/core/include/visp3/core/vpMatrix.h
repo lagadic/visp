@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,14 +29,30 @@
  *
  * Description:
  * Matrix manipulation.
- *
- *****************************************************************************/
+ */
 
-#ifndef vpMatrix_H
-#define vpMatrix_H
+/*!
+  \file vpMatrix.h
+
+  \brief Definition of matrix class as well as a set of operations on
+  these matrices.
+*/
+
+#ifndef VP_MATRIX_H
+#define VP_MATRIX_H
+
+#include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
+class vpRowVector;
+class vpColVector;
+class vpTranslationVector;
+class vpHomogeneousMatrix;
+class vpVelocityTwistMatrix;
+class vpForceTwistMatrix;
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -48,19 +63,7 @@
 #include <iostream>
 #include <math.h>
 
-class vpRowVector;
-class vpColVector;
-class vpTranslationVector;
-class vpHomogeneousMatrix;
-class vpVelocityTwistMatrix;
-class vpForceTwistMatrix;
-
-/*!
-  \file vpMatrix.h
-
-  \brief Definition of matrix class as well as a set of operations on
-  these matrices.
-*/
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpMatrix
@@ -71,16 +74,16 @@ class vpForceTwistMatrix;
   This class needs one of the following third-party to compute matrix inverse,
   pseudo-inverse, singular value decomposition, determinant:
   - If Lapack is installed and detected by ViSP, this 3rd party is used by
-  vpMatrix. Installation instructions are provided here
-  https://visp.inria.fr/3rd_lapack;
+    vpMatrix. Installation instructions are provided here
+    https://visp.inria.fr/3rd_lapack;
   - else if Eigen3 is installed and detected by ViSP, this 3rd party is used
-  by vpMatrix. Installation instructions are provided here
-  https://visp.inria.fr/3rd_eigen;
+    by vpMatrix. Installation instructions are provided here
+    https://visp.inria.fr/3rd_eigen;
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
     Installation instructions are provided here
-  https://visp.inria.fr/3rd_opencv;
+    https://visp.inria.fr/3rd_opencv;
   - If none of these previous 3rd parties is installed, we use by default a
-  Lapack built-in version.
+    Lapack built-in version.
 
   vpMatrix class provides a data structure for the matrices as well
   as a set of operations on these matrices.
@@ -89,62 +92,74 @@ class vpForceTwistMatrix;
 
   The code below shows how to create a 2-by-3 matrix of doubles, set the element values and access them:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-  vpMatrix M(2, 3);
-  M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-  M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "M:" << std::endl;
-  for (unsigned int i = 0; i < M.getRows(); i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
-      std::cout << M[i][j] << " ";
+  int main()
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+    std::cout << "M:" << std::endl;
+    for (unsigned int i = 0; i < M.getRows(); ++i) {
+      for (unsigned int j = 0; j < M.getCols(); ++j) {
+        std::cout << M[i][j] << " ";
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
-}
   \endcode
   Once build, this previous code produces the following output:
   \code
-M:
--1 -2 -3
-4 5.5 6
+  M:
+  -1 -2 -3
+  4 5.5 6
   \endcode
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
-  std::cout << "M:\n" << M << std::endl;
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
   You can also create and initialize a matrix this way:
   \code
-#include <visp3/code/vpMatrix.h
+  #include <visp3/code/vpMatrix.h
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
+  }
   \endcode
 
   The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
   \code
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M;
-  M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-#endif
-}
+  #include <visp3/code/vpMatrix.h
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpMatrix M;
+    M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+  }
   \endcode
 
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
@@ -157,7 +172,8 @@ public:
     Method used to compute the determinant of a square matrix.
     \sa det()
   */
-  typedef enum {
+  typedef enum
+  {
     LU_DECOMPOSITION /*!< LU decomposition method. */
   } vpDetMethod;
 
@@ -166,7 +182,7 @@ public:
     Basic constructor of a matrix of double. Number of columns and rows are
     zero.
   */
-  vpMatrix() : vpArray2D<double>(0, 0) {}
+  vpMatrix() : vpArray2D<double>(0, 0) { }
 
   /*!
     Constructor that initialize a matrix of double with 0.
@@ -174,7 +190,7 @@ public:
     \param r : Matrix number of rows.
     \param c : Matrix number of columns.
   */
-  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
+  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) { }
 
   /*!
     Constructor that initialize a matrix of double with \e val.
@@ -183,34 +199,37 @@ public:
     \param c : Matrix number of columns.
     \param val : Each element of the matrix is set to \e val.
   */
-  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
+  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) { }
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
 
   /*!
-     Create a matrix from a 2D array that could be one of the following
-     container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
-     vpHomogeneousMatrix, vpPoseVector, vpColVector, vpRowVector...
+    Create a matrix from a 2D array that could be one of the following
+    container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
+    vpHomogeneousMatrix, vpPoseVector, vpColVector, vpRowVector...
 
-     The following example shows how to create a matrix from an homogeneous
-     matrix:
-\code
-vpRotationMatrix R;
-vpMatrix M(R);
-\endcode
+    The following example shows how to create a matrix from an homogeneous
+    matrix:
+    \code
+    vpRotationMatrix R;
+    vpMatrix M(R);
+    \endcode
    */
-  vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
-
-  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
+  VP_EXPLICIT vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) { }
+  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
+  VP_EXPLICIT vpMatrix(const vpHomogeneousMatrix &R);
+  VP_EXPLICIT vpMatrix(const vpRotationMatrix &R);
+  VP_EXPLICIT vpMatrix(const vpVelocityTwistMatrix &V);
+  VP_EXPLICIT vpMatrix(const vpForceTwistMatrix &F);
+  VP_EXPLICIT vpMatrix(const vpColVector &v);
+  VP_EXPLICIT vpMatrix(const vpRowVector &v);
+  VP_EXPLICIT vpMatrix(const vpTranslationVector &t);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
-  explicit vpMatrix(const std::initializer_list<double> &list);
-  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
-  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
+  VP_EXPLICIT vpMatrix(const std::initializer_list<double> &list);
+  VP_EXPLICIT vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
+  VP_EXPLICIT vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
-
-  //! Destructor (Memory de-allocation)
-  virtual ~vpMatrix() {}
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -218,16 +237,18 @@ vpMatrix M(R);
   */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
-    rowNum = colNum = dsize = 0;
+    rowNum = 0;
+    colNum = 0;
+    dsize = 0;
   }
 
   //-------------------------------------------------
@@ -279,12 +300,20 @@ vpMatrix M(R);
   //---------------------------------
   /** @name Assignment operators */
   //@{
-  vpMatrix &operator<<(double *);
+  vpMatrix &operator<<(double *p);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
+  vpMatrix &operator=(const vpHomogeneousMatrix &M);
+  vpMatrix &operator=(const vpRotationMatrix &R);
+  vpMatrix &operator=(const vpVelocityTwistMatrix &V);
+  vpMatrix &operator=(const vpForceTwistMatrix &F);
+  vpMatrix &operator=(const vpColVector &v);
+  vpMatrix &operator=(const vpRowVector &v);
+  vpMatrix &operator=(const vpTranslationVector &t);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(vpMatrix &&A);
 
   vpMatrix &operator=(const std::initializer_list<double> &list);
@@ -344,6 +373,33 @@ vpMatrix M(R);
   //---------------------------------
   /** @name Matrix operations  */
   //@{
+  /*!
+    Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+    \param M : First matrix.
+    \param kernel : Second matrix.
+    \param mode : Convolution mode: "full" (default), "same", "valid".
+
+    \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+    \note This is a very basic implementation that does not use FFT.
+  */
+  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode);
+
+  /*!
+    Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+    \param M : First array.
+    \param kernel : Second array.
+    \param res : Result.
+    \param mode : Convolution mode: "full" (default), "same", "valid".
+
+    \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+    \note This is a very basic implementation that does not use FFT.
+  */
+  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode);
+
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
@@ -355,6 +411,16 @@ vpMatrix M(R);
 #endif
 #if defined(VISP_HAVE_OPENCV)
   double detByLUOpenCV() const;
+#endif
+  vpMatrix cholesky() const;
+#if defined(VISP_HAVE_EIGEN3)
+  vpMatrix choleskyByEigen3() const;
+#endif
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix choleskyByLapack() const;
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  vpMatrix choleskyByOpenCV() const;
 #endif
 
   // Compute the exponential matrix of a square matrix
@@ -478,8 +544,7 @@ vpMatrix M(R);
   unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                             vpMatrix &kerAt) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverse(int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
@@ -490,38 +555,34 @@ vpMatrix M(R);
   vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseLapack(int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
 #if defined(VISP_HAVE_EIGEN3)
   vpMatrix pseudoInverseEigen3(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseEigen3(int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
 #if defined(VISP_HAVE_OPENCV)
   vpMatrix pseudoInverseOpenCV(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseOpenCV(int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
+
+  vpMatrix dampedInverse(const double &ratioOfMaxSvd = 1e-4) const;
   //@}
 
   //-------------------------------------------------
@@ -572,7 +633,7 @@ vpMatrix M(R);
   /** @name Eigen values  */
 
   //@{
-  // compute the eigen values using Lapack
+  // Compute the eigen values using Lapack.
   vpColVector eigenValues() const;
   void eigenValues(vpColVector &evalue, vpMatrix &evector) const;
   //@}
@@ -582,7 +643,6 @@ vpMatrix M(R);
   //-------------------------------------------------
   /** @name Norms  */
   //@{
-  double euclideanNorm() const;
   double frobeniusNorm() const;
   double inducedL2Norm() const;
   double infinityNorm() const;
@@ -677,13 +737,6 @@ vpMatrix M(R);
   static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
 
-  //-------------------------------------------------
-  // 2D Convolution Static Public Member Functions
-  //-------------------------------------------------
-  /** @name 2D Convolution with Static Public Member Functions  */
-  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode = "full");
-  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode = "full");
-
   //---------------------------------
   // Covariance computation Static Public Member Functions
   //---------------------------------
@@ -717,6 +770,10 @@ vpMatrix M(R);
     The following example shows how to use this function:
     \code
     #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {
@@ -770,7 +827,7 @@ vpMatrix M(R);
     \sa saveMatrix(), saveMatrixYAML(), loadMatrixYAML()
   */
   static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, bool binary = false,
-                                char *header = NULL)
+                                char *header = nullptr)
   {
     return vpArray2D<double>::load(filename, M, binary, header);
   }
@@ -788,6 +845,10 @@ vpMatrix M(R);
     The following example shows how to use this function:
     \code
     #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {
@@ -844,7 +905,7 @@ vpMatrix M(R);
 
     \sa saveMatrixYAML(), saveMatrix(), loadMatrix()
   */
-  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
+  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = nullptr)
   {
     return vpArray2D<double>::loadYAML(filename, M, header);
   }
@@ -865,6 +926,10 @@ vpMatrix M(R);
     The following example shows how to use this function:
     \code
     #include <visp3/core/vpMatrix.h>
+
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
 
     int main()
     {
@@ -938,6 +1003,10 @@ vpMatrix M(R);
     \code
     #include <visp3/core/vpMatrix.h>
 
+    #ifdef ENABLE_VISP_NAMESPACE
+    using namespace VISP_NAMESPACE_NAME;
+    #endif
+
     int main()
     {
       std::string filename("matrix.yaml");
@@ -1000,65 +1069,67 @@ vpMatrix M(R);
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  VP_DEPRECATED double euclideanNorm() const;
+
   /*!
     @name Deprecated functions
   */
   //@{
   /*!
-     \deprecated Only provided for compatibilty with ViSP previous releases.
+     \deprecated Only provided for compatibility with ViSP previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  VP_DEPRECATED void init() { }
 
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
    */
-  vp_deprecated void stackMatrices(const vpMatrix &A) { stack(A); }
+  VP_DEPRECATED void stackMatrices(const vpMatrix &A) { stack(A); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
      &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpMatrix &B) { return stack(A, B); }
+  VP_DEPRECATED static vpMatrix stackMatrices(const vpMatrix &A, const vpMatrix &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
      &B, vpMatrix &C)
    */
-  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { stack(A, B, C); }
+  VP_DEPRECATED static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { stack(A, B, C); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
      &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpRowVector &B);
+  VP_DEPRECATED static vpMatrix stackMatrices(const vpMatrix &A, const vpRowVector &B);
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const
      vpRowVector &B, vpMatrix &C)
    */
-  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C);
+  VP_DEPRECATED static void stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C);
   /*!
      \deprecated You should rather use vpColVector::stack(const vpColVector
      &A, const vpColVector &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpColVector &A, const vpColVector &B);
+  VP_DEPRECATED static vpMatrix stackMatrices(const vpColVector &A, const vpColVector &B);
   /*!
      \deprecated You should rather use vpColVector::stack(const vpColVector
      &A, const vpColVector &B, vpColVector &C)
    */
-  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
+  VP_DEPRECATED static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
   /*!
      \deprecated You should rather use diag(const double &)
    */
-  vp_deprecated void setIdentity(const double &val = 1.0);
+  VP_DEPRECATED void setIdentity(const double &val = 1.0);
 
-  vp_deprecated vpRowVector row(unsigned int i);
-  vp_deprecated vpColVector column(unsigned int j);
+  VP_DEPRECATED vpRowVector row(unsigned int i);
+  VP_DEPRECATED vpColVector column(unsigned int j);
 
   // Deprecated functions using GSL
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /*!
      \deprecated You should rather use detByLULapack() or detByLU().
    */
-  vp_deprecated double detByLUGsl() const
+  VP_DEPRECATED double detByLUGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return detByLULapack();
@@ -1070,7 +1141,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use inverseByLULapack() or inverseByLU().
    */
-  vp_deprecated vpMatrix inverseByLUGsl() const
+  VP_DEPRECATED vpMatrix inverseByLUGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByLULapack();
@@ -1082,7 +1153,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use inverseByCholeskyLapack() or inverseByCholesky().
    */
-  vpMatrix inverseByCholeskyGsl() const
+  VP_DEPRECATED vpMatrix inverseByCholeskyGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByCholeskyLapack();
@@ -1094,7 +1165,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use inverseByQRLapack() or inverseByQR().
    */
-  vpMatrix inverseByQRGsl() const
+  VP_DEPRECATED vpMatrix inverseByQRGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByQRLapack();
@@ -1106,7 +1177,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const
+  VP_DEPRECATED vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(svThreshold);
@@ -1119,7 +1190,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const
+  VP_DEPRECATED unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, svThreshold);
@@ -1133,7 +1204,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const
+  VP_DEPRECATED unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, sv, svThreshold);
@@ -1148,7 +1219,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+  VP_DEPRECATED unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                                 vpMatrix &kerAt) const
   {
 #if defined(VISP_HAVE_LAPACK)
@@ -1167,7 +1238,7 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use svdLapack() or svd().
    */
-  void svdGsl(vpColVector &w, vpMatrix &V)
+  VP_DEPRECATED void svdGsl(vpColVector &w, vpMatrix &V)
   {
 #if defined(VISP_HAVE_LAPACK)
     svdLapack(w, V);
@@ -1194,6 +1265,14 @@ private:
                          double *x_data, int incx_, double beta, double *y_data, int incy_);
   static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_, double *w_data,
                          double *work_data, int lwork_, int &info_);
+
+  unsigned int qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+
+#ifdef VISP_HAVE_GSL
+  unsigned int qrPivotLapackGSL(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR,
+                       double tol) const;
+#endif
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,
@@ -1210,4 +1289,6 @@ __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lap
 VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
+
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,18 +31,15 @@
  * Description:
  * Defines the simplest robot : a free flying camera.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef vpRobotCamera_H
-#define vpRobotCamera_H
+*****************************************************************************/
 
 /*!
   \file vpRobotCamera.h
   \brief class that defines the simplest robot : a free flying camera
 */
+
+#ifndef vpRobotCamera_H
+#define vpRobotCamera_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -53,6 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotCamera
   \ingroup group_robot_simu_camera
@@ -78,32 +76,36 @@
 
   The following code shows how to control this robot in position and velocity.
   \code
-#include <visp3/robot/vpRobotCamera.h>
+  #include <visp3/robot/vpRobotCamera.h>
 
-int main()
-{
-  vpHomogeneousMatrix cMw;
-  vpRobotCamera robot;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  robot.getPosition(cMw); // Position of the world frame in the camera frame
-  std::cout << "Default position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
+  int main()
+  {
+    vpHomogeneousMatrix cMw;
+    vpRobotCamera robot;
 
-  cMw[2][3] = 1.; // World frame is 1 meter along z axis in front of the camera frame
-  robot.setPosition(cMw); // Set the new position of the world frame in the camera frame
-  std::cout << "New position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
+    robot.getPosition(cMw); // Position of the world frame in the camera frame
+    std::cout << "Default position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
 
-  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
-  robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
-  robot.setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
+    cMw[2][3] = 1.; // World frame is 1 meter along z axis in front of the camera frame
+    robot.setPosition(cMw); // Set the new position of the world frame in the camera frame
+    std::cout << "New position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
 
-  vpColVector v(6);
-  v = 0;
-  v[2] = 1.; // set v_z to 1 m/s
-  robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-  // The robot has moved from 0.1 meters along the z axis
-  robot.getPosition(cMw); // Position of the world frame in the camera frame
-  std::cout << "New position of the camera cMw:\n" << cMw << std::endl;
-}
+    robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+    robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
+    robot.setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
+
+    vpColVector v(6);
+    v = 0;
+    v[2] = 1.; // set v_z to 1 m/s
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+    // The robot has moved from 0.1 meters along the z axis
+    robot.getPosition(cMw); // Position of the world frame in the camera frame
+    std::cout << "New position of the camera cMw:\n" << cMw << std::endl;
+  }
   \endcode
 
 */
@@ -114,28 +116,27 @@ protected:
 
 public:
   vpRobotCamera();
-  virtual ~vpRobotCamera();
 
   /** @name Inherited functionalities from vpRobotCamera */
   //@{
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe);
+  void get_eJe(vpMatrix &eJe) VP_OVERRIDE;
 
   void getPosition(vpHomogeneousMatrix &cMw) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) VP_OVERRIDE;
 
   void setPosition(const vpHomogeneousMatrix &cMw);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v) VP_OVERRIDE;
   //@}
 
 private:
-  void init();
+  void init() VP_OVERRIDE;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
+  void get_fJe(vpMatrix & /*_fJe */) VP_OVERRIDE { };
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) VP_OVERRIDE { };
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) VP_OVERRIDE { };
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

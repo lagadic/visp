@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +30,13 @@
  * Description:
  * Visual feature circle.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpCircle.h>
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+BEGIN_VISP_NAMESPACE
 void vpCircle::init()
 {
   oP.resize(7);
@@ -71,13 +68,20 @@ void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 */
 void vpCircle::setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
 {
-  oP[0] = oA;
-  oP[1] = oB;
-  oP[2] = oC;
-  oP[3] = oX;
-  oP[4] = oY;
-  oP[5] = oZ;
-  oP[6] = R;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  oP[index_0] = oA;
+  oP[index_1] = oB;
+  oP[index_2] = oC;
+  oP[index_3] = oX;
+  oP[index_4] = oY;
+  oP[index_5] = oZ;
+  oP[index_6] = R;
 }
 
 /*!
@@ -124,7 +128,7 @@ vpCircle::vpCircle(double oA, double oB, double oC, double oX, double oY, double
 /*!
  * Default destructor that does nothing.
  */
-vpCircle::~vpCircle() {}
+vpCircle::~vpCircle() { }
 
 /*!
   Perspective projection of the circle.
@@ -161,64 +165,73 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {
   double det_threshold = 1e-10;
   p_.resize(5, false);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
 
   vpColVector K(6);
   {
-    double A = cP_[0];
-    double B = cP_[1];
-    double C = cP_[2];
+    double A = cP_[index_0];
+    double B = cP_[index_1];
+    double C = cP_[index_2];
 
-    double X0 = cP_[3];
-    double Y0 = cP_[4];
-    double Z0 = cP_[5];
+    double X0 = cP_[index_3];
+    double Y0 = cP_[index_4];
+    double Z0 = cP_[index_5];
 
     double r = cP_[6];
 
     // projection
-    double s = X0 * X0 + Y0 * Y0 + Z0 * Z0 - r * r;
-    double det = A * X0 + B * Y0 + C * Z0;
+    double s = ((X0 * X0) + (Y0 * Y0) + (Z0 * Z0)) - (r * r);
+    double det = (A * X0) + (B * Y0) + (C * Z0);
     A = A / det;
     B = B / det;
     C = C / det;
 
-    K[0] = 1 - 2 * A * X0 + A * A * s;
-    K[1] = 1 - 2 * B * Y0 + B * B * s;
-    K[2] = -A * Y0 - B * X0 + A * B * s;
-    K[3] = -C * X0 - A * Z0 + A * C * s;
-    K[4] = -C * Y0 - B * Z0 + B * C * s;
-    K[5] = 1 - 2 * C * Z0 + C * C * s;
+    K[index_0] = (1 - (2 * A * X0)) + (A * A * s);
+    K[index_1] = (1 - (2 * B * Y0)) + (B * B * s);
+    K[index_2] = ((-A * Y0) - (B * X0)) + (A * B * s);
+    K[index_3] = ((-C * X0) - (A * Z0)) + (A * C * s);
+    K[index_4] = ((-C * Y0) - (B * Z0)) + (B * C * s);
+    K[index_5] = (1 - (2 * C * Z0)) + (C * C * s);
   }
 
-  double det = K[2] * K[2] - K[0] * K[1];
+  double det = (K[index_2] * K[index_2]) - (K[index_0] * K[index_1]);
   if (fabs(det) < det_threshold) {
     throw(vpException(vpException::divideByZeroError, "Division by 0 in vpCircle::projection."));
   }
 
-  double xc = (K[1] * K[3] - K[2] * K[4]) / det;
-  double yc = (K[0] * K[4] - K[2] * K[3]) / det;
+  double xc = ((K[index_1] * K[index_3]) - (K[index_2] * K[index_4])) / det;
+  double yc = ((K[index_0] * K[index_4]) - (K[index_2] * K[index_3])) / det;
 
-  double c = sqrt((K[0] - K[1]) * (K[0] - K[1]) + 4 * K[2] * K[2]);
-  double s = 2 * (K[0] * xc * xc + 2 * K[2] * xc * yc + K[1] * yc * yc - K[5]);
+  double c = sqrt(((K[index_0] - K[index_1]) * (K[index_0] - K[index_1])) + (4 * K[index_2] * K[index_2]));
+  double s = 2 * (((K[index_0] * xc * xc) + (2 * K[index_2] * xc * yc) + (K[1] * yc * yc)) - K[index_5]);
 
   double A, B, E;
 
-  if (fabs(K[2]) < std::numeric_limits<double>::epsilon()) {
+  if (fabs(K[index_2]) < std::numeric_limits<double>::epsilon()) {
     E = 0.0;
     if (K[0] > K[1]) {
-      A = sqrt(s / (K[0] + K[1] + c));
-      B = sqrt(s / (K[0] + K[1] - c));
-    } else {
-      A = sqrt(s / (K[0] + K[1] - c));
-      B = sqrt(s / (K[0] + K[1] + c));
+      A = sqrt(s / ((K[0] + K[1]) + c));
+      B = sqrt(s / ((K[0] + K[1]) - c));
     }
-  } else {
-    E = (K[1] - K[0] + c) / (2 * K[2]);
+    else {
+      A = sqrt(s / ((K[0] + K[1]) - c));
+      B = sqrt(s / ((K[0] + K[1]) + c));
+    }
+  }
+  else {
+    E = ((K[1] - K[0]) + c) / (2 * K[index_2]);
     if (fabs(E) > 1.0) {
-      A = sqrt(s / (K[0] + K[1] + c));
-      B = sqrt(s / (K[0] + K[1] - c));
-    } else {
-      A = sqrt(s / (K[0] + K[1] - c));
-      B = sqrt(s / (K[0] + K[1] + c));
+      A = sqrt(s / ((K[0] + K[1]) + c));
+      B = sqrt(s / ((K[0] + K[1]) - c));
+    }
+    else {
+      A = sqrt(s / ((K[0] + K[1]) - c));
+      B = sqrt(s / ((K[0] + K[1]) + c));
       E = -1.0 / E;
     }
   }
@@ -226,14 +239,14 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
   // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
   det = 4 * (1.0 + vpMath::sqr(E));
   double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
-  double n11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
+  double n11 = ((vpMath::sqr(A) - vpMath::sqr(B)) * E) / det;
   double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
 
-  p_[0] = xc;
-  p_[1] = yc;
-  p_[2] = n20;
-  p_[3] = n11;
-  p_[4] = n02;
+  p_[index_0] = xc;
+  p_[index_1] = yc;
+  p_[index_2] = n20;
+  p_[index_3] = n11;
+  p_[index_4] = n02;
 }
 
 /*!
@@ -251,25 +264,32 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) co
   noP.resize(7, false);
 
   double A, B, C;
-  A = noMo[0][0] * oP[0] + noMo[0][1] * oP[1] + noMo[0][2] * oP[2];
-  B = noMo[1][0] * oP[0] + noMo[1][1] * oP[1] + noMo[1][2] * oP[2];
-  C = noMo[2][0] * oP[0] + noMo[2][1] * oP[1] + noMo[2][2] * oP[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  A = (noMo[index_0][0] * oP[0]) + (noMo[index_0][1] * oP[1]) + (noMo[index_0][index_2] * oP[index_2]);
+  B = (noMo[index_1][0] * oP[0]) + (noMo[index_1][1] * oP[1]) + (noMo[index_1][index_2] * oP[index_2]);
+  C = (noMo[index_2][0] * oP[0]) + (noMo[index_2][1] * oP[1]) + (noMo[index_2][index_2] * oP[index_2]);
 
   double X0, Y0, Z0;
-  X0 = noMo[0][3] + noMo[0][0] * oP[3] + noMo[0][1] * oP[4] + noMo[0][2] * oP[5];
-  Y0 = noMo[1][3] + noMo[1][0] * oP[3] + noMo[1][1] * oP[4] + noMo[1][2] * oP[5];
-  Z0 = noMo[2][3] + noMo[2][0] * oP[3] + noMo[2][1] * oP[4] + noMo[2][2] * oP[5];
+  X0 = noMo[index_0][index_3] + (noMo[index_0][0] * oP[3]) + (noMo[index_0][1] * oP[index_4]) + (noMo[index_0][index_2] * oP[index_5]);
+  Y0 = noMo[index_1][index_3] + (noMo[index_1][0] * oP[3]) + (noMo[index_1][1] * oP[index_4]) + (noMo[index_1][index_2] * oP[index_5]);
+  Z0 = noMo[index_2][index_3] + (noMo[index_2][0] * oP[3]) + (noMo[index_2][1] * oP[index_4]) + (noMo[index_2][index_2] * oP[index_5]);
   double R = oP[6];
 
-  noP[0] = A;
-  noP[1] = B;
-  noP[2] = C;
+  noP[index_0] = A;
+  noP[index_1] = B;
+  noP[index_2] = C;
 
-  noP[3] = X0;
-  noP[4] = Y0;
-  noP[5] = Z0;
+  noP[index_3] = X0;
+  noP[index_4] = Y0;
+  noP[index_5] = Z0;
 
-  noP[6] = R;
+  noP[index_6] = R;
 }
 
 /*!
@@ -281,25 +301,32 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) co
 void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   double A, B, C;
-  A = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2];
-  B = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2];
-  C = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  A = (cMo[index_0][0] * oP[0]) + (cMo[index_0][1] * oP[1]) + (cMo[index_0][index_2] * oP[index_2]);
+  B = (cMo[index_1][0] * oP[0]) + (cMo[index_1][1] * oP[1]) + (cMo[index_1][index_2] * oP[index_2]);
+  C = (cMo[index_2][0] * oP[0]) + (cMo[index_2][1] * oP[1]) + (cMo[index_2][index_2] * oP[index_2]);
 
   double X0, Y0, Z0;
-  X0 = cMo[0][3] + cMo[0][0] * oP[3] + cMo[0][1] * oP[4] + cMo[0][2] * oP[5];
-  Y0 = cMo[1][3] + cMo[1][0] * oP[3] + cMo[1][1] * oP[4] + cMo[1][2] * oP[5];
-  Z0 = cMo[2][3] + cMo[2][0] * oP[3] + cMo[2][1] * oP[4] + cMo[2][2] * oP[5];
+  X0 = cMo[index_0][index_3] + (cMo[index_0][0] * oP[index_3]) + (cMo[index_0][1] * oP[index_4]) + (cMo[index_0][index_2] * oP[index_5]);
+  Y0 = cMo[index_1][index_3] + (cMo[index_1][0] * oP[index_3]) + (cMo[index_1][1] * oP[index_4]) + (cMo[index_1][index_2] * oP[index_5]);
+  Z0 = cMo[index_2][index_3] + (cMo[index_2][0] * oP[index_3]) + (cMo[index_2][1] * oP[index_4]) + (cMo[index_2][index_2] * oP[index_5]);
   double R = oP[6];
 
-  cP[0] = A;
-  cP[1] = B;
-  cP[2] = C;
+  cP[index_0] = A;
+  cP[index_1] = B;
+  cP[index_2] = C;
 
-  cP[3] = X0;
-  cP[4] = Y0;
-  cP[5] = Z0;
+  cP[index_3] = X0;
+  cP[index_4] = Y0;
+  cP[index_5] = Z0;
 
-  cP[6] = R;
+  cP[index_6] = R;
 }
 
 /*!
@@ -314,7 +341,12 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(p[index_0], p[index_1], p[index_2], p[index_3], p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -329,7 +361,12 @@ void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters
 void vpCircle::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(p[index_0], p[index_1], p[index_2], p[index_3], p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -346,10 +383,15 @@ void vpCircle::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, 
 void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  projection(v_cP, v_p);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(v_p[index_0], v_p[index_1], v_p[index_2], v_p[index_3], v_p[index_4], cam, I, color, thickness);
 }
 
 /*!
@@ -366,10 +408,15 @@ void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
 void vpCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  projection(v_cP, v_p);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  vpFeatureDisplay::displayEllipse(v_p[index_0], v_p[index_1], v_p[index_2], v_p[index_3], v_p[index_4], cam, I, color, thickness);
 }
 
 //! For memory issue (used by the vpServo class only)
@@ -405,11 +452,17 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double u0 = cam.get_u0();
   double v0 = cam.get_v0();
 
-  double n11 = circle.p[3];
-  double n02 = circle.p[4];
-  double n20 = circle.p[2];
-  double Xg = u0 + circle.p[0] * px;
-  double Yg = v0 + circle.p[1] * py;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+
+  double n11 = circle.p[index_3];
+  double n02 = circle.p[index_4];
+  double n20 = circle.p[index_2];
+  double Xg = u0 + (circle.p[index_0] * px);
+  double Yg = v0 + (circle.p[index_1] * py);
 
   // Find Intersection between line and ellipse in the image.
 
@@ -421,14 +474,15 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double ctheta2 = vpMath::sqr(ctheta);
   double m02xg = n02 * Xg;
   double m11stheta = n11 * stheta;
-  j = ((n11 * Xg * sctheta - n20 * Yg * sctheta + n20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
-        m02xg * ctheta2 + m11stheta * rho) /
-       (n20 * ctheta2 + 2.0 * m11stheta * ctheta + n02 - n02 * ctheta2));
+  j = ((((((((n11 * Xg * sctheta) - (n20 * Yg * sctheta)) + (n20 * rho * ctheta)) - m11yg) + (m11yg * ctheta2) + m02xg) -
+         (m02xg * ctheta2)) + (m11stheta * rho)) /
+       (((n20 * ctheta2) + (2.0 * m11stheta * ctheta) + n02) - (n02 * ctheta2)));
   // Optimised calculation for Y
   double rhom02 = rho * n02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-(-rho * n11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + n11 * Xg * sctheta2 - n20 * Yg * sctheta2 -
-         ctheta * n11 * Yg + ctheta3 * n11 * Yg + ctheta * n02 * Xg - ctheta3 * n02 * Xg) /
-       (n20 * ctheta2 + 2.0 * n11 * stheta * ctheta + n02 - n02 * ctheta2) / stheta);
+  i = (-(((((((-rho * n11 * stheta * ctheta) - rhom02) + (rhom02 * ctheta2) + (n11 * Xg * sctheta2)) - (n20 * Yg * sctheta2)) -
+           (ctheta * n11 * Yg)) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg)) - (ctheta3 * n02 * Xg)) /
+       (((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02) - (n02 * ctheta2)) / stheta);
 }
+END_VISP_NAMESPACE

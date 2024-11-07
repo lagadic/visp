@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,24 +31,23 @@
  * Description:
  * Generic virtual robot.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef vpRobot_H
-#define vpRobot_H
+*****************************************************************************/
 
 /*!
   \file vpRobot.h
   \brief class that defines a generic virtual robot
 */
 
+#ifndef vpRobot_H
+#define vpRobot_H
+
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobot
   \ingroup group_robot_real_gantry group_robot_real_cylindrical
@@ -62,7 +61,8 @@ public:
   /*!
     Robot control states.
   */
-  typedef enum {
+  typedef enum
+  {
     STATE_STOP,                 //!< Stops robot motion especially in velocity and acceleration control.
     STATE_VELOCITY_CONTROL,     //!< Initialize the velocity controller.
     STATE_POSITION_CONTROL,     //!< Initialize the position controller.
@@ -73,7 +73,8 @@ public:
   /*!
     Robot control frames.
   */
-  typedef enum {
+  typedef enum
+  {
     REFERENCE_FRAME,               /*!< Corresponds to a fixed reference frame
                 attached to the robot structure. */
     ARTICULAR_FRAME,               /*!< Corresponds to the joint state. This value is deprecated.
@@ -137,6 +138,15 @@ public:
 
   double getMaxTranslationVelocity(void) const;
   double getMaxRotationVelocity(void) const;
+
+  /*!
+   * Return robot degrees of freedom number.
+   */
+  int getNDof() const
+  {
+    return nDof;
+  }
+
   //! Get the robot position (frame has to be specified).
   virtual void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) = 0;
 
@@ -173,5 +183,5 @@ protected:
   vpControlFrameType getRobotFrame(void) const { return frameRobot; }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,56 +28,47 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpFrameGrabber class and its
- *derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpFrameGrabberException_h_
-#define _vpFrameGrabberException_h_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* \file vpFrameGrabberException.h
-   \brief error that can be emited by the vpFrameGrabber class and its
-   derivates
- */
-/* Classes standards. */
-
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Exceptions that can be emitted by the vpFrameGrabber class and its
+ * derivates.
  */
 
 /*!
-  \brief Error that can be emited by the vpFrameGrabber class and its
-  derivates
+ * \file vpFrameGrabberException.h
+ *  \brief error that can be emitted by the vpFrameGrabber class and its
+ *  derivates
  */
+
+#ifndef VP_FRAMEGRABBER_EXCEPTION_H
+#define VP_FRAMEGRABBER_EXCEPTION_H
+
+#include <iostream>
+#include <string>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+
+BEGIN_VISP_NAMESPACE
+/*!
+ * \brief Error that can be emitted by the vpFrameGrabber class and its
+ * derivates.
+*/
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpFrameGrabber member
- */
-  enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };
+   * Lists the possible error than can be emitted while calling
+   * vpFrameGrabber member
+   */
+  enum errorFrameGrabberCodeEnum
+  {
+    settingError, //!< Grabber settings error
+    initializationError, //!< Grabber initialization error
+    otherError //!< Grabber returned an other error
+  };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpFrameGrabberException(int id, const char *format, ...)
   {
     this->code = id;
@@ -87,8 +77,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFrameGrabberException(int id) : vpException(id) { ; }
-};
 
-#endif /* #ifndef _vpFrameGrabberException_h_ */
+  /*!
+   * Constructor.
+   */
+  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpFrameGrabberException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
+#endif

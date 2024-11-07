@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Object input structure used by moments.
- *
- * Authors:
- * Filip Novotny
- * Manikandan Bakthavatchalam
- *****************************************************************************/
+ */
 /*!
   \file vpMomentObject.h
   \brief Object input structure used by moments.
@@ -44,11 +39,13 @@
 
 #include <cstdlib>
 #include <utility>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpPoint.h>
 
+BEGIN_VISP_NAMESPACE
 class vpCameraParameters;
 
 /*!
@@ -103,117 +100,121 @@ class vpCameraParameters;
   to get the basic moments that are computed and how to compute other classical
   moments such as the gravity center or the centered moments.
 
-\code
-#include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  \code
+  #include <visp3/core/vpMomentCommon.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  // Define an object as 4 clockwise points on a plane (Z=0)
-  std::vector<vpPoint> vec_p; // vector that contains the 4 points
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vec_p.push_back( vpPoint(-0.2, 0.1,  0.0) ); // values in meters
-  vec_p.push_back( vpPoint(+0.3, 0.1,  0.0) ); // values in meters
-  vec_p.push_back( vpPoint(+0.2,-0.1,  0.0) ); // values in meters
-  vec_p.push_back( vpPoint(-0.2,-0.15, 0.0) ); // values in meters
+  int main()
+  {
+    // Define an object as 4 clockwise points on a plane (Z=0)
+    std::vector<vpPoint> vec_p; // vector that contains the 4 points
 
-  // These points are observed by a camera
-  vpHomogeneousMatrix cMo(0, 0, 1, 0, 0, 0); // We set the camera to be 1m far the object
-  // ... update cMo from an image processing
+    vec_p.push_back( vpPoint(-0.2, 0.1,  0.0) ); // values in meters
+    vec_p.push_back( vpPoint(+0.3, 0.1,  0.0) ); // values in meters
+    vec_p.push_back( vpPoint(+0.2,-0.1,  0.0) ); // values in meters
+    vec_p.push_back( vpPoint(-0.2,-0.15, 0.0) ); // values in meters
 
-  // Apply the perspective projection to update the points coordinates in the camera plane
-  for (unsigned int i=0; i<vec_p.size(); ++i)
-    vec_p[i].project(cMo);
+    // These points are observed by a camera
+    vpHomogeneousMatrix cMo(0, 0, 1, 0, 0, 0); // We set the camera to be 1m far the object
+    // ... update cMo from an image processing
 
-  std::cout << "Considered points: " << std::endl;
-  for(unsigned int i=0; i<vec_p.size(); ++i)
-    std::cout << "point " << i << ": " << vec_p[i].get_x() << ", " << vec_p[i].get_y() << std::endl;
+    // Apply the perspective projection to update the points coordinates in the camera plane
+    for (unsigned int i=0; i<vec_p.size(); ++i)
+      vec_p[i].project(cMo);
 
-  // Define an image moment object from the previous points
-  vpMomentObject obj(5); // use moments up to order 5
-  obj.setType(vpMomentObject::DISCRETE); // initialize the object as constituted by discrete points
-  obj.fromVector(vec_p); // init the object from the points
+    std::cout << "Considered points: " << std::endl;
+    for(unsigned int i=0; i<vec_p.size(); ++i)
+      std::cout << "point " << i << ": " << vec_p[i].get_x() << ", " << vec_p[i].get_y() << std::endl;
 
-  // --- Access the computed moments by querying the moment object
+    // Define an image moment object from the previous points
+    vpMomentObject obj(5); // use moments up to order 5
+    obj.setType(vpMomentObject::DISCRETE); // initialize the object as constituted by discrete points
+    obj.fromVector(vec_p); // init the object from the points
 
-  // 1. Getting a vector of doubles
-  std::vector<double> moment = obj.get();
-  std::cout << std::endl << "Basic moment available (from vector of doubles)" << std::endl;
-  for(unsigned int k=0; k<=obj.getOrder(); k++) {
-    for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++) {
-      std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+    // --- Access the computed moments by querying the moment object
+
+    // 1. Getting a vector of doubles
+    std::vector<double> moment = obj.get();
+    std::cout << std::endl << "Basic moment available (from vector of doubles)" << std::endl;
+    for(unsigned int k=0; k<=obj.getOrder(); k++) {
+      for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++) {
+        std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+      }
+      std::cout<<std::endl;
     }
-    std::cout<<std::endl;
+
+    // 2. Print the contents of moment object directly
+    std::cout << std::endl << "Basic moment available: ";
+    std::cout << obj << std::endl;
+
+    // 3. Directly indexing the moment object
+    std::cout << std::endl << "Direct access to some basic moments: " << std::endl;
+    std::cout << "m00: " << obj.get(0, 0) << std::endl;
+    std::cout << "m10: " << obj.get(1, 0) << std::endl;
+    std::cout << "m01: " << obj.get(0, 1) << std::endl;
+    std::cout << "m22: " << obj.get(2, 2) << std::endl;
+    std::cout << "m20: " << obj.get(2, 0) << std::endl;
+    std::cout << "m02: " << obj.get(0, 2) << std::endl;
+
+    // Get common moments computed using basic moments
+    double m00 = vpMomentCommon::getSurface(obj); // surface = m00
+    double alpha = vpMomentCommon::getAlpha(obj); // orientation
+    std::vector<double> mu_3 = vpMomentCommon::getMu3(obj); // centered moment up to 3rd order
+
+    std::cout << std::endl << "Common moments computed using basic moments:" << std::endl;
+    std::cout << "Surface: " << m00 << std::endl;
+    std::cout << "Alpha: " << alpha << std::endl;
+    std::cout << "Centered moments (mu03, mu12, mu21, mu30): ";
+    for(unsigned int i=0; i<mu_3.size(); ++i)
+      std::cout << mu_3[i] << " ";
+    std::cout << std::endl;
+
+    return 0;
   }
-
-  // 2. Print the contents of moment object directly
-  std::cout << std::endl << "Basic moment available: ";
-  std::cout << obj << std::endl;
-
-  // 3. Directly indexing the moment object
-  std::cout << std::endl << "Direct access to some basic moments: " << std::endl;
-  std::cout << "m00: " << obj.get(0, 0) << std::endl;
-  std::cout << "m10: " << obj.get(1, 0) << std::endl;
-  std::cout << "m01: " << obj.get(0, 1) << std::endl;
-  std::cout << "m22: " << obj.get(2, 2) << std::endl;
-  std::cout << "m20: " << obj.get(2, 0) << std::endl;
-  std::cout << "m02: " << obj.get(0, 2) << std::endl;
-
-  // Get common moments computed using basic moments
-  double m00 = vpMomentCommon::getSurface(obj); // surface = m00
-  double alpha = vpMomentCommon::getAlpha(obj); // orientation
-  std::vector<double> mu_3 = vpMomentCommon::getMu3(obj); // centered moment up to 3rd order
-
-  std::cout << std::endl << "Common moments computed using basic moments:" << std::endl;
-  std::cout << "Surface: " << m00 << std::endl;
-  std::cout << "Alpha: " << alpha << std::endl;
-  std::cout << "Centered moments (mu03, mu12, mu21, mu30): ";
-  for(unsigned int i=0; i<mu_3.size(); ++i)
-    std::cout << mu_3[i] << " ";
-  std::cout << std::endl;
-
-  return 0;
-}
   \endcode
 
   This example produces the following results:
   \code
-Considered points:
-point 0: -0.2, 0.1
-point 1: 0.3, 0.1
-point 2: 0.2, -0.1
-point 3: -0.2, -0.15
+  Considered points:
+  point 0: -0.2, 0.1
+  point 1: 0.3, 0.1
+  point 2: 0.2, -0.1
+  point 3: -0.2, -0.15
 
-Basic moment available (from vector of doubles):
-m00=4   m10=0.1 m20=0.21        m30=0.019       m40=0.0129      m50=0.00211
-m01=-0.05       m11=0.02        m21=0.003       m31=0.0023      m41=0.00057
-m02=0.0525      m12=-0.0015     m22=0.0026      m32=9e-05
-m03=-0.002375   m13=0.000575    m23=-4.5e-05
-m04=0.00080625  m14=-7.125e-05
-m05=-6.59375e-05
+  Basic moment available (from vector of doubles):
+  m00=4   m10=0.1 m20=0.21        m30=0.019       m40=0.0129      m50=0.00211
+  m01=-0.05       m11=0.02        m21=0.003       m31=0.0023      m41=0.00057
+  m02=0.0525      m12=-0.0015     m22=0.0026      m32=9e-05
+  m03=-0.002375   m13=0.000575    m23=-4.5e-05
+  m04=0.00080625  m14=-7.125e-05
+  m05=-6.59375e-05
 
-Basic moment available:
-4	0.1	0.21	0.019	0.0129	0.00211
--0.05	0.02	0.003	0.0023	0.00057	x
-0.0525	-0.0015	0.0026	9e-05	x	x
--0.002375	0.000575	-4.5e-05	x	x	x
-0.00080625	-7.125e-05	x	x	x	x
--6.59375e-05	x	x	x	x	x
+  Basic moment available:
+  4   0.1 0.21    0.019   0.0129  0.00211
+  -0.05   0.02    0.003   0.0023  0.00057 x
+  0.0525  -0.0015 0.0026  9e-05   x   x
+  -0.002375   0.000575    -4.5e-05    x   x   x
+  0.00080625  -7.125e-05  x   x   x   x
+  -6.59375e-05    x   x   x   x   x
 
-Direct access to some basic moments:
-m00: 4
-m10: 0.1
-m01: -0.05
-m22: 0.0026
-m20: 0.21
-m02: 0.0525
+  Direct access to some basic moments:
+  m00: 4
+  m10: 0.1
+  m01: -0.05
+  m22: 0.0026
+  m20: 0.21
+  m02: 0.0525
 
-Common moments computed using basic moments:
-Surface: 0.259375
-Alpha: 0.133296
-Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000421875
-\endcode
+  Common moments computed using basic moments:
+  Surface: 0.259375
+  Alpha: 0.133296
+  Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000421875
+  \endcode
 
   Note that in the continuous case, the moment object \f$m_{00}\f$ corresponds
   to the surface \f$a\f$ of the object. In the discrete case, it is the number
@@ -225,7 +226,8 @@ public:
   /*!
     Type of object that will be considered.
   */
-  typedef enum {
+  typedef enum
+  {
     DENSE_FULL_OBJECT = 0, /*!< A set of points (typically from an image)
                               which are interpreted as being dense. */
     DENSE_POLYGON = 1,     /*!< A set of points (stored in clockwise order)
@@ -237,7 +239,8 @@ public:
   /*!
      Type of camera image background.
    */
-  typedef enum {
+  typedef enum
+  {
     BLACK = 0, //!< Black background
     WHITE = 1, //!< Not functional right now
   } vpCameraImgBckGrndType;
@@ -247,7 +250,7 @@ public:
                                 // value present in it
 
   // Constructors
-  explicit vpMomentObject(unsigned int order);
+  VP_EXPLICIT vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject &srcobj);
   /*!
   Virtual destructor to allow polymorphic usage.
@@ -313,5 +316,6 @@ private:
   void cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points);
 };
+END_VISP_NAMESPACE
 
 #endif

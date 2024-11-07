@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Firewire cameras video capture.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file grab1394Two.cpp
@@ -69,6 +69,10 @@
 // List of allowed command line options
 #define GETOPTARGS "b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
 #define DUAL_ACQ
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -318,16 +322,16 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       break;
     case 'h':
     case '?':
-      usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize,
+      usage(argv[0], nullptr, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize,
             panControl);
-      exit(0);
+      return false;
       break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
+    usage(argv[0], nullptr, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -376,10 +380,9 @@ int main(int argc, const char **argv)
     if (read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
                      framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set,
                      ringbuffersize, display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl,
-                     panControl_is_set)) {
+                     panControl_is_set) == false) {
       return EXIT_FAILURE;
     }
-
     // Create a grabber
     vp1394TwoGrabber g(reset);
 
@@ -418,11 +421,12 @@ int main(int argc, const char **argv)
 
     if (multi) {
       camera = 0; // to over write a bad option usage
-    } else {
+    }
+    else {
       ncameras = 1; // acquisition from only one camera
     }
     // Offset is used to set the correspondancy between and image and the
-    // camera. For example, images comming from camera (i+offset) are
+    // camera. For example, images coming from camera (i+offset) are
     // available in I[i]
     offset = camera;
 
@@ -454,22 +458,24 @@ int main(int argc, const char **argv)
           g.getGuid(guid);
 
           std::cout << "----------------------------------------------------------" << std::endl
-                    << "---- Video modes and framerates supported by camera " << i + offset << " ----" << std::endl
-                    << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
-                    << "---- * is for the current settings                    ----" << std::endl
-                    << "---- between ( ) you have the corresponding option    ----" << std::endl
-                    << "---- to use.                                          ----" << std::endl
-                    << "----------------------------------------------------------" << std::endl;
+            << "---- Video modes and framerates supported by camera " << i + offset << " ----" << std::endl
+            << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
+            << "---- * is for the current settings                    ----" << std::endl
+            << "---- between ( ) you have the corresponding option    ----" << std::endl
+            << "---- to use.                                          ----" << std::endl
+            << "----------------------------------------------------------" << std::endl;
 
           for (it_lmode = lmode.begin(); it_lmode != lmode.end(); ++it_lmode) {
             // Parse the list of supported modes
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
+            std::stringstream ss;
+            ss << (int)supmode;
             if (curmode == supmode)
-              std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
-                        << std::endl;
+              std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << ss.str() << ")"
+              << std::endl;
             else
-              std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
-                        << std::endl;
+              std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << ss.str() << ")"
+              << std::endl;
 
             if (g.isVideoModeFormat7(supmode)) {
               // Format 7 video mode; no framerate setting, but color
@@ -478,25 +484,30 @@ int main(int argc, const char **argv)
               for (it_lcoding = lcoding.begin(); it_lcoding != lcoding.end(); ++it_lcoding) {
                 vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
                 supcoding = *it_lcoding;
+                std::stringstream ss;
+                ss << (int)supcoding;
                 if ((curmode == supmode) && (supcoding == curcoding))
-                  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
-                            << ")" << std::endl;
+                  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
+                  << ")" << std::endl;
                 else
-                  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
-                            << ")" << std::endl;
+                  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
+                  << ")" << std::endl;
               }
-            } else {
+            }
+            else {
 
               // Parse the list of supported framerates for a supported mode
               g.getFramerateSupported(supmode, lfps);
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
+                std::stringstream ss;
+                ss << (int)supfps;
                 if ((curmode == supmode) && (supfps == curfps))
-                  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
-                            << std::endl;
+                  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
+                  << std::endl;
                 else
-                  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
-                            << std::endl;
+                  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
+                  << std::endl;
               }
             }
           }
@@ -516,7 +527,8 @@ int main(int argc, const char **argv)
     if (videomode_is_set) {
       g.setCamera(camera);
       g.setVideoMode(videomode);
-    } else {
+    }
+    else {
       // get The actual video mode
       g.setCamera(camera);
       g.getVideoMode(videomode);
@@ -542,7 +554,7 @@ int main(int argc, const char **argv)
 
 #ifdef VISP_HAVE_X11
     // allocate a display for each camera to consider
-    vpDisplayX *d = NULL;
+    vpDisplayX *d = nullptr;
     if (display)
       d = new vpDisplayX[ncameras];
 #endif
@@ -562,7 +574,7 @@ int main(int argc, const char **argv)
       if (grab_color[i]) {
         g.acquire(Ic[i]);
         std::cout << "Image size for camera " << i + offset << " : width: " << Ic[i].getWidth()
-                  << " height: " << Ic[i].getHeight() << std::endl;
+          << " height: " << Ic[i].getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
         if (display) {
@@ -575,10 +587,11 @@ int main(int argc, const char **argv)
           vpDisplay::flush(Ic[i]);
         }
 #endif
-      } else {
+      }
+      else {
         g.acquire(Ig[i]);
         std::cout << "Image size for camera " << i + offset << " : width: " << Ig[i].getWidth()
-                  << " height: " << Ig[i].getHeight() << std::endl;
+          << " height: " << Ig[i].getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
         if (display) {
@@ -615,7 +628,8 @@ int main(int argc, const char **argv)
             vpDisplay::flush(Ic[c]);
           }
 #endif
-        } else {
+        }
+        else {
           g.acquire(Ig[c]);
 #ifdef VISP_HAVE_X11
           if (display) {
@@ -632,7 +646,8 @@ int main(int argc, const char **argv)
           std::cout << "Write: " << filename << std::endl;
           if (grab_color[c]) {
             vpImageIo::write(Ic[c], filename);
-          } else {
+          }
+          else {
             vpImageIo::write(Ig[c], filename);
           }
         }
@@ -661,7 +676,8 @@ int main(int argc, const char **argv)
       delete[] d;
 #endif
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -673,6 +689,6 @@ int main()
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install libdc1394-2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 
 #endif

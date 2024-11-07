@@ -3,7 +3,9 @@
 \page tutorial-calibration-intrinsic Tutorial: Camera intrinsic calibration
 \tableofcontents
 
-This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real world units (normalized position in meters in the image plane).
+This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera
+parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real
+world units (normalized position in meters in the image plane).
 
 \section calibration_intro Introduction
 
@@ -31,11 +33,15 @@ In ViSP we consider two unit conversions:
 In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
 - \f$(u_0, v_0)\f$ are the coordinates of the principal point in pixel;
 - \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
-- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion. \f$k_{ud}\f$ is the distortion parameter used to transform the coordinates from \e undistorted to \e distorted images, while \f$k_{du}\f$ is used to transform the coordinates from \e distorted to \e undistorted images.
+- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion. \f$k_{ud}\f$ is the distortion parameter
+used to transform the coordinates from \e undistorted to \e distorted images, while \f$k_{du}\f$ is used to transform
+the coordinates from \e distorted to \e undistorted images.
 
-\note It may be useful to make a tour in \ref tutorial-bridge-opencv that makes in relation the camera model used in ViSP with the one proposed by OpenCV.
+\note It may be useful to make a tour in \ref tutorial-bridge-opencv that makes in relation the camera model used in
+ViSP with the one proposed by OpenCV.
 
-\note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion.
+\note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class.
+It allows to consider two kind of models; with or without distortion.
 
 The calibration process allows to estimate the values of these parameters.
 
@@ -44,9 +50,11 @@ The calibration process allows to estimate the values of these parameters.
 The following recommendation should be taken into account to obtain good results:
 - Use a rigid planar calibration board, a printed sheet is not ideal
 - Adjust the lens to get focused images and adjust the camera parameters to have good illumination
-- Avoid perpendicular images (in other terms image plane parallel to the calibration grid) since there is an ambiguity between the camera position and the focal lens
+- Avoid perpendicular images (in other terms image plane parallel to the calibration grid) since there is an ambiguity
+  between the camera position and the focal lens
 - Take oblique images w.r.t. the calibration pattern
-- During data acquisition try to fill the images with corners keeping the whole grid in the image. It is very important to have points close to the edges and the corners of the image in order to get a better estimate of the distortion coefficients
+- During data acquisition try to fill the images with corners keeping the whole grid in the image. It is very important
+  to have points close to the edges and the corners of the image in order to get a better estimate of the distortion coefficients
 - Acquire between 5 and 15 images. There is no need to acquire a lot of images, but rather good poses
 
 How to improve calibration accuracy:
@@ -64,9 +72,11 @@ How to improve calibration accuracy:
 
 <b>3. Acquire images of the calibration grid</b>
 
-To calibrate your camera you need to take snapshots of one of these two patterns with your camera. At least 5 good snapshots of the input pattern acquired at different positions are requested for good results.
+To calibrate your camera you need to take snapshots of one of these two patterns with your camera. At least 5 good
+snapshots of the input pattern acquired at different positions are requested for good results.
 
-To this end see \ref tutorial-grabber and use one of the binaries that could be found in `tutorial/grabber` folder to grab single shot images of the grid.
+To this end see \ref tutorial-grabber and use one of the binaries that could be found in `tutorial/grabber` folder
+to grab single shot images of the grid.
 
 For example, with a webcam connected to a laptop running Linux (Ubuntu, Fedora...) use one of the following:
 \verbatim
@@ -118,13 +128,10 @@ In all other cases, try with:
 \section calibration Calibration
 \subsection calibration_source_code Source code
 
-All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+Note that all the material (source code) described in this tutorial is part of ViSP source code
+(in `example/calibration` folder) and could be found in https://github.com/lagadic/visp/tree/master/example/calibration.
 
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/example/calibration
-\endverbatim
-
-The calibration tool is available in \c calibrate_camera.cpp located in \c example/calibration folder.
+The calibration tool is available in \c calibrate_camera.cpp located in \c apps/calibration folder.
 
 We will not describe in detail the source, but just mention that:
 - the image processing is performed using OpenCV;

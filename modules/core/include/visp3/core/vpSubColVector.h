@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,53 +28,38 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Mask on a vpColVector .
- *
- * Authors:
- * Laneurit Jean
- *
- *****************************************************************************/
+ * Mask on a vpColVector.
+ */
 
-#ifndef _vpSubColVector_h_
-#define _vpSubColVector_h_
+/*!
+ * \file vpSubColVector.h
+ *
+ * \brief Definition of the vpSubColVector class
+ */
 
+#ifndef VP_SUBCOL_VECTOR_H
+#define VP_SUBCOL_VECTOR_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \file vpSubColVector.h
-
-  \brief Definition of the vpSubColVector class
-*/
-
-/*!
-  \class vpSubColVector
-  \ingroup group_core_matrices
-  This class provides a mask on a vpColVector. It has internally a
-  pointer to the parent vpColVector.
-  All properties of vpColVector are available with
-  a vpSubColVector.
-
-  \author Jean Laneurit (IRISA - INRIA Rennes)
-
-  \sa vpMatrix vpColvector vpRowVector
+ * \class vpSubColVector
+ * \ingroup group_core_matrices
+ * This class provides a mask on a vpColVector. It has internally a
+ * pointer to the parent vpColVector.
+ * All properties of vpColVector are available with
+ * a vpSubColVector.
+ *
+ * \sa vpMatrix vpColVector vpRowVector
 */
 class VISP_EXPORT vpSubColVector : public vpColVector
 {
-
-private:
-  //! Copy constructor unavaible
-  vpSubColVector(const vpSubColVector & /* m */);
-
-protected:
-  //! Number of row of parent vpColvector at initialization
-  unsigned int pRowNum;
-  //! Parent vpColvector
-  vpColVector *parent;
-
 public:
   vpSubColVector();
   vpSubColVector(vpColVector &v, const unsigned int &offset, const unsigned int &nrows);
-  virtual ~vpSubColVector();
+  virtual ~vpSubColVector() VP_OVERRIDE;
 
   void checkParentStatus() const;
 
@@ -90,6 +74,18 @@ public:
   vpSubColVector &operator=(const vpColVector &B);
   vpSubColVector &operator=(const vpMatrix &B);
   vpSubColVector &operator=(const double &x);
-};
 
+protected:
+  //! Number of row of parent vpColVector at initialization
+  unsigned int m_pRowNum;
+  //! Parent vpColVector
+  vpColVector *m_parent;
+
+private:
+  //! Copy constructor unavailable
+  vpSubColVector(const vpSubColVector &v /* m */);
+
+
+};
+END_VISP_NAMESPACE
 #endif

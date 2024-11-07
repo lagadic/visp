@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,12 @@
  *
  * Description:
  * Example of visual servoing with moments using a polygon as object container
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testFeatureMoment.cpp
+ */
+
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMomentCommon.h>
@@ -43,6 +46,10 @@
 
 #include <iostream>
 #include <limits>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // initialize scene in the interface
 void initScene(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,

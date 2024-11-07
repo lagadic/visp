@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,19 +29,12 @@
  *
  * Description:
  * Tests transformation within various representations of rotation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
   \file testDisplacement.cpp
-  \brief Tests transformation within various representations of rotation
-*/
-
-/*!
   \example testDisplacement.cpp
+  \brief Tests transformation within various representations of rotation
 */
 
 #include <stdio.h>
@@ -52,6 +44,10 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/vision/vpHomography.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 bool test(const std::string &s, const vpHomography &H, const std::vector<double> &bench)
 {
@@ -187,7 +183,8 @@ int main()
     }
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

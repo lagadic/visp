@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpScene_h
 #define vpScene_h
@@ -64,16 +64,19 @@
 #include <list>
 #include <vector>
 
-typedef struct indexFaceSet {
-  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index(){};
+BEGIN_VISP_NAMESPACE
+typedef struct indexFaceSet
+{
+  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() { };
   int nbPt;
   std::vector<vpPoint> pt;
   int nbIndex;
   std::vector<int> index;
 } indexFaceSet;
-
+END_VISP_NAMESPACE
 #endif
 
+BEGIN_VISP_NAMESPACE
 typedef enum { BND_MODEL, WRL_MODEL, UNKNOWN_MODEL } Model_3D;
 
 Model_3D getExtension(const char *file);
@@ -86,6 +89,6 @@ void extractFaces(SoVRMLIndexedFaceSet *face_set, indexFaceSet *ifs);
 void ifsToBound(Bound *, std::list<indexFaceSet *> &);
 void destroyIfs(std::list<indexFaceSet *> &);
 #endif
-
+END_VISP_NAMESPACE
 #endif
 #endif

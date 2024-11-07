@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Reflex Takktile 2 hand from Right Hand Robotics.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -45,13 +42,14 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpReflexTakktile2.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpReflexTakktile2::Impl : public reflex_driver2::ReflexDriver
 {
 public:
-  Impl() {}
+  Impl() { }
 
-  ~Impl() {}
+  ~Impl() { }
 };
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -122,9 +120,8 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpReflexTakktile2::
  */
 vpReflexTakktile2::vpReflexTakktile2()
   : m_network_interface(), m_finger_file_name(), m_tactile_file_name(), m_motor_file_name(), m_hand_info(),
-    m_impl(new Impl())
-{
-}
+  m_impl(new Impl())
+{ }
 
 /*!
  * Destructor.
@@ -328,5 +325,5 @@ void vpReflexTakktile2::open()
  * \param milliseconds : Duration in [ms].
  */
 void vpReflexTakktile2::wait(int milliseconds) { m_impl->wait(milliseconds); }
-
+END_VISP_NAMESPACE
 #endif

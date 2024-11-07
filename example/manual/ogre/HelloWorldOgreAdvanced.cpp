@@ -43,10 +43,19 @@
 
 #include <visp3/ar/vpAROgre.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
+
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #if defined(VISP_HAVE_OGRE)
 
@@ -63,7 +72,7 @@ public:
                    unsigned int height = 480)
     : vpAROgre(cam, width, height)
   {
-    mAnimationState = NULL;
+    mAnimationState = nullptr;
   }
 
 protected:
@@ -113,7 +122,7 @@ int main()
     // level.
     vpImage<unsigned char> I;
 
-// Now we try to find an available framegrabber
+    // Now we try to find an available framegrabber
 #if defined(VISP_HAVE_V4L2)
     // Video for linux 2 grabber
     vpV4l2Grabber grabber;
@@ -159,7 +168,7 @@ int main()
 
     // Rendering loop
     while (ogre.continueRendering()) {
-// Acquire a new image
+      // Acquire a new image
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(HAVE_OPENCV_VIDEOIO)
@@ -179,10 +188,12 @@ int main()
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return EXIT_FAILURE;
   }

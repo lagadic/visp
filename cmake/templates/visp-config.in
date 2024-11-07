@@ -3,7 +3,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -33,9 +33,6 @@
 # Description:
 # visp-config shell script.
 # Auto-generated from visp-config.in by cmake.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -59,7 +56,7 @@ usage()
     cat <<EOF
 
 ViSP $VERSION (Visual Servoing Platform)
-Copyright (C) 2005 - 2019 Inria. All rights reserved.
+Copyright (C) 2005 - 2023 Inria. All rights reserved.
 
 Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--dumpversion]  [--help]
 
@@ -89,7 +86,7 @@ for arg in $@; do
   --version)
       echo "ViSP $VERSION (Visual Servoing Platform)"
       echo ""
-      echo "Copyright (C) 2005 - 2019 Inria. All rights reserved.";;
+      echo "Copyright (C) 2005 - 2023 Inria. All rights reserved.";;
   --dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
         *) usage; exit 0 ;;
     esac;

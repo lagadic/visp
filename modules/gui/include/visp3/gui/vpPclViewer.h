@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS)
 // System
 #include <thread>
 #include <mutex>
@@ -48,6 +48,7 @@
 // PCL
 #include <pcl/visualization/pcl_visualizer.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPclViewer
   \ingroup group_gui_plotter
@@ -253,8 +254,9 @@ protected:
   std::thread m_threadDisplay; /*!< The non-blocking drawing thread.*/
   bool m_hasToRun; /*!< If true, the drawing thread is running. Otherwise, it is stopped.*/
   std::string m_title; /*!< The title of the viewer window.*/
-  bool m_hasToSavePCDs; /*!< If true, thhe point clouds will be saved at each iteration of the drawing thread.*/
+  bool m_hasToSavePCDs; /*!< If true, the point clouds will be saved at each iteration of the drawing thread.*/
   std::string m_outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
 };
+END_VISP_NAMESPACE
 #endif // #if defined(VISP_HAVE_PCL)
 #endif // _vpPclVisualizer_h_

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,19 +31,18 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 # Image i/o: jpeg, png, OpenCV (already included by core)
 if(USE_JPEG)
-  list(APPEND opt_incs ${JPEG_INCLUDE_DIR})
-  list(APPEND opt_libs ${JPEG_LIBRARIES})
+  # libjpeg usage is private
+  include_directories(${JPEG_INCLUDE_DIR})
+  list(APPEND opt_libs_private ${JPEG_LIBRARIES})
   # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
   # handle a compilation error "conflicting declaration 'typedef long int INT32'
   if(VISP_HAVE_QT3_FOUND)
@@ -52,22 +51,27 @@ if(USE_JPEG)
 endif()
 
 if(USE_PNG)
-  list(APPEND opt_incs ${PNG_INCLUDE_DIR})
-  list(APPEND opt_libs ${PNG_LIBRARIES})
+  # libpng usage is private
+  include_directories(${PNG_INCLUDE_DIR})
+  list(APPEND opt_libs_private ${PNG_LIBRARIES})
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-# stb_image is private
-include_directories(${STBIMAGE_INCLUDE_DIRS})
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
+if(WITH_STBIMAGE)
+  # stb_image is private
+  include_directories(${STBIMAGE_INCLUDE_DIRS})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
+if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+endif()
+
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
+endif()
 
 # TinyEXR lib is private
 include_directories(${TINYEXR_INCLUDE_DIRS})
@@ -180,30 +184,25 @@ if(USE_OPENCV)
 endif(USE_OPENCV)
 
 if(ANDROID)
-  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES})
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${opt_libs_private})
 else()
-  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES} WRAP java)
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 endif()
 
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests()
 
-vp_set_source_file_compile_flag(src/tools/vpParseArgv.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/image/vpImageIo.cpp -Wno-missing-field-initializers) # since stb_image_write.h update from v1.13 to v1.16
-vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/image/private/vpImageIoTinyEXR.cpp -Wno-strict-overflow -Wno-sign-compare -Wno-type-limits -Wno-unused-but-set-variable)
+set(opt_test_incs "")
+set(opt_test_libs "")
 
-if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/image/private/vpImageIoLibjpeg.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/private/vpImageIoLibpng.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/private/vpImageIoOpenCV.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/private/vpImageIoPortable.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/vpImageIo.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/video/vpDiskGrabber.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/video/vpVideoReader.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/video/vpVideoWriter.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/video/testVideo.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfImageLoadSave.cpp -Wno-float-equal)
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
 endif()
+
+vp_add_tests(PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
+
+vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow -Wno-deprecated-declarations)
+vp_set_source_file_compile_flag(src/image/private/vpImageIoTinyEXR.cpp -Wno-strict-overflow -Wno-sign-compare -Wno-type-limits -Wno-unused-but-set-variable)

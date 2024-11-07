@@ -37,7 +37,7 @@ $ ./tutorial-count-coins
 To run the demo code for the sample image 2:
 
 \code
-$ ./tutorial-count-coins --input coins2.pgm --white_foreground
+$ ./tutorial-count-coins --input coins2.jpg --white_foreground
 \endcode
 
 The functions we will use needs the following includes:
@@ -71,7 +71,7 @@ The fill holes algorithm is basic:
 
 \image html img-tutorial-count-coins-mask.png "Left: binary image, right: result of the flood fill operation"
 
-- substract the flood fill image from a white image to get only the holes
+- subtract the flood fill image from a white image to get only the holes
 
 \image html img-tutorial-count-coins-white-holes.png "Top left: white image, bottom left: flood fill image, right: I_holes = I_white - I_flood_fill"
 

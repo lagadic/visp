@@ -1,7 +1,7 @@
 
 ###################################################################
 #
-# Errors that occured on visp-osx-10-9-mavericks ci
+# Errors that occurred on visp-osx-10-9-mavericks ci
 #
 ###################################################################
 
@@ -27,7 +27,7 @@
 
 ###################################################################
 #
-# Errors that occured on flylab-gs3 running ubuntu 18.04
+# Errors that occurred on flylab-gs3 running ubuntu 18.04
 #
 ###################################################################
 
@@ -157,4 +157,3 @@
    ...
    fun:dlopen@@GLIBC_2.2.5
 }
-

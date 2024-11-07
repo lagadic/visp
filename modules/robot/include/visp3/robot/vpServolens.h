@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,17 +32,7 @@
  * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef _vpServolens_h_
-#define _vpServolens_h_
-
-#include <visp3/core/vpConfig.h>
-
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+*****************************************************************************/
 
 /*!
 
@@ -53,9 +43,18 @@
 
 */
 
+#ifndef _vpServolens_h_
+#define _vpServolens_h_
+
+#include <visp3/core/vpConfig.h>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpServolens
@@ -69,31 +68,35 @@
   the position of the focal lens.
 
   \code
-#include <iostream>
-#include <visp3/vs/vpServolens.h>
+  #include <iostream>
+  #include <visp3/vs/vpServolens.h>
 
-int main()
-{
-  // Open the serial device to communicate with the Servolens lens
-  vpServolens servolens("/dev/ttyS0");
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Get the current zoom position
-  unsigned zoom;
-  servolens.getPosition(vpServolens::ZOOM, zoom);
-  std::cout << "Actual zoom value: " << zoom << std::endl;
+  int main()
+  {
+    // Open the serial device to communicate with the Servolens lens
+    vpServolens servolens("/dev/ttyS0");
 
-  // Set a new zoom value
-  servolens.setPosition(vpServolens::ZOOM, zoom+1000);
-}
+    // Get the current zoom position
+    unsigned zoom;
+    servolens.getPosition(vpServolens::ZOOM, zoom);
+    std::cout << "Actual zoom value: " << zoom << std::endl;
+
+    // Set a new zoom value
+    servolens.setPosition(vpServolens::ZOOM, zoom+1000);
+  }
   \endcode
-
 */
 
 class VISP_EXPORT vpServolens
 {
 public:
   typedef enum { ZOOM = 1, FOCUS = 2, IRIS = 3 } vpServoType;
-  typedef enum {
+  typedef enum
+  {
     ZOOM_MAX = 10000, // Valeur maxi zoom (mm/100)
     ZOOM_MIN = 1000,  // Valeur mini zoom (mm/100)
     FOCUS_MAX = 1500, // Valeur maxi focus (metres/100)
@@ -104,7 +107,7 @@ public:
   typedef enum { AUTO = 1, CONTROLLED = 2, RELEASED = 3 } vpControllerType;
 
   vpServolens();
-  explicit vpServolens(const char *port);
+  VP_EXPLICIT vpServolens(const char *port);
   virtual ~vpServolens();
 
   void open(const char *port = "/dev/ttyS0");
@@ -133,6 +136,6 @@ private:
   int remfd; // file pointer of the host's tty
   bool isinit;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

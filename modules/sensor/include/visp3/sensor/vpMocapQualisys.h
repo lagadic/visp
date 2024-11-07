@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Motion capture using Qualisys device.
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpMocapQualisys_h
 #define vpMocapQualisys_h
 
@@ -41,11 +41,12 @@
 
 #include <visp3/sensor/vpMocap.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMocapQualisys
  * \ingroup group_sensor_mocap
  * Qualisys motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocapQualisys : public vpMocap
 {
 public:
@@ -67,6 +68,6 @@ private:
   class vpMocapQualisysImpl;
   vpMocapQualisysImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif // vpMocapQualisys_h

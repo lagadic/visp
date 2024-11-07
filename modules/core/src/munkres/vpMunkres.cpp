@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,14 @@
  *
  * Description:
  * Class for Munkres Assignment Algorithm.
- *
- * Authors:
- * Souriya Trinh
- * Julien Dufour
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpMunkres.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Find a starred zero in a specific mask matrix row.
  *
@@ -49,12 +44,12 @@
  * \param[in] row: Row index.
  * \return Index of the starred zero [col] or std::nullopt if the mask matrix row does not contain a starred zero.
  */
-std::optional<unsigned int> vpMunkres::findStarInRow(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
-                                                     const unsigned int &row)
+  std::optional<unsigned int> vpMunkres::findStarInRow(const std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
+                                                       const unsigned int &row)
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::STARRED);
   return it != end(mask.at(row)) ? std::make_optional<unsigned int>(std::distance(begin(mask.at(row)), it))
-                                 : std::nullopt;
+    : std::nullopt;
 }
 
 /*!
@@ -84,7 +79,7 @@ std::optional<unsigned int> vpMunkres::findPrimeInRow(const std::vector<std::vec
 {
   const auto it = std::find(begin(mask.at(row)), end(mask.at(row)), vpMunkres::ZERO_T::PRIMED);
   return it != end(mask.at(row)) ? std::make_optional<unsigned int>(std::distance(begin(mask.at(row)), it))
-                                 : std::nullopt;
+    : std::nullopt;
 }
 
 /*!
@@ -98,7 +93,7 @@ void vpMunkres::augmentPath(std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
 {
   for (const auto &[row, col] : path) {
     mask.at(row).at(col) =
-        mask.at(row).at(col) == vpMunkres::ZERO_T::STARRED ? vpMunkres::ZERO_T::NA : vpMunkres::ZERO_T::STARRED;
+      mask.at(row).at(col) == vpMunkres::ZERO_T::STARRED ? vpMunkres::ZERO_T::NA : vpMunkres::ZERO_T::STARRED;
   }
 }
 
@@ -172,12 +167,13 @@ vpMunkres::STEP_T vpMunkres::stepFive(std::vector<std::vector<vpMunkres::ZERO_T>
                                       const std::pair<unsigned int, unsigned int> &path_0, std::vector<bool> &row_cover,
                                       std::vector<bool> &col_cover)
 {
-  std::vector<std::pair<unsigned int, unsigned int> > path{path_0}; // Z0
+  std::vector<std::pair<unsigned int, unsigned int> > path { path_0 }; // Z0
 
   while (true) {
     if (const auto star_in_col = findStarInCol(mask, path.back().second)) {
       path.emplace_back(*star_in_col, path.back().second); // Z1
-    } else {
+    }
+    else {
       augmentPath(mask, path);
       erasePrimes(mask);
       clearCovers(row_cover, col_cover);
@@ -190,5 +186,5 @@ vpMunkres::STEP_T vpMunkres::stepFive(std::vector<std::vector<vpMunkres::ZERO_T>
     }
   }
 }
-
-#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+END_VISP_NAMESPACE
+#endif

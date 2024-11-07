@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,8 @@
  *
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
- *estimation.
- *
- * Authors:
- * Andrew Comport
- *
- *****************************************************************************/
+ * estimation.
+ */
 
 /*!
  \file vpScale.h
@@ -45,7 +40,7 @@
 /*!
  * \brief Contains various estimators for scale.
  * \n Methods : Median Absolute Deviation (MAD),
- * 							MPDE, Mean shift kernel
+ *              MPDE, Mean shift kernel
  * density estimation. \author Andrew Comport \date 24/10/03
  */
 // ==========================================================
@@ -56,6 +51,7 @@
 #include <math.h>
 #include <visp3/core/vpColVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpScale
   \ingroup group_core_robust
@@ -68,7 +64,7 @@
 
   \author Andrew Comport
   \date 24/10/03
- */
+*/
 class VISP_EXPORT vpScale
 {
 
@@ -90,5 +86,5 @@ public:
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
   double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
 };
-
+END_VISP_NAMESPACE
 #endif

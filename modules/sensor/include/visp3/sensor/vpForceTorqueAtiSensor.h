@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * ATI Force torque interface.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 #ifndef _vpForceTorqueAtiSensor_h_
 #define _vpForceTorqueAtiSensor_h_
 
@@ -47,62 +42,61 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/sensor/vpComedi.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpForceTorqueAtiSensor
-
-  \ingroup group_sensor_ft
-
-  Interface for ATI force/torque sensor. This class works only under
-linux-like OS. It requires Comedi 3rd party. Installation instructions are
-provided here https://visp.inria.fr/3rd_comedi.
-
-  Comedi is the linux control and measurement device interface. For more
-information see http://www.comedi.org.
-
-  This class was tested with ATI Gamma 65-SI FT sensor connected to a
-  National Instrument NI DAQmx PCI-6220 board.
-
-  Synchronous F/T data acquisition is performed using getForceTorque(). The
-call to the function blocks until the whole acquisition has finished.
-
-  The following example shows how to get single measures from an ATI F/T
-device each 10 ms (100 Hz).
-\code
-#include <visp3/core/vpTime.h>
-#include <visp3/sensor/vpForceTorqueAtiSensor.h>
-
-int main(int argc, char** argv)
-{
-  vpForceTorqueAtiSensor ati;
-  ati.setCalibrationFile("FT12345.cal");
-  ati.open();
-  ati.bias();
-  for(unsigned int i=0; i < 20; i++) {
-    std::cout << "F/T: " << ati.getForceTorque().t() << std::endl;
-    vpTime::wait(10);
-  }
-  ati.close();
-#endif
-}
-  \endcode
-
+ * \class vpForceTorqueAtiSensor
+ *
+ * \ingroup group_sensor_ft
+ *
+ * Interface for ATI force/torque sensor. This class works only under
+ * linux-like OS. It requires Comedi 3rd party. Installation instructions are
+ * provided here https://visp.inria.fr/3rd_comedi.
+ *
+ * Comedi is the linux control and measurement device interface. For more
+ * information see http://www.comedi.org.
+ *
+ * This class was tested with ATI Gamma 65-SI FT sensor connected to a
+ * National Instrument NI DAQmx PCI-6220 board.
+ *
+ * Synchronous F/T data acquisition is performed using getForceTorque(). The
+ * call to the function blocks until the whole acquisition has finished.
+ *
+ * The following example shows how to get single measures from an ATI F/T
+ * device each 10 ms (100 Hz).
+ * \code
+ * #include <visp3/core/vpTime.h>
+ * #include <visp3/sensor/vpForceTorqueAtiSensor.h>
+ *
+ * int main(int argc, char** argv)
+ * {
+ *   vpForceTorqueAtiSensor ati;
+ *   ati.setCalibrationFile("FT12345.cal");
+ *   ati.open();
+ *   ati.bias();
+ *   for(unsigned int i=0; i < 20; i++) {
+ *     std::cout << "F/T: " << ati.getForceTorque().t() << std::endl;
+ *     vpTime::wait(10);
+ *   }
+ *   ati.close();
+ * #endif
+ * }
+ * \endcode
 */
 class VISP_EXPORT vpForceTorqueAtiSensor : public vpComedi
 {
 public:
   vpForceTorqueAtiSensor();
-  virtual ~vpForceTorqueAtiSensor();
+  virtual ~vpForceTorqueAtiSensor() VP_OVERRIDE;
 
   void bias();
   void close();
 
   /*!
-     Return the calibration file location specified using
-     setCalibrationFile(). \sa setCalibrationFile()
+   * Return the calibration file location specified using
+   * setCalibrationFile(). \sa setCalibrationFile()
    */
   std::string getCalibrationFile() const { return m_calibfile; }
   vpColVector getForceTorque() const;
-  vpColVector getForceTorqueAsync() const;
   std::string getForceUnits() const;
   std::string getTorqueUnits() const;
 
@@ -120,6 +114,6 @@ protected:
   unsigned short m_num_channels; //!< Number of channels available from the sensor
   vpColVector m_sample_bias;     //!< Sample value used for bias
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

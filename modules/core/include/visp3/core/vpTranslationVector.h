@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,25 +29,23 @@
  *
  * Description:
  * Translation vector.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef vpTRANSLATIONVECTOR_H
-#define vpTRANSLATIONVECTOR_H
+ */
 
 /*!
-  \file vpTranslationVector.h
-  \brief Class that consider the case of a translation vector.
-*/
+ * \file vpTranslationVector.h
+ * \brief Class that consider the case of a translation vector.
+ */
 
+#ifndef VP_TRANSLATION_VECTOR_H
+#define VP_TRANSLATION_VECTOR_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
+
+BEGIN_VISP_NAMESPACE
+class vpMatrix;
 
 /*!
   \class vpTranslationVector
@@ -75,13 +72,11 @@
   \endcode
   You can also initialize the vector using operator<<(double):
   \code
-  t << 0, 0.1, 05;
+  t << 0, 0.1, 0.5;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   t = {0, 0.1, 0.5};
-#endif
   \endcode
 
   To get the values [meters] use:
@@ -95,25 +90,29 @@
   homogeneous matrix.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpTranslationVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpTranslationVector.h>
 
-int main()
-{
-  vpTranslationVector t; // Translation vector
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialization of the translation vector
-  t[0] =  0.2; // tx = 0.2 meters
-  t[1] = -0.1; // ty = -0.1 meters
-  t[2] =  1.0; // tz = 1 meters
+  int main()
+  {
+    vpTranslationVector t; // Translation vector
 
-  // Construction of a rotation matrix
-  vpRotationMatrix R; // Set to identity by default
+    // Initialization of the translation vector
+    t[0] =  0.2; // tx = 0.2 meters
+    t[1] = -0.1; // ty = -0.1 meters
+    t[2] =  1.0; // tz = 1 meters
 
-  // Construction of an homogeneous matrix
-  vpHomogeneousMatrix M(t, R);
-}
+    // Construction of a rotation matrix
+    vpRotationMatrix R; // Set to identity by default
+
+    // Construction of an homogeneous matrix
+    vpHomogeneousMatrix M(t, R);
+  }
   \endcode
 */
 class VISP_EXPORT vpTranslationVector : public vpArray2D<double>
@@ -123,19 +122,18 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0){};
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { }
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
-  explicit vpTranslationVector(const vpHomogeneousMatrix &M);
-  explicit vpTranslationVector(const vpPoseVector &p);
-  explicit vpTranslationVector(const vpColVector &v);
+  VP_EXPLICIT vpTranslationVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpTranslationVector(const vpPoseVector &p);
+  VP_EXPLICIT vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(double tx, double ty, double tz);
-  vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
-  vpTranslationVector buildFrom(const vpPoseVector &p);
-  vpTranslationVector buildFrom(const vpColVector &v);
+  vpTranslationVector &buildFrom(const double &tx, const double &ty, const double &tz);
+  vpTranslationVector &buildFrom(const vpHomogeneousMatrix &M);
+  vpTranslationVector &buildFrom(const vpPoseVector &p);
+  vpTranslationVector &buildFrom(const vpColVector &v);
 
-  vp_deprecated double euclideanNorm() const;
   double frobeniusNorm() const;
 
   // operators
@@ -180,7 +178,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
-  };
+  }
 
   void set(double tx, double ty, double tz);
 
@@ -197,8 +195,17 @@ public:
   static vpMatrix skew(const vpTranslationVector &tv);
   static void skew(const vpTranslationVector &tv, vpMatrix &M);
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+      @name Deprecated functions
+  */
+  //@{
+  VP_DEPRECATED double euclideanNorm() const;
+  //}
+#endif
+
 protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
-
+END_VISP_NAMESPACE
 #endif

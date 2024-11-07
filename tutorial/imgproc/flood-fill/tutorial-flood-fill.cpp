@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -11,6 +12,10 @@
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -111,25 +116,32 @@ int getOctant(const vpImagePoint &imPt1, const vpImagePoint &imPt2)
   if (dx >= 0 && dy >= 0) {
     if (dy >= dx) {
       return 1;
-    } else {
+    }
+    else {
       return 0;
     }
-  } else if (dx < 0 && dy >= 0) {
+  }
+  else if (dx < 0 && dy >= 0) {
     if (-dx >= dy) {
       return 3;
-    } else {
+    }
+    else {
       return 2;
     }
-  } else if (dx < 0 && dy < 0) {
+  }
+  else if (dx < 0 && dy < 0) {
     if (dy <= dx) {
       return 5;
-    } else {
+    }
+    else {
       return 4;
     }
-  } else {
+  }
+  else {
     if (dx >= -dy) {
       return 7;
-    } else {
+    }
+    else {
       return 6;
     }
   }
@@ -154,8 +166,8 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImag
     vpImagePoint currentPt(y, x);
     currentPt = switchFromOctantZeroTo(octant, currentPt);
 
-    unsigned int i = std::min(I.getHeight() - 1, (unsigned int)std::max(0.0, currentPt.get_i()));
-    unsigned int j = std::min(I.getWidth() - 1, (unsigned int)std::max(0.0, currentPt.get_j()));
+    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_i()));
+    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_j()));
     I[i][j] = value;
 
     if (D >= 0) {
@@ -196,7 +208,7 @@ int main()
     vpDisplay::display(I);
     std::stringstream ss;
     ss << "Left click to draw polygon " << i + 1 << "/3"
-       << ", right click to close the shape.";
+      << ", right click to close the shape.";
     vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
     vpDisplay::flush(I);
 
@@ -244,7 +256,7 @@ int main()
       switch (button) {
       case vpMouseButton::button1:
         //! [Flood fill]
-        vp::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
+        VISP_NAMESPACE_NAME::floodFill(mask, ip, 0, 255, vpImageMorphology::CONNEXITY_4);
         //! [Flood fill]
 
         //! [Bucket fill]

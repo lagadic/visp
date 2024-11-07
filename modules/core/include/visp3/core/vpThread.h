@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,14 @@
  *
  * Description:
  * Threading capabilities
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 #ifndef _vpPthread_h_
 #define _vpPthread_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && (defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0)))
 
 #if defined(VISP_HAVE_PTHREAD)
 #include <pthread.h>
@@ -53,24 +48,23 @@
 #include <windows.h>
 #endif
 
+#ifdef ENABLE_VISP_NAMESPACE
+namespace VISP_NAMESPACE_NAME
+{
+#endif
 /*!
    \class vpThread
 
    \ingroup group_core_threading
 
+   \deprecated Use rather std::thread.
+
    Class to represent individual threads of execution.
    This class implements native pthread functionalities if available, or
    native Windows threading capabilities if pthread is not available under
    Windows.
-
-   There are two examples implemented in testMutex.cpp and testThread.cpp to
-   show how to use this class. The content of test-thread.cpp that hightlights
-   the main functionalities of this class is given hereafter: \snippet
-   testThread.cpp Code
-
-   More examples are provided in \ref tutorial-multi-threading.
- */
-class vpThread
+*/
+class VP_DEPRECATED vpThread
 {
 public:
 #if defined(VISP_HAVE_PTHREAD)
@@ -89,36 +83,38 @@ public:
      Default constructor that does nothing. To attach a function to this
      thread of execution you need to call create().
    */
-  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false) {}
+  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false) { }
 
   /*!
      Construct a thread object that represents a new joinable thread of
      execution. The new thread of execution calls \e fn passing \e args as
-     arguments. \param fn : A pointer to a function. \param args : Arguments
-     passed to the call to \e fn (if any).
+     arguments.
+     \param fn : A pointer to a function.
+     \param args : Arguments passed to the call to \e fn (if any).
    */
-  vpThread(vpThread::Fn fn, vpThread::Args args = NULL) : m_handle(), m_isCreated(false), m_isJoinable(false)
+  vpThread(vpThread::Fn fn, vpThread::Args args = nullptr) : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
     create(fn, args);
   }
 
   /*!
      Creates a thread object that represents a new joinable thread of
-     execution. \param fn : A pointer to a function. \param args : Arguments
-     passed to the call to \e fn (if any).
+     execution.
+     \param fn : A pointer to a function.
+     \param args : Arguments passed to the call to \e fn (if any).
    */
-  void create(vpThread::Fn fn, vpThread::Args args = NULL)
+  void create(vpThread::Fn fn, vpThread::Args args = nullptr)
   {
     if (m_isCreated)
       throw vpException(vpException::fatalError, "The thread is already created");
 #if defined(VISP_HAVE_PTHREAD)
-    int err = pthread_create(&m_handle, NULL, fn, args);
+    int err = pthread_create(&m_handle, nullptr, fn, args);
     if (err != 0) {
       throw vpException(vpException::cannotUseConstructorError, "Can't create thread : %s", strerror(err));
     }
 #elif defined(_WIN32)
     DWORD dwThreadIdArray;
-    m_handle = CreateThread(NULL,              // default security attributes
+    m_handle = CreateThread(nullptr,              // default security attributes
                             0,                 // use default stack size
                             fn,                // thread function name
                             args,              // argument to thread function
@@ -155,7 +151,7 @@ public:
   {
     if (m_isJoinable) {
 #if defined(VISP_HAVE_PTHREAD)
-      pthread_join(m_handle, NULL);
+      pthread_join(m_handle, nullptr);
 #elif defined(_WIN32)
 #if defined(WINRT_8_1)
       WaitForSingleObjectEx(m_handle, INFINITE, FALSE);
@@ -189,6 +185,8 @@ protected:
   bool m_isCreated;  //!< Indicates if the thread is created
   bool m_isJoinable; //!< Indicates if the thread is joinable
 };
-
+#ifdef ENABLE_VISP_NAMESPACE
+}
+#endif
 #endif
 #endif

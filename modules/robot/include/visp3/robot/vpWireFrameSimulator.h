@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,18 +31,16 @@
  * Description:
  * Wire frame simulator
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
-
-#ifndef vpWireFrameSimulator_HH
-#define vpWireFrameSimulator_HH
+*****************************************************************************/
 
 /*!
   \file vpWireFrameSimulator.h
   \brief Implementation of a wire frame simulator.
 */
+
+#ifndef vpWireFrameSimulator_HH
+#define vpWireFrameSimulator_HH
+
 #include <cmath> // std::fabs
 #include <iostream>
 #include <limits> // numeric_limits
@@ -61,6 +59,7 @@
 #include <visp3/robot/vpImageSimulator.h>
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpWireFrameSimulator
 
@@ -114,29 +113,32 @@
   The following example shows how it is easy to use.
 
   \code
-
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpWireFrameSimulator.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
     vpWireFrameSimulator sim;
 
-    vpImage<vpRGBa> Iint(480,640,255);
-    vpImage<vpRGBa> Iext(480,640,255);
+    vpImage<vpRGBa> Iint(480, 640, vpRGBa(255));
+    vpImage<vpRGBa> Iext(480, 640, vpRGBa(255));
 
     //Set the type of scene to use
     sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
 
     //Set the initial pose of the camera
-    sim.setCameraPositionRelObj(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
+    sim.setCameraPositionRelObj(vpHomogeneousMatrix(0, 0, 0.5, vpMath::rad(0), vpMath::rad(10), 0));
     //Set the desired pose of the camera (for the internal view)
-    sim.setDesiredCameraPosition(vpHomogeneousMatrix(0.0,0,0.5,0,0,0));
+    sim.setDesiredCameraPosition(vpHomogeneousMatrix(0.0, 0, 0.5, 0, 0, 0));
     //Set the pose of the reference frame (for the external view)
-    sim.setExternalCameraPosition(vpHomogeneousMatrix(0.1,0,0.2,0,0,0));
+    sim.setExternalCameraPosition(vpHomogeneousMatrix(0.1, 0, 0.2, 0, 0, 0));
 
     //Set the camera parameters
-    vpCameraParameters camera(1000,1000,320,240);
+    vpCameraParameters camera(1000, 1000, 320, 240);
     sim.setInternalCameraParameters(camera);
     sim.setExternalCameraParameters(camera);
 
@@ -157,7 +159,8 @@ public:
   /*!
       Type of scene used to display the object at the current position.
     */
-  typedef enum {
+  typedef enum
+  {
     THREE_PTS,   //!< A 40cm by 40cm plate with 3 points at coordinates (0,0,0),
                  //!< (0.1,0,0), (0,0.1,0). Each point is represented by a
                  //!< circle with 2cm radius.
@@ -208,7 +211,8 @@ public:
      current position.
       - D_OUTIL will display a tool which is attached to the camera.
     */
-  typedef enum {
+  typedef enum
+  {
     D_STANDARD, //!<  The object displayed at the desired position is the same
                 //!<  than the scene object defined in vpSceneObject.
     D_CIRCLE,   //!<  The object displayed at the desired position is a circle.
@@ -604,5 +608,5 @@ protected:
                                        const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,20 +29,26 @@
  *
  * Description:
  * Theta U parameterization for the rotation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef vpTHETAUVECTOR_H
-#define vpTHETAUVECTOR_H
+ */
 
 /*!
   \file vpThetaUVector.h
   \brief class that consider the case of the Theta U parameterization for the
   rotation
 */
+
+#ifndef VP_THETAU_VECTOR_H
+#define VP_THETAU_VECTOR_H
+
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpQuaternionVector.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpRzyxVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpHomogeneousMatrix;
 class vpRotationMatrix;
@@ -54,14 +59,6 @@ class vpRzyzVector;
 class vpColVector;
 class vpRotationVector;
 class vpQuaternionVector;
-
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpQuaternionVector.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpRzyxVector.h>
 
 /*!
   \class vpThetaUVector
@@ -118,9 +115,7 @@ class vpQuaternionVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   tu = {M_PI_4, M_PI_2, M_PI};
-#endif
   \endcode
 
   To get the values [rad] use:
@@ -131,90 +126,89 @@ class vpQuaternionVector;
   \endcode
 
   The code below shows first how to initialize a \f$\theta {\bf u}\f$
-  vector, than how to contruct a rotation matrix from a vpThetaUVector
+  vector, than how to construct a rotation matrix from a vpThetaUVector
   and finally how to extract the theta U angles from the build rotation
   matrix.
 
   \code
-#include <iostream>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpThetaUVector.h>
+  #include <iostream>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpThetaUVector tu;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialise the theta U rotation vector
-  tu[0] = vpMath::rad( 45.f);
-  tu[1] = vpMath::rad(-30.f);
-  tu[2] = vpMath::rad( 90.f);
+  int main()
+  {
+    vpThetaUVector tu;
 
-  // Construct a rotation matrix from the theta U angles
-  vpRotationMatrix R(tu);
+    // Initialise the theta U rotation vector
+    tu[0] = vpMath::rad( 45.f);
+    tu[1] = vpMath::rad(-30.f);
+    tu[2] = vpMath::rad( 90.f);
 
-  // Extract the theta U angles from a rotation matrix
-  tu.buildFrom(R);
+    // Construct a rotation matrix from the theta U angles
+    vpRotationMatrix R(tu);
 
-  // Print the extracted theta U angles. Values are the same than the
-  // one used for initialization
-  std::cout << tu;
+    // Extract the theta U angles from a rotation matrix
+    tu.buildFrom(R);
 
-  // Since the rotation vector is 3 values column vector, the
-  // transpose operation produce a row vector.
-  vpRowVector tu_t = tu.t();
+    // Print the extracted theta U angles. Values are the same than the
+    // one used for initialization
+    std::cout << tu;
 
-  // Print the transpose row vector
-  std::cout << tu_t << std::endl;
-}
+    // Since the rotation vector is 3 values column vector, the
+    // transpose operation produce a row vector.
+    vpRowVector tu_t = tu.t();
+
+    // Print the transpose row vector
+    std::cout << tu_t << std::endl;
+  }
   \endcode
 */
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
-private:
-  static const double minimum;
-
 public:
   vpThetaUVector();
   vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
-  explicit vpThetaUVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpThetaUVector(const vpHomogeneousMatrix &M);
   // constructor initialize a Theta U vector from a pose vector
-  explicit vpThetaUVector(const vpPoseVector &p);
+  VP_EXPLICIT vpThetaUVector(const vpPoseVector &p);
   // constructor initialize a Theta U vector from a rotation matrix
-  explicit vpThetaUVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpThetaUVector(const vpRotationMatrix &R);
   // constructor initialize a Theta U vector from a RzyxVector
-  explicit vpThetaUVector(const vpRzyxVector &rzyx);
+  VP_EXPLICIT vpThetaUVector(const vpRzyxVector &rzyx);
   // constructor initialize a Theta U vector from a RzyzVector
-  explicit vpThetaUVector(const vpRzyzVector &rzyz);
+  VP_EXPLICIT vpThetaUVector(const vpRzyzVector &rzyz);
   // constructor initialize a Theta U vector from a RxyzVector
-  explicit vpThetaUVector(const vpRxyzVector &rxyz);
-  explicit vpThetaUVector(const vpQuaternionVector &q);
-  explicit vpThetaUVector(const vpColVector &tu);
-  explicit vpThetaUVector(const std::vector<double> &tu);
+  VP_EXPLICIT vpThetaUVector(const vpRxyzVector &rxyz);
+  VP_EXPLICIT vpThetaUVector(const vpQuaternionVector &q);
+  VP_EXPLICIT vpThetaUVector(const vpColVector &tu);
+  VP_EXPLICIT vpThetaUVector(const std::vector<double> &tu);
 
   vpThetaUVector(double tux, double tuy, double tuz);
-  //! Destructor.
-  virtual ~vpThetaUVector(){};
 
   // convert an homogeneous matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
+  vpThetaUVector &buildFrom(const vpHomogeneousMatrix &M);
   // convert a pose vector into Theta U vector
-  vpThetaUVector buildFrom(const vpPoseVector &p);
+  vpThetaUVector &buildFrom(const vpPoseVector &p);
   // convert a rotation matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpRotationMatrix &R);
+  vpThetaUVector &buildFrom(const vpRotationMatrix &R);
   // convert an Rzyx vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
+  vpThetaUVector &buildFrom(const vpRzyxVector &rzyx);
   // convert an Rzyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyzVector &zyz);
+  vpThetaUVector &buildFrom(const vpRzyzVector &zyz);
   // convert an Rxyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRxyzVector &xyz);
-  vpThetaUVector buildFrom(const vpQuaternionVector &q);
-  vpThetaUVector buildFrom(const vpColVector &tu);
-  vpThetaUVector buildFrom(const std::vector<double> &tu);
+  vpThetaUVector &buildFrom(const vpRxyzVector &xyz);
+  vpThetaUVector &buildFrom(const vpQuaternionVector &q);
+  vpThetaUVector &buildFrom(const vpColVector &tu);
+  vpThetaUVector &buildFrom(const std::vector<double> &tu);
 
-  void buildFrom(double tux, double tuy, double tuz);
+  vpThetaUVector &buildFrom(const double &tux, const double &tuy, const double &tuz);
 
   // extract the angle and the axis from the ThetaU representation
   void extract(double &theta, vpColVector &u) const;
@@ -228,6 +222,10 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
 #endif
-};
 
+private:
+  static const double minimum;
+
+};
+END_VISP_NAMESPACE
 #endif

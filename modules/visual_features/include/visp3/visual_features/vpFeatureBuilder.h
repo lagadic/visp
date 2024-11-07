@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,19 +31,17 @@
  * Description:
  * Conversion between tracker and visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef vpFeatureBuilder_H
-#define vpFeatureBuilder_H
+*****************************************************************************/
 
 /*!
   \file vpFeatureBuilder.h
   \brief  class  that defines conversion between tracker and visual feature
 */
+
+#ifndef vpFeatureBuilder_H
+#define vpFeatureBuilder_H
+
+
 #include <visp3/core/vpConfig.h>
 
 // tracker
@@ -83,6 +81,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpFeatureBuilder
 
@@ -156,4 +155,5 @@ public:
                      const vpImagePoint &line1_ip2, const vpImagePoint &line2_ip1, const vpImagePoint &line2_ip2,
                      unsigned int select);
 };
+END_VISP_NAMESPACE
 #endif

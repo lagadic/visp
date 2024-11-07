@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,24 +28,22 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Descriptor for various invariants used to drive space roations around X and
- *Y axis.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ * Descriptor for various invariants used to drive space rotations around X and
+ * Y axis.
+ */
 /*!
   \file vpMomentCInvariant.h
-  \brief Descriptor for various invariants used to drive space roations around
+  \brief Descriptor for various invariants used to drive space rotations around
   X and Y axis.
 */
 #ifndef _vpMomentCInvariant_h_
 #define _vpMomentCInvariant_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentCentered;
 class vpMomentBasic;
 
@@ -56,73 +53,76 @@ class vpMomentBasic;
   \ingroup group_core_moments
 
   This class defines several 2D (translation+rotation+scale) invariants for
-both symmetric and non-symmetric objects. These moment-based invariants are
-described in the following papers \cite Chaumette04a, \cite Tahri05z.
+  both symmetric and non-symmetric objects. These moment-based invariants are
+  described in the following papers \cite Chaumette04a, \cite Tahri05z.
 
   The descriptions for the invariants \f$C_1\f$ to \f$C_{10}\f$ can be found
-in \cite Chaumette04a and for invariants
-\f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in \cite Tahri05z.
+  in \cite Chaumette04a and for invariants
+  \f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in \cite Tahri05z.
 
   These invariants are classicaly used in visual servoing to control the
-out-of-plane rotations. The C-type or P-type invariants are used for
-non-symmetric objects whereas the S-type invariants are used for symmetric
-objects.
+  out-of-plane rotations. The C-type or P-type invariants are used for
+  non-symmetric objects whereas the S-type invariants are used for symmetric
+  objects.
 
   For most cases of non-symmetric objects, (\f$C_4\f$,\f$C_6\f$) or
-(\f$P_x\f$,\f$P_y\f$) couples are widely used to control x and y rotations.
+  (\f$P_x\f$,\f$P_y\f$) couples are widely used to control x and y rotations.
   For symmetric objects \f$S_x\f$ and \f$S_y\f$ are the only choice.
 
   There are 14 translation+rotation+scale invariants (10 C-type, 2 P-type and
-2 S-type) that can be accessed from by vpMomentCInvariant::get or any of the
-get shortcuts.
+  2 S-type) that can be accessed from by vpMomentCInvariant::get or any of the
+  get shortcuts.
 
   The example below shows how to retrieve the \f$C_2\f$ invariant:
   \code
-#include <iostream>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  #include <iostream>
+  #include <visp3/core/vpMomentCInvariant.h>
+  #include <visp3/core/vpMomentCommon.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  vpPoint p;
-  std::vector<vpPoint> vec_p;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(2); p.set_y(3); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(0); p.set_y(1.2); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
+  int main()
+  {
+    vpPoint p;
+    std::vector<vpPoint> vec_p;
 
-  vpMomentObject obj(5); // Create an image moment object with 5 as maximum order
-  obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
-  obj.fromVector(vec_p);
+    p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(2); p.set_y(3); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
+    p.set_x(0); p.set_y(1.2); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
 
-  //initialisation with default values
-  vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),
-                    vpMomentCommon::getAlpha(obj),1.);
-  bool success;
+    vpMomentObject obj(5); // Create an image moment object with 5 as maximum order
+    obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
+    obj.fromVector(vec_p);
 
-  db.updateAll(obj); // Update AND compute all moments
+    //initialisation with default values
+    vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),
+                      vpMomentCommon::getAlpha(obj),1.);
+    bool success;
 
-  //get C-invariant
-  const vpMomentCInvariant& C
-    = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
-  if(success)
-      std::cout << C.get(1) << std:: endl; // print C2 invariant
-  else
-      std::cout << "vpMomentCInvariant not found." << std::endl;
+    db.updateAll(obj); // Update AND compute all moments
 
-  return 0;
-}
-\endcode
+    //get C-invariant
+    const vpMomentCInvariant& C
+      = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+    if(success)
+        std::cout << C.get(1) << std:: endl; // print C2 invariant
+    else
+        std::cout << "vpMomentCInvariant not found." << std::endl;
 
-vpMomentCInvariant depends on vpMomentCentered (see vpMomentDatabase and
-vpMomentCommon).
+    return 0;
+  }
+  \endcode
+
+  vpMomentCInvariant depends on vpMomentCentered (see vpMomentDatabase and vpMomentCommon).
 */
 class VISP_EXPORT vpMomentCInvariant : public vpMoment
 {
@@ -144,8 +144,7 @@ private:
   bool flg_sxsynormalization_;
 
 public:
-  explicit vpMomentCInvariant(bool flg_sxsynormalization = false);
-  virtual ~vpMomentCInvariant(){};
+  VP_EXPLICIT vpMomentCInvariant(bool flg_sxsynormalization = false);
 
   /*!
     Shorcut for getting the value of \f$C_1\f$.
@@ -229,7 +228,7 @@ public:
   /*!
     Moment name.
     */
-  const char *name() const { return "vpMomentCInvariant"; }
+  const std::string name() const { return "vpMomentCInvariant"; }
 
   /*!
     Print partial invariant.
@@ -284,4 +283,5 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant &v);
 };
+END_VISP_NAMESPACE
 #endif

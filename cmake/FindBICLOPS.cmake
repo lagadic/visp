@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,97 +30,94 @@
 #
 # Description:
 # Try to find libBiclops, libPMD and libUtils for Biclops head.
-# Once run this will define: 
+# Once run this will define:
 #
 # BICLOPS_FOUND
 # BICLOPS_INCLUDE_DIRS
 # BICLOPS_LIBRARIES
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 
-IF(NOT UNIX AND NOT WIN32)
-  # MESSAGE("FindBICLOPS.cmake: macro only for Unix and Windows for the moment.")
-  SET(BICLOPS_FOUND FALSE)
-ELSE(NOT UNIX AND NOT WIN32)
+if(NOT UNIX AND NOT WIN32)
+  # message("FindBICLOPS.cmake: macro only for Unix and Windows for the moment.")
+  set(BICLOPS_FOUND FALSE)
+else(NOT UNIX AND NOT WIN32)
 
-  FIND_PATH(BICLOPS_INCLUDE_DIR Biclops.h
+  find_path(BICLOPS_INCLUDE_DIR Biclops.h
     $ENV{BICLOPS_HOME}/include
     /usr/include )
-  	
-  #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")  
 
-  FIND_PATH(PMD_INCLUDE_DIR PMD.h
+  #message("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
+
+  find_path(PMD_INCLUDE_DIR PMD.h
     $ENV{BICLOPS_HOME}/include
     $ENV{BICLOPS_PMD_HOME}/include
     /usr/include )
 
-  FIND_PATH(UTILS_INCLUDE_DIR utility.h
+  find_path(UTILS_INCLUDE_DIR utility.h
     $ENV{BICLOPS_HOME}/include
     $ENV{BICLOPS_UTILS_HOME}/include
     /usr/include )
 
-  FIND_LIBRARY(BICLOPS_LIBRARY
+  find_library(BICLOPS_LIBRARY
     NAMES Biclops libBiclops libBiclopsD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     /usr/lib
     )
 
-  FIND_LIBRARY(PMD_LIBRARY
+  find_library(PMD_LIBRARY
     NAMES PMD libPMD libPMDD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     $ENV{BICLOPS_PMD_HOME}/lib
     /usr/lib
     )
 
-  FIND_LIBRARY(UTILS_LIBRARY
+  find_library(UTILS_LIBRARY
     NAMES Utils libUtils libUtilsD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     $ENV{BICLOPS_UTILS_HOME}/lib
     /usr/lib
     )
-  #MESSAGE("DBG BICLOPS_LIBRARY=${BICLOPS_LIBRARY}")
+  #message("DBG BICLOPS_LIBRARY=${BICLOPS_LIBRARY}")
 
   ## --------------------------------
 
-  IF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
-    SET(BICLOPS_LIBRARIES ${BICLOPS_LIBRARY} ${PMD_LIBRARY} ${UTILS_LIBRARY})
-  ELSE(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
-#     MESSAGE(SEND_ERROR "Biclops library not found. Set USE_BICLOPS option OFF")
-  ENDIF(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+  if(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+    set(BICLOPS_LIBRARIES ${BICLOPS_LIBRARY} ${PMD_LIBRARY} ${UTILS_LIBRARY})
+  else(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
+#     message(SEND_ERROR "Biclops library not found. Set USE_BICLOPS option OFF")
+  endif(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
 
-  IF(NOT BICLOPS_INCLUDE_DIR)
-#     MESSAGE(SEND_ERROR "Biclops include dir not found. Set USE_BICLOPS option OFF")
-  ENDIF(NOT BICLOPS_INCLUDE_DIR)
- 
-  IF(NOT PMD_INCLUDE_DIR)
-#     MESSAGE(SEND_ERROR "PMD include dir not found. Set USE_BICLOPS option OFF")
-  ENDIF(NOT PMD_INCLUDE_DIR)
-  
-  IF(NOT UTILS_INCLUDE_DIR)
-#     MESSAGE(SEND_ERROR "Utils include dir not found. Set USE_BICLOPS option OFF ")
-  ENDIF(NOT UTILS_INCLUDE_DIR)
+  if(NOT BICLOPS_INCLUDE_DIR)
+#     message(SEND_ERROR "Biclops include dir not found. Set USE_BICLOPS option OFF")
+  endif(NOT BICLOPS_INCLUDE_DIR)
 
-  IF(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
-    SET(BICLOPS_INCLUDE_DIRS ${BICLOPS_INCLUDE_DIR} ${PMD_INCLUDE_DIR} ${UTILS_INCLUDE_DIR})
-  ENDIF(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  if(NOT PMD_INCLUDE_DIR)
+#     message(SEND_ERROR "PMD include dir not found. Set USE_BICLOPS option OFF")
+  endif(NOT PMD_INCLUDE_DIR)
 
-  IF(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  if(NOT UTILS_INCLUDE_DIR)
+#     message(SEND_ERROR "Utils include dir not found. Set USE_BICLOPS option OFF ")
+  endif(NOT UTILS_INCLUDE_DIR)
+
+  if(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+    set(BICLOPS_INCLUDE_DIRS ${BICLOPS_INCLUDE_DIR} ${PMD_INCLUDE_DIR} ${UTILS_INCLUDE_DIR})
+  endif(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+
+  if(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
     #message("BICLOPS_LIBRARIES: ${BICLOPS_LIBRARIES}")
     #message("BICLOPS_INCLUDE_DIRS: ${BICLOPS_INCLUDE_DIRS}")
 
     # Try to compile a sample code using Biclops library to see if GetHomedState() is available
-    #SET(BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION FALSE)
+    #set(BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION FALSE)
     include(CheckCXXSourceCompiles)
 
-    SET(CMAKE_REQUIRED_LIBRARIES ${BICLOPS_LIBRARIES})
-    SET(CMAKE_REQUIRED_INCLUDES  ${BICLOPS_INCLUDE_DIRS})
+    set(CMAKE_REQUIRED_LIBRARIES ${BICLOPS_LIBRARIES})
+    set(CMAKE_REQUIRED_INCLUDES  ${BICLOPS_INCLUDE_DIRS})
     CHECK_CXX_SOURCE_COMPILES("
       #include <PMDUtils.h>
       int main(){
@@ -130,14 +127,14 @@ ELSE(NOT UNIX AND NOT WIN32)
       }
      " BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)
 
-    #MESSAGE("DBG1 BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION ${BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION}")
+    #message("DBG1 BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION ${BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION}")
 
-    SET(BICLOPS_FOUND TRUE)
-  ELSE(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
-    SET(BICLOPS_FOUND FALSE)
-  ENDIF(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+    set(BICLOPS_FOUND TRUE)
+  else(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+    set(BICLOPS_FOUND FALSE)
+  endif(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
 
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     BICLOPS_INCLUDE_DIR
     BICLOPS_LIBRARIES
     BICLOPS_LIBRARY
@@ -146,4 +143,4 @@ ELSE(NOT UNIX AND NOT WIN32)
     PMD_LIBRARY
     UTILS_LIBRARY
     )
-ENDIF(NOT UNIX AND NOT WIN32)
+endif(NOT UNIX AND NOT WIN32)

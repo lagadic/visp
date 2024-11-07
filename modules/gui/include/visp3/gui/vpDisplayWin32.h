@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,22 +29,19 @@
  *
  * Description:
  * Windows 32 display base class
- *
- * Authors:
- * Bruno Renier
- *
- *****************************************************************************/
+ */
+
+
+#ifndef VP_DISPLAY_WIN32_H
+#define VP_DISPLAY_WIN32_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDisplay.h>
 
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
-#ifndef vpDisplayWin32_hh
-#define vpDisplayWin32_hh
-
 #include <string>
 
-#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
@@ -56,11 +52,14 @@
 #include <visp3/gui/vpWin32Window.h>
 #include <windows.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
-  Used to pass parameters to the window's thread.
+ * Used to pass parameters to the window's thread.
 */
-struct threadParam {
+struct threadParam
+{
   //! Pointer to the display associated with the window.
   vpDisplayWin32 *vpDisp;
 
@@ -82,16 +81,14 @@ struct threadParam {
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 /*!
-  \class vpDisplayWin32
-
-  \brief Base abstract class for Windows 32 displays.
-  Implements the window creation in a separate thread
-  and the associated event handling functions for
-  Windows 32 displays.
-  Uses calls to a renderer to do some display.
-  (i.e. all display methods are implemented in the renderer)
-
-  \author Bruno Renier
+ * \class vpDisplayWin32
+ *
+ * \brief Base abstract class for Windows 32 displays.
+ * Implements the window creation in a separate thread
+ * and the associated event handling functions for
+ * Windows 32 displays.
+ * Uses calls to a renderer to do some display.
+ * (i.e. all display methods are implemented in the renderer)
 */
 class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 {
@@ -118,82 +115,82 @@ protected:
   friend void vpCreateWindow(threadParam *param);
 
 public:
-  explicit vpDisplayWin32(vpWin32Renderer *rend = NULL);
+  VP_EXPLICIT vpDisplayWin32(vpWin32Renderer *rend = nullptr);
 
   vpDisplayWin32(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
 
   vpDisplayWin32(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
 
-  virtual ~vpDisplayWin32();
+  virtual ~vpDisplayWin32() VP_OVERRIDE;
 
-  void clearDisplay(const vpColor &color = vpColor::white);
-  void closeDisplay();
-  void displayImage(const vpImage<vpRGBa> &I);
-  void displayImage(const vpImage<unsigned char> &I);
+  void clearDisplay(const vpColor &color = vpColor::white) VP_OVERRIDE;
+  void closeDisplay() VP_OVERRIDE;
+  void displayImage(const vpImage<vpRGBa> &I) VP_OVERRIDE;
+  void displayImage(const vpImage<unsigned char> &I) VP_OVERRIDE;
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+                       unsigned int height) VP_OVERRIDE;
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  void flushDisplay();
-  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void flushDisplay() VP_OVERRIDE;
+  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height) VP_OVERRIDE;
 
-  void getImage(vpImage<vpRGBa> &I);
-  unsigned int getScreenHeight();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-  unsigned int getScreenWidth();
+  void getImage(vpImage<vpRGBa> &I) VP_OVERRIDE;
+  unsigned int getScreenHeight() VP_OVERRIDE;
+  void getScreenSize(unsigned int &width, unsigned int &height) VP_OVERRIDE;
+  unsigned int getScreenWidth() VP_OVERRIDE;
 
-  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "");
+  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "") VP_OVERRIDE;
+  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "") VP_OVERRIDE;
+  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "") VP_OVERRIDE;
 
-  void setFont(const std::string &fontname);
+  void setFont(const std::string &fontname) VP_OVERRIDE;
   void setDownScalingFactor(unsigned int scale)
   {
     window.setScale(scale);
     m_scale = scale;
   }
   void setDownScalingFactor(vpScaleType scaleType) { m_scaleType = scaleType; }
-  void setTitle(const std::string &windowtitle);
-  void setWindowPosition(int winx, int winy);
+  void setTitle(const std::string &windowtitle) VP_OVERRIDE;
+  void setWindowPosition(int winx, int winy) VP_OVERRIDE;
 
 protected:
   void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color = vpColor::white,
-                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
-
-  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green);
+                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) VP_OVERRIDE;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                     unsigned int thickness = 1);
+                     unsigned int thickness = 1) VP_OVERRIDE;
 
-  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
+  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
   void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                      unsigned int thickness = 1);
+                      unsigned int thickness = 1) VP_OVERRIDE;
 
-  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1);
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
-  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1) VP_OVERRIDE;
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
-  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1) VP_OVERRIDE;
 
-  bool getClick(bool blocking = true);
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color = vpColor::green) VP_OVERRIDE;
 
-  bool getClick(vpImagePoint &ip, bool blocking = true);
+  bool getClick(bool blocking = true) VP_OVERRIDE;
+  bool getClick(vpImagePoint &ip, bool blocking = true) VP_OVERRIDE;
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) VP_OVERRIDE;
+  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) VP_OVERRIDE;
 
-  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true);
-
-  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true);
-  bool getKeyboardEvent(bool blocking = true);
-  bool getKeyboardEvent(std::string &key, bool blocking);
-  bool getPointerMotionEvent(vpImagePoint &ip);
-  bool getPointerPosition(vpImagePoint &ip);
+  bool getKeyboardEvent(bool blocking = true) VP_OVERRIDE;
+  bool getKeyboardEvent(std::string &key, bool blocking) VP_OVERRIDE;
+  bool getPointerMotionEvent(vpImagePoint &ip) VP_OVERRIDE;
+  bool getPointerPosition(vpImagePoint &ip) VP_OVERRIDE;
 
   void waitForInit();
 };
+
+END_VISP_NAMESPACE
 #endif
 #endif

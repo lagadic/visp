@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,24 +29,20 @@
  *
  * Description:
  * M-Estimator and various influence function.
- *
- * Authors:
- * Andrew Comport
- * Jean Laneurit
- *
- *****************************************************************************/
+ */
 
 /*!
- \file vpRobust.h
+  \file vpRobust.h
 */
 
-#ifndef vpRobust_h
-#define vpRobust_h
+#ifndef VP_ROBUST_H
+#define VP_ROBUST_H
 
-#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobust
   \ingroup group_core_robust
@@ -89,12 +84,83 @@ class VISP_EXPORT vpRobust
 {
 public:
   //! Enumeration of influence functions
-  typedef enum {
+  typedef enum
+  {
     TUKEY,  //!< Tukey influence function.
     CAUCHY, //!< Cauchy influence function.
     HUBER   //!< Huber influence function.
   } vpRobustEstimatorType;
 
+public:
+  vpRobust();
+  vpRobust(const vpRobust &other);
+
+  //! Destructor
+  virtual ~vpRobust() { };
+
+  /*!
+   * Return residual vector Median Absolute Deviation (MAD).
+   * This value is updated after a call to MEstimator(). It corresponds to
+   * value of \f$ \sigma = 1.48{Med}(|r_i - {Med}(r_i)|) \f$.
+   * This value cannot be lower than the min value returned by getMinMedianAbsoluteDeviation()
+   * or set with setMinMedianAbsoluteDeviation().
+   *
+   * \sa setMinMedianAbsoluteDeviation()
+   */
+  double getMedianAbsoluteDeviation() { return m_mad; };
+
+  /*!
+   * Return the min value used to threshold residual vector Median Absolute Deviation (MAD).
+   * This value corresponds to the minimal value of \f$\sigma\f$ computed in MEstimator().
+   *
+   * \sa setMinMedianAbsoluteDeviation()
+   */
+  double getMinMedianAbsoluteDeviation() { return m_mad_min; };
+
+  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
+
+  vpRobust &operator=(const vpRobust &other);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRobust &operator=(const vpRobust &&other);
+#endif
+
+  /*!
+   * Set minimal median absolute deviation (MAD) value corresponding to the minimal value of
+   * \f$\sigma\f$ computed in MEstimator() with
+   * \f$ \sigma = 1.48{Med}(|r_i - {Med}(r_i)|) \f$.
+   * \param mad_min : Minimal Median Absolute Deviation value.
+   * Default value is set to 0.0017 in the default constructor.
+   *
+   * \sa getMinMedianAbsoluteDeviation()
+   */
+  inline void setMinMedianAbsoluteDeviation(double mad_min) { m_mad_min = mad_min; }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  VP_DEPRECATED VP_EXPLICIT vpRobust(unsigned int n_data);
+  //! Compute the weights according a residue vector and a PsiFunction
+  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, const vpColVector &all_residues,
+                  vpColVector &weights);
+  /*!
+   * \deprecated Set iteration. This function is to call before simultMEstimator().
+   * \param iter : The first call iter should be set to 0.
+   */
+  VP_DEPRECATED void setIteration(unsigned int iter) { m_iter = iter; }
+  /*!
+    \deprecated You should rather use setMinMedianAbsoluteDeviation().
+    Set minimal median absolute deviation (MAD) value.
+    Given the input vector or residual, when MAD(residual) < mad_min
+    we set MAD(residual) = mad_min.
+    \param mad_min : Minimal Median Absolute Deviation value.
+    Default value is set to 0.0017 in the default constructor.
+  */
+  VP_DEPRECATED inline void setThreshold(double mad_min) { m_mad_min = mad_min; }
+  VP_DEPRECATED vpColVector simultMEstimator(vpColVector &residues);
+  //@}
+#endif
 private:
   //! Normalized residue
   vpColVector m_normres;
@@ -116,76 +182,6 @@ private:
   //! Residual vector Median Absolute Deviation
   double m_mad;
 
-public:
-  vpRobust();
-  vpRobust(const vpRobust &other);
-
-  //! Destructor
-  virtual ~vpRobust(){};
-
-  /*!
-   * Return residual vector Median Absolute Deviation (MAD).
-   * This value is updated after a call to MEstimator(). It corresponds to
-   * value of \f$ \sigma = 1.48{Med}(|r_i - {Med}(r_i)|) \f$.
-   * This value cannot be lower than the min value returned by getMinMedianAbsoluteDeviation()
-   * or set with setMinMedianAbsoluteDeviation().
-   *
-   * \sa setMinMedianAbsoluteDeviation()
-   */
-  double getMedianAbsoluteDeviation() { return m_mad; };
-
-  /*!
-   * Return the min value used to threshold residual vector Median Absolute Deviation (MAD).
-   * This value corresponds to the mimimal value of \f$\sigma\f$ computed in MEstimator().
-   *
-   * \sa setMinMedianAbsoluteDeviation()
-   */
-  double getMinMedianAbsoluteDeviation() { return m_mad_min; };
-
-  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
-
-  vpRobust &operator=(const vpRobust &other);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRobust &operator=(const vpRobust &&other);
-#endif
-
-  /*!
-   * Set minimal median absolute deviation (MAD) value corresponding to the mimimal value of
-   * \f$\sigma\f$ computed in MEstimator() with
-   * \f$ \sigma = 1.48{Med}(|r_i - {Med}(r_i)|) \f$.
-   * \param mad_min : Minimal Median Absolute Deviation value.
-   * Default value is set to 0.0017 in the default constructor.
-   *
-   * \sa getMinMedianAbsoluteDeviation()
-   */
-  inline void setMinMedianAbsoluteDeviation(double mad_min) { m_mad_min = mad_min; }
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  /*!
-    @name Deprecated functions
-  */
-  //@{
-  vp_deprecated explicit vpRobust(unsigned int n_data);
-  //! Compute the weights according a residue vector and a PsiFunction
-  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, const vpColVector &all_residues,
-                  vpColVector &weights);
-  /*!
-   * \deprecated Set iteration. This function is to call before simultMEstimator().
-   * \param iter : The first call iter should be set to 0.
-   */
-  vp_deprecated void setIteration(unsigned int iter) { m_iter = iter; }
-  /*!
-    \deprecated You should rather use setMinMedianAbsoluteDeviation().
-    Set minimal median absolute deviation (MAD) value.
-    Given the input vector or residual, when MAD(residual) < mad_min
-    we set MAD(residual) = mad_min.
-    \param mad_min : Minimal Median Absolute Deviation value.
-    Default value is set to 0.0017 in the default constructor.
-  */
-  vp_deprecated inline void setThreshold(double mad_min) { m_mad_min = mad_min; }
-  vp_deprecated vpColVector simultMEstimator(vpColVector &residues);
-  //@}
-#endif
 private:
   //! Resize containers for sort methods
   void resize(unsigned int n_data);
@@ -249,5 +245,5 @@ private:
   double select(vpColVector &a, int l, int r, int k);
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

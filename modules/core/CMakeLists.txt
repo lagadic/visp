@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,16 +31,25 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 #vp_define_module(core)
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
+
+if(WITH_LAPACK)
+  # lapack is private
+  set(opt_libs_private ${LAPACK_LIBRARIES})
+endif()
+
+# Add library ws2_32.a or ws2_32.lib for vpNetwork class
+if(WS2_32_FOUND)
+  list(APPEND opt_libs ${WS2_32_LIBRARY})
+endif()
 
 # OpenCV
 if(USE_OPENCV)
@@ -148,12 +157,30 @@ if(USE_OPENCV)
     list(APPEND opt_libs ${OpenCV_LIBS})
   endif()
   if(OpenCV_INCLUDE_DIRS)
+    # Append OpenCV include dirs as system to avoid warnings coming from OpenCV headers
     list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
   endif()
 endif(USE_OPENCV)
 
 if(USE_YARP)
-  list(APPEND opt_incs ${YARP_INCLUDE_DIRS})
+  foreach(lib_ ${YARP_LIBRARIES})
+    get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+    if(imported_libs_)
+      list(APPEND YARP_LIBS ${lib_})
+      list(APPEND YARP_IMPORTED_LIBS ${imported_libs_})
+    else()
+      list(APPEND YARP_LIBS ${lib_})
+    endif()
+
+    get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+    if(imported_incs_)
+      list(APPEND YARP_IMPORTED_INCLUDE_DIRS ${imported_incs_})
+    endif()
+  endforeach()
+  vp_list_unique(YARP_IMPORTED_LIBS)
+  vp_list_unique(YARP_IMPORTED_INCLUDE_DIRS)
+
+  list(APPEND opt_incs ${YARP_IMPORTED_INCLUDE_DIRS})
 
   # Work around to add Yarp libraries and also third party libraries requested by Yarp
   list(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
@@ -174,47 +201,39 @@ if(USE_YARP)
       else()
         list(APPEND opt_libs ${YARP_LIB}) # Append full absolute library path and name
       endif()
-      # Get 3rd party libraries requested by Yarp
-      get_target_property(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}")
-      list(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
     endforeach()
   endforeach()
-
-  # Remove Yarp libraries since they were added previously with full absolute library path and name
-  if(YARP_LINK_LIBS)
-    foreach(lib ${YARP_LIBRARIES})
-      list(REMOVE_ITEM YARP_LINK_LIBS ${lib})
-    endforeach()
-  endif()
-  # Add 3rd party libraries requested by Yarp
-  list(APPEND opt_libs ${YARP_LINK_LIBS})
-  add_definitions(${YARP_DEFINES})
 endif(USE_YARP)
 
-# Math: eigen3, gsl, lapack, OpenCV
+# Math: eigen3, gsl, mkl, openblas, atlas, netlib, OpenCV
 if(USE_EIGEN3)
   if(EIGEN3_INCLUDE_DIRS)
-    list(APPEND opt_incs ${EIGEN3_INCLUDE_DIRS})
+    list(APPEND opt_system_incs ${EIGEN3_INCLUDE_DIRS})
   else()
-    list(APPEND opt_incs ${EIGEN3_INCLUDE_DIR})
+    list(APPEND opt_system_incs ${EIGEN3_INCLUDE_DIR})
   endif()
 endif()
+
 if(USE_GSL)
   list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
   list(APPEND opt_libs ${GSL_LIBRARIES})
 endif()
+
 if(USE_MKL)
   list(APPEND opt_incs ${MKL_INCLUDE_DIRS})
   list(APPEND opt_libs ${MKL_LIBRARIES})
 endif()
+
 if(USE_OPENBLAS)
   list(APPEND opt_incs ${OpenBLAS_INCLUDE_DIR})
   list(APPEND opt_libs ${OpenBLAS_LIBRARIES})
 endif()
+
 if(USE_ATLAS)
   list(APPEND opt_incs ${Atlas_INCLUDE_DIR})
   list(APPEND opt_libs ${Atlas_LIBRARIES})
 endif()
+
 if(USE_NETLIB)
   list(APPEND opt_libs ${NETLIB_LIBRARIES})
 endif()
@@ -224,137 +243,61 @@ if(USE_XML2)
   list(APPEND opt_incs ${XML2_INCLUDE_DIRS})
   list(APPEND opt_libs ${XML2_LIBRARIES})
 endif()
-if(USE_PTHREAD)
-  list(APPEND opt_incs ${PTHREAD_INCLUDE_DIRS})
-  list(APPEND opt_libs ${PTHREAD_LIBRARIES})
+
+if(USE_THREADS)
+  if(CMAKE_THREAD_LIBS_INIT)
+    list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
+  endif()
 endif()
+
 if(USE_ZLIB)
   list(APPEND opt_incs ${ZLIB_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
+
 if(USE_OPENMP)
   list(APPEND opt_incs ${OpenMP_CXX_INCLUDE_DIRS})
-  list(APPEND opt_libs ${OpenMP_CXX_LIBRARIES})
+  # Because there is an explicit link to libpthread location that breaks visp conda package usage on linux
+  # we cannot use OpenMP_CXX_LIBRARIES that contains /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so;/usr/lib/x86_64-linux-gnu/libpthread.a
+  # by adding:
+  # list(APPEND opt_libs ${OpenMP_CXX_LIBRARIES})
+  foreach(lib_ ${OpenMP_CXX_LIB_NAMES})
+    if("x${lib_}" STREQUAL "xpthread")
+      if(CMAKE_THREAD_LIBS_INIT)
+        list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
+      endif()
+    else()
+      list(APPEND opt_libs ${OpenMP_${lib_}_LIBRARY})
+    endif()
+  endforeach()
 endif()
-if(USE_NLOHMANN_JSON)
+
+if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
 
-# pugixml is always enabled to provide default XML I/O capabilities
-# pugixml is private
-include_directories(${PUGIXML_INCLUDE_DIRS})
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
+if(USE_PCL)
+  list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
+  # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
+  # and PCL_DEPS_LIBRARIES instead
+  list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
+  list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
-
-if(MSVC)
-  # Disable Visual C++ C4996 warning
-  # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead
-  # warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead
-  # warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead
-  if(BUILD_SHARED_LIBS)
-    vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd4996)
-    vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp /wd4996)
-    vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd4996)
-    vp_set_source_file_compile_flag(src/math/random-generator/vpUniRand.cpp /wd4146)
-    if(BUILD_TESTS)
-      vp_set_source_file_compile_flag(test/network/testClient.cpp /wd4996)
-      vp_set_source_file_compile_flag(test/network/testServer.cpp /wd4996)
-    endif()
-  else()
-    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4996)
-  endif()
+if(WITH_PUGIXML)
+  # pugixml is private and provides default XML I/O capabilities
+  include_directories(${PUGIXML_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 endif()
 
-if(USE_EIGEN3)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy -Wno-shadow -Wno-maybe-uninitialized)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy -Wno-shadow)
-  vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
-  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
-  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context -Wno-shadow)
-  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context -Wno-shadow)
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 
-vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow -Wno-sign-compare -Wno-float-equal)
-vp_set_source_file_compile_flag(src/image/vpImageFilter.cpp -Wno-strict-overflow -Wno-float-equal)
-vp_set_source_file_compile_flag(src/image/vpImageTools.cpp -Wno-strict-overflow  -Wno-float-equal)
-vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/tools/optimization/vpQuadProg.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/tools/optimization/vpLinProg.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/munkres/vpMunkres.cpp /wd26812 /wd4244)
-vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(test/image/testImageOwnership.cpp -Wno-pessimizing-move)
-vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
-
-if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/camera/vpColorDepthConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/camera/vpMeterPixelConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/camera/vpPixelMeterConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/display/vpDisplay.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/display/vpDisplay_rgba.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/display/vpDisplay_uchar.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/display/vpFeatureDisplay.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/vpGaussianFilter.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/image/vpImageDraw.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_cholesky.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/tools/convert/vpConvert.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/tools/geometry/vpPolygon.cpp -Wno-float-equal -Wno-strict-overflow)
-  vp_set_source_file_compile_flag(src/tools/geometry/vpPolygon3D.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/tracking/moments/vpMomentObject.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/camera/testCameraParametersConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image/testImageResize.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image/testImageMorphology.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testColorConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testCrop.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testCropAdvanced.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testGaussianFilter.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageAddSub.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageFilter.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageComparison.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageNormalizedCorrelation.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageTemplateMatching.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testImageWarp.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testIoPGM.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testIoPPM.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testReadImage.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testPerformanceLUT.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/testUndistortImage.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfImageAddSub.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfImageMorphology.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfImageResize.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfImageWarp.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfGaussianFilter.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image-with-dataset/perfColorConversion.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image/testImageDraw.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/image/testImageDifference.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/math/testMomentAlpha.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/tools/convert/testConvert.cpp -Wno-float-equal)
-  vp_set_source_file_compile_flag(test/tools/histogram-with-dataset/testHistogram.cpp -Wno-float-equal)
-endif()
-
-if(USE_XML2)
-  if(MSVC)
-    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp /wd4996)
-    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp /wd4996)
-  else()
-    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp -Wno-deprecated-declarations)
-    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp -Wno-deprecated-declarations)
-  endif()
-endif()
-
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
+vp_add_module(core PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 
 #-----------------------------------------------------------------------------
 # Enable large file support
@@ -372,12 +315,29 @@ endif()
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
 vp_glob_module_sources(SOURCES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
-vp_module_include_directories(${opt_incs})
+vp_module_include_directories(${opt_incs} SYSTEM ${opt_system_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
-vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
+
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+endif()
+
+vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 # copy data for testing
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 # copy font
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
+
+if(UNIX)
+  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-misleading-indentation -Wno-strict-aliasing)
+  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
+else()
+  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
+endif()

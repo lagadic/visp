@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in articular
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
@@ -75,6 +75,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpRobotViper850 robot;
 
@@ -284,7 +288,6 @@ int main()
         }
         h_s = beta * h_s / 2.0; // cost function
         e2 *= beta;
-        //	std::cout << e2.t() << std::endl;
         std::cout << "Cost function h_s: " << h_s << std::endl;
 
         sec_task = task.secondaryTask(e2, de2dt);
@@ -323,7 +326,8 @@ int main()
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

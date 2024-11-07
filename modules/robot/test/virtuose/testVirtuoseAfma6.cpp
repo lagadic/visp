@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * Test for Virtuose SDK wrapper.
- *
- * Authors:
- * Fabien Spindler
- * Nicolò Pedemonte
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testVirtuoseAfma6.cpp
@@ -51,6 +45,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if defined(VISP_HAVE_VIRTUOSE) && defined(VISP_HAVE_AFMA6)
   vpRobotAfma6 robot;
   try {
@@ -79,7 +76,7 @@ int main()
     std::cout << "rMv:\n" << rMv << std::endl;
     vpVelocityTwistMatrix rVv(rMv);
 
-    // Set the extrinsic camera parameters obtained with a perpective
+    // Set the extrinsic camera parameters obtained with a perspective
     // projection model including a distortion parameter
     robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
     // Initialize the controller to position control
@@ -112,11 +109,13 @@ int main()
           force_feedback_robot[i] = (max[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] <= -force_limit)
             force_feedback_robot[i] = -force_limit;
-        } else if (robot_cart_position[i] <= min[i]) {
+        }
+        else if (robot_cart_position[i] <= min[i]) {
           force_feedback_robot[i] = (min[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] >= force_limit)
             force_feedback_robot[i] = force_limit;
-        } else
+        }
+        else
           force_feedback_robot[i] = 0;
       }
       vpColVector force_feedback_virt = rMv.getRotationMatrix().inverse() * force_feedback_robot;
@@ -138,7 +137,8 @@ int main()
     robot.stopMotion();
     virtuose.setPowerOff();
     std::cout << "The end" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     robot.stopMotion();
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }

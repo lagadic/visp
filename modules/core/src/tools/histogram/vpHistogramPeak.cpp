@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +30,8 @@
  * Description:
  * Gray level histogram manipulation.
  *
- * Author:
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpHistogramPeak.cpp
@@ -45,15 +42,16 @@
 
 #include <visp3/core/vpHistogramPeak.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  Defaut constructor for a gray level histogram peak.
+  Default constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
+vpHistogramPeak::vpHistogramPeak() : level(0), value(0) { }
 
 /*!
-  Defaut constructor for a gray level histogram peak.
+  Default constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) {}
+vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) { }
 
 /*!
   Copy constructor of a gray level histogram peak.
@@ -94,11 +92,11 @@ bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const { return ((leve
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 {
 
-  s << (int)p.getLevel() << " " << p.getValue();
+  s << static_cast<int>(p.getLevel()) << " " << p.getValue();
 
   return s;
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

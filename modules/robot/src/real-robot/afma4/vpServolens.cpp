@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,7 +32,7 @@
  * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 
@@ -59,13 +59,14 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpServolens.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor. Does nothing.
 
   \sa open()
 
 */
-vpServolens::vpServolens() : remfd(0), isinit(false) {}
+vpServolens::vpServolens() : remfd(0), isinit(false) { }
 
 /*!
   Open and initialize the Servolens serial link at 9600 bauds, 7
@@ -240,7 +241,7 @@ void vpServolens::init() const
   cmd = "VW0";
   this->write(cmd.c_str());
 
-  /* L'experience montre qu'une petite tempo est utile.		*/
+  /* L'experience montre qu'une petite tempo est utile. */
   vpTime::wait(500);
 }
 
@@ -512,16 +513,19 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
         if (c >= '0' && c <= '9') {
           *pt_posit++ = c; /* sauvegarde de la position */
           lecture_posit_en_cours = 1;
-        } else if (lecture_posit_en_cours) {
+        }
+        else if (lecture_posit_en_cours) {
           fin_lect_posit = 1;
           *pt_posit = '\0';
-        } else
+        }
+        else
           posit_car = 0;
         break;
       }
 
-    } else {
-      // Timout sur la lecture, on retoure FALSE
+    }
+    else {
+   // Timout sur la lecture, on retoure FALSE
       return false;
     }
   } while (!fin_lect_posit);
@@ -540,25 +544,29 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 /*!
 
   These parameters are computed from the Dragonfly2 DR2-COL camera sensor
-pixel size (7.4 um) and from the servolens zoom position.
+  pixel size (7.4 um) and from the servolens zoom position.
 
   \param I : An image coming from the Dragonfly2 camera attached to the
   servolens.
 
-\code
-#include <visp3/vs/vpServolens.h>
+  \code
+  #include <visp3/vs/vpServolens.h>
 
-int main()
-{
-  // UNIX vpServolens servolens("/dev/ttyS0");
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I(240, 320);
-  vpCameraParameters cam = servolens.getCameraParameters(I);
-  std::cout << "Camera parameters: " << cam << std::endl;
-#endif
-  }
-\endcode
+  int main()
+  {
+    // UNIX vpServolens servolens("/dev/ttyS0");
+  #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+
+    vpImage<unsigned char> I(240, 320);
+    vpCameraParameters cam = servolens.getCameraParameters(I);
+    std::cout << "Camera parameters: " << cam << std::endl;
+  #endif
+    }
+  \endcode
 
   \exception vpRobotException::communicationError : If cannot dial with Servolens.
 
@@ -710,12 +718,12 @@ bool vpServolens::read(char *c, long timeout_s) const
   }
 
   fd_set readfds;                          /* list of fds for select to listen to */
-  struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
+  struct timeval timeout = { timeout_s, 0 }; // seconde, micro-sec
 
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
 
-  if (select(FD_SETSIZE, &readfds, (fd_set *)NULL, (fd_set *)NULL, &timeout) > 0) {
+  if (select(FD_SETSIZE, &readfds, (fd_set *)nullptr, (fd_set *)nullptr, &timeout) > 0) {
     ssize_t n = ::read(this->remfd, c, 1); /* read one character at a time */
     if (n != 1)
       return false;
@@ -793,5 +801,5 @@ bool vpServolens::clean(const char *in, char *out) const
   }
   return (error);
 }
-
+END_VISP_NAMESPACE
 #endif

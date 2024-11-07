@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,31 +30,30 @@
  * Description:
  * Point feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpFeatureDisplay.h>
-#include <visp3/core/vpPoint.h>
+*****************************************************************************/
 
 /*!
   \file vpPoint.cpp
   \brief Class that defines what is a 3D point.
 */
 
+#include <visp3/core/vpFeatureDisplay.h>
+#include <visp3/core/vpPoint.h>
+
+BEGIN_VISP_NAMESPACE
 void vpPoint::init()
 {
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   p.resize(3);
   p = 0;
-  p[2] = 1;
+  p[index_2] = 1.;
   oP.resize(4);
-  oP = 0;
-  oP[3] = 1;
+  oP = 0.;
+  oP[index_3] = 1.;
   cP.resize(4);
-  cP = 0;
-  cP[3] = 1;
+  cP = 0.;
+  cP[index_3] = 1.;
 
   // default value Z (1 meters)
   set_Z(1);
@@ -112,10 +110,14 @@ vpPoint::vpPoint(const std::vector<double> &oP_)
 */
 void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 {
-  oP[0] = oX;
-  oP[1] = oY;
-  oP[2] = oZ;
-  oP[3] = 1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  oP[index_0] = oX;
+  oP[index_1] = oY;
+  oP[index_2] = oZ;
+  oP[index_3] = 1;
 }
 
 /*!
@@ -130,18 +132,27 @@ void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 */
 void vpPoint::setWorldCoordinates(const vpColVector &oP_)
 {
-  if (oP_.size() == 3) {
-    oP[0] = oP_[0];
-    oP[1] = oP_[1];
-    oP[2] = oP_[2];
-    oP[3] = 1.;
-  } else if (oP_.size() == 4) {
-    oP[0] = oP_[0];
-    oP[1] = oP_[1];
-    oP[2] = oP_[2];
-    oP[3] = oP_[3];
-    oP /= oP[3];
-  } else {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_3 = 3;
+  const unsigned int val_4 = 4;
+
+  if (oP_.size() == val_3) {
+    oP[index_0] = oP_[index_0];
+    oP[index_1] = oP_[index_1];
+    oP[index_2] = oP_[index_2];
+    oP[index_3] = 1.;
+  }
+  else if (oP_.size() == val_4) {
+    oP[index_0] = oP_[index_0];
+    oP[index_1] = oP_[index_1];
+    oP[index_2] = oP_[index_2];
+    oP[index_3] = oP_[index_3];
+    oP /= oP[index_3];
+  }
+  else {
     throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", oP_.size()));
   }
 }
@@ -158,18 +169,27 @@ void vpPoint::setWorldCoordinates(const vpColVector &oP_)
 */
 void vpPoint::setWorldCoordinates(const std::vector<double> &oP_)
 {
-  if (oP_.size() == 3) {
-    oP[0] = oP_[0];
-    oP[1] = oP_[1];
-    oP[2] = oP_[2];
-    oP[3] = 1.;
-  } else if (oP_.size() == 4) {
-    oP[0] = oP_[0];
-    oP[1] = oP_[1];
-    oP[2] = oP_[2];
-    oP[3] = oP_[3];
-    oP /= oP[3];
-  } else {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_3 = 3;
+  const unsigned int val_4 = 4;
+
+  if (oP_.size() == val_3) {
+    oP[index_0] = oP_[index_0];
+    oP[index_1] = oP_[index_1];
+    oP[index_2] = oP_[index_2];
+    oP[index_3] = 1.;
+  }
+  else if (oP_.size() == val_4) {
+    oP[index_0] = oP_[index_0];
+    oP[index_1] = oP_[index_1];
+    oP[index_2] = oP_[index_2];
+    oP[index_3] = oP_[index_3];
+    oP /= oP[index_3];
+  }
+  else {
     throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", oP_.size()));
   }
 }
@@ -177,9 +197,12 @@ void vpPoint::setWorldCoordinates(const std::vector<double> &oP_)
 //! Get the point object frame coordinates.
 void vpPoint::getWorldCoordinates(double &oX, double &oY, double &oZ)
 {
-  oX = oP[0];
-  oY = oP[1];
-  oZ = oP[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  oX = oP[index_0];
+  oY = oP[index_1];
+  oZ = oP[index_2];
 }
 
 /*!
@@ -199,8 +222,10 @@ void vpPoint::getWorldCoordinates(vpColVector &oP_) { oP_ = oP; }
 void vpPoint::getWorldCoordinates(std::vector<double> &oP_)
 {
   oP_.resize(oP.size());
-  for (unsigned int i = 0; i < oP.size(); i++)
+  unsigned int oP_size = oP.size();
+  for (unsigned int i = 0; i < oP_size; ++i) {
     oP_[i] = oP[i];
+  }
 }
 
 /*!
@@ -214,18 +239,21 @@ vpColVector vpPoint::getWorldCoordinates(void) { return this->oP; }
 /*!
   Compute the perspective projection of a point _cP.
 
-  \param _cP : 3-dim vector cP = (cX, cY, cZ) or 4-dim vector cP = (cX, cY, cZ, 1) corresponding
+  \param v_cP : 3-dim vector cP = (cX, cY, cZ) or 4-dim vector cP = (cX, cY, cZ, 1) corresponding
   to the normalized coordinates of the 3D point in the camera frame.
-  \param _p : Coordinates of the point in the
+  \param v_p : Coordinates of the point in the
   image plane obtained by perspective projection.
 */
-void vpPoint::projection(const vpColVector &_cP, vpColVector &_p) const
+void vpPoint::projection(const vpColVector &v_cP, vpColVector &v_p) const
 {
-  _p.resize(3, false);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  v_p.resize(3, false);
 
-  _p[0] = _cP[0] / _cP[2];
-  _p[1] = _cP[1] / _cP[2];
-  _p[2] = 1;
+  v_p[index_0] = v_cP[index_0] / v_cP[index_2];
+  v_p[index_1] = v_cP[index_1] / v_cP[index_2];
+  v_p[index_2] = 1;
 }
 
 /*!
@@ -234,22 +262,26 @@ void vpPoint::projection(const vpColVector &_cP, vpColVector &_p) const
   3D coordinates of the point in the camera frame cP = cMo * oP.
 
   \param cMo : Transformation from camera to object frame.
-  \param _cP : 3D normalized coordinates of the point in the camera frame cP = (cX, cY, cZ, 1).
+  \param v_cP : 3D normalized coordinates of the point in the camera frame cP = (cX, cY, cZ, 1).
 */
-void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) const
+void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &v_cP) const
 {
-  _cP.resize(4, false);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  v_cP.resize(4, false);
 
-  _cP[0] = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
-  _cP[1] = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
-  _cP[2] = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
-  _cP[3] = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
+  v_cP[index_0] = (cMo[index_0][index_0] * oP[index_0]) + (cMo[index_0][index_1] * oP[index_1]) + (cMo[index_0][index_2] * oP[index_2]) + (cMo[index_0][index_3] * oP[index_3]);
+  v_cP[index_1] = (cMo[index_1][index_0] * oP[index_0]) + (cMo[index_1][index_1] * oP[index_1]) + (cMo[index_1][index_2] * oP[index_2]) + (cMo[index_1][index_3] * oP[index_3]);
+  v_cP[index_2] = (cMo[index_2][index_0] * oP[index_0]) + (cMo[index_2][index_1] * oP[index_1]) + (cMo[index_2][index_2] * oP[index_2]) + (cMo[index_2][index_3] * oP[index_3]);
+  v_cP[index_3] = (cMo[index_3][index_0] * oP[index_0]) + (cMo[index_3][index_1] * oP[index_1]) + (cMo[index_3][index_2] * oP[index_2]) + (cMo[index_3][index_3] * oP[index_3]);
 
-  double d = 1 / _cP[3];
-  _cP[0] *= d;
-  _cP[1] *= d;
-  _cP[2] *= d;
-  _cP[3] *= d;
+  double d = 1 / v_cP[index_3];
+  v_cP[index_0] *= d;
+  v_cP[index_1] *= d;
+  v_cP[index_2] *= d;
+  v_cP[index_3] *= d;
 }
 
 /*!
@@ -262,93 +294,22 @@ void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) cons
 */
 void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-  double X = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
-  double Y = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
-  double Z = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
-  double W = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  double X = (cMo[index_0][index_0] * oP[index_0]) + (cMo[index_0][index_1] * oP[index_1]) + (cMo[index_0][index_2] * oP[index_2]) + (cMo[index_0][index_3] * oP[index_3]);
+  double Y = (cMo[index_1][index_0] * oP[index_0]) + (cMo[index_1][index_1] * oP[index_1]) + (cMo[index_1][index_2] * oP[index_2]) + (cMo[index_1][index_3] * oP[index_3]);
+  double Z = (cMo[index_2][index_0] * oP[index_0]) + (cMo[index_2][index_1] * oP[index_1]) + (cMo[index_2][index_2] * oP[index_2]) + (cMo[index_2][index_3] * oP[index_3]);
+  double W = (cMo[index_3][index_0] * oP[index_0]) + (cMo[index_3][index_1] * oP[index_1]) + (cMo[index_3][index_2] * oP[index_2]) + (cMo[index_3][index_3] * oP[index_3]);
 
-  double d = 1 / W;
-  cP[0] = X * d;
-  cP[1] = Y * d;
-  cP[2] = Z * d;
-  cP[3] = 1;
+  double d = 1. / W;
+  cP[index_0] = X * d;
+  cP[index_1] = Y * d;
+  cP[index_2] = Z * d;
+  cP[index_3] = 1.;
 }
 
-#if 0
-/*!
-  From the coordinates of the point in camera frame b and the transformation between
-  camera frame a and camera frame b computes the coordinates of the point in camera frame a.
-
-  \param aMb : 3D transformation between camera frame a and b.
-  \param bP : 3D coordinates of the point in camera frame bP.
-
-  \return A point with 3D coordinates in the camera frame a. The coordinates in the world or object
-  frame are set to the same coordinates than the one in the camera frame.
-*/
-const vpPoint
-operator*(const vpHomogeneousMatrix &aMb, const vpPoint& bP)
-{
-  vpPoint aP ;
-
-  vpColVector v(4),v1(4) ;
-
-  v[0] = bP.get_X() ;
-  v[1] = bP.get_Y() ;
-  v[2] = bP.get_Z() ;
-  v[3] = bP.get_W() ;
-
-  v1[0] = aMb[0][0]*v[0] + aMb[0][1]*v[1]+ aMb[0][2]*v[2]+ aMb[0][3]*v[3] ;
-  v1[1] = aMb[1][0]*v[0] + aMb[1][1]*v[1]+ aMb[1][2]*v[2]+ aMb[1][3]*v[3] ;
-  v1[2] = aMb[2][0]*v[0] + aMb[2][1]*v[1]+ aMb[2][2]*v[2]+ aMb[2][3]*v[3] ;
-  v1[3] = aMb[3][0]*v[0] + aMb[3][1]*v[1]+ aMb[3][2]*v[2]+ aMb[3][3]*v[3] ;
-
-  v1 /= v1[3] ;
-
-  //  v1 = M*v ;
-  aP.set_X(v1[0]) ;
-  aP.set_Y(v1[1]) ;
-  aP.set_Z(v1[2]) ;
-  aP.set_W(v1[3]) ;
-
-  aP.set_oX(v1[0]) ;
-  aP.set_oY(v1[1]) ;
-  aP.set_oZ(v1[2]) ;
-  aP.set_oW(v1[3]) ;
-
-  return aP ;
-}
-
-/*!
-  From the coordinates of the point in image plane b and the homography between image
-  a and b computes the coordinates of the point in image plane a.
-
-  \param aHb : Homography between image a and b.
-  \param bP : 2D coordinates of the point in the image plane b.
-
-  \return A point with 2D coordinates in the image plane a.
-*/
-const vpPoint
-operator*(const vpHomography &aHb, const vpPoint& bP)
-{
-  vpPoint aP ;
-  vpColVector v(3),v1(3) ;
-
-  v[0] = bP.get_x() ;
-  v[1] = bP.get_y() ;
-  v[2] = bP.get_w() ;
-
-  v1[0] = aHb[0][0]*v[0] + aHb[0][1]*v[1]+ aHb[0][2]*v[2] ;
-  v1[1] = aHb[1][0]*v[0] + aHb[1][1]*v[1]+ aHb[1][2]*v[2] ;
-  v1[2] = aHb[2][0]*v[0] + aHb[2][1]*v[1]+ aHb[2][2]*v[2] ;
-
-  //  v1 = M*v ;
-  aP.set_x(v1[0]) ;
-  aP.set_y(v1[1]) ;
-  aP.set_w(v1[2]) ;
-
-  return aP ;
-}
-#endif
 //! For memory issue (used by the vpServo class only).
 vpPoint *vpPoint::duplicate() const
 {
@@ -370,15 +331,16 @@ vpPoint *vpPoint::duplicate() const
 void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const vpColor &color, unsigned int thickness)
 {
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  const unsigned int index_2 = 2;
 
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-
-  if (_cP[2] < 0) // no display if point is behind the camera
+  if (v_cP[index_2] < 0) { // no display if point is behind the camera
     return;
+  }
 
-  vpPoint::projection(_cP, _p);
-  vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
+  vpPoint::projection(v_cP, v_p);
+  vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
 
 /*!
@@ -395,29 +357,17 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix
 void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  const unsigned int index_2 = 2;
 
-  if (_cP[2] < 0) // no display if point is behind the camera
+  if (v_cP[index_2] < 0) { // no display if point is behind the camera
     return;
+  }
 
-  vpPoint::projection(_cP, _p);
-  vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
+  vpPoint::projection(v_cP, v_p);
+  vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
-
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
-
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-vpPoint &vpPoint::operator=(const vpPoint &vpp)
-{
-  p = vpp.p;
-  cP = vpp.cP;
-  oP = vpp.oP;
-  cPAvailable = vpp.cPAvailable;
-
-  return *this;
-}
-#endif
 
 /*!
  * Display the projection of a 3D point in image \e I.
@@ -449,29 +399,29 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, c
 
 // Get coordinates
 //! Get the point cX coordinate in the camera frame.
-double vpPoint::get_X() const { return cP[0]; }
+double vpPoint::get_X() const { const unsigned int index_0 = 0; return cP[index_0]; }
 //! Get the point cY coordinate in the camera frame.
-double vpPoint::get_Y() const { return cP[1]; }
+double vpPoint::get_Y() const { const unsigned int index_1 = 1; return cP[index_1]; }
 //! Get the point cZ coordinate in the camera frame.
-double vpPoint::get_Z() const { return cP[2]; }
+double vpPoint::get_Z() const { const unsigned int index_2 = 2; return cP[index_2]; }
 //! Get the point cW coordinate in the camera frame.
-double vpPoint::get_W() const { return cP[3]; }
+double vpPoint::get_W() const { const unsigned int index_3 = 3; return cP[index_3]; }
 
 //! Get the point oX coordinate in the object frame.
-double vpPoint::get_oX() const { return oP[0]; }
+double vpPoint::get_oX() const { const unsigned int index_0 = 0; return oP[index_0]; }
 //! Get the point oY coordinate in the object frame.
-double vpPoint::get_oY() const { return oP[1]; }
+double vpPoint::get_oY() const { const unsigned int index_1 = 1; return oP[index_1]; }
 //! Get the point oZ coordinate in the object frame.
-double vpPoint::get_oZ() const { return oP[2]; }
+double vpPoint::get_oZ() const { const unsigned int index_2 = 2; return oP[index_2]; }
 //! Get the point oW coordinate in the object frame.
-double vpPoint::get_oW() const { return oP[3]; }
+double vpPoint::get_oW() const { const unsigned int index_3 = 3; return oP[index_3]; }
 
 //! Get the point x coordinate in the image plane.
-double vpPoint::get_x() const { return p[0]; }
+double vpPoint::get_x() const { const unsigned int index_0 = 0; return p[index_0]; }
 //! Get the point y coordinate in the image plane.
-double vpPoint::get_y() const { return p[1]; }
+double vpPoint::get_y() const { const unsigned int index_1 = 1; return p[index_1]; }
 //! Get the point w coordinate in the image plane.
-double vpPoint::get_w() const { return p[2]; }
+double vpPoint::get_w() const { const unsigned int index_2 = 2; return p[index_2]; }
 
 /*!
   Perspective projection of the 3D point.
@@ -483,33 +433,39 @@ double vpPoint::get_w() const { return p[2]; }
 */
 void vpPoint::projection()
 {
-  double d = 1 / cP[2];
-  p[0] = cP[0] * d;
-  p[1] = cP[1] * d;
-  p[2] = 1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  double d = 1 / cP[index_2];
+  p[index_0] = cP[index_0] * d;
+  p[index_1] = cP[index_1] * d;
+  p[index_2] = 1;
 }
 
 //! Set the point cX coordinate in the camera frame.
-void vpPoint::set_X(double cX) { cP[0] = cX; }
+void vpPoint::set_X(double cX) { const unsigned int index_0 = 0; cP[index_0] = cX; }
 //! Set the point cY coordinate in the camera frame.
-void vpPoint::set_Y(double cY) { cP[1] = cY; }
+void vpPoint::set_Y(double cY) { const unsigned int index_1 = 1; cP[index_1] = cY; }
 //! Set the point cZ coordinate in the camera frame.
-void vpPoint::set_Z(double cZ) { cP[2] = cZ; }
+void vpPoint::set_Z(double cZ) { const unsigned int index_2 = 2; cP[index_2] = cZ; }
 //! Set the point cW coordinate in the camera frame.
-void vpPoint::set_W(double cW) { cP[3] = cW; }
+void vpPoint::set_W(double cW) { const unsigned int index_3 = 3; cP[index_3] = cW; }
 
 //! Set the point oX coordinate in the object frame.
-void vpPoint::set_oX(double oX) { oP[0] = oX; }
+void vpPoint::set_oX(double oX) { const unsigned int index_0 = 0; oP[index_0] = oX; }
 //! Set the point oY coordinate in the object frame.
-void vpPoint::set_oY(double oY) { oP[1] = oY; }
+void vpPoint::set_oY(double oY) { const unsigned int index_1 = 1; oP[index_1] = oY; }
 //! Set the point oZ coordinate in the object frame.
-void vpPoint::set_oZ(double oZ) { oP[2] = oZ; }
+void vpPoint::set_oZ(double oZ) { const unsigned int index_2 = 2; oP[index_2] = oZ; }
 //! Set the point oW coordinate in the object frame.
-void vpPoint::set_oW(double oW) { oP[3] = oW; }
+void vpPoint::set_oW(double oW) { const unsigned int index_3 = 3; oP[index_3] = oW; }
 
 //! Set the point x coordinate in the image plane.
-void vpPoint::set_x(double x) { p[0] = x; }
+void vpPoint::set_x(double x) { const unsigned int index_0 = 0;  p[index_0] = x; }
 //! Set the point y coordinate in the image plane.
-void vpPoint::set_y(double y) { p[1] = y; }
+void vpPoint::set_y(double y) { const unsigned int index_1 = 1; p[index_1] = y; }
 //! Set the point w coordinate in the image plane.
-void vpPoint::set_w(double w) { p[2] = w; }
+void vpPoint::set_w(double w) { const unsigned int index_2 = 2; p[index_2] = w; }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
+END_VISP_NAMESPACE

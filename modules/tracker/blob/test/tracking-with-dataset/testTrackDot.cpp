@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * Test auto detection of dots.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 #include <iomanip>
 #include <sstream>
@@ -67,6 +61,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
 
@@ -147,7 +145,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       ipath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], nullptr, ipath);
       return false;
       break;
 
@@ -160,7 +158,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], nullptr, ipath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -204,24 +202,24 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], nullptr, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -241,11 +239,12 @@ int main(int argc, const char **argv)
       vpCTRACE << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+        << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -280,7 +279,8 @@ int main(int argc, const char **argv)
     dot.initTracking(I, ip);
     if (opt_display) {
       dot.setGraphics(true);
-    } else {
+    }
+    else {
       dot.setGraphics(false);
     }
     dot.setComputeMoments(true);
@@ -303,7 +303,8 @@ int main(int argc, const char **argv)
       }
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

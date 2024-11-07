@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example of sequential calls to QP solver
  *
- * Authors:
- * Olivier Kermorgant
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file quadprog.cpp
 
@@ -50,7 +47,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <visp3/core/vpQuadProg.h>
 #include <visp3/core/vpTime.h>
@@ -59,6 +56,10 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   const int n = 20; // x dim
   const int m = 10; // equality m < n
   const int p = 30; // inequality
@@ -76,26 +77,26 @@ int main(int argc, char **argv)
       opt_click_allowed = false;
     else
 #endif
-        if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
-      std::cout << "\nOptions: \n"
+      if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
+        std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
+        std::cout << "\nOptions: \n"
 #ifdef VISP_HAVE_DISPLAY
-                   "  -d \n"
-                   "     Disable the image display. This can be useful \n"
-                   "     for automatic tests using crontab under Unix or \n"
-                   "     using the task manager under Windows.\n"
-                   "\n"
-                   "  -c \n"
-                   "     Disable the mouse click. Useful to automate the \n"
-                   "     execution of this program without human intervention.\n"
-                   "\n"
+          "  -d \n"
+          "     Disable the image display. This can be useful \n"
+          "     for automatic tests using crontab under Unix or \n"
+          "     using the task manager under Windows.\n"
+          "\n"
+          "  -c \n"
+          "     Disable the mouse click. Useful to automate the \n"
+          "     execution of this program without human intervention.\n"
+          "\n"
 #endif
-                   "  -h, --help\n"
-                   "     Print the help.\n"
-                << std::endl;
+          "  -h, --help\n"
+          "     Print the help.\n"
+          << std::endl;
 
-      return EXIT_SUCCESS;
-    }
+        return EXIT_SUCCESS;
+      }
   }
   std::srand((long)vpTime::measureTimeMs());
 
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
   r = randV(o) * 5;
   C = randM(p, n) * 5;
 
-  // make sure Cx <= d has a solution within Ax = b
+    // make sure Cx <= d has a solution within Ax = b
   vpColVector x = A.solveBySVD(b);
   d = C * x;
   for (int i = 0; i < p; ++i)
@@ -123,9 +124,9 @@ int main(int argc, char **argv)
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
-  QPlot *plot = NULL;
+  QPlot *plot = nullptr;
   if (opt_display)
-    plot = new QPlot(1, total, {"time to solveQP", "warm start"});
+    plot = new QPlot(1, total, { "time to solveQP", "warm start" });
 #endif
 
   for (int k = 0; k < total; ++k) {

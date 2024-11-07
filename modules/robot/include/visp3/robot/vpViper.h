@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,36 +31,35 @@
  * Description:
  * Interface for a  generic ADEPT Viper (either 650 or 850) robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef vpViper_h
-#define vpViper_h
+*****************************************************************************/
 
 /*!
 
   \file vpViper.h
 
-  Modelisation of the ADEPT Viper 650 or 850 robot.
+  Modelization of the ADEPT Viper 650 or 850 robot.
 
 */
 
+#ifndef vpViper_h
+#define vpViper_h
+
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpViper
 
   \ingroup group_robot_real_arm group_robot_simu_arm
 
-  \brief Modelisation of the ADEPT Viper robot
+  \brief Modelization of the ADEPT Viper robot
 
   This robot has six degrees of freedom. The model of the robot is the
   following: \image html model-viper.png Model of the Viper 850 robot.
@@ -114,7 +113,7 @@ class VISP_EXPORT vpViper
 {
 public:
   vpViper();
-  virtual ~vpViper(){};
+  virtual ~vpViper() { };
 
   /** @name Inherited functionalities from vpViper */
   //@{
@@ -172,5 +171,5 @@ protected:
   vpColVector joint_max; // Maximal value of the joints
   vpColVector joint_min; // Minimal value of the joints
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -326,8 +326,8 @@ public class JavaCamera2View extends CameraBridgeViewBase {
     private class JavaCamera2Frame implements VpCameraViewFrame {
         @Override
         public VpImageUChar gray() {
-			      if (gray == null)
-				      gray = new VpImageUChar(mYuvFrameData,w,h,true);
+            if (gray == null)
+              gray = new VpImageUChar(mYuvFrameData,w,h,true);
             return gray;
         }
 
@@ -370,12 +370,12 @@ public class JavaCamera2View extends CameraBridgeViewBase {
         }
 
         public void release() {
-			      // TODO openc-v had release() method here. Check whether we need to
+            // TODO openc-v had release() method here. Check whether we need to
         }
 
         private byte[] mYuvFrameData;
         private byte[] mUVFrameData;
-		    private VpImageUChar gray;
+        private VpImageUChar gray;
         private VpImageRGBa rgba;
         private int w;
         private int h;

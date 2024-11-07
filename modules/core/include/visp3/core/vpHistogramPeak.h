@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,26 +29,22 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpHistogramPeak.h
   \brief Declaration of the vpHistogramPeak class.
   Class vpHistogramPeak defines a gray level histogram peak.
-
 */
 
-#ifndef vpHistogramPeak_h
-#define vpHistogramPeak_h
+#ifndef VP_HISTOGRAM_PEAK_H
+#define VP_HISTOGRAM_PEAK_H
 
 #include <visp3/core/vpConfig.h>
 
 #include <ostream>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogramPeak
 
@@ -70,7 +65,7 @@ public:
   vpHistogramPeak(const vpHistogramPeak &p);
 
   /*! Destructor that does nothing. */
-  virtual ~vpHistogramPeak() {}
+  virtual ~vpHistogramPeak() { }
 
   vpHistogramPeak &operator=(const vpHistogramPeak &p);
   bool operator==(const vpHistogramPeak &p) const;
@@ -151,5 +146,5 @@ protected:
  * c-basic-offset: 2
  * End:
  */
-
+END_VISP_NAMESPACE
 #endif

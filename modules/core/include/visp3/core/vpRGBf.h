@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * 32-bit floating point RGB pixel.
- *
- *****************************************************************************/
-
-#ifndef vpRGBf_h
-#define vpRGBf_h
+ */
 
 /*!
   \file vpRGBf.h
@@ -42,7 +37,13 @@
   images (it defines a RGB 32-bit floating point structure)
 */
 
+#ifndef VP_RGBF_H
+#define VP_RGBF_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpRGBf
@@ -63,7 +64,7 @@ public:
 
     Build a black value.
   */
-  inline vpRGBf() : R(0), G(0), B(0) {}
+  inline vpRGBf() : R(0), G(0), B(0) { }
 
   /*!
     Constructor.
@@ -76,8 +77,7 @@ public:
   */
   inline vpRGBf(float r, float g, float b)
     : R(r), G(g), B(b)
-  {
-  }
+  { }
 
   /*!
     Constructor.
@@ -86,12 +86,24 @@ public:
 
     \param v : Value to set.
   */
-  inline vpRGBf(float v) : R(v), G(v), B(v) {}
+  VP_EXPLICIT inline vpRGBf(float v) : R(v), G(v), B(v) { }
+
+  /*!
+    Constructor.
+
+    Initialize all the R, G, B components to \e v.
+
+    \param v : Value to set.
+  */
+  VP_EXPLICIT inline vpRGBf(int v)
+  {
+    *this = v;
+  }
 
   /*!
     Copy constructor.
   */
-  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) {}
+  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) { }
 
   /*!
     Create a RGB value from a 3 dimensional column vector.
@@ -100,9 +112,10 @@ public:
     G=v[1]
     B=v[2]
   */
-  inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
+  VP_EXPLICIT inline vpRGBf(const vpColVector &v) : R(0), G(0), B(0) { *this = v; }
 
   vpRGBf &operator=(float v);
+  vpRGBf &operator=(int v);
   vpRGBf &operator=(const vpRGBf &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBf &operator=(const vpRGBf &&v);
@@ -129,6 +142,7 @@ public:
   float B; //!< Blue component.
 
   friend VISP_EXPORT vpRGBf operator*(double x, const vpRGBf &rgb);
+  friend VISP_EXPORT vpRGBf operator*(float x, const vpRGBf &rgb);
 };
-
+END_VISP_NAMESPACE
 #endif

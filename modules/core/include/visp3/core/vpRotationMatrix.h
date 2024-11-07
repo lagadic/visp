@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,20 +29,17 @@
  *
  * Description:
  * Rotation matrix.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef vpROTATIONMATRIX_H
-#define vpROTATIONMATRIX_H
+ */
 
 /*!
   \file vpRotationMatrix.h
   \brief Class that consider the particular case of rotation matrix
 */
 
+#ifndef VP_ROTATION_MATRIX_H
+#define VP_ROTATION_MATRIX_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoseVector.h>
@@ -54,6 +50,7 @@
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/core/vpTranslationVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRotationMatrix
 
@@ -69,54 +66,64 @@
 
   The code below shows how to create a rotation matrix, set the element values and access them:
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R;
-  R[0][0] =  0; R[0][1] =  0; R[0][2] = -1;
-  R[1][0] =  0; R[1][1] = -1; R[1][2] =  0;
-  R[2][0] = -1; R[2][1] =  0; R[2][2] =  0;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "R:" << std::endl;
-  for (unsigned int i = 0; i < R.getRows(); i++) {
-    for (unsigned int j = 0; j < R.getCols(); j++) {
-      std::cout << R[i][j] << " ";
+  int main()
+  {
+    vpRotationMatrix R;
+    R[0][0] =  0; R[0][1] =  0; R[0][2] = -1;
+    R[1][0] =  0; R[1][1] = -1; R[1][2] =  0;
+    R[2][0] = -1; R[2][1] =  0; R[2][2] =  0;
+
+    std::cout << "R:" << std::endl;
+    for (unsigned int i = 0; i < R.getRows(); ++i) {
+      for (unsigned int j = 0; j < R.getCols(); ++j) {
+        std::cout << R[i][j] << " ";
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
-}
   \endcode
   Once build, this previous code produces the following output:
   \code
-R:
-0 0 -1
-0 -1 0
--1 0 0
+  R:
+  0 0 -1
+  0 -1 0
+  -1 0 0
   \endcode
   You can also use operator<< to initialize a rotation matrix as previously:
   \code
-#include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
 
-int main()
-{
-  vpRotationMatrix R;
-  R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
-  std::cout << "R:\n" << R << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix R;
+    R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+    std::cout << "R:\n" << R << std::endl;
+  }
   \endcode
 
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpRotationMatrix.h
+  #include <visp3/code/vpRotationMatrix.h
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
-  std::cout << "R:\n" << R << std::endl;
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+    std::cout << "R:\n" << R << std::endl;
+  }
   \endcode
 */
 class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
@@ -124,33 +131,28 @@ class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
 public:
   vpRotationMatrix();
   vpRotationMatrix(const vpRotationMatrix &R);
-  explicit vpRotationMatrix(const vpHomogeneousMatrix &M);
-  explicit vpRotationMatrix(const vpThetaUVector &r);
-  explicit vpRotationMatrix(const vpPoseVector &p);
-  explicit vpRotationMatrix(const vpRzyzVector &r);
-  explicit vpRotationMatrix(const vpRxyzVector &r);
-  explicit vpRotationMatrix(const vpRzyxVector &r);
-  explicit vpRotationMatrix(const vpQuaternionVector &q);
-  explicit vpRotationMatrix(const vpMatrix &R);
+  VP_EXPLICIT vpRotationMatrix(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpRotationMatrix(const vpThetaUVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpPoseVector &p);
+  VP_EXPLICIT vpRotationMatrix(const vpRzyzVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpRxyzVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpRzyxVector &r);
+  VP_EXPLICIT vpRotationMatrix(const vpQuaternionVector &q);
+  VP_EXPLICIT vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(double tux, double tuy, double tuz);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  explicit vpRotationMatrix(const std::initializer_list<double> &list);
+  VP_EXPLICIT vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
-  /*!
-    Destructor.
-  */
-  virtual ~vpRotationMatrix() {}
-
-  vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
-  vpRotationMatrix buildFrom(const vpThetaUVector &v);
-  vpRotationMatrix buildFrom(const vpPoseVector &p);
-  vpRotationMatrix buildFrom(const vpRzyzVector &v);
-  vpRotationMatrix buildFrom(const vpRxyzVector &v);
-  vpRotationMatrix buildFrom(const vpRzyxVector &v);
-  vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
+  vpRotationMatrix &buildFrom(const vpHomogeneousMatrix &M);
+  vpRotationMatrix &buildFrom(const vpThetaUVector &v);
+  vpRotationMatrix &buildFrom(const vpPoseVector &p);
+  vpRotationMatrix &buildFrom(const vpRzyzVector &v);
+  vpRotationMatrix &buildFrom(const vpRxyzVector &v);
+  vpRotationMatrix &buildFrom(const vpRzyxVector &v);
+  vpRotationMatrix &buildFrom(const vpQuaternionVector &q);
+  vpRotationMatrix &buildFrom(const double &tux, const double &tuy, const double &tuz);
 
   void eye();
 
@@ -174,6 +176,7 @@ public:
   // operation C = A * B (A is unchanged)
   vpRotationMatrix operator*(const vpRotationMatrix &R) const;
   // operation C = A * B (A is unchanged)
+  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
   vpMatrix operator*(const vpMatrix &M) const;
   // operation v2 = A * v1 (A is unchanged)
   vpColVector operator*(const vpColVector &v) const;
@@ -215,12 +218,12 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  VP_DEPRECATED void init() { }
   /*!
      \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
-//@}
+  VP_DEPRECATED void setIdentity();
+  //@}
 #endif
 
 protected:
@@ -230,6 +233,6 @@ protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R);
-
+VISP_NAMESPACE_ADDRESSING vpRotationMatrix operator*(const double &x, const VISP_NAMESPACE_ADDRESSING vpRotationMatrix &R);
+END_VISP_NAMESPACE
 #endif

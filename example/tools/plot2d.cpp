@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,8 @@
  * Description:
  * Example which describes how to use the vpPlot class
  *
- * Author:
- * Nicolas Melchior
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example plot2d.cpp
@@ -51,6 +49,10 @@
 int main()
 {
 #if defined(VISP_HAVE_DISPLAY)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
@@ -108,15 +110,16 @@ int main()
     plot.saveData(0, "dataCos.txt", "# ");
     plot.saveData(1, "dataSin.txt", "# ");
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 
 #else
   std::cout << "Plot functionalities are not avalaible since no display is "
-               "available."
-            << std::endl;
+    "available."
+    << std::endl;
   return EXIT_SUCCESS;
 #endif
-}
+  }

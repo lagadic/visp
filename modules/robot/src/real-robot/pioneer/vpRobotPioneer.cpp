@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for Pioneer robots based on Aria 3rd party library.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotException.h>
@@ -45,13 +42,15 @@
 // This error is due to cmath header included from vpMath.h that makes
 // isfinite() ambiguous between ::isfinite() and std::isfinite()
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_PIONEER
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor that initializes Aria.
   */
-vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
+  vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
 {
   isInitialized = false;
 
@@ -127,7 +126,8 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
     this->setVel(vel_sat[0] * 1000.);         // convert velocity in mm/s
     this->setRotVel(vpMath::deg(vel_sat[1])); // convert velocity in deg/s
     this->unlock();
-  } else if (frame == vpRobot::ARTICULAR_FRAME) {
+  }
+  else if (frame == vpRobot::ARTICULAR_FRAME) {
     vel_max[0] = getMaxTranslationVelocity();
     vel_max[1] = getMaxTranslationVelocity();
 
@@ -137,7 +137,8 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
     this->setVel2(vel_sat[0] * 1000.,
                   vel_sat[1] * 1000.); // convert velocity in mm/s
     this->unlock();
-  } else {
+  }
+  else {
     throw vpRobotException(vpRobotException::wrongStateError,
                            "Cannot send the robot velocity in the specified control frame");
   }
@@ -196,12 +197,14 @@ void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     velocity[0] = this->getLeftVel() / 1000.;
     velocity[1] = this->getRightVel() / 1000;
     this->unlock();
-  } else if (frame == vpRobot::REFERENCE_FRAME) {
+  }
+  else if (frame == vpRobot::REFERENCE_FRAME) {
     this->lock();
     velocity[0] = this->getVel() / 1000.;
     velocity[1] = vpMath::rad(this->getRotVel());
     this->unlock();
-  } else {
+  }
+  else {
     throw vpRobotException(vpRobotException::wrongStateError,
                            "Cannot get the robot volocity in the specified control frame");
   }
@@ -233,9 +236,8 @@ vpColVector vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
   getVelocity(frame, velocity);
   return velocity;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no
-// symbols
-void dummy_vpRobotPioneer(){};
+// Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no symbols
+void dummy_vpRobotPioneer() { };
 #endif

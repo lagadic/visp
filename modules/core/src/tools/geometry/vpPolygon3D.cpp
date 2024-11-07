@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,31 +34,32 @@
  * Authors:
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
-#include <limits.h>
-
-#include <visp3/core/vpConfig.h>
 /*!
  \file vpPolygon3D.cpp
  \brief Implements a polygon of the model used by the model-based tracker.
 */
 
+#include <limits.h>
+
+#include <visp3/core/vpConfig.h>
+
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpPolygon3D.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 */
 vpPolygon3D::vpPolygon3D()
-  : nbpt(0), nbCornersInsidePrev(0), p(NULL), polyClipped(), clippingFlag(vpPolygon3D::NO_CLIPPING),
-    distNearClip(0.001), distFarClip(100.)
-{
-}
+  : nbpt(0), nbCornersInsidePrev(0), p(nullptr), polyClipped(), clippingFlag(vpPolygon3D::NO_CLIPPING),
+  distNearClip(0.001), distFarClip(100.)
+{ }
 
 vpPolygon3D::vpPolygon3D(const vpPolygon3D &mbtp)
-  : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev), p(NULL), polyClipped(mbtp.polyClipped),
-    clippingFlag(mbtp.clippingFlag), distNearClip(mbtp.distNearClip), distFarClip(mbtp.distFarClip)
+  : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev), p(nullptr), polyClipped(mbtp.polyClipped),
+  clippingFlag(mbtp.clippingFlag), distNearClip(mbtp.distNearClip), distFarClip(mbtp.distFarClip)
 {
   if (p)
     delete[] p;
@@ -90,9 +91,9 @@ vpPolygon3D &vpPolygon3D::operator=(const vpPolygon3D &mbtp)
 */
 vpPolygon3D::~vpPolygon3D()
 {
-  if (p != NULL) {
+  if (p != nullptr) {
     delete[] p;
-    p = NULL;
+    p = nullptr;
   }
 }
 
@@ -119,7 +120,7 @@ vpPoint &vpPolygon3D::getPoint(const unsigned int _index)
 void vpPolygon3D::setNbPoint(unsigned int nb)
 {
   nbpt = nb;
-  if (p != NULL)
+  if (p != nullptr)
     delete[] p;
   p = new vpPoint[nb];
 }
@@ -132,7 +133,7 @@ void vpPolygon3D::setNbPoint(unsigned int nb)
 */
 void vpPolygon3D::addPoint(unsigned int n, const vpPoint &P)
 {
-  // if( p!NULL && n < nbpt )
+  // if( p!nullptr && n < nbpt )
   p[n] = P;
 }
 
@@ -201,23 +202,23 @@ void vpPolygon3D::computePolygonClipped(const vpCameraParameters &cam)
             break;
           case 4:
             problem =
-                !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
-                                                          p2ClippedInfo, fovNormals[0], vpPolygon3D::LEFT_CLIPPING));
+              !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
+                                                        p2ClippedInfo, fovNormals[0], vpPolygon3D::LEFT_CLIPPING));
             break;
           case 8:
             problem =
-                !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
-                                                          p2ClippedInfo, fovNormals[1], vpPolygon3D::RIGHT_CLIPPING));
+              !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
+                                                        p2ClippedInfo, fovNormals[1], vpPolygon3D::RIGHT_CLIPPING));
             break;
           case 16:
             problem =
-                !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
-                                                          p2ClippedInfo, fovNormals[2], vpPolygon3D::UP_CLIPPING));
+              !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
+                                                        p2ClippedInfo, fovNormals[2], vpPolygon3D::UP_CLIPPING));
             break;
           case 32:
             problem =
-                !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
-                                                          p2ClippedInfo, fovNormals[3], vpPolygon3D::DOWN_CLIPPING));
+              !(vpPolygon3D::getClippedPointsFovGeneric(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo,
+                                                        p2ClippedInfo, fovNormals[3], vpPolygon3D::DOWN_CLIPPING));
             break;
           }
 
@@ -306,7 +307,8 @@ bool vpPolygon3D::getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p
       if (beta1 < M_PI / 2.0) {
         p1ClippedInfo = p1ClippedInfo | flag;
         p1Clipped = pClipped;
-      } else {
+      }
+      else {
         p2ClippedInfo = p2ClippedInfo | flag;
         p2Clipped = pClipped;
       }
@@ -361,7 +363,8 @@ bool vpPolygon3D::getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2,
         p1ClippedInfo = p1ClippedInfo | vpPolygon3D::FAR_CLIPPING;
       else
         p1ClippedInfo = p1ClippedInfo | vpPolygon3D::NEAR_CLIPPING;
-    } else {
+    }
+    else {
       p2Clipped = pClippedNear;
       if (flag == vpPolygon3D::FAR_CLIPPING)
         p2ClippedInfo = p2ClippedInfo | vpPolygon3D::FAR_CLIPPING;
@@ -645,3 +648,4 @@ bool vpPolygon3D::roiInsideImage(const vpImage<unsigned char> &I, const std::vec
 
   return true;
 }
+END_VISP_NAMESPACE

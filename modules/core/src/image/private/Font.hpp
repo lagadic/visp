@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Point and Rectangle structures for text drawing.
  *
- *****************************************************************************/
+*****************************************************************************/
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -65,7 +65,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace Font
 {
-template <typename T> struct Point {
+template <typename T> struct Point
+{
   typedef T Type; /*!< Type definition. */
 
   T x; /*!< \brief Specifies the x-coordinate of a point. */
@@ -110,19 +111,17 @@ template <> inline int Convert<int, double>(double src) { return Round(src); }
 
 template <> inline int Convert<int, float>(float src) { return Round(src); }
 
-template <typename T> inline Point<T>::Point() : x(0), y(0) {}
+template <typename T> inline Point<T>::Point() : x(0), y(0) { }
 
 template <typename T>
 template <typename TX, typename TY>
 inline Point<T>::Point(TX tx, TY ty) : x(Convert<T, TX>(tx)), y(Convert<T, TY>(ty))
-{
-}
+{ }
 
 template <typename T>
 template <class TP, template <class> class TPoint>
 inline Point<T>::Point(const TPoint<TP> &p) : x(Convert<T, TP>(p.x)), y(Convert<T, TP>(p.y))
-{
-}
+{ }
 
 template <typename T> inline Point<T> Point<T>::operator<<(int shift) const { return Point<T>(x << shift, y << shift); }
 
@@ -140,7 +139,8 @@ template <typename TP, typename TA> inline Point<TP> operator*(const TA &a, cons
   return Point<TP>(p.x * a, p.y * a);
 }
 
-template <typename T> struct Rectangle {
+template <typename T> struct Rectangle
+{
   typedef T Type; /*!< Type definition. */
 
   T left;   /*!< \brief Specifies the position of left side of a rectangle. */
@@ -362,36 +362,32 @@ template <typename T> struct Rectangle {
 
 // struct Rectangle<T> implementation:
 
-template <typename T> inline Rectangle<T>::Rectangle() : left(0), top(0), right(0), bottom(0) {}
+template <typename T> inline Rectangle<T>::Rectangle() : left(0), top(0), right(0), bottom(0) { }
 
 template <typename T>
 template <typename TL, typename TT, typename TR, typename TB>
 inline Rectangle<T>::Rectangle(TL l, TT t, TR r, TB b)
   : left(Convert<T, TL>(l)), top(Convert<T, TT>(t)), right(Convert<T, TR>(r)), bottom(Convert<T, TB>(b))
-{
-}
+{ }
 
 template <typename T>
 template <typename TLT, typename TRB>
 inline Rectangle<T>::Rectangle(const Point<TLT> &lt, const Point<TRB> &rb)
   : left(Convert<T, TLT>(lt.x)), top(Convert<T, TLT>(lt.y)), right(Convert<T, TRB>(rb.x)), bottom(Convert<T, TRB>(rb.y))
-{
-}
+{ }
 
 template <typename T>
 template <typename TRB>
 inline Rectangle<T>::Rectangle(const Point<TRB> &rb)
   : left(0), top(0), right(Convert<T, TRB>(rb.x)), bottom(Convert<T, TRB>(rb.y))
-{
-}
+{ }
 
 template <typename T>
 template <class TR, template <class> class TRectangle>
 inline Rectangle<T>::Rectangle(const TRectangle<TR> &r)
   : left(Convert<T, TR>(r.left)), top(Convert<T, TR>(r.top)), right(Convert<T, TR>(r.right)),
-    bottom(Convert<T, TR>(r.bottom))
-{
-}
+  bottom(Convert<T, TR>(r.bottom))
+{ }
 
 template <typename T>
 template <class TR, template <class> class TRectangle>
@@ -473,10 +469,10 @@ template <typename TR>
 inline Rectangle<T> Rectangle<T>::Intersection(const Rectangle<TR> &rect) const
 {
   Rectangle<T> _rect(rect);
-  T l = std::max(left, _rect.left);
-  T t = std::max(top, _rect.top);
-  T r = std::max(l, std::min(right, _rect.right));
-  T b = std::max(t, std::min(bottom, _rect.bottom));
+  T l = std::max<T>(left, _rect.left);
+  T t = std::max<T>(top, _rect.top);
+  T r = std::max<T>(l, std::min<T>(right, _rect.right));
+  T b = std::max<T>(t, std::min<T>(bottom, _rect.bottom));
   return Rectangle(l, t, r, b);
 }
 
@@ -489,13 +485,13 @@ template <typename T> template <typename TR> inline Rectangle<T> &Rectangle<T>::
 
   Rectangle<T> _r(r);
   if (left < _r.left)
-    left = std::min(_r.left, right);
+    left = std::min<T>(_r.left, right);
   if (top < _r.top)
-    top = std::min(_r.top, bottom);
+    top = std::min<T>(_r.top, bottom);
   if (right > _r.right)
-    right = std::max(_r.right, left);
+    right = std::max<T>(_r.right, left);
   if (bottom > _r.bottom)
-    bottom = std::max(_r.bottom, top);
+    bottom = std::max<T>(_r.bottom, top);
   return *this;
 }
 
@@ -507,10 +503,10 @@ template <typename T> template <typename TR> inline Rectangle<T> &Rectangle<T>::
     return *this;
 
   Rectangle<T> _r(r);
-  left = std::min(left, _r.left);
-  top = std::min(top, _r.top);
-  right = std::max(right, _r.right);
-  bottom = std::max(bottom, _r.bottom);
+  left = std::min<T>(left, _r.left);
+  top = std::min<T>(top, _r.top);
+  right = std::max<T>(right, _r.right);
+  bottom = std::max<T>(bottom, _r.bottom);
   return *this;
 }
 } // namespace Font

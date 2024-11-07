@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeSite.cpp
@@ -41,195 +39,172 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <stdlib.h>
+#include <map>
+
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeSite.h>
 
+BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+struct vpMeSiteHypothesis
+{
+  vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
+  { }
+
+  vpMeSite *site;
+  double likelihood;
+  double contrast;
+};
+
 static bool horsImage(int i, int j, int half, int rows, int cols)
 {
-  // return((i < half + 1) || ( i > (rows - half - 3) )||(j < half + 1) || (j
-  // > (cols - half - 3) )) ;
   int half_1 = half + 1;
   int half_3 = half + 3;
-  // return((i < half + 1) || ( i > (rows - half - 3) )||(j < half + 1) || (j
-  // > (cols - half - 3) )) ;
-  return ((0 < (half_1 - i)) || ((i - rows + half_3) > 0) || (0 < (half_1 - j)) || ((j - cols + half_3) > 0));
+  return ((0 < (half_1 - i)) || (((i - rows) + half_3) > 0) || (0 < (half_1 - j)) || (((j - cols) + half_3) > 0));
 }
 #endif
 
 void vpMeSite::init()
 {
   // Site components
-  alpha = 0.0;
-  convlt = 0.0;
-  weight = -1;
+  m_alpha = 0.0;
+  m_convlt = 0.0;
+  m_weight = -1;
+  m_contrastThreshold = 10000.0;
 
-  selectDisplay = NONE;
+  m_selectDisplay = NONE;
 
   // Pixel components
-  i = 0;
-  j = 0;
-  v = 0;
-  ifloat = i;
-  jfloat = j;
-  i_1 = 0;
-  j_1 = 0;
+  m_i = 0;
+  m_j = 0;
+  m_ifloat = m_i;
+  m_jfloat = m_j;
 
-  mask_sign = 1;
+  m_mask_sign = 1;
 
-  normGradient = 0;
+  m_normGradient = 0;
 
-  state = NO_SUPPRESSION;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  suppress = 0;
-#endif
+  m_state = NO_SUPPRESSION;
 }
 
 vpMeSite::vpMeSite()
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+  : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 { }
 
-vpMeSite::vpMeSite(double ip, double jp)
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+vpMeSite::vpMeSite(const double &ip, const double &jp)
+  : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 {
-  i = vpMath::round(ip);
-  j = vpMath::round(jp);
-  ifloat = ip;
-  jfloat = jp;
+  m_i = vpMath::round(ip);
+  m_j = vpMath::round(jp);
+  m_ifloat = ip;
+  m_jfloat = jp;
 }
 
-/*!
-  Copy constructor.
-*/
 vpMeSite::vpMeSite(const vpMeSite &mesite)
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+  : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
+  m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 {
   *this = mesite;
 }
 
 // More an Update than init
 // For points in meter form (to avoid approximations)
-void vpMeSite::init(double ip, double jp, double alphap)
+void vpMeSite::init(const double &ip, const double &jp, const double &alphap)
 {
-  // Note: keep old value of convlt, suppress and contrast
-  selectDisplay = NONE;
+  // Note: keep old value of m_convlt, contrast and threshold
+  m_selectDisplay = NONE;
 
-  ifloat = ip;
-  i = vpMath::round(ip);
-  jfloat = jp;
-  j = vpMath::round(jp);
-  alpha = alphap;
-  mask_sign = 1;
-
-  v = 0;
-  i_1 = 0;
-  j_1 = 0;
+  m_ifloat = ip;
+  m_i = vpMath::round(ip);
+  m_jfloat = jp;
+  m_j = vpMath::round(jp);
+  m_alpha = alphap;
+  m_mask_sign = 1;
 }
 
-// initialise with convolution
-void vpMeSite::init(double ip, double jp, double alphap, double convltp)
+// initialise with convolution()
+void vpMeSite::init(const double &ip, const double &jp, const double &alphap, const double &convltp)
 {
-  selectDisplay = NONE;
-  ifloat = ip;
-  i = (int)ip;
-  jfloat = jp;
-  j = (int)jp;
-  alpha = alphap;
-  convlt = convltp;
-  mask_sign = 1;
-
-  v = 0;
-  i_1 = 0;
-  j_1 = 0;
+  m_selectDisplay = NONE;
+  m_ifloat = ip;
+  m_i = static_cast<int>(ip);
+  m_jfloat = jp;
+  m_j = static_cast<int>(jp);
+  m_alpha = alphap;
+  m_convlt = convltp;
+  m_mask_sign = 1;
 }
+
 // initialise with convolution and sign
-void vpMeSite::init(double ip, double jp, double alphap, double convltp, int sign)
+void vpMeSite::init(const double &ip, const double &jp, const double &alphap, const double &convltp, const int &sign)
 {
-  selectDisplay = NONE;
-  ifloat = ip;
-  i = (int)ip;
-  jfloat = jp;
-  j = (int)jp;
-  alpha = alphap;
-  convlt = convltp;
-  mask_sign = sign;
+  m_selectDisplay = NONE;
+  m_ifloat = ip;
+  m_i = static_cast<int>(ip);
+  m_jfloat = jp;
+  m_j = static_cast<int>(jp);
+  m_alpha = alphap;
+  m_convlt = convltp;
+  m_mask_sign = sign;
+}
 
-  v = 0;
-  i_1 = 0;
-  j_1 = 0;
+// initialise with convolution and sign
+void vpMeSite::init(const double &ip, const double &jp, const double &alphap, const double &convltp, const int &sign, const double &contrastThreshold)
+{
+  m_selectDisplay = NONE;
+  m_ifloat = ip;
+  m_i = static_cast<int>(ip);
+  m_jfloat = jp;
+  m_j = static_cast<int>(jp);
+  m_alpha = alphap;
+  m_convlt = convltp;
+  m_mask_sign = sign;
+  m_contrastThreshold = contrastThreshold;
 }
 
 vpMeSite &vpMeSite::operator=(const vpMeSite &m)
 {
-  i = m.i;
-  j = m.j;
-  i_1 = m.i_1;
-  j_1 = m.j_1;
-  ifloat = m.ifloat;
-  jfloat = m.jfloat;
-  v = m.v;
-  mask_sign = m.mask_sign;
-  alpha = m.alpha;
-  convlt = m.convlt;
-  normGradient = m.normGradient;
-  weight = m.weight;
-  selectDisplay = m.selectDisplay;
-  state = m.state;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  suppress = m.suppress;
-#endif
+  m_i = m.m_i;
+  m_j = m.m_j;
+  m_ifloat = m.m_ifloat;
+  m_jfloat = m.m_jfloat;
+  m_mask_sign = m.m_mask_sign;
+  m_alpha = m.m_alpha;
+  m_convlt = m.m_convlt;
+  m_normGradient = m.m_normGradient;
+  m_weight = m.m_weight;
+  m_contrastThreshold = m.m_contrastThreshold;
+  m_selectDisplay = m.m_selectDisplay;
+  m_state = m.m_state;
 
   return *this;
 }
 
-// ===================================================================
-/*!
- * Construct and return the list of vpMeSite along the normal to the contour,
- * in the given range. \pre : ifloat, jfloat, and the direction of the normal
- * (alpha) have to be set. \param I : Image in which the display is performed.
- * \param range :  +/- the range within which the pixel's correspondent will
- * be sought \return Pointer to the list of query sites
- */
- // ===================================================================
-
-vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
+vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int &range) const
 {
   unsigned int range_ = static_cast<unsigned int>(range);
   // Size of query list includes the point on the line
-  vpMeSite *list_query_pixels = new vpMeSite[2 * range_ + 1];
+  vpMeSite *list_query_pixels = new vpMeSite[(2 * range_) + 1];
 
   // range : +/- the range within which the pixel's
   // correspondent will be sought
 
-  double salpha = sin(alpha);
-  double calpha = cos(alpha);
+  double salpha = sin(m_alpha);
+  double calpha = cos(m_alpha);
   int n = 0;
   vpImagePoint ip;
 
-  for (int k = -range; k <= range; k++) {
-    double ii = (ifloat + k * salpha);
-    double jj = (jfloat + k * calpha);
+  for (int k = -range; k <= range; ++k) {
+    double ii = m_ifloat + (k * salpha);
+    double jj = m_jfloat + (k * calpha);
 
     // Display
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RANGE)) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RANGE)) {
       ip.set_i(ii);
       ip.set_j(jj);
       vpDisplay::displayCross(I, ip, 1, vpColor::yellow);
@@ -237,52 +212,16 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int rang
 
     // Copy parent's convolution
     vpMeSite pel;
-    pel.init(ii, jj, alpha, convlt, mask_sign);
-    pel.setDisplay(selectDisplay); // Display
+    pel.init(ii, jj, m_alpha, m_convlt, m_mask_sign, m_contrastThreshold);
+    pel.setDisplay(m_selectDisplay); // Display
 
     // Add site to the query list
     list_query_pixels[n] = pel;
-    n++;
+    ++n;
   }
 
-  return (list_query_pixels);
+  return list_query_pixels;
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-// ===================================================================
-/*!
- * get the sign (according to the difference of values of the intensities of
- * the extremities). \pre : ifloat, jfloat, and the direction of the normal
- * (alpha) have to be set. \param I : Image in which the sign is computed.
- * \param range :  +/- the range within which the pixel's correspondent is
- * sought \post : mask_sign is computed
- */
- // ===================================================================
-void vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
-{
-
-  int k;
-
-  double salpha = sin(alpha);
-  double calpha = cos(alpha);
-
-  // First extremity
-  k = -range;
-  unsigned int i1 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j1 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
-
-  // Second extremity
-  k = range;
-  unsigned int i2 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j2 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
-
-  // TODO: Here check if i1,j1,i2,j2 > 0 else ??
-  if (I[i1][j1] > I[i2][j2])
-    mask_sign = 1;
-  else
-    mask_sign = -1;
-}
-#endif
 
 // Specific function for ME
 double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
@@ -293,401 +232,324 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
 
   double conv = 0.0;
   unsigned int msize = me->getMaskSize();
-  half = (static_cast<int>(msize) - 1) >> 1;
+  half = static_cast<int>((msize - 1) >> 1);
 
-  if (horsImage(i, j, half + me->getStrip(), height_, width_)) {
+  if (horsImage(m_i, m_j, half + me->getStrip(), height_, width_)) {
     conv = 0.0;
-    i = 0;
-    j = 0;
+    m_i = 0;
+    m_j = 0;
   }
   else {
     // Calculate tangent angle from normal
-    double theta = alpha + M_PI / 2;
+    double theta = m_alpha + (M_PI / 2);
     // Move tangent angle to within 0->M_PI for a positive
     // mask index
-    while (theta < 0)
+    while (theta < 0) {
       theta += M_PI;
-    while (theta > M_PI)
+    }
+    while (theta > M_PI) {
       theta -= M_PI;
+    }
 
     // Convert radians to degrees
-    int thetadeg = vpMath::round(theta * 180 / M_PI);
+    int thetadeg = vpMath::round((theta * 180) / M_PI);
 
-    if (abs(thetadeg) == 180) {
+    const int flatAngle = 180;
+    if (abs(thetadeg) == flatAngle) {
       thetadeg = 0;
     }
 
-    unsigned int index_mask = (unsigned int)(thetadeg / (double)me->getAngleStep());
+    unsigned int index_mask = static_cast<unsigned int>(thetadeg / static_cast<double>(me->getAngleStep()));
 
-    unsigned int i_ = static_cast<unsigned int>(i);
-    unsigned int j_ = static_cast<unsigned int>(j);
+    unsigned int i_ = static_cast<unsigned int>(m_i);
+    unsigned int j_ = static_cast<unsigned int>(m_j);
     unsigned int half_ = static_cast<unsigned int>(half);
 
     unsigned int ihalf = i_ - half_;
     unsigned int jhalf = j_ - half_;
 
-    for (unsigned int a = 0; a < msize; a++) {
+    for (unsigned int a = 0; a < msize; ++a) {
       unsigned int ihalfa = ihalf + a;
-      for (unsigned int b = 0; b < msize; b++) {
-        conv += mask_sign * me->getMask()[index_mask][a][b] *
-          //	  I(i-half+a,j-half+b) ;
-          I(ihalfa, jhalf + b);
+      for (unsigned int b = 0; b < msize; ++b) {
+        conv += m_mask_sign * me->getMask()[index_mask][a][b] * I(ihalfa, jhalf + b);
       }
     }
   }
 
-  return (conv);
+  return conv;
 }
 
-/*!
-
-  Specific function for ME.
-
-  \warning To display the moving edges graphics a call to vpDisplay::flush()
-  is needed.
-
-*/
-void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_contrast)
+void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool &test_contrast)
 {
-  //   vpMeSite  *list_query_pixels ;
-  //   int  max_rank =0 ;
-  //   int max_rank1=0 ;
-  //   int max_rank2 = 0;
-  //   double  convolution = 0 ;
-  //   double  max_convolution = 0 ;
-  //   double max = 0 ;
-  //   double contrast = 0;
-  //   //  vpDisplay::display(I) ;
-  //   //  vpERROR_TRACE("getclcik %d",me->getRange()) ;
-  //   //  vpDisplay::getClick(I) ;
-  //
-  //   // range = +/- range of pixels within which the correspondent
-  //   // of the current pixel will be sought
-  //   int range  = me->getRange() ;
-  //
-  //   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  <<
-  //   std::endl ; list_query_pixels = getQueryList(I, range) ;
-  //
-  //   double  contrast_max = 1 + me->getMu2();
-  //   double  contrast_min = 1 - me->getMu1();
-  //
-  //   // array in which likelihood ratios will be stored
-  //   double  *likelihood= new double[ 2 * range + 1 ] ;
-  //
-  //   int ii_1 = i ;
-  //   int jj_1 = j ;
-  //   i_1 = i ;
-  //   j_1 = j ;
-  //   double threshold;
-  //   threshold = me->getThreshold();
-  //
-  //   //    std::cout <<"---------------------"<<std::endl ;
-  //   for(int n = 0 ; n < 2 * range + 1 ; n++)
-  //     {
-  //
-  //       //   convolution results
-  //       convolution = list_query_pixels[n].convolution(I, me) ;
-  //
-  //       // luminance ratio of reference pixel to potential correspondent
-  //       pixel
-  //       // the luminance must be similar, hence the ratio value should
-  //       // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
-  //       if( test_contrast )
-  // 	{
-  // 	  // Include this to eliminate temporal calculation
-  // 	  if (convlt==0)
-  // 	    {
-  // 	      std::cout << "vpMeSite::track : Division by zero  convlt = 0" <<
-  // std::endl ; 	      delete []list_query_pixels ; 	      delete
-  // []likelihood;
-  // 	      throw(vpTrackingException(vpTrackingException::initializationError,
-  // 					"Division by zero")) ;
-  // 	    }
-  //
-  // // 	  contrast = fabs(convolution / convlt) ;
-  // 	  contrast = convolution / convlt ;
-  // 	  // likelihood ratios
-  // 	  if((contrast > contrast_min) && (contrast < contrast_max))
-  // 	    likelihood[n] = fabs(convolution + convlt ) ;
-  // 	  else
-  // 	    likelihood[n] = 0 ;
-  // 	}
-  //       else
-  // 	likelihood[n] = fabs(2*convolution) ;
-  //
-  //
-  //       // establishment of the maximal likelihood ratios's  rank
-  //       // in the array, the value of the likelihood ratio can now be
-  //     // referenced by its rank in the array
-  //     if (likelihood[n] > max)
-  //     {
-  //       max_convolution= convolution;
-  //       max = likelihood[n] ;
-  //       max_rank = n ;
-  //       max_rank2 = max_rank1;
-  //       max_rank1 = max_rank;
-  //     }
-  //
-  //   }
-  //
-  //   // test on the likelihood threshold if threshold==-1 then
-  //   // the me->threshold is  selected
-  //
-  //   vpImagePoint ip;
-  //
-  //   //  if (test_contrast)
-  //   if(max > threshold)
-  //     {
-  //       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
-  // 	{
-  // 	  ip.set_i( list_query_pixels[max_rank].i );
-  // 	  ip.set_j( list_query_pixels[max_rank].j );
-  // 	  vpDisplay::displayPoint(I, ip, vpColor::red);
-  // 	}
-  //
-  //       *this = list_query_pixels[max_rank] ;//The vpMeSite is replaced by
-  //       the vpMeSite of max likelihood normGradient =
-  //       vpMath::sqr(max_convolution);
-  //
-  //       convlt = max_convolution;
-  //       i_1 = ii_1; //list_query_pixels[max_rank].i ;
-  //       j_1 = jj_1; //list_query_pixels[max_rank].j ;
-  //       delete []list_query_pixels ;
-  //       delete []likelihood;
-  //     }
-  //   else //none of the query sites is better than the threshold
-  //     {
-  //       if ((selectDisplay==RANGE_RESULT)||(selectDisplay==RESULT))
-  // 	{
-  // 	  ip.set_i( list_query_pixels[max_rank].i );
-  // 	  ip.set_j( list_query_pixels[max_rank].j );
-  // 	  vpDisplay::displayPoint(I, ip, vpColor::green);
-  // 	}
-  //       normGradient = 0 ;
-  //       if(max == 0)
-  // 	suppress = 1; // contrast suppression
-  //       else
-  // 	suppress = 2; // threshold suppression
-  //
-  //       delete []list_query_pixels ;
-  //       delete []likelihood; // modif portage
-  //     }
-
   int max_rank = -1;
-  //   int max_rank1=-1 ;
-  //   int max_rank2 = -1;
   double max_convolution = 0;
   double max = 0;
   double contrast = 0;
-  //  vpDisplay::display(I) ;
-  //  vpERROR_TRACE("getclcik %d",me->range) ;
-  //  vpDisplay::getClick(I) ;
 
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
   unsigned int range = me->getRange();
+  const unsigned int normalSides = 2;
+  const unsigned int numQueries = range * normalSides + 1;
 
-  //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  <<
-  //  std::endl ;
-  vpMeSite *list_query_pixels = getQueryList(I, (int)range);
+  vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
 
   double contrast_max = 1 + me->getMu2();
   double contrast_min = 1 - me->getMu1();
 
-  // array in which likelihood ratios will be stored
-  double *likelihood = new double[2 * range + 1];
+  double threshold = computeFinalThreshold(*me);
 
-  int ii_1 = i;
-  int jj_1 = j;
-  i_1 = i;
-  j_1 = j;
-  double threshold;
-  threshold = me->getThreshold();
-  double diff = 1e6;
+  if (test_contrast) {
+    double diff = 1e6;
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      // convolution results
 
-  //    std::cout <<"---------------------"<<std::endl ;
-  for (unsigned int n = 0; n < 2 * range + 1; n++) {
-    //   convolution results
-    double convolution_ = list_query_pixels[n].convolution(I, me);
+      double convolution_ = list_query_pixels[n].convolution(I, me);
+      // luminance ratio of reference pixel to potential correspondent pixel
+      // the luminance must be similar, hence the ratio value should
+      // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
+      const double likelihood = fabs(convolution_ + m_convlt);
 
-    // luminance ratio of reference pixel to potential correspondent pixel
-    // the luminance must be similar, hence the ratio value should
-    // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
-    if (test_contrast) {
-      likelihood[n] = fabs(convolution_ + convlt);
-      if (likelihood[n] > threshold) {
-        contrast = convolution_ / convlt;
-        if ((contrast > contrast_min) && (contrast < contrast_max) && fabs(1 - contrast) < diff) {
+      if (likelihood > threshold) {
+        contrast = convolution_ / m_convlt;
+        if ((contrast > contrast_min) && (contrast < contrast_max) && (fabs(1 - contrast) < diff)) {
           diff = fabs(1 - contrast);
           max_convolution = convolution_;
-          max = likelihood[n];
-          max_rank = (int)n;
-          // 	    max_rank2 = max_rank1;
-          // 	    max_rank1 = max_rank;
+          max = likelihood;
+          max_rank = static_cast<int>(n);
         }
       }
     }
+  }
+  else { // test on contrast only
+    for (unsigned int n = 0; n < numQueries; ++n) {
 
-    else {
-      likelihood[n] = fabs(2 * convolution_);
-      if (likelihood[n] > max && likelihood[n] > threshold) {
+      // convolution results
+      double convolution_ = list_query_pixels[n].convolution(I, me);
+      const double likelihood = fabs(2 * convolution_);
+      if ((likelihood > max) && (likelihood > threshold)) {
         max_convolution = convolution_;
-        max = likelihood[n];
-        max_rank = (int)n;
-        //           max_rank2 = max_rank1;
-        //           max_rank1 = max_rank;
+        max = likelihood;
+        max_rank = static_cast<int>(n);
       }
     }
   }
 
-  // test on the likelihood threshold if threshold==-1 then
-  // the me->threshold is  selected
-
   vpImagePoint ip;
 
-  //  if (test_contrast)
   if (max_rank >= 0) {
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RESULT)) {
-      ip.set_i(list_query_pixels[max_rank].i);
-      ip.set_j(list_query_pixels[max_rank].j);
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+      ip.set_i(list_query_pixels[max_rank].m_i);
+      ip.set_j(list_query_pixels[max_rank].m_j);
       vpDisplay::displayPoint(I, ip, vpColor::red);
     }
 
     *this = list_query_pixels[max_rank]; // The vpMeSite2 is replaced by the
     // vpMeSite2 of max likelihood
-    normGradient = vpMath::sqr(max_convolution);
+    m_normGradient = vpMath::sqr(max_convolution);
 
-    convlt = max_convolution;
-    i_1 = ii_1; // list_query_pixels[max_rank].i ;
-    j_1 = jj_1; // list_query_pixels[max_rank].j ;
-    delete [] list_query_pixels;
-    delete [] likelihood;
+    m_convlt = max_convolution;
   }
   else // none of the query sites is better than the threshold
   {
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RESULT)) {
-      ip.set_i(list_query_pixels[0].i);
-      ip.set_j(list_query_pixels[0].j);
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+      ip.set_i(list_query_pixels[0].m_i);
+      ip.set_j(list_query_pixels[0].m_j);
       vpDisplay::displayPoint(I, ip, vpColor::green);
     }
-    normGradient = 0;
-    // if(contrast != 0)
-    if (std::fabs(contrast) > std::numeric_limits<double>::epsilon())
-      state = CONTRAST; // contrast suppression
-    else
-      state = THRESHOLD; // threshold suppression
+    m_normGradient = 0;
+    if (std::fabs(contrast) > std::numeric_limits<double>::epsilon()) {
+      m_state = CONTRAST; // contrast suppression
+    }
+    else {
+      m_state = THRESHOLD; // threshold suppression
+    }
 
-    delete [] list_query_pixels;
-    delete [] likelihood; // modif portage
   }
+  delete[] list_query_pixels;
 }
 
-int vpMeSite::operator!=(const vpMeSite &m) { return ((m.i != i) || (m.j != j)); }
-
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
+void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vpMe &me, const bool &test_contrast,
+std::vector<vpMeSite> &outputHypotheses, const unsigned numCandidates)
 {
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Flag: " << vpMeS.suppress
-    << "  Weight: " << vpMeS.weight);
-#else
-  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Weight: " << vpMeS.weight);
-#endif
+
+  // range = +/- range of pixels within which the correspondent
+  // of the current pixel will be sought
+  unsigned int range = me.getRange();
+  const unsigned int numQueries = range * 2 + 1;
+
+  if (numCandidates > numQueries) {
+    throw vpException(vpException::badValue, "Error in vpMeSite::track: the number of retained hypotheses cannot superior to the number of queried sites.");
+  }
+
+  vpMeSite *list_query_pixels = getQueryList(I, static_cast<int>(range));
+
+  // Insert into a map, where the key is the sorting criterion (negative likelihood or contrast diff)
+  // and the key is the ME site + its computed likelihood and contrast.
+  // After computation: iterating on the map is guaranteed to be done with the keys being sorted according to the criterion.
+  // Multimap allows to have multiple values (sites) with the same key (likelihood/contrast diff)
+  // Only the candidates that are above the threshold are kept
+  std::multimap<double, vpMeSiteHypothesis> candidates;
+
+  const double contrast_max = 1 + me.getMu2();
+  const double contrast_min = 1 - me.getMu1();
+
+  const double threshold = computeFinalThreshold(me);
+
+  // First step: compute likelihoods and contrasts for all queries
+  if (test_contrast) {
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      vpMeSite &query = list_query_pixels[n];
+      //   convolution results
+      const double convolution_ = query.convolution(I, &me);
+      // luminance ratio of reference pixel to potential correspondent pixel
+      // the luminance must be similar, hence the ratio value should
+      // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
+      const double likelihood = fabs(convolution_ + m_convlt);
+
+      query.m_convlt = convolution_;
+      const double contrast = convolution_ / m_convlt;
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(fabs(1.0 - contrast), vpMeSiteHypothesis(&query, likelihood, contrast)));
+    }
+  }
+  else { // test on likelihood only
+    for (unsigned int n = 0; n < numQueries; ++n) {
+      // convolution results
+      vpMeSite &query = list_query_pixels[n];
+      const double convolution_ = query.convolution(I, &me);
+      const double likelihood = fabs(2 * convolution_);
+      query.m_convlt = convolution_;
+      candidates.insert(std::pair<double, vpMeSiteHypothesis>(-likelihood, vpMeSiteHypothesis(&query, likelihood, 0.0)));
+    }
+  }
+  // Take first numCandidates hypotheses: map is sorted according to the likelihood/contrast difference so we can just
+  // iterate from the start
+  outputHypotheses.resize(numCandidates);
+
+  std::multimap<double, vpMeSiteHypothesis>::iterator it = candidates.begin();
+  if (test_contrast) {
+    for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
+      outputHypotheses[i] = *(it->second.site);
+      outputHypotheses[i].m_normGradient = vpMath::sqr(outputHypotheses[i].m_convlt);
+      const double likelihood = it->second.likelihood;
+      const double contrast = it->second.contrast;
+
+      if (likelihood > threshold) {
+        if (contrast <= contrast_min || contrast >= contrast_max) {
+          outputHypotheses[i].m_state = CONTRAST;
+        }
+        else {
+          outputHypotheses[i].m_state = NO_SUPPRESSION;
+        }
+      }
+      else {
+        outputHypotheses[i].m_state = THRESHOLD;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
+      outputHypotheses[i] = *(it->second.site);
+      const double likelihood = it->second.likelihood;
+      if (likelihood > threshold) {
+        outputHypotheses[i].m_state = NO_SUPPRESSION;
+      }
+      else {
+        outputHypotheses[i].m_state = THRESHOLD;
+      }
+    }
+  }
+
+  const vpMeSite &bestMatch = outputHypotheses[0];
+
+
+  if (bestMatch.m_state != NO_SUPPRESSION) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+
+      vpDisplay::displayPoint(I, bestMatch.m_i, bestMatch.m_j, vpColor::red);
+    }
+    *this = outputHypotheses[0];
+  }
+  else {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
+      vpDisplay::displayPoint(I, bestMatch.m_i, bestMatch.m_j, vpColor::green);
+    }
+    m_normGradient = 0;
+  }
+
+  delete[] list_query_pixels;
 }
 
-void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+int vpMeSite::operator!=(const vpMeSite &m) { return ((m.m_i != m_i) || (m.m_j != m_j)); }
 
-void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+
+void vpMeSite::display(const vpImage<unsigned char> &I) const { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
+
+void vpMeSite::display(const vpImage<vpRGBa> &I) const { vpMeSite::display(I, m_ifloat, m_jfloat, m_state); }
 
 // Static functions
 
-/*!
-    Display the moving edge site with a color corresponding to their state.
-
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase
-   (contrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase
-   (threshold problem).
-    - If red : The point is removed because of the robust method in the
-   virtual visual servoing (M-Estimator problem).
-    - If cyan : The point is removed because it's too close to another.
-    - Yellow otherwise
-
-    \param I : The image.
-    \param i : Pixel i of the site
-    \param j : Pixel j of the site
-    \param state : state of the site
-*/
 void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
+  const unsigned int crossSize = 3;
   switch (state) {
   case NO_SUPPRESSION:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::green, 1);
     break;
 
   case CONTRAST:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::blue, 1);
     break;
 
   case THRESHOLD:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::purple, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::purple, 1);
     break;
 
   case M_ESTIMATOR:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::red, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::red, 1);
     break;
 
-  case TOO_NEAR:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::cyan, 1);
+  case OUTSIDE_ROI_MASK:
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::cyan, 1);
     break;
 
   default:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::yellow, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), crossSize, vpColor::yellow, 1);
   }
 }
 
-/*!
-    Display the moving edge site with a color corresponding to their state.
-
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase
-   (contrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase
-   (threshold problem).
-    - If red : The point is removed because of the robust method in the
-   virtual visual servoing (M-Estimator problem).
-    - If cyan : The point is removed because it's too close to another.
-    - Yellow otherwise
-
-    \param I : The image.
-    \param i : Pixel i of the site
-    \param j : Pixel j of the site
-    \param state : state of the site
-*/
 void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
+  const unsigned int cross_size = 3;
   switch (state) {
   case NO_SUPPRESSION:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::green, 1);
     break;
 
   case CONTRAST:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::blue, 1);
     break;
 
   case THRESHOLD:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::purple, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::purple, 1);
     break;
 
   case M_ESTIMATOR:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::red, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::red, 1);
     break;
 
-  case TOO_NEAR:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::cyan, 1);
+  case OUTSIDE_ROI_MASK:
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::cyan, 1);
     break;
 
   default:
-    vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::yellow, 1);
+    vpDisplay::displayCross(I, vpImagePoint(i, j), cross_size, vpColor::yellow, 1);
   }
 }
+
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
+{
+  return (os << "Alpha: " << vpMeS.m_alpha << "  Convolution: " << vpMeS.m_convlt << "  Weight: " << vpMeS.m_weight << "  Threshold: " << vpMeS.m_contrastThreshold);
+}
+
+END_VISP_NAMESPACE

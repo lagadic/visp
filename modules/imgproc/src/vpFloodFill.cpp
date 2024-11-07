@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Flood fill algorithm.
- *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+ */
 /*
  * Copyright (c) 2004-2007, Lode Vandevenne
  *
@@ -61,7 +56,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- */
+*/
 
 /*!
   \file vpFloodFill.cpp
@@ -71,23 +66,15 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
-/*!
-  \ingroup group_imgproc_connected_components
+namespace VISP_NAMESPACE_NAME
+{
 
-  Perform the flood fill algorithm.
-
-  \param I : Input image to flood fill.
-  \param seedPoint : Seed position in the image.
-  \param oldValue : Old value to replace.
-  \param newValue : New value to flood fill.
-  \param connexity : Type of connexity.
-*/
-void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
-                   const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
+void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
+               const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Code from Lode Vandevenne tutorial.
   // Naive modification for 8-connexity implementation
-  if (oldValue == newValue || I.getSize() == 0) {
+  if ((oldValue == newValue) || (I.getSize() == 0)) {
     return;
   }
 
@@ -100,22 +87,22 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
     vpImagePoint current_seed = seed_queue.front();
     seed_queue.pop();
 
-    unsigned int x = (unsigned int)current_seed.get_j();
-    unsigned int y = (unsigned int)current_seed.get_i();
-    int x1 = (int)x;
+    unsigned int x = static_cast<unsigned int>(current_seed.get_j());
+    unsigned int y = static_cast<unsigned int>(current_seed.get_i());
+    int x1 = static_cast<int>(x);
 
     // Find most left pixel
-    while (x1 >= 0 && I[y][x1] == oldValue) {
-      x1--;
+    while ((x1 >= 0) && (I[y][x1] == oldValue)) {
+      --x1;
     }
-    x1++;
+    ++x1;
 
     bool spanAbove = false, spanBelow = false;
 
-    while (x1 < (int)I.getWidth() && I[y][x1] == oldValue) {
+    while ((x1 < static_cast<int>(I.getWidth())) && (I[y][x1] == oldValue)) {
       I[y][x1] = newValue;
 
-      if (!spanAbove && y > 0) {
+      if ((!spanAbove) && (y > 0)) {
         if (I[y - 1][x1] == oldValue) {
           // North
           spanAbove = true;
@@ -123,22 +110,23 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
         }
 
         if (connexity != vpImageMorphology::CONNEXITY_4) {
-          if (x1 > 0 && I[y - 1][x1 - 1] == oldValue) {
+          if ((x1 > 0) && (I[y - 1][x1 - 1] == oldValue)) {
             // North west
             spanAbove = true;
             seed_queue.push(vpImagePoint(y - 1, x1 - 1));
           }
-          if (x1 < (int)I.getWidth() - 1 && I[y - 1][x1 + 1] == oldValue) {
+          if ((x1 < (static_cast<int>(I.getWidth()) - 1)) && (I[y - 1][x1 + 1] == oldValue)) {
             // North east
             spanAbove = true;
             seed_queue.push(vpImagePoint(y - 1, x1 + 1));
           }
         }
-      } else if (spanAbove && y > 0 && I[y - 1][x1] != oldValue) {
+      }
+      else if (spanAbove && (y > 0) && (I[y - 1][x1] != oldValue)) {
         spanAbove = false;
       }
 
-      if (!spanBelow && y < I.getHeight() - 1) {
+      if ((!spanBelow) && (y < (I.getHeight() - 1))) {
         if (I[y + 1][x1] == oldValue) {
           // South
           seed_queue.push(vpImagePoint(y + 1, x1));
@@ -146,18 +134,19 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
         }
 
         if (connexity != vpImageMorphology::CONNEXITY_4) {
-          if (x1 > 0 && I[y + 1][x1 - 1] == oldValue) {
+          if ((x1 > 0) && (I[y + 1][x1 - 1] == oldValue)) {
             // South west
             seed_queue.push(vpImagePoint(y + 1, x1 - 1));
             spanBelow = true;
           }
-          if (x1 < (int)I.getWidth() - 1 && I[y + 1][x1 + 1] == oldValue) {
+          if ((x1 < (static_cast<int>(I.getWidth()) - 1)) && (I[y + 1][x1 + 1] == oldValue)) {
             // South east
             seed_queue.push(vpImagePoint(y + 1, x1 + 1));
             spanBelow = true;
           }
         }
-      } else if (spanBelow && y < I.getHeight() - 1 && I[y + 1][x1] != oldValue) {
+      }
+      else if (spanBelow && (y < (I.getHeight() - 1)) && (I[y + 1][x1] != oldValue)) {
         spanBelow = false;
       }
 
@@ -167,7 +156,9 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
         spanAbove = false;
       }
 
-      x1++;
+      ++x1;
     }
   }
 }
+
+} // namespace

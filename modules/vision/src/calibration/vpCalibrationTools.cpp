@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,41 +29,31 @@
  *
  * Description:
  * Camera calibration.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- *
- *****************************************************************************/
+ */
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/vision/vpCalibration.h>
 #include <visp3/vision/vpPose.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
-
-#undef MAX /* FC unused anywhere */
-#undef MIN /* FC unused anywhere */
-
+BEGIN_VISP_NAMESPACE
 void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)
 {
 
-  vpMatrix A(2 * npt, 3);
-  vpMatrix B(2 * npt, 9);
+  vpMatrix A(2 * m_npt, 3);
+  vpMatrix B(2 * m_npt, 9);
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   vpImagePoint ip;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
 
     double x0 = *it_LoX;
     double y0 = *it_LoY;
@@ -179,7 +168,8 @@ void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatr
 
   if (m_aspect_ratio > 0.) {
     resul[3] = resul[2] / m_aspect_ratio;
-  } else {
+  }
+  else {
     resul[3] = sqrt(sol[6] * sol[6] + sol[7] * sol[7] + sol[8] * sol[8] /* py */
                     - resul[1] * resul[1]);
   }
@@ -220,7 +210,7 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
 {
   std::ios::fmtflags original_flags(std::cout.flags());
   std::cout.precision(10);
-  unsigned int n_points = npt;
+  unsigned int n_points = m_npt;
 
   vpColVector oX(n_points), cX(n_points);
   vpColVector oY(n_points), cY(n_points);
@@ -233,10 +223,10 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
 
   vpImagePoint ip;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   for (unsigned int i = 0; i < n_points; i++) {
     oX[i] = *it_LoX;
@@ -259,7 +249,7 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
 
   double residu_1 = 1e12;
   double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
+  while (vpMath::equal(residu_1, r, m_threshold) == false && iter < m_nbIterMax) {
     iter++;
     residu_1 = r;
 
@@ -267,7 +257,8 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     if (m_aspect_ratio > 0.) {
       px = cam_est.get_px();
       py = px / m_aspect_ratio;
-    } else {
+    }
+    else {
       px = cam_est.get_px(); // default
       py = cam_est.get_py();
     }
@@ -319,7 +310,8 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
         L[2 * i][8] = X;
         if (m_aspect_ratio > 0.) {
           L[2 * i][8] = X;
-        } else // default
+        }
+        else // default
         {
           L[2 * i][8] = X;
           L[2 * i][9] = 0;
@@ -338,7 +330,8 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
         L[2 * i + 1][7] = 1;
         if (m_aspect_ratio > 0.) {
           L[2 * i + 1][8] = Y;
-        } else {
+        }
+        else {
           L[2 * i + 1][8] = 0;
           L[2 * i + 1][9] = Y;
         }
@@ -351,7 +344,7 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     e = Lp * error;
 
     vpColVector Tc, Tc_v(6);
-    Tc = -e * gain;
+    Tc = -e * m_gain;
 
     //   Tc_v =0 ;
     for (unsigned int i = 0; i < 6; i++)
@@ -359,7 +352,8 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
 
     if (m_aspect_ratio > 0.) {
       cam_est.initPersProjWithoutDistortion(px + Tc[8], (px + Tc[8]) / m_aspect_ratio, u0 + Tc[6], v0 + Tc[7]);
-    } else {
+    }
+    else {
       cam_est.initPersProjWithoutDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7]); // default
     }
 
@@ -367,14 +361,14 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     if (verbose)
       std::cout << " std dev " << sqrt(r / n_points) << std::endl;
   }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
+  if (iter == m_nbIterMax) {
+    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", m_nbIterMax);
     throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
   }
   this->cMo = cMo_est;
   this->cMo_dist = cMo_est;
-  this->residual = r;
-  this->residual_dist = r;
+  this->m_residual = r;
+  this->m_residual_dist = r;
   if (verbose)
     std::cout << " std dev " << sqrt(r / n_points) << std::endl;
   // Restore ostream format
@@ -392,7 +386,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
   unsigned int nbPose6 = 6 * nbPose;
 
   for (unsigned int i = 0; i < nbPose; i++) {
-    nbPoint[i] = table_cal[i].npt;
+    nbPoint[i] = table_cal[i].m_npt;
     nbPointTotal += nbPoint[i];
   }
 
@@ -411,12 +405,12 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
   vpColVector Pd(2 * nbPointTotal);
   vpImagePoint ip;
 
-  unsigned int curPoint = 0; // current point indice
+  unsigned int curPoint = 0; // current point index
   for (unsigned int p = 0; p < nbPose; p++) {
-    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
-    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
-    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
-    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
+    std::list<double>::const_iterator it_LoX = table_cal[p].m_LoX.begin();
+    std::list<double>::const_iterator it_LoY = table_cal[p].m_LoY.begin();
+    std::list<double>::const_iterator it_LoZ = table_cal[p].m_LoZ.begin();
+    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].m_Lip.begin();
 
     for (unsigned int i = 0; i < nbPoint[p]; i++) {
       oX[curPoint] = *it_LoX;
@@ -440,7 +434,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
 
   double residu_1 = 1e12;
   double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
+  while (vpMath::equal(residu_1, r, m_threshold) == false && iter < m_nbIterMax) {
 
     iter++;
     residu_1 = r;
@@ -449,7 +443,8 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     if (aspect_ratio > 0.) {
       px = cam_est.get_px();
       py = px / aspect_ratio;
-    } else {
+    }
+    else {
       px = cam_est.get_px(); // default
       py = cam_est.get_py();
     }
@@ -457,18 +452,18 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     double v0 = cam_est.get_v0();
 
     r = 0;
-    curPoint = 0; // current point indice
+    curPoint = 0; // current point index
     for (unsigned int p = 0; p < nbPose; p++) {
       vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
       for (unsigned int i = 0; i < nbPoint[p]; i++) {
         unsigned int curPoint2 = 2 * curPoint;
 
         cX[curPoint] =
-            oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
+          oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
         cY[curPoint] =
-            oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
+          oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
         cZ[curPoint] =
-            oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
+          oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
 
         Pd[curPoint2] = u[curPoint];
         Pd[curPoint2 + 1] = v[curPoint];
@@ -486,7 +481,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     // r = r/nbPointTotal ;
 
     vpMatrix L(nbPointTotal * 2, nbPose6 + 3 + (aspect_ratio > 0. ? 0 : 1));
-    curPoint = 0; // current point indice
+    curPoint = 0; // current point index
     for (unsigned int p = 0; p < nbPose; p++) {
       unsigned int q = 6 * p;
       for (unsigned int i = 0; i < nbPoint[p]; i++) {
@@ -517,7 +512,8 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
             L[curPoint2][nbPose6 + 1] = 0;
             if (aspect_ratio > 0.) {
               L[curPoint2][nbPose6 + 2] = X;
-            } else { // default
+            }
+            else { // default
               L[curPoint2][nbPose6 + 2] = X;
               L[curPoint2][nbPose6 + 3] = 0;
             }
@@ -535,7 +531,8 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
             L[curPoint21][nbPose6 + 1] = 1;
             if (aspect_ratio > 0.) {
               L[curPoint21][nbPose6 + 2] = Y;
-            } else { // default
+            }
+            else { // default
               L[curPoint21][nbPose6 + 2] = 0;
               L[curPoint21][nbPose6 + 3] = Y;
             }
@@ -551,7 +548,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     e = Lp * error;
 
     vpColVector Tc, Tc_v(nbPose6);
-    Tc = -e * gain;
+    Tc = -e * m_gain;
 
     //   Tc_v =0 ;
     for (unsigned int i = 0; i < nbPose6; i++)
@@ -560,7 +557,8 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     if (aspect_ratio > 0.) {
       cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], (px + Tc[nbPose6 + 2]) / aspect_ratio,
                                             u0 + Tc[nbPose6], v0 + Tc[nbPose6 + 1]);
-    } else // default
+    }
+    else // default
     {
       cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
                                             v0 + Tc[nbPose6 + 1]);
@@ -579,8 +577,8 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     if (verbose)
       std::cout << " std dev " << sqrt(r / nbPointTotal) << std::endl;
   }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
+  if (iter == m_nbIterMax) {
+    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", m_nbIterMax);
     throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
   }
   for (unsigned int p = 0; p < nbPose; p++) {
@@ -599,7 +597,7 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
 {
   std::ios::fmtflags original_flags(std::cout.flags());
   std::cout.precision(10);
-  unsigned int n_points = npt;
+  unsigned int n_points = m_npt;
 
   vpColVector oX(n_points), cX(n_points);
   vpColVector oY(n_points), cY(n_points);
@@ -610,10 +608,10 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
   vpColVector P(4 * n_points);
   vpColVector Pd(4 * n_points);
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   vpImagePoint ip;
 
@@ -637,7 +635,7 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
 
   double residu_1 = 1e12;
   double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
+  while (vpMath::equal(residu_1, r, m_threshold) == false && iter < m_nbIterMax) {
     iter++;
     residu_1 = r;
 
@@ -649,7 +647,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     if (m_aspect_ratio > 0.) {
       px = cam_est.get_px();
       py = px / m_aspect_ratio;
-    } else {
+    }
+    else {
       px = cam_est.get_px(); // default
       py = cam_est.get_py();
     }
@@ -723,9 +722,9 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
 
       r += (vpMath::sqr(P[i4] - Pd[i4]) + vpMath::sqr(P[i41] - Pd[i41]) + vpMath::sqr(P[i42] - Pd[i42]) +
             vpMath::sqr(P[i43] - Pd[i43])) *
-           0.5;
+        0.5;
 
-      //--distorted to undistorted
+   //--distorted to undistorted
       {
         {
           L[i4][0] = px * (-inv_z);
@@ -743,7 +742,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
             L[i4][8] = X + k2du * xp02 * xp0 + k2du * up0 * yp02 * inv_py;
             L[i4][9] = -(up0) * (r2du);
             L[i4][10] = 0;
-          } else // default
+          }
+          else // default
           {
             L[i4][8] = X + k2du * xp02 * xp0;
             L[i4][9] = k2du * up0 * yp02 * inv_py;
@@ -766,7 +766,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
             L[i41][8] = k2du * vp0 * xp02 * inv_px + Y + k2du * yp02 * yp0;
             L[i41][9] = -vp0 * r2du;
             L[i41][10] = 0;
-          } else // default
+          }
+          else // default
           {
             L[i41][8] = k2du * vp0 * xp02 * inv_px;
             L[i41][9] = Y + k2du * yp02 * yp0;
@@ -790,7 +791,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
             L[i42][8] = X * kr2ud;
             L[i42][9] = 0;
             L[i42][10] = px * X * r2ud;
-          } else // default
+          }
+          else // default
           {
             L[i42][8] = X * kr2ud;
             L[i42][9] = 0;
@@ -813,7 +815,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
             L[i43][8] = Y * kr2ud;
             L[i43][9] = 0;
             L[i43][10] = py * Y * r2ud;
-          } else {
+          }
+          else {
             L[i43][8] = 0;
             L[i43][9] = Y * kr2ud;
             L[i43][10] = 0;
@@ -834,7 +837,7 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     e = Lp * error;
 
     vpColVector Tc, Tc_v(6);
-    Tc = -e * gain;
+    Tc = -e * m_gain;
 
     for (unsigned int i = 0; i < 6; i++)
       Tc_v[i] = Tc[i];
@@ -842,7 +845,8 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     if (m_aspect_ratio > 0.) {
       cam_est.initPersProjWithDistortion(px + Tc[8], (px + Tc[8]) / m_aspect_ratio, u0 + Tc[6], v0 + Tc[7],
                                          kud + Tc[10], kdu + Tc[9]);
-    } else {
+    }
+    else {
       cam_est.initPersProjWithDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7], kud + Tc[11], kdu + Tc[10]);
     }
 
@@ -850,11 +854,11 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     if (verbose)
       std::cout << " std dev " << sqrt(r / n_points) << std::endl;
   }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
+  if (iter == m_nbIterMax) {
+    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", m_nbIterMax);
     throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
   }
-  this->residual_dist = r;
+  this->m_residual_dist = r;
   this->cMo_dist = cMo_est;
   this->cam_dist = cam_est;
 
@@ -875,7 +879,7 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   unsigned int nbPose = (unsigned int)table_cal.size();
   unsigned int nbPose6 = 6 * nbPose;
   for (unsigned int i = 0; i < nbPose; i++) {
-    nbPoint[i] = table_cal[i].npt;
+    nbPoint[i] = table_cal[i].m_npt;
     nbPointTotal += nbPoint[i];
   }
 
@@ -894,12 +898,12 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   vpColVector Pd(4 * nbPointTotal);
   vpImagePoint ip;
 
-  unsigned int curPoint = 0; // current point indice
+  unsigned int curPoint = 0; // current point index
   for (unsigned int p = 0; p < nbPose; p++) {
-    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
-    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
-    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
-    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
+    std::list<double>::const_iterator it_LoX = table_cal[p].m_LoX.begin();
+    std::list<double>::const_iterator it_LoY = table_cal[p].m_LoY.begin();
+    std::list<double>::const_iterator it_LoZ = table_cal[p].m_LoZ.begin();
+    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].m_Lip.begin();
 
     for (unsigned int i = 0; i < nbPoint[p]; i++) {
       oX[curPoint] = *it_LoX;
@@ -922,33 +926,34 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
 
   double residu_1 = 1e12;
   double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
+  while (vpMath::equal(residu_1, r, m_threshold) == false && iter < m_nbIterMax) {
     iter++;
     residu_1 = r;
 
     r = 0;
-    curPoint = 0; // current point indice
+    curPoint = 0; // current point index
     for (unsigned int p = 0; p < nbPose; p++) {
       vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_dist;
       for (unsigned int i = 0; i < nbPoint[p]; i++) {
         cX[curPoint] =
-            oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
+          oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
         cY[curPoint] =
-            oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
+          oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
         cZ[curPoint] =
-            oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
+          oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
 
         curPoint++;
       }
     }
 
     vpMatrix L(nbPointTotal * 4, nbPose6 + 5 + (aspect_ratio > 0. ? 0 : 1));
-    curPoint = 0; // current point indice
+    curPoint = 0; // current point index
     double px, py;
     if (aspect_ratio > 0.) {
       px = cam_est.get_px();
       py = px / aspect_ratio;
-    } else {
+    }
+    else {
       px = cam_est.get_px(); // default
       py = cam_est.get_py();
     }
@@ -1017,7 +1022,7 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
 
         r += (vpMath::sqr(P[curPoint4] - Pd[curPoint4]) + vpMath::sqr(P[curPoint4 + 1] - Pd[curPoint4 + 1]) +
               vpMath::sqr(P[curPoint4 + 2] - Pd[curPoint4 + 2]) + vpMath::sqr(P[curPoint4 + 3] - Pd[curPoint4 + 3])) *
-             0.5;
+          0.5;
 
         unsigned int curInd = curPoint4;
         //---------------
@@ -1037,7 +1042,8 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
               L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0 + k2du * up0 * yp02 * inv_py;
               L[curInd][nbPose6 + 3] = -(up0) * (r2du);
               L[curInd][nbPose6 + 4] = 0;
-            } else {
+            }
+            else {
               L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0;
               L[curInd][nbPose6 + 3] = k2du * up0 * yp02 * inv_py;
               L[curInd][nbPose6 + 4] = -(up0) * (r2du);
@@ -1060,7 +1066,8 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
               L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px + Y + k2du * yp02 * yp0;
               L[curInd][nbPose6 + 3] = -vp0 * r2du;
               L[curInd][nbPose6 + 4] = 0;
-            } else {
+            }
+            else {
               L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px;
               L[curInd][nbPose6 + 3] = Y + k2du * yp02 * yp0;
               L[curInd][nbPose6 + 4] = -vp0 * r2du;
@@ -1084,7 +1091,8 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
               L[curInd][nbPose6 + 2] = X * kr2ud;
               L[curInd][nbPose6 + 3] = 0;
               L[curInd][nbPose6 + 4] = px * X * r2ud;
-            } else {
+            }
+            else {
               L[curInd][nbPose6 + 2] = X * kr2ud;
               L[curInd][nbPose6 + 3] = 0;
               L[curInd][nbPose6 + 4] = 0;
@@ -1107,7 +1115,8 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
               L[curInd][nbPose6 + 2] = Y * kr2ud;
               L[curInd][nbPose6 + 3] = 0;
               L[curInd][nbPose6 + 4] = py * Y * r2ud;
-            } else {
+            }
+            else {
               L[curInd][nbPose6 + 2] = 0;
               L[curInd][nbPose6 + 3] = Y * kr2ud;
               L[curInd][nbPose6 + 4] = 0;
@@ -1129,14 +1138,15 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
     vpColVector e;
     e = Lp * error;
     vpColVector Tc, Tc_v(6 * nbPose);
-    Tc = -e * gain;
+    Tc = -e * m_gain;
     for (unsigned int i = 0; i < 6 * nbPose; i++)
       Tc_v[i] = Tc[i];
 
     if (aspect_ratio > 0.) {
       cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], (px + Tc[nbPose6 + 2]) / aspect_ratio, u0 + Tc[nbPose6],
                                          v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 4], kdu + Tc[nbPose6 + 3]);
-    } else {
+    }
+    else {
       cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
                                          v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 5], kdu + Tc[nbPose6 + 4]);
     }
@@ -1152,8 +1162,8 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
       std::cout << " std dev: " << sqrt(r / nbPointTotal) << std::endl;
     // std::cout <<  "   residual: " << r << std::endl;
   }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
+  if (iter == m_nbIterMax) {
+    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", m_nbIterMax);
     throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
   }
 
@@ -1207,72 +1217,4 @@ void vpCalibration::calibVVSWithDistortionMulti(unsigned int nbPose, vpCalibrati
     table_cal[i] = v_table_cal[i];
   }
 }
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-
-#include <visp3/vision/vpHandEyeCalibration.h>
-
-/*!
-  \deprecated This function is deprecated. You should rather use vpHandEyeCalibration::calibrate().
-
-  Compute extrinsic camera parameters : the constant transformation from
-  the effector to the camera frames (eMc).
-
-  \param cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param eMc : homogeneous matrix representing the transformation
-  between the effector and the camera (output)
-*/
-void vpCalibration::calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
-                                    const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
-{
-  vpHandEyeCalibration::calibrate(cMo, rMe, eMc);
-}
-
-/*!
-  \deprecated This function is deprecated. You should rather use vpHandEyeCalibration::calibrate().
-
-  Compute extrinsic camera parameters : the constant transformation from
-  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the
-  camera model with or without distortion.
-
-  \param[in] table_cal : Vector of vpCalibration that contains for each index
-  a couple of \f${^r}{\bf M}_e\f$ (world to end-effector) and \f${^c}{\bf
-  M}_o\f$ (camera to object) transformations.
-  \param[out] eMc : Estimated pose of the camera in relation to the end-effector considering
-  the camera model without distortion.
-  \param[out] eMc_dist : Estimated pose of the camera in relation to the end-effector
-  considering the model with distortion.
-  \return 0 if the computation managed, -1 if less than three poses are provides as
-  input.
-*/
-int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                          vpHomogeneousMatrix &eMc_dist)
-{
-  unsigned int nbPose = (unsigned int)table_cal.size();
-  if (nbPose > 2) {
-    std::vector<vpHomogeneousMatrix> table_cMo(nbPose);
-    std::vector<vpHomogeneousMatrix> table_cMo_dist(nbPose);
-    std::vector<vpHomogeneousMatrix> table_rMe(nbPose);
-
-    for (unsigned int i = 0; i < nbPose; i++) {
-      table_cMo[i] = table_cal[i].cMo;
-      table_cMo_dist[i] = table_cal[i].cMo_dist;
-      table_rMe[i] = table_cal[i].rMe;
-    }
-    vpHandEyeCalibration::calibrate(table_cMo, table_rMe, eMc);
-    vpHandEyeCalibration::calibrate(table_cMo_dist, table_rMe, eMc_dist);
-
-    return 0;
-  } else {
-    throw(vpException(vpException::dimensionError, "At least 3 images are needed to compute hand-eye calibration !\n"));
-  }
-}
-
-#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2
+END_VISP_NAMESPACE

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,63 +28,49 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpImage class and its derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpImageException_h_
-#define _vpImageException_h_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Exceptions that can be emitted by the vpImage class and its derivatives.
  */
 
-/* \file vpImageException.h
-   \brief error that can be emited by the vpImage class and its derivates
+/*!
+ * \file vpImageException.h
+ * \brief error that can be emitted by the vpImage class and its derivatives
  */
-/* Classes standards. */
+
+#ifndef VP_IMAGE_EXCEPTION_H
+#define VP_IMAGE_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-
-  \class vpImageException
-  \ingroup group_core_debug
-  \brief Error that can be emited by the vpImage class and its derivates.
- */
+ * \class vpImageException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpImage class and its derivatives.
+*/
 class VISP_EXPORT vpImageException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpImage member
- */
-  enum errorImageCodeEnum {
-    ioError,
-    noFileNameError,
-    notInitializedError,
-    incorrectInitializationError,
-    notInTheImage
+   * \brief Lists the possible error than can be emitted while calling
+   * vpImage member
+   */
+  enum errorImageCodeEnum
+  {
+    ioError, //!< Image io error
+    noFileNameError, //!< Image file name error
+    notInitializedError, //!< Image not initialized
+    incorrectInitializationError, //!< Wrong image initialization
+    notInTheImage //!< Pixel not in the image
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpImageException(int id, const char *format, ...)
   {
     this->code = id;
@@ -94,8 +79,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpImageException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpImageException(int id) : vpException(id) { ; }
-};
 
+  /*!
+   * Constructor.
+   */
+  vpImageException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpImageException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

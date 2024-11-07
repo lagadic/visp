@@ -1,4 +1,5 @@
 //! \example tutorial-mb-generic-tracker-full.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -10,9 +11,27 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+namespace
+{
+std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
+{
+  vpThetaUVector tu = cMo.getThetaUVector();
+  vpTranslationVector t = cMo.getTranslationVector();
+  std::vector<double> vec { t[0], t[1], t[2], tu[0], tu[1], tu[2] };
+
+  return vec;
+}
+}
+#endif
+
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
   int opt_tracker = 0;
@@ -23,12 +42,15 @@ int main(int argc, char **argv)
   bool opt_display_scale_auto = false;
   vpColVector opt_dof_to_estimate(6, 1.); // Here we consider 6 dof estimation
   std::string opt_save;
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+  std::string opt_save_results;
+#endif
   unsigned int thickness = 2;
 
   vpImage<unsigned char> I;
-  vpDisplay *display = NULL;
-  vpPlot *plot = NULL;
-  vpVideoWriter *writer = NULL;
+  std::shared_ptr<vpDisplay> display;
+  std::shared_ptr<vpPlot> plot;
+  std::shared_ptr<vpVideoWriter> writer;
 
   try {
     for (int i = 0; i < argc; i++) {
@@ -50,6 +72,11 @@ int main(int argc, char **argv)
       else if (std::string(argv[i]) == "--save") {
         opt_save = std::string(argv[++i]);
       }
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+      else if (std::string(argv[i]) == "--save-results") {
+        opt_save_results = std::string(argv[++i]);
+      }
+#endif
       else if (std::string(argv[i]) == "--plot") {
         opt_plot = true;
       }
@@ -73,74 +100,85 @@ int main(int argc, char **argv)
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nSYNOPSIS " << std::endl
-                  << argv[0]
-                  << " [--video <video name>]"
-                  << " [--video-first-frame <image index>"
-                  << " [--model <model name>"
-                  << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
-                  << " [--downscale-img <scale factor>]"
-                  << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
-                  << " [--save <video>]"
-                  << " [--display-scale-auto]"
-                  << " [--plot]"
-                  << " [--verbose,-v]"
-                  << " [--help,-h]"
-                  << std::endl;
+          << argv[0]
+          << " [--video <video name>]"
+          << " [--video-first-frame <image index>"
+          << " [--model <model name>"
+          << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
+          << " [--downscale-img <scale factor>]"
+          << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
+          << " [--save <e.g. results-%04d.png>]"
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+          << " [--save-results <e.g. tracking_poses.npz>]"
+#endif
+          << " [--display-scale-auto]"
+          << " [--plot]"
+          << " [--verbose,-v]"
+          << " [--help,-h]"
+          << std::endl;
         std::cout << "\nOPTIONS " << std::endl
-                  << "  --video <video name>" << std::endl
-                  << "      Input video name." << std::endl
-                  << "      Default: model/teabox/teabox.mp4" << std::endl
-                  << std::endl
-                  << "  --video-first-frame <image index>" << std::endl
-                  << "      Index of the first image to process." << std::endl
-                  << "      Set to -1 to process the first image of the video." << std::endl
-                  << "      Default: -1" << std::endl
-                  << std::endl
-                  << "  --model <model name>" << std::endl
-                  << "      CAD model filename. Supported formats are .cao and .wrl." << std::endl
-                  << "      To use wrl format, ViSP need to be built with Coin3D third-party." << std::endl
-                  << "      Default: model/teabox/teabox.cao" << std::endl
-                  << std::endl
-                  << "  --tracker <0=egde|1=keypoint|2=hybrid>" << std::endl
-                  << "      Tracker type:" << std::endl
-                  << "      - when 0: use only moving-edges" << std::endl
-                  << "      - when 1: use only KLT keypoints" << std::endl
-                  << "      - when 2: use hybrid scheme, moving-edges and KLT keypoints." << std::endl
-                  << "      Default: 0" << std::endl
-                  << std::endl
-                  << "  --downscale-img <scale factor>" << std::endl
-                  << "      Downscale input image width and height by this factor." << std::endl
-                  << "      When set to 1, image not down scaled. When set to 2, image width" << std::endl
-                  << "      and height is divided by 2." << std::endl
-                  << "      Default: 1" << std::endl
-                  << std::endl
-                  << "  --dof <0/1 0/1 0/1 0/1 0/1 0/1>" << std::endl
-                  << "      6-dim vector of 0 and 1 to indicate which dof [tx ty tz rx ry rz]" << std::endl
-                  << "      has to be estimated." << std::endl
-                  << "      When set to 1 the dof is estimated. When rather set to 0 the dof" << std::endl
-                  << "      is not estimated. It's value is the one from the initialisation." << std::endl
-                  << "      Default: 1 1 1 1 1 1 (to estimate all 6 dof)" << std::endl
-                  << std::endl
-                  << "  --save <video>" << std::endl
-                  << "      Name of the saved image sequence that contains tracking results in overlay." << std::endl
-                  << "      When the name contains a folder like in the next example, the folder" << std::endl
-                  << "      is created if it doesn't exist."
-                  << "      Example: \"result/image-%04d.png\"." << std::endl
-                  << std::endl
-                  << "  --display-scale-auto" << std::endl
-                  << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
-                  << "      visible on the screen. Useful for large images." << std::endl
-                  << "      Note that this option doesn't affect the size of the processed images." << std::endl
-                  << std::endl
-                  << "  --plot" << std::endl
-                  << "      Open a window that plots the estimated pose evolution." << std::endl
-                  << std::endl
-                  << "  --verbose, -v" << std::endl
-                  << "      Enable verbose mode." << std::endl
-                  << std::endl
-                  << "  --help, -h" << std::endl
-                  << "      Display this helper message." << std::endl
-                  << std::endl;
+          << "  --video <video name>" << std::endl
+          << "      Input video name." << std::endl
+          << "      Default: model/teabox/teabox.mp4" << std::endl
+          << std::endl
+          << "  --video-first-frame <image index>" << std::endl
+          << "      Index of the first image to process." << std::endl
+          << "      Set to -1 to process the first image of the video." << std::endl
+          << "      Default: -1" << std::endl
+          << std::endl
+          << "  --model <model name>" << std::endl
+          << "      CAD model filename. Supported formats are .cao and .wrl." << std::endl
+          << "      To use wrl format, ViSP need to be built with Coin3D third-party." << std::endl
+          << "      Default: model/teabox/teabox.cao" << std::endl
+          << std::endl
+          << "  --tracker <0=egde|1=keypoint|2=hybrid>" << std::endl
+          << "      Tracker type:" << std::endl
+          << "      - when 0: use only moving-edges" << std::endl
+          << "      - when 1: use only KLT keypoints" << std::endl
+          << "      - when 2: use hybrid scheme, moving-edges and KLT keypoints." << std::endl
+          << "      Default: 0" << std::endl
+          << std::endl
+          << "  --downscale-img <scale factor>" << std::endl
+          << "      Downscale input image width and height by this factor." << std::endl
+          << "      When set to 1, image not down scaled. When set to 2, image width" << std::endl
+          << "      and height is divided by 2." << std::endl
+          << "      Default: 1" << std::endl
+          << std::endl
+          << "  --dof <0/1 0/1 0/1 0/1 0/1 0/1>" << std::endl
+          << "      6-dim vector of 0 and 1 to indicate which dof [tx ty tz rx ry rz]" << std::endl
+          << "      has to be estimated." << std::endl
+          << "      When set to 1 the dof is estimated. When rather set to 0 the dof" << std::endl
+          << "      is not estimated. It's value is the one from the initialisation." << std::endl
+          << "      Default: 1 1 1 1 1 1 (to estimate all 6 dof)" << std::endl
+          << std::endl
+          << "  --save <e.g. results-%04d.png>" << std::endl
+          << "      Name of the saved image sequence that contains tracking results in overlay." << std::endl
+          << "      When the name contains a folder like in the next example, the folder" << std::endl
+          << "      is created if it doesn't exist."
+          << "      Example: \"result/image-%04d.png\"." << std::endl
+          << std::endl
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+          << "  --save-results <e.g. tracking_results.npz>" << std::endl
+          << "      Name of the npz file containing cMo data estimated from MBT." << std::endl
+          << "      When the name contains a folder like in the next example, the folder" << std::endl
+          << "      is created if it doesn't exist."
+          << "      Example: \"result/tracking_results.npz\"." << std::endl
+          << std::endl
+#endif
+          << "  --display-scale-auto" << std::endl
+          << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
+          << "      visible on the screen. Useful for large images." << std::endl
+          << "      Note that this option doesn't affect the size of the processed images." << std::endl
+          << std::endl
+          << "  --plot" << std::endl
+          << "      Open a window that plots the estimated pose evolution." << std::endl
+          << std::endl
+          << "  --verbose, -v" << std::endl
+          << "      Enable verbose mode." << std::endl
+          << std::endl
+          << "  --help, -h" << std::endl
+          << "      Display this helper message." << std::endl
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -161,15 +199,24 @@ int main(int argc, char **argv)
     std::cout << "Dof to estimate            : " << opt_dof_to_estimate.t() << std::endl;
 
     // Create output folder if needed
-    if (! opt_save.empty()) {
+    if (!opt_save.empty()) {
       std::string parent = vpIoTools::getParent(opt_save);
-      if (! parent.empty()) {
+      if (!parent.empty()) {
         std::cout << "Create output directory: " << parent << std::endl;
         vpIoTools::makeDirectory(parent);
       }
     }
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+    if (!opt_save_results.empty()) {
+      std::string parent = vpIoTools::getParent(opt_save_results);
+      if (!parent.empty()) {
+        std::cout << "Create output directory for the npz file: " << parent << std::endl;
+        vpIoTools::makeDirectory(parent);
+      }
+    }
+#endif
 
-    //! [Image]
+//! [Image]
     vpImage<unsigned char> Ivideo;
     //! [Image]
     //! [cMo]
@@ -190,18 +237,18 @@ int main(int argc, char **argv)
     }
 
     vpImage<vpRGBa> O;
-    if (! opt_save.empty()) {
-      writer = new vpVideoWriter();
+    if (!opt_save.empty()) {
+      writer = std::make_shared<vpVideoWriter>();
       writer->setFileName(opt_save);
       writer->open(O);
     }
 
 #if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
+    display = std::make_shared<vpDisplayX>();
 #elif defined(VISP_HAVE_GDI)
-    display = new vpDisplayGDI;
+    display = std::make_shared<vpDisplayGDI>();
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    display = new vpDisplayOpenCV;
+    display = std::make_shared<vpDisplayOpenCV>();
 #endif
     if (opt_display_scale_auto) {
       display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
@@ -209,7 +256,8 @@ int main(int argc, char **argv)
     display->init(I, 100, 100, "Model-based tracker");
 
     if (opt_plot) {
-      plot = new vpPlot(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30, display->getWindowYPosition(), "Estimated pose");
+      plot = std::make_shared<vpPlot>(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30,
+                                      display->getWindowYPosition(), "Estimated pose");
       plot->initGraph(0, 3); // Translation
       plot->setTitle(0, "Translation [m]");
       plot->setColor(0, 0, vpColor::red);
@@ -221,7 +269,6 @@ int main(int argc, char **argv)
       plot->setColor(1, 1, vpColor::green);
       plot->setColor(1, 2, vpColor::blue);
     }
-
 
     //! [Constructor]
     vpMbGenericTracker tracker;
@@ -235,8 +282,8 @@ int main(int argc, char **argv)
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is not available. "
-                   "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
-                << std::endl;
+        "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
+        << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -244,11 +291,13 @@ int main(int argc, char **argv)
 
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       std::cout << "Tracker config file        : " << objectname + ".xml" << std::endl;
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     //! [Load xml]
 
     if (!usexml) {
@@ -259,7 +308,8 @@ int main(int argc, char **argv)
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(8);
-        me.setThreshold(10000);
+        me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me.setThreshold(20);
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
@@ -340,6 +390,21 @@ int main(int argc, char **argv)
 
     std::cout << "Initialize tracker on image size: " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
+    std::vector<double> vec_poses;
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+    if (!opt_save_results.empty()) {
+      const unsigned int height = I.getHeight(), width = I.getWidth();
+      visp::cnpy::npz_save(opt_save_results, "height", &height, { 1 }, "w");
+      visp::cnpy::npz_save(opt_save_results, "width", &width, { 1 }, "a");
+
+      const double cam_px = cam.get_px(), cam_py = cam.get_py(), cam_u0 = cam.get_u0(), cam_v0 = cam.get_v0();
+      visp::cnpy::npz_save(opt_save_results, "cam_px", &cam_px, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_py", &cam_py, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_u0", &cam_u0, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_v0", &cam_v0, { 1 }, "a");
+    }
+#endif
+
     //! [Init]
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
@@ -354,7 +419,7 @@ int main(int argc, char **argv)
       }
       std::stringstream ss;
       ss << "Process image " << g.getFrameIndex();
-      if(opt_verbose) {
+      if (opt_verbose) {
         std::cout << "-- " << ss.str() << std::endl;
       }
       vpDisplay::display(I);
@@ -368,8 +433,8 @@ int main(int argc, char **argv)
       tracker.display(I, cMo, cam, vpColor::red, thickness);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, thickness);
-      vpDisplay::displayText(I, 20*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), "A click to exit...", vpColor::red);
-      vpDisplay::displayText(I, 40*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "A click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
       {
         std::stringstream ss;
         ss << "Features";
@@ -381,18 +446,18 @@ int main(int argc, char **argv)
           ss << " klt: " << tracker.getNbFeaturesKlt();
         }
 #endif
-        vpDisplay::displayText(I, 60*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
-        if(opt_verbose) {
+        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        if (opt_verbose) {
           std::cout << ss.str() << std::endl;
-          std::cout <<"cMo:\n" << cMo << std::endl;
+          std::cout << "cMo:\n" << cMo << std::endl;
         }
       }
       {
         double proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
         std::stringstream ss;
         ss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
-        vpDisplay::displayText(I, 80*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
-        if(opt_verbose) {
+        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        if (opt_verbose) {
           std::cout << ss.str() << std::endl;
         }
       }
@@ -406,16 +471,30 @@ int main(int argc, char **argv)
         plot->plot(1, g.getFrameIndex(), c_tu_o_deg);
       }
 
-      if (! opt_save.empty()) {
+      if (!opt_save.empty()) {
         vpDisplay::getImage(I, O);
         writer->saveFrame(O);
       }
+
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+      if (!opt_save_results.empty()) {
+        std::vector<double> vec_pose = poseToVec(cMo);
+        vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
+      }
+#endif
 
       if (vpDisplay::getClick(I, false))
         break;
     }
     vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+
+#if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
+    if (!opt_save_results.empty()) {
+      visp::cnpy::npz_save(opt_save_results, "vec_poses", vec_poses.data(), { static_cast<size_t>(vec_poses.size()/6), 6 }, "a");
+    }
+#endif
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     vpDisplay::getClick(I);
   }
@@ -425,15 +504,6 @@ int main(int argc, char **argv)
     vpDisplay::getClick(I);
   }
 #endif
-  //! [Cleanup]
-  delete display;
-  if (opt_plot) {
-    delete plot;
-  }
-  if (writer) {
-    delete writer;
-  }
-  //! [Cleanup]
 #else
   (void)argc;
   (void)argv;

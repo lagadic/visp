@@ -1,3 +1,33 @@
+/*
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 /* cpu_x86.cpp
  *
  * Author           : Alexander J. Yee
@@ -50,7 +80,7 @@ using std::memset;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void cpu_x86::print(const char *label, bool yes)
+void cpuX86::print(const char *label, bool yes)
 {
   cout << label;
   cout << (yes ? "Yes" : "No") << endl;
@@ -59,27 +89,30 @@ void cpu_x86::print(const char *label, bool yes)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-cpu_x86::cpu_x86()
+cpuX86::cpuX86()
 {
   memset(this, 0, sizeof(*this));
   detect_host();
 }
-bool cpu_x86::detect_OS_AVX()
+bool cpuX86::detect_OS_AVX()
 {
 #ifndef UNKNOWN_ARCH
   //  Copied from: http://stackoverflow.com/a/22521619/922184
 
   bool avxSupported = false;
 
-  int cpuInfo[4];
+  uint32_t cpuInfo[4];
   cpuid(cpuInfo, 1);
+  const unsigned int index_2 = 2;
+  const unsigned int val_27 = 27;
+  const unsigned int val_28 = 28;
 
-  bool osUsesXSAVE_XRSTORE = (cpuInfo[2] & (1 << 27)) != 0;
-  bool cpuAVXSuport = (cpuInfo[2] & (1 << 28)) != 0;
+  bool osUsesXSAVE_XRSTORE = (cpuInfo[index_2] & (1U << val_27)) != 0;
+  bool cpuAVXSuport = (cpuInfo[index_2] & (1U << val_28)) != 0;
 
   if (osUsesXSAVE_XRSTORE && cpuAVXSuport) {
     uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-    avxSupported = (xcrFeatureMask & 0x6) == 0x6;
+    avxSupported = (xcrFeatureMask & 0x6U) == 0x6U;
   }
 
   return avxSupported;
@@ -87,28 +120,33 @@ bool cpu_x86::detect_OS_AVX()
   return false;
 #endif
 }
-bool cpu_x86::detect_OS_AVX512()
+bool cpuX86::detect_OS_AVX512()
 {
 #ifndef UNKNOWN_ARCH
-  if (!detect_OS_AVX())
+  if (!detect_OS_AVX()) {
     return false;
+  }
 
   uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-  return (xcrFeatureMask & 0xe6) == 0xe6;
+  return (xcrFeatureMask & 0xe6U) == 0xe6U;
 #else
   return false;
 #endif
 }
-std::string cpu_x86::get_vendor_string()
+std::string cpuX86::get_vendor_string()
 {
 #ifndef UNKNOWN_ARCH
-  int32_t CPUInfo[4];
+  uint32_t CPUInfo[4];
   char name[13];
 
   cpuid(CPUInfo, 0);
-  memcpy(name + 0, &CPUInfo[1], 4);
-  memcpy(name + 4, &CPUInfo[3], 4);
-  memcpy(name + 8, &CPUInfo[2], 4);
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_4 = 4;
+  memcpy(name + 0, &CPUInfo[index_1], val_4);
+  memcpy(name + 4, &CPUInfo[index_3], val_4);
+  memcpy(name + 8, &CPUInfo[index_2], val_4);
   name[12] = '\0';
 
   return name;
@@ -120,7 +158,7 @@ std::string cpu_x86::get_vendor_string()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-void cpu_x86::detect_host()
+void cpuX86::detect_host()
 {
 #ifndef UNKNOWN_ARCH
   //  OS Features
@@ -132,67 +170,93 @@ void cpu_x86::detect_host()
   std::string vendor(get_vendor_string());
   if (vendor == "GenuineIntel") {
     Vendor_Intel = true;
-  } else if (vendor == "AuthenticAMD") {
+  }
+  else if (vendor == "AuthenticAMD") {
     Vendor_AMD = true;
   }
 
-  int info[4];
+  uint32_t info[4];
   cpuid(info, 0);
   int nIds = info[0];
 
   cpuid(info, 0x80000000);
   uint32_t nExIds = info[0];
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int val_1 = 1;
+  const unsigned int val_3 = 3;
+  const unsigned int val_5 = 5;
+  const unsigned int val_6 = 6;
+  const unsigned int val_8 = 8;
+  const unsigned int val_9 = 9;
+  const unsigned int val_11 = 11;
+  const unsigned int val_12 = 12;
+  const unsigned int val_14 = 14;
+  const unsigned int val_16 = 16;
+  const unsigned int val_17 = 17;
+  const unsigned int val_19 = 19;
+  const unsigned int val_20 = 20;
+  const unsigned int val_21 = 21;
+  const unsigned int val_23 = 23;
+  const unsigned int val_25 = 25;
+  const unsigned int val_26 = 26;
+  const unsigned int val_27 = 27;
+  const unsigned int val_28 = 28;
+  const unsigned int val_29 = 29;
+  const unsigned int val_30 = 30;
+  const unsigned int val_31 = 31;
 
   //  Detect Features
   if (nIds >= 0x00000001) {
     cpuid(info, 0x00000001);
-    HW_MMX = (info[3] & ((int)1 << 23)) != 0;
-    HW_SSE = (info[3] & ((int)1 << 25)) != 0;
-    HW_SSE2 = (info[3] & ((int)1 << 26)) != 0;
-    HW_SSE3 = (info[2] & ((int)1 << 0)) != 0;
+    HW_MMX = (info[index_3] & (1U << val_23)) != 0U;
+    HW_SSE = (info[index_3] & (1U << val_25)) != 0U;
+    HW_SSE2 = (info[index_3] & (1U << val_26)) != 0U;
+    HW_SSE3 = (info[index_2] & (1U << 0)) != 0U;
 
-    HW_SSSE3 = (info[2] & ((int)1 << 9)) != 0;
-    HW_SSE41 = (info[2] & ((int)1 << 19)) != 0;
-    HW_SSE42 = (info[2] & ((int)1 << 20)) != 0;
-    HW_AES = (info[2] & ((int)1 << 25)) != 0;
+    HW_SSSE3 = (info[index_2] & (1U << val_9)) != 0U;
+    HW_SSE41 = (info[index_2] & (1U << val_19)) != 0U;
+    HW_SSE42 = (info[index_2] & (1U << val_20)) != 0U;
+    HW_AES = (info[index_2] & (1U << val_25)) != 0U;
 
-    HW_AVX = (info[2] & ((int)1 << 28)) != 0;
-    HW_FMA3 = (info[2] & ((int)1 << 12)) != 0;
+    HW_AVX = (info[index_2] & (1U << val_28)) != 0U;
+    HW_FMA3 = (info[index_2] & (1U << val_12)) != 0U;
 
-    HW_RDRAND = (info[2] & ((int)1 << 30)) != 0;
+    HW_RDRAND = (info[index_2] & (1U << val_30)) != 0U;
   }
   if (nIds >= 0x00000007) {
     cpuid(info, 0x00000007);
-    HW_AVX2 = (info[1] & ((int)1 << 5)) != 0;
+    HW_AVX2 = (info[index_1] & (1U << val_5)) != 0U;
 
-    HW_BMI1 = (info[1] & ((int)1 << 3)) != 0;
-    HW_BMI2 = (info[1] & ((int)1 << 8)) != 0;
-    HW_ADX = (info[1] & ((int)1 << 19)) != 0;
-    HW_MPX = (info[1] & ((int)1 << 14)) != 0;
-    HW_SHA = (info[1] & ((int)1 << 29)) != 0;
-    HW_PREFETCHWT1 = (info[2] & ((int)1 << 0)) != 0;
+    HW_BMI1 = (info[index_1] & (1U << val_3)) != 0U;
+    HW_BMI2 = (info[index_1] & (1U << val_8)) != 0U;
+    HW_ADX = (info[index_1] & (1U << val_19)) != 0U;
+    HW_MPX = (info[index_1] & (1U << val_14)) != 0U;
+    HW_SHA = (info[index_1] & (1U << val_29)) != 0U;
+    HW_PREFETCHWT1 = (info[index_2] & (1U << 0)) != 0U;
 
-    HW_AVX512_F = (info[1] & ((int)1 << 16)) != 0;
-    HW_AVX512_CD = (info[1] & ((int)1 << 28)) != 0;
-    HW_AVX512_PF = (info[1] & ((int)1 << 26)) != 0;
-    HW_AVX512_ER = (info[1] & ((int)1 << 27)) != 0;
-    HW_AVX512_VL = (info[1] & ((int)1 << 31)) != 0;
-    HW_AVX512_BW = (info[1] & ((int)1 << 30)) != 0;
-    HW_AVX512_DQ = (info[1] & ((int)1 << 17)) != 0;
-    HW_AVX512_IFMA = (info[1] & ((int)1 << 21)) != 0;
-    HW_AVX512_VBMI = (info[2] & ((int)1 << 1)) != 0;
+    HW_AVX512_F = (info[index_1] & (1U << val_16)) != 0U;
+    HW_AVX512_CD = (info[index_1] & (1U << val_28)) != 0U;
+    HW_AVX512_PF = (info[index_1] & (1U << val_26)) != 0U;
+    HW_AVX512_ER = (info[index_1] & (1U << val_27)) != 0U;
+    HW_AVX512_VL = (info[index_1] & (1U << val_31)) != 0U;
+    HW_AVX512_BW = (info[index_1] & (1U << val_30)) != 0U;
+    HW_AVX512_DQ = (info[index_1] & (1U << val_17)) != 0U;
+    HW_AVX512_IFMA = (info[index_1] & (1U << val_21)) != 0U;
+    HW_AVX512_VBMI = (info[index_2] & (1U << val_1)) != 0U;
   }
   if (nExIds >= 0x80000001) {
     cpuid(info, 0x80000001);
-    HW_x64 = (info[3] & ((int)1 << 29)) != 0;
-    HW_ABM = (info[2] & ((int)1 << 5)) != 0;
-    HW_SSE4a = (info[2] & ((int)1 << 6)) != 0;
-    HW_FMA4 = (info[2] & ((int)1 << 16)) != 0;
-    HW_XOP = (info[2] & ((int)1 << 11)) != 0;
+    HW_x64 = (info[index_3] & (1U << val_29)) != 0U;
+    HW_ABM = (info[index_2] & (1U << val_5)) != 0U;
+    HW_SSE4a = (info[index_2] & (1U << val_6)) != 0U;
+    HW_FMA4 = (info[index_2] & (1U << val_16)) != 0U;
+    HW_XOP = (info[index_2] & (1U << val_11)) != 0U;
   }
 #endif
 }
-void cpu_x86::print() const
+void cpuX86::print() const
 {
   cout << "CPU Vendor:" << endl;
   print("    AMD         = ", Vendor_AMD);

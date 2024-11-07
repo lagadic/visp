@@ -11,10 +11,10 @@ distributions, but should work with any other distribution as well.
 
 \section install_ubuntu_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion.
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake and git.
 This can be achieved running:
 \verbatim
-$ sudo apt-get install build-essential cmake-curses-gui git subversion wget
+$ sudo apt-get install build-essential cmake-curses-gui git wget
 \endverbatim
 
 \section install_ubuntu_ws Create a workspace
@@ -31,7 +31,8 @@ $ mkdir -p $VISP_WS
 
 \section install_ubuntu_quick Quick ViSP installation
 
-In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_ubuntu_advanced.
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in
+\ref install_ubuntu_advanced.
 
 - Install a small number of recommended 3rd parties
 
@@ -110,7 +111,7 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
   libpthread-stubs0-dev libdc1394-22-dev
 \endverbatim
 
-Note that on older distributions, the apt package for the JSON library is outdated: to install, see \ref install_ubuntu_3rdparty_other.
+Note that on older distributions, the apt package for the JSON library is outdated. If needed, you may install \ref soft_tool_json from source.
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
@@ -141,7 +142,7 @@ $ cd librealsense
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
 \verbatim
-$ ./scripts/setup_udev_rules.sh
+$ sudo ./scripts/setup_udev_rules.sh
 \endverbatim
 
 5. Build and install librealsense
@@ -444,21 +445,25 @@ $ sudo apt-get install libdmtx-dev
 \verbatim
 $ sudo apt-get install libgsl-dev
 \endverbatim
-- JSON for modern C++: if the apt package `nlohmann-json3-dev` is not available for your distribution, you can either install from source or from a package manager
-  - To install from source
+- JSON for modern C++
 \verbatim
-$ git clone https://github.com/nlohmann/json.git
-$ cd json && mkdir build && cd build
-$ cmake ..
-$ make -j$(nproc) && sudo make install
+$ sudo apt-get install nlohmann-json3-dev
 \endverbatim
-  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
+- Gtk-2 for gui capabilities instead of X11
+\verbatim
+$ sudo apt-get install libgtk2.0-dev libglib2.0-dev libpango1.0-dev libatk1.0-dev libcairo2-dev
+\endverbatim
+After installing the gtk packages, you need to explicitly enable gtk usage during ViSP cmake configuration step by:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DUSE_GTK=ON
+\endverbatim
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
   Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
@@ -468,7 +473,7 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>.
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
   Once downloaded, uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
@@ -564,28 +569,31 @@ $ source ~/.bashrc
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code.
 This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`.
-This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+This archive could be downloaded from https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
-$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+$ unzip ~/Downloads/visp-images-3.6.0.zip -d $VISP_WS
 \endverbatim
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.6.0`.
 \verbatim
-$ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
-AprilTag   README.md      cube       endianness   line    mire          warp
-Klimt      calibration    ellipse    faces        mbt     mire-2        xml
+$ ls $VISP_WS/visp-images-3.6.0
+3dmodel          README.md    ellipse     mbt        video
+AprilTag         Solvay       ellipse-1   mbt-cao    warp
+Bayer            calibration  endianness  mbt-depth  xml
+Gaussian-filter  circle       faces       memorial
+Klimt            cube         iv          mire
+LICENSE.txt      dnn          line        mire-2
 \endverbatim
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
-  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`.
+  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`.
   It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
 \verbatim
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 

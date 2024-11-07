@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test for Virtuose SDK wrapper.
- *
- * Author:
- * Nicolò Pedemonte
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testVirtuose.cpp
@@ -46,6 +41,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #if defined(VISP_HAVE_VIRTUOSE)
   std::string opt_ip = "localhost";
   int opt_port = 5000;
@@ -56,19 +54,19 @@ int main(int argc, char **argv)
       opt_port = std::atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-                << " [--ip <localhost>] [--port <port>]"
-                   " [--help] [-h]\n"
-                << std::endl
-                << "Description: " << std::endl
-                << " --ip <localhost>" << std::endl
-                << "\tHost IP address. Default value: \"localhost\"." << std::endl
-                << std::endl
-                << " --port <port>" << std::endl
-                << "\tCommunication port. Default value: 5000." << std::endl
-                << "\tSuggested values: " << std::endl
-                << "\t- 5000 to communicate with the Virtuose." << std::endl
-                << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
-                << std::endl;
+        << " [--ip <localhost>] [--port <port>]"
+        " [--help] [-h]\n"
+        << std::endl
+        << "Description: " << std::endl
+        << " --ip <localhost>" << std::endl
+        << "\tHost IP address. Default value: \"localhost\"." << std::endl
+        << std::endl
+        << " --port <port>" << std::endl
+        << "\tCommunication port. Default value: 5000." << std::endl
+        << "\tSuggested values: " << std::endl
+        << "\t- 5000 to communicate with the Virtuose." << std::endl
+        << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -84,11 +82,13 @@ int main(int argc, char **argv)
       std::cout << "The system is operational." << std::endl;
       vpColVector q = virtuose.getArticularPosition();
       std::cout << "The current joint values are : " << q.t() << std::endl;
-    } else
+    }
+    else
       std::cout << "The system is not operational. \nPlease plug the "
-                   "emergency stop to the system (or untrigger it)."
-                << std::endl;
-  } catch (const vpException &e) {
+      "emergency stop to the system (or untrigger it)."
+      << std::endl;
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

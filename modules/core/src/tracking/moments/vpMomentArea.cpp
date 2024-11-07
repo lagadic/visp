@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,13 +34,14 @@
  * Authors:
  * Manikandan Bakthavatchalam
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <cmath>
 #include <visp3/core/vpMomentArea.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Has the area \f$ a = m_{00} = \mu_{00} \f$ for dense objects,
   \f$ \mu_{20}+\mu_{02} \f$ for a discrete set of points.
@@ -58,11 +59,12 @@ void vpMomentArea::compute()
      * linked to it
      */
     const vpMomentCentered &momentCentered =
-        static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
     if (!found_moment_centered)
       throw vpException(vpException::notInitialized, "vpMomentCentered not found");
     values[0] = momentCentered.get(2, 0) + momentCentered.get(0, 2);
-  } else {
+  }
+  else {
     values[0] = getObject().get(0, 0);
   }
 }
@@ -71,16 +73,6 @@ void vpMomentArea::compute()
   Default constructor.
 */
 vpMomentArea::vpMomentArea() : vpMoment() { values.resize(1); }
-
-/*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "a(m00) = " << m.values[0] << std::endl;
-  return os;
-}
 
 /*!
 If the vpMomentObject type is
@@ -93,14 +85,27 @@ void vpMomentArea::printDependencies(std::ostream &os) const
 
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   if (getObject().getType() == vpMomentObject::DISCRETE) {
     os << "mu20 = " << momentCentered.get(2, 0) << "\t";
     os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
-  } else {
+  }
+  else {
     os << "mu00 = " << momentCentered.get(0, 0) << std::endl;
   }
 }
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "a(m00) = " << m.values[0] << std::endl;
+  return os;
+}
+
+END_VISP_NAMESPACE

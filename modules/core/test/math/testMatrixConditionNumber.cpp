@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test matrix condition number.
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testMatrixConditionNumber.cpp
@@ -41,6 +39,10 @@
 #include <iostream>
 #include <stdlib.h>
 #include <visp3/core/vpMatrix.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 int test_condition_number(const std::string &test_name, const vpMatrix &M)
 {
@@ -97,7 +99,8 @@ int main()
   if (test_condition_number("* Test square matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -112,7 +115,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -121,7 +125,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -142,7 +147,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -151,7 +157,8 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
   std::cout << "Test succeed" << std::endl;

@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2022- ViSP contributor
+# Copyright 2022-2024 ViSP contributor
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ from numpy import linspace
 import numpy as np
 import argparse
 import os
-
-debug_print = False
+import re
+from pathlib import Path # require >= Python 3.4
+import math
 
 def visp_thetau_to_rotation(thetau):
     theta = np.linalg.norm(thetau)
@@ -101,17 +102,27 @@ def visp_rotation_to_thetau(R):
             thetau[0,2] = -thetau[0,2]
     return thetau
 
-def load_camera_poses(filename, use_thetau=False):
-    if use_thetau:
-        camera_poses_raw = np.loadtxt(filename)
+def load_camera_poses(filename, use_thetau=False, use_npz_file_format=False):
+    if use_npz_file_format:
+        datafile = np.load(filename)
+        camera_poses_raw = datafile['vec_poses']
         camera_poses = np.zeros((4*camera_poses_raw.shape[0], 4))
         for i in range(camera_poses_raw.shape[0]):
-            camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i, 3:])
-            camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,0:3].T
+            camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i,3:])
+            camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,:3].T
             camera_poses[i*4+3, 3] = 1
         return camera_poses
     else:
-        return np.loadtxt(filename)
+      if use_thetau:
+          camera_poses_raw = np.loadtxt(filename)
+          camera_poses = np.zeros((4*camera_poses_raw.shape[0], 4))
+          for i in range(camera_poses_raw.shape[0]):
+              camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i,3:])
+              camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,:3].T
+              camera_poses[i*4+3, 3] = 1
+          return camera_poses
+      else:
+          return np.loadtxt(filename)
 
 def inverse_homogeneoux_matrix(M):
     R = M[0:3, 0:3]
@@ -246,7 +257,7 @@ def draw_sphere(ax, tx, ty, tz, radius, color='b'):
     z = radius * np.cos(v) + tz
     ax.plot_wireframe(x, y, z, color=color)
 
-def draw_model(ax, model, color='b'):
+def draw_model(ax, model, debug_print, color='b'):
     # Lines
     if debug_print:
         print(f"model.lines_vec: {len(model.lines_vec)}")
@@ -510,7 +521,52 @@ def data_for_cylinder_along_z(center_x,center_y,radius,height_z):
 
     return x_grid,y_grid,z_grid
 
-def parse_cao_model(filename):
+def parse_load_recursive_model(input_str, debug_print):
+    filename = ""
+    t_vec = None
+    tu_vec = None
+    m = re.search('load\(\"(.+)\"', input_str)
+    if m:
+        filename = m.group(1)
+        print(f"filename={filename}")
+
+        pattern_t = '([-+]?\d*\.*\d+)'
+        m = re.search('t=\[{}; {}; {}\]'.format(pattern_t, pattern_t, pattern_t), input_str)
+        if m:
+            tx = float(m.group(1))
+            ty = float(m.group(2))
+            tz = float(m.group(3))
+            t_vec = [tx, ty, tz]
+            if debug_print:
+                print(f"tx={tx} ; ty={ty} ; tz={tz}")
+
+        pattern_unit = '(.rad|.deg)?'
+        pattern_tu_val = '([-+]?\d*\.*\d+)'
+        pattern_tu = '({}{})'.format(pattern_tu_val, pattern_unit)
+        m = re.search('tu=\[{}; {}; {}\]'.format(pattern_tu, pattern_tu, pattern_tu), input_str)
+        if m:
+            groups = m.groups()
+            if debug_print:
+                print(f"groups:\n{groups}")
+            tu_vec = []
+            for idx in range(3):
+                idx_tu_val = idx*3 + 1
+                idx_tu_unit = idx*3 + 2
+                tu_val = groups[idx_tu_val] if groups[idx_tu_unit] is None else \
+                    (groups[idx_tu_val] if "rad" in groups[idx_tu_unit] else math.radians(float(groups[idx_tu_val])))
+                tu_vec.append(float(tu_val))
+            if debug_print:
+                print(f"tu_vec={tu_vec}")
+
+    oTo = np.eye(4)
+    if tu_vec is not None:
+        oTo[:3,:3] = visp_thetau_to_rotation(tu_vec)
+    if t_vec is not None:
+        oTo[:3,3] = np.array(t_vec).T
+
+    return filename, oTo
+
+def parse_cao_model(filename, od_T_o, debug_print):
     with open(filename) as file:
         state = 0
         pts_vec = []
@@ -519,6 +575,7 @@ def parse_cao_model(filename):
         point_faces_vec = []
         cylinders_vec = []
         circles_vec = []
+        faces_vec = []
         max_iter = 10000
         for _ in range(max_iter):
             raw_line = file.readline()
@@ -533,20 +590,38 @@ def parse_cao_model(filename):
                     else:
                         raise ValueError("CAO model should have at the beginning the version number (either V0 or V1).")
                 elif state == 1:
-                    nb_pts = int(line)
-                    print(f"nb_pts: {nb_pts}")
+                    if line.startswith("load("):
+                        recursive_filename, oTo_local = parse_load_recursive_model(line, debug_print)
+                        print(f"oTo_local:\n{oTo_local}")
 
-                    # Parse object points coordinates
-                    i = 0
-                    while i < nb_pts:
-                        raw_line = file.readline()
-                        if "" == raw_line:
-                            break
-                        line = remove_comment(raw_line.rstrip('\n').strip())
-                        if line:
-                            i += 1
-                            pts_vec.append([float(number) for number in line.split()])
-                    state = 2
+                        path = Path(filename)
+                        recursive_filepath = path.parent / recursive_filename
+                        recursive_model = parse_cao_model(recursive_filepath, od_T_o @ oTo_local, debug_print)
+
+                        lines_vec.extend(recursive_model.lines_vec)
+                        point_faces_vec.extend(point_faces_vec)
+                        faces_vec.extend(recursive_model.faces_vec)
+                        cylinders_vec.extend(recursive_model.cylinders_vec)
+                        circles_vec.extend(recursive_model.spheres_vec)
+                    else:
+                        nb_pts = int(line)
+                        print(f"nb_pts: {nb_pts}")
+
+                        # Parse object points coordinates
+                        i = 0
+                        while i < nb_pts:
+                            raw_line = file.readline()
+                            if "" == raw_line:
+                                break
+                            line = remove_comment(raw_line.rstrip('\n').strip())
+                            if line:
+                                i += 1
+                                pts_vec_local_frame_vec = [float(number) for number in line.split()]
+                                pts_vec_local_frame_vec.append(1)
+                                pts_vec_local_frame = np.array(pts_vec_local_frame_vec)
+                                pts_vec_ref_frame = od_T_o @ pts_vec_local_frame
+                                pts_vec.append(pts_vec_ref_frame[:3])
+                        state = 2
                 elif state == 2:
                     nb_lines = int(line)
                     print(f"nb_lines: {nb_lines}")
@@ -667,7 +742,7 @@ def parse_cao_model(filename):
             print(f"cylinders_vec:\n{cylinders_vec}")
             print(f"circles_vec:\n{circles_vec}")
 
-        faces_vec = line_faces_vec
+        faces_vec.extend(line_faces_vec)
         faces_vec.extend(point_faces_vec)
         return Model(lines_vec, faces_vec, cylinders_vec, circles_vec)
 
@@ -710,16 +785,17 @@ def center_viewport(ax, x_lim, y_lim, z_lim, print_lim=False):
 
 def main():
     parser = argparse.ArgumentParser(description='Plot camera trajectory from poses and CAO model files.')
-    parser.add_argument('-p', type=str, nargs=1, required=True, help='Path to poses file.')
+    parser.add_argument('-p', type=str, nargs=1, required=True, help='Path to poses file (4n x 4 if homogeneous or lines of "tx ty tz tux tuy tuz").')
     parser.add_argument('--theta-u', action='store_true', default=False,
                         help='If true, camera poses are expressed using [tx ty tz tux tuy tuz] formalism, otherwise in homogeneous form.')
+    parser.add_argument('--npz', action='store_true', default=False,
+                        help='If true, poses are loaded from a npz file with \"vec_poses\" field and [tx ty tz tux tuy tuz] data.')
     parser.add_argument('-m', type=str, nargs=1, required=True, help='Path to CAO model file.')
     parser.add_argument('--colormap', default='gist_rainbow', type=str, help='Colormap to use for the camera path.')
     parser.add_argument('--save', action='store_true', help='If true, save the figures on disk.')
     parser.add_argument('--save-dir',  default='images', type=str, help='If --save flag is set, the folder where to save the plot images.')
     parser.add_argument('--save-pattern',  default='image_{:06d}.png', type=str, help='Image filename pattern when saving.')
     parser.add_argument('--save-dpi',  default=300, type=int, help='Image dpi when saving.')
-    parser.add_argument('--step', type=int, help='Step number between each camera poses when drawing.')
     parser.add_argument('--axes-label-size', type=int, default=20, help='Axes label size.')
     parser.add_argument('--xtick-label-size', type=int, default=14, help='X-tick label size.')
     parser.add_argument('--ytick-label-size', type=int, default=14, help='Y-tick label size.')
@@ -740,6 +816,7 @@ def main():
     parser.add_argument('--x-lim', type=float, nargs=2, default=[np.nan, np.nan], help='Manually set the x-limit for the viewport.')
     parser.add_argument('--y-lim', type=float, nargs=2, default=[np.nan, np.nan], help='Manually set the y-limit for the viewport.')
     parser.add_argument('--z-lim', type=float, nargs=2, default=[np.nan, np.nan], help='Manually set the z-limit for the viewport.')
+    parser.add_argument('--debug', action='store_true', default=False, help='Debug print.')
     args = parser.parse_args()
 
     axes_label_size = args.axes_label_size
@@ -774,18 +851,23 @@ def main():
     # Load camera poses
     camera_pose_filename = args.p[0]
     use_thetau = args.theta_u
-    print(f"Load camera poses from: {camera_pose_filename} ; Use theta-u? {use_thetau}")
-    camera_poses = load_camera_poses(camera_pose_filename, use_thetau)
+    use_npz_file_format = args.npz
+    print(f"Load camera poses from: {camera_pose_filename} ; Use theta-u? {use_thetau} ; Load from npz file? {use_npz_file_format}")
+    camera_poses = load_camera_poses(camera_pose_filename, use_thetau, use_npz_file_format)
     print("poses: ", camera_poses.shape)
 
     colormap = args.colormap
     print(f"Colormap: {colormap}")
     camera_colors = get_colormap(camera_poses.shape[0]//4, colormap)
 
+    debug_print = args.debug
+    print(f"Debug print? {debug_print}")
+
     # Load model
     model_filename = args.m[0]
     print(f"Load object CAO model from: {model_filename}")
-    model = parse_cao_model(model_filename)
+    od_T_o = np.eye(4)
+    model = parse_cao_model(model_filename, od_T_o, debug_print)
     w_M_o = np.eye(4)
     w_M_o[:3,:3] = visp_thetau_to_rotation(np.array(args.wRo))
     print(f"w_M_o:\n{w_M_o}")
@@ -826,7 +908,7 @@ def main():
                 draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale, camera_colors[i//4])
 
             draw_camera_path(ax, inverse_camera_poses[:cpt+8,:], camera_colors)
-            draw_model(ax, model)
+            draw_model(ax, model, debug_print)
             # Draw current camera pose
             draw_camera(ax, inverse_camera_poses[cpt:cpt+4,:], cam_width, cam_height, cam_focal, cam_scale, camera_colors[cpt//4])
             draw_model_frame(ax, w_M_o[:3,:3], frame_size)
@@ -849,20 +931,21 @@ def main():
             plt.close()
     else:
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
+        #ax = fig.gca(projection='3d') # doesn't work on macOS Sonoma 14.6.1
+        ax = fig.add_subplot(projection='3d')
         ax.set_aspect("auto")
 
         for i in range(0, inverse_camera_poses.shape[0], 4*pose_step):
             camera_pose = inverse_camera_poses[i:i+4,:]
-            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale)
+            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale, camera_colors[i//4])
 
         # Draw the last camera pose
         for i in range(inverse_camera_poses.shape[0]-4, inverse_camera_poses.shape[0], 4):
             camera_pose = inverse_camera_poses[i:i+4,:]
-            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale)
+            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale, camera_colors[-1])
 
         draw_camera_path(ax, inverse_camera_poses, camera_colors)
-        draw_model(ax, model)
+        draw_model(ax, model, debug_print)
         draw_model_frame(ax, w_M_o[:3,:3], frame_size)
 
         center_viewport(ax, x_lim, y_lim, z_lim, print_lim=True)

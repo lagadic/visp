@@ -13,7 +13,11 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::string opt_videoname_left = "teabox_left.mp4";
     std::string opt_videoname_right = "teabox_right.mp4";
@@ -24,23 +28,25 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--name" && i + 2 < argc) {
         opt_videoname_left = std::string(argv[i + 1]);
         opt_videoname_right = std::string(argv[i + 2]);
-      } else if (std::string(argv[i]) == "--tracker" && i + 2 < argc) {
+      }
+      else if (std::string(argv[i]) == "--tracker" && i + 2 < argc) {
         opt_tracker1 = atoi(argv[i + 1]);
         opt_tracker2 = atoi(argv[i + 2]);
-      } else if (std::string(argv[i]) == "--help") {
+      }
+      else if (std::string(argv[i]) == "--help") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--name <video name left> <video name right>]"
-                     " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
-                     " [--help]\n"
-                  << std::endl;
+          << " [--name <video name left> <video name right>]"
+          " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
+          " [--help]\n"
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
     if ((opt_tracker1 < 1 || opt_tracker1 > 3) && (opt_tracker2 < 1 || opt_tracker2 > 3)) {
       std::cerr << "Wrong tracker type. Correct values are: "
-                   "1=egde|2=keypoint|3=hybrid."
-                << std::endl;
+        "1=egde|2=keypoint|3=hybrid."
+        << std::endl;
       return EXIT_SUCCESS;
     }
 
@@ -54,11 +60,11 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << opt_videoname_left << " ; " << opt_videoname_right << std::endl;
     std::cout << "Tracker requested config files: " << objectname_left << ".[init, cao]"
-              << " and " << objectname_right << ".[init, cao]" << std::endl;
+      << " and " << objectname_right << ".[init, cao]" << std::endl;
     std::cout << "Tracker optional config files: " << opt_videoname_left << ".ppm"
-              << " and " << opt_videoname_right << ".ppm" << std::endl;
+      << " and " << opt_videoname_right << ".ppm" << std::endl;
 
-    //! [Images]
+//! [Images]
     vpImage<unsigned char> I_left, I_right;
     //! [Images]
 
@@ -91,11 +97,14 @@ int main(int argc, char **argv)
     //! [Constructor]
 
 #if !defined(VISP_HAVE_MODULE_KLT)
-    if (opt_tracker >= 2) {
-      std::cout << "klt and hybrid model-based tracker are not available "
-                   "since visp_klt module is missing"
-                << std::endl;
-      return EXIT_SUCCESS;
+    unsigned int nbTracker = trackerTypes.size();
+    for (unsigned int i = 0; i < nbTracker; ++i) {
+      if (trackerTypes[i] >= 2) {
+        std::cout << "klt and hybrid model-based tracker are not available "
+          "since visp_klt module is missing"
+          << std::endl;
+        return EXIT_SUCCESS;
+      }
     }
 #endif
 
@@ -160,7 +169,8 @@ int main(int argc, char **argv)
       }
     }
     vpDisplay::getClick(I_left);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.what() << std::endl;
   }
 #else

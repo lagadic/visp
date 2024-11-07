@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,14 @@
  *
  * Description:
  * Windows 32 renderer base class
- *
- * Authors:
- * Bruno Renier
- *
- *****************************************************************************/
+ */
+
+#ifndef VP_WIN32_RENDERER_H
+#define VP_WIN32_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
-
-#ifndef vpWin32Renderer_HH
-#define vpWin32Renderer_HH
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -50,8 +45,9 @@
 // Include WinSock2.h before windows.h to ensure that winsock.h is not
 // included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
-#include <visp3/core/vpDebug.h>
 #include <windows.h>
+
+BEGIN_VISP_NAMESPACE
 
 class VISP_EXPORT vpWin32Renderer
 {
@@ -63,9 +59,9 @@ protected:
   unsigned int m_rscale;
 
 public:
-  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1){};
+  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) { };
   //! Destructor.
-  virtual ~vpWin32Renderer(){};
+  virtual ~vpWin32Renderer() { };
 
   //! Inits the display .
   virtual bool init(HWND hWnd, unsigned int w, unsigned int h) = 0;
@@ -171,6 +167,8 @@ public:
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
 };
 
+
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

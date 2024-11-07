@@ -1,6 +1,6 @@
-project(tutorial-tracking-mb-generic-rgbd-blender)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-tracking-mb-generic-rgbd-blender)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 
@@ -8,16 +8,8 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd-blender.cpp)
 
-list(APPEND tutorial_data_dir "camera_poses")
-list(APPEND tutorial_data_dir "depth")
-list(APPEND tutorial_data_dir "images")
-
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/depth_M_color.txt")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.cao")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.init")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.png")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.xml")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox_depth.xml")
+list(APPEND tutorial_data_dir "data")
+list(APPEND tutorial_data_dir "model")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -46,8 +38,4 @@ endforeach()
 # Copy the data files to the same location than the target
 foreach(data_dir ${tutorial_data_dir})
   visp_copy_dir(tutorial-mb-generic-tracker-rgbd-blender.cpp "${CMAKE_CURRENT_SOURCE_DIR}" ${data_dir})
-endforeach()
-
-foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-mb-generic-tracker-rgbd-blender.cpp ${data})
 endforeach()

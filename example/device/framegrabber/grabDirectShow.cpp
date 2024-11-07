@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,7 +32,7 @@
  * Acquire images using DirectShow (under Windows only) and display it
  * using GTK or GDI.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -57,6 +57,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "dhn:o:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -94,7 +98,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          nframes, opath.c_str());
+nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
@@ -134,7 +138,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, b
       opath = optarg;
       break;
     case 'h':
-      usage(argv[0], NULL, nframes, opath);
+      usage(argv[0], nullptr, nframes, opath);
       return false;
       break;
 
@@ -147,7 +151,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, b
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, nframes, opath);
+    usage(argv[0], nullptr, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -254,7 +258,8 @@ int main(int argc, const char **argv)
     // Release the framegrabber
     delete grabber;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -264,7 +269,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

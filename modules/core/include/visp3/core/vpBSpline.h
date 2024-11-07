@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,19 +29,15 @@
  *
  * Description:
  * This class implements the B-Spline
- *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
-
-#ifndef vpBSpline_H
-#define vpBSpline_H
+ */
 
 /*!
   \file vpBSpline.h
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 */
+
+#ifndef vpBSpline_H
+#define vpBSpline_H
 
 #include <visp3/core/vpImagePoint.h>
 
@@ -50,6 +45,7 @@
 #include <vector>
 #include <visp3/core/vpMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -62,7 +58,8 @@
   - k indicates which kth derivative is computed.
   - value is the numerical value of \f$ N_{i,p}^k(u) \f$.
 */
-typedef struct vpBasisFunction {
+typedef struct vpBasisFunction
+{
   unsigned int i;
   unsigned int p;
   double u;
@@ -109,14 +106,14 @@ typedef struct vpBasisFunction {
 
 class VISP_EXPORT vpBSpline
 {
-  public /*protected*/:
-  //! Vector wich contains the control points
+public /*protected*/:
+//! Vector which contains the control points
   std::vector<vpImagePoint> controlPoints;
   //! Vector which contain the knots \f$ {u0, ..., um} \f$
   std::vector<double> knots;
   //! Degree of the B-Spline basis functions.
   unsigned int p;
-  //! Vector wich contains the points used during the interpolation method.
+  //! Vector which contains the points used during the interpolation method.
   std::vector<vpImagePoint> crossingPoints;
 
 public:
@@ -219,24 +216,24 @@ public:
     }
   }
 
-  static unsigned int findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots);
-  unsigned int findSpan(double u);
+  static unsigned int findSpan(double l_u, unsigned int l_p, const std::vector<double> &l_knots);
+  unsigned int findSpan(double u) const;
 
   static vpBasisFunction *computeBasisFuns(double l_u, unsigned int l_i, unsigned int l_p,
-                                           std::vector<double> &l_knots);
-  vpBasisFunction *computeBasisFuns(double u);
+                                           const std::vector<double> &l_knots);
+  vpBasisFunction *computeBasisFuns(double u) const;
 
   static vpBasisFunction **computeDersBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                                std::vector<double> &l_knots);
-  vpBasisFunction **computeDersBasisFuns(double u, unsigned int der);
+                                                const std::vector<double> &l_knots);
+  vpBasisFunction **computeDersBasisFuns(double u, unsigned int der) const;
 
-  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
-                                        std::vector<vpImagePoint> &l_controlPoints);
-  vpImagePoint computeCurvePoint(double u);
+  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, const std::vector<double> &l_knots,
+                                        const std::vector<vpImagePoint> &l_controlPoints);
+  vpImagePoint computeCurvePoint(double u) const;
 
   static vpImagePoint *computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                        std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
-  vpImagePoint *computeCurveDers(double u, unsigned int der);
+                                        const std::vector<double> &l_knots, const std::vector<vpImagePoint> &l_controlPoints);
+  vpImagePoint *computeCurveDers(double u, unsigned int der) const;
 };
-
+END_VISP_NAMESPACE
 #endif

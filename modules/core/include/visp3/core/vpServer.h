@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * TCP Server
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
 #ifndef vpServer_H
 #define vpServer_H
@@ -47,6 +42,7 @@
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpServer
 
@@ -57,8 +53,8 @@
   TCP provides reliable, ordered delivery of a stream of bytes from a program
   on one computer to another program on another computer.
 
-  Exemple of server's code, receiving and sending basic message.
-  It corresponds to the client used in the first exemple of vpClient class'
+  Example of server's code, receiving and sending basic message.
+  It corresponds to the client used in the first example of vpClient class'
   documentation.
 
   \code
@@ -98,8 +94,8 @@ int main(int argc,const char** argv)
 }
   \endcode
 
-  Exemple of server's code, receiving a vpImage on request form.
-  It correspond to the client used in the second exemple of vpClient class'
+  Example of server's code, receiving a vpImage on request form.
+  It correspond to the client used in the second example of vpClient class'
 documentation.
 
   \code
@@ -176,10 +172,10 @@ private:
 
 public:
   vpServer();
-  explicit vpServer(const int &port);
+  VP_EXPLICIT vpServer(const int &port);
   vpServer(const std::string &adress_serv, const int &port_serv);
 
-  virtual ~vpServer();
+  virtual ~vpServer() VP_OVERRIDE;
 
   bool checkForConnections();
 
@@ -190,7 +186,7 @@ public:
 
     \return True if the server is started, false otherwise.
   */
-  bool isStarted() { return started; }
+  bool isStarted() const { return started; }
 
   /*!
     Get the maximum number of clients that can be connected to the server.
@@ -199,14 +195,14 @@ public:
 
     \return Maximum number of clients.
   */
-  unsigned int getMaxNumberOfClients() { return max_clients; }
+  unsigned int getMaxNumberOfClients() const { return max_clients; }
 
   /*!
     Get the number of clients connected to the server.
 
     \return Number of clients connected.
   */
-  unsigned int getNumberOfClients() { return (unsigned int)receptor_list.size(); }
+  unsigned int getNumberOfClients() const { return (unsigned int)receptor_list.size(); }
 
   void print();
 
@@ -219,8 +215,8 @@ public:
 
     \param l : Maximum number of clients.
   */
-  void setMaxNumberOfClients(unsigned int &l) { max_clients = l; }
+  void setMaxNumberOfClients(const unsigned int &l) { max_clients = l; }
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

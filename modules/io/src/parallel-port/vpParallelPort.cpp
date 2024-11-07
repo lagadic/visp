@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,12 @@
  *
  * Description:
  * Parallel port management.
- *
- *****************************************************************************/
+ */
+
+/*!
+  \file vpParallelPort.cpp
+  \brief Parallel port management under unix.
+*/
 
 #include <visp3/core/vpConfig.h>
 
@@ -45,11 +48,9 @@
 
 #include <visp3/io/vpParallelPort.h>
 
-/*!
-  \file vpParallelPort.cpp
-  \brief Parallel port management under unix.
-*/
 
+
+BEGIN_VISP_NAMESPACE
 static unsigned char vpParallelPortData;
 
 /*!
@@ -159,9 +160,8 @@ void vpParallelPort::close()
     throw(vpParallelPortException(vpParallelPortException::closing, "Can't close the parallel port"));
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no
-// symbols
-void dummy_vpParallelPort(){};
+// Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no symbols
+void dummy_vpParallelPort() { };
 #endif

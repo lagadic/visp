@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,12 +32,10 @@
  * Manage a cylinder used in the model-based tracker.
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  * Bertrand Delabarre
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpMbtDistanceCylinder.h
@@ -48,6 +46,7 @@
 #define vpMbtDistanceCylinder_HH
 
 #include <visp3/core/vpCircle.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCylinder.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpLine.h>
@@ -56,6 +55,7 @@
 #include <visp3/mbt/vpMbtMeLine.h>
 #include <visp3/visual_features/vpFeatureLine.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtDistanceCylinder
 
@@ -120,12 +120,12 @@ public:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //    vpMbtDistanceCylinder(const vpMbtDistanceCylinder &)
-  //      : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1),
+  //      : name(), index(0), cam(), me(nullptr), wmean1(1), wmean2(1),
   //        featureline1(), featureline2(), isTrackedCylinder(true),
-  //        meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL),
-  //        radius(0), p1(NULL), p2(NULL), L(), error(), nbFeature(0),
-  //        nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL),
-  //        hiddenface(NULL), index_polygon(-1), isvisible(false)
+  //        meline1(nullptr), meline2(nullptr), cercle1(nullptr), cercle2(nullptr),
+  //        radius(0), p1(nullptr), p2(nullptr), L(), error(), nbFeature(0),
+  //        nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(nullptr),
+  //        hiddenface(nullptr), index_polygon(-1), isvisible(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
   //      implemented!");
@@ -199,7 +199,7 @@ public:
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                      const vpImage<bool> *mask = NULL);
+                      const vpImage<bool> *mask = nullptr);
 
   /*!
    Return if the cylinder is used for tracking.
@@ -216,7 +216,7 @@ public:
   inline bool isVisible() const { return isvisible; }
 
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                        const vpImage<bool> *mask = NULL);
+                        const vpImage<bool> *mask = nullptr);
 
   /*!
    Set the camera parameters.
@@ -283,5 +283,5 @@ public:
 private:
   void project(const vpHomogeneousMatrix &cMo);
 };
-
+END_VISP_NAMESPACE
 #endif

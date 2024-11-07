@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,27 +28,16 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpIo class and its derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpIoException_h_
-#define _vpIoException_h_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Exceptions that can be emitted by the vpIo class and its derivatives.
  */
 
 /*!
-  \file vpIoException.h
-  \brief Error that can be emited by the vpIoTools class and its derivates.
+ * \file vpIoException.h
+ * \brief Error that can be emitted by the vpIoTools class and its derivatives.
 */
+
+#ifndef VP_IO_EXCEPTION_H
+#define VP_IO_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -57,33 +45,31 @@
 #include <iostream>
 #include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpIoException
-  \ingroup group_core_debug
-  \brief Error that can be emited by the vpIoTools class and its derivates.
- */
+ * \class vpIoException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpIoTools class and its derivatives.
+*/
 class VISP_EXPORT vpIoException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpIo member.
- */
-  enum error {
-    invalidDirectoryName, /*! Directory name is invalid. */
-    cantCreateDirectory,  /*! Unable to create a directory. */
-    cantGetUserName,      /*! User name is not available. */
-    cantGetenv            /*! Cannot get environment variable value. */
+   * \brief Lists the possible error than can be emitted while calling
+   * vpIo member.
+   */
+  enum error
+  {
+    invalidDirectoryName, //!< Directory name is invalid.
+    cantCreateDirectory,  //!< Unable to create a directory.
+    cantGetUserName,      //!< User name is not available.
+    cantGetenv            //!< Cannot get environment variable value.
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpIoException(int id, const char *format, ...)
   {
     this->code = id;
@@ -92,8 +78,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpIoException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpIoException(int id) : vpException(id) { ; }
-};
 
+  /*!
+   * Constructor.
+   */
+  vpIoException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpIoException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

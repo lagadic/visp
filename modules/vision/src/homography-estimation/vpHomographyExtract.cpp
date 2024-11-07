@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,34 +29,21 @@
  *
  * Description:
  * Homography transformation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 #include <math.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpHomography.h>
+
+BEGIN_VISP_NAMESPACE
 
 //#define DEBUG_Homographie 0
 
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const double vpHomography::sing_threshold = 0.0001;
+const double vpHomography::m_sing_threshold = 0.0001;
 
-/*!
-  Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-*/
 void vpHomography::computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n)
 {
 
@@ -69,26 +55,6 @@ void vpHomography::computeDisplacement(vpRotationMatrix &aRb, vpTranslationVecto
   computeDisplacement(*this, aRb, atb, n);
 }
 
-/*!
-
-  Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
-  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
-  (vpHomogeneousMatrix).
-
-  \param nd : Input normal vector to the plane used to compar with the normal
-  vector \e n extracted from the homography.
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-*/
 void vpHomography::computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                        vpColVector &n)
 {
@@ -133,8 +99,6 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
   double s, determinantU, determinantV;
   unsigned int vOrdre[3];
 
-  // vpColVector normaleDesiree(3) ;
-  // normaleDesiree[0]=0;normaleDesiree[1]=0;normaleDesiree[2]=1;
   vpColVector normaleDesiree(nd);
 
 /**** Corps de la focntion ****/
@@ -150,9 +114,12 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
   vpMatrix aRbp(3, 3);
 
   vpMatrix mH(3, 3);
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       mH[i][j] = aHb[i][j];
+    }
+  }
 
   /* Preparation au calcul de la SVD */
   mTempU = mH;
@@ -173,28 +140,33 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -206,9 +178,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
         hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
 
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
     sv[i] = svTemp[vOrdre[i]];
-    for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       mU[i][j] = mTempU[i][vOrdre[j]];
       mV[i][j] = mTempV[i][vOrdre[j]];
     }
@@ -232,8 +204,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
 #ifdef DEBUG_Homographie
   printf("s = det(U) * det(V) = %f * %f = %f\n", determinantU, determinantV, s);
 #endif
-  if (s < 0)
+  if (s < 0) {
     mV *= -1;
+  }
 
   /* d' = d2 */
   distanceFictive = sv[1];
@@ -242,10 +215,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
 #endif
   n.resize(3);
 
-  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold) {
-    //#ifdef DEBUG_Homographie
-    //   printf ("\nPure  rotation\n");
-    //#endif
+  if (((sv[0] - sv[1]) < m_sing_threshold) && ((sv[0] - sv[2]) < m_sing_threshold)) {
     /*****
           Cas ou le deplacement est une rotation pure
           et la normale reste indefini
@@ -258,7 +228,8 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
     n[0] = normaleDesiree[0];
     n[1] = normaleDesiree[1];
     n[2] = normaleDesiree[2];
-  } else {
+  }
+  else {
 #ifdef DEBUG_Homographie
     printf("\nCas general\n");
 #endif
@@ -267,16 +238,16 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
     /*****
           test pour determiner quelle est la bonne solution on teste
           d'abord quelle solution est plus proche de la perpendiculaire
-          au plan de la cible constuction de la normale n
+          au plan de la cible construction de la normale n
     *****/
 
     /*****
           Calcul de la normale au plan : n' = [ esp1*x1 , x2=0 , esp3*x3 ]
           dans l'ordre : cas (esp1=+1, esp3=+1) et (esp1=-1, esp3=+1)
     *****/
-    mX[0][0] = sqrt((sv[0] * sv[0] - sv[1] * sv[1]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    mX[0][0] = sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
     mX[1][0] = 0.0;
-    mX[2][0] = sqrt((sv[1] * sv[1] - sv[2] * sv[2]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    mX[2][0] = sqrt(((sv[1] * sv[1]) - (sv[2] * sv[2])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
 
     mX[0][1] = -mX[0][0];
     mX[1][1] = mX[1][0];
@@ -284,21 +255,22 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
 
     /* Il y a 4 solutions pour n : 2 par cas => n1, -n1, n2, -n2 */
     double cosinusAncien = 0.0;
-    for (unsigned int w = 0; w < 2; w++) {   /* Pour les 2 cas */
-      for (unsigned int k = 0; k < 2; k++) { /* Pour le signe */
+    for (unsigned int w = 0; w < 2; ++w) {   /* Pour les 2 cas */
+      for (unsigned int k = 0; k < 2; ++k) { /* Pour le signe */
 
         /* Calcul de la normale estimee : n = V.n' */
-        for (unsigned int i = 0; i < 3; i++) {
+        for (unsigned int i = 0; i < val_3; ++i) {
           normaleEstimee[i] = 0.0;
-          for (unsigned int j = 0; j < 3; j++) {
-            normaleEstimee[i] += (2.0 * k - 1.0) * mV[i][j] * mX[j][w];
+          for (unsigned int j = 0; j < val_3; ++j) {
+            normaleEstimee[i] += ((2.0 * k) - 1.0) * mV[i][j] * mX[j][w];
           }
         }
 
         /* Calcul du cosinus de l'angle entre la normale reelle et desire */
         double cosinusDesireeEstimee = 0.0;
-        for (unsigned int i = 0; i < 3; i++)
+        for (unsigned int i = 0; i < val_3; ++i) {
           cosinusDesireeEstimee += normaleEstimee[i] * normaleDesiree[i];
+        }
 
         /*****
               Si la solution est meilleur
@@ -308,28 +280,31 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
           cosinusAncien = cosinusDesireeEstimee;
 
           /* Affectation de la normale qui est retourner */
-          for (unsigned int j = 0; j < 3; j++)
+          for (unsigned int j = 0; j < val_3; ++j) {
             n[j] = normaleEstimee[j];
+          }
 
           /* Construction du vecteur t'= +/- (d1-d3).[x1, 0, -x3] */
-          aTbp[0] = (2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[0][w];
-          aTbp[1] = (2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[1][w];
-          aTbp[2] = -(2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[2][w];
+          aTbp[0] = ((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[0][w];
+          aTbp[1] = ((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[1][w];
+          aTbp[2] = -((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[2][w];
 
           /* si c'est la deuxieme solution */
-          if (w == 1)
+          if (w == 1) {
             signeSinus = -1; /* car esp1*esp3 = -1 */
-          else
+          }
+          else {
             signeSinus = 1;
+          }
         } /* fin if (cosinusDesireeEstimee > cosinusAncien) */
       }   /* fin k */
     }     /* fin w */
   }       /* fin else */
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
     atb[i] = 0.0;
-    for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       atb[i] += mU[i][j] * aTbp[j];
     }
     atb[i] /= distanceFictive;
@@ -352,9 +327,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
         de la solution retenue (cf. ci-dessous)
   *****/
   sinusTheta =
-      signeSinus * sqrt((sv[0] * sv[0] - sv[1] * sv[1]) * (sv[1] * sv[1] - sv[2] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
+    (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
 
-  cosinusTheta = (sv[1] * sv[1] + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+  cosinusTheta = ((sv[1] * sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
   /* construction de la matrice de rotation R' */
   aRbp[0][0] = cosinusTheta;
@@ -368,25 +343,25 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
   aRbp[2][2] = cosinusTheta;
 
   /* multiplication Rint = U R' */
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aRbint[i][j] = 0.0;
-      for (unsigned int k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         aRbint[i][j] += mU[i][k] * aRbp[k][j];
       }
     }
   }
 
   /* multiplication R = Rint . V^T */
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aRb[i][j] = 0.0;
-      for (unsigned int k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         aRb[i][j] += aRbint[i][k] * mV[j][k];
       }
     }
   }
-/*transpose_carre(aRb,3); */
+
 #ifdef DEBUG_Homographie
   printf("R : %d\n", aRb.isARotationMatrix());
   std::cout << aRb << std::endl;
@@ -443,9 +418,12 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
   vpMatrix aRbp(3, 3);
 
   vpMatrix mH(3, 3);
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       mH[i][j] = aHb[i][j];
+    }
+  }
 
   /* Preparation au calcul de la SVD */
   mTempU = mH;
@@ -466,28 +444,33 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -499,9 +482,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
 
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
     sv[i] = svTemp[vOrdre[i]];
-    for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       mU[i][j] = mTempU[i][vOrdre[j]];
       mV[i][j] = mTempV[i][vOrdre[j]];
     }
@@ -525,8 +508,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 #ifdef DEBUG_Homographie
   printf("s = det(U) * det(V) = %f * %f = %f\n", determinantU, determinantV, s);
 #endif
-  if (s < 0)
+  if (s < 0) {
     mV *= -1;
+  }
 
   /* d' = d2 */
   distanceFictive = sv[1];
@@ -535,10 +519,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 #endif
   n.resize(3);
 
-  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold) {
-    //#ifdef DEBUG_Homographie
-    //   printf ("\nPure  rotation\n");
-    //#endif
+  if (((sv[0] - sv[1]) < m_sing_threshold) && ((sv[0] - sv[2]) < m_sing_threshold)) {
     /*****
           Cas ou le deplacement est une rotation pure
           et la normale reste indefini
@@ -551,7 +532,8 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
     n[0] = normaleDesiree[0];
     n[1] = normaleDesiree[1];
     n[2] = normaleDesiree[2];
-  } else {
+  }
+  else {
 #ifdef DEBUG_Homographie
     printf("\nCas general\n");
 #endif
@@ -567,9 +549,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
           Calcul de la normale au plan : n' = [ esp1*x1 , x2=0 , esp3*x3 ]
           dans l'ordre : cas (esp1=+1, esp3=+1) et (esp1=-1, esp3=+1)
     *****/
-    mX[0][0] = sqrt((sv[0] * sv[0] - sv[1] * sv[1]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    mX[0][0] = sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
     mX[1][0] = 0.0;
-    mX[2][0] = sqrt((sv[1] * sv[1] - sv[2] * sv[2]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    mX[2][0] = sqrt(((sv[1] * sv[1]) - (sv[2] * sv[2])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
 
     mX[0][1] = -mX[0][0];
     mX[1][1] = mX[1][0];
@@ -577,21 +559,22 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 
     /* Il y a 4 solutions pour n : 2 par cas => n1, -n1, n2, -n2 */
     double cosinusAncien = 0.0;
-    for (unsigned int w = 0; w < 2; w++) {   /* Pour les 2 cas */
-      for (unsigned int k = 0; k < 2; k++) { /* Pour le signe */
+    for (unsigned int w = 0; w < 2; ++w) {   /* Pour les 2 cas */
+      for (unsigned int k = 0; k < 2; ++k) { /* Pour le signe */
 
         /* Calcul de la normale estimee : n = V.n' */
-        for (unsigned int i = 0; i < 3; i++) {
+        for (unsigned int i = 0; i < val_3; ++i) {
           normaleEstimee[i] = 0.0;
-          for (unsigned int j = 0; j < 3; j++) {
-            normaleEstimee[i] += (2.0 * k - 1.0) * mV[i][j] * mX[j][w];
+          for (unsigned int j = 0; j < val_3; ++j) {
+            normaleEstimee[i] += ((2.0 * k)- 1.0) * mV[i][j] * mX[j][w];
           }
         }
 
         /* Calcul du cosinus de l'angle entre la normale reelle et desire */
         double cosinusDesireeEstimee = 0.0;
-        for (unsigned int i = 0; i < 3; i++)
+        for (unsigned int i = 0; i < val_3; ++i) {
           cosinusDesireeEstimee += normaleEstimee[i] * normaleDesiree[i];
+        }
 
         /*****
               Si la solution est meilleur
@@ -601,28 +584,31 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
           cosinusAncien = cosinusDesireeEstimee;
 
           /* Affectation de la normale qui est retourner */
-          for (unsigned int j = 0; j < 3; j++)
+          for (unsigned int j = 0; j < val_3; ++j) {
             n[j] = normaleEstimee[j];
+          }
 
           /* Construction du vecteur t'= +/- (d1-d3).[x1, 0, -x3] */
-          aTbp[0] = (2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[0][w];
-          aTbp[1] = (2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[1][w];
-          aTbp[2] = -(2.0 * k - 1.0) * (sv[0] - sv[2]) * mX[2][w];
+          aTbp[0] = ((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[0][w];
+          aTbp[1] = ((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[1][w];
+          aTbp[2] = -((2.0 * k) - 1.0) * (sv[0] - sv[2]) * mX[2][w];
 
           /* si c'est la deuxieme solution */
-          if (w == 1)
+          if (w == 1) {
             signeSinus = -1; /* car esp1*esp3 = -1 */
-          else
+          }
+          else {
             signeSinus = 1;
+          }
         } /* fin if (cosinusDesireeEstimee > cosinusAncien) */
       }   /* fin k */
     }     /* fin w */
   }       /* fin else */
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
     atb[i] = 0.0;
-    for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       atb[i] += mU[i][j] * aTbp[j];
     }
     atb[i] /= distanceFictive;
@@ -645,9 +631,9 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
         de la solution retenue (cf. ci-dessous)
   *****/
   sinusTheta =
-      signeSinus * sqrt((sv[0] * sv[0] - sv[1] * sv[1]) * (sv[1] * sv[1] - sv[2] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
+    (signeSinus * sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) * ((sv[1] * sv[1]) - (sv[2] * sv[2])))) / ((sv[0] + sv[2]) * sv[1]);
 
-  cosinusTheta = (sv[1] * sv[1] + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+  cosinusTheta = ((sv[1] * sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
   /* construction de la matrice de rotation R' */
   aRbp[0][0] = cosinusTheta;
@@ -661,25 +647,25 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
   aRbp[2][2] = cosinusTheta;
 
   /* multiplication Rint = U R' */
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aRbint[i][j] = 0.0;
-      for (unsigned int k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         aRbint[i][j] += mU[i][k] * aRbp[k][j];
       }
     }
   }
 
   /* multiplication R = Rint . V^T */
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       aRb[i][j] = 0.0;
-      for (unsigned int k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         aRb[i][j] += aRbint[i][k] * mV[j][k];
       }
     }
   }
-/*transpose_carre(aRb,3); */
+
 #ifdef DEBUG_Homographie
   printf("R : %d\n", aRb.isARotationMatrix());
   std::cout << aRb << std::endl;
@@ -704,6 +690,7 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   bool norm1ok = false, norm2ok = false, norm3ok = false, norm4ok = false;
 
   double tmp, determinantU, determinantV, s, distanceFictive;
+  const unsigned int val_3 = 3;
   vpMatrix mTempU(3, 3), mTempV(3, 3), U(3, 3), V(3, 3);
 
   vpRotationMatrix Rprim1, R1;
@@ -743,28 +730,33 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
         vOrdre[0] = 0;
         vOrdre[1] = 1;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 0;
         vOrdre[1] = 2;
         vOrdre[2] = 1;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 0;
       vOrdre[2] = 1;
     }
-  } else {
+  }
+  else {
     if (svTemp[1] >= svTemp[2]) {
       if (svTemp[0] > svTemp[2]) {
         vOrdre[0] = 1;
         vOrdre[1] = 0;
         vOrdre[2] = 2;
-      } else {
+      }
+      else {
         vOrdre[0] = 1;
         vOrdre[1] = 2;
         vOrdre[2] = 0;
       }
-    } else {
+    }
+    else {
       vOrdre[0] = 2;
       vOrdre[1] = 1;
       vOrdre[2] = 0;
@@ -775,9 +767,9 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
         en fonction des valeurs singulieres car
         hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < val_3; ++i) {
     sv[i] = svTemp[vOrdre[i]];
-    for (unsigned int j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       U[i][j] = mTempU[i][vOrdre[j]];
       V[i][j] = mTempV[i][vOrdre[j]];
     }
@@ -793,11 +785,11 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 #endif
 
   // calcul du determinant de U et V
-  determinantU = U[0][0] * (U[1][1] * U[2][2] - U[1][2] * U[2][1]) + U[0][1] * (U[1][2] * U[2][0] - U[1][0] * U[2][2]) +
-                 U[0][2] * (U[1][0] * U[2][1] - U[1][1] * U[2][0]);
+  determinantU = (U[0][0] * ((U[1][1] * U[2][2]) - (U[1][2] * U[2][1]))) + (U[0][1] * ((U[1][2] * U[2][0]) - (U[1][0] * U[2][2]))) +
+    (U[0][2] * ((U[1][0] * U[2][1]) - (U[1][1] * U[2][0])));
 
-  determinantV = V[0][0] * (V[1][1] * V[2][2] - V[1][2] * V[2][1]) + V[0][1] * (V[1][2] * V[2][0] - V[1][0] * V[2][2]) +
-                 V[0][2] * (V[1][0] * V[2][1] - V[1][1] * V[2][0]);
+  determinantV = (V[0][0] * ((V[1][1] * V[2][2]) - (V[1][2] * V[2][1]))) + (V[0][1] * ((V[1][2] * V[2][0]) - (V[1][0] * V[2][2]))) +
+    (V[0][2] * ((V[1][0] * V[2][1]) - (V[1][1] * V[2][0])));
 
   s = determinantU * determinantV;
 
@@ -815,12 +807,14 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   // (h_31x_1 + h_32x_2 + h_33)/d > 0
   // et d = sd'
 
-  tmp = H[2][0] * x + H[2][1] * y + H[2][2];
+  tmp = (H[2][0] * x) + (H[2][1] * y) + H[2][2];
 
-  if ((tmp / (sv[1] * s)) > 0)
+  if ((tmp / (sv[1] * s)) > 0) {
     distanceFictive = sv[1];
-  else
+  }
+  else {
     distanceFictive = -sv[1];
+  }
 
   // il faut ensuite considerer l'ordre de multiplicite de chaque variable
   // 1er cas : d1<>d2<>d3
@@ -828,16 +822,21 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   // 3eme cas : d1 <>d2 =d3
   // 4eme cas : d1 =d2=d3
 
-  if ((sv[0] - sv[1]) < sing_threshold) {
-    if ((sv[1] - sv[2]) < sing_threshold)
+  if ((sv[0] - sv[1]) < m_sing_threshold) {
+    if ((sv[1] - sv[2]) < m_sing_threshold) {
       cas = cas4;
-    else
+    }
+    else {
       cas = cas2;
-  } else {
-    if ((sv[1] - sv[2]) < sing_threshold)
+    }
+  }
+  else {
+    if ((sv[1] - sv[2]) < m_sing_threshold) {
       cas = cas3;
-    else
+    }
+    else {
       cas = cas1;
+    }
   }
 
   Nprim1 = 0.0;
@@ -861,9 +860,9 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
   if (cas == cas1) {
     // quatre normales sont possibles
-    Nprim1[0] = sqrt((sv[0] * sv[0] - sv[1] * sv[1]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    Nprim1[0] = sqrt(((sv[0] * sv[0]) - (sv[1] * sv[1])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
 
-    Nprim1[2] = sqrt((sv[1] * sv[1] - sv[2] * sv[2]) / (sv[0] * sv[0] - sv[2] * sv[2]));
+    Nprim1[2] = sqrt(((sv[1] * sv[1]) - (sv[2] * sv[2])) / ((sv[0] * sv[0]) - (sv[2] * sv[2])));
 
     Nprim2[0] = Nprim1[0];
     Nprim2[2] = -Nprim1[2];
@@ -895,46 +894,46 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   if (cas == cas1) {
     N1 = V * Nprim1;
 
-    tmp = N1[0] * x + N1[1] * y + N1[2];
+    tmp = (N1[0] * x) + (N1[1] * y) + N1[2];
     tmp /= (distanceFictive * s);
     norm1ok = (tmp > 0);
 
     N2 = V * Nprim2;
-    tmp = N2[0] * x + N2[1] * y + N2[2];
+    tmp = (N2[0] * x) + (N2[1] * y) + N2[2];
     tmp /= (distanceFictive * s);
     norm2ok = (tmp > 0);
 
     N3 = V * Nprim3;
-    tmp = N3[0] * x + N3[1] * y + N3[2];
+    tmp = (N3[0] * x) + (N3[1] * y) + N3[2];
     tmp /= (distanceFictive * s);
     norm3ok = (tmp > 0);
 
     N4 = V * Nprim4;
-    tmp = N4[0] * x + N4[1] * y + N4[2];
+    tmp = (N4[0] * x) + (N4[1] * y) + N4[2];
     tmp /= (distanceFictive * s);
     norm4ok = (tmp > 0);
   }
 
   if (cas == cas2) {
     N1 = V * Nprim1;
-    tmp = N1[0] * x + N1[1] * y + N1[2];
+    tmp = (N1[0] * x) + (N1[1] * y) + N1[2];
     tmp /= (distanceFictive * s);
     norm1ok = (tmp > 0);
 
     N2 = V * Nprim2;
-    tmp = N2[0] * x + N2[1] * y + N2[2];
+    tmp = (N2[0] * x) + (N2[1] * y) + N2[2];
     tmp /= (distanceFictive * s);
     norm2ok = (tmp > 0);
   }
 
   if (cas == cas3) {
     N1 = V * Nprim1;
-    tmp = N1[0] * x + N1[1] * y + N1[2];
+    tmp = (N1[0] * x) + (N1[1] * y) + N1[2];
     tmp /= (distanceFictive * s);
     norm1ok = (tmp > 0);
 
     N2 = V * Nprim2;
-    tmp = N2[0] * x + N2[1] * y + N2[2];
+    tmp = (N2[0] * x) + (N2[1] * y) + N2[2];
     tmp /= (distanceFictive * s);
     norm2ok = (tmp > 0);
   }
@@ -948,13 +947,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm1ok) {
 
         // cos theta
-        Rprim1[0][0] = (vpMath::sqr(sv[1]) + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+        Rprim1[0][0] = (vpMath::sqr(sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
         Rprim1[2][2] = Rprim1[0][0];
 
         // sin theta
         Rprim1[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim1[0][2] = -Rprim1[2][0];
 
@@ -970,13 +969,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm2ok) {
 
         // cos theta
-        Rprim2[0][0] = (vpMath::sqr(sv[1]) + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+        Rprim2[0][0] = (vpMath::sqr(sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
         Rprim2[2][2] = Rprim2[0][0];
 
         // sin theta
         Rprim2[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim2[0][2] = -Rprim2[2][0];
 
@@ -992,13 +991,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm3ok) {
 
         // cos theta
-        Rprim3[0][0] = (vpMath::sqr(sv[1]) + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+        Rprim3[0][0] = (vpMath::sqr(sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
         Rprim3[2][2] = Rprim3[0][0];
 
         // sin theta
         Rprim3[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim3[0][2] = -Rprim3[2][0];
 
@@ -1014,13 +1013,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm4ok) {
 
         // cos theta
-        Rprim4[0][0] = (vpMath::sqr(sv[1]) + sv[0] * sv[2]) / ((sv[0] + sv[2]) * sv[1]);
+        Rprim4[0][0] = (vpMath::sqr(sv[1]) + (sv[0] * sv[2])) / ((sv[0] + sv[2]) * sv[1]);
 
         Rprim4[2][2] = Rprim4[0][0];
 
         // sin theta
         Rprim4[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] + sv[2]) * sv[1]);
+          ((sv[0] + sv[2]) * sv[1]);
 
         Rprim4[0][2] = -Rprim4[2][0];
 
@@ -1079,13 +1078,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm1ok) {
 
         // cos theta
-        Rprim1[0][0] = (sv[0] * sv[2] - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
+        Rprim1[0][0] = ((sv[0] * sv[2]) - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
 
         Rprim1[2][2] = -Rprim1[0][0];
 
         // sin theta
         Rprim1[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim1[0][2] = Rprim1[2][0];
 
@@ -1101,13 +1100,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm2ok) {
 
         // cos theta
-        Rprim2[0][0] = (sv[0] * sv[2] - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
+        Rprim2[0][0] = ((sv[0] * sv[2]) - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
 
         Rprim2[2][2] = -Rprim2[0][0];
 
         // sin theta
         Rprim2[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim2[0][2] = Rprim2[2][0];
 
@@ -1123,13 +1122,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       if (norm3ok) {
 
         // cos theta
-        Rprim3[0][0] = (sv[0] * sv[2] - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
+        Rprim3[0][0] = ((sv[0] * sv[2]) - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
 
         Rprim3[2][2] = -Rprim3[0][0];
 
         // sin theta
         Rprim3[2][0] = -(sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim3[0][2] = Rprim3[2][0];
 
@@ -1144,13 +1143,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
 
       if (norm4ok) {
         // cos theta
-        Rprim4[0][0] = (sv[0] * sv[2] - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
+        Rprim4[0][0] = ((sv[0] * sv[2]) - vpMath::sqr(sv[1])) / ((sv[0] - sv[2]) * sv[1]);
 
         Rprim4[2][2] = -Rprim4[0][0];
 
         // sin theta
         Rprim4[2][0] = (sqrt((vpMath::sqr(sv[0]) - vpMath::sqr(sv[1])) * (vpMath::sqr(sv[1]) - vpMath::sqr(sv[2])))) /
-                       ((sv[0] - sv[2]) * sv[1]);
+          ((sv[0] - sv[2]) * sv[1]);
 
         Rprim4[0][2] = Rprim4[2][0];
 
@@ -1256,30 +1255,41 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
       vT.push_back(T4);
       vN.push_back(N4);
     }
-  } else {
+  }
+  else {
     std::cout << "On tombe dans le cas particulier ou le mouvement n'est pas "
-                 "estimable!"
-              << std::endl;
+      "estimable!"
+      << std::endl;
   }
 
-  // on peut ensuite afficher les resultats...
-  /* std::cout << "Analyse des resultats : "<< std::endl; */
-  /* if (cas==cas1) */
-  /* std::cout << "On est dans le cas 1" << std::endl; */
-  /* if (cas==cas2) */
-  /* std::cout << "On est dans le cas 2" << std::endl; */
-  /* if (cas==cas3) */
-  /* std::cout << "On est dans le cas 3" << std::endl; */
-  /* if (cas==cas4) */
-  /* std::cout << "On est dans le cas 4" << std::endl; */
+#ifdef DEBUG_Homographie
+// on peut ensuite afficher les resultats...
+  std::cout << "Analyse des resultats : "<< std::endl;
+  if (cas==cas1) {
+    std::cout << "On est dans le cas 1" << std::endl;
+  }
+  if (cas==cas2) {
+    std::cout << "On est dans le cas 2" << std::endl;
+  }
+  if (cas==cas3) {
+    std::cout << "On est dans le cas 3" << std::endl;
+  }
+  if (cas==cas4) {
+    std::cout << "On est dans le cas 4" << std::endl;
+  }
 
-  /* if (distanceFictive < 0) */
-  /* std::cout << "d'<0" << std::endl; */
-  /* else */
-  /* std::cout << "d'>0" << std::endl; */
+  if (distanceFictive < 0) {
+    std::cout << "d'<0" << std::endl;
+  }
+  else {
+    std::cout << "d'>0" << std::endl;
+  }
+#endif
 
 #ifdef DEBUG_Homographie
   printf("fin : Homographie_EstimationDeplacementCamera\n");
 #endif
 }
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+END_VISP_NAMESPACE

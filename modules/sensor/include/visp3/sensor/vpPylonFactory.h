@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,13 @@
  * Authors:
  * Wenfeng CAI
  *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpPylonFactory.h
+  \brief Description: Factory class used to create vpPylonGrabber
+  instances.
+*/
 
 #ifndef _vpPylonFactory_h_
 #define _vpPylonFactory_h_
@@ -44,12 +50,7 @@
 
 #ifdef VISP_HAVE_PYLON
 
-/*!
-  \file vpPylonFactory.h
-  \brief Description: Factory class used to create vpPylonGrabber
-  instances.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Factory singleton class to create vpPylonGrabber subclass
   instances.
@@ -64,7 +65,7 @@
   vpPylonFactory &factory = vpPylonFactory::instance();
   vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
- */
+*/
 class VISP_EXPORT vpPylonFactory
 {
 public:
@@ -72,7 +73,8 @@ public:
 
   /*! Device class of cameras.
    */
-  enum DeviceClass {
+  enum DeviceClass
+  {
     BASLER_GIGE, //!< Basler GigE camera.
     BASLER_USB   //!< Basler USB camera.
   };
@@ -81,12 +83,12 @@ public:
 
 private:
   //! Default constructor.
-  vpPylonFactory(){};
+  vpPylonFactory() { };
   vpPylonFactory(vpPylonFactory const &);
   void operator=(vpPylonFactory const &);
 
   Pylon::PylonAutoInitTerm m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonFactory_h_

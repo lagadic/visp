@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Simulator based on Coin3d.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 /*!
   \file vpViewer.cpp
   Viewer used by the simulator. Under Windows, the viewer is
@@ -51,15 +46,16 @@
 #include <Inventor/events/SoKeyboardEvent.h>
 #include <Inventor/nodes/SoEventCallback.h>
 
+BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent, vpSimulator *_simu, vpViewerType type)
-  : SoWinExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoWinExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOQT)
 vpViewer::vpViewer(QWidget *parent, vpSimulator *_simu, vpViewerType type)
-  : SoQtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoQtExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOXT)
 vpViewer::vpViewer(Widget parent, vpSimulator *_simu, vpViewerType type)
-  : SoXtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoXtExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #endif
 {
   // Coin should not clear the pixel-buffer, so the background image
@@ -70,7 +66,7 @@ vpViewer::vpViewer(Widget parent, vpSimulator *_simu, vpViewerType type)
   setAutoRedraw(false);
 }
 
-vpViewer::~vpViewer() {}
+vpViewer::~vpViewer() { }
 
 void vpViewer::actualRedraw(void)
 {
@@ -87,7 +83,7 @@ void vpViewer::actualRedraw(void)
 
     // this should be used only with the vpAR:vpSimulator
     // to diplay an image background
-    if (simu->image_background != NULL) {
+    if (simu->image_background != nullptr) {
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       if (simu->typeImage == vpSimulator::grayImage)
         glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(), (GLenum)GL_LUMINANCE,
@@ -234,8 +230,8 @@ SbBool vpViewer::processSoEvent(const SoEvent *const event)
   return SoXtExaminerViewer::processSoEvent(event);
 #endif
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpViewer.cpp.o) has no symbols
-void dummy_vpViewer(){};
+void dummy_vpViewer() { };
 #endif

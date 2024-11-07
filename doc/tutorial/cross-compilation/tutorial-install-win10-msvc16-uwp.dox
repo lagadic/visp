@@ -76,7 +76,7 @@ With CMake configure ViSP specifying options for cross compiling for `"Windows S
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
-C:\> cmake.exe -G "Visual Studio 16 2019" -A "Win32" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "Win32" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
@@ -94,10 +94,7 @@ The same process could be applied except that during cmake configuration you hav
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
-C:\> cmake.exe -G "Visual Studio 16 2019" -A "x64" -DCMAKE_SYSTEM_NAME:String=WindowsStore \
-               -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF \
-               -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF                                     \
-               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "x64" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
@@ -110,10 +107,7 @@ The same process could be applied except that during cmake configuration you hav
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
-C:\> cmake.exe -G "Visual Studio 16 2019" -A "ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore \
-               -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF \
-               -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF                                     \
-               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "ARM" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D point visual feature.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeatureDepth.cpp
@@ -57,18 +54,11 @@
 #include <visp3/core/vpFeatureDisplay.h>
 
 /*
-
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
-
-
-
-
-
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
   Initialize the memory space requested for 3D depth visual feature.
 */
@@ -80,7 +70,7 @@ void vpFeatureDepth::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -368,7 +358,7 @@ void vpFeatureDepth::print(unsigned int select) const
   \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
-void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZstar)
+vpFeatureDepth &vpFeatureDepth::buildFrom(const double &x_, const double &y_, const double &Z_, const double &LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;
@@ -391,8 +381,10 @@ void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZ
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -445,7 +437,7 @@ void vpFeatureDepth::display(const vpCameraParameters & /* cam */, const vpImage
     // to produce a failure
   }
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

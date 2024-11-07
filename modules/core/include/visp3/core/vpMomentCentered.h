@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,22 +29,20 @@
  *
  * Description:
  * Centered moment descriptor
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
+
+/*!
+  \file vpMomentCentered.h
+  \brief Centered moment descriptor (also referred as \f$\mu_{ij}\f$).
+*/
 
 #ifndef _vpMomentCentered_h_
 #define _vpMomentCentered_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMoment.h>
-/*!
-  \file vpMomentCentered.h
-  \brief Centered moment descriptor (also refered to as \f$\mu_{ij}\f$).
 
-*/
-
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -80,7 +77,6 @@ class VISP_EXPORT vpMomentCentered : public vpMoment
 {
 public:
   vpMomentCentered();
-  virtual ~vpMomentCentered(){};
 
   void compute();
   double get(unsigned int i, unsigned int j) const;
@@ -89,7 +85,7 @@ public:
   /*!
      Moment name.
   */
-  inline const char *name() const { return "vpMomentCentered"; }
+  inline const std::string name() const { return "vpMomentCentered"; }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &v);
   void printWithIndices(std::ostream &os) const;
@@ -133,5 +129,5 @@ mu12 = mc.get(1,2); // the same
   \endcode
 */
 inline const std::vector<double> &vpMomentCentered::get() const { return vpMoment::get(); }
-
+END_VISP_NAMESPACE
 #endif

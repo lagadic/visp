@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  *
  * Authors:
  * Amaury Dame
- * Nicolas Melchior
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpImageSimulator_h
 #define vpImageSimulator_h
@@ -72,17 +71,20 @@
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-    vpImage<vpRGBa> Icamera(480,640,0);
+    vpImage<vpRGBa> Icamera(480,640,vpRGBa(0));
     vpImage<vpRGBa> Iimage(60,60);
 
     // Initialise the image which will be projected into the image Icamera
     vpRGBa colorb(0,0,255);
     vpRGBa colorw(255,255,255);
     vpRGBa colorr(255,0,0);
-    for(int i = 0; i < 60; i++)
-    {
+    for(int i = 0; i < 60; i++) {
       for(int j = 0; j < 20; j++)
         Iimage[i][j] = colorb;
       for(int j = 20; j < 40; j++)
@@ -130,6 +132,7 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPoint.h>
@@ -139,6 +142,7 @@
 #include <list>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpImageSimulator
 {
 public:
@@ -205,7 +209,7 @@ private:
   bool needClipping;
 
 public:
-  explicit vpImageSimulator(const vpColorPlan &col = COLORED);
+  VP_EXPLICIT vpImageSimulator(const vpColorPlan &col = COLORED);
   vpImageSimulator(const vpImageSimulator &text);
   virtual ~vpImageSimulator();
 
@@ -303,7 +307,7 @@ private:
   void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, const vpCameraParameters &cam,
               const std::vector<vpPoint> &point, vpRect &rect);
 };
-
+END_VISP_NAMESPACE
 #endif
 
 /*

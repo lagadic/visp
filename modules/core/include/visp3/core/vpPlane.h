@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,17 @@
  *
  * Description:
  * Plane geometrical structure.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
-#ifndef vpPlane_hh
-#define vpPlane_hh
+#ifndef VP_PLANE_H
+#define VP_PLANE_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   \class vpPlane
@@ -57,14 +55,11 @@
 */
 class VISP_EXPORT vpPlane
 {
-
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // for backward compatibility
 public:
-#else
-private:
-#endif
   double A, B, C, D;
+#endif
 
 public:
   typedef enum { object_frame, camera_frame } vpPlaneFrame;
@@ -118,14 +113,19 @@ public:
   */
   inline vpColVector getABCD() const
   {
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
     vpColVector n(4);
-    n[0] = A;
-    n[1] = B;
-    n[2] = C;
-    n[3] = D;
+    n[index_0] = A;
+    n[index_1] = B;
+    n[index_2] = C;
+    n[index_3] = D;
 
     return n;
   }
+
   /*!
 
     \warning This method is provided for compatibility with the
@@ -138,11 +138,15 @@ public:
   */
   inline vpColVector abcd() const
   {
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    const unsigned int index_3 = 3;
     vpColVector n(4);
-    n[0] = A;
-    n[1] = B;
-    n[2] = C;
-    n[3] = D;
+    n[index_0] = A;
+    n[index_1] = B;
+    n[index_2] = C;
+    n[index_3] = D;
 
     return n;
   }
@@ -150,7 +154,7 @@ public:
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;
@@ -159,6 +163,11 @@ public:
 
   double getIntersection(const vpColVector &M1, vpColVector &H) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
-};
 
+#ifndef VISP_BUILD_DEPRECATED_FUNCTIONS
+private:
+  double A, B, C, D;
+#endif
+};
+END_VISP_NAMESPACE
 #endif

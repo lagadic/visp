@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,29 +31,21 @@
  * Description:
  * Interface for the qb robotics devices.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_QBDEVICE
+#if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
 
 #include <regex>
 
 #include <visp3/robot/vpQbSoftHand.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor that does nothing.
  * To connect to a device call init().
  */
-vpQbSoftHand::vpQbSoftHand() : vpQbDevice() {}
-
-/**
- * Close all the still open serial ports.
- * \sa close()
- */
-vpQbSoftHand::~vpQbSoftHand() {}
+vpQbSoftHand::vpQbSoftHand() : vpQbDevice() { }
 
 /**
  * Retrieve the motor currents of the given device.
@@ -132,7 +124,8 @@ void vpQbSoftHand::setPosition(const vpColVector &position, const int &id)
 
   if (commands[0] < position_limits[0]) {
     commands[0] = position_limits[0];
-  } else if (commands[0] > position_limits[1]) {
+  }
+  else if (commands[0] > position_limits[1]) {
     commands[0] = position_limits[1];
   }
 
@@ -174,13 +167,15 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
   double vel = speed_factor;
   if (vel < 0.01) {
     vel = 0.01;
-  } else if (vel > 1.) {
+  }
+  else if (vel > 1.) {
     vel = 1.0;
   }
   double current_factor = stiffness;
   if (current_factor < 0.0) {
     current_factor = 0.0;
-  } else if (current_factor > 1.) {
+  }
+  else if (current_factor > 1.) {
     current_factor = 1.0;
   }
   double slope = sign * max_slope * vel;
@@ -192,7 +187,8 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
     q[0] = q_mes[0] + slope * delta_t / 1000.0 * i;
     if (q[0] < getPositionLimits()[0]) {
       q[0] = getPositionLimits()[0];
-    } else if (q[0] > getPositionLimits()[1]) {
+    }
+    else if (q[0] > getPositionLimits()[1]) {
       q[0] = getPositionLimits()[1];
     }
     setPosition(q, id);
@@ -201,11 +197,13 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
 
     if (std::fabs(current[0]) > current_factor * current_max) {
       current_failures++;
-    } else {
+    }
+    else {
       current_failures = 0;
     }
 
     vpTime::wait(t0, delta_t);
   } while (!vpMath::equal(q[0], position[0], precision) && !(current_failures > 1));
 }
+END_VISP_NAMESPACE
 #endif

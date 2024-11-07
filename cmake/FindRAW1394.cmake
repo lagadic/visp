@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,14 +30,11 @@
 #
 # Description:
 # Try to find libraw1394 for IEEE1394 camera under Linux.
-# Once run this will define: 
+# Once run this will define:
 #
 # RAW1394_FOUND
 # RAW1394_INCLUDE_DIRS
 # RAW1394_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -45,39 +42,39 @@ IF(NOT UNIX)
   # MESSAGE("FindRAW1394.cmake: libraw1394 only available for Unix.")
   SET(RAW1394_FOUND FALSE)
 ELSE(NOT UNIX)
-  
+
   FIND_PATH(RAW1394_INCLUDE_DIR libraw1394/raw1394.h
     $ENV{RAW1394_HOME}/include
     /usr/include )
-  #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")  
-  
+  #MESSAGE("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")
+
   FIND_LIBRARY(RAW1394_LIBRARY
     NAMES raw1394
-    PATHS 
+    PATHS
     $ENV{RAW1394_HOME}/lib
     /usr/lib
     )
   #MESSAGE("DBG RAW1394_LIBRARY=${RAW1394_LIBRARY}")
-  
+
   ## --------------------------------
-  
+
   IF(RAW1394_LIBRARY)
     SET(RAW1394_LIBRARIES ${RAW1394_LIBRARY})
   ELSE(RAW1394_LIBRARY)
     #MESSAGE("libraw1394 library not found.")
   ENDIF(RAW1394_LIBRARY)
-  
+
   IF(NOT RAW1394_INCLUDE_DIR)
     #MESSAGE("libraw1394 include dir not found.")
   ENDIF(NOT RAW1394_INCLUDE_DIR)
-  
+
   IF(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
     SET(RAW1394_INCLUDE_DIRS ${RAW1394_INCLUDE_DIR})
     SET(RAW1394_FOUND TRUE)
   ELSE(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
     SET(RAW1394_FOUND FALSE)
   ENDIF(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
-  
+
   MARK_AS_ADVANCED(
     RAW1394_INCLUDE_DIR
     RAW1394_LIBRARIES

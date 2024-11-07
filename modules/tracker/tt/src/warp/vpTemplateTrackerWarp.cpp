@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,22 +29,19 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
+
+#include <visp3/core/vpDebug.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 
+BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p,
                                          vpTemplateTrackerTriangle &out)
 {
   if (p.size() < 2) {
     vpCTRACE << "Bad template tracker warp parameters dimension. Should "
-                "never occur. "
-             << std::endl;
+      "never occur. "
+      << std::endl;
     throw(vpException(vpException::dimensionError, "Bad template tracker warp parameters dimension"));
   }
   vpColVector S1(2), S2(2), S3(2);
@@ -150,8 +146,9 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0, const
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       p += (vpColVector)(HLM.inverseByLU() * G, 0u);
-    } catch (const vpException &e) {
-      // std::cout<<"Cannot inverse the matrix by LU " << std::endl;
+    }
+    catch (const vpException &e) {
+   // std::cout<<"Cannot inverse the matrix by LU " << std::endl;
       throw(e);
     }
     cpt++;
@@ -159,3 +156,4 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0, const
   // std::cout<<"erreur apres transformation="<<erreur<<std::endl;
 }
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+END_VISP_NAMESPACE

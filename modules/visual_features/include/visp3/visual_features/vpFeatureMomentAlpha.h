@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,107 +29,111 @@
  *
  * Description:
  * Implementation for all supported moment features.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
+
 /*!
-  \file vpFeatureMomentAlpha.h
-  \brief Implementation of the interaction matrix computation for
-  vpMomentAlpha.
-*/
+ * \file vpFeatureMomentAlpha.h
+ * \brief Implementation of the interaction matrix computation for
+ * vpMomentAlpha.
+ */
 
 #ifndef _vpFeatureMomentAlpha_h_
 #define _vpFeatureMomentAlpha_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentDatabase;
 /*!
-  \class vpFeatureMomentAlpha
-
-  \ingroup group_visual_features
-
-  \brief Functionality computation for in-plane rotation moment feature \f$ \alpha \f$:
-  computes the interaction matrix associated with vpMomentAlpha.
-
-  The interaction matrix for the feature can be deduced from \cite Tahri05z.
-
-  This class computes the interaction matrix associated to \f$ \alpha =
-  \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment primitive.
-
-  The interaction matrix for the feature has the following form:
-  \f[{
- \left[ \begin {array}{c} {\frac {\mu_{{1,1}}{\it DA}\,A}{d}}+{\frac {
- \left( {\it DA}\,\mu_{{0,2}}+1/2\,d-1/2\,{{\it DA}}^{2} \right) B}{d}
-}\\ \noalign{\medskip}{\frac { \left( {\it DA}\,\mu_{{0,2}}-1/2\,d-1/2
-\,{{\it DA}}^{2} \right) A}{d}}-{\frac {B\mu_{{1,1}}{\it DA}}{d}}
-\\ \noalign{\medskip}Bw_{{x}}-Aw_{{y}}\\ \noalign{\medskip}{\frac {
-\beta\, \left( \mu_{{1,2}} \left( \mu_{{2,0}}-\mu_{{0,2}} \right) +\mu
-_{{1,1}} \left( \mu_{{0,3}}-\mu_{{2,1}} \right)  \right) +\gamma\,x_{{
-g}} \left( \mu_{{0,2}} \left( \mu_{{2,0}}-\mu_{{0,2}} \right) -2\,{\mu
-_{{1,1}}}^{2} \right) +\gamma\,y_{{g}}\mu_{{1,1}} \left( \mu_{{2,0}}+
-\mu_{{0,2}} \right) }{d}}\\ \noalign{\medskip}{\frac {\beta\, \left(
-\mu_{{2,1}} \left( \mu_{{0,2}}-\mu_{{2,0}} \right) +\mu_{{1,1}}
- \left( \mu_{{3,0}}-\mu_{{1,2}} \right)  \right) +\gamma\,x_{{g}}\mu_{
-{1,1}} \left( \mu_{{2,0}}+\mu_{{0,2}} \right) +\gamma\,y_{{g}} \left(
-\mu_{{2,0}} \left( \mu_{{0,2}}-\mu_{{2,0}} \right) -2\,{\mu_{{1,1}}}^{
-2} \right) }{d}}\\ \noalign{\medskip}-1\end {array} \right]
-}^t
-\f]
-with \f${\it DA} = \mu_{{2,0}}-\mu_{{0,2}}\f$ and \f${\it d} =
-DA^2+4{\mu_{1,1}}^2\f$.
-
-  - In the discrete case:
-  \f$beta = 4\f$,\f$gamma = 2\f$.
-  - In the dense case:
-  \f$beta = 5\f$,\f$gamma = 1\f$.
-
-
-  The interaction matrix computed is single-dimension (no selection possible)
-  and can be obtained by calling vpFeatureMomentAlpha::interaction().
-
-  This feature is often used in moment-based visual servoing to control the
-  planar rotation parameter.
-
-  Minimum vpMomentObject order needed to compute this feature: 4.
-
-  This feature depends on:
-  - vpMomentCentered
-  - vpMomentGravityCenter
+ * \class vpFeatureMomentAlpha
+ *
+ * \ingroup group_visual_features
+ *
+ * \brief Functionality computation for in-plane rotation moment feature \f$ \alpha \f$:
+ * computes the interaction matrix associated with vpMomentAlpha.
+ *
+ * The interaction matrix for the feature can be deduced from \cite Tahri05z.
+ *
+ * This class computes the interaction matrix associated to \f$ \alpha =
+ * \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment primitive.
+ *
+ * The interaction matrix for the feature has the following form:
+ * \f[{
+ * \left[ \begin {array}{c} {\frac {\mu_{{1,1}}{\it DA}\,A}{d}}+{\frac {
+ * \left( {\it DA}\,\mu_{{0,2}}+1/2\,d-1/2\,{{\it DA}}^{2} \right) B}{d}
+ * }\\ \noalign{\medskip}{\frac { \left( {\it DA}\,\mu_{{0,2}}-1/2\,d-1/2
+ * \,{{\it DA}}^{2} \right) A}{d}}-{\frac {B\mu_{{1,1}}{\it DA}}{d}}
+ * \\ \noalign{\medskip}Bw_{{x}}-Aw_{{y}}\\ \noalign{\medskip}{\frac {
+ * \beta\, \left( \mu_{{1,2}} \left( \mu_{{2,0}}-\mu_{{0,2}} \right) +\mu
+ * _{{1,1}} \left( \mu_{{0,3}}-\mu_{{2,1}} \right) \right) +\gamma\,x_{{
+ * g}} \left( \mu_{{0,2}} \left( \mu_{{2,0}}-\mu_{{0,2}} \right) -2\,{\mu
+ * _{{1,1}}}^{2} \right) +\gamma\,y_{{g}}\mu_{{1,1}} \left( \mu_{{2,0}}+
+ * \mu_{{0,2}} \right) }{d}}\\ \noalign{\medskip}{\frac {\beta\, \left(
+ * \mu_{{2,1}} \left( \mu_{{0,2}}-\mu_{{2,0}} \right) +\mu_{{1,1}}
+ * \left( \mu_{{3,0}}-\mu_{{1,2}} \right) \right) +\gamma\,x_{{g}}\mu_{
+ * {1,1}} \left( \mu_{{2,0}}+\mu_{{0,2}} \right) +\gamma\,y_{{g}} \left(
+ * \mu_{{2,0}} \left( \mu_{{0,2}}-\mu_{{2,0}} \right) -2\,{\mu_{{1,1}}}^{
+ * 2} \right) }{d}}\\ \noalign{\medskip}-1\end {array} \right]
+ * }^t
+ * \f]
+ * with \f${\it DA} = \mu_{{2,0}}-\mu_{{0,2}}\f$ and \f${\it d} =
+ * DA^2+4{\mu_{1,1}}^2\f$.
+ *
+ * - In the discrete case:
+ *   \f$beta = 4\f$,\f$gamma = 2\f$.
+ * - In the dense case:
+ *   \f$beta = 5\f$,\f$gamma = 1\f$.
+ *
+ * The interaction matrix computed is single-dimension (no selection possible)
+ * and can be obtained by calling vpFeatureMomentAlpha::interaction().
+ *
+ * This feature is often used in moment-based visual servoing to control the
+ * planar rotation parameter.
+ *
+ * Minimum vpMomentObject order needed to compute this feature: 4.
+ *
+ * This feature depends on:
+ * - vpMomentCentered
+ * - vpMomentGravityCenter
 */
 class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment
 {
 public:
   /*!
-  Initializes the feature with information about the database of moment
-  primitives, the object plane and feature database.
-  \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory.
-  It is used to access different moment values later used to compute the final matrix.
-  \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param featureMoments : Feature database.
-
-  */
+   * Initializes the feature with information about the database of moment
+   * primitives, the object plane and feature database.
+   * \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory.
+   * It is used to access different moment values later used to compute the final matrix.
+   * \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param featureMoments : Feature database.
+   */
   vpFeatureMomentAlpha(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                       vpFeatureMomentDatabase *featureMoments = NULL)
+                       vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
+  { }
+
+  void compute_interaction() VP_OVERRIDE;
+  /*!
+   * Associated moment name.
+   */
+  const std::string momentName() const VP_OVERRIDE
   {
+    return "vpMomentAlpha";
   }
 
-  void compute_interaction();
-  /*!
-    Associated moment name.
-    */
-  const char *momentName() const { return "vpMomentAlpha"; }
-  /*!
-    Feature name.
-    */
-  const char *name() const { return "vpFeatureMomentAlpha"; }
+/*!
+ * Feature name.
+ */
+  const std::string name() const VP_OVERRIDE
+  {
+    return "vpFeatureMomentAlpha";
+  }
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
 };
+END_VISP_NAMESPACE
 #endif

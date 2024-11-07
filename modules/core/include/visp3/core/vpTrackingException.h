@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,60 +28,49 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpTracking class and its derivates.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpTrackingException_H
-#define _vpTrackingException_H
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* \file vpTrackingException.h
-   \brief error that can be emited by the vpTracker class and its derivates
- */
-/* Classes standards. */
-
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-#include <visp3/core/vpException.h>
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Exceptions that can be emitted by the vpTracking class and its derivatives.
  */
 
 /*!
-  \class vpTrackingException
-  \ingroup group_core_debug
-  \brief Error that can be emited by the vpTracker class and its derivates.
+ * \file vpTrackingException.h
+ *  \brief error that can be emitted by the vpTracker class and its derivatives
  */
+
+#ifndef VP_TRACKING_EXCEPTION_H
+#define VP_TRACKING_EXCEPTION_H
+
+#include <iostream>
+#include <string>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+
+BEGIN_VISP_NAMESPACE
+
+/*!
+ * \class vpTrackingException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpTracker class and its derivatives.
+*/
 class VISP_EXPORT vpTrackingException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpTracking member
- */
-  enum errorTrackingCodeEnum {
-    featureLostError,
-
+   * \brief Lists the possible error than can be emitted while calling
+   * vpTracking member
+   */
+  enum errorTrackingCodeEnum
+  {
+    featureLostError, //!< Tracker lost feature
     // Moving edges
-    notEnoughPointError,
-    initializationError,
-    fatalError
+    notEnoughPointError, //!< Not enough point to track
+    initializationError, //!< Tracker initialization error
+    fatalError //!< Tracker fatal error
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpTrackingException(int id, const char *format, ...)
   {
     this->code = id;
@@ -91,8 +79,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpTrackingException(int id) : vpException(id) { ; }
-};
 
+  /*!
+   * Constructor.
+   */
+  vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpTrackingException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

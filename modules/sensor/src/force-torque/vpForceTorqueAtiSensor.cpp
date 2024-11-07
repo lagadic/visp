@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * ATI Force torque interface.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -42,15 +42,15 @@
 #include <visp3/core/vpException.h>
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 
-static Calibration *s_calibinfo = NULL; //!< Struct containing calibration information
+static Calibration *s_calibinfo = nullptr; //!< Struct containing calibration information
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  */
-vpForceTorqueAtiSensor::vpForceTorqueAtiSensor()
+  vpForceTorqueAtiSensor::vpForceTorqueAtiSensor()
   : m_calibfile(""), m_index(1), m_num_axes(6), m_num_channels(6), m_sample_bias()
-{
-}
+{ }
 
 /*!
  * Open the connection to the device.
@@ -120,10 +120,10 @@ void vpForceTorqueAtiSensor::unbias()
  */
 void vpForceTorqueAtiSensor::close()
 {
-  if (s_calibinfo != NULL) {
+  if (s_calibinfo != nullptr) {
     // free memory allocated to calibration structure
     destroyCalibration(s_calibinfo);
-    s_calibinfo = NULL;
+    s_calibinfo = nullptr;
   }
   vpComedi::close();
 }
@@ -202,7 +202,7 @@ void vpForceTorqueAtiSensor::setCalibrationFile(const std::string &calibfile, un
 
   // Create calibration struct
   s_calibinfo = createCalibration(m_calibfile.c_str(), m_index);
-  if (s_calibinfo == NULL) {
+  if (s_calibinfo == nullptr) {
     throw vpException(vpException::fatalError, "Calibration file %s couldn't be loaded", m_calibfile.c_str());
   }
 
@@ -219,19 +219,23 @@ void vpForceTorqueAtiSensor::setCalibrationFile(const std::string &calibfile, un
 
   The following example shows how to use this method.
   \code
-#include <visp3/sensor/vpForceTorqueAtiSensor.h>
+  #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 
-int main()
-{
-  vpForceTorqueAtiSensor ati;
-  ati.setCalibrationFile("FT12345.cal");
-  std::cout << "ATI F/T sensor characteristics: \n" << ati << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpForceTorqueAtiSensor ati;
+    ati.setCalibrationFile("FT12345.cal");
+    std::cout << "ATI F/T sensor characteristics: \n" << ati << std::endl;
+  }
   \endcode
  */
 std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 {
-  if (s_calibinfo == NULL) {
+  if (s_calibinfo == nullptr) {
     os << "Calibration Information is not available" << std::endl;
     return os;
   }
@@ -255,7 +259,8 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
     char *units;
     if ((s_calibinfo->AxisNames[i])[0] == 'F') {
       units = s_calibinfo->ForceUnits;
-    } else
+    }
+    else
       units = s_calibinfo->TorqueUnits;
     os << s_calibinfo->AxisNames[i] << ": " << s_calibinfo->MaxLoads[i] << " " << units << std::endl;
   }
@@ -276,9 +281,9 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 
   return os;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueAtiSensor.cpp.o) has no symbols
-void dummy_vpForceTorqueAtiSensor(){};
+void dummy_vpForceTorqueAtiSensor() { };
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,61 +28,49 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Error that can be emited by the vpPose class and its derivates
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef _vpPoseException_h_
-#define _vpPoseException_h_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+ * Error that can be emitted by the vpPose class and its derivatives
  */
 
-/* Classes standards. */
+#ifndef VP_POSE_EXCEPTION_H
+#define VP_POSE_EXCEPTION_H
 
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+BEGIN_VISP_NAMESPACE
 
 /*!
-  \class vpPoseException
-  \ingroup group_vision_pose
-  \brief Error that can be emited by the vpPose class and its derivates.
- */
+ * \class vpPoseException
+ * \ingroup group_vision_pose
+ * \brief Error that can be emitted by the vpPose class and its derivatives.
+*/
 class VISP_EXPORT vpPoseException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpPose member
- */
-  enum errorCodeEnum {
+   * Lists the possible error than can be emitted while calling
+   * vpPose member
+   */
+  enum errorCodeEnum
+  {
+    //! Generic pose error
     poseError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedERR,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
+    //! Not enough points to compute the pose
     notEnoughPointError
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpPoseException(int id, const char *format, ...)
   {
     this->code = id;
@@ -92,9 +79,18 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpPoseException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpPoseException(int id) : vpException(id) { ; }
-  // vpPoseException() : vpException() { ;}
+
+  /*!
+   * Constructor.
+   */
+  vpPoseException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpPoseException(int id) : vpException(id) { }
 };
+
+END_VISP_NAMESPACE
 
 #endif

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find OpenCV framework. 
+# Try to find OpenCV framework.
 #
 # OpenCV_FOUND
 # OpenCV_INCLUDE_DIRS (only for naoqi)
@@ -38,9 +38,6 @@
 # OpenCV_VERSION_MINOR
 # OpenCV_VERSION_PATCH
 # OpenCV_VERSION
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -60,7 +57,7 @@ macro(vp_get_opencv_version_from_hpp FILENAME DEFINE VAR)
       set(${__var} 0)
     endif()
   else()
-    message("Warning: Cannot retrive OpenCV version from non existing file ${FILENAME}. This may produce build issues.")
+    message("Warning: Cannot retrieve OpenCV version from non existing file ${FILENAME}. This may produce build issues.")
     set(${__var} 0)
   endif()
 endmacro()
@@ -204,4 +201,3 @@ if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
     endforeach()
   endif()
 endif()
-

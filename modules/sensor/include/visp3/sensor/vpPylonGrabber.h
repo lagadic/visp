@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,13 @@
  * Authors:
  * Wenfeng CAI
  *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpPylonGrabber.h
+  \brief Wrapper over Basler Pylon SDK to capture images from Basler
+  cameras.
+*/
 
 #ifndef _vpPylonGrabber_h_
 #define _vpPylonGrabber_h_
@@ -58,12 +64,7 @@
 
 #include <pylon/PylonIncludes.h>
 
-/*!
-  \file vpPylonGrabber.h
-  \brief Wrapper over Basler Pylon SDK to capture images from Basler
-  cameras.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabber
   \ingroup group_sensor_camera
@@ -92,18 +93,19 @@
   - acA1600-60gm
 
   This class is inspired by vpFlyCaptureGrabber with much simplified methods.
- */
+*/
 class VISP_EXPORT vpPylonGrabber : public vpFrameGrabber
 {
 public:
   /*!
      Default destructor.
    */
-  virtual ~vpPylonGrabber(){};
+  virtual ~vpPylonGrabber() { };
 
   /*! Valid values for user set names.
    */
-  enum UserSetName {
+  enum UserSetName
+  {
     USERSET_DEFAULT,  //!< The default user set.
     USERSET_USERSET1, //!< User set 1.
     USERSET_USERSET2, //!< User set 2.
@@ -165,7 +167,7 @@ public:
     */
   virtual std::ostream &getCameraInfo(std::ostream &os) = 0;
   /*!
-    Return the handler to the active camera or NULL if the camera is not
+    Return the handler to the active camera or nullptr if the camera is not
     connected. This function was designed to provide a direct access to
     the Pylon SDK to get access to advanced functionalities that are not
     implemented in this class.
@@ -390,6 +392,6 @@ public:
    */
   virtual void stopCapture() = 0;
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabber_h_

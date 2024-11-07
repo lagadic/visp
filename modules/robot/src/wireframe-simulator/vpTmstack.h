@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpTmstack_h
 #define vpTmstack_h
@@ -47,6 +47,7 @@
 #include "vpArit.h"
 #include "vpMy.h"
 
+BEGIN_VISP_NAMESPACE
 Matrix *get_tmstack(void);
 void load_tmstack(Matrix m);
 void pop_tmstack(void);
@@ -61,6 +62,6 @@ void premult_tmstack(Matrix m);
 void prerotate_tmstack(Vector *vp);
 void prescale_tmstack(Vector *vp);
 void pretranslate_tmstack(Vector *vp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

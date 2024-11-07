@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,10 +34,12 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Computes the two gravity center coordinates commonly called \f$x_g\f$ and
   \f$y_g\f$.
@@ -60,16 +62,6 @@ vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment() { values.resize(2); 
 const std::vector<double> &vpMomentGravityCenter::get() const { return values; }
 
 /*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
-  return os;
-}
-
-/*!
 Prints its dependencies
 Basic moments m10, m01 and m00 from vpMomentObject
 */
@@ -80,3 +72,14 @@ void vpMomentGravityCenter::printDependencies(std::ostream &os) const
   os << "m00 = " << getObject().get(0, 1) << "\t";
   os << "m00 = " << getObject().get(0, 0) << std::endl;
 }
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
+  return os;
+}
+END_VISP_NAMESPACE

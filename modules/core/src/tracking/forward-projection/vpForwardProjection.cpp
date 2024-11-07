@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,19 +30,16 @@
  * Description:
  * Forward projection.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpForwardProjection.h>
+*****************************************************************************/
 
 /*!
   \file vpForwardProjection.cpp
   \brief   class that defines what is a point
 */
 
+#include <visp3/core/vpForwardProjection.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
   Print to stdout the feature parameters in:
   - the object frame
@@ -104,3 +100,4 @@ void vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 
 */
 void vpForwardProjection::track(const vpHomogeneousMatrix &cMo) { project(cMo); }
+END_VISP_NAMESPACE

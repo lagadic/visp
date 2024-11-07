@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +30,7 @@
  * Description:
  * Conversion between tracker and visual feature point with
  * polar coordinates.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpFeatureBuilderPointPolar.cpp
@@ -43,10 +38,12 @@
   \brief Conversion between tracker and visual feature point with
   polar coordinates.
 */
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
 
@@ -114,7 +111,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -186,7 +184,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -254,7 +253,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -307,7 +307,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
       throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -364,12 +365,13 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &
 
     s.set_rho(rho);
     s.set_theta(theta);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

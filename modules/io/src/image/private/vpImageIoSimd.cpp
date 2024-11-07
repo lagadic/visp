@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,20 @@
  *
  * Description:
  * Simd backend for JPEG and PNG image I/O operations.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpImageIo.cpp
   \brief Simd backend for JPEG and PNG image I/O operations.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_SIMDLIB)
 #include "vpImageIoBackend.h"
 #include <Simd/SimdLib.h>
+
+BEGIN_VISP_NAMESPACE
 
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
 {
@@ -48,7 +51,7 @@ void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
   uint8_t *data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
   // Since the Simd lib use aligned data, some padding are introduced and we need to take care of it when copying
   I.init(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
-  for (size_t i = 0; i < height; i++) {
+  for (size_t i = 0; i < height; ++i) {
     memcpy(reinterpret_cast<uint8_t *>(I.bitmap) + i * width, data + i * stride, width);
   }
   SimdFree(data);
@@ -61,7 +64,7 @@ void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
   uint8_t *data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
   // Since the Simd lib use aligned data, some padding are introduced and we need to take care of it when copying
   I.init(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
-  for (size_t i = 0; i < height; i++) {
+  for (size_t i = 0; i < height; ++i) {
     memcpy(reinterpret_cast<uint8_t *>(I.bitmap) + i * width * 4, data + i * stride, 4 * width);
   }
   SimdFree(data);
@@ -90,3 +93,7 @@ void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)
   SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth() * 4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32,
                       SimdImageFilePng, 90, filename.c_str());
 }
+
+END_VISP_NAMESPACE
+
+#endif

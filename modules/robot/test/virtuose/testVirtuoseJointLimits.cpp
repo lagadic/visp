@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test for Virtuose SDK wrapper.
- *
- * Authors:
- * Nicolò Pedemonte
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testVirtuoseJointLimits.cpp
@@ -49,20 +44,24 @@
 
 #if defined(VISP_HAVE_VIRTUOSE)
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void CallBackVirtuose(VirtContext VC, void *ptr)
 {
   (void)VC;
   vpVirtuose *p_virtuose = (vpVirtuose *)ptr;
 
-  float maxQ[6] = {0.7811045051f, -0.07668215036f, 2.481732368f, 2.819076777f, 1.044736624f, 2.687076807f};
-  float minQ[6] = {-0.8011951447f, -1.648244739f, 0.7439950705f, -3.022218227f, -1.260564089f, -2.054088593f};
+  float maxQ[6] = { 0.7811045051f, -0.07668215036f, 2.481732368f, 2.819076777f, 1.044736624f, 2.687076807f };
+  float minQ[6] = { -0.8011951447f, -1.648244739f, 0.7439950705f, -3.022218227f, -1.260564089f, -2.054088593f };
   unsigned int numJoint = 6;
 
   vpColVector feedbackRegion(numJoint, 0);
   vpColVector forceFeedback(numJoint, 0);
 
   int feedbackRegionFactor = 10;
-  float saturationForce[6] = {5, 5, 5, 2.5, 2.5, 2.5};
+  float saturationForce[6] = { 5, 5, 5, 2.5, 2.5, 2.5 };
 
   for (unsigned int iter = 0; iter < numJoint; iter++)
     feedbackRegion[iter] = (maxQ[iter] - minQ[iter]) / feedbackRegionFactor;
@@ -73,13 +72,15 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   for (unsigned int iter = 0; iter < numJoint; iter++) {
     if (currentQ[iter] >= (maxQ[iter] - feedbackRegion[iter])) {
       forceFeedback[iter] =
-          -saturationForce[iter] * pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) / feedbackRegion[iter], 2);
+        -saturationForce[iter] * pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) / feedbackRegion[iter], 2);
       std::cout << "WARNING! Getting close to the maximum joint limit. Joint #" << iter + 1 << std::endl;
-    } else if (currentQ[iter] <= (minQ[iter] + feedbackRegion[iter])) {
+    }
+    else if (currentQ[iter] <= (minQ[iter] + feedbackRegion[iter])) {
       forceFeedback[iter] =
-          saturationForce[iter] * pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) / feedbackRegion[iter], 2);
+        saturationForce[iter] * pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) / feedbackRegion[iter], 2);
       std::cout << "WARNING! Getting close to the minimum joint limit. Joint #" << iter + 1 << std::endl;
-    } else {
+    }
+    else {
       forceFeedback[iter] = 0;
       std::cout << "Safe zone" << std::endl;
     }
@@ -105,19 +106,19 @@ int main(int argc, char **argv)
       opt_port = std::atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-                << " [--ip <localhost>] [--port <port>]"
-                   " [--help] [-h]\n"
-                << std::endl
-                << "Description: " << std::endl
-                << " --ip <localhost>" << std::endl
-                << "\tHost IP address. Default value: \"localhost\"." << std::endl
-                << std::endl
-                << " --port <port>" << std::endl
-                << "\tCommunication port. Default value: 5000." << std::endl
-                << "\tSuggested values: " << std::endl
-                << "\t- 5000 to communicate with the Virtuose." << std::endl
-                << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
-                << std::endl;
+        << " [--ip <localhost>] [--port <port>]"
+        " [--help] [-h]\n"
+        << std::endl
+        << "Description: " << std::endl
+        << " --ip <localhost>" << std::endl
+        << "\tHost IP address. Default value: \"localhost\"." << std::endl
+        << std::endl
+        << " --port <port>" << std::endl
+        << "\tCommunication port. Default value: 5000." << std::endl
+        << "\tSuggested values: " << std::endl
+        << "\t- 5000 to communicate with the Virtuose." << std::endl
+        << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
+        << std::endl;
       return EXIT_SUCCESS;
       ;
     }
@@ -186,7 +187,8 @@ int main(int argc, char **argv)
     }
 
     std::cout << "The end" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

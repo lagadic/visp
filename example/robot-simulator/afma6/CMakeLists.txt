@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Nicolas Melchior
-#
 #############################################################################
 
-project(example-robot-simulator-afma6)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(example-robot-simulator-afma6)
 
 find_package(VISP REQUIRED visp_core visp_vs visp_robot visp_io visp_gui)
 
@@ -53,6 +50,8 @@ foreach(cpp ${example_cpp})
   endif()
 
   # Add test
-  get_filename_component(target ${cpp} NAME_WE)
-  add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+  # Workaround for github action issue when using std::mutex by removing the test
+  # See https://github.com/actions/runner-images/issues/10020
+  # get_filename_component(target ${cpp} NAME_WE)
+  # add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
 endforeach()

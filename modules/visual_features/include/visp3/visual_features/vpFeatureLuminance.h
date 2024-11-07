@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,33 +29,30 @@
  *
  * Description:
  * Luminance based feature.
+ */
+
+/*!
+ * \file vpFeatureLuminance.h
+ * \brief Class that defines the image luminance visual feature
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ * For more details see \cite Collewet08c.
+ */
 
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 
-/*!
-  \file vpFeatureLuminance.h
-  \brief Class that defines the image luminance visual feature
-
-  For more details see \cite Collewet08c.
-*/
-
+BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /*!
-  \class vpLuminance
-  \brief Class that defines the luminance and gradient of a point
-
-  \sa vpFeatureLuminance
+ * \class vpLuminance
+ * \brief Class that defines the luminance and gradient of a point.
+ *
+ * \sa vpFeatureLuminance
 */
 class VISP_EXPORT vpLuminance
 {
@@ -69,13 +65,12 @@ public:
 #endif
 
 /*!
-  \class vpFeatureLuminance
-  \ingroup group_visual_features
-  \brief Class that defines the image luminance visual feature
-
-  For more details see \cite Collewet08c.
-*/
-
+ * \class vpFeatureLuminance
+ * \ingroup group_visual_features
+ * \brief Class that defines the image luminance visual feature
+ *
+ * For more details see \cite Collewet08c.
+ */
 class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
 {
 protected:
@@ -97,39 +92,43 @@ protected:
 public:
   vpFeatureLuminance();
   vpFeatureLuminance(const vpFeatureLuminance &f);
-  //! Destructor.
-  virtual ~vpFeatureLuminance();
 
-  void buildFrom(vpImage<unsigned char> &I);
+  //! Destructor.
+  virtual ~vpFeatureLuminance() VP_OVERRIDE;
+
+  vpFeatureLuminance &buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const VP_OVERRIDE;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const VP_OVERRIDE;
 
-  vpFeatureLuminance *duplicate() const;
+  vpFeatureLuminance *duplicate() const VP_OVERRIDE;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void error(const vpBasicFeature &s_star, vpColVector &e);
-  //! Compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_Z() const;
+  unsigned int getBorder() const;
 
-  void init();
+
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
-  vpMatrix interaction(unsigned int select = FEATURE_ALL);
+
+  void init() VP_OVERRIDE;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void interaction(vpMatrix &L);
+  void print(unsigned int select = FEATURE_ALL) const VP_OVERRIDE;
 
   vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
-  void print(unsigned int select = FEATURE_ALL) const;
 
-  void setCameraParameters(vpCameraParameters &_cam);
+  void setCameraParameters(const vpCameraParameters &_cam);
   void set_Z(double Z);
+
+  static const int DEFAULT_BORDER;
 
 public:
   vpCameraParameters cam;
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,7 @@
-/****************************************************************************
+/*
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Use to display an image behind the internal view of the simulator
  * used for augmented reality application
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpAR.h
@@ -49,8 +44,8 @@
 
 */
 
-#ifndef vpAR_HH
-#define vpAR_HH
+#ifndef VP_AR_H
+#define VP_AR_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -68,6 +63,7 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpTime.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpAR
 
@@ -87,58 +83,61 @@
   The code below shows how to use the class.
 
   \code
-#include <visp3/ar/vpAR.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
+  #include <visp3/ar/vpAR.h>
+  #include <visp3/core/vpCameraParameters.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpImage.h>
 
-#ifdef VISP_HAVE_COIN3D_AND_GUI
-static void *mainloopfunction(void *_simu)
-{
-  vpAR *simu = (vpAR *)_simu ;
-  simu->initMainApplication() ;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo;
+  #ifdef VISP_HAVE_COIN3D_AND_GUI
+  static void *mainloopfunction(void *_simu)
+  {
+    vpAR *simu = (vpAR *)_simu ;
+    simu->initMainApplication() ;
 
-  //Your code to compute the pose cMo.
+    vpImage<unsigned char> I;
+    vpHomogeneousMatrix cMo;
 
-  //Set the image to use as background.
-  simu->setImage(I) ;
-  //Set the camera position thanks to the pose cMo computed before.
-  simu->setCameraPosition(cMo) ;
+    //Your code to compute the pose cMo.
 
-  simu->closeMainApplication();
-}
-#endif
+    //Set the image to use as background.
+    simu->setImage(I) ;
+    //Set the camera position thanks to the pose cMo computed before.
+    simu->setCameraPosition(cMo) ;
 
-int main()
-{
-#ifdef VISP_HAVE_COIN3D_AND_GUI
-  vpAR simu;
-  //Camera parameters.
-  vpCameraParameters cam(600,600,160,120);
+    simu->closeMainApplication();
+  }
+  #endif
 
-  //Initialize the internal view of the simulator.
-  simu.initInternalViewer(640,480, vpSimulator::grayImage);
+  int main()
+  {
+  #ifdef VISP_HAVE_COIN3D_AND_GUI
+    vpAR simu;
+    //Camera parameters.
+    vpCameraParameters cam(600,600,160,120);
 
-  vpTime::wait(300);
+    //Initialize the internal view of the simulator.
+    simu.initInternalViewer(640,480, vpSimulator::grayImage);
 
-  // Load the cad model. 4points.iv can be downloaded on the website
-  // with the image package
-  simu.load("./4points.iv");
+    vpTime::wait(300);
 
-  //Initialize the internal camera parameters.
-  simu.setInternalCameraParameters(cam);
+    // Load the cad model. 4points.iv can be downloaded on the website
+    // with the image package
+    simu.load("./4points.iv");
 
-  simu.initApplication(&mainloopfunction);
+    //Initialize the internal camera parameters.
+    simu.setInternalCameraParameters(cam);
 
-  simu.mainLoop();
-#endif
-  return 0;
-}
+    simu.initApplication(&mainloopfunction);
+
+    simu.mainLoop();
+  #endif
+    return 0;
+  }
   \endcode
-
 */
 class VISP_EXPORT vpAR : public vpSimulator
 {
@@ -147,13 +146,13 @@ private:
   bool background;
 
 public:
-  vpAR() : background(false){};
+  vpAR() : background(false) { };
 
   virtual ~vpAR();
   void initInternalViewer(unsigned int width, unsigned int height, vpImageType type = grayImage);
   void setImage(vpImage<unsigned char> &I);
   void setImage(vpImage<vpRGBa> &I);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

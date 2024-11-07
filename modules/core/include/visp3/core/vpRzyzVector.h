@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +30,7 @@
  * Description:
  * Euler angles parameterization for the rotation.
  * Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef vpRzyzVector_h
-#define vpRzyzVector_h
+ */
 
 /*!
   \file vpRzyzVector.h
@@ -49,11 +40,17 @@
   Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
-class vpRotationMatrix;
-class vpThetaUVector;
+#ifndef VP_RZYZ_VECTOR_H
+#define VP_RZYZ_VECTOR_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
+
+BEGIN_VISP_NAMESPACE
+
+class vpRotationMatrix;
+class vpThetaUVector;
 
 /*!
   \class vpRzyzVector
@@ -129,9 +126,7 @@ class vpThetaUVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   rzyz = {M_PI_4, M_PI_2, M_PI};
-#endif
   \endcode
 
   To get the values [rad] use:
@@ -142,41 +137,45 @@ class vpThetaUVector;
   \endcode
 
   The code below shows first how to initialize this representation of
-  Euler angles, than how to contruct a rotation matrix from a
+  Euler angles, than how to construct a rotation matrix from a
   vpRzyzVector and finally how to extract the vpRzyzVector Euler angles
   from the build rotation matrix.
 
   \code
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRzyzVector.h>
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpRzyzVector.h>
 
-int main()
-{
-  vpRzyzVector rzyz;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Initialise the Euler angles
-  rzyz[0] = vpMath::rad( 45.f); // phi   angle in rad/s around z axis
-  rzyz[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
-  rzyz[2] = vpMath::rad( 90.f); // psi   angle in rad/s around z axis
+  int main()
+  {
+    vpRzyzVector rzyz;
 
-  // Construct a rotation matrix from the Euler angles
-  vpRotationMatrix R(rzyz);
+    // Initialise the Euler angles
+    rzyz[0] = vpMath::rad( 45.f); // phi   angle in rad/s around z axis
+    rzyz[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
+    rzyz[2] = vpMath::rad( 90.f); // psi   angle in rad/s around z axis
 
-  // Extract the Euler angles around z,y,z axis from a rotation matrix
-  rzyz.buildFrom(R);
+    // Construct a rotation matrix from the Euler angles
+    vpRotationMatrix R(rzyz);
 
-  // Print the extracted Euler angles. Values are the same than the
-  // one used for initialization
-  std::cout << rzyz;
+    // Extract the Euler angles around z,y,z axis from a rotation matrix
+    rzyz.buildFrom(R);
 
-  // Since the rotation vector is 3 values column vector, the
-  // transpose operation produce a row vector.
-  vpRowVector rzyz_t = rzyz.t();
+    // Print the extracted Euler angles. Values are the same than the
+    // one used for initialization
+    std::cout << rzyz;
 
-  // Print the transpose row vector
-  std::cout << rzyz_t << std::endl;
-}
+    // Since the rotation vector is 3 values column vector, the
+    // transpose operation produce a row vector.
+    vpRowVector rzyz_t = rzyz.t();
+
+    // Print the transpose row vector
+    std::cout << rzyz_t << std::endl;
+  }
   \endcode
 */
 class VISP_EXPORT vpRzyzVector : public vpRotationVector
@@ -186,33 +185,31 @@ public:
   vpRzyzVector(const vpRzyzVector &rzyz);
 
   // initialize a Rzyz vector from a rotation matrix
-  explicit vpRzyzVector(const vpRotationMatrix &R);
+  VP_EXPLICIT vpRzyzVector(const vpRotationMatrix &R);
 
   // initialize a Rzyz vector from a ThetaU vector
-  explicit vpRzyzVector(const vpThetaUVector &tu);
+  VP_EXPLICIT vpRzyzVector(const vpThetaUVector &tu);
 
   vpRzyzVector(double phi, double theta, double psi);
-  explicit vpRzyzVector(const vpColVector &rzyz);
-  explicit vpRzyzVector(const std::vector<double> &rzyz);
-
-  //! Destructor.
-  virtual ~vpRzyzVector(){};
+  VP_EXPLICIT vpRzyzVector(const vpColVector &rzyz);
+  VP_EXPLICIT vpRzyzVector(const std::vector<double> &rzyz);
 
   // convert a rotation matrix into Rzyz vector
-  vpRzyzVector buildFrom(const vpRotationMatrix &R);
+  vpRzyzVector &buildFrom(const vpRotationMatrix &R);
 
   // convert a ThetaU vector into a Rzyz vector
-  vpRzyzVector buildFrom(const vpThetaUVector &R);
-  vpRzyzVector buildFrom(const vpColVector &rxyz);
-  vpRzyzVector buildFrom(const std::vector<double> &rxyz);
+  vpRzyzVector &buildFrom(const vpThetaUVector &R);
+  vpRzyzVector &buildFrom(const vpColVector &rxyz);
+  vpRzyzVector &buildFrom(const std::vector<double> &rxyz);
 
-  void buildFrom(double phi, double theta, double psi);
+  vpRzyzVector &buildFrom(const double &phi, const double &theta, const double &psi);
 
   vpRzyzVector &operator=(const vpColVector &rzyz);
   vpRzyzVector &operator=(double x);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRzyzVector &operator=(const vpRzyzVector &rzyz) = default;
+  vpRzyzVector &operator=(const vpRzyzVector &) = default;
   vpRzyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 };
+END_VISP_NAMESPACE
 #endif

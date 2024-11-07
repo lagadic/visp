@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,13 @@
  *
  * Description:
  * Test for image conversions.
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testConversion.cpp
+
+  \brief Manipulation of image conversions.
+*/
 
 #include <iomanip>
 #include <stdlib.h>
@@ -45,11 +49,18 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \example testConversion.cpp
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#endif
 
-  \brief Manipulation of image conversions.
-*/
+#if defined(VISP_HAVE_YARP)
+#include <yarp/sig/ImageFile.h>
+#endif
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:n:h"
@@ -72,9 +83,9 @@ Test image conversions.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>] [-n <nb benchmark iterations>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -135,7 +146,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       nbIterations = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, opath, user, nbIterations);
+      usage(argv[0], nullptr, ipath, opath, user, nbIterations);
       return false;
 
     case 'c':
@@ -150,7 +161,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user, nbIterations);
+    usage(argv[0], nullptr, ipath, opath, user, nbIterations);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -208,8 +219,9 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
+      }
+      catch (...) {
+        usage(argv[0], nullptr, ipath, opt_opath, username, nbIterations);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
@@ -218,24 +230,24 @@ int main(int argc, const char **argv)
     }
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (opt_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
+      usage(argv[0], nullptr, ipath, opt_opath, username, nbIterations);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -278,7 +290,7 @@ int main(int argc, const char **argv)
     // Convert a YUV pixel value to a RGB value
     vpImageConvert::YUVToRGB(y, u, v, r, g, b);
     std::cout << "   y(" << (int)y << ") u(" << (int)u << ") v(" << (int)v << ") = r(" << (int)r << ") g(" << (int)g
-              << ") b(" << (int)b << ")" << std::endl;
+      << ") b(" << (int)b << ")" << std::endl;
 
     vpChrono chrono;
 
@@ -301,7 +313,7 @@ int main(int argc, const char **argv)
     int flags = CV_LOAD_IMAGE_COLOR;
 #endif
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -320,7 +332,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_GRAYSCALE;
 #endif
     imageMat = cv::imread(filename, flags); // Forced to grayscale.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -344,7 +356,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_COLOR;
 #endif
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -364,7 +376,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_GRAYSCALE;
 #endif
     imageMat = cv::imread(filename, flags);
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -433,10 +445,10 @@ int main(int argc, const char **argv)
     std::cout << "   Load " << filename << std::endl;
     vpImageIo::read(Ic, filename);
     vpImage<unsigned char> R, G, B, a;
-    vpImageConvert::split(Ic, &R, NULL, &B);
+    vpImageConvert::split(Ic, &R, nullptr, &B);
     chrono.start();
     for (int iteration = 0; iteration < nbIterations; iteration++) {
-      vpImageConvert::split(Ic, &R, NULL, &B);
+      vpImageConvert::split(Ic, &R, nullptr, &B);
     }
     chrono.stop();
 
@@ -474,11 +486,10 @@ int main(int argc, const char **argv)
     // Convert a vpImage<vpRGBa> in RGB color space to a vpImage<vpRGBa> in
     // HSV color
     ////////////////////////////////////
-    std::cout << "** Convert a vpImage<vpRGBa> in RGB color space to a "
-                 "vpImage<vpRGBa> in HSV color"
-              << std::endl;
+    std::cout << "** Convert a vpImage<vpRGBa> in RGB color space to a  vpImage<vpRGBa> in HSV color" << std::endl;
     unsigned int size = Ic.getSize();
     unsigned int w = Ic.getWidth(), h = Ic.getHeight();
+    // Check the conversion RGBa <==> HSV(unsigned char)
     std::vector<unsigned char> hue(size);
     std::vector<unsigned char> saturation(size);
     std::vector<unsigned char> value(size);
@@ -488,13 +499,31 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_saturation(&saturation.front(), h, w);
     vpImage<unsigned char> I_value(&value.front(), h, w);
     vpImage<vpRGBa> I_HSV;
-    vpImageConvert::merge(&I_hue, &I_saturation, &I_value, NULL, I_HSV);
+    vpImageConvert::merge(&I_hue, &I_saturation, &I_value, nullptr, I_HSV);
 
     filename = vpIoTools::createFilePath(opath, "Klimt_HSV.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     vpImageIo::write(I_HSV, filename);
 
-    // Check the conversion RGBa <==> HSV
+    vpImage<vpRGBa> Ic_from_hsv(Ic.getHeight(), Ic.getWidth());
+    vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), reinterpret_cast<unsigned char *>(Ic_from_hsv.bitmap), size);
+    for (unsigned int i = 0; i < Ic.getHeight(); i++) {
+      for (unsigned int j = 0; j < Ic.getWidth(); j++) {
+        double precision = 10.; // Due to cast to unsigned char
+        if ((!vpMath::equal(static_cast<double>(Ic[i][j].R), static_cast<double>(Ic_from_hsv[i][j].R), precision))
+            || (!vpMath::equal(static_cast<double>(Ic[i][j].G), static_cast<double>(Ic_from_hsv[i][j].G), precision))
+            || (!vpMath::equal(static_cast<double>(Ic[i][j].B), static_cast<double>(Ic_from_hsv[i][j].B), precision))) {
+          std::cerr << "Ic[i][j].R=" << static_cast<unsigned int>(Ic[i][j].R)
+            << " ; Ic_from_hsv[i][j].R=" << static_cast<unsigned int>(Ic_from_hsv[i][j].R) << " precision: " << precision << std::endl;
+          std::cerr << "Ic[i][j].G=" << static_cast<unsigned int>(Ic[i][j].G)
+            << " ; Ic_from_hsv[i][j].G=" << static_cast<unsigned int>(Ic_from_hsv[i][j].G) << " precision: " << precision << std::endl;
+          std::cerr << "Ic[i][j].B=" << static_cast<unsigned int>(Ic[i][j].B)
+            << " ; Ic_from_hsv[i][j].B=" << static_cast<unsigned int>(Ic_from_hsv[i][j].B) << " precision: " << precision << std::endl;
+          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV(unsigned char)");
+        }
+      }
+    }
+    // Check the conversion RGBa <==> HSV(double)
     std::vector<double> hue2(size);
     std::vector<double> saturation2(size);
     std::vector<double> value2(size);
@@ -512,12 +541,12 @@ int main(int argc, const char **argv)
       for (unsigned int j = 0; j < Ic.getWidth(); j++) {
         if (Ic[i][j].R != I_HSV2RGBa[i][j].R || Ic[i][j].G != I_HSV2RGBa[i][j].G || Ic[i][j].B != I_HSV2RGBa[i][j].B) {
           std::cerr << "Ic[i][j].R=" << static_cast<unsigned>(Ic[i][j].R)
-                    << " ; I_HSV2RGBa[i][j].R=" << static_cast<unsigned>(I_HSV2RGBa[i][j].R) << std::endl;
+            << " ; I_HSV2RGBa[i][j].R=" << static_cast<unsigned>(I_HSV2RGBa[i][j].R) << std::endl;
           std::cerr << "Ic[i][j].G=" << static_cast<unsigned>(Ic[i][j].G)
-                    << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
+            << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
           std::cerr << "Ic[i][j].B=" << static_cast<unsigned>(Ic[i][j].B)
-                    << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
-          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV");
+            << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
+          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV(double)");
         }
       }
     }
@@ -586,9 +615,9 @@ int main(int argc, const char **argv)
       cv::Mat colorMat_crop = colorMat(rect_roi);
       cv::Mat colorMat_crop_continuous = colorMat(rect_roi).clone();
       std::cout << "   colorMat_crop: " << colorMat_crop.cols << "x" << colorMat_crop.rows << " is continuous? "
-                << colorMat_crop.isContinuous() << std::endl;
+        << colorMat_crop.isContinuous() << std::endl;
       std::cout << "   colorMat_crop_continuous: " << colorMat_crop_continuous.cols << "x" << colorMat_crop_continuous.rows
-                << " is continuous? " << colorMat_crop_continuous.isContinuous() << std::endl;
+        << " is continuous? " << colorMat_crop_continuous.isContinuous() << std::endl;
 
       vpImage<vpRGBa> I_color_crop((unsigned int)(rect_roi.height - rect_roi.y),
                                    (unsigned int)(rect_roi.width - rect_roi.x));
@@ -632,11 +661,173 @@ int main(int argc, const char **argv)
       std::cout << "   Resulting image saved in: " << filename << std::endl;
       vpImageIo::write(I_bgr2gray_flip_crop_no_continuous_sse, filename);
 #endif
-      std::cout << "Test succeed" << std::endl;
+      std::cout << "   Test succeed" << std::endl;
     }
 
+#if defined(VISP_HAVE_YARP)
+    /////////////////////////
+    // Convert a ViSP to Yarp uchar image
+    ////////////////////////
+    std::cout << "** Test ViSP to Yarp image conversion by copy" << std::endl;
+    {
+      bool convert_by_copy = true;
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+      std::cout << "   Reading the gray image with ViSP: " << filename << std::endl;
+      vpImage<unsigned char> I;
+      // Read an image on a disk
+      vpImageIo::read(I, filename);
+
+      yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
+      // Convert the vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
+      vpImageConvert::convert(I, Iyarp, convert_by_copy);
+      // Write the image
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_copy.pgm");
+      std::cout << "   Converted Yarp image saved in: " << filename << std::endl;
+      yarp::sig::file::write(*Iyarp, filename, yarp::sig::file::FORMAT_PGM);
+
+      std::cout << "   Reading the gray image with Yarp: " << filename << std::endl;
+      yarp::sig::ImageOf< yarp::sig::PixelMono > *IIyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
+      yarp::sig::file::read(*IIyarp, filename, yarp::sig::file::FORMAT_PGM);
+      vpImage<unsigned char> II;
+      vpImageConvert::convert(IIyarp, II, convert_by_copy);
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_copy_visp.pgm");
+      std::cout << "   Converted image in ViSP saved in: " << filename << std::endl;
+      vpImageIo::write(II, filename);
+      if (I != II) {
+        std::cout << "   Yarp gray conversion test failed" << std::endl;
+        return EXIT_FAILURE;
+      }
+      std::cout << std::endl;
+    }
+    {
+      bool convert_by_copy = true;
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+      std::cout << "   Reading the color image with ViSP: " << filename << std::endl;
+      vpImage<vpRGBa> I;
+      // Read an image on a disk
+      vpImageIo::read(I, filename);
+
+      yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
+      // Convert the vpImage\<vpRGBa\> to a yarp::sig::ImageOf\<yarp::sig::PixelRgba\>
+      vpImageConvert::convert(I, Iyarp, convert_by_copy);
+      // Write the image
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_copy.ppm");
+      std::cout << "   Converted image saved in: " << filename << std::endl;
+      yarp::sig::file::write(*Iyarp, filename, yarp::sig::file::FORMAT_PPM);
+
+      std::cout << "   Reading the color image with Yarp: " << filename << std::endl;
+      yarp::sig::ImageOf< yarp::sig::PixelRgba > *IIyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
+      yarp::sig::file::read(*IIyarp, filename, yarp::sig::file::FORMAT_PPM);
+      vpImage<vpRGBa> II;
+      vpImageConvert::convert(IIyarp, II, convert_by_copy);
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_copy_visp.ppm");
+      std::cout << "   Converted image in ViSP saved in: " << filename << std::endl;
+      vpImageIo::write(II, filename);
+      if (I != II) {
+        std::cout << "   Yarp color conversion test failed" << std::endl;
+        return EXIT_FAILURE;
+      }
+      std::cout << std::endl;
+    }
+
+    std::cout << "** Test ViSP to Yarp image conversion without copy" << std::endl;
+    {
+      bool convert_by_copy = false;
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+      std::cout << "   Reading the gray image with ViSP: " << filename << std::endl;
+      vpImage<unsigned char> I;
+      // Read an image on a disk
+      vpImageIo::read(I, filename);
+
+      yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
+      // Convert the vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
+      vpImageConvert::convert(I, Iyarp, convert_by_copy);
+      // Write the image
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy.pgm");
+      std::cout << "   Converted Yarp image saved in: " << filename << std::endl;
+      yarp::sig::file::write(*Iyarp, filename, yarp::sig::file::FORMAT_PGM);
+
+      std::cout << "   Reading the gray image with Yarp: " << filename << std::endl;
+      yarp::sig::ImageOf< yarp::sig::PixelMono > *IIyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
+      yarp::sig::file::read(*IIyarp, filename, yarp::sig::file::FORMAT_PGM);
+      vpImage<unsigned char> II;
+      vpImageConvert::convert(IIyarp, II, convert_by_copy);
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy_visp.pgm");
+      std::cout << "   Converted image in ViSP saved in: " << filename << std::endl;
+      vpImageIo::write(II, filename);
+      if (I != II) {
+        std::cout << "   Yarp gray conversion test failed" << std::endl;
+        return EXIT_FAILURE;
+      }
+      else {
+        std::cout << "   Yarp gray conversion test succeed" << std::endl;
+      }
+      std::cout << std::endl;
+    }
+    {
+      bool convert_by_copy = false;
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+      std::cout << "   Reading the color image with ViSP: " << filename << std::endl;
+      vpImage<vpRGBa> I;
+      // Read an image on a disk
+      vpImageIo::read(I, filename);
+
+      yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
+      // Convert the vpImage\<vpRGBa\> to a yarp::sig::ImageOf\<yarp::sig::PixelRgba\>
+      vpImageConvert::convert(I, Iyarp, convert_by_copy);
+      // Write the image
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy.ppm");
+      std::cout << "   Converted image saved in: " << filename << std::endl;
+      yarp::sig::file::write(*Iyarp, filename, yarp::sig::file::FORMAT_PPM);
+
+      std::cout << "   Reading the color image with Yarp: " << filename << std::endl;
+      yarp::sig::ImageOf< yarp::sig::PixelRgba > *IIyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
+      yarp::sig::file::read(*IIyarp, filename, yarp::sig::file::FORMAT_PPM);
+      vpImage<vpRGBa> II;
+      vpImageConvert::convert(IIyarp, II, convert_by_copy);
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy_visp.ppm");
+      std::cout << "   Converted image in ViSP saved in: " << filename << std::endl;
+      vpImageIo::write(II, filename);
+      if (I != II) {
+        std::cout << "   Yarp RGBa color conversion test failed" << std::endl;
+        return EXIT_FAILURE;
+      }
+      else {
+        std::cout << "   Yarp RGBa color conversion test succeed" << std::endl;
+      }
+
+      yarp::sig::ImageOf< yarp::sig::PixelRgb > *IIIyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgb >();
+      // Convert the vpImage\<vpRGBa\> to a yarp::sig::ImageOf\<yarp::sig::PixelRgb\>
+      vpImageConvert::convert(I, IIIyarp);
+      // Write the image
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy_rgb.ppm");
+      std::cout << "   Converted RGB image saved in: " << filename << std::endl;
+      yarp::sig::file::write(*Iyarp, filename, yarp::sig::file::FORMAT_PPM);
+
+      std::cout << "   Reading the RGB color image with Yarp: " << filename << std::endl;
+      yarp::sig::file::read(*IIIyarp, filename, yarp::sig::file::FORMAT_PPM);
+      vpImage<vpRGBa> III;
+      vpImageConvert::convert(IIIyarp, III);
+      filename = vpIoTools::createFilePath(opath, "Klimt_yarp_without_copy_visp_rgb.ppm");
+      std::cout << "   Converted RGB image in ViSP saved in: " << filename << std::endl;
+      vpImageIo::write(II, filename);
+      if (I != III) {
+        std::cout << "   Yarp RGB color conversion test failed" << std::endl;
+        return EXIT_FAILURE;
+      }
+      else {
+        std::cout << "   Yarp RGB color conversion test succeed" << std::endl;
+      }
+
+      std::cout << std::endl;
+    }
+#endif
+
+    std::cout << "** All the tests succeed" << std::endl;
+
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

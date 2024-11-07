@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Regression test for depth MBT.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testGenericTrackerDepth.cpp
@@ -43,8 +41,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) &&                                                                                   \
-    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_MBT) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
@@ -61,6 +58,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #define GETOPTARGS "i:dcle:mCh"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -140,7 +141,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       use_color_image = true;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -153,7 +154,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -237,7 +238,7 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
 #endif
-  // Initialise a  display
+// Initialise a  display
 #if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
 #elif defined(VISP_HAVE_GDI)
@@ -255,32 +256,34 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
   std::vector<int> tracker_type;
   tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
   vpMbGenericTracker tracker(tracker_type);
-  tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
-#if 0
-    // Corresponding parameters manually set to have an example code
-    {
-      vpCameraParameters cam_depth;
-      cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
-      tracker.setCameraParameters(cam_depth);
-    }
-    // Depth
-    tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
-    tracker.setDepthNormalPclPlaneEstimationMethod(2);
-    tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
-    tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
-    tracker.setDepthNormalSamplingStep(2, 2);
 
-    tracker.setDepthDenseSamplingStep(4, 4);
+#if defined(VISP_HAVE_PUGIXML)
+  tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
+#else
+    // Corresponding parameters manually set to have an example code
+  {
+    vpCameraParameters cam_depth;
+    cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+    tracker.setCameraParameters(cam_depth);
+  }
+  // Depth
+  tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+  tracker.setDepthNormalPclPlaneEstimationMethod(2);
+  tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
+  tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
+  tracker.setDepthNormalSamplingStep(2, 2);
+
+  tracker.setDepthDenseSamplingStep(4, 4);
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    tracker.setKltMaskBorder(5);
+  tracker.setKltMaskBorder(5);
 #endif
 
-    tracker.setAngleAppear(vpMath::rad(85.0));
-    tracker.setAngleDisappear(vpMath::rad(89.0));
-    tracker.setNearClippingDistance(0.01);
-    tracker.setFarClippingDistance(2.0);
-    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+  tracker.setAngleAppear(vpMath::rad(85.0));
+  tracker.setAngleDisappear(vpMath::rad(89.0));
+  tracker.setNearClippingDistance(0.01);
+  tracker.setFarClippingDistance(2.0);
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
   tracker.loadModel(input_directory + "/Models/chateau.cao");
   vpHomogeneousMatrix T;
@@ -391,7 +394,7 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
     const double tu_thresh = useScanline ? 0.5 : 0.4;
     if (!use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh)) { // no accuracy test with mask
       std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << ", tu_thresh = " << tu_thresh
-                << ")!" << std::endl;
+        << ")!" << std::endl;
       std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
       correct_accuracy = false;
     }
@@ -430,8 +433,8 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
 
   if (!time_vec.empty())
     std::cout << "Computation time, Mean: " << vpMath::getMean(time_vec)
-              << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
-              << std::endl;
+    << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
+    << std::endl;
 
   if (!vec_err_t.empty())
     std::cout << "Max translation error: " << *std::max_element(vec_err_t.begin(), vec_err_t.end()) << std::endl;
@@ -476,18 +479,18 @@ int main(int argc, const char *argv[])
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
 
     std::string input_directory =
-        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/Castle-simu");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/Castle-simu");
     if (!vpIoTools::checkDirectory(input_directory)) {
       std::cerr << "ViSP-images does not contain the folder: " << input_directory << "!" << std::endl;
       return EXIT_SUCCESS;
@@ -496,11 +499,13 @@ int main(int argc, const char *argv[])
     if (use_color_image) {
       vpImage<vpRGBa> I_color;
       return run(I_color, input_directory, opt_click_allowed, opt_display, useScanline, opt_lastFrame, use_mask);
-    } else {
+    }
+    else {
       vpImage<unsigned char> I_gray;
       return run(I_gray, input_directory, opt_click_allowed, opt_display, useScanline, opt_lastFrame, use_mask);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

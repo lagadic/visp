@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,12 +34,14 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <cmath>
 #include <visp3/core/vpMomentAreaNormalized.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentObject.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*!
   Computes the normalized area \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$.
@@ -50,11 +52,12 @@ void vpMomentAreaNormalized::compute()
   bool found_moment_centered;
 
   /* getMoments() returns a reference to a vpMomentDatabase. (a protected
-    member inherited from vpMoment)
-    .get() 		is a member function of vpMomentDatabase that returns
-    a specific moment which is linked to it*/
+   * member inherited from vpMoment)
+   *.get() is a member function of vpMomentDatabase that returns
+   * a specific moment which is linked to it
+   * */
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -82,16 +85,6 @@ vpMomentAreaNormalized::vpMomentAreaNormalized(double a_star, double Z_star)
 }
 
 /*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "An = " << m.values[0] << std::endl;
-  return os;
-}
-
-/*!
 Prints dependencies namely,
 1. Depth at desired pose Z*
 2. Area moment at desired pose
@@ -107,7 +100,7 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
 
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
@@ -118,3 +111,14 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
     a = getObject().get(0, 0);
   os << "a = " << a << std::endl;
 }
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "An = " << m.values[0] << std::endl;
+  return os;
+}
+END_VISP_NAMESPACE

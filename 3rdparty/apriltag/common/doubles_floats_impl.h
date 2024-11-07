@@ -57,7 +57,7 @@ either expressed or implied, of the Regents of The University of Michigan.
   xyzrpy (translation x, y, z, euler angles)
 
   Roll Pitch Yaw are evaluated in the order: roll, pitch, then yaw. I.e.,
-  rollPitchYawToMatrix(rpy) = rotateZ(rpy[2]) * rotateY(rpy[1]) * rotateX(rpy[0])
+  rollPitchYawToMatrix(rpy) = rotateZ(rpy[2]) * rotateY(rpy[1]) * Rotatex(rpy[0])
 */
 
 #define TRRFN(root, suffix) root ## suffix
@@ -70,7 +70,7 @@ static inline TNAME *TFN(s_dup)(const TNAME *v, int len)
     if (!v)
         return NULL;
 
-    TNAME *r = (TNAME *)malloc(len * sizeof(TNAME));
+    TNAME *r = (TNAME*)malloc(len * sizeof(TNAME));
     memcpy(r, v, len * sizeof(TNAME));
     return r;
 }
@@ -688,7 +688,7 @@ static inline void TFN(s_mat_ABC)(const TNAME *A, int Arows, int Acols,
                                   const TNAME *C, int Crows, int Ccols,
                                   TNAME *R, int Rrows, int Rcols)
 {
-    TNAME *tmp = (TNAME *)malloc(sizeof(TNAME)*Arows*Bcols);
+    TNAME *tmp = malloc(sizeof(TNAME)*Arows*Bcols);
 
     TFN(s_mat_AB)(A, Arows, Acols, B, Brows, Bcols, tmp, Arows, Bcols);
     TFN(s_mat_AB)(tmp, Arows, Bcols, C, Crows, Ccols, R, Rrows, Rcols);

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,18 @@
  *
  * Description:
  * DNN object detection using OpenCV DNN module.
- *
-*****************************************************************************/
-#ifndef _vpDetectorDNN_h_
-#define _vpDetectorDNN_h_
+ */
+
+#ifndef VP_DETECTOR_DNN_OPENCV_H
+#define VP_DETECTOR_DNN_OPENCV_H
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+
 #include <map>
 #include <string>
 #include <vector>
@@ -50,32 +53,34 @@
 #include <visp3/core/vpRect.h>
 
 #include <optional>
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpDetectorDNNOpenCV
-  \ingroup group_detection_dnn
-  This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
-  OpenCV DNN module</a> and specialized to handle object detection task.
-
-  This class supports the following networks dedicated to object detection:
-
-  - Faster-RCNN, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_faster_rcnn network
-  - SSD MobileNet, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_mobilenet_ssd network
-  - ResNet 10, see usage for \ref dnn_usecase_face_detection
-  - Yolo v3, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov3 network
-  - Yolo v4, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov4 network
-  - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
-  - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
-  - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
-
-  This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
-  Examples of such JSON files can be found in the tutorial folder.
-
-  \sa \ref tutorial-detection-dnn
+ * \class vpDetectorDNNOpenCV
+ * \ingroup group_detection_dnn
+ * This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
+ * OpenCV DNN module</a> and specialized to handle object detection task.
+ *
+ * This class supports the following networks dedicated to object detection:
+ *
+ * - Faster-RCNN, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_faster_rcnn network
+ * - SSD MobileNet, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_mobilenet_ssd network
+ * - ResNet 10, see usage for \ref dnn_usecase_face_detection
+ * - Yolo v3, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov3 network
+ * - Yolo v4, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov4 network
+ * - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
+ * - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
+ * - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
+ * - Yolo v11, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov11 network
+ *
+ * This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
+ * Examples of such JSON files can be found in the tutorial folder.
+ *
+ * \sa \ref tutorial-detection-dnn
 */
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
@@ -95,8 +100,9 @@ public:
     YOLO_V4 = 5, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV4 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV3_V4 for more information.*/
     YOLO_V5 = 6, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV5 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
     YOLO_V7 = 7, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV7 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
-    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8 for more information.*/
-    COUNT = 9 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
+    YOLO_V8 = 8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
+    YOLO_V11 = 9, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV11 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8_V11 for more information.*/
+    COUNT = 10 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -199,7 +205,7 @@ public:
      * \param j The JSON object, resulting from the parsing of a JSON file.
      * \param config The configuration of the network, that will be initialized from the JSON data.
      */
-    inline friend void from_json(const json &j, NetConfig &config)
+    friend inline void from_json(const nlohmann::json &j, NetConfig &config)
     {
       config.m_confThreshold = j.value("confidenceThreshold", config.m_confThreshold);
       if (config.m_confThreshold <= 0) {
@@ -239,11 +245,11 @@ public:
      * \param j A JSON parser object.
      * \param config The vpDetectorDNNOpenCV::NetConfig that must be parsed into JSON format.
      */
-    inline friend void to_json(json &j, const NetConfig &config)
+    friend inline void to_json(nlohmann::json &j, const NetConfig &config)
     {
       std::pair<unsigned int, unsigned int> resolution = { config.m_inputSize.width, config.m_inputSize.height };
       std::vector<double> v_mean = { config.m_mean[0], config.m_mean[1], config.m_mean[2] };
-      j = json {
+      j = nlohmann::json {
         {"confidenceThreshold", config.m_confThreshold  } ,
         {"nmsThreshold"       , config.m_nmsThreshold   } ,
         {"filterSizeRatio"    , config.m_filterSizeRatio} ,
@@ -438,7 +444,7 @@ public:
       return text;
     }
 
-    inline friend std::ostream &operator<<(std::ostream &os, const NetConfig &config)
+    friend inline std::ostream &operator<<(std::ostream &os, const NetConfig &config)
     {
       os << config.toString();
       return os;
@@ -513,7 +519,7 @@ public:
    * \param j The JSON object, resulting from the parsing of a JSON file.
    * \param network The network, that will be initialized from the JSON data.
    */
-  inline friend void from_json(const json &j, vpDetectorDNNOpenCV &network)
+  friend inline void from_json(const nlohmann::json &j, vpDetectorDNNOpenCV &network)
   {
     network.m_netConfig = j.value("networkSettings", network.m_netConfig);
   }
@@ -524,15 +530,15 @@ public:
    * \param j The JSON parser.
    * \param network  The network we want to parse the configuration.
    */
-  inline friend void to_json(json &j, const vpDetectorDNNOpenCV &network)
+  friend inline void to_json(nlohmann::json &j, const vpDetectorDNNOpenCV &network)
   {
-    j = json {
+    j = nlohmann::json {
       {"networkSettings", network.m_netConfig}
     };
   }
 #endif
 
-  inline friend std::ostream &operator<<(std::ostream &os, const vpDetectorDNNOpenCV &network)
+  friend inline std::ostream &operator<<(std::ostream &os, const vpDetectorDNNOpenCV &network)
   {
     os << network.m_netConfig;
     return os;
@@ -557,7 +563,7 @@ protected:
 
   void postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
-  void postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
@@ -614,5 +620,6 @@ vpDetectorDNNOpenCV::DetectedFeatures2D::display(const vpImage< Type > &img, con
   ss << "(" << std::setprecision(4) << m_score * 100. << "%)";
   vpDisplay::displayText(img, m_bbox.getTopRight(), ss.str(), color);
 }
+END_VISP_NAMESPACE
 #endif
 #endif

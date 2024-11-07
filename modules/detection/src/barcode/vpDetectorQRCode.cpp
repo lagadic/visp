@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Base class for bar code detection.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -42,6 +39,7 @@
 
 #include <visp3/detection/vpDetectorQRCode.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor.
  */
@@ -87,12 +85,13 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   }
 
   // clean up
-  img.set_data(NULL, 0);
+  img.set_data(nullptr, 0);
 
   return detected;
 }
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorQRCode.cpp.o) has
 // no symbols
-void dummy_vpDetectorQRCode(){};
+void dummy_vpDetectorQRCode() { };
 #endif

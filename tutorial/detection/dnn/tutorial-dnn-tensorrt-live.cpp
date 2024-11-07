@@ -23,6 +23,8 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#include <opencv2/videoio.hpp>
+
 //! [OpenCV CUDA header files]
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/cudaarithm.hpp>
@@ -40,6 +42,10 @@
 //! [TRT header files]
 
 #include <sys/stat.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 //! [Preprocess image]
 void preprocessImage(cv::Mat &img, float *gpu_input, const nvinfer1::Dims &dims, float meanR, float meanG, float meanB)
@@ -108,7 +114,7 @@ std::vector<cv::Rect> postprocessResults(std::vector<void *> buffers, const std:
 
   // post process
   int N = output_dims[0].d[1], C = output_dims[0].d[2]; // (1 x N x C format); N: Number of output detection boxes
-                                                        // (fixed in the model), C: Number of classes.
+  // (fixed in the model), C: Number of classes.
   for (int i = 0; i < N; i++)                           // for all N (boxes)
   {
     uint32_t maxClass = 0;
@@ -164,7 +170,8 @@ public:
 } gLogger;
 
 // destroy TensoRT objects if something goes wrong
-struct TRTDestroy {
+struct TRTDestroy
+{
   template <class T> void operator()(T *obj) const
   {
     if (obj)
@@ -177,7 +184,7 @@ template <class T> using TRTUniquePtr = std::unique_ptr<T, TRTDestroy>;
 //! [ParseOnnxModel]
 bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaEngine> &engine,
                     TRTUniquePtr<nvinfer1::IExecutionContext> &context)
-//! [ParseOnnxModel]
+  //! [ParseOnnxModel]
 {
   // this section of code is from jetson-inference's `tensorNet`, to test if the GIE already exists.
   char cache_prefix[FILENAME_MAX];
@@ -190,7 +197,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
   //! [ParseOnnxModel engine exists]
   if (vpIoTools::checkFilename(cache_path)) {
-    char *engineStream = NULL;
+    char *engineStream = nullptr;
     size_t engineSize = 0;
 
     // determine the file size of the engine
@@ -202,7 +209,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     engineStream = (char *)malloc(engineSize);
 
     // open the engine cache file from disk
-    FILE *cacheFile = NULL;
+    FILE *cacheFile = nullptr;
     cacheFile = fopen(cache_path, "rb");
 
     // read the serialized engine into memory
@@ -218,8 +225,8 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     fclose(cacheFile);
 
     // Recreate the inference runtime
-    TRTUniquePtr<nvinfer1::IRuntime> infer{nvinfer1::createInferRuntime(gLogger)};
-    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, NULL));
+    TRTUniquePtr<nvinfer1::IRuntime> infer { nvinfer1::createInferRuntime(gLogger) };
+    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, nullptr));
     context.reset(engine->createExecutionContext());
 
     return true;
@@ -233,10 +240,10 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
       return false;
     }
 
-    TRTUniquePtr<nvinfer1::IBuilder> builder{nvinfer1::createInferBuilder(gLogger)};
-    TRTUniquePtr<nvinfer1::INetworkDefinition> network{
-        builder->createNetworkV2(1U << (uint32_t)nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)};
-    TRTUniquePtr<nvonnxparser::IParser> parser{nvonnxparser::createParser(*network, gLogger)};
+    TRTUniquePtr<nvinfer1::IBuilder> builder { nvinfer1::createInferBuilder(gLogger) };
+    TRTUniquePtr<nvinfer1::INetworkDefinition> network {
+        builder->createNetworkV2(1U << (uint32_t)nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH) };
+    TRTUniquePtr<nvonnxparser::IParser> parser { nvonnxparser::createParser(*network, gLogger) };
 
     // parse ONNX
     if (!parser->parseFromFile(model_path.c_str(), static_cast<int>(nvinfer1::ILogger::Severity::kINFO))) {
@@ -244,7 +251,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
       return false;
     }
 
-    TRTUniquePtr<nvinfer1::IBuilderConfig> config{builder->createBuilderConfig()};
+    TRTUniquePtr<nvinfer1::IBuilderConfig> config { builder->createBuilderConfig() };
     // allow TRT to use up to 1GB of GPU memory for tactic selection
     config->setMaxWorkspaceSize(32 << 20);
     // use FP16 mode if possible
@@ -257,7 +264,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     engine.reset(builder->buildEngineWithConfig(*network, *config));
     context.reset(engine->createExecutionContext());
 
-    TRTUniquePtr<nvinfer1::IHostMemory> serMem{engine->serialize()};
+    TRTUniquePtr<nvinfer1::IHostMemory> serMem { engine->serialize() };
 
     if (!serMem) {
       std::cout << "Failed to serialize CUDA engine." << std::endl;
@@ -278,7 +285,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     memcpy(engineMemory, serData, serSize);
 
     // write the cache file
-    FILE *cacheFile = NULL;
+    FILE *cacheFile = nullptr;
     cacheFile = fopen(cache_path, "wb");
 
     fwrite(engineMemory, 1, serSize, cacheFile);
@@ -304,33 +311,42 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--device" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       input = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
       modelFile = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
       config = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
       opt_scale = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
+    }
+    else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
       meanR = atof(argv[i + 1]);
       meanG = atof(argv[i + 2]);
       meanB = atof(argv[i + 3]);
-    } else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
       confThresh = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
       nmsThresh = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
       labelFile = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0]
-                << " [--device <camera device number>] [--input <path to image or video>"
-                   " (camera is used if input is empty)] [--model <path to net trained weights>]"
-                   " [--config <path to net config file>]"
-                   " [--input-scale <input scale factor>] [--mean <meanR meanG meanB>]"
-                   " [--confThresh <confidence threshold>]"
-                   " [--nmsThresh <NMS threshold>] [--labels <path to label file>]"
-                << std::endl;
+        << " [--device <camera device number>] [--input <path to image or video>"
+        " (camera is used if input is empty)] [--model <path to net trained weights>]"
+        " [--config <path to net config file>]"
+        " [--input-scale <input scale factor>] [--mean <meanR meanG meanB>]"
+        " [--confThresh <confidence threshold>]"
+        " [--nmsThresh <NMS threshold>] [--labels <path to label file>]"
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -349,13 +365,13 @@ int main(int argc, char **argv)
 
   //! [Create GIE]
   // Parse the model and initialize the engine and the context.
-  TRTUniquePtr<nvinfer1::ICudaEngine> engine{nullptr};
-  TRTUniquePtr<nvinfer1::IExecutionContext> context{nullptr};
+  TRTUniquePtr<nvinfer1::ICudaEngine> engine { nullptr };
+  TRTUniquePtr<nvinfer1::IExecutionContext> context { nullptr };
   if (!parseOnnxModel(model_path, engine, context)) // Problem parsing Onnx model
   {
     std::cout << "Make sure the model file exists. To see available models, plese visit: "
-                 "\n\twww.github.com/lagadic/visp-images/dnn/object_detection/"
-              << std::endl;
+      "\n\twww.github.com/lagadic/visp-images/dnn/object_detection/"
+      << std::endl;
     return EXIT_FAILURE;
   }
   //! [Create GIE]
@@ -371,7 +387,8 @@ int main(int argc, char **argv)
 
     if (engine->bindingIsInput(i)) {
       input_dims.emplace_back(engine->getBindingDimensions(i));
-    } else {
+    }
+    else {
       output_dims.emplace_back(engine->getBindingDimensions(i));
     }
   }
@@ -387,7 +404,8 @@ int main(int argc, char **argv)
 
   if (input.empty()) {
     capture.open(opt_device);
-  } else {
+  }
+  else {
     capture.open(input);
   }
 

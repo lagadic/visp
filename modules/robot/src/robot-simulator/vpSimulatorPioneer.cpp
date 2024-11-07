@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Pioneer mobile robot simulator without display.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpSimulatorPioneer.cpp
@@ -49,6 +46,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpSimulatorPioneer.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Constructor.
 
@@ -72,17 +70,11 @@ void vpSimulatorPioneer::init()
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;
-  qmin = NULL;
-  qmax = NULL;
+  qmin = nullptr;
+  qmax = nullptr;
 
   wMc_ = wMe_ * cMe_.inverse();
 }
-
-/*!
-  Destructor.
-
-*/
-vpSimulatorPioneer::~vpSimulatorPioneer() {}
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
@@ -173,14 +165,14 @@ void vpSimulatorPioneer::getPosition(vpHomogeneousMatrix &wMc) const { wMc = thi
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes (not implemented)
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference frame, and rotation in
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference frame, and rotation in
   camera frame)
 
   \param position : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, this functionality is not implemented.
 
@@ -199,8 +191,8 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vp
 
   case vpRobot::ARTICULAR_FRAME:
     std::cout << "ARTICULAR_FRAME is not implemented in "
-                 "vpSimulatorPioneer::getPosition()"
-              << std::endl;
+      "vpSimulatorPioneer::getPosition()"
+      << std::endl;
     break;
   case vpRobot::REFERENCE_FRAME: {
     // Convert wMc_ to a position
@@ -225,3 +217,4 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vp
     break;
   }
 }
+END_VISP_NAMESPACE

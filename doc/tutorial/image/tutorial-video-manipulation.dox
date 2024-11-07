@@ -4,13 +4,11 @@
 
 \section img_manip_seq_intro Introduction
 
-In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
+In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the
+images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
 
-Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endcode
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `tutorial/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/image.
 
 \section img_manip_seq_prereq Prerequisites
 
@@ -87,7 +85,8 @@ $ cd $VISP_WS/visp-build/tutorial/image
 $ ./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg
 \endverbatim
 
-- To visualize a sequence of successive images, like the one acquired in \ref img_manip_seq_create section, you may rather run:
+- To visualize a sequence of successive images, like the one acquired in \ref img_manip_seq_create section, you may
+  rather run:
 \verbatim
 $ cd $VISP_WS/visp-build/tutorial/image
 ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png
@@ -177,24 +176,26 @@ image-0120.jpeg
 
 Moreover, there is also an other extra option `--out-gray` that allows to save output images in Y8 gray level images.
 
-- For example, considering that `/tmp/myseq/png/I%04d.png` input images are color images, if you want to convert them in Y8 gray, you may run:
+- For example, considering that `/tmp/myseq/png/I%04d.png` input images are color images, if you want to convert them
+  in Y8 gray, you may run:
 \verbatim
 $ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/gray-jpeg/gray-image-%04d.jpg --out-gray
 \endverbatim
 
-- Finally, there is also the `--out-stride` option that allows to keep one image over n in the resulting output video. 
-  For example, if your input image sequence has 40 images and you want to create a new image sequence temporally subsampled 
-  with only 20 images, you can use this option like:
+- Finally, there is also the `--out-stride` option that allows to keep one image over n in the resulting output video.
+  For example, if your input image sequence has 40 images and you want to create a new image sequence temporally
+  subsampled  with only 20 images, you can use this option like:
 \verbatim
 $ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/png-stride-2/I%04d.png --out-stride 2
 \endverbatim
-  
-  
+
+
 \subsection img_manip_seq_extract Images extraction from a video
 
 The tutorial tutorial-image-manipulation.cpp allows also to extract images from a video file.
 
-- For example to extract the images from an `mpeg` video part of ViSP data set and create a sequence of successive images, you may run:
+- For example to extract the images from an `mpeg` video part of ViSP data set and create a sequence of successive
+  images, you may run:
 \verbatim
 $ ./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg --out /tmp/cube/jpeg/image-%04d.jpeg
 \endverbatim
@@ -211,7 +212,7 @@ image-0008.jpeg
 image-0009.jpeg
 image-0010.jpeg
 ...
-\endverbatim 
+\endverbatim
 - You can then replay the image sequence using:
 \verbatim
 ./tutorial-video-manipulation --in /tmp/cube/jpeg/image-%04d.jpeg
@@ -219,15 +220,17 @@ image-0010.jpeg
 
 \subsection img_manip_seq_select Images selection to create a new video or sequence
 
-The tutorial tutorial-image-manipulation.cpp allows also to extract some images selected by the user during visualisation by user click. This feature could be useful to extract the images that will be part of a deep leaning data set.
+The tutorial tutorial-image-manipulation.cpp allows also to extract some images selected by the user during
+visualisation by user click. This feature could be useful to extract the images that will be part of a deep
+leaning data set.
 
 - To create a new video from selected images you may add `--select` option, like:
 \verbatim
 $ ./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg --out /tmp/cube/jpeg/image-%04d.jpeg --select
 \endverbatim
-- Here if the user click four times in the video, you will get a new sequence with 4 successive images 
+- Here if the user click four times in the video, you will get a new sequence with 4 successive images
 \verbatim
-$ ls -1 /tmp/cube/jpeg 
+$ ls -1 /tmp/cube/jpeg
 image-0001.jpeg
 image-0002.jpeg
 image-0003.jpeg

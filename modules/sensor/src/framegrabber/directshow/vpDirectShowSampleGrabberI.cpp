@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,7 +35,7 @@
  * Bruno Renier
  * Anthony Saunier
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpImageConvert.h>
@@ -44,6 +44,7 @@
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_DIRECTSHOW))
 
+BEGIN_VISP_NAMESPACE
 /*!
         Constructor - creates the semaphore
 */
@@ -51,7 +52,7 @@ vpDirectShowSampleGrabberI::vpDirectShowSampleGrabberI()
   : acqGrayDemand(false), acqRGBaDemand(false), specialMediaType(false), invertedSource(false)
 {
   // semaphore(0), max value = 1
-  copySem = CreateSemaphore(NULL, 0, 1, NULL);
+  copySem = CreateSemaphore(nullptr, 0, 1, nullptr);
 }
 
 /*!
@@ -65,7 +66,7 @@ vpDirectShowSampleGrabberI::~vpDirectShowSampleGrabberI()
 
 STDMETHODIMP vpDirectShowSampleGrabberI::QueryInterface(REFIID riid, void **ppvObject)
 {
-  if (NULL == ppvObject)
+  if (nullptr == ppvObject)
     return E_POINTER;
   if (riid == __uuidof(IUnknown)) {
     *ppvObject = static_cast<IUnknown *>(this);
@@ -94,7 +95,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
       BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
 
       // if biHeight > 0 and the source is not special
-      // then  the image needs to be verticaly flipped
+      // then  the image needs to be vertically flipped
       bool flip;
       if (!specialMediaType)
         flip = bmpInfo.biHeight >= 0;
@@ -116,7 +117,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                     flip);
           // reset the demand boolean
           acqRGBaDemand = false;
-        } else // if it was a grayscale image demand
+        }
+        else // if it was a grayscale image demand
         {
           // first, resizes the image as needed
           grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -125,11 +127,12 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
           // reset the demand boolean
           acqGrayDemand = false;
         }
-      } else {
+      }
+      else {
         unsigned long FourCC;
         FourCC = ((bmpInfo.biCompression & 0xFF000000) >> 24) | ((bmpInfo.biCompression & 0x00FF0000) >> 8) |
-                 ((bmpInfo.biCompression & 0x0000FF00) << 8) | (bmpInfo.biCompression & 0x000000FF) << 24;
-        // if the buffer contains a like YUV420 image
+          ((bmpInfo.biCompression & 0x0000FF00) << 8) | (bmpInfo.biCompression & 0x000000FF) << 24;
+ // if the buffer contains a like YUV420 image
         if (connectedMediaType.subtype == MEDIASUBTYPE_IYUV || FourCC == 'I420') {
           // if it was an RGBa image demand
           if (acqRGBaDemand) {
@@ -140,7 +143,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                          rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -150,8 +154,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             acqGrayDemand = false;
           }
 
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_YV12) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_YV12) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -160,7 +165,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                        rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -169,8 +175,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             // reset the demand boolean
             acqGrayDemand = false;
           }
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_YVU9) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_YVU9) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -179,7 +186,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                        rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -188,8 +196,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             // reset the demand boolean
             acqGrayDemand = false;
           }
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_YUY2 || connectedMediaType.subtype == MEDIASUBTYPE_YUYV) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_YUY2 || connectedMediaType.subtype == MEDIASUBTYPE_YUYV) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -198,7 +207,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                         rgbaIm->getWidth() * rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -207,8 +217,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             // reset the demand boolean
             acqGrayDemand = false;
           }
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_YVYU) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_YVYU) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -217,7 +228,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                         rgbaIm->getWidth() * rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -226,8 +238,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             // reset the demand boolean
             acqGrayDemand = false;
           }
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_UYVY) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_UYVY) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -236,7 +249,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
                                          rgbaIm->getWidth() * rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -245,8 +259,9 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             // reset the demand boolean
             acqGrayDemand = false;
           }
-        } else if (connectedMediaType.subtype == MEDIASUBTYPE_RGB32) {
-          // if it was an RGBa image demand
+        }
+        else if (connectedMediaType.subtype == MEDIASUBTYPE_RGB32) {
+       // if it was an RGBa image demand
           if (acqRGBaDemand) {
             // first, resizes the image as needed
             rgbaIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -256,7 +271,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
             memcpy(rgbaIm->bitmap, pBuffer, 4 * rgbaIm->getWidth() * rgbaIm->getHeight());
             // reset the demand boolean
             acqRGBaDemand = false;
-          } else // if it was a grayscale image demand
+          }
+          else // if it was a grayscale image demand
           {
             // first, resizes the image as needed
             grayIm->resize(abs(bmpInfo.biHeight), bmpInfo.biWidth);
@@ -270,15 +286,15 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
     }
 
     // increment the semaphore - allows acquire to continue execution
-    ReleaseSemaphore(copySem, 1, NULL);
+    ReleaseSemaphore(copySem, 1, nullptr);
   }
   return S_OK;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowSampleGrabberI.cpp.o) has no symbols
-void dummy_vpDirectShowSampleGrabberI(){};
+void dummy_vpDirectShowSampleGrabberI() { };
 #endif
 
 #endif

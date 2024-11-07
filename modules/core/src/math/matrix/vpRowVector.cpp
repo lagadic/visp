@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Operation on row vectors.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpRowVector.cpp
@@ -49,11 +44,15 @@
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRowVector.h>
 
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
+
+BEGIN_VISP_NAMESPACE
 //! Copy operator.   Allow operation such as A = v
 vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 {
@@ -61,7 +60,8 @@ vpRowVector &vpRowVector::operator=(const vpRowVector &v)
   if (colNum != k) {
     try {
       resize(k);
-    } catch (...) {
+    }
+    catch (...) {
       throw;
     }
   }
@@ -85,8 +85,9 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
                       M.getCols(), M.getRows(), M.getCols()));
   }
 
-  if (M.getCols() != colNum)
+  if (M.getCols() != colNum) {
     resize(M.getCols());
+  }
 
   memcpy(data, M.data, colNum * sizeof(double));
   return *this;
@@ -97,9 +98,11 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 {
-  resize((unsigned int)v.size());
-  for (unsigned int i = 0; i < v.size(); i++)
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  resize(v_size);
+  for (unsigned int i = 0; i < v_size; ++i) {
     (*this)[i] = v[i];
+  }
   return *this;
 }
 /*!
@@ -107,17 +110,19 @@ vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<float> &v)
 {
-  resize((unsigned int)v.size());
-  for (unsigned int i = 0; i < v.size(); i++)
-    (*this)[i] = (float)v[i];
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  resize(v_size);
+  for (unsigned int i = 0; i < v_size; ++i) {
+    (*this)[i] = static_cast<float>(v[i]);
+  }
   return *this;
 }
 
 //! Initialize each element of the vector with \e x.
 vpRowVector &vpRowVector::operator=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = x;
     }
   }
@@ -139,9 +144,9 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 
     other.rowNum = 0;
     other.colNum = 0;
-    other.rowPtrs = NULL;
+    other.rowPtrs = nullptr;
     other.dsize = 0;
-    other.data = NULL;
+    other.data = nullptr;
   }
 
   return *this;
@@ -150,18 +155,22 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 /*!
   Set vector elements from a list of double.
   \code
-#include <visp3/core/vpRowVector.cpp>
+  #include <visp3/core/vpRowVector.cpp>
 
-int main()
-{
-  vpRowVector r;
-  r = {1, 2, 3};
-  std::cout << "r: " << r << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r;
+    r = {1, 2, 3};
+    std::cout << "r: " << r << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-r: 1  2  3
+  r: 1  2  3
   \endcode
   \sa operator<<()
 */
@@ -175,12 +184,14 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
 
 bool vpRowVector::operator==(const vpRowVector &v) const
 {
-  if (colNum != v.colNum || rowNum != v.rowNum /* should not happen */)
+  if ((colNum != v.colNum) || (rowNum != v.rowNum) /* should not happen */) {
     return false;
+  }
 
-  for (unsigned int i = 0; i < colNum; i++) {
-    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon()))
+  for (unsigned int i = 0; i < colNum; ++i) {
+    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon())) {
       return false;
+    }
   }
 
   return true;
@@ -212,7 +223,7 @@ double vpRowVector::operator*(const vpColVector &x) const
 
   double scalar = 0.0;
 
-  for (unsigned int i = 0; i < nelements; i++) {
+  for (unsigned int i = 0; i < nelements; ++i) {
     scalar += (*this)[i] * x[i];
   }
   return scalar;
@@ -243,9 +254,10 @@ vpRowVector vpRowVector::operator*(const vpMatrix &M) const
 
   c = 0.0;
 
-  for (unsigned int i = 0; i < colNum; i++) {
+  for (unsigned int i = 0; i < colNum; ++i) {
     double bi = data[i]; // optimization em 5/12/2006
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+    unsigned int m_cols = M.getCols();
+    for (unsigned int j = 0; j < m_cols; ++j) {
       c[j] += bi * M[i][j];
     }
   }
@@ -279,8 +291,9 @@ vpRowVector vpRowVector::operator*(double x) const
   double *vd = v.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = (*d++) * x;
+  }
   return v;
 }
 
@@ -303,8 +316,9 @@ vpRowVector vpRowVector::operator*(double x) const
 */
 vpRowVector &vpRowVector::operator*=(double x)
 {
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] *= x;
+  }
   return (*this);
 }
 
@@ -334,8 +348,9 @@ vpRowVector vpRowVector::operator/(double x) const
   double *vd = v.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = (*d++) / x;
+  }
   return v;
 }
 
@@ -359,8 +374,9 @@ vpRowVector vpRowVector::operator/(double x) const
 */
 vpRowVector &vpRowVector::operator/=(double x)
 {
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] /= x;
+  }
   return (*this);
 }
 
@@ -381,8 +397,9 @@ vpRowVector vpRowVector::operator-() const
   double *vd = A.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = -(*d++);
+  }
 
   return A;
 }
@@ -400,8 +417,9 @@ vpRowVector vpRowVector::operator-(const vpRowVector &m) const
 
   vpRowVector v(colNum);
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     v[i] = (*this)[i] - m[i];
+  }
   return v;
 }
 
@@ -418,8 +436,9 @@ vpRowVector vpRowVector::operator+(const vpRowVector &v) const
 
   vpRowVector r(colNum);
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     r[i] = (*this)[i] + v[i];
+  }
   return r;
 }
 
@@ -435,8 +454,9 @@ vpRowVector &vpRowVector::operator+=(vpRowVector v)
                       v.getCols()));
   }
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] += v[i];
+  }
   return (*this);
 }
 
@@ -452,8 +472,9 @@ vpRowVector &vpRowVector::operator-=(vpRowVector v)
                       v.getCols()));
   }
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] -= v[i];
+  }
   return (*this);
 }
 
@@ -461,16 +482,20 @@ vpRowVector &vpRowVector::operator-=(vpRowVector v)
   Copy operator.
   Allows operation such as A << v
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector A, B(5);
-  for (unsigned int i=0; i<B.size(); i++)
-    B[i] = i;
-  A << B;
-  std::cout << "A: " << A << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector A, B(5);
+    for (unsigned int i=0; i<B.size(); i++)
+      B[i] = i;
+    A << B;
+    std::cout << "A: " << A << std::endl;
+  }
   \endcode
   In row vector A we get:
   \code
@@ -525,9 +550,12 @@ void vpRowVector::transpose(vpColVector &v) const { v = t(); }
  */
 vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i) : vpArray2D<double>(1, M.getCols())
 {
-  for (unsigned int j = 0; j < M.getCols(); j++)
+  unsigned int m_cols = M.getCols();
+  for (unsigned int j = 0; j < m_cols; ++j) {
     (*this)[j] = M[i][j];
+  }
 }
+
 /*!
    Constructor that creates a row vector from a 1-by-n matrix \e M.
 
@@ -540,26 +568,32 @@ vpRowVector::vpRowVector(const vpMatrix &M) : vpArray2D<double>(1, M.getCols())
     throw(vpException(vpException::dimensionError, "Cannot construct a (1x%d) row vector from a (%dx%d) matrix",
                       M.getCols(), M.getRows(), M.getCols()));
   }
-
-  for (unsigned int j = 0; j < M.getCols(); j++)
+  unsigned int m_cols = M.getCols();
+  for (unsigned int j = 0; j < m_cols; ++j) {
     (*this)[j] = M[0][j];
+  }
 }
 
 /*!
    Constructor that creates a row vector from a std vector of double.
  */
-vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  for (unsigned int j = 0; j < v.size(); j++)
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[j] = v[j];
+  }
 }
+
 /*!
    Constructor that creates a row vector from a std vector of float.
  */
-vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  for (unsigned int j = 0; j < v.size(); j++)
-    (*this)[j] = (double)(v[j]);
+  unsigned int v_size = static_cast<unsigned int>(v.size());
+  for (unsigned int j = 0; j < v_size; ++j) {
+    (*this)[j] = static_cast<double>(v[j]);
+  }
 }
 
 /*!
@@ -567,11 +601,11 @@ vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, (un
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-  row vector to contruct. \param ncols : Number of columns of the constructed
-  row vector.
+  row vector to construct.
+  \param ncols : Number of columns of the constructed row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
-  is used to initialize the contructed row vector.
+  is used to initialize the constructed row vector.
 
   \sa init()
 */
@@ -591,14 +625,14 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 
   v.rowNum = 0;
   v.colNum = 0;
-  v.rowPtrs = NULL;
+  v.rowPtrs = nullptr;
   v.dsize = 0;
-  v.data = NULL;
+  v.data = nullptr;
 }
 #endif
 
 /*!
-  Normalise the vector given as input parameter and return the normalized
+  Normalize the vector given as input parameter and return the normalized
   vector:
 
   \f[
@@ -657,99 +691,115 @@ vpMatrix vpRowVector::reshape(unsigned int nrows, unsigned int ncols)
   \param ncols : number of columns of the matrix.
 
   \exception vpException::dimensionError If the matrix and the row vector have
-not the same size.
+  not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  int var=0;
-  vpMatrix mat(3, 4);
-  for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 4; j++)
-          mat[i][j] = ++var;
-  std::cout << "mat: \n" << mat << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRowVector row = mat.stackRows();
-  std::cout << "row vector: " << row << std::endl;
+  int main()
+  {
+    int var=0;
+    vpMatrix mat(3, 4);
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 4; j++)
+            mat[i][j] = ++var;
+    std::cout << "mat: \n" << mat << std::endl;
 
-  vpMatrix remat = row.reshape(3, 4);
-  std::cout << "remat: \n" << remat << std::endl;
-}
+    vpRowVector row = mat.stackRows();
+    std::cout << "row vector: " << row << std::endl;
+
+    vpMatrix remat = row.reshape(3, 4);
+    std::cout << "remat: \n" << remat << std::endl;
+  }
   \endcode
 
   If you run the previous example, you get:
   \code
-mat:
-1  2  3  4
-5  6  7  8
-9  10  11  12
-row vector: 1  2  3  4  5  6  7  8  9  10  11  12
-remat:
-1  2  3  4
-5  6  7  8
-9  10  11  12
+  mat:
+  1  2  3  4
+  5  6  7  8
+  9  10  11  12
+  row vector: 1  2  3  4  5  6  7  8  9  10  11  12
+  remat:
+  1  2  3  4
+  5  6  7  8
+  9  10  11  12
   \endcode
 */
 void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
 {
-  if (dsize != nrows * ncols) {
+  if (dsize != (nrows * ncols)) {
     throw(vpException(vpException::dimensionError, "Cannot reshape (1x%d) row vector in (%dx%d) matrix", colNum,
                       M.getRows(), M.getCols()));
   }
   try {
-    if ((M.getRows() != nrows) || (M.getCols() != ncols))
+    if ((M.getRows() != nrows) || (M.getCols() != ncols)) {
       M.resize(nrows, ncols);
-  } catch (...) {
+    }
+  }
+  catch (...) {
     throw;
   }
-  for (unsigned int i = 0; i < nrows; i++)
-    for (unsigned int j = 0; j < ncols; j++)
-      M[i][j] = data[i * ncols + j];
+  for (unsigned int i = 0; i < nrows; ++i) {
+    for (unsigned int j = 0; j < ncols; ++j) {
+      M[i][j] = data[(i * ncols) + j];
+    }
+  }
 }
 
 /*!
   Insert a row vector.
-  \param i : Index of the first element to introduce. This index starts from
-0. \param v : Row vector to insert.
+  \param i : Index of the first element to introduce. This index starts from 0.
+  \param v : Row vector to insert.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector v(4);
-  for (unsigned int i=0; i < v.size(); i++)
-    v[i] = i;
-  std::cout << "v: " << v << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpRowVector w(2);
-  for (unsigned int i=0; i < w.size(); i++)
-    w[i] = i+10;
-  std::cout << "w: " << w << std::endl;
+  int main()
+  {
+    vpRowVector v(4);
+    for (unsigned int i=0; i < v.size(); i++)
+      v[i] = i;
+    std::cout << "v: " << v << std::endl;
 
-  v.insert(1, w);
-  std::cout << "v: " << v << std::endl;
-}  \endcode
+    vpRowVector w(2);
+    for (unsigned int i=0; i < w.size(); i++)
+      w[i] = i+10;
+    std::cout << "w: " << w << std::endl;
+
+    v.insert(1, w);
+    std::cout << "v: " << v << std::endl;
+  }
+  \endcode
   It produces the following output:
   \code
-v: 0  1  2  3
-w: 10  11
-v: 0  10  11  3
+  v: 0  1  2  3
+  w: 10  11
+  v: 0  10  11  3
   \endcode
  */
 void vpRowVector::insert(unsigned int i, const vpRowVector &v)
 {
-  if (i + v.size() > this->size())
+  if ((i + v.size()) > this->size()) {
     throw(vpException(vpException::dimensionError,
                       "Unable to insert (1x%d) row vector in (1x%d) row "
                       "vector at position (%d)",
                       v.getCols(), colNum, i));
-  for (unsigned int j = 0; j < v.size(); j++)
+  }
+  unsigned int v_size = v.size();
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[i + j] = v[j];
+  }
 }
 
 /*!
@@ -760,8 +810,10 @@ std::vector<double> vpRowVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 
-  for (unsigned int i = 0; i < this->size(); i++)
+  unsigned int this_size = this->size();
+  for (unsigned int i = 0; i < this_size; ++i) {
     v[i] = data[i];
+  }
   return v;
 }
 
@@ -860,7 +912,7 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
   unsigned int nrA = A.getCols();
   unsigned int nrB = B.getCols();
 
-  if (nrA == 0 && nrB == 0) {
+  if ((nrA == 0) && (nrB == 0)) {
     C.resize(0);
     return;
   }
@@ -878,11 +930,13 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
   // General case
   C.resize(nrA + nrB);
 
-  for (unsigned int i = 0; i < nrA; i++)
+  for (unsigned int i = 0; i < nrA; ++i) {
     C[i] = A[i];
+  }
 
-  for (unsigned int i = 0; i < nrB; i++)
+  for (unsigned int i = 0; i < nrB; ++i) {
     C[nrA + i] = B[i];
+  }
 }
 
 /*!
@@ -890,14 +944,16 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
 */
 double vpRowVector::mean(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean = 0;
   double *vd = v.data;
-  for (unsigned int i = 0; i < v.getCols(); i++)
+  unsigned int v_col = v.getCols();
+  for (unsigned int i = 0; i < v_col; ++i) {
     mean += *(vd++);
+  }
 
   return mean / v.getCols();
 }
@@ -907,7 +963,7 @@ double vpRowVector::mean(const vpRowVector &v)
 */
 double vpRowVector::median(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -921,18 +977,19 @@ double vpRowVector::median(const vpRowVector &v)
 */
 double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean_value = mean(v);
   double sum_squared_diff = 0.0;
-  for (unsigned int i = 0; i < v.size(); i++) {
+  unsigned int v_size = v.size();
+  for (unsigned int i = 0; i < v_size; ++i) {
     sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
   }
 
-  double divisor = (double)v.size();
-  if (useBesselCorrection && v.size() > 1) {
+  double divisor = static_cast<double>(v.size());
+  if (useBesselCorrection && (v.size() > 1)) {
     divisor = divisor - 1;
   }
 
@@ -948,7 +1005,7 @@ double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
   \param s Stream used for the printing.
 
   \param length The suggested width of each row vector element.
-  The actual width grows in order to accomodate the whole integral part,
+  The actual width grows in order to accommodate the whole integral part,
   and shrinks if the whole extent is not needed for all the numbers.
   \param intro The introduction which is printed before the vector.
   Can be set to zero (or omitted), in which case
@@ -970,7 +1027,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
+  // ossFixed <<std::fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -992,7 +1049,8 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
     if (p == std::string::npos) {
       maxBefore = vpMath::maximum(maxBefore, thislen);
       // maxAfter remains the same
-    } else {
+    }
+    else {
       maxBefore = vpMath::maximum(maxBefore, p);
       maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
     }
@@ -1002,32 +1060,35 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
+  if (maxAfter == 1) {
     maxAfter = 0;
+  }
 
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (intro) {
     s << intro;
+  }
   s << "[" << m << "," << n << "]=\n";
 
   s << "  ";
-  for (unsigned int j = 0; j < n; j++) {
+  for (unsigned int j = 0; j < n; ++j) {
     size_type p = values[j].find('.');
     s.setf(std::ios::right, std::ios::adjustfield);
-    s.width((std::streamsize)maxBefore);
+    s.width(static_cast<std::streamsize>(maxBefore));
     s << values[j].substr(0, p).c_str();
 
     if (maxAfter > 0) {
       s.setf(std::ios::left, std::ios::adjustfield);
       if (p != std::string::npos) {
-        s.width((std::streamsize)maxAfter);
+        s.width(static_cast<std::streamsize>(maxAfter));
         s << values[j].substr(p, maxAfter).c_str();
-      } else {
+      }
+      else {
         assert(maxAfter > 1);
-        s.width((std::streamsize)maxAfter);
+        s.width(static_cast<std::streamsize> (maxAfter));
         s << ".0";
       }
     }
@@ -1038,29 +1099,19 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
 
   s.flags(original_flags); // restore s to standard state
 
-  return (int)(maxBefore + maxAfter);
-}
-
-/*!
-  Allows to multiply a scalar by row vector.
-*/
-vpRowVector operator*(const double &x, const vpRowVector &v)
-{
-  vpRowVector vout;
-  vout = v * x;
-  return vout;
+  return static_cast<int>(maxBefore + maxAfter);
 }
 
 /*!
   Return the sum of all the elements \f$v_{i}\f$ of the row vector v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j\f$.
-  */
+ */
 double vpRowVector::sum() const
 {
   double sum = 0.0;
 
-  for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int j = 0; j < colNum; ++j) {
     sum += rowPtrs[0][j];
   }
 
@@ -1072,12 +1123,12 @@ double vpRowVector::sum() const
   v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j^{2}\f$.
-  */
+ */
 double vpRowVector::sumSquare() const
 {
   double sum_square = 0.0;
 
-  for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int j = 0; j < colNum; ++j) {
     double x = rowPtrs[0][j];
     sum_square += x * x;
   }
@@ -1086,21 +1137,10 @@ double vpRowVector::sumSquare() const
 }
 
 /*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Euclidean norm if the vector is initialized, 0 otherwise.
-
-  \sa frobeniusNorm()
-*/
-double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
-
-/*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
-*/
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
+ */
 double vpRowVector::frobeniusNorm() const
 {
   double norm = sumSquare();
@@ -1108,53 +1148,73 @@ double vpRowVector::frobeniusNorm() const
   return sqrt(norm);
 }
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm()
+*/
+double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
+#endif
+
 /*!
   Initialize the row vector from a part of an input row vector \e v.
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-  row vector to contruct. \param ncols : Number of columns of the constructed
+  row vector to construct. \param ncols : Number of columns of the constructed
   row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
-  is used to initialize the contructed row vector.
+  is used to initialize the constructed row vector.
 
   The following code shows how to use this function:
-\code
-#include <visp3/core/vpRowVector.h>
+  \code
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector v(4);
-  int val = 0;
-  for(size_t i=0; i<v.getCols(); i++) {
-    v[i] = val++;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector v(4);
+    int val = 0;
+    for(size_t i=0; i<v.getCols(); i++) {
+      v[i] = val++;
+    }
+    std::cout << "v: " << v << std::endl;
+
+    vpRowVector w;
+    w.init(v, 1, 2);
+    std::cout << "w: " << w << std::endl;
   }
-  std::cout << "v: " << v << std::endl;
-
-  vpRowVector w;
-  w.init(v, 1, 2);
-  std::cout << "w: " << w << std::endl;
-}
-\endcode
+  \endcode
   It produces the following output:
   \code
-v: 0 1 2 3
-w: 1 2
+  v: 0 1 2 3
+  w: 1 2
   \endcode
  */
 void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
 {
   unsigned int cncols = c + ncols;
 
-  if (cncols > v.getCols())
+  if (cncols > v.getCols()) {
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
                       cncols, v.getCols()));
+  }
   resize(ncols);
-  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) { // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
-  for (unsigned int i = 0; i < ncols; i++)
+  }
+  for (unsigned int i = 0; i < ncols; ++i) {
     (*this)[i] = v[i + c];
+  }
 }
 
 /*!
@@ -1166,38 +1226,43 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
   each bytes of the double array.
 
   The following code shows how to use this function:
-\code
-#include <visp3/core/vpRowVector.h>
+  \code
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  r.cppPrint(std::cout, "r");
-}
-\endcode
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
+
+    r.cppPrint(std::cout, "r");
+  }
+  \endcode
   It produces the following output that could be copy/paste in a C++ code:
   \code
-vpRowVector r (3);
-r[0] = 0;
-r[1] = 1;
-r[2] = 2;
-
+  vpRowVector r (3);
+  r[0] = 0;
+  r[1] = 1;
+  r[2] = 2;
   \endcode
 */
 std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixName, bool octet) const
 {
   os << "vpRowVector " << matrixName << " (" << this->getCols() << "); " << std::endl;
 
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     if (!octet) {
       os << matrixName << "[" << j << "] = " << (*this)[j] << "; " << std::endl;
-    } else {
+    }
+    else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
         os << "((unsigned char*)&(" << matrixName << "[" << j << "]) )[" << k << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; " << std::endl;
+          << static_cast<unsigned int>(((unsigned char *)&((*this)[j]))[k]) << "; " << std::endl;
       }
     }
   }
@@ -1210,31 +1275,37 @@ std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixN
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  std::ofstream ofs("log.csv", std::ofstream::out);
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  r.csvPrint(ofs);
+  int main()
+  {
+    std::ofstream ofs("log.csv", std::ofstream::out);
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
 
-  ofs.close();
-}
+    r.csvPrint(ofs);
+
+    ofs.close();
+  }
   \endcode
   produces log.csv file that contains:
   \code
-0, 1, 2
+  0, 1, 2
   \endcode
 */
 std::ostream &vpRowVector::csvPrint(std::ostream &os) const
 {
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j];
-    if (!(j == (this->getCols() - 1)))
+    if (!(j == (this->getCols() - 1))) {
       os << ", ";
+    }
   }
   os << std::endl;
   return os;
@@ -1245,21 +1316,25 @@ std::ostream &vpRowVector::csvPrint(std::ostream &os) const
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
-  std::cout << "r = "; r.maplePrint(std::cout);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
+    std::cout << "r = "; r.maplePrint(std::cout);
+  }
   \endcode
   produces this output:
   \code
-r = ([
-[0, 1, 2, ],
-])
+  r = ([
+  [0, 1, 2, ],
+  ])
   \endcode
   that could be copy/paste in Maple.
 */
@@ -1267,7 +1342,8 @@ std::ostream &vpRowVector::maplePrint(std::ostream &os) const
 {
   os << "([ " << std::endl;
   os << "[";
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j] << ", ";
   }
   os << "]," << std::endl;
@@ -1280,37 +1356,72 @@ std::ostream &vpRowVector::maplePrint(std::ostream &os) const
 
   The following code
   \code
-#include <visp3/core/vpRowVector.h>
+  #include <visp3/core/vpRowVector.h>
 
-int main()
-{
-  vpRowVector r(3);
-  for (unsigned int i=0; i<r.size(); i++)
-    r[i] = i;
-  std::cout << "r = "; r.matlabPrint(std::cout);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpRowVector r(3);
+    for (unsigned int i=0; i<r.size(); i++)
+      r[i] = i;
+    std::cout << "r = "; r.matlabPrint(std::cout);
+  }
   \endcode
   produces this output:
   \code
-r = [ 0, 1, 2, ]
+  r = [ 0, 1, 2, ]
   \endcode
   that could be copy/paste in Matlab:
   \code
->> r = [ 0, 1, 2, ]
+  >> r = [ 0, 1, 2, ]
 
-r =
+  r =
 
-    0   1   2
+      0   1   2
 
->>
+  >>
   \endcode
 */
 std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
 {
   os << "[ ";
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j] << ", ";
   }
   os << "]" << std::endl;
   return os;
 }
+
+/*!
+  Allows to multiply a scalar by row vector.
+*/
+vpRowVector operator*(const double &x, const vpRowVector &v)
+{
+  vpRowVector vout;
+  vout = v * x;
+  return vout;
+}
+
+vpRowVector vpRowVector::hadamard(const vpRowVector &v) const
+{
+  if ((v.getRows() != rowNum) || (v.getCols() != colNum)) {
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
+  }
+
+  vpRowVector out;
+  out.resize(colNum, false);
+#if defined(VISP_HAVE_SIMDLIB)
+  SimdVectorHadamard(data, v.data, colNum, out.data);
+#else
+  for (unsigned int i = 0; i < dsize; ++i) {
+    out.data[i] = data[i] * v.data[i];
+  }
+#endif
+  return out;
+}
+END_VISP_NAMESPACE

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -27,12 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Authors:
- * Eric Marchand
- * Christophe Collewet
- *
- *****************************************************************************/
+ */
 
 /*!
   \example photometricVisualServoingWithoutVpServo.cpp
@@ -40,6 +34,7 @@
   Implemented from \cite Collewet08c.
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
 #include <visp3/core/vpImage.h>
@@ -70,6 +65,10 @@
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:n:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, int niter);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter);
@@ -154,7 +153,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       niter = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, niter);
+      usage(argv[0], nullptr, ipath, niter);
       return false;
 
     default:
@@ -165,7 +164,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, niter);
+    usage(argv[0], nullptr, ipath, niter);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -204,24 +203,24 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_niter);
+      usage(argv[0], nullptr, ipath, opt_niter);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -273,7 +272,7 @@ int main(int argc, const char **argv)
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
 
-// display the image
+    // display the image
 #if defined(VISP_HAVE_X11)
     vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
@@ -308,7 +307,7 @@ int main(int argc, const char **argv)
 
     // set the robot at the desired position
     sim.setCameraPosition(cMo);
-    I = 0;
+    I = 0u;
     sim.getImage(I, cam); // and aquire the image Id
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
@@ -327,7 +326,7 @@ int main(int argc, const char **argv)
 
     vpImageTools::imageDifference(I, Id, Idiff);
 
-// Affiche de l'image de difference
+    // Affiche de l'image de difference
 #if defined(VISP_HAVE_X11)
     vpDisplayX d1;
 #elif defined(VISP_HAVE_GDI)
@@ -396,7 +395,7 @@ int main(int argc, const char **argv)
     vpColVector v; // camera velocity send to the robot
 
     // ----------------------------------------------------------
-    // Minimisation
+    // minimization
 
     double mu; // mu = 0 : Gauss Newton ; mu != 0  : LM
     double lambdaGN;
@@ -457,7 +456,7 @@ int main(int argc, const char **argv)
         {
           H = ((mu * diagHsd) + Hsd).inverseByLU();
         }
-        //	compute the control law
+        // Compute the control law
         e = H * Lsd.t() * error;
 
         v = -lambda * e;
@@ -479,7 +478,8 @@ int main(int argc, const char **argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

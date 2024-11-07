@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,7 +32,7 @@
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
  * estimation.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpScale.cpp
@@ -47,6 +47,7 @@
 
 #define DEBUG_LEVEL2 0
 
+BEGIN_VISP_NAMESPACE
 //! Constructor
 vpScale::vpScale() : bandwidth(0.02), dimension(1)
 {
@@ -71,7 +72,7 @@ vpScale::vpScale(double kernel_bandwidth, unsigned int dim) : bandwidth(kernel_b
 }
 
 //! Destructor
-vpScale::~vpScale() {}
+vpScale::~vpScale() { }
 
 // Calculate the modes of the density for the distribution
 // and their associated errors
@@ -181,7 +182,8 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j++;
-    } else {
+    }
+    else {
       inside_kernel = 0;
     }
   }
@@ -196,7 +198,8 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j--;
-    } else {
+    }
+    else {
       inside_kernel = 0;
     }
   }
@@ -259,3 +262,4 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
   // (double)dimension)*c*vpMath::sqr(bandwidth));
   return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }
+END_VISP_NAMESPACE

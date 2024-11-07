@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Mask on a vpMatrix .
- *
- * Authors:
- * Laneurit Jean
- *
- *****************************************************************************/
+ */
 
 #include <stdlib.h>
 #include <visp3/core/vpDebug.h>
@@ -42,7 +37,8 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpSubMatrix.h>
 
-vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
+BEGIN_VISP_NAMESPACE
+vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) { }
 
 /*!
   \brief Constructor
@@ -54,7 +50,7 @@ vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
 */
 vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
                          const unsigned int &nrows, const unsigned int &ncols)
-  : pRowNum(0), pColNum(0), parent(NULL)
+  : pRowNum(0), pColNum(0), parent(nullptr)
 {
   init(m, row_offset, col_offset, nrows, ncols);
 }
@@ -75,7 +71,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     throw(vpMatrixException(vpMatrixException::subMatrixError, "SubMatrix parent matrix is not allocated"));
   }
 
-  if (row_offset + nrows <= m.getRows() && col_offset + ncols <= m.getCols()) {
+  if (((row_offset + nrows) <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
     data = m.data;
     parent = &m;
     rowNum = nrows;
@@ -83,17 +79,20 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     pRowNum = m.getRows();
     pColNum = m.getCols();
 
-    if (rowPtrs)
+    if (rowPtrs) {
       free(rowPtrs);
+    }
 
     rowPtrs = (double **)malloc(nrows * sizeof(double *));
-    for (unsigned int r = 0; r < nrows; r++)
-      rowPtrs[r] = m.data + col_offset + (r + row_offset) * pColNum;
+    for (unsigned int r = 0; r < nrows; ++r) {
+      rowPtrs[r] = m.data + col_offset + ((r + row_offset) * pColNum);
+    }
 
     dsize = pRowNum * pColNum;
-  } else {
+  }
+  else {
     throw(
-        vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Submatrix cannot be contain in parent matrix"));
+      vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Submatrix cannot be contain in parent matrix"));
   }
 }
 
@@ -107,7 +106,7 @@ void vpSubMatrix::checkParentStatus() const
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
                             "vpSubMatrix parent vpMatrix has been destroyed"));
   }
-  if (pRowNum != parent->getRows() || pColNum != parent->getCols()) {
+  if ((pRowNum != parent->getRows()) || (pColNum != parent->getCols())) {
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
                             "vpSubMatrix size of parent vpMatrix has been changed"));
   }
@@ -125,9 +124,10 @@ vpSubMatrix &vpSubMatrix::operator=(const vpMatrix &B)
                             "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = B[i][j];
+    }
   }
 
   return *this;
@@ -151,9 +151,10 @@ vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
 
   double **BrowPtrs = B.rowPtrs;
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = BrowPtrs[i][j];
+    }
   }
 
   return *this;
@@ -165,12 +166,14 @@ vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
 */
 vpSubMatrix &vpSubMatrix::operator=(const double &x)
 {
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = x;
+    }
   }
 
   return *this;
 }
 
-vpSubMatrix::~vpSubMatrix() { data = NULL; }
+vpSubMatrix::~vpSubMatrix() { data = nullptr; }
+END_VISP_NAMESPACE

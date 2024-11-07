@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,15 +29,20 @@
  *
  * Description:
  * Test vpRect.
- *
- *****************************************************************************/
+ */
 
+/*!
+  \example testRect.cpp
+ */
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRect.h>
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   vpRect c(10.1, 15.05, 19.63, 7.84);
   vpRect a(c.getLeft() - 12.456, c.getTop() - 7.75, c.getWidth() + 12.456, c.getHeight() + 7.75);
   vpRect b(c.getLeft(), c.getTop(), c.getWidth() + 8.81, c.getHeight() + 14.57);

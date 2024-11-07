@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,21 +29,20 @@
  *
  * Description:
  * Save data during the task execution.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpServoData.cpp
   \brief save data during the task execution
 */
 
-// Servo
-#include <visp3/vs/vpServo.h>
-
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoData.h>
 
+BEGIN_VISP_NAMESPACE
 void vpServoData::open(const std::string &directory)
 {
   try {
@@ -64,7 +62,8 @@ void vpServoData::open(const std::string &directory)
     s = directory + "/sStar.dat";
     sStarFile.open(s.c_str());
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -93,15 +92,20 @@ void vpServoData::save(const vpServo &task)
 
 void vpServoData::close()
 {
-  velocityFile.close();
-  errorFile.close();
-  errorNormFile.close();
-  sFile.close();
-  sStarFile.close();
+  if (velocityFile.is_open()) {
+    velocityFile.close();
+  }
+  if (errorFile.is_open()) {
+    errorFile.close();
+  }
+  if (errorNormFile.is_open()) {
+    errorNormFile.close();
+  }
+  if (sFile.is_open()) {
+    sFile.close();
+  }
+  if (sStarFile.is_open()) {
+    sStarFile.close();
+  }
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+END_VISP_NAMESPACE

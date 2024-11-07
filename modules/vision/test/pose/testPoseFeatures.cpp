@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,14 +29,9 @@
  *
  * Description:
  * Compute the pose from visual features by virtual visual servoing.
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
 #include <iostream>
-#include <limits>
 #include <vector>
 
 #include <visp3/core/vpCameraParameters.h>
@@ -55,15 +49,18 @@
 
 */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vp_createPointClass
 {
 public:
   int value;
 
-  vp_createPointClass() : value(0) {}
+  vp_createPointClass() : value(0) { }
 
   int vp_createPoint(vpFeaturePoint &fp, const vpPoint &v)
   {
@@ -76,7 +73,6 @@ public:
 void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v) { vpFeatureBuilder::create(fp, v); }
 
 void vp_createLine(vpFeatureLine &fp, const vpLine &v) { vpFeatureBuilder::create(fp, v); }
-#endif
 #endif
 
 int test_pose(bool use_robust)
@@ -158,7 +154,6 @@ int test_pose(bool use_robust)
 
   pose.addFeatureEllipse(circle);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;
@@ -168,7 +163,6 @@ int test_pose(bool use_robust)
   pose.addSpecificFeature(&cpClass, ptrClass, fp, pts[1]);
   pose.addSpecificFeature(&vp_createLine, fl, line);
   pose.addSpecificFeature(ptr, fs, pts[3], pts[4]);
-#endif
 
   pose.setVerbose(true);
   pose.setLambda(0.6);
@@ -196,7 +190,7 @@ int test_pose(bool use_robust)
   std::cout << "\nResulting covariance (Diag): " << std::endl;
   vpMatrix covariance = pose.getCovarianceMatrix();
   std::cout << covariance[0][0] << " " << covariance[1][1] << " " << covariance[2][2] << " " << covariance[3][3] << " "
-            << covariance[4][4] << " " << covariance[5][5] << " " << std::endl;
+    << covariance[4][4] << " " << covariance[5][5] << " " << std::endl;
 
   int test_fail = 0;
   for (unsigned int i = 0; i < 6; i++) {
@@ -208,10 +202,12 @@ int test_pose(bool use_robust)
 
   return test_fail;
 }
+#endif
 
 int main()
 {
-#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
+   && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     if (test_pose(false))
       return EXIT_FAILURE;
@@ -220,12 +216,13 @@ int main()
       return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }
 #else
-  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV and enable c++11 min standard " << std::endl;
   return EXIT_SUCCESS;
 #endif
 }

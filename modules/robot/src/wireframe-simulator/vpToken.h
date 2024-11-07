@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,7 +35,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpToken_H
 #define vpToken_H
 
@@ -45,9 +45,11 @@
 
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
-typedef struct {
-  const char *ident; /* identifateur 	*/
-  Index token;       /* code du jeton 	*/
+BEGIN_VISP_NAMESPACE
+typedef struct
+{
+  const char *ident; /* identifateur */
+  Index token;       /* code du jeton */
 } Keyword;
 
 #define T_EOF 256
@@ -62,7 +64,7 @@ extern int mylength;
 extern int mylineno;
 extern char *mytext;
 extern Keyword keyword_tbl[];
-
+END_VISP_NAMESPACE
 /*
  * Jetons superieurs a 270 (voir "../mylex/token.h").
  */

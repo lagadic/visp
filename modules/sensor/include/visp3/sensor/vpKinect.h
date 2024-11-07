@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,25 +35,26 @@
  * Authors:
  * Celine Teuliere
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpKinect_h_
 #define _vpKinect_h_
 
 #include <visp3/core/vpConfig.h>
 // Note that libfreenect needs libusb-1.0 and libpthread
-#if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
+#if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES) && defined(VISP_HAVE_THREADS)
 
 #include <iostream>
 #include <libfreenect.hpp>
+#include <mutex>
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpMutex.h> // need pthread
 #include <visp3/core/vpPixelMeterConversion.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpKinect
@@ -63,47 +64,51 @@
   \brief Driver for the Kinect-1 device.
 
   To be enabled this class requires libfreenect 3rd party. Installation
-instructions are provided here https://visp.inria.fr/3rd_freenect.
+  instructions are provided here https://visp.inria.fr/3rd_freenect.
 
   The following example shows how to use this class to acquire data
   (depth map and color image) from a Kinect.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vpKinect.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/sensor/vpKinect.h>
 
-int main() {
-#ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
-  // Init Kinect device
-#ifdef VISP_HAVE_LIBFREENECT_OLD
-  // This is the way to initialize Freenect with an old version of libfreenect
-  // package under ubuntu lucid 10.04
-  Freenect::Freenect<vpKinect> freenect;
-  vpKinect * kinect = &freenect.createDevice(0);
-#else
-  Freenect::Freenect freenect;
-  vpKinect * kinect = &freenect.createDevice<vpKinect>(0);
-#endif
-  kinect->start(); // Start acquisition thread
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Set tilt angle
-  float angle = -5;
-  kinect->setTiltDegrees(angle);
+  int main() {
+  #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
+    // Init Kinect device
+  #ifdef VISP_HAVE_LIBFREENECT_OLD
+    // This is the way to initialize Freenect with an old version of libfreenect
+    // package under ubuntu lucid 10.04
+    Freenect::Freenect<vpKinect> freenect;
+    vpKinect * kinect = &freenect.createDevice(0);
+  #else
+    Freenect::Freenect freenect;
+    vpKinect * kinect = &freenect.createDevice<vpKinect>(0);
+  #endif
+    kinect->start(); // Start acquisition thread
 
-  vpImage<unsigned char> I(480,640);
-  vpImage<vpRGBa> Irgb(480,640);
-  vpImage<float> dmap(480,640);
+    // Set tilt angle
+    float angle = -5;
+    kinect->setTiltDegrees(angle);
 
-  // Acquisition loop
-  for (int i=0; i<100; i++)
-  {
-    kinect->getDepthMap(dmap,I);
-    kinect->getRGB(Irgb);
+    vpImage<unsigned char> I(480,640);
+    vpImage<vpRGBa> Irgb(480,640);
+    vpImage<float> dmap(480,640);
+
+    // Acquisition loop
+    for (int i=0; i<100; i++)
+    {
+      kinect->getDepthMap(dmap,I);
+      kinect->getRGB(Irgb);
+    }
+    kinect->stop(); // Stop acquisition thread
+  #endif
+    return 0;
   }
-  kinect->stop(); // Stop acquisition thread
-#endif
-  return 0;
-}
   \endcode
 */
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
@@ -121,7 +126,8 @@ public:
   /*!
     Depth map resolution.
   */
-  typedef enum {
+  typedef enum
+  {
     DMAP_LOW_RES,   /*!< Depth map has a resolution of 320 by 240. */
     DMAP_MEDIUM_RES /*!< Depth map has a resolution of 640 by 480. */
   } vpDMResolution;
@@ -154,8 +160,8 @@ private:
   void DepthCallback(void *depth, uint32_t timestamp);
 
 private:
-  vpMutex m_rgb_mutex;
-  vpMutex m_depth_mutex;
+  std::mutex m_rgb_mutex;
+  std::mutex m_depth_mutex;
 
   vpCameraParameters RGBcam, IRcam; // intrinsic parameters of the two cameras
   vpHomogeneousMatrix rgbMir;       // Transformation from IRcam coordinate frame to
@@ -175,7 +181,7 @@ private:
   unsigned int height; // height of the rgb image
   unsigned int width;  // width of the rgb image
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif

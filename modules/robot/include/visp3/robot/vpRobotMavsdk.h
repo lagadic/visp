@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,17 @@
  * Description:
  * Interface to mavlink compatible controller using mavsdk 3rd party
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRobotMavsdk_h_
 #define vpRobotMavsdk_h_
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) \
+  && defined(VISP_HAVE_THREADS)
 
 #include <future>
 #include <mutex>
@@ -48,6 +51,7 @@
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpRobotMavsdk
  *
@@ -105,7 +109,7 @@ public:
   void getPosition(vpHomogeneousMatrix &ned_M_frd) const;
   std::tuple<float, float> getHome() const;
   std::string getAddress() const;
-   bool isRunning() const;
+  bool isRunning() const;
   //@}
 
   //! \name Robot commands
@@ -124,9 +128,11 @@ public:
   bool setLateralSpeed(double body_frd_vy);
   bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
   void setPositioningIncertitude(float position_incertitude, float yaw_incertitude);
-  bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking = true,
+                   int timeout_sec = 10);
   bool setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking = true, int timeout_sec = 10);
-  bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw,
+                           bool blocking = true, int timeout_sec = 10);
   bool setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking = true, int timeout_sec = 10);
   bool setVelocity(const vpColVector &frd_vel_cmd);
   bool setVerticalSpeed(double body_frd_vz);
@@ -135,8 +141,8 @@ public:
   void setVerbose(bool verbose);
   bool stopMoving();
   bool takeControl();
-  bool takeOff(bool interactive = true, int timeout_sec = 10);
-  bool takeOff(bool interactive, double takeoff_altitude, int timeout_sec = 10);
+  bool takeOff(bool interactive = true, int timeout_sec = 10, bool use_gps = false);
+  bool takeOff(bool interactive, double takeoff_altitude, int timeout_sec = 10, bool use_gps = false);
   //@}
 
 private:
@@ -152,6 +158,6 @@ private:
   class vpRobotMavsdkImpl;
   vpRobotMavsdkImpl *m_impl;
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_MAVSDK
 #endif // #ifndef vpRobotMavsdk_h_

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,22 @@
  *
  * Description:
  * Homogeneous matrix.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHomogeneousMatrix.h
   \brief Definition and computation on the homogeneous matrices
-*/
+ */
 
-#ifndef VPHOMOGENEOUSMATRIX_HH
-#define VPHOMOGENEOUSMATRIX_HH
+#ifndef VP_HOMOGENEOUS_MATRIX_H
+#define VP_HOMOGENEOUS_MATRIX_H
+
+#include <fstream>
+#include <vector>
+
+#include <visp3/core/vpConfig.h>
+
+BEGIN_VISP_NAMESPACE
 
 class vpTranslationVector;
 class vpPoseVector;
@@ -50,19 +55,18 @@ class vpThetaUVector;
 class vpQuaternionVector;
 class vpPoint;
 
-#include <fstream>
-#include <vector>
+END_VISP_NAMESPACE
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
-//#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpPoseVector.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHomogeneousMatrix
 
@@ -93,6 +97,10 @@ class vpPoint;
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpHomogeneousMatrix M;
@@ -101,8 +109,8 @@ class vpPoint;
     M[2][0] = -1; M[2][1] =  0; M[2][2] =  0; M[2][3] = 0.3;
 
     std::cout << "M:" << std::endl;
-    for (unsigned int i = 0; i < M.getRows(); i++) {
-      for (unsigned int j = 0; j < M.getCols(); j++) {
+    for (unsigned int i = 0; i < M.getRows(); ++i) {
+      for (unsigned int j = 0; j < M.getCols(); ++j) {
         std::cout << M[i][j] << " ";
       }
       std::cout << std::endl;
@@ -121,6 +129,10 @@ class vpPoint;
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -137,9 +149,12 @@ class vpPoint;
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpHomogeneousMatrix M( vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix( {0, 0, -1, 0, -1, 0, -1, 0, 0} ) );
       std::cout << "M:\n" << M << std::endl;
@@ -150,7 +165,6 @@ class vpPoint;
                             -1,  0,  0, 0.3 };
       std::cout << "M:\n" << M << std::endl;
     }
-  #endif
   }
   \endcode
 
@@ -161,6 +175,10 @@ class vpPoint;
   and reload the values from this JSON file.
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -207,25 +225,21 @@ public:
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu);
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q);
-  explicit vpHomogeneousMatrix(const vpPoseVector &p);
-  explicit vpHomogeneousMatrix(const std::vector<float> &v);
-  explicit vpHomogeneousMatrix(const std::vector<double> &v);
+  VP_EXPLICIT vpHomogeneousMatrix(const vpPoseVector &p);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::vector<float> &v);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpHomogeneousMatrix(const std::initializer_list<double> &list);
+  VP_EXPLICIT vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpHomogeneousMatrix() { }
 
-  void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
-  void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
-  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
-  void buildFrom(const vpPoseVector &p);
-  void buildFrom(const std::vector<float> &v);
-  void buildFrom(const std::vector<double> &v);
-  void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
+  vpHomogeneousMatrix &buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q);
+  vpHomogeneousMatrix &buildFrom(const vpPoseVector &p);
+  vpHomogeneousMatrix &buildFrom(const std::vector<float> &v);
+  vpHomogeneousMatrix &buildFrom(const std::vector<double> &v);
+  vpHomogeneousMatrix &buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
@@ -257,10 +271,87 @@ public:
   void extract(vpTranslationVector &t) const;
   void extract(vpQuaternionVector &q) const;
 
-  // Load an homogeneous matrix from a file
+  /*!
+   * Read an homogeneous matrix from an input file stream. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param f : Input file stream.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * std::ifstream f("homogeneous.dat");
+   * M.load(f);
+   * \endcode
+   *
+   * \sa load(const std::string &), save(std::ifstream &)
+   */
   void load(std::ifstream &f);
-  // Save an homogeneous matrix in a file
+
+  /*!
+   * Read an homogeneous matrix from an input file. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param filename : Input file name.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * M.load("homogeneous.dat");
+   * \endcode
+   *
+   * \sa load(std::ifstream &), save(const std::string &)
+   */
+  void load(const std::string &filename);
+
+  /*!
+   * Save an homogeneous matrix in an output file stream.
+   *
+   * \param f : Output file stream. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * std::ofstream f("homogeneous.dat");
+   * M.save(f);
+   * \endcode
+   *
+   * \sa save(const std::string &), load(std::ifstream &)
+   */
   void save(std::ofstream &f) const;
+
+  /*!
+   * Save an homogeneous matrix in a file.
+   *
+   * \param filename : Output file name. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * M.save("homogeneous.dat");
+   * \endcode
+   *
+   * \sa save(std::ofstream &), load(const std::string &)
+   */
+  void save(const std::string &filename) const;
 
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
@@ -268,6 +359,7 @@ public:
 
   vpColVector operator*(const vpColVector &v) const;
   vpTranslationVector operator*(const vpTranslationVector &t) const;
+  vpHomogeneousMatrix operator*(const vpRotationMatrix &R) const;
 
   // Multiply by a point
   vpPoint operator*(const vpPoint &bP) const;
@@ -280,10 +372,10 @@ public:
   void print() const;
 
   /*!
-    This function is not applicable to an homogeneous matrix that is always a
-    4-by-4 matrix.
-    \exception vpException::fatalError When this function is called.
-    */
+   * This function is not applicable to an homogeneous matrix that is always a
+   * 4-by-4 matrix.
+   * \exception vpException::fatalError When this function is called.
+   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
@@ -300,28 +392,29 @@ public:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T);
   friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
+public:
 
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
-  */
-  //@{
-  /*!
-     \deprecated Provided only for compat with previous releases.
-     This function does nothing.
+   * @name Deprecated functions
    */
-  vp_deprecated void init() { }
+   //@{
+   /*!
+    * \deprecated Provided only for compat with previous releases.
+    *  This function does nothing.
+    */
+  VP_DEPRECATED void init() { }
   /*!
-     \deprecated You should rather use eye().
+   *  \deprecated You should rather use eye().
    */
-  vp_deprecated void setIdentity();
+  VP_DEPRECATED void setIdentity();
   //@}
 #endif
 
@@ -334,10 +427,11 @@ inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 {
   T.convert_to_json(j);
 }
+
 inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
 {
   T.parse_json(j);
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Irisa's Afma4 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -53,6 +50,7 @@
 #include <visp3/robot/vpRobotAfma4.h>
 #include <visp3/robot/vpRobotException.h>
 
+BEGIN_VISP_NAMESPACE
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -123,7 +121,7 @@ void emergencyStopAfma4(int signo)
 
   The only available constructor.
 
-  This contructor calls init() to initialise the connection with the MotionBox
+  This constructor calls init() to initialise the connection with the MotionBox
   or low level controller, power on the robot and wait 1 sec before returning
   to be sure the initialisation is done.
 
@@ -134,22 +132,22 @@ vpRobotAfma4::vpRobotAfma4(bool verbose) : vpAfma4(), vpRobot()
 {
 
   /*
-    #define	SIGHUP	1	// hangup
-    #define	SIGINT	2	// interrupt (rubout)
-    #define	SIGQUIT	3	// quit (ASCII FS)
-    #define	SIGILL	4	// illegal instruction (not reset when caught)
-    #define	SIGTRAP	5	// trace trap (not reset when caught)
-    #define	SIGIOT	6	// IOT instruction
-    #define	SIGABRT 6	// used by abort, replace SIGIOT in the future
-    #define	SIGEMT	7	// EMT instruction
-    #define	SIGFPE	8	// floating point exception
-    #define	SIGKILL	9	// kill (cannot be caught or ignored)
-    #define	SIGBUS	10	// bus error
-    #define	SIGSEGV	11	// segmentation violation
-    #define	SIGSYS	12	// bad argument to system call
-    #define	SIGPIPE	13	// write on a pipe with no one to read it
-    #define	SIGALRM	14	// alarm clock
-    #define	SIGTERM	15	// software termination signal from kill
+    #define  SIGHUP   1  // hangup
+    #define  SIGINT   2  // interrupt (rubout)
+    #define  SIGQUIT  3  // quit (ASCII FS)
+    #define  SIGILL   4  // illegal instruction (not reset when caught)
+    #define  SIGTRAP  5  // trace trap (not reset when caught)
+    #define  SIGIOT   6  // IOT instruction
+    #define  SIGABRT  6  // used by abort, replace SIGIOT in the future
+    #define  SIGEMT   7  // EMT instruction
+    #define  SIGFPE   8  // floating point exception
+    #define  SIGKILL  9  // kill (cannot be caught or ignored)
+    #define  SIGBUS  10  // bus error
+    #define  SIGSEGV 11  // segmentation violation
+    #define  SIGSYS  12  // bad argument to system call
+    #define  SIGPIPE 13  // write on a pipe with no one to read it
+    #define  SIGALRM 14  // alarm clock
+    #define  SIGTERM 15  // software termination signal from kill
   */
 
   signal(SIGINT, emergencyStopAfma4);
@@ -164,8 +162,9 @@ vpRobotAfma4::vpRobotAfma4(bool verbose) : vpAfma4(), vpRobot()
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
-    //    vpERROR_TRACE("Error caught") ;
+  }
+  catch (...) {
+ //    vpERROR_TRACE("Error caught") ;
     throw;
   }
   positioningVelocity = defaultPositioningVelocity;
@@ -223,7 +222,7 @@ void vpRobotAfma4::init(void)
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
-  Try(PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL, &HIPowerStatus));
+  Try(PrimitiveSTATUS_Afma4(nullptr, nullptr, &EStopStatus, nullptr, nullptr, nullptr, &HIPowerStatus));
   CAL_Wait(0.1);
 
   // Print the robot status
@@ -296,7 +295,7 @@ vpRobotAfma4::~vpRobotAfma4(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try(PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try(PrimitiveSTATUS_Afma4(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &HIPowerStatus));
   CAL_Wait(0.1);
 
   //   if (HIPowerStatus == 1) {
@@ -336,9 +335,10 @@ vpRobot::vpRobotStateType vpRobotAfma4::setRobotState(vpRobot::vpRobotStateType 
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       Try(PrimitiveSTOP_Afma4());
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     this->powerOn();
     break;
@@ -403,23 +403,26 @@ void vpRobotAfma4::powerOn(void)
   unsigned int nitermax = 10;
 
   for (unsigned int i = 0; i < nitermax; i++) {
-    Try(PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL, &HIPowerStatus));
+    Try(PrimitiveSTATUS_Afma4(nullptr, nullptr, &EStopStatus, nullptr, nullptr, nullptr, &HIPowerStatus));
     if (EStopStatus == ESTOP_AUTO) {
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_MANUAL) {
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_ACTIVATED) {
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       if (firsttime) {
         std::cout << "Emergency stop is activated! \n"
-                  << "Check the emergency stop button and push the yellow "
-                     "button before continuing."
-                  << std::endl;
+          << "Check the emergency stop button and push the yellow "
+          "button before continuing."
+          << std::endl;
         firsttime = false;
       }
       fprintf(stdout, "Remaining time %us  \r", nitermax - i);
       fflush(stdout);
       CAL_Wait(1);
-    } else {
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
@@ -465,7 +468,7 @@ void vpRobotAfma4::powerOff(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try(PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try(PrimitiveSTATUS_Afma4(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -499,7 +502,7 @@ bool vpRobotAfma4::getPowerState(void)
   bool status = false;
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try(PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, &HIPowerStatus));
+  Try(PrimitiveSTATUS_Afma4(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -555,7 +558,8 @@ void vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf) const
 
   try {
     vpAfma4::get_cVf(q, cVf);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -601,7 +605,8 @@ void vpRobotAfma4::get_eJe(vpMatrix &eJe)
 
   try {
     vpAfma4::get_eJe(q, eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -636,7 +641,8 @@ void vpRobotAfma4::get_fJe(vpMatrix &fJe)
 
   try {
     vpAfma4::get_fJe(q, fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -870,7 +876,8 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const do
     position[3] = q5;
 
     setPosition(frame, position);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -936,14 +943,14 @@ double vpRobotAfma4::getTime() const
   Get the current position of the robot.
 
   \param frame : Control frame type in which to get the position, either :
-  - in the camera cartesien frame,
+  - in the camera cartesian frame,
   - joint (articular) coordinates of each axes
-  - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference
+  - in a reference or fixed cartesian frame attached to the robot base
+  - in a mixt cartesian frame (translation in reference
   frame, and rotation in camera frame)
 
   \param position : Measured position of the robot:
-  - in camera cartesien frame, a 6 dimension vector, set to 0.
+  - in camera cartesian frame, a 6 dimension vector, set to 0.
 
   - in articular, a 4 dimension vector corresponding to the joint position of
   each dof. position[0]
@@ -1104,7 +1111,7 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \warning Velocities could be saturated if one of them exceed the
-  maximal autorized speed (see vpRobot::maxTranslationVelocity and
+  maximal authorized speed (see vpRobot::maxTranslationVelocity and
   vpRobot::maxRotationVelocity). To change these values use
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
@@ -1191,10 +1198,10 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
     vpColVector velocity = vpRobot::saturateVelocities(vel, vel_max, true);
 
 #if 0 // ok
-    vpMatrix eJe(4,6);
+    vpMatrix eJe(4, 6);
     eJe = 0;
     eJe[2][4] = -1;
-    eJe[3][3] =  1;
+    eJe[3][3] = 1;
 
     joint_vel = eJe * velocity; // Compute the articular velocity
 #endif
@@ -1218,7 +1225,7 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
     joint_vel = eJe_inverse * eVc * velocity;
 
     //     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1],
-    // 	   joint_vel[2], joint_vel[3]);
+    //      joint_vel[2], joint_vel[3]);
   }
 
   // Case of the joint control where we control all the joints
@@ -1243,17 +1250,19 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
   if (TryStt < 0) {
     if (TryStt == VelStopOnJoint) {
       UInt32 axisInJoint[njoint];
-      PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
+      PrimitiveSTATUS_Afma4(nullptr, nullptr, nullptr, nullptr, nullptr, axisInJoint, nullptr);
       for (unsigned int i = 0; i < njoint; i++) {
         if (axisInJoint[i])
           std::cout << "\nWarning: Velocity control stopped: axis " << i + 1 << " on joint limit!" << std::endl;
       }
-    } else {
+    }
+    else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
-      if (TryString != NULL) {
+      if (TryString != nullptr) {
         // The statement is in TryString, but we need to check the validity
         printf(" Error sentence %s\n", TryString); // Print the TryString
-      } else {
+      }
+      else {
         printf("\n");
       }
     }
@@ -1270,7 +1279,7 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param velocity : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1391,7 +1400,8 @@ void vpRobotAfma4::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
       break;
     }
     }
-  } else {
+  }
+  else {
     first_time_getvel = false;
   }
 
@@ -1429,7 +1439,7 @@ void vpRobotAfma4::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
 
   Get the robot velocities.
 
-  \param frame : Frame in wich velocities are mesured.
+  \param frame : Frame in which velocities are measured.
 
   \param timestamp : Time in second since last robot power on.
 
@@ -1628,7 +1638,7 @@ bool vpRobotAfma4::savePosFile(const std::string &filename, const vpColVector &q
 
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
 
   fprintf(fd, "\
@@ -1729,7 +1739,8 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
       return;
     }
     }
-  } else {
+  }
+  else {
     first_time_getdis = false;
   }
 
@@ -1742,9 +1753,8 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
     throw vpRobotException(vpRobotException::lowLevelError, "Cannot get velocity.");
   }
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no
-// symbols
-void dummy_vpRobotAfma4(){};
+// Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no symbols
+void dummy_vpRobotAfma4() { };
 #endif

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,34 +29,30 @@
  *
  * Description:
  * Basic class used to make robot simulators.
- *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+ */
+
+/*!
+ * \file vpRobotSimulator.h
+ * \brief Basic class used to make robot simulators.
+ */
 
 #ifndef vpRobotSimulator_HH
 #define vpRobotSimulator_HH
-
-/*!
-  \file vpRobotSimulator.h
-  \brief Basic class used to make robot simulators.
-*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobot.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpRobotSimulator
-
-  \ingroup group_robot_simu_gantry group_robot_simu_arm
-  group_robot_simu_unicycle \ingroup group_robot_simu_camera
-
-  \brief This class aims to be a basis used to create all the
-  robot simulators.
-
+ * \class vpRobotSimulator
+ *
+ * \ingroup group_robot_simu_gantry group_robot_simu_arm
+ * group_robot_simu_unicycle \ingroup group_robot_simu_camera
+ *
+ * \brief This class aims to be a basis used to create all the
+ * robot simulators.
 */
 class VISP_EXPORT vpRobotSimulator : public vpRobot
 {
@@ -66,30 +61,25 @@ protected:
 
 public:
   vpRobotSimulator();
-  /*!
-    Basic destructor
-  */
-  virtual ~vpRobotSimulator(){};
 
   /** @name Inherited functionalities from vpRobotSimulator */
   //@{
   /*!
-    Return the sampling time.
-
-    \return Sampling time in second used to compute the robot displacement
-    from the velocity applied to the robot during this time.
-  */
+   * Return the sampling time.
+   *
+   * \return Sampling time in second used to compute the robot displacement
+   * from the velocity applied to the robot during this time.
+   */
   inline double getSamplingTime() const { return (this->delta_t_); }
 
   /*!
-    Set the sampling time.
-
-    \param delta_t : Sampling time in second used to compute the robot
-    displacement from the velocity applied to the robot during this time.
-
-  */
+   * Set the sampling time.
+   *
+   * \param delta_t : Sampling time in second used to compute the robot
+   * displacement from the velocity applied to the robot during this time.
+   */
   virtual inline void setSamplingTime(const double &delta_t) { this->delta_t_ = delta_t; }
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

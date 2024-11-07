@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,13 +35,14 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpMomentAreaNormalized.h>
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentGravityCenterNormalized.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Computes normalized gravity center moment.
   Depends on vpMomentAreaNormalized and on vpMomentGravityCenter.
@@ -54,7 +55,7 @@ void vpMomentGravityCenterNormalized::compute()
   const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
       getMoments().get("vpMomentAreaNormalized", found_moment_surface_normalized));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
 
   if (!found_moment_surface_normalized)
     throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
@@ -71,17 +72,7 @@ void vpMomentGravityCenterNormalized::compute()
 /*!
   Default constructor.
 */
-vpMomentGravityCenterNormalized::vpMomentGravityCenterNormalized() : vpMomentGravityCenter() {}
-
-/*!
-  Outputs the moment's values to a stream.
-*/
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &m)
-{
-  os << (__FILE__) << std::endl;
-  os << "(Xn,Yn) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
-  return os;
-}
+vpMomentGravityCenterNormalized::vpMomentGravityCenterNormalized() : vpMomentGravityCenter() { }
 
 /*!
 Prints the dependent moments,
@@ -97,13 +88,24 @@ void vpMomentGravityCenterNormalized::printDependencies(std::ostream &os) const
   const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
       getMoments().get("vpMomentAreaNormalized", found_moment_surface_normalized));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
 
   if (!found_moment_surface_normalized)
     throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
   if (!found_moment_gravity)
     throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   os << "Xg = " << momentGravity.get()[0] << "\t"
-     << "Yg = " << momentGravity.get()[1] << std::endl;
+    << "Yg = " << momentGravity.get()[1] << std::endl;
   os << "An = " << momentSurfaceNormalized.get()[0] << std::endl;
 }
+
+/*!
+  Outputs the moment's values to a stream.
+*/
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "(Xn,Yn) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
+  return os;
+}
+END_VISP_NAMESPACE

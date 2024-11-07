@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the ptu-46 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpPtu46_h_
 #define _vpPtu46_h_
@@ -57,6 +54,7 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpPtu46
@@ -84,7 +82,7 @@ public: /* Constants */
 public: /* Methodes publiques */
   vpPtu46(void);
   /*! Destructor that does nothing. */
-  virtual ~vpPtu46(){};
+  virtual ~vpPtu46() { };
 
   /** @name Inherited functionalities from vpPtu46 */
   //@{
@@ -102,5 +100,5 @@ public: /* Methodes publiques */
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 &constant);
 };
-
+END_VISP_NAMESPACE
 #endif

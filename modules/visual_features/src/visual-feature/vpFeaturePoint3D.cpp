@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * 3D point visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeaturePoint3D.h>
@@ -54,6 +50,7 @@
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for a 3D point visual
@@ -69,7 +66,7 @@ void vpFeaturePoint3D::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -378,7 +375,8 @@ vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int s
       ez[0] = s[2] - s_star[2];
       e = vpColVector::stack(e, ez);
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 
@@ -401,9 +399,8 @@ vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int s
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-void vpFeaturePoint3D::buildFrom(const vpPoint &p)
+vpFeaturePoint3D &vpFeaturePoint3D::buildFrom(const vpPoint &p)
 {
-
   // cP is expressed in homogeneous coordinates
   // we devide by the fourth coordinate
   s[0] = p.cP[0] / p.cP[3];
@@ -425,8 +422,10 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -445,9 +444,8 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
   on the camera which is not possible.
 
 */
-void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
+vpFeaturePoint3D &vpFeaturePoint3D::buildFrom(const double &X, const double &Y, const double &Z)
 {
-
   s[0] = X;
   s[1] = Y;
   s[2] = Z;
@@ -466,8 +464,10 @@ void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
     throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
-  for (unsigned int i = 0; i < nbParameters; i++)
+  for (unsigned int i = 0; i < nbParameters; ++i) {
     flags[i] = true;
+  }
+  return *this;
 }
 
 /*!
@@ -635,3 +635,4 @@ unsigned int vpFeaturePoint3D::selectY() { return FEATURE_LINE[1]; }
 
 */
 unsigned int vpFeaturePoint3D::selectZ() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -89,6 +86,7 @@ foreach(mod ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_D
   unset(VISP_MODULE_${mod}_PRIVATE_OPT_DEPS CACHE)
   unset(VISP_MODULE_${mod}_LINK_DEPS CACHE)
   unset(VISP_MODULE_${mod}_INC_DEPS CACHE)
+  unset(VISP_MODULE_${mod}_SYSTEM_INC_DEPS CACHE)
   unset(VISP_MODULE_${mod}_WRAPPERS CACHE)
 endforeach()
 
@@ -182,6 +180,7 @@ macro(vp_add_module _name)
 
     set(VISP_MODULE_${the_module}_LINK_DEPS "" CACHE INTERNAL "")
     set(VISP_MODULE_${the_module}_INC_DEPS "" CACHE INTERNAL "")
+    set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "" CACHE INTERNAL "")
 
     # parse list of dependencies
     if("${ARGV1}" STREQUAL "INTERNAL" OR "${ARGV1}" STREQUAL "BINDINGS")
@@ -589,23 +588,26 @@ endfunction()
 
 # setup include paths for the list of passed modules
 macro(vp_target_include_modules target)
+  set(is_system "")
   foreach(d ${ARGN})
-    if(d MATCHES "^visp_" AND HAVE_${d})
+    if("${d}" STREQUAL "SYSTEM")
+      set(is_system "SYSTEM")
+    elseif(d MATCHES "^visp_" AND HAVE_${d})
       if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
         vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
-        # Work around to be able to build the modules without INTERFACE_INCLUDE_DIRECTORIES
-        # that was only introduces since CMake 2.8.12
-        if (CMAKE_VERSION VERSION_LESS 2.8.12)
-          vp_target_include_directories(${target} "${VISP_MODULE_${d}_INC_DEPS}")
-        endif()
       endif()
     elseif(EXISTS "${d}")
       # FS keep external deps inc
-      set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
-      vp_target_include_directories(${target} "${d}")
+      if(is_system)
+        set(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS "${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS};${d}" CACHE INTERNAL "")
+      else()
+        set(VISP_MODULE_${the_module}_INC_DEPS "${VISP_MODULE_${the_module}_INC_DEPS};${d}" CACHE INTERNAL "")
+      endif()
+      vp_target_include_directories(${target} "${is_system}" "${d}")
     endif()
   endforeach()
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
+  vp_list_unique(VISP_MODULE_${the_module}_SYSTEM_INC_DEPS)
 endmacro()
 
 # setup include paths for the list of passed modules and recursively add dependent modules
@@ -788,7 +790,7 @@ endmacro()
 # creates ViSP module in current folder
 # creates new target, configures standard dependencies, compilers flags, install rules
 # Usage:
-#   vp_create_module(<extra link dependencies> LINK_PRIVATE <private link dependencies>)
+#   vp_create_module(<extra link dependencies>)
 #   vp_create_module()
 macro(vp_create_module)
   vp_debug_message("vp_create_module(" ${ARGN} ")")
@@ -804,14 +806,14 @@ macro(_vp_create_module)
   vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES})
 
   vp_target_link_libraries(${the_module}
-    LINK_PUBLIC
+    PUBLIC
       ${VISP_MODULE_${the_module}_DEPS_TO_LINK}
       ${VISP_MODULE_${the_module}_DEPS_EXT}
       ${VISP_MODULE_${the_module}_LINK_DEPS}
-      ${VISP_LINKER_LIBS}
-    LINK_PRIVATE
+    PRIVATE
       ${VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS}
-      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS})
+      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS}
+      ${VISP_LINKER_LIBS})
   add_dependencies(visp_modules ${the_module})
 
   if(ENABLE_SOLUTION_FOLDERS)
@@ -835,10 +837,22 @@ macro(_vp_create_module)
     target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
   endif()
 
-
-  set_property(TARGET ${the_module} APPEND PROPERTY
-    INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}
-  )
+  #set_property(TARGET ${the_module} APPEND PROPERTY
+  #  # Here we need also to add system include dirs, otherwise they are missing
+  #  INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS} ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
+  #)
+  #set_property(TARGET ${the_module} APPEND PROPERTY
+  #  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}
+  #)
+  set(inc "${VISP_MODULE_${the_module}_INC_DEPS};${VISP_MODULE_${the_module}_SYSTEM_INC_DEPS}")
+  if(NOT (CMAKE_VERSION VERSION_LESS "3.11.0"))  # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/1264 : eliminates "Cannot specify compile definitions for imported target" error message
+    target_include_directories(${the_module} SYSTEM INTERFACE "$<BUILD_INTERFACE:${inc}>")
+  else()
+    set_target_properties(${the_module} PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "$<BUILD_INTERFACE:${inc}>"
+        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "$<BUILD_INTERFACE:${inc}>"
+    )
+  endif()
 
   # For dynamic link numbering convenions
   if(NOT ANDROID)
@@ -919,6 +933,8 @@ macro(__vp_parse_test_sources tests_type)
   set(VISP_${tests_type}_${the_module}_SOURCES "")
   set(VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE "")
   set(VISP_${tests_type}_${the_module}_DEPS "")
+  set(VISP_${tests_type}_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS "")
+  set(VISP_${tests_type}_${the_module}_DEPS_PRIVATE_LIBRARIES "")
   set(VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FOLDER "")
   set(VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FILE "")
   set(__file_group_name "")
@@ -942,6 +958,10 @@ macro(__vp_parse_test_sources tests_type)
       set(__currentvar "VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FILE")
     elseif(arg STREQUAL "SOURCES_EXCLUDE")
       set(__currentvar "VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE")
+    elseif(arg STREQUAL "PRIVATE_INCLUDE_DIRS")
+      set(__currentvar "VISP_${tests_type}_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS")
+    elseif(arg STREQUAL "PRIVATE_LIBRARIES")
+      set(__currentvar "VISP_${tests_type}_${the_module}_DEPS_PRIVATE_LIBRARIES")
     else()
       list(APPEND ${__currentvar} "${arg}")
     endif()
@@ -957,6 +977,8 @@ endmacro()
 #              [DEPENDS_ON] <list of extra dependencies>
 #              [CTEST_EXCLUDE_PATH] <list of folders to exclude from ctest>)
 #              [CTEST_EXCLUDE_FILE] <list of files to exclude from ctest>)
+#              [PRIVATE_INCLUDE_DIRS] <list of private include dirs>
+#              [PRIVATE_LIBRARIES] <list of private libs>
 #
 # When a test is located in a folder which name ends with "with-dataset" like
 # "test/core/image-with-dataset/test.cpp" the test is added only if the dataset is
@@ -995,11 +1017,6 @@ macro(vp_add_tests)
     foreach(d ${VISP_TEST_${the_module}_DEPS})
       list(APPEND test_deps ${d})
       list(APPEND test_deps ${VISP_MODULE_${d}_DEPS})
-      # Work around to be able to build the modules without INTERFACE_INCLUDE_DIRECTORIES
-      # that was only introduces since CMake 2.8.12
-      if(CMAKE_VERSION VERSION_LESS 2.8.12)
-        list(APPEND test_deps "${VISP_MODULE_${__m}_INC_DEPS}")
-      endif()
     endforeach()
 
     vp_check_dependencies(${test_deps})
@@ -1018,8 +1035,8 @@ macro(vp_add_tests)
           get_filename_component(the_target ${t} NAME_WE)
           # From source compile the binary and add link rules
           vp_add_executable(${the_target} ${t})
-          vp_target_include_modules(${the_target} ${test_deps})
-          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
+          vp_target_include_modules(${the_target} ${test_deps} ${VISP_TEST_${the_module}_DEPS_PRIVATE_INCLUDE_DIRS})
+          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_TEST_${the_module}_DEPS_PRIVATE_LIBRARIES})
 
           # ctest only:
           # - if required dataset available
@@ -1034,6 +1051,8 @@ macro(vp_add_tests)
 
           if(${__to_exclude_from_ctest} EQUAL -1)
             if(${t} MATCHES "perf*")
+              add_test(${the_target} ${the_target})
+            elseif(${t} MATCHES "catch*")
               add_test(${the_target} ${the_target})
             else()
               add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})

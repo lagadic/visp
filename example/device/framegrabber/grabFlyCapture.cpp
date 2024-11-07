@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Acquire images using FlyCapture SDK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example grabFlyCapture.cpp
@@ -56,6 +56,10 @@
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 #define GETOPTARGS "cdhi:n:o:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*!
 
@@ -95,7 +99,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          icamera, opath.c_str());
+icamera, opath.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -141,7 +145,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &s
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, icamera, opath);
+      usage(argv[0], nullptr, icamera, opath);
       return false;
       break;
 
@@ -154,7 +158,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &s
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, icamera, opath);
+    usage(argv[0], nullptr, icamera, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -189,7 +193,7 @@ int main(int argc, const char **argv)
     std::cout << "Camera serial: " << g.getCameraSerial(g.getCameraIndex()) << std::endl;
     std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
     if (opt_display) {
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX(I);
@@ -220,7 +224,8 @@ int main(int argc, const char **argv)
       if (opt_click && opt_display) {
         if (vpDisplay::getClick(I, false) == true)
           break;
-      } else {
+      }
+      else {
         static unsigned int cpt = 0;
         if (cpt++ == 10)
           break;
@@ -232,7 +237,8 @@ int main(int argc, const char **argv)
     // The camera connection will be closed automatically in vpFlyCapture
     // destructor
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

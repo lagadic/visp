@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test some core functionalities.
- *
- *****************************************************************************/
+ */
 
  /*!
    \example testMath.cpp
@@ -55,7 +53,7 @@
  // 4723 : potential divide by 0
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef NAN
 // https://msdn.microsoft.com/en-us/library/w22adx1s%28v=vs.120%29.aspx
 // http://tdistler.com/2011/03/24/how-to-define-nan-not-a-number-on-windows
@@ -66,6 +64,9 @@ static const unsigned long __nan[2] = { 0xffffffff, 0x7fffffff };
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Test isNaN
   if (vpMath::isNaN(0.0)) {
     std::cerr << "Fail: IsNaN(0.0)=" << vpMath::isNaN(0.0) << " / should be false" << std::endl;
@@ -601,22 +602,11 @@ int main()
   std::cout << "vpMath::getMedian() is Ok !" << std::endl;
 
   // Test clamp
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     const double lower { -10. }, upper { +10. };
-    std::vector<double> testing_values{5., -15., 15.};
-    std::vector<double> expected_values{5., -10., 10.};
-#else
-    const double lower = -10., upper = +10.;
-    std::vector<double> testing_values;
-    testing_values.push_back(5.);
-    testing_values.push_back(-15.);
-    testing_values.push_back(15.);
-    std::vector<double> expected_values;
-    expected_values.push_back(5.);
-    expected_values.push_back(-10.);
-    expected_values.push_back(10.);
-#endif
+    std::vector<double> testing_values { 5., -15., 15. };
+    std::vector<double> expected_values { 5., -10., 10. };
 
     for (size_t i = 0u; i < testing_values.size(); i++) {
       const double clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
@@ -627,6 +617,7 @@ int main()
     }
     std::cout << "vpMath::clamp() is Ok !" << std::endl;
   }
+#endif
 
   // Test vpMath::deg() and vpMath::rad()
   {

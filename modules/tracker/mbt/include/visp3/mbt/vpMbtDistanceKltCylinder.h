@@ -52,6 +52,7 @@
 #include <visp3/mbt/vpMbHiddenFaces.h>
 #include <visp3/vision/vpHomography.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpMbtDistanceKltCylinder
 
@@ -117,7 +118,7 @@ private:
   //        initPoints(), initPoints3D(), curPoints(), curPointsInd(),
   //        nbPointsCur(0), nbPointsInit(0), minNbPoint(4),
   //        enoughPoints(false), cam(), isTrackedKltCylinder(true),
-  //        listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)
+  //        listIndicesCylinderBBox(), hiddenface(nullptr), useScanLine(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
   //      implemented!");
@@ -212,7 +213,7 @@ public:
 
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 };
-
+END_VISP_NAMESPACE
 #endif
 
 #endif // VISP_HAVE_OPENCV

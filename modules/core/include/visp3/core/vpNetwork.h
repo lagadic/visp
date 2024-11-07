@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +29,21 @@
  *
  * Description:
  * TCP Network
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
-#ifndef vpNetwork_H
-#define vpNetwork_H
+#ifndef VP_NETWORK_H
+#define VP_NETWORK_H
+
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT) || defined(_WIN32)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRequest.h>
 
 #include <iostream>
@@ -50,7 +54,7 @@
 #include <sys/select.h>
 #endif
 
-// inet_ntop() not supported on win XP
+ // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -70,6 +74,7 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpNetwork
 
@@ -81,7 +86,7 @@
   on one computer to another program on another computer.
 
   \warning This class shouldn't be used directly. You better use vpClient and
-  vpServer to simulate your network. Some exemples are provided in these
+  vpServer to simulate your network. Some examples are provided in these
   classes.
 
   \sa vpServer
@@ -91,7 +96,8 @@ class VISP_EXPORT vpNetwork
 {
 protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct vpReceptor {
+  struct vpReceptor
+  {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int socketFileDescriptorReceptor;
     socklen_t receptorAddressSize;
@@ -102,10 +108,11 @@ protected:
     struct sockaddr_in receptorAddress;
     std::string receptorIP;
 
-    vpReceptor() : socketFileDescriptorReceptor(0), receptorAddressSize(), receptorAddress(), receptorIP() {}
+    vpReceptor() : socketFileDescriptorReceptor(0), receptorAddressSize(), receptorAddress(), receptorIP() { }
   };
 
-  struct vpEmitter {
+  struct vpEmitter
+  {
     struct sockaddr_in emitterAddress;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int socketFileDescriptorEmitter;
@@ -153,13 +160,13 @@ protected:
   bool verboseMode;
 
 private:
-  std::vector<int> _handleRequests();
-  int _handleFirstRequest();
+  std::vector<int> privHandleRequests();
+  int privHandleFirstRequest();
 
-  void _receiveRequest();
-  void _receiveRequestFrom(const unsigned int &receptorEmitting);
-  int _receiveRequestOnce();
-  int _receiveRequestOnceFrom(const unsigned int &receptorEmitting);
+  void privReceiveRequest();
+  void privReceiveRequestFrom(const unsigned int &receptorEmitting);
+  int privReceiveRequestOnce();
+  int privReceiveRequestOnceFrom(const unsigned int &receptorEmitting);
 
 public:
   vpNetwork();
@@ -261,9 +268,9 @@ public:
 //##################################################
 
 /*!
-  Receives a object. The size of the received object is suppose to be the size
-  of the type of the object. Note that a received message can correspond to a
-  deconnection signal.
+  Receives a object. The size of the object received is assumed to correspond
+  to the size of the object type. Note that a message received may correspond
+  to a disconnection signal.
 
   \warning Using this function means that you know what kind of object you are
   suppose to receive, and when you are suppose to receive. If the emitter has
@@ -278,7 +285,7 @@ public:
   \param object : Received object.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occured.
+  \return the number of bytes received, or -1 if an error occurred.
 */
 template <typename T> int vpNetwork::receive(T *object, const unsigned int &sizeOfObject)
 {
@@ -289,7 +296,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -307,24 +314,26 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     // Timeout
     return 0;
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < receptor_list.size(); i++) {
       if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
         numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, (char *)(void *)object,
-                        (int)sizeOfObject, 0);
+          (int)sizeOfObject, 0);
 #endif
         if (numbytes <= 0) {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
@@ -359,7 +368,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
   \param receptorEmitting : Index of the receptor emitting the message.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occured.
+  \return the number of bytes received, or -1 if an error occurred.
 */
 template <typename T>
 int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject)
@@ -371,7 +380,7 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -382,28 +391,30 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     // timeout
     return 0;
-  } else {
+  }
+  else {
     if (FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor)) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       numbytes =
-          recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
+        recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
       numbytes = recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,
-                      (char *)(void *)object, (int)sizeOfObject, 0);
+        (char *)(void *)object, (int)sizeOfObject, 0);
 #endif
       if (numbytes <= 0) {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr)
-                  << std::endl;
+          << std::endl;
         receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
         return numbytes;
       }
@@ -443,17 +454,17 @@ template <typename T> int vpNetwork::send(T *object, const unsigned int &sizeOfO
   }
 
   int flags = 0;
-//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+  //#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
 #if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
-                (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
+    (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #else
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject, flags,
-                (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
+    (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #endif
 }
 
@@ -487,19 +498,19 @@ template <typename T> int vpNetwork::sendTo(T *object, const unsigned int &dest,
   }
 
   int flags = 0;
-//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+  //#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
 #if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
-                (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
+    (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #else
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject,
-                flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
+    flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #endif
 }
-
+END_VISP_NAMESPACE
 #endif
 #endif

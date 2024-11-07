@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,36 +29,33 @@
  *
  * Description:
  * Generic tracker.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
-
-#ifndef vpTracker_H
-#define vpTracker_H
+ */
 
 /*!
-  \file vpTracker.h
-  \brief Class that defines what is a generic tracker.
-*/
+ * \file vpTracker.h
+ * \brief Class that defines what is a generic tracker.
+ */
 
+#ifndef VP_TRACKER_H
+#define VP_TRACKER_H
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpTracker
-  \ingroup group_core_trackers
-  \brief Class that defines what is a feature generic tracker.
-
-  A tracker is able to track features with parameters expressed in:
-  - in the camera frame \e cP. These parameters are located in the public
-    attribute vpTracker::cP.
-  - in the image plane \e p. These parameters are located in the public
-    attribute vpTracker::p. They correspond to normalized coordinates
-    of the feature expressed in meters.
-
+ * \class vpTracker
+ * \ingroup group_core_trackers
+ * \brief Class that defines what is a feature generic tracker.
+ *
+ * A tracker is able to track features with parameters expressed in:
+ * - in the camera frame \e cP. These parameters are located in the public
+ *   attribute vpTracker::cP.
+ * - in the image plane \e p. These parameters are located in the public
+ *   attribute vpTracker::p. They correspond to normalized coordinates
+ *   of the feature expressed in meters.
 */
 class VISP_EXPORT vpTracker
 {
@@ -67,19 +63,19 @@ public:
   /** @name Public Attributes Inherited from vpTracker */
   //@{
   /*!
-    Feature coordinates expressed in the image plane \e p. They correspond
-    to 2D normalized coordinates expressed in meters.
-  */
+   * Feature coordinates expressed in the image plane \e p. They correspond
+   * to 2D normalized coordinates expressed in meters.
+   */
   vpColVector p;
   /*!
-    Feature coordinates expressed in the camera frame \e cP.
-  */
+   * Feature coordinates expressed in the camera frame \e cP.
+   */
   vpColVector cP;
 
   /*!
-    Flag used to indicate if the feature parameters \e cP expressed
-    in the camera frame are available.
-  */
+   * Flag used to indicate if the feature parameters \e cP expressed
+   * in the camera frame are available.
+   */
   bool cPAvailable;
   //@}
 
@@ -89,7 +85,7 @@ public:
   //! Copy constructor.
   vpTracker(const vpTracker &tracker);
   //! Destructor.
-  virtual ~vpTracker() { ; }
+  virtual ~vpTracker() { }
 
   /** @name Public Member Functions Inherited from vpTracker */
   //@{
@@ -109,5 +105,5 @@ protected:
   void init();
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

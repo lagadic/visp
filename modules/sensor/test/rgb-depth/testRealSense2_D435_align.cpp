@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test Intel RealSense D435 acquisition with librealsense2.
- *
- *****************************************************************************/
+ */
 /*!
   \example testRealSense2_D435_align.cpp
   Test Intel RealSense D435 acquisition with librealsense2.
@@ -40,8 +38,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&          \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
+  && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -49,6 +47,10 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 namespace
 {
@@ -99,11 +101,14 @@ int main(int argc, char *argv[])
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--align_to_depth") {
       align_to_depth = true;
-    } else if (std::string(argv[i]) == "--color") {
+    }
+    else if (std::string(argv[i]) == "--color") {
       color_pointcloud = true;
-    } else if (std::string(argv[i]) == "--col_vector") {
+    }
+    else if (std::string(argv[i]) == "--col_vector") {
       col_vector = true;
-    } else if (std::string(argv[i]) == "--no_align") {
+    }
+    else if (std::string(argv[i]) == "--no_align") {
       no_align = true;
     }
   }
@@ -142,17 +147,18 @@ int main(int argc, char *argv[])
 
   rs2::align align_to(align_to_depth ? RS2_STREAM_DEPTH : RS2_STREAM_COLOR);
   vpCameraParameters cam_projection =
-      align_to_depth ? rs.getCameraParameters(RS2_STREAM_DEPTH) : rs.getCameraParameters(RS2_STREAM_COLOR);
+    align_to_depth ? rs.getCameraParameters(RS2_STREAM_DEPTH) : rs.getCameraParameters(RS2_STREAM_COLOR);
 
   while (true) {
     if (color_pointcloud) {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud_color, NULL,
-                 no_align ? NULL : &align_to);
-    } else {
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud_color, nullptr,
+                 no_align ? nullptr : &align_to);
+    }
+    else {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud, NULL,
-                 no_align ? NULL : &align_to);
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud, nullptr,
+                 no_align ? nullptr : &align_to);
     }
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
@@ -170,14 +176,15 @@ int main(int argc, char *argv[])
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
             unsigned int u =
-                std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+              std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
             unsigned int v =
-                std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+              std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
             I_pcl[v][u] = vpRGBa(pcl_pt.r, pcl_pt.g, pcl_pt.b);
           }
         }
       }
-    } else {
+    }
+    else {
       createDepthHist(histogram, pointcloud, depth_scale);
 
       for (uint32_t i = 0; i < pointcloud->height; i++) {
@@ -191,9 +198,9 @@ int main(int argc, char *argv[])
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
             unsigned int u =
-                std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+              std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
             unsigned int v =
-                std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+              std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
             unsigned char depth_viz = getDepthColor(histogram, pcl_pt.z, depth_scale);
             I_pcl[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
           }
@@ -213,9 +220,9 @@ int main(int argc, char *argv[])
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
         unsigned int u =
-            std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+          std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
         unsigned int v =
-            std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+          std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram2, Z, depth_scale);
         I_pcl2[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
       }

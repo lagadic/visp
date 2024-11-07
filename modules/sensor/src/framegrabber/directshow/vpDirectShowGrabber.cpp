@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,7 +35,7 @@
  * Bruno Renier
  * Anthony Saunier
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_DIRECTSHOW))
@@ -43,6 +43,7 @@
 #include <visp3/sensor/vpDirectShowGrabber.h>
 #include <visp3/sensor/vpDirectShowGrabberImpl.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
         Returns the number of rows in the grabbed image
 */
@@ -188,9 +189,9 @@ bool vpDirectShowGrabber::setMediaType(int mediaTypeID) { return grabber->setMed
         \return the current mediaTypeID
 */
 int vpDirectShowGrabber::getMediaType() { return grabber->getMediaType(); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpDirectShowGrabber.cpp.o)
 // has no symbols
-void dummy_vpDirectShowGrabber(){};
+void dummy_vpDirectShowGrabber() { };
 #endif

@@ -1,6 +1,6 @@
-project(tutorial-munkres)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-munkres)
 
 find_package(VISP REQUIRED visp_core visp_gui)
 

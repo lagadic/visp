@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Example that shows how to send a pose from a motion capture system through masvsdk.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  * @example sendMocapToPixhawk.cpp
@@ -44,8 +44,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                        \
-    (defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON))
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) &&                                        \
+    (defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON)) && defined(VISP_HAVE_THREADS)
 
 #include <chrono>
 #include <thread>
@@ -56,6 +57,10 @@
 
 using std::chrono::seconds;
 using std::this_thread::sleep_for;
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 // ------------------------------------------------------------------------------
 //   Modifications Qualisys
@@ -92,7 +97,8 @@ bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_
     std::cout << "ERROR : Qualisys not found.";
     return false;
 #endif
-  } else {
+  }
+  else {
 #ifdef VISP_HAVE_VICON
     mocap = std::make_shared<vpMocapVicon>();
 #else
@@ -120,11 +126,13 @@ bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_
       if (!mocap->getBodiesPose(body_poses_enu_M_flu, opt_all_bodies)) {
         g_quit = true;
       }
-    } else {
+    }
+    else {
       vpHomogeneousMatrix enu_M_flu;
       if (!mocap->getSpecificBodyPose(opt_onlyBody, enu_M_flu)) {
         g_quit = true;
-      } else {
+      }
+      else {
         body_poses_enu_M_flu[opt_onlyBody] = enu_M_flu;
       }
     }
@@ -132,7 +140,7 @@ bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_
     lock.lock();
     internal_mavlink_failure = mavlink_failure;
     current_body_poses_enu_M_flu =
-        body_poses_enu_M_flu; // Now we send directly the poses in the ENU global reference frame.
+      body_poses_enu_M_flu; // Now we send directly the poses in the ENU global reference frame.
     lock.unlock();
   }
   return true;
@@ -148,7 +156,7 @@ int top(const std::string &connection_info, std::map<std::string, vpHomogeneousM
   bool internal_mocap_failure = false;
   const double fps = 100;
 
-  vpRobotMavsdk drone{connection_info};
+  vpRobotMavsdk drone { connection_info };
 
   while (!g_quit && !internal_mocap_failure) {
     double t = vpTime::measureTimeMs();
@@ -176,44 +184,44 @@ int top(const std::string &connection_info, std::map<std::string, vpHomogeneousM
 void usage(char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
-            << "  " << argv[0] << " [--only-body <name>] [-ob]"
-            << " [--mocap-system <qualisys>/<vicon>] [-ms <q>/<v>]"
-            << " [--device <device port>] [-d]"
-            << " [--server-address <server address>] [-sa]"
-            << " [--verbose] [-v]"
-            << " [--help] [-h]" << std::endl
-            << std::endl;
+    << "  " << argv[0] << " [--only-body <name>] [-ob]"
+    << " [--mocap-system <qualisys>/<vicon>] [-ms <q>/<v>]"
+    << " [--device <device port>] [-d]"
+    << " [--server-address <server address>] [-sa]"
+    << " [--verbose] [-v]"
+    << " [--help] [-h]" << std::endl
+    << std::endl;
   std::cout << "DESCRIPTION" << std::endl
-            << "MANDATORY PARAMETERS :" << std::endl
-            << "  --only-body <name>" << std::endl
-            << "    Name of the specific body you want to be displayed." << std::endl
-            << std::endl
-            << "OPTIONAL PARAMETERS (DEFAULT VALUES)" << std::endl
-            << "  --mocap-system, -ms" << std::endl
-            << "    Specify the name of the mocap system : 'qualisys' / 'q' or 'vicon'/ 'v'." << std::endl
-            << "    Default: Qualisys mode." << std::endl
-            << std::endl
-            << "  --device <device port>, -d" << std::endl
-            << "    String giving us all the informations necessary for connection." << std::endl
-            << "    Default: serial:///dev/ttyUSB0 ." << std::endl
-            << "    UDP example: udp://192.168.30.111:14540 (udp://IP:Port) ." << std::endl
-            << std::endl
-            << "  --server-address <address>, -sa" << std::endl
-            << "    Mocap server address." << std::endl
-            << "    Default for Qualisys: 192.168.34.42 ." << std::endl
-            << "    Default for Vicon: 192.168.34.1 ." << std::endl
-            << std::endl
-            << "  --verbose, -v" << std::endl
-            << "    Enable verbose mode." << std::endl
-            << std::endl
-            << "  --help, -h" << std::endl
-            << "    Print this helper message." << std::endl
-            << std::endl;
+    << "MANDATORY PARAMETERS :" << std::endl
+    << "  --only-body <name>" << std::endl
+    << "    Name of the specific body you want to be displayed." << std::endl
+    << std::endl
+    << "OPTIONAL PARAMETERS (DEFAULT VALUES)" << std::endl
+    << "  --mocap-system, -ms" << std::endl
+    << "    Specify the name of the mocap system : 'qualisys' / 'q' or 'vicon'/ 'v'." << std::endl
+    << "    Default: Qualisys mode." << std::endl
+    << std::endl
+    << "  --device <device port>, -d" << std::endl
+    << "    String giving us all the informations necessary for connection." << std::endl
+    << "    Default: serial:///dev/ttyUSB0 ." << std::endl
+    << "    UDP example: udp://192.168.30.111:14540 (udp://IP:Port) ." << std::endl
+    << std::endl
+    << "  --server-address <address>, -sa" << std::endl
+    << "    Mocap server address." << std::endl
+    << "    Default for Qualisys: 192.168.34.42 ." << std::endl
+    << "    Default for Vicon: 192.168.34.1 ." << std::endl
+    << std::endl
+    << "  --verbose, -v" << std::endl
+    << "    Enable verbose mode." << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
 
   if (error) {
     std::cout << "Error" << std::endl
-              << "  "
-              << "Unsupported parameter " << argv[error] << std::endl;
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -230,31 +238,40 @@ void parse_commandline(int argc, char **argv, bool &qualisys, std::string &conne
     if (std::string(argv[i]) == "--only-body" || std::string(argv[i]) == "-ob") {
       only_body = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--mocap-system" || std::string(argv[i]) == "-ms") {
+    }
+    else if (std::string(argv[i]) == "--mocap-system" || std::string(argv[i]) == "-ms") {
       std::string mode = std::string(argv[i + 1]);
       if (mode == "qualisys" || mode == "q") {
         qualisys = true;
-      } else if (mode == "vicon" || mode == "v") {
+      }
+      else if (mode == "vicon" || mode == "v") {
         qualisys = false;
-      } else {
+      }
+      else {
         std::cout << "ERROR : System not recognized, exiting." << std::endl;
         throw EXIT_FAILURE;
       }
       i++;
-    } else if (std::string(argv[i]) == "--device" || std::string(argv[i]) == "-d") {
+    }
+    else if (std::string(argv[i]) == "--device" || std::string(argv[i]) == "-d") {
       connection_info = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--server-address" || std::string(argv[i]) == "-sa") {
+    }
+    else if (std::string(argv[i]) == "--server-address" || std::string(argv[i]) == "-sa") {
       server_address = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--all-bodies") {
+    }
+    else if (std::string(argv[i]) == "--all-bodies") {
       all_bodies = true;
-    } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+    }
+    else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       verbose = true;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
       throw EXIT_SUCCESS;
-    } else {
+    }
+    else {
       usage(argv, i);
       throw EXIT_FAILURE;
     }
@@ -289,7 +306,8 @@ int main(int argc, char **argv)
 
   if (opt_qualisys && opt_serverAddress == "") {
     opt_serverAddress = "192.168.30.42";
-  } else if (!opt_qualisys && opt_serverAddress == "") {
+  }
+  else if (!opt_qualisys && opt_serverAddress == "") {
     opt_serverAddress = "192.168.30.1";
   }
 
@@ -304,8 +322,8 @@ int main(int argc, char **argv)
   bool mavlink_failure = false;
   std::thread mocap_thread([&lock, &opt_qualisys, &opt_verbose, &opt_all_bodies, &opt_serverAddress, &opt_onlyBody,
                             &current_body_poses_enu_M_flu, &mocap_failure, &mavlink_failure]() {
-    mocap_sdk_loop(lock, opt_qualisys, opt_verbose, opt_all_bodies, opt_serverAddress, opt_onlyBody,
-                   current_body_poses_enu_M_flu, mocap_failure, mavlink_failure);
+                              mocap_sdk_loop(lock, opt_qualisys, opt_verbose, opt_all_bodies, opt_serverAddress, opt_onlyBody,
+                              current_body_poses_enu_M_flu, mocap_failure, mavlink_failure);
   });
   if (mocap_failure) {
     std::cout << "Mocap connexion failure. Check mocap server IP address" << std::endl;
@@ -318,7 +336,8 @@ int main(int argc, char **argv)
         try {
           int result = top(opt_connectionInfo, current_body_poses_enu_M_flu, lock, mocap_failure);
           return result;
-        } catch (int error) {
+        }
+        catch (int error) {
           fprintf(stderr, "mavlink_control threw exception %i \n", error);
           lock.lock();
           mavlink_failure = true;
@@ -331,7 +350,8 @@ int main(int argc, char **argv)
   mavlink_thread.join();
   if (mocap_failure) {
     return EXIT_FAILURE;
-  } else {
+  }
+  else {
     return EXIT_SUCCESS;
   }
 }
@@ -342,18 +362,18 @@ int main()
 {
 #ifndef VISP_HAVE_MAVSDK
   std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
-            << std::endl;
+    << std::endl;
 #endif
 #if !(defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON))
   std::cout << "\nThis example requires data from a Qualisys or Vicon mocap system. You should install it, configure "
-               "and rebuid ViSP.\n"
-            << std::endl;
+    "and rebuid ViSP.\n"
+    << std::endl;
 #endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   std::cout
-      << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
-         "rebuild ViSP.\n"
-      << std::endl;
+    << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
+    "rebuild ViSP.\n"
+    << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

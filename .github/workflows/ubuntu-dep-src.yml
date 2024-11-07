@@ -2,10 +2,20 @@ name: Ubuntu-dep-src
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
+
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  # Function to get the most recent tag of a remote repository without having to clone it, excluding tag with 'pr' as in Pre Release
+  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
 
 jobs:
   build-ubuntu-dep-src:
@@ -13,17 +23,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-latest]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: lscpu
@@ -31,15 +35,10 @@ jobs:
     - name: Print OS information
       run: lsb_release -a
 
-    - name: Install dependencies for ubuntu 18.04 and 20.04
-      if: matrix.os != 'ubuntu-22.04'
+    - name: Install dependencies for ubuntu 20.04
+      if: matrix.os == 'ubuntu-20.04'
       run: |
         sudo apt-get update && sudo apt-get install -y libdc1394-22-dev
-
-    - name: Install dependencies for ubuntu 22.04
-      if: matrix.os == 'ubuntu-22.04'
-      run: |
-        sudo apt-get update && sudo apt-get install -y libdc1394-dev
 
     - name: Install common dependencies for ubuntu
       run: |
@@ -49,8 +48,8 @@ jobs:
         sudo apt-get install -y mesa-common-dev mesa-utils freeglut3-dev libflann-dev libboost-all-dev
         sudo apt-get install -y nlohmann-json3-dev
 
-    - name: Install dependencies for ubuntu 22.04
-      if: matrix.os == 'ubuntu-22.04'
+    - name: Install dependencies for ubuntu-latest
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libeigen3-dev
         sudo apt-get update && sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
@@ -59,7 +58,10 @@ jobs:
       run: |
         pwd
         echo $GITHUB_WORKSPACE
-        git clone --depth 1 https://github.com/xianyi/OpenBLAS.git ${HOME}/OpenBLAS
+        GIT_ADDRESS=https://github.com/xianyi/OpenBLAS.git
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/OpenBLAS
         cd ${HOME}/OpenBLAS
         mkdir install
         make -j$(nproc)
@@ -68,9 +70,16 @@ jobs:
         echo $OpenBLAS_HOME
 
     - name: Build VTK from source
+      # We set GIT_CLONE_PROTECTION_ACTIVE=false to avoid the issue described in
+      # https://github.com/git-lfs/git-lfs/issues/5749
       run: |
         pwd
-        git clone --recursive --depth 1 https://github.com/Kitware/VTK.git ${HOME}/VTK
+        echo "GIT_CLONE_PROTECTION_ACTIVE=false" >> $GITHUB_ENV
+        export GIT_CLONE_PROTECTION_ACTIVE=false
+        GIT_ADDRESS="https://github.com/Kitware/VTK.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --recursive --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/VTK
         cd ${HOME}/VTK
         mkdir build && cd build && mkdir install
         cmake .. -DVTK_ANDROID_BUILD=OFF -DVTK_BUILD_DOCUMENTATION=OFF -DVTK_BUILD_EXAMPLES=OFF -DVTK_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release \
@@ -82,7 +91,10 @@ jobs:
     - name: Build OpenCV from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/opencv/opencv.git ${HOME}/opencv
+        GIT_ADDRESS="https://github.com/opencv/opencv.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/opencv
         cd ${HOME}/opencv
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_EXAMPLES=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -93,7 +105,10 @@ jobs:
     - name: Build librealsense2 from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/IntelRealSense/librealsense.git ${HOME}/librealsense
+        GIT_ADDRESS="https://github.com/IntelRealSense/librealsense.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/librealsense
         cd ${HOME}/librealsense
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -104,7 +119,10 @@ jobs:
     - name: Build PCL from source
       run: |
         pwd
-        git clone --depth 1 https://github.com/PointCloudLibrary/pcl.git ${HOME}/pcl
+        GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
+        LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
+        echo "Newest tag is ${LATEST_TAG}"
+        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS}  ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         cmake .. -DBUILD_tools=OFF -DBUILD_global_tests=OFF -DPCL_DISABLE_GPU_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$(pwd)/install
@@ -118,7 +136,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Configure CMake
@@ -128,7 +146,14 @@ jobs:
         cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         cat ViSP-third-party.txt
 
-    - name: Compile
+    - name: Build visp-config script
+      working-directory: build
+      run: |
+        make -j$(nproc) developer_scripts
+        ./bin/visp-config --cflags
+        ./bin/visp-config --libs
+
+    - name: Build and install ViSP
       working-directory: build
       run: |
         make -j$(nproc) install

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Video capture example based on CMU 1394 Digital Camera SDK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file grab1394CMU.cpp
@@ -56,6 +56,11 @@
 
 // List of allowed command line options
 #define GETOPTARGS "dhn:o:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 
 void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath);
 bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframes, bool &save, std::string &opath);
@@ -96,7 +101,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          nframes, opath.c_str());
+nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
@@ -136,7 +141,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, nframes, opath);
+      usage(argv[0], nullptr, nframes, opath);
       return false;
       break;
 
@@ -149,7 +154,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, nframes, opath);
+    usage(argv[0], nullptr, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -257,7 +262,8 @@ int main(int argc, const char **argv)
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

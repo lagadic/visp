@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Matrix Cholesky decomposition.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -45,9 +40,6 @@
 // Exception
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
 
 #if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
@@ -71,6 +63,11 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 #endif
 #endif
 
+#if defined(VISP_HAVE_EIGEN3)
+#include <Eigen/Dense>
+#endif
+
+BEGIN_VISP_NAMESPACE
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition.
   The matrix must be real symmetric positive defined.
@@ -85,30 +82,33 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix A(4,4);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Symmetric matrix
-  A[0][0] = 1/1.; A[0][1] = 1/5.; A[0][2] = 1/6.; A[0][3] = 1/7.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/3.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  int main()
+  {
+    vpMatrix A(4,4);
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByCholesky();
-  std::cout << "Inverse by Cholesky: \n" << A_1 << std::endl;
+    // Symmetric matrix
+    A[0][0] = 1/1.; A[0][1] = 1/5.; A[0][2] = 1/6.; A[0][3] = 1/7.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/3.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    // Compute the inverse
+    vpMatrix A_1; // A^-1
+    A_1 = A.inverseByCholesky();
+    std::cout << "Inverse by Cholesky: \n" << A_1 << std::endl;
+
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa pseudoInverse()
 */
-
 vpMatrix vpMatrix::inverseByCholesky() const
 {
 #if defined(VISP_HAVE_LAPACK)
@@ -116,45 +116,47 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #elif defined(VISP_HAVE_OPENCV)
   return inverseByCholeskyOpenCV();
 #else
-  throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
-                                             "Cholesky. Install Lapack or "
-                                             "OpenCV 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by Cholesky. Install Lapack or OpenCV 3rd party"));
 #endif
 }
 
 #if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
-Lapack 3rd party. The matrix must be real symmetric positive defined.
+  Lapack 3rd party. The matrix must be real symmetric positive defined.
 
   \return The inverse matrix.
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  unsigned int n = 4;
-  vpMatrix A(n, n);
-  vpMatrix I;
-  I.eye(4);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  int main()
+  {
+    unsigned int n = 4;
+    vpMatrix A(n, n);
+    vpMatrix I;
+    I.eye(4);
 
-  // Make matrix symmetric positive
-  A = 0.5*(A+A.t());
-  A = A + n*I;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByCholeskyLapack();
-  std::cout << "Inverse by Cholesky (Lapack): \n" << A_1 << std::endl;
+    // Make matrix symmetric positive
+    A = 0.5*(A+A.t());
+    A = A + n*I;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByCholeskyLapack();
+    std::cout << "Inverse by Cholesky (Lapack): \n" << A_1 << std::endl;
+
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByCholesky(), inverseByCholeskyOpenCV()
@@ -195,8 +197,11 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
     vpMatrix A = *this;
     dpotrf_((char *)"L", &rowNum_, A.data, &lda, &info);
 
-    if (info != 0)
-      throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
+    if (info != 0) {
+      std::stringstream errMsg;
+      errMsg << "Cannot inverse by Cholesky with Lapack: error "<< info << " in dpotrf_()";
+      throw(vpException(vpException::fatalError, errMsg.str()));
+    }
 
     dpotri_((char *)"L", &rowNum_, A.data, &lda, &info);
     if (info != 0) {
@@ -204,8 +209,8 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
       throw vpMatrixException::badValue;
     }
 
-    for (unsigned int i = 0; i < A.getRows(); i++)
-      for (unsigned int j = 0; j < A.getCols(); j++)
+    for (unsigned int i = 0; i < A.getRows(); ++i)
+      for (unsigned int j = 0; j < A.getCols(); ++j)
         if (i > j)
           A[i][j] = A[j][i];
 
@@ -213,7 +218,63 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
   }
 #endif
 }
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Lapack library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByLapack()const
+{
+  vpMatrix L = *this;
+#if defined(VISP_HAVE_GSL)
+  gsl_matrix cholesky;
+  cholesky.size1 = rowNum;
+  cholesky.size2 = colNum;
+  cholesky.tda = cholesky.size2;
+  cholesky.data = L.data;
+  cholesky.owner = 0;
+  cholesky.block = 0;
+
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 3)
+  gsl_linalg_cholesky_decomp1(&cholesky);
+#else
+  gsl_linalg_cholesky_decomp(&cholesky);
 #endif
+#else
+  if (rowNum != colNum) {
+    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
+                            rowNum, colNum));
+  }
+
+  integer rowNum_ = (integer)this->getRows();
+  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer info;
+  dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
+  L = L.transpose(); // For an unknown reason, dpotrf seems to return the transpose of L
+  if (info < 0) {
+    std::stringstream errMsg;
+    errMsg << "The " << -info << "th argument has an illegal value" << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
+  else if (info > 0) {
+    std::stringstream errMsg;
+    errMsg << "The leading minor of order" << info << "is not positive definite." << std::endl;
+    throw(vpMatrixException(vpMatrixException::forbiddenOperatorError, errMsg.str()));
+  }
+#endif
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
+}
+#endif // VISP_HAVE_LAPACK
 
 #if defined(VISP_HAVE_OPENCV)
 /*!
@@ -224,30 +285,34 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
 
   Here an example:
   \code
-#include <visp3/core/vpMatrix.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  unsigned int n = 4;
-  vpMatrix A(n, n);
-  vpMatrix I;
-  I.eye(4);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+  int main()
+  {
+    unsigned int n = 4;
+    vpMatrix A(n, n);
+    vpMatrix I;
+    I.eye(4);
 
-  // Make matrix symmetric positive
-  A = 0.5*(A+A.t());
-  A = A + n*I;
+    A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+    A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+    A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+    A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1 = A.inverseByCholeskyOpenCV();
-  std::cout << "Inverse by Cholesky (OpenCV): \n" << A_1 << std::endl;
+    // Make matrix symmetric positive
+    A = 0.5*(A+A.t());
+    A = A + n*I;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
-}
+    // Compute the inverse
+    vpMatrix A_1 = A.inverseByCholeskyOpenCV();
+    std::cout << "Inverse by Cholesky (OpenCV): \n" << A_1 << std::endl;
+
+    std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+  }
   \endcode
 
   \sa inverseByCholesky(), inverseByCholeskyLapack()
@@ -267,4 +332,62 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
 
   return A;
 }
-#endif
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using OpenCV library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByOpenCV() const
+{
+  cv::Mat M(rowNum, colNum, CV_64F);
+  memcpy(M.data, this->data, (size_t)(8 * M.rows * M.cols));
+  std::size_t bytes_per_row = sizeof(double)*rowNum;
+  bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, rowNum, nullptr, bytes_per_row, rowNum);
+  if (!result) {
+    throw(vpMatrixException(vpMatrixException::fatalError, "Could not compute the Cholesky's decomposition of the input matrix."));
+  }
+  vpMatrix L(rowNum, colNum);
+  memcpy(L.data, M.data, (size_t)(8 * M.rows * M.cols));
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
+}
+#endif // VISP_HAVE_OPENCV
+
+#if defined(VISP_HAVE_EIGEN3)
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Eigen3 library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByEigen3() const
+{
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  Eigen::MatrixXd A(nbRows, nbCols);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      A(r, c) = (*this)[r][c];
+    }
+  }
+  Eigen::MatrixXd L = A.llt().matrixL();
+  vpMatrix Lvisp(static_cast<unsigned int>(L.rows()), static_cast<unsigned int>(L.cols()), 0.);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c <= r; ++c) {
+      Lvisp[r][c] = L(r, c);
+    }
+  }
+  return Lvisp;
+}
+#endif // VISP_HAVE_EIGEN3
+
+END_VISP_NAMESPACE

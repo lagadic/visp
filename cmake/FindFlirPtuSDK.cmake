@@ -1,4 +1,4 @@
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -18,9 +18,6 @@
 # FLIRPTUSDK_FOUND
 # FLIRPTUSDK_INCLUDE_DIRS
 # FLIRPTUSDK_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 

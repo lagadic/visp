@@ -1,5 +1,5 @@
 //! \example tutorial-image-filter.cpp
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -7,6 +7,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display(vpImage<unsigned char> &I, const std::string &title);
 void display(vpImage<double> &D, const std::string &title);
@@ -27,7 +31,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
   std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-  vpDisplay::setTitle(I, title.c_str());
+  vpDisplay::setTitle(I, title);
   vpDisplay::display(I);
   vpDisplay::displayText(I, 15, 15, "Click to continue...", vpColor::red);
   vpDisplay::flush(I);
@@ -54,7 +58,8 @@ int main(int argc, char **argv)
 
     try {
       vpImageIo::read(I, argv[1]);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
       return EXIT_FAILURE;
     }
@@ -67,7 +72,7 @@ int main(int argc, char **argv)
     //! [Gaussian blur]
     display(F, "Blur (default)");
 
-    vpImageFilter::gaussianBlur(I, F, 7, 2);
+    vpImageFilter::gaussianBlur(I, F, 7, 2.);
     display(F, "Blur (var=2)");
 
     //! [Gradients x]
@@ -83,11 +88,9 @@ int main(int argc, char **argv)
     display(dIy, "Gradient dIy");
 
     //! [Canny]
-  #if defined(HAVE_OPENCV_IMGPROC)
     vpImage<unsigned char> C;
-    vpImageFilter::canny(I, C, 5, 15, 3);
+    vpImageFilter::canny(I, C, 5, -1., 3);
     display(C, "Canny");
-  #endif
     //! [Canny]
 
     //! [Convolution kernel]
@@ -118,7 +121,8 @@ int main(int argc, char **argv)
     }
     //! [Gaussian pyramid]
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

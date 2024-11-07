@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpTemplateTrackerWarp.h
  \brief
@@ -45,12 +44,14 @@
 #ifndef vpTemplateTrackerWarp_hh
 #define vpTemplateTrackerWarp_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerTriangle.h>
 #include <visp3/tt/vpTemplateTrackerZone.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTemplateTrackerWarp
   \ingroup group_tt_warp
@@ -65,11 +66,11 @@ public:
   /*!
    * Default constructor.
    */
-  vpTemplateTrackerWarp() : denom(1.), nbParam(0) {}
+  vpTemplateTrackerWarp() : denom(1.), nbParam(0) { }
   /*!
    * Destructor.
    */
-  virtual ~vpTemplateTrackerWarp() {}
+  virtual ~vpTemplateTrackerWarp() { }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   virtual void computeCoeff(const vpColVector &p) = 0;
@@ -256,5 +257,5 @@ public:
   void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out);
   //@}
 };
-
+END_VISP_NAMESPACE
 #endif

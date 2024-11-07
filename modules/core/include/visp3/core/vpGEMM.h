@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,15 @@
  *
  * Description:
  * Matrix generalized multiplication.
- *
- * Authors:
- * Laneurit Jean
- *
- *****************************************************************************/
+ */
 
-#ifndef _vpGEMM_h_
-#define _vpGEMM_h_
+#ifndef VP_GEMM_H
+#define VP_GEMM_H
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
 
+BEGIN_VISP_NAMESPACE
 const vpArray2D<double> null(0, 0);
 
 /*!
@@ -54,7 +50,8 @@ const vpArray2D<double> null(0, 0);
 
   \relates vpArray2D
   */
-typedef enum {
+typedef enum
+{
   VP_GEMM_A_T = 1, //! Use A^T instead of A
   VP_GEMM_B_T = 2, //! Use B^T instead of B
   VP_GEMM_C_T = 4, //! Use C^T instead of C
@@ -63,8 +60,7 @@ typedef enum {
 template <unsigned int>
 inline void GEMMsize(const vpArray2D<double> & /*A*/, const vpArray2D<double> & /*B*/, unsigned int & /*Arows*/,
                      unsigned int & /*Acols*/, unsigned int & /*Brows*/, unsigned int & /*Bcols*/)
-{
-}
+{ }
 
 template <>
 void inline GEMMsize<0>(const vpArray2D<double> &A, const vpArray2D<double> &B, unsigned int &Arows,
@@ -148,80 +144,88 @@ template <unsigned int>
 inline void GEMM1(const unsigned int & /*Arows*/, const unsigned int & /*Brows*/, const unsigned int & /*Bcols*/,
                   const vpArray2D<double> & /*A*/, const vpArray2D<double> & /*B*/, const double & /*alpha*/,
                   vpArray2D<double> & /*D*/)
-{
-}
+{ }
 
 template <>
 inline void GEMM1<0>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols,
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[n][c] * alpha;
+      }
       D[r][c] = sum;
     }
+  }
 }
 
 template <>
 inline void GEMM1<1>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols,
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[n][c] * alpha;
+      }
       D[r][c] = sum;
     }
+  }
 }
 
 template <>
 inline void GEMM1<2>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols,
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[c][n] * alpha;
+      }
       D[r][c] = sum;
     }
+  }
 }
 
 template <>
 inline void GEMM1<3>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols,
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[c][n] * alpha;
+      }
       D[r][c] = sum;
     }
+  }
 }
 
 template <unsigned int>
 inline void GEMM2(const unsigned int & /*Arows*/, const unsigned int & /*Brows*/, const unsigned int & /*Bcols*/,
                   const vpArray2D<double> & /*A*/, const vpArray2D<double> & /*B*/, const double & /*alpha*/,
                   const vpArray2D<double> & /*C*/, const double & /*beta*/, vpArray2D<double> & /*D*/)
-{
-}
+{ }
 
 template <>
 inline void GEMM2<0>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols,
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[n][c] * alpha;
-      D[r][c] = sum + C[r][c] * beta;
+      }
+      D[r][c] = sum + (C[r][c] * beta);
     }
+  }
 }
 
 template <>
@@ -229,13 +233,15 @@ inline void GEMM2<1>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[n][c] * alpha;
-      D[r][c] = sum + C[r][c] * beta;
+      }
+      D[r][c] = sum + (C[r][c] * beta);
     }
+  }
 }
 
 template <>
@@ -243,13 +249,15 @@ inline void GEMM2<2>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[c][n] * alpha;
-      D[r][c] = sum + C[r][c] * beta;
+      }
+      D[r][c] = sum + (C[r][c] * beta);
     }
+  }
 }
 
 template <>
@@ -257,13 +265,15 @@ inline void GEMM2<3>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[c][n] * alpha;
-      D[r][c] = sum + C[r][c] * beta;
+      }
+      D[r][c] = sum + (C[r][c] * beta);
     }
+  }
 }
 
 template <>
@@ -271,13 +281,15 @@ inline void GEMM2<4>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[n][c] * alpha;
-      D[r][c] = sum + C[c][r] * beta;
+      }
+      D[r][c] = sum + (C[c][r] * beta);
     }
+  }
 }
 
 template <>
@@ -285,13 +297,15 @@ inline void GEMM2<5>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[n][c] * alpha;
-      D[r][c] = sum + C[c][r] * beta;
+      }
+      D[r][c] = sum + (C[c][r] * beta);
     }
+  }
 }
 
 template <>
@@ -299,13 +313,15 @@ inline void GEMM2<6>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[r][n] * B[c][n] * alpha;
-      D[r][c] = sum + C[c][r] * beta;
+      }
+      D[r][c] = sum + (C[c][r] * beta);
     }
+  }
 }
 
 template <>
@@ -313,13 +329,15 @@ inline void GEMM2<7>(const unsigned int &Arows, const unsigned int &Brows, const
                      const vpArray2D<double> &A, const vpArray2D<double> &B, const double &alpha,
                      const vpArray2D<double> &C, const double &beta, vpArray2D<double> &D)
 {
-  for (unsigned int r = 0; r < Arows; r++)
-    for (unsigned int c = 0; c < Bcols; c++) {
+  for (unsigned int r = 0; r < Arows; ++r) {
+    for (unsigned int c = 0; c < Bcols; ++c) {
       double sum = 0;
-      for (unsigned int n = 0; n < Brows; n++)
+      for (unsigned int n = 0; n < Brows; ++n) {
         sum += A[n][r] * B[c][n] * alpha;
-      D[r][c] = sum + C[c][r] * beta;
+      }
+      D[r][c] = sum + (C[c][r] * beta);
     }
+  }
 }
 
 template <unsigned int T>
@@ -334,9 +352,11 @@ inline void vpTGEMM(const vpArray2D<double> &A, const vpArray2D<double> &B, cons
   GEMMsize<T>(A, B, Arows, Acols, Brows, Bcols);
 
   try {
-    if ((Arows != D.getRows()) || (Bcols != D.getCols()))
+    if ((Arows != D.getRows()) || (Bcols != D.getCols())) {
       D.resize(Arows, Bcols);
-  } catch (...) {
+    }
+  }
+  catch (...) {
     throw;
   }
 
@@ -352,7 +372,8 @@ inline void vpTGEMM(const vpArray2D<double> &A, const vpArray2D<double> &B, cons
     }
 
     GEMM2<T>(Arows, Brows, Bcols, A, B, alpha, C, beta, D);
-  } else {
+  }
+  else {
     GEMM1<T>(Arows, Brows, Bcols, A, B, alpha, D);
   }
 }
@@ -423,5 +444,5 @@ inline void vpGEMM(const vpArray2D<double> &A, const vpArray2D<double> &B, const
     break;
   }
 }
-
+END_VISP_NAMESPACE
 #endif

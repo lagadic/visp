@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +32,9 @@
  * Make the complete tracking of an object by using its CAD model
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
 /*!
@@ -50,6 +48,7 @@
 #include <visp3/mbt/vpMbtDistanceLine.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 
+BEGIN_VISP_NAMESPACE
 void buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane);
 void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
 
@@ -57,23 +56,21 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
-    poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(), error(), nbFeature(), nbFeatureTotal(0),
-    Reinit(false), hiddenface(NULL), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
-{
-}
+  : name(), index(0), cam(), me(nullptr), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
+  poly(), useScanLine(false), meline(), line(nullptr), p1(nullptr), p2(nullptr), L(), error(), nbFeature(), nbFeatureTotal(0),
+  Reinit(false), hiddenface(nullptr), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
+{ }
 
 /*!
   Basic destructor useful to deallocate the memory.
 */
 vpMbtDistanceLine::~vpMbtDistanceLine()
 {
-  //	cout << "Deleting line " << index << endl;
-  if (line != NULL)
+  if (line != nullptr)
     delete line;
 
   for (unsigned int i = 0; i < meline.size(); i++)
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
 
   meline.clear();
@@ -166,7 +163,7 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
 */
 void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand &rand_gen)
 {
-  if (line == NULL) {
+  if (line == nullptr) {
     line = new vpLine;
   }
 
@@ -202,7 +199,8 @@ void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand &rand_ge
     vpPoint P3(V3[0], V3[1], V3[2]);
     vpPoint P4(V4[0], V4[1], V4[2]);
     buildLine(*p1, *p2, P3, P4, *line);
-  } else {
+  }
+  else {
     vpPoint P3(V1[0], V1[1], V1[2]);
     vpPoint P4(V2[0], V2[1], V2[2]);
     buildLine(*p1, *p2, P3, P4, *line);
@@ -284,7 +282,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   me = _me;
 
   for (unsigned int i = 0; i < meline.size(); i++)
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       //      nbFeature[i] = 0;
       meline[i]->reset();
       meline[i]->setMe(me);
@@ -301,14 +299,14 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false. \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
   }
 
@@ -331,7 +329,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
 
       if (useScanLine) {
         hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst);
-      } else {
+      }
+      else {
         linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
@@ -342,7 +341,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       line->changeFrame(cMo);
       try {
         line->projection();
-      } catch (...) {
+      }
+      catch (...) {
         isvisible = false;
         return false;
       }
@@ -381,14 +381,16 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         if (ip1.get_j() < ip2.get_j()) {
           melinePt->jmin = (int)ip1.get_j() - marge;
           melinePt->jmax = (int)ip2.get_j() + marge;
-        } else {
+        }
+        else {
           melinePt->jmin = (int)ip2.get_j() - marge;
           melinePt->jmax = (int)ip1.get_j() + marge;
         }
         if (ip1.get_i() < ip2.get_i()) {
           melinePt->imin = (int)ip1.get_i() - marge;
           melinePt->imax = (int)ip2.get_i() + marge;
-        } else {
+        }
+        else {
           melinePt->imin = (int)ip2.get_i() - marge;
           melinePt->imax = (int)ip1.get_i() + marge;
         }
@@ -398,13 +400,15 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
           meline.push_back(melinePt);
           nbFeature.push_back((unsigned int)melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
-        } catch (...) {
+        }
+        catch (...) {
           delete melinePt;
           isvisible = false;
           return false;
         }
       }
-    } else {
+    }
+    else {
       isvisible = false;
     }
   }
@@ -428,9 +432,10 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
         nbFeature.push_back((unsigned int)meline[i]->getMeList().size());
         nbFeatureTotal += (unsigned int)meline[i]->getMeList().size();
       }
-    } catch (...) {
+    }
+    catch (...) {
       for (size_t i = 0; i < meline.size(); i++) {
-        if (meline[i] != NULL)
+        if (meline[i] != nullptr)
           delete meline[i];
       }
 
@@ -466,13 +471,14 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
       if (useScanLine) {
         hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst);
-      } else {
+      }
+      else {
         linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
       if (linesLst.size() != meline.size() || linesLst.size() == 0) {
         for (size_t i = 0; i < meline.size(); i++) {
-          if (meline[i] != NULL)
+          if (meline[i] != nullptr)
             delete meline[i];
         }
 
@@ -481,13 +487,15 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         nbFeatureTotal = 0;
         isvisible = false;
         Reinit = true;
-      } else {
+      }
+      else {
         line->changeFrame(cMo);
         try {
           line->projection();
-        } catch (...) {
+        }
+        catch (...) {
           for (size_t j = 0; j < meline.size(); j++) {
-            if (meline[j] != NULL)
+            if (meline[j] != nullptr)
               delete meline[j];
           }
 
@@ -528,14 +536,16 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
             if (ip1.get_j() < ip2.get_j()) {
               meline[i]->jmin = (int)ip1.get_j() - marge;
               meline[i]->jmax = (int)ip2.get_j() + marge;
-            } else {
+            }
+            else {
               meline[i]->jmin = (int)ip2.get_j() - marge;
               meline[i]->jmax = (int)ip1.get_j() + marge;
             }
             if (ip1.get_i() < ip2.get_i()) {
               meline[i]->imin = (int)ip1.get_i() - marge;
               meline[i]->imax = (int)ip2.get_i() + marge;
-            } else {
+            }
+            else {
               meline[i]->imin = (int)ip2.get_i() - marge;
               meline[i]->imax = (int)ip1.get_i() + marge;
             }
@@ -544,9 +554,10 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
             nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
             nbFeatureTotal += nbFeature[i];
           }
-        } catch (...) {
+        }
+        catch (...) {
           for (size_t j = 0; j < meline.size(); j++) {
-            if (meline[j] != NULL)
+            if (meline[j] != nullptr)
               delete meline[j];
           }
 
@@ -557,9 +568,10 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
           Reinit = true;
         }
       }
-    } else {
+    }
+    else {
       for (size_t i = 0; i < meline.size(); i++) {
-        if (meline[i] != NULL)
+        if (meline[i] != nullptr)
           delete meline[i];
       }
       nbFeature.clear();
@@ -578,14 +590,14 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                          const vpImage<bool> *mask)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
   }
 
@@ -615,7 +627,7 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogen
                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -640,7 +652,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -666,7 +678,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       meline[i]->display(I);
     }
   }
@@ -675,7 +687,7 @@ void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<vpRGBa> &I)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       meline[i]->display(I);
     }
   }
@@ -691,12 +703,14 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 
   for (size_t i = 0; i < meline.size(); i++) {
     vpMbtMeLine *me_l = meline[i];
-    if (me_l != NULL) {
+    if (me_l != nullptr) {
       for (std::list<vpMeSite>::const_iterator it = me_l->getMeList().begin(); it != me_l->getMeList().end(); ++it) {
         vpMeSite p_me_l = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        std::vector<double> params = {0, // ME
-                                      p_me_l.get_ifloat(), p_me_l.get_jfloat(), static_cast<double>(p_me_l.getState())};
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+        std::vector<double> params = { 0, //ME
+                                      p_me_l.get_ifloat(),
+                                      p_me_l.get_jfloat(),
+                                      static_cast<double>(p_me_l.getState()) };
 #else
         std::vector<double> params;
         params.push_back(0); // ME
@@ -704,6 +718,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
         params.push_back(p_me_l.get_jfloat());
         params.push_back(static_cast<double>(p_me_l.getState()));
 #endif
+
         features.push_back(params);
       }
     }
@@ -752,7 +767,8 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
       if (useScanLine && !displayFullModel) {
         hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
-      } else {
+      }
+      else {
         linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
@@ -763,17 +779,21 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        std::vector<double> params = {0, // 0 for line parameters
-                                      ip1.get_i(), ip1.get_j(), ip2.get_i(), ip2.get_j()};
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+        std::vector<double> params = { 0, //0 for line parameters
+                                      ip1.get_i(),
+                                      ip1.get_j(),
+                                      ip2.get_i(),
+                                      ip2.get_j() };
 #else
         std::vector<double> params;
-        params.push_back(0); // 0 for line parameters
+        params.push_back(0); //0 for line parameters
         params.push_back(ip1.get_i());
         params.push_back(ip1.get_j());
         params.push_back(ip2.get_i());
         params.push_back(ip2.get_j());
 #endif
+
         models.push_back(params);
       }
     }
@@ -790,7 +810,8 @@ void vpMbtDistanceLine::initInteractionMatrixError()
   if (isvisible) {
     L.resize(nbFeatureTotal, 6);
     error.resize(nbFeatureTotal);
-  } else {
+  }
+  else {
     for (size_t i = 0; i < meline.size(); i++) {
       nbFeature[i] = 0;
       // To be consistent with nbFeature[i] = 0
@@ -835,8 +856,8 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
-          x = (double)it->j;
-          y = (double)it->i;
+          x = (double)it->m_j;
+          y = (double)it->m_i;
 
           x = (x - xc) * mx;
           y = (y - yc) * my;
@@ -853,9 +874,10 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
           j++;
         }
       }
-    } catch (...) {
-      // Handle potential exception: due to a degenerate case: the image of the straight line is a point!
-      // Set the corresponding interaction matrix part to zero
+    }
+    catch (...) {
+   // Handle potential exception: due to a degenerate case: the image of the straight line is a point!
+   // Set the corresponding interaction matrix part to zero
       unsigned int j = 0;
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
@@ -890,15 +912,15 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
     for (size_t i = 0; i < meline.size(); i++) {
       for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin(); it != meline[i]->getMeList().end();
            ++it) {
-        int i_ = it->i;
-        int j_ = it->j;
+        int i_ = it->m_i;
+        int j_ = it->m_j;
 
         if (i_ < 0 || j_ < 0) { // out of image.
           return true;
         }
 
-        if (((unsigned int)i_ > (I.getHeight() - threshold)) || (unsigned int)i_ < threshold ||
-            ((unsigned int)j_ > (I.getWidth() - threshold)) || (unsigned int)j_ < threshold) {
+        if (((unsigned int)i_ >(I.getHeight() - threshold)) || (unsigned int)i_ < threshold ||
+            ((unsigned int)j_ >(I.getWidth() - threshold)) || (unsigned int)j_ < threshold) {
           return true;
         }
       }
@@ -906,3 +928,4 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
   }
   return false;
 }
+END_VISP_NAMESPACE

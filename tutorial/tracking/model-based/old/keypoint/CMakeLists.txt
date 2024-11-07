@@ -1,6 +1,6 @@
 project(tutorial-tracking-mb-keypoint)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_klt visp_gui)
 

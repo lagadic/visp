@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,13 @@
  * Description:
  * Manage depth normal features for a particular face.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/common/centroid.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -55,16 +55,16 @@
 #define USE_SSE 0
 #endif
 
+BEGIN_VISP_NAMESPACE
 vpMbtFaceDepthNormal::vpMbtFaceDepthNormal()
-  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
-    m_planeObject(), m_polygon(NULL), m_useScanLine(false), m_faceActivated(false),
-    m_faceCentroidMethod(GEOMETRIC_CENTROID), m_faceDesiredCentroid(), m_faceDesiredNormal(),
-    m_featureEstimationMethod(ROBUST_FEATURE_ESTIMATION), m_isTrackedDepthNormalFace(true), m_isVisible(false),
-    m_listOfFaceLines(), m_planeCamera(),
-    m_pclPlaneEstimationMethod(2), // SAC_MSAC, see pcl/sample_consensus/method_types.h
-    m_pclPlaneEstimationRansacMaxIter(200), m_pclPlaneEstimationRansacThreshold(0.001), m_polygonLines()
-{
-}
+  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
+  m_planeObject(), m_polygon(nullptr), m_useScanLine(false), m_faceActivated(false),
+  m_faceCentroidMethod(GEOMETRIC_CENTROID), m_faceDesiredCentroid(), m_faceDesiredNormal(),
+  m_featureEstimationMethod(ROBUST_FEATURE_ESTIMATION), m_isTrackedDepthNormalFace(true), m_isVisible(false),
+  m_listOfFaceLines(), m_planeCamera(),
+  m_pclPlaneEstimationMethod(2), // SAC_MSAC, see pcl/sample_consensus/method_types.h
+  m_pclPlaneEstimationRansacMaxIter(200), m_pclPlaneEstimationRansacThreshold(0.001), m_polygonLines()
+{ }
 
 vpMbtFaceDepthNormal::~vpMbtFaceDepthNormal()
 {
@@ -77,7 +77,7 @@ vpMbtFaceDepthNormal::~vpMbtFaceDepthNormal()
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
-  If the line already exists, the ploygone's index is added to the list of
+  If the line already exists, the polygon's index is added to the list of
   polygon to which it belongs.
 
   \param P1 : The first extremity of the line.
@@ -147,7 +147,7 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
                                                   unsigned int height,
                                                   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
@@ -185,10 +185,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -202,9 +202,11 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
     point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
     point_cloud_face_vec.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
-  } else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
+  }
+  else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
     point_cloud_face_vec.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
-  } else if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
+  }
+  else if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
     point_cloud_face->reserve((size_t)(bb.getWidth() * bb.getHeight()));
   }
 
@@ -219,16 +221,17 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
+      if (vpMeTracker::inRoiMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
 
         if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
           point_cloud_face->push_back((*point_cloud)(j, i));
-        } else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION ||
-                   m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+        }
+        else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION ||
+                m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
           point_cloud_face_vec.push_back((*point_cloud)(j, i).x);
           point_cloud_face_vec.push_back((*point_cloud)(j, i).y);
           point_cloud_face_vec.push_back((*point_cloud)(j, i).z);
@@ -244,7 +247,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
                 prev_x = x;
                 prev_y = y;
                 prev_z = (*point_cloud)(j, i).z;
-              } else {
+              }
+              else {
                 push = false;
                 point_cloud_face_custom.push_back(prev_x);
                 point_cloud_face_custom.push_back(x);
@@ -256,7 +260,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
                 point_cloud_face_custom.push_back((*point_cloud)(j, i).z);
               }
 #endif
-            } else {
+            }
+            else {
               point_cloud_face_custom.push_back(x);
               point_cloud_face_custom.push_back(y);
               point_cloud_face_custom.push_back((*point_cloud)(j, i).z);
@@ -290,12 +295,15 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     if (!computeDesiredFeaturesPCL(point_cloud_face, desired_features, desired_normal, centroid_point)) {
       return false;
     }
-  } else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
+  }
+  else if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
     computeDesiredFeaturesSVD(point_cloud_face_vec, cMo, desired_features, desired_normal, centroid_point);
-  } else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+  }
+  else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
     computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face_vec, cMo, desired_features,
                                          desired_normal, centroid_point);
-  } else {
+  }
+  else {
     throw vpException(vpException::badValue, "Unknown feature estimation method!");
   }
 
@@ -343,10 +351,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -372,12 +380,12 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
+      if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
-        // Add point
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
+// Add point
         point_cloud_face.push_back(point_cloud[i * width + j][0]);
         point_cloud_face.push_back(point_cloud[i * width + j][1]);
         point_cloud_face.push_back(point_cloud[i * width + j][2]);
@@ -393,7 +401,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
               prev_x = x;
               prev_y = y;
               prev_z = point_cloud[i * width + j][2];
-            } else {
+            }
+            else {
               push = false;
               point_cloud_face_custom.push_back(prev_x);
               point_cloud_face_custom.push_back(x);
@@ -405,7 +414,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
               point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
             }
 #endif
-          } else {
+          }
+          else {
             point_cloud_face_custom.push_back(x);
             point_cloud_face_custom.push_back(y);
             point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
@@ -434,7 +444,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   // Face centroid computed by the different methods
   vpColVector centroid_point(3);
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
   if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_face_pcl(new pcl::PointCloud<pcl::PointXYZ>);
     point_cloud_face_pcl->reserve(point_cloud_face.size() / 3);
@@ -445,16 +455,19 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     }
 
     computeDesiredFeaturesPCL(point_cloud_face_pcl, desired_features, desired_normal, centroid_point);
-  } else
-#endif
-      if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
-    computeDesiredFeaturesSVD(point_cloud_face, cMo, desired_features, desired_normal, centroid_point);
-  } else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
-    computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face, cMo, desired_features,
-                                         desired_normal, centroid_point);
-  } else {
-    throw vpException(vpException::badValue, "Unknown feature estimation method!");
   }
+  else
+#endif
+    if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
+      computeDesiredFeaturesSVD(point_cloud_face, cMo, desired_features, desired_normal, centroid_point);
+    }
+    else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+      computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face, cMo, desired_features,
+                                           desired_normal, centroid_point);
+    }
+    else {
+      throw vpException(vpException::badValue, "Unknown feature estimation method!");
+    }
 
   computeDesiredNormalAndCentroid(cMo, desired_normal, centroid_point);
 
@@ -463,7 +476,167 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   return true;
 }
 
-#ifdef VISP_HAVE_PCL
+bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                  unsigned int height, const vpMatrix &point_cloud,
+                                                  vpColVector &desired_features, unsigned int stepX, unsigned int stepY
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+                                                  ,
+                                                  vpImage<unsigned char> &debugImage,
+                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
+#endif
+                                                  ,
+                                                  const vpImage<bool> *mask)
+{
+  m_faceActivated = false;
+
+  if (width == 0 || height == 0)
+    return false;
+
+  std::vector<vpImagePoint> roiPts;
+  vpColVector desired_normal(3);
+
+  computeROI(cMo, width, height, roiPts
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+             ,
+             roiPts_vec
+#endif
+  );
+
+  if (roiPts.size() <= 2) {
+#ifndef NDEBUG
+    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
+#endif
+    return false;
+  }
+
+  vpPolygon polygon_2d(roiPts);
+  vpRect bb = polygon_2d.getBoundingBox();
+
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+
+  bb.setTop(top);
+  bb.setBottom(bottom);
+  bb.setLeft(left);
+  bb.setRight(right);
+
+  // Keep only 3D points inside the projected polygon face
+  std::vector<double> point_cloud_face, point_cloud_face_custom;
+
+  point_cloud_face.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+    point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  }
+
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
+  bool push = false;
+  double prev_x, prev_y, prev_z;
+#endif
+
+  double x = 0.0, y = 0.0;
+  for (unsigned int i = top; i < bottom; i += stepY) {
+    for (unsigned int j = left; j < right; j += stepX) {
+      if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
+          (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+                            j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+                            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
+// Add point
+        point_cloud_face.push_back(point_cloud[i * width + j][0]);
+        point_cloud_face.push_back(point_cloud[i * width + j][1]);
+        point_cloud_face.push_back(point_cloud[i * width + j][2]);
+
+        if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+          // Add point for custom method for plane equation estimation
+          vpPixelMeterConversion::convertPoint(m_cam, j, i, x, y);
+
+          if (checkSSE2) {
+#if USE_SSE
+            if (!push) {
+              push = true;
+              prev_x = x;
+              prev_y = y;
+              prev_z = point_cloud[i * width + j][2];
+            }
+            else {
+              push = false;
+              point_cloud_face_custom.push_back(prev_x);
+              point_cloud_face_custom.push_back(x);
+
+              point_cloud_face_custom.push_back(prev_y);
+              point_cloud_face_custom.push_back(y);
+
+              point_cloud_face_custom.push_back(prev_z);
+              point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
+            }
+#endif
+          }
+          else {
+            point_cloud_face_custom.push_back(x);
+            point_cloud_face_custom.push_back(y);
+            point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
+          }
+        }
+
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+        debugImage[i][j] = 255;
+#endif
+      }
+    }
+  }
+
+#if USE_SSE
+  if (checkSSE2 && push) {
+    point_cloud_face_custom.push_back(prev_x);
+    point_cloud_face_custom.push_back(prev_y);
+    point_cloud_face_custom.push_back(prev_z);
+  }
+#endif
+
+  if (point_cloud_face.empty() && point_cloud_face_custom.empty()) {
+    return false;
+  }
+
+  // Face centroid computed by the different methods
+  vpColVector centroid_point(3);
+
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
+  if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_face_pcl(new pcl::PointCloud<pcl::PointXYZ>);
+    point_cloud_face_pcl->reserve(point_cloud_face.size() / 3);
+
+    for (size_t i = 0; i < point_cloud_face.size() / 3; i++) {
+      point_cloud_face_pcl->push_back(
+          pcl::PointXYZ(point_cloud_face[3 * i], point_cloud_face[3 * i + 1], point_cloud_face[3 * i + 2]));
+    }
+
+    computeDesiredFeaturesPCL(point_cloud_face_pcl, desired_features, desired_normal, centroid_point);
+  }
+  else
+#endif
+    if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
+      computeDesiredFeaturesSVD(point_cloud_face, cMo, desired_features, desired_normal, centroid_point);
+    }
+    else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+      computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face, cMo, desired_features,
+                                           desired_normal, centroid_point);
+    }
+    else {
+      throw vpException(vpException::badValue, "Unknown feature estimation method!");
+    }
+
+  computeDesiredNormalAndCentroid(cMo, desired_normal, centroid_point);
+
+  m_faceActivated = true;
+
+  return true;
+}
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
                                                      vpColVector &desired_features, vpColVector &desired_normal,
                                                      vpColVector &centroid_point)
@@ -514,7 +687,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
       centroid_point[0] = centroid_point_pcl.x;
       centroid_point[1] = centroid_point_pcl.y;
       centroid_point[2] = centroid_point_pcl.z;
-    } else {
+    }
+    else {
       std::cerr << "Cannot compute centroid!" << std::endl;
       return false;
     }
@@ -522,7 +696,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
     std::cerr << "Cannot compute centroid using PCL " << PCL_VERSION_PRETTY << "!" << std::endl;
     return false;
 #endif
-  } catch (const pcl::PCLException &e) {
+  }
+  catch (const pcl::PCLException &e) {
     std::cerr << "Catch a PCL exception: " << e.what() << std::endl;
     throw;
   }
@@ -619,16 +794,16 @@ bool vpMbtFaceDepthNormal::computePolygonCentroid(const std::vector<vpPoint> &po
   for (size_t i = 0; i < points.size() - 1; i++) {
     // projection onto xy plane
     c_x1 += (points[i].get_X() + points[i + 1].get_X()) *
-            (points[i].get_X() * points[i + 1].get_Y() - points[i + 1].get_X() * points[i].get_Y());
+      (points[i].get_X() * points[i + 1].get_Y() - points[i + 1].get_X() * points[i].get_Y());
     c_y += (points[i].get_Y() + points[i + 1].get_Y()) *
-           (points[i].get_X() * points[i + 1].get_Y() - points[i + 1].get_X() * points[i].get_Y());
+      (points[i].get_X() * points[i + 1].get_Y() - points[i + 1].get_X() * points[i].get_Y());
     A1 += points[i].get_X() * points[i + 1].get_Y() - points[i + 1].get_X() * points[i].get_Y();
 
     // projection onto xz plane
     c_x2 += (points[i].get_X() + points[i + 1].get_X()) *
-            (points[i].get_X() * points[i + 1].get_Z() - points[i + 1].get_X() * points[i].get_Z());
+      (points[i].get_X() * points[i + 1].get_Z() - points[i + 1].get_X() * points[i].get_Z());
     c_z += (points[i].get_Z() + points[i + 1].get_Z()) *
-           (points[i].get_X() * points[i + 1].get_Z() - points[i + 1].get_X() * points[i].get_Z());
+      (points[i].get_X() * points[i + 1].get_Z() - points[i + 1].get_X() * points[i].get_Z());
     A2 += points[i].get_X() * points[i + 1].get_Z() - points[i + 1].get_X() * points[i].get_Z();
   }
 
@@ -639,7 +814,8 @@ bool vpMbtFaceDepthNormal::computePolygonCentroid(const std::vector<vpPoint> &po
 
   if (A1 > A2) {
     centroid.set_X(c_x1);
-  } else {
+  }
+  else {
     centroid.set_X(c_x2);
   }
 
@@ -704,8 +880,9 @@ void vpMbtFaceDepthNormal::computeROI(const vpHomogeneousMatrix &cMo, unsigned i
         }
       }
     }
-  } else {
-    // Get polygon clipped
+  }
+  else {
+ // Get polygon clipped
     m_polygon->getRoiClipped(m_cam, roiPts, cMo);
 
 #if DEBUG_DISPLAY_DEPTH_NORMAL
@@ -730,7 +907,8 @@ void vpMbtFaceDepthNormal::computeVisibilityDisplay()
       int index = *itindex;
       if (index == -1) {
         isvisible = true;
-      } else {
+      }
+      else {
         if (line->hiddenface->isVisible((unsigned int)index)) {
           isvisible = true;
         }
@@ -743,7 +921,8 @@ void vpMbtFaceDepthNormal::computeVisibilityDisplay()
 
     if (isvisible) {
       line->setVisible(true);
-    } else {
+    }
+    else {
       line->setVisible(false);
     }
   }
@@ -775,7 +954,8 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
     e4[1] = -centroid.get_Y();
     e4[2] = -centroid.get_Z();
     e4.normalize();
-  } else {
+  }
+  else {
     double centroid_x = 0.0;
     double centroid_y = 0.0;
     double centroid_z = 0.0;
@@ -804,14 +984,15 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
   double angle = acos(vpColVector::dotProd(e4, faceNormal));
   if (angle < M_PI_2) {
     correct_normal = faceNormal;
-  } else {
+  }
+  else {
     correct_normal[0] = -faceNormal[0];
     correct_normal[1] = -faceNormal[1];
     correct_normal[2] = -faceNormal[2];
   }
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbtFaceDepthNormal::computeNormalVisibility(float nx, float ny, float nz, const pcl::PointXYZ &centroid_point,
                                                    pcl::PointXYZ &face_normal)
 {
@@ -830,7 +1011,8 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(float nx, float ny, float nz,
   double angle = acos(vpColVector::dotProd(e4, faceNormal));
   if (angle < M_PI_2) {
     face_normal = pcl::PointXYZ(faceNormal[0], faceNormal[1], faceNormal[2]);
-  } else {
+  }
+  else {
     face_normal = pcl::PointXYZ(-faceNormal[0], -faceNormal[1], -faceNormal[2]);
   }
 }
@@ -854,6 +1036,32 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
     face_normal[1] = -face_normal[1];
     face_normal[2] = -face_normal[2];
   }
+}
+
+/**
+ * Returns true when the plane is nearly parallalel to the optical axis and close to the optical center.
+ * In this case, the interaction matrix related to this face may "explode" leading to a tracking failure.
+ */
+bool vpMbtFaceDepthNormal::planeIsInvalid(const vpHomogeneousMatrix &cMo, double maxAngle)
+{
+  m_planeCamera = m_planeObject;
+  m_planeCamera.changeFrame(cMo);
+  const vpTranslationVector t = cMo.getTranslationVector();
+  // const double D = -(t[0] * m_planeCamera.getA() + t[1] * m_planeCamera.getB() + t[2] * m_planeCamera.getC());
+  const double D = m_planeCamera.getD();
+  vpPoint centroid;
+  std::vector<vpPoint> polyPts;
+  m_polygon->getPolygonClipped(polyPts);
+  computePolygonCentroid(polyPts, centroid);
+  centroid.changeFrame(cMo);
+  centroid.project();
+  vpColVector c(3);
+  c[0] = centroid.get_X();
+  c[1] = centroid.get_Y();
+  c[2] = centroid.get_Z();
+  const double L = c.frobeniusNorm();
+  const double minD = L * cos(maxAngle);
+  return fabs(D) <= minD;
 }
 
 void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features)
@@ -906,7 +1114,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomo
                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -920,7 +1128,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneous
                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -1093,7 +1301,7 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
             const __m128d vinvZi = _mm_div_pd(vones, vZi);
 
             const __m128d tmp =
-                _mm_add_pd(_mm_add_pd(_mm_mul_pd(vA, vxi), _mm_mul_pd(vB, vyi)), _mm_sub_pd(vC, vinvZi));
+              _mm_add_pd(_mm_add_pd(_mm_mul_pd(vA, vxi), _mm_mul_pd(vB, vyi)), _mm_sub_pd(vC, vinvZi));
             _mm_storeu_pd(ptr_residues, tmp);
           }
         }
@@ -1260,7 +1468,8 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
       iter++;
     } // while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) )
 #endif
-  } else {
+  }
+  else {
     while (std::fabs(error - prev_error) > 1e-6 && (iter < max_iter)) {
       if (iter == 0) {
         // Transform the plane equation for the current pose
@@ -1372,7 +1581,8 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
   for (unsigned int iter = 0; iter < max_iter && std::fabs(error - prev_error) > 1e-6; iter++) {
     if (iter != 0) {
       tukey.MEstimator(residues, weights, 1e-4);
-    } else {
+    }
+    else {
       // Transform the plane equation for the current pose
       m_planeCamera = m_planeObject;
       m_planeCamera.changeFrame(cMo);
@@ -1386,7 +1596,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
       for (size_t i = 0; i < point_cloud_face.size() / 3; i++) {
         residues[i] = std::fabs(A * point_cloud_face[3 * i] + B * point_cloud_face[3 * i + 1] +
                                 C * point_cloud_face[3 * i + 2] + D) /
-                      sqrt(A * A + B * B + C * C);
+          sqrt(A * A + B * B + C * C);
       }
 
       tukey.MEstimator(residues, weights, 1e-4);
@@ -1448,7 +1658,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
     for (size_t i = 0; i < point_cloud_face.size() / 3; i++) {
       residues[i] = std::fabs(A * point_cloud_face[3 * i] + B * point_cloud_face[3 * i + 1] +
                               C * point_cloud_face[3 * i + 2] + D) /
-                    sqrt(A * A + B * B + C * C);
+        sqrt(A * A + B * B + C * C);
       error += weights[i] * residues[i];
     }
     error /= total_w;
@@ -1516,13 +1726,15 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {2, // desired normal
-                                    im_centroid.get_i(), im_centroid.get_j(), im_extremity.get_i(),
-                                    im_extremity.get_j()};
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      std::vector<double> params = { 2, //desired normal
+                                    im_centroid.get_i(),
+                                    im_centroid.get_j(),
+                                    im_extremity.get_i(),
+                                    im_extremity.get_j() };
 #else
       std::vector<double> params;
-      params.push_back(2); // desired normal
+      params.push_back(2); //desired normal
       params.push_back(im_centroid.get_i());
       params.push_back(im_centroid.get_j());
       params.push_back(im_extremity.get_i());
@@ -1554,13 +1766,15 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {3, // normal at current pose
-                                    im_centroid.get_i(), im_centroid.get_j(), im_extremity.get_i(),
-                                    im_extremity.get_j()};
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      std::vector<double> params = { 3, //normal at current pose
+                                    im_centroid.get_i(),
+                                    im_centroid.get_j(),
+                                    im_extremity.get_i(),
+                                    im_extremity.get_j() };
 #else
       std::vector<double> params;
-      params.push_back(3); // normal at current pose
+      params.push_back(3); //normal at current pose
       params.push_back(im_centroid.get_i());
       params.push_back(im_centroid.get_j());
       params.push_back(im_extremity.get_i());
@@ -1598,7 +1812,7 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getModelForDisplay(unsig
          ++it) {
       vpMbtDistanceLine *line = *it;
       std::vector<std::vector<double> > lineModels =
-          line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+        line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
       models.insert(models.end(), lineModels.begin(), lineModels.end());
     }
   }
@@ -1647,3 +1861,4 @@ void vpMbtFaceDepthNormal::setScanLineVisibilityTest(bool v)
     (*it)->useScanLine = v;
   }
 }
+END_VISP_NAMESPACE

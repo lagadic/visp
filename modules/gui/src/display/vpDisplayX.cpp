@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +29,7 @@
  *
  * Description:
  * Image display.
- *
- * Authors:
- * Fabien Spindler
- * Anthony Saunier
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpDisplayX.cpp
@@ -56,7 +50,6 @@
 #include <visp3/gui/vpDisplayX.h>
 
 // debug / exception
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
 
 // math
@@ -67,6 +60,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+BEGIN_VISP_NAMESPACE
+
 // Work around to use this class with Eigen3
 #ifdef Success
 #undef Success // See http://eigen.tuxfamily.org/bz/show_bug.cgi?id=253
@@ -76,13 +71,12 @@ class vpDisplayX::Impl
 {
 public:
   Impl()
-    : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
-      screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
-      BShift(0)
-  {
-  }
+    : display(nullptr), window(), Ximage(nullptr), lut(), context(), screen(0), event(), pixmap(), x_color(nullptr),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
+  { }
 
-  ~Impl() {}
+  ~Impl() { }
 
   void clearDisplay(const vpColor &color, unsigned int width, unsigned int height)
   {
@@ -109,7 +103,7 @@ public:
     if (ximage_data_init == true)
       free(Ximage->data);
 
-    Ximage->data = NULL;
+    Ximage->data = nullptr;
     XDestroyImage(Ximage);
 
     XFreePixmap(display, pixmap);
@@ -118,13 +112,13 @@ public:
     XDestroyWindow(display, window);
     XCloseDisplay(display);
 
-    if (x_color != NULL) {
+    if (x_color != nullptr) {
       delete[] x_color;
-      x_color = NULL;
+      x_color = nullptr;
     }
   }
 
-  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color, unsigned int scale)
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color, unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground(display, context, x_color[color.id]);
@@ -136,8 +130,8 @@ public:
       XAllocColor(display, lut, &xcolor);
       XSetForeground(display, context, xcolor.pixel);
     }
-    XDrawString(display, pixmap, context, (int)(ip.get_u() / scale), (int)(ip.get_v() / scale), text,
-                (int)strlen(text));
+    XDrawString(display, pixmap, context, (int)(ip.get_u() / scale), (int)(ip.get_v() / scale), text.c_str(),
+                (int)text.size());
   }
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
@@ -160,7 +154,8 @@ public:
       XDrawArc(display, pixmap, context, vpMath::round((center.get_u() - radius) / scale),
                vpMath::round((center.get_v() - radius) / scale), radius * 2 / scale, radius * 2 / scale, 0,
                23040); /* 23040 = 360*64 */
-    } else {
+    }
+    else {
       XFillArc(display, pixmap, context, vpMath::round((center.get_u() - radius) / scale),
                vpMath::round((center.get_v() - radius) / scale), radius * 2 / scale, radius * 2 / scale, 0,
                23040); /* 23040 = 360*64 */
@@ -202,15 +197,18 @@ public:
 
         while (i < size) {
           unsigned char nivGris = src_8[i];
-          if (nivGris > nivGrisMax)
+          if (nivGris > nivGrisMax) {
             dst_8[i] = 255;
-          else
+          }
+          else {
             dst_8[i] = nivGris;
-          i++;
+          }
+          ++i;
         }
-      } else {
-        // Correction de l'image de facon a liberer les niveaux de gris
-        // ROUGE, VERT, BLEU, JAUNE
+      }
+      else {
+     // Correction de l'image de facon a liberer les niveaux de gris
+     // ROUGE, VERT, BLEU, JAUNE
         unsigned char *dst_8 = (unsigned char *)Ximage->data;
         unsigned int k = 0;
         for (unsigned int i = 0; i < height; i++) {
@@ -239,7 +237,8 @@ public:
             *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
           }
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < height; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
@@ -273,8 +272,9 @@ public:
             *(dst_32++) = val; // Green
             *(dst_32++) = val; // Blue
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           while (bitmap < n) {
             unsigned char val = *(bitmap++);
             *(dst_32++) = val; // Blue
@@ -283,7 +283,8 @@ public:
             *(dst_32++) = vpRGBa::alpha_default;
           }
         }
-      } else {
+      }
+      else {
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = 0; i < height; i++) {
@@ -295,8 +296,9 @@ public:
               *(dst_32++) = val; // Blue
             }
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           for (unsigned int i = 0; i < height; i++) {
             for (unsigned int j = 0; j < width; j++) {
               unsigned char val = I[i * scale][j * scale];
@@ -334,11 +336,12 @@ public:
             g = bitmap->G;
             b = bitmap->B;
             *(dst_16 + j) =
-                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
+              (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
             bitmap++;
           }
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < height; i++) {
           unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
@@ -348,7 +351,7 @@ public:
             g = val.G;
             b = val.B;
             *(dst_16 + j) =
-                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
+              (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
             bitmap++;
           }
         }
@@ -364,7 +367,7 @@ public:
       /*
        * 32-bit source, 24/32-bit destination
        */
-      unsigned char *dst_32 = NULL;
+      unsigned char *dst_32 = nullptr;
       dst_32 = (unsigned char *)Ximage->data;
       if (scale == 1) {
         vpRGBa *bitmap = I.bitmap;
@@ -378,8 +381,9 @@ public:
             *(dst_32++) = bitmap->B;
             bitmap++;
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           for (unsigned int i = 0; i < sizeI; i++) {
             *(dst_32++) = bitmap->B;
             *(dst_32++) = bitmap->G;
@@ -388,7 +392,8 @@ public:
             bitmap++;
           }
         }
-      } else {
+      }
+      else {
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = 0; i < height; i++) {
@@ -400,8 +405,9 @@ public:
               *(dst_32++) = val.B;
             }
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           for (unsigned int i = 0; i < height; i++) {
             for (unsigned int j = 0; j < width; j++) {
               vpRGBa val = I[i * scale][j * scale];
@@ -466,22 +472,23 @@ public:
               *(dst_8 + j) = 255;
             else
               *(dst_8 + j) = nivGris;
-            j++;
+            ++j;
           }
           src_8 = src_8 + iwidth;
           dst_8 = dst_8 + width;
-          i++;
+          ++i;
         }
 
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
                   w, h);
-      } else {
+      }
+      else {
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -518,11 +525,12 @@ public:
 
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
                   w, h);
-      } else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+      }
+      else {
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -562,14 +570,15 @@ public:
               *(dst_32 + 4 * j + 1) = val;
               *(dst_32 + 4 * j + 2) = val;
               *(dst_32 + 4 * j + 3) = val;
-              j++;
+              ++j;
             }
             src_8 = src_8 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           unsigned int i = 0;
           while (i < h) {
             unsigned int j = 0;
@@ -579,21 +588,22 @@ public:
               *(dst_32 + 4 * j + 1) = val;
               *(dst_32 + 4 * j + 2) = val;
               *(dst_32 + 4 * j + 3) = vpRGBa::alpha_default;
-              j++;
+              ++j;
             }
             src_8 = src_8 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
         }
 
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
                   w, h);
-      } else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+      }
+      else {
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -612,8 +622,9 @@ public:
               *(dst_32++) = val;
             }
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
             unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
@@ -651,17 +662,18 @@ public:
             unsigned int g = val.G;
             unsigned int b = val.B;
             *(dst_16 + j) =
-                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
+              (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
           }
         }
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
                   w, h);
-      } else {
+      }
+      else {
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -677,7 +689,7 @@ public:
             unsigned int g = val.G;
             unsigned int b = val.B;
             *(dst_16 + j) =
-                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
+              (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
           }
         }
         XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
@@ -714,15 +726,16 @@ public:
               *(dst_32 + 4 * j + 2) = (src_32 + j)->G;
               *(dst_32 + 4 * j + 3) = (src_32 + j)->B;
 
-              j++;
+              ++j;
             }
             src_32 = src_32 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
 
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           while (i < h) {
             unsigned int j = 0;
             while (j < w) {
@@ -731,21 +744,22 @@ public:
               *(dst_32 + 4 * j + 2) = (src_32 + j)->R;
               *(dst_32 + 4 * j + 3) = (src_32 + j)->A;
 
-              j++;
+              ++j;
             }
             src_32 = src_32 + iwidth;
             dst_32 = dst_32 + 4 * width;
-            i++;
+            ++i;
           }
         }
 
         XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
                   w, h);
-      } else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+      }
+      else {
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -764,8 +778,9 @@ public:
               *(dst_32++) = val.B;
             }
           }
-        } else {
-          // little endian
+        }
+        else {
+       // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
             unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
@@ -824,7 +839,8 @@ public:
 
     if (thickness == 1) {
       XDrawPoint(display, pixmap, context, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale));
-    } else {
+    }
+    else {
       XFillRectangle(display, pixmap, context, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
                      thickness, thickness);
     }
@@ -847,7 +863,8 @@ public:
     if (fill == false) {
       XDrawRectangle(display, pixmap, context, vpMath::round(topLeft.get_u() / scale),
                      vpMath::round(topLeft.get_v() / scale), w / scale, h / scale);
-    } else {
+    }
+    else {
       XFillRectangle(display, pixmap, context, vpMath::round(topLeft.get_u() / scale),
                      vpMath::round(topLeft.get_v() / scale), w / scale, h / scale);
     }
@@ -878,7 +895,8 @@ public:
       XCheckMaskEvent(display, ButtonReleaseMask, &event);
       XMaskEvent(display, ButtonPressMask, &event);
       ret = true;
-    } else {
+    }
+    else {
       ret = XCheckMaskEvent(display, ButtonPressMask, &event);
     }
 
@@ -917,7 +935,8 @@ public:
       XCheckMaskEvent(display, ButtonReleaseMask, &event);
       XMaskEvent(display, ButtonReleaseMask, &event);
       ret = true;
-    } else {
+    }
+    else {
       ret = XCheckMaskEvent(display, ButtonReleaseMask, &event);
     }
 
@@ -953,7 +972,7 @@ public:
 
     I.resize(height, width);
 
-    unsigned char *src_32 = NULL;
+    unsigned char *src_32 = nullptr;
     src_32 = (unsigned char *)xi->data;
 
     if (screen_depth == 16) {
@@ -972,7 +991,8 @@ public:
         }
       }
 
-    } else {
+    }
+    else {
       if (XImageByteOrder(display) == 1) {
         // big endian
         for (unsigned int i = 0; i < width * height; i++) {
@@ -984,8 +1004,9 @@ public:
           I.bitmap[i].G = src_32[i * 4 + 2];
           I.bitmap[i].B = src_32[i * 4 + 3];
         }
-      } else {
-        // little endian
+      }
+      else {
+     // little endian
         for (unsigned int i = 0; i < width * height; i++) {
           I.bitmap[i].B = src_32[i * 4];
           I.bitmap[i].G = src_32[i * 4 + 1];
@@ -1008,7 +1029,8 @@ public:
     if (blocking) {
       XMaskEvent(display, KeyPressMask, &event);
       ret = true;
-    } else {
+    }
+    else {
       ret = XCheckMaskEvent(display, KeyPressMask, &event);
     }
 
@@ -1029,7 +1051,8 @@ public:
       /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym, &compose_status);
       key = buffer;
       ret = true;
-    } else {
+    }
+    else {
       ret = XCheckMaskEvent(display, KeyPressMask, &event);
       if (ret) {
         /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym, &compose_status);
@@ -1102,9 +1125,9 @@ public:
     int screen_;
     unsigned int depth;
 
-    if ((display_ = XOpenDisplay(NULL)) == NULL) {
+    if ((display_ = XOpenDisplay(nullptr)) == nullptr) {
       throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
-                               XDisplayName(NULL)));
+                               XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
     depth = (unsigned int)DefaultDepth(display_, screen_);
@@ -1119,9 +1142,9 @@ public:
     Display *display_;
     int screen_;
 
-    if ((display_ = XOpenDisplay(NULL)) == NULL) {
+    if ((display_ = XOpenDisplay(nullptr)) == nullptr) {
       throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
-                               XDisplayName(NULL)));
+                               XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
     w = (unsigned int)DisplayWidth(display_, screen_);
@@ -1132,7 +1155,7 @@ public:
 
   void init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
   {
-    if (x_color == NULL) {
+    if (x_color == nullptr) {
       // id_unknown = number of predefined colors
       x_color = new unsigned long[vpColor::id_unknown];
     }
@@ -1142,26 +1165,23 @@ public:
     // Positionnement de la fenetre dans l'ecran.
     if ((win_x < 0) || (win_y < 0)) {
       hints.flags = 0;
-    } else {
+    }
+    else {
       hints.flags = USPosition;
       hints.x = win_x;
       hints.y = win_y;
     }
 
-    if ((display = XOpenDisplay(NULL)) == NULL) {
-      vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
-      throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
+    if ((display = XOpenDisplay(nullptr)) == nullptr) {
+      throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.", XDisplayName(nullptr)));
     }
 
     screen = DefaultScreen(display);
     lut = DefaultColormap(display, screen);
     screen_depth = (unsigned int)DefaultDepth(display, screen);
 
-    vpTRACE("Screen depth: %d\n", screen_depth);
-
     if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), win_x, win_y, win_width, win_height, 1,
                                       BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
-      vpERROR_TRACE("Can't create window.");
       throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
     }
 
@@ -1189,8 +1209,7 @@ public:
         xcolor.pad = 0;
         xcolor.red = xcolor.green = xcolor.blue = 256 * i;
         if (XAllocColor(display, lut, &xcolor) == 0) {
-          vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
-          throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors."));
+          throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors. Only %d allocated.", i));
         }
         colortable[i] = xcolor.pixel;
       }
@@ -1534,8 +1553,7 @@ public:
     values.background = BlackPixel(display, screen);
     context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
-    if (context == NULL) {
-      vpERROR_TRACE("Can't create graphics context.");
+    if (context == nullptr) {
       throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
     }
 
@@ -1548,7 +1566,7 @@ public:
     //  while ( event.xany.type != Expose );
 
     {
-      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, win_width,
+      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, nullptr, win_width,
                             win_height, XBitmapPad(display), 0);
 
       Ximage->data = (char *)malloc(win_height * (unsigned int)Ximage->bytes_per_line);
@@ -1566,7 +1584,8 @@ public:
       Font stringfont;
       stringfont = XLoadFont(display, fontname.c_str()); //"-adobe-times-bold-r-normal--18*");
       XSetFont(display, context, stringfont);
-    } catch (...) {
+    }
+    catch (...) {
       throw(vpDisplayException(vpDisplayException::notInitializedError, "Bad font"));
     }
   }
@@ -1605,13 +1624,13 @@ private:
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
@@ -1633,13 +1652,13 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDis
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y, const std::string &title, vpScaleType scaleType)
@@ -1659,13 +1678,13 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y, const std::strin
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
@@ -1686,13 +1705,13 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplay(),
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
   same than the image size.
-  - vpDisplay::SCALE_2, the display size is downscaled by 2 along the lines
+  - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
   and the columns.
-  - vpDisplay::SCALE_3, the display size is downscaled by 3 along the lines
+  - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
   and the columns.
-  - vpDisplay::SCALE_4, the display size is downscaled by 4 along the lines
+  - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
   and the columns.
-  - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
+  - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
   and the columns.
 */
 vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
@@ -1712,15 +1731,19 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y, const std::string &titl
   To initialize the display size, you need to call init().
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpDisplayX d(100, 200, "My display");
-  vpImage<unsigned char> I(240, 384);
-  d.init(I);
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayX d(100, 200, "My display");
+    vpImage<unsigned char> I(240, 384);
+    d.init(I);
+  }
   \endcode
 */
 vpDisplayX::vpDisplayX(int x, int y, const std::string &title) : vpDisplay(), m_impl(new Impl())
@@ -1739,18 +1762,22 @@ vpDisplayX::vpDisplayX(int x, int y, const std::string &title) : vpDisplay(), m_
   init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpDisplayX d;
-  vpImage<unsigned char> I(240, 384);
-  d.init(I, 100, 200, "My display");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpDisplayX d;
+    vpImage<unsigned char> I(240, 384);
+    d.init(I, 100, 200, "My display");
+  }
   \endcode
 */
-vpDisplayX::vpDisplayX() : vpDisplay(), m_impl(new Impl()) {}
+vpDisplayX::vpDisplayX() : vpDisplay(), m_impl(new Impl()) { }
 
 /*!
   Destructor.
@@ -1848,7 +1875,7 @@ void vpDisplayX::init(unsigned int win_width, unsigned int win_height, int win_x
 /*!
 
   Set the font used to display a text in overlay. The display is
-  performed using displayCharString().
+  performed using displayText().
 
   \param fontname : The expected font name. The available fonts are given by
   the "xlsfonts" binary. To choose a font you can also use the
@@ -1857,7 +1884,7 @@ void vpDisplayX::init(unsigned int win_width, unsigned int win_height, int win_x
   \note Under UNIX, to know all the available fonts, use the
   "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
 
-  \sa displayCharString()
+  \sa displayText()
 */
 void vpDisplayX::setFont(const std::string &fontname)
 {
@@ -1865,7 +1892,8 @@ void vpDisplayX::setFont(const std::string &fontname)
     if (!fontname.empty()) {
       m_impl->setFont(fontname);
     }
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1880,7 +1908,8 @@ void vpDisplayX::setTitle(const std::string &title)
     m_title = title;
     if (!title.empty())
       m_impl->setTitle(title);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1898,7 +1927,8 @@ void vpDisplayX::setWindowPosition(int win_x, int win_y)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->setWindowPosition(win_x, win_y);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1918,7 +1948,8 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImage(I, m_scale, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1938,7 +1969,8 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImage(I, m_scale, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1958,7 +1990,8 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImage(bitmap, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -1983,7 +2016,8 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImageROI(I, iP, w, h, m_scale, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2007,7 +2041,8 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &i
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImageROI(I, iP, w, h, m_scale, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2037,7 +2072,8 @@ void vpDisplayX::flushDisplay()
 {
   if (m_displayHasBeenInitialized) {
     m_impl->flushDisplay();
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2053,7 +2089,8 @@ void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, unsigned int w, unsigne
 {
   if (m_displayHasBeenInitialized) {
     m_impl->flushDisplayROI(iP, w, h, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2066,7 +2103,8 @@ void vpDisplayX::clearDisplay(const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->clearDisplay(color, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2090,7 +2128,8 @@ void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
     if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
         (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
       // DisplayCrossLarge(i1,j1,3,col) ;
-    } else {
+    }
+    else {
       a /= lg;
       b /= lg;
 
@@ -2113,7 +2152,8 @@ void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
 
       displayLine(ip1, ip2, color, thickness);
     }
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2129,11 +2169,12 @@ void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
 
   \sa setFont()
 */
-void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
+void vpDisplayX::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
-    m_impl->displayCharString(ip, text, color, m_scale);
-  } else {
+    m_impl->displayText(ip, text, color, m_scale);
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2154,7 +2195,8 @@ void vpDisplayX::displayCircle(const vpImagePoint &center, unsigned int radius, 
     if (thickness == 1)
       thickness = 0;
     m_impl->displayCircle(center, radius, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2186,7 +2228,8 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size, c
     ip2.set_j(j + cross_size / 2);
 
     displayLine(ip1, ip2, color, thickness);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2204,7 +2247,8 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2
       thickness = 0;
 
     m_impl->displayDotLine(ip1, ip2, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2222,7 +2266,8 @@ void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
     if (thickness == 1)
       thickness = 0;
     m_impl->displayLine(ip1, ip2, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2237,7 +2282,8 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsi
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayPoint(ip, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2263,7 +2309,8 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w, u
       thickness = 0;
 
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2291,7 +2338,8 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, const vpImagePoin
     unsigned int h = static_cast<unsigned int>(vpMath::round(bottomRight.get_v() - topLeft.get_v()));
 
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2317,7 +2365,8 @@ void vpDisplayX::displayRectangle(const vpRect &rectangle, const vpColor &color,
     unsigned int w = static_cast<unsigned int>(vpMath::round(rectangle.getWidth()));
     unsigned int h = static_cast<unsigned int>(vpMath::round(rectangle.getHeight()));
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2345,7 +2394,8 @@ bool vpDisplayX::getClick(bool blocking)
     vpImagePoint ip;
     vpMouseButton::vpMouseButtonType button;
     ret = m_impl->getClick(ip, button, blocking, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2373,7 +2423,8 @@ bool vpDisplayX::getClick(vpImagePoint &ip, bool blocking)
   if (m_displayHasBeenInitialized) {
     vpMouseButton::vpMouseButtonType button;
     ret = m_impl->getClick(ip, button, blocking, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2404,7 +2455,8 @@ bool vpDisplayX::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &bu
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getClick(ip, button, blocking, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2439,7 +2491,8 @@ bool vpDisplayX::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getClickUp(ip, button, blocking, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2448,7 +2501,7 @@ bool vpDisplayX::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &
 /*
   Gets the displayed image (including the overlay plane)
   and returns an RGBa image. If a scale factor is set using setScale(), the
-  size of the image is the size of the downscaled image.
+  size of the image is the size of the down scaled image.
 
   \param I : Image to get.
 */
@@ -2456,7 +2509,8 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->getImage(I, m_width, m_height);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
@@ -2518,7 +2572,8 @@ bool vpDisplayX::getKeyboardEvent(bool blocking)
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getKeyboardEvent(blocking);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2552,7 +2607,8 @@ bool vpDisplayX::getKeyboardEvent(std::string &key, bool blocking)
   bool ret = false;
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getKeyboardEvent(key, blocking);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2575,7 +2631,8 @@ bool vpDisplayX::getPointerMotionEvent(vpImagePoint &ip)
   bool ret = false;
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getPointerMotionEvent(ip, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
@@ -2596,14 +2653,16 @@ bool vpDisplayX::getPointerPosition(vpImagePoint &ip)
   bool ret = false;
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getPointerPosition(ip, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no
-// symbols
-void dummy_vpDisplayX(){};
+// Work around to avoid warning: libvisp_gui.a(vpDisplayX.cpp.o) has no symbols
+void dummy_vpDisplayX() { };
 #endif

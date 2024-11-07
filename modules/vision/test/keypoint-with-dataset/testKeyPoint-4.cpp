@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +30,14 @@
  * Description:
  * Test keypoint matching and pose estimation with mostly OpenCV functions
  * calls to detect potential memory leaks in testKeyPoint-2.cpp.
- *
-*****************************************************************************/
+ */
+
+/*!
+  \example testKeyPoint-4.cpp
+
+  \brief   Test keypoint matching and pose estimation with mostly OpenCV
+  functions calls to detect potential memory leaks in testKeyPoint-2.cpp.
+*/
 
 #include <iostream>
 
@@ -56,6 +61,10 @@
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
@@ -74,7 +83,7 @@ Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -118,7 +127,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
       display = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -131,7 +140,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -142,7 +151,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &I,
-              vpImage<Type> &Imatch, vpImage<Type> &Iref)
+  vpImage<Type> &Imatch, vpImage<Type> &Iref)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
@@ -182,15 +191,17 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   // Load config for tracker
   std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
+#if defined(VISP_HAVE_PUGIXML)
   tracker.loadConfigFile(tracker_config_file);
   tracker.getCameraParameters(cam);
-#if 0
+#else
   // Corresponding parameters manually set to have an example code
   vpMe me;
   me.setMaskSize(5);
   me.setMaskNumber(180);
   me.setRange(8);
-  me.setThreshold(10000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
   me.setMu1(0.5);
   me.setMu2(0.5);
   me.setSampleStep(4);
@@ -214,7 +225,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   std::string init_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.init");
   if (opt_display && opt_click_allowed) {
     tracker.initClick(I, init_file);
-  } else {
+  }
+  else {
     vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
     tracker.initFromPose(I, cMoi);
   }
@@ -288,7 +300,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     std::vector<cv::DMatch> matches;
     matcher->knnMatch(queryDescriptors, trainDescriptors, knn_matches, 2);
     for (std::vector<std::vector<cv::DMatch> >::const_iterator it = knn_matches.begin(); it != knn_matches.end();
-         ++it) {
+      ++it) {
       if (it->size() > 1) {
         double ratio = (*it)[0].distance / (*it)[1].distance;
         if (ratio < 0.85) {
@@ -300,11 +312,11 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     vpPose estimated_pose;
     for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
       vpPoint pt(points3f[(size_t)(it->trainIdx)].x, points3f[(size_t)(it->trainIdx)].y,
-                 points3f[(size_t)(it->trainIdx)].z);
+        points3f[(size_t)(it->trainIdx)].z);
 
       double x = 0.0, y = 0.0;
       vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x,
-                                           queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
+        queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
       pt.set_x(x);
       pt.set_y(y);
 
@@ -320,7 +332,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         estimated_pose.setRansacMaxTrials(500);
         estimated_pose.computePose(vpPose::RANSAC, cMo);
         is_pose_estimated = true;
-      } catch (...) {
+      }
+      catch (...) {
         is_pose_estimated = false;
       }
     }
@@ -333,7 +346,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
       for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
         vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y, trainKeyPoints[(size_t)it->trainIdx].pt.x);
         vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
-                             queryKeyPoints[(size_t)it->queryIdx].pt.x + Iref.getWidth());
+          queryKeyPoints[(size_t)it->queryIdx].pt.x + Iref.getWidth());
         vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
       }
 
@@ -354,12 +367,14 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         if (button == vpMouseButton::button3) {
           opt_click = false;
         }
-      } else {
+      }
+      else {
         // Use right click to enable/disable step by step tracking
         if (vpDisplay::getClick(I, button, false)) {
           if (button == vpMouseButton::button3) {
             opt_click = true;
-          } else if (button == vpMouseButton::button1) {
+          }
+          else if (button == vpMouseButton::button1) {
             break;
           }
         }
@@ -368,12 +383,6 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   }
 }
 
-/*!
-  \example testKeyPoint-4.cpp
-
-  \brief   Test keypoint matching and pose estimation with mostly OpenCV
-  functions calls to detect potential memory leaks in testKeyPoint-2.cpp.
-*/
 int main(int argc, const char **argv)
 {
   try {
@@ -392,8 +401,8 @@ int main(int argc, const char **argv)
 
     if (env_ipath.empty()) {
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
-                   "variable value."
-                << std::endl;
+        "variable value."
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -411,7 +420,8 @@ int main(int argc, const char **argv)
       run_test(env_ipath, opt_click_allowed, opt_display, I, Imatch, Iref);
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

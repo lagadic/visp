@@ -3,25 +3,29 @@
   \page tutorial-getting-started Tutorial: How to create and build a project that uses ViSP and CMake on Unix or Windows
   \tableofcontents
 
-\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tutorial_install_pkg or with an \ref tutorial_install_src.
+\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tutorial_install_pkg or
+with an \ref tutorial_install_src.
 
-In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu,
+Debian, ...) or on Windows.
 
-The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
+The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not
+familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
-Note also that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endverbatim
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `tutorial/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/image.
 
 \section started_quick Quick getting started
 
-In this section we show how to build an existing project that uses ViSP as third-party and CMake for the build mechanism. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image. It contains a set of source files `tutorial-viewer.cpp`, `tutorial-image-viewer.cpp` and a `CMakeLists.txt` file. We show here how to get these files and build them.
+In this section we show how to build an existing project that uses ViSP as third-party and CMake for the build
+mechanism. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from
+https://github.com/lagadic/visp/tutorial/image. It contains a set of source files `tutorial-viewer.cpp`,
+`tutorial-image-viewer.cpp` and a `CMakeLists.txt` file. We show here how to get these files and build them.
 
 \subsection started_quick_unix On unix-like operating system
 
-1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
+1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to
+point 2. since your workspace should be already existing.<br>
 Check if `VISP_WS` environment var exists:
 \verbatim
 $ env | grep VISP_WS
@@ -33,12 +37,12 @@ $ source ~/.bashrc
 $ mkdir -p $VISP_WS
 \endverbatim
 
-2. Get the source code using Subversion (`svn`):
+2. Copy the source code from `tutorial/image` ViSP folder
 \verbatim
-$ sudo apt-get install subversion
 $ cd $VISP_WS
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+$ cp -p -r visp/tutorial/image .
 \endverbatim
+or donwload it from https://github.com/lagadic/visp/tree/master/tutorial/image.
 
 3. Create a build folder
 \verbatim
@@ -80,15 +84,13 @@ C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
 \endverbatim
 
-2. Get the source code in your workspace either using Subversion (`svn`), either copying the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the \ref tutorial_install_src tutorials, or downloading the source from https://github.com/lagadic/visp/tutorial/image:<br>
-With Subversion:
-\verbatim
-C:\> svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endverbatim
-Or by copy from ViSP source code
+2. Get the source code in your workspace <br>
+You can either copy the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the
+\ref tutorial_install_src tutorials
 \verbatim
 C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image
 \endverbatim
+or downloading it from https://github.com/lagadic/visp/tutorial/image.
 
 3. Create a build folder
 \verbatim
@@ -161,7 +163,8 @@ C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
 \endverbatim
 
-Enter `VISP_WS` folder and create a new folder let say `started` that will contain your first project that uses ViSP as third-party:
+Enter `VISP_WS` folder and create a new folder let say `started` that will contain your first project that uses ViSP
+as third-party:
 
 - <b>On unix-like operating system</b><br>
 \verbatim
@@ -177,9 +180,11 @@ C:\> mkdir started
 
 \subsection image_code Get tutorial-viewer.cpp file
 
-Let's start to write our first C++ example to see how to read an image and open a window to display the image with ViSP. This example is provided in tutorial-viewer.cpp example and given below.
+Let's start to write our first C++ example to see how to read an image and open a window to display the image with ViSP.
+This example is provided in tutorial-viewer.cpp example and given below.
 
-Open your favorite editor and copy/paste the content of this example in `VISP_WS/started/tutorial-viewer.cpp` source file.
+Open your favorite editor and copy/paste the content of this example in `VISP_WS/started/tutorial-viewer.cpp` source
+file.
 
 The code to copy/paste is the following:
 
@@ -188,7 +193,10 @@ The code to copy/paste is the following:
 Here is the detailed explanation of the source, line by line:
 \snippet tutorial-viewer.cpp Include display
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available.
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or
+the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The
+third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is
+available. The last one is also cross-platform and requires that OpenCV is available.
 
 \snippet tutorial-viewer.cpp Include io
 Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
@@ -197,10 +205,12 @@ Include the header that allows to read/write PGM, PPM, PNG and JPEG images from 
 Create an instance of a color image where each pixel is coded in RGBa.
 
 \snippet tutorial-viewer.cpp vpImage reading
-The image `I` is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
+The image `I` is initialized by reading an image file from the disk. If the image format is not supported we throw an
+exception.
 
 \snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image `I`. The first viewer that is available is used. Here we create the link between the image `I` and the display `d`. Note that an image can only have one display.
+Create an instance of an image display window for image `I`. The first viewer that is available is used. Here we create
+the link between the image `I` and the display `d`. Note that an image can only have one display.
 
 \snippet tutorial-viewer.cpp vpDisplay set title
 The title of the display is then set to "My image".
@@ -213,13 +223,14 @@ Here we handle mouse events. We are waiting for a blocking mouse click to end th
 
 \subsection image_cmake Get CMakeLists.txt file
 
-Now you have to create a `CMakeLists.txt` file that gives the instructions on how to build `tutorial-viewer.cpp` example. A minimalistic `CMakeLists.txt` should contain the following lines.
+Now you have to create a `CMakeLists.txt` file that gives the instructions on how to build `tutorial-viewer.cpp`
+example. A minimalistic `CMakeLists.txt` should contain the following lines.
 
 Open your editor and copy/paste the following lines in `VISP_WS/started/CMakeLists.txt` file.
 \code
-project(tutorial-image)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-image)
 
 find_package(VISP REQUIRED)
 
@@ -237,9 +248,9 @@ The `find_package()` CMake command searches for a `VISPConfig.cmake` file that w
 
 Note that the previous `CMakeLists.txt` file can also be:
 \code
-project(tutorial-image)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-image)
 
 find_package(VISP REQUIRED)
 if(VISP_FOUND)
@@ -249,7 +260,8 @@ endif(VISP_FOUND)
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 \endcode
 
-where `VISP_USE_FILE` variable is set to the full path to `VISPUse.cmake` file that contains all the CMake material that allow to build your project with ViSP. In other terms, the line
+where `VISP_USE_FILE` variable is set to the full path to `VISPUse.cmake` file that contains all the CMake material
+that allow to build your project with ViSP. In other terms, the line
 \code
   include(${VISP_USE_FILE})
 \endcode
@@ -263,16 +275,15 @@ will include the following lines to your `CMakeFile.txt`
 
 Get `monkey.ppm` image and copy it to `VISP_WS/started` either:
 - copying it from ViSP source code; the file is in `VISP_WS/tutorial/image/monkey.ppm`
-- using Subversion:
-\verbatim
-svn export https://github.com/lagadic/visp.git/trunk/tutorial/image/monkey.ppm
-\endverbatim
-- by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using the Raw button
+- using download it from https://github.com/lagadic/visp/blob/master/tutorial/image/
+  by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using
+  the Raw button
 
 
 \subsection image_unix On unix-like operating system
 
-In this section we supppose that you have created a folder `$VISP_WS/started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files.
+In this section we supppose that you have created a folder `$VISP_WS/started` that contains `CMakeLists.txt`,
+`tutorial-viewer.cpp` and `monkey.ppm` files.
 
 \subsubsection image_unix_build_folder Create a build folder
 

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,17 +29,12 @@
  *
  * Description:
  * Firewire cameras video capture.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
-  \file test1394TwoGrabber.cpp
+  \example test1394TwoGrabber.cpp
 
-  \brief  Aquire images using libdc1394-2.x library.
-
+  \brief  Acquire images using libdc1394-2.x library.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -49,17 +43,16 @@
 #include <iostream>
 #include <string>
 
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if defined(VISP_HAVE_DC1394)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
-/*!
-  \example test1394TwoGrabber.cpp
 
-
-
-*/
 int main()
 {
   try {
@@ -115,21 +108,16 @@ int main()
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
-  } catch (...) {
+  }
+  catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
 #else
 int main()
 {
-  vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-          "You should install libdc1394-2 to use this binary.");
+  vpTRACE("Ieee 1394 grabber capabilities are not available...");
+  vpTRACE("You should install libdc1394-2 to use this binary.");
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -44,6 +44,7 @@
 #include <visp3/core/vpConvert.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
+BEGIN_VISP_NAMESPACE
 /*!
   Unary function used to transform a cv::KeyPoint to a vpImagePoint.
   \param keypoint : KeyPoint to convert.
@@ -185,7 +186,7 @@ cv::Point3d vpConvert::vpCamPointToPoint3d(const vpPoint &point)
 }
 
 /*!
-  Unary function to convert the 3D coordinates in the object frame to a cv::Point3f. 
+  Unary function to convert the 3D coordinates in the object frame to a cv::Point3f.
   \param point : Point to convert.
 
   \return A cv::Point3f with the 3D coordinates stored in vpPoint in the
@@ -248,7 +249,8 @@ void vpConvert::convertFromOpenCV(const cv::Point3f &from, vpPoint &to, bool cam
 {
   if (cameraFrame) {
     to = point3fToVpCamPoint(from);
-  } else {
+  }
+  else {
     to = point3fToVpObjectPoint(from);
   }
 }
@@ -264,7 +266,8 @@ void vpConvert::convertFromOpenCV(const cv::Point3d &from, vpPoint &to, bool cam
 {
   if (cameraFrame) {
     to = point3dToVpCamPoint(from);
-  } else {
+  }
+  else {
     to = point3dToVpObjectPoint(from);
   }
 }
@@ -314,7 +317,8 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vec
   to.resize(from.size());
   if (cameraFrame) {
     std::transform(from.begin(), from.end(), to.begin(), point3fToVpCamPoint);
-  } else {
+  }
+  else {
     std::transform(from.begin(), from.end(), to.begin(), point3fToVpObjectPoint);
   }
 }
@@ -331,7 +335,8 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vec
   to.resize(from.size());
   if (cameraFrame) {
     std::transform(from.begin(), from.end(), to.begin(), point3dToVpCamPoint);
-  } else {
+  }
+  else {
     std::transform(from.begin(), from.end(), to.begin(), point3dToVpObjectPoint);
   }
 }
@@ -377,7 +382,8 @@ void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3f &to, bool camer
 {
   if (cameraFrame) {
     to = vpCamPointToPoint3f(from);
-  } else {
+  }
+  else {
     to = vpObjectPointToPoint3f(from);
   }
 }
@@ -393,7 +399,8 @@ void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3d &to, bool camer
 {
   if (cameraFrame) {
     to = vpCamPointToPoint3d(from);
-  } else {
+  }
+  else {
     to = vpObjectPointToPoint3d(from);
   }
 }
@@ -432,7 +439,8 @@ void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv
   to.resize(from.size());
   if (cameraFrame) {
     std::transform(from.begin(), from.end(), to.begin(), vpCamPointToPoint3f);
-  } else {
+  }
+  else {
     std::transform(from.begin(), from.end(), to.begin(), vpObjectPointToPoint3f);
   }
 }
@@ -449,12 +457,13 @@ void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv
   to.resize(from.size());
   if (cameraFrame) {
     std::transform(from.begin(), from.end(), to.begin(), vpCamPointToPoint3d);
-  } else {
+  }
+  else {
     std::transform(from.begin(), from.end(), to.begin(), vpObjectPointToPoint3d);
   }
 }
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpConvert.cpp.o) has no
-// symbols
-void dummy_vpConvert(){};
+// Work around to avoid warning: libvisp_core.a(vpConvert.cpp.o) has no symbols
+void dummy_vpConvert() { };
 #endif

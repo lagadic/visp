@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,21 +29,20 @@
  *
  * Description:
  * D3D renderer for windows 32 display
- *
- * Authors:
- * Bruno Renier
- *
- *****************************************************************************/
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+ */
 
 #include <algorithm>
 
 #include <visp3/core/vpConfig.h>
+
 #if (defined(_WIN32) & defined(VISP_HAVE_D3D9))
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/gui/vpD3DRenderer.h>
+
+BEGIN_VISP_NAMESPACE
 
 /*
   Be careful, when using :
@@ -73,11 +71,11 @@
 */
 vpD3DRenderer::vpD3DRenderer()
 {
-  pD3D = NULL;
-  pd3dDevice = NULL;
-  pSprite = NULL;
-  pd3dText = NULL;
-  pd3dVideoText = NULL;
+  pD3D = nullptr;
+  pd3dDevice = nullptr;
+  pSprite = nullptr;
+  pd3dText = nullptr;
+  pd3dVideoText = nullptr;
   textWidth = 0;
 
   // D3D palette
@@ -159,7 +157,7 @@ vpD3DRenderer::vpD3DRenderer()
 
   // Creates a logical font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
+                     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, nullptr);
 }
 
 /*!
@@ -170,13 +168,13 @@ vpD3DRenderer::~vpD3DRenderer()
 {
   DeleteObject(hFont);
 
-  if (pd3dDevice != NULL)
+  if (pd3dDevice != nullptr)
     pd3dDevice->Release();
-  if (pD3D != NULL)
+  if (pD3D != nullptr)
     pD3D->Release();
-  if (pd3dText != NULL)
+  if (pd3dText != nullptr)
     pd3dText->Release();
-  if (pd3dVideoText != NULL)
+  if (pd3dVideoText != nullptr)
     pd3dVideoText->Release();
 }
 
@@ -210,7 +208,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
   hWnd = hwnd;
 
   // D3D initialize
-  if (NULL == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
+  if (nullptr == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
     throw vpDisplayException(vpDisplayException::notInitializedError, "Can't initialize D3D!");
 
   D3DDISPLAYMODE d3ddm;
@@ -287,9 +285,9 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
 void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         vpRGBa val = I[i][j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -298,11 +296,12 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, u
         imBuffer[++index_] = val.A;
       }
     }
-  } else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+  }
+  else {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         vpRGBa val = I[i_][j * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -323,9 +322,9 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, u
 void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         unsigned char val = I[i][j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -334,11 +333,12 @@ void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBu
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+  }
+  else {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         unsigned char val = I[i_][j * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -365,10 +365,10 @@ void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *i
   int w = j_max - j_min;
 
   if (m_rscale == 1) {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = i_min + i;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][j_min + j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -377,11 +377,12 @@ void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *i
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
-    for (int i = 0; i < h; i++) {
+  }
+  else {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val;
@@ -408,10 +409,10 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
   int w = j_max - j_min;
 
   if (m_rscale == 1) {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = i_min + i;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         vpRGBa val = I[i_][j_min + j];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -420,11 +421,12 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
-    for (int i = 0; i < h; i++) {
+  }
+  else {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         vpRGBa val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = ii_ + j * 4;
         imBuffer[index_] = val.B;
@@ -443,7 +445,7 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
 void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -454,7 +456,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -467,7 +469,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -479,13 +481,13 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
                               unsigned int height)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -495,7 +497,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -508,7 +510,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -519,7 +521,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
 void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -530,7 +532,7 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -543,7 +545,7 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -555,13 +557,13 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
                               unsigned int height)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -571,7 +573,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -584,7 +586,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -596,7 +598,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
 bool vpD3DRenderer::render()
 {
   // Clears the back buffer to a blue color
-  // pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET,
+  // pd3dDevice->Clear( 0, nullptr, D3DCLEAR_TARGET,
   // D3DCOLOR_XRGB(0,0,255), 1.0f, 0 );
 
   // Begins the scene.
@@ -617,17 +619,17 @@ bool vpD3DRenderer::render()
 
 #if (D3DX_SDK_VERSION <= 9)
   pSprite->Begin(); //
-  pSprite->Draw(pd3dVideoText, &r, NULL, NULL, NULL, NULL, 0xFFFFFFFF);
+  pSprite->Draw(pd3dVideoText, &r, nullptr, nullptr, nullptr, nullptr, 0xFFFFFFFF);
 #else
   pSprite->Begin(0);
-  pSprite->Draw(pd3dVideoText, &r, NULL, NULL, 0xFFFFFFFF);
+  pSprite->Draw(pd3dVideoText, &r, nullptr, nullptr, 0xFFFFFFFF);
 #endif
   pSprite->End();
 
   // Ends the scene.
   pd3dDevice->EndScene();
   // Presents the backbuffer
-  pd3dDevice->Present(NULL, NULL, NULL, NULL);
+  pd3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
 
   return true;
 }
@@ -647,7 +649,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
   }
 
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -659,7 +661,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -672,7 +674,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -687,7 +689,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
                              unsigned int thickness, int style)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     // Will contain the texture's surface drawing context
     HDC hDCMem;
 
@@ -727,7 +729,8 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         if (ip2_.get_i() < ip1_.get_i()) {
           std::swap(ip1_, ip2_);
         }
-      } else if (ip2_.get_j() < ip1_.get_j()) {
+      }
+      else if (ip2_.get_j() < ip1_.get_j()) {
         std::swap(ip1_, ip2_);
       }
 
@@ -742,22 +745,24 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
           double j = ip1_.get_j();
 
           // Move to the starting point
-          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
           // Draw the line
           LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
-      } else {
+      }
+      else {
         for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
           double i = slope * j + orig;
           // Move to the starting point
-          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
           // Draw the line
           LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
       }
-    } else {
-      // move to the starting point
-      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+    }
+    else {
+   // move to the starting point
+      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
       // Draw the line
       LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
     }
@@ -784,20 +789,20 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
                              bool fill, unsigned int thickness)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     if (fill == false) {
       drawLine(topLeft, topLeft + vpImagePoint(0, width), color, thickness);
       drawLine(topLeft + vpImagePoint(0, width), topLeft + vpImagePoint(height, width), color, thickness);
       drawLine(topLeft + vpImagePoint(height, width), topLeft + vpImagePoint(height, 0), color, thickness);
       drawLine(topLeft + vpImagePoint(height, 0), topLeft, color, thickness);
-    } else {
+    }
+    else {
       vpImagePoint topLeftScaled = topLeft / m_rscale;
       unsigned int widthScaled = width / m_rscale;
       unsigned int heightScaled = height / m_rscale;
 
       if (topLeftScaled.get_i() > (int)m_rheight - 1 || topLeftScaled.get_j() > (int)m_rwidth - 1 ||
           topLeftScaled.get_i() + height < 0 || topLeftScaled.get_j() + width < 0) {
-        //       vpCERROR<<"Invalid parameters!"<<std::endl;
         return;
       }
 
@@ -816,7 +821,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
 
       // locks the texture to directly access it
       if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-        vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+        std::cout << "D3D : Couldn't lock the texture!" << std::endl;
         return;
       }
 
@@ -826,15 +831,15 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
 
       if (topLeftScaled.get_i() >= 0 && topLeftScaled.get_j() + widthScaled < m_rwidth &&
           topLeftScaled.get_i() + heightScaled < m_rheight && topLeftScaled.get_j() >= 0) {
-        for (int x = 0; x < rectW; x++) {
-          for (int y = 0; y < rectH; y++)
+        for (int x = 0; x < rectW; ++x) {
+          for (int y = 0; y < rectH; ++y)
             setBufferPixel(buf, pitch, x, y, color);
         }
       }
 
       // unlocks the texture
       if (pd3dText->UnlockRect(0) != D3D_OK)
-        vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+        std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
     }
   }
 }
@@ -846,7 +851,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
 void vpD3DRenderer::clear(const vpColor &color)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -857,7 +862,7 @@ void vpD3DRenderer::clear(const vpColor &color)
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -879,7 +884,7 @@ void vpD3DRenderer::clear(const vpColor &color)
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -893,12 +898,14 @@ void vpD3DRenderer::subDrawCircle(int i, int j, int x, int y, vpColor col, unsig
     setBufferPixel(buf, pitch, i, j - y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + y, j, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - y, j, col, maxX, maxY);
-  } else if (x == y) {
+  }
+  else if (x == y) {
     setBufferPixel(buf, pitch, i + x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + x, j - y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j - y, col, maxX, maxY);
-  } else if (x < y) {
+  }
+  else if (x < y) {
     setBufferPixel(buf, pitch, i + x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + x, j - y, col, maxX, maxY);
@@ -928,17 +935,17 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
     return;
 
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT rec;
     int radiusScaled_ = static_cast<int>(radiusScaled);
     int rleft = (vpMath::round(centerScaled.get_j() - radiusScaled_) > 0)
-                    ? vpMath::round(centerScaled.get_j()) - radiusScaled_
-                    : 0;
+      ? vpMath::round(centerScaled.get_j()) - radiusScaled_
+      : 0;
     int rtop = (vpMath::round(centerScaled.get_i() - radiusScaled_) > 0)
-                   ? vpMath::round(centerScaled.get_i()) - radiusScaled_
-                   : 0;
+      ? vpMath::round(centerScaled.get_i()) - radiusScaled_
+      : 0;
 
     rec.top = rtop;
     rec.left = rleft;
@@ -955,7 +962,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
 
     // locks the texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &rec, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -978,7 +985,8 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
       x++;
       if (p < 0) {
         p += ((x << 1) + 1) << 1;
-      } else {
+      }
+      else {
         y--;
         p += (((x - y) << 1) + 1) << 1;
       }
@@ -987,7 +995,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
@@ -1085,7 +1093,8 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
   if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
       (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
     // DisplayCrossLarge(i1,j1,3,col) ;
-  } else {
+  }
+  else {
     a /= lg;
     b /= lg;
 
@@ -1121,7 +1130,7 @@ void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pit
   unsigned int j = I.getWidth();
 
   unsigned int k = 0;
-  for (unsigned int i = 0; i < I.getHeight() * I.getWidth(); i++) {
+  for (unsigned int i = 0; i < I.getHeight() * I.getWidth(); ++i) {
     // go to the next line
     if (j == 0) {
       k += pitch - (I.getWidth() * 4);
@@ -1146,7 +1155,7 @@ void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pit
 void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
 
     // resize the destination image as needed
     I.resize(m_rheight, m_rwidth);
@@ -1161,7 +1170,7 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 
     // locks the whole texture to directly access it
     if (pd3dText->LockRect(0, &d3dLRect, &r, 0) != D3D_OK) {
-      vpCERROR << "D3D : Couldn't lock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't lock the texture!" << std::endl;
       return;
     }
 
@@ -1174,13 +1183,14 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 
     // unlocks the texture
     if (pd3dText->UnlockRect(0) != D3D_OK)
-      vpCERROR << "D3D : Couldn't unlock the texture!" << std::endl;
+      std::cout << "D3D : Couldn't unlock the texture!" << std::endl;
   }
 }
 
+END_VISP_NAMESPACE
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no
-// symbols
-void dummy_vpD3DRenderer(){};
+// Work around to avoid warning: libvisp_gui.a(vpD3DRenderer.cpp.o) has no symbols
+void dummy_vpD3DRenderer() { };
 #endif
 #endif

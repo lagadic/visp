@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,17 +32,18 @@
  * Acquire images using 1394 device with cfox (MAC OSX) and display it
  * using GTK or GTK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
-#include <stdlib.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h>
 /*!
   \file grabV4l2.cpp
 
   \brief Example of image framegrabbing using vpV4l2Grabber class.
 
 */
+
+#include <stdlib.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_V4L2
 
@@ -60,7 +61,12 @@
 // List of allowed command line options
 #define GETOPTARGS "df:i:hn:o:p:s:t:v:x"
 
-typedef enum {
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
+
+typedef enum
+{
   grey_image = 0, // for ViSP unsigned char grey images
   color_image     // for ViSP vpRGBa color images
 } vpImage_type;
@@ -212,7 +218,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
       verbose = true;
       break;
     case 'h':
-      usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat, image_type, opath);
+      usage(argv[0], nullptr, fps, input, scale, niter, device, pixelformat, image_type, opath);
       return false;
       break;
 
@@ -225,7 +231,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat, image_type, opath);
+    usage(argv[0], nullptr, fps, input, scale, niter, device, pixelformat, image_type, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -292,8 +298,9 @@ int main(int argc, const char **argv)
       // Acquire an image
       g.acquire(Ig);
       std::cout << "Grey image size: width : " << Ig.getWidth() << " height: " << Ig.getHeight() << std::endl;
-    } else {
-      // Open the framegrabber with the specified settings on color images
+    }
+    else {
+   // Open the framegrabber with the specified settings on color images
       g.open(Ic);
       // Acquire an image
       g.acquire(Ic);
@@ -318,7 +325,8 @@ int main(int argc, const char **argv)
         display.init(Ig, 100, 100, "V4L2 grey images framegrabbing");
         vpDisplay::display(Ig);
         vpDisplay::flush(Ig);
-      } else {
+      }
+      else {
         display.init(Ic, 100, 100, "V4L2 color images framegrabbing");
         vpDisplay::display(Ic);
         vpDisplay::flush(Ic);
@@ -338,7 +346,8 @@ int main(int argc, const char **argv)
           // Flush the display
           vpDisplay::flush(Ig);
         }
-      } else {
+      }
+      else {
         g.acquire(Ic);
         if (opt_display) {
           // Display the image
@@ -355,7 +364,8 @@ int main(int argc, const char **argv)
         std::cout << "Write: " << filename << std::endl;
         if (opt_image_type == grey_image) {
           vpImageIo::write(Ig, filename);
-        } else {
+        }
+        else {
           vpImageIo::write(Ic, filename);
         }
       }
@@ -366,7 +376,8 @@ int main(int argc, const char **argv)
 
     g.close();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

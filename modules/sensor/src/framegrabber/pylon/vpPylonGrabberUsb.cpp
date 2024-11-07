@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  * Authors:
  * Wenfeng CAI
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPylonGrabberUsb.cpp
@@ -48,6 +48,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpTime.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
    Default constructor that consider the first camera found on the bus as
    active.
@@ -105,7 +106,7 @@ std::ostream &vpPylonGrabberUsb::getCameraInfo(std::ostream &os)
 }
 
 /*!
-  Return the handler to the active camera or NULL if the camera is not
+  Return the handler to the active camera or nullptr if the camera is not
   connected. This function was designed to provide a direct access to
   the Pylon SDK to get access to advanced functionalities that are not
   implemented in this class.
@@ -116,8 +117,9 @@ Pylon::CInstantCamera *vpPylonGrabberUsb::getCameraHandler()
 
   if (m_connected == true) {
     return &m_camera;
-  } else {
-    return NULL;
+  }
+  else {
+    return nullptr;
   }
 }
 
@@ -373,7 +375,8 @@ float vpPylonGrabberUsb::setGain(bool gain_auto, float gain_value)
   if (GenApi::IsWritable(m_camera.Gain)) {
     m_camera.Gain.SetValue(gain_value);
     return m_camera.Gain.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set gain.");
 }
 
@@ -398,7 +401,8 @@ float vpPylonGrabberUsb::setBlackLevel(float blacklevel_value)
   if (GenApi::IsWritable(m_camera.BlackLevel)) {
     m_camera.BlackLevel.SetValue(blacklevel_value);
     return m_camera.BlackLevel.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set blacklevel.");
 }
 
@@ -436,7 +440,8 @@ float vpPylonGrabberUsb::setExposure(bool exposure_on, bool exposure_auto, float
   if (GenApi::IsWritable(m_camera.ExposureTime)) {
     m_camera.ExposureTime.SetValue(exposure_value * 1000);
     return m_camera.ExposureTime.GetValue() * 0.001;
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set exposure.");
 }
 
@@ -462,7 +467,8 @@ float vpPylonGrabberUsb::setGamma(bool gamma_on, float gamma_value)
     else
       m_camera.Gamma.SetValue(1);
     return m_camera.Gamma.GetValue();
-  } else
+  }
+  else
     throw vpException(vpException::notImplementedError, "Don't know how to set gamma.");
 }
 
@@ -787,9 +793,9 @@ vpPylonGrabber &vpPylonGrabberUsb::operator>>(vpImage<vpRGBa> &I)
   acquire(I);
   return *this;
 }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonGrabberUsb.cpp.o) has no symbols
-void dummy_vpPylonGrabberUsb(){};
+void dummy_vpPylonGrabberUsb() { };
 #endif // #ifdef VISP_HAVE_PYLON

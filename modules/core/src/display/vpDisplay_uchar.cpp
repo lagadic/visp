@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +30,7 @@
  * Description:
  * Display implementation.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpDisplay.h>
 
@@ -41,7 +40,7 @@
 // Modifications done in this file should be reported in all vpDisplay_*.cpp
 // files that implement other types (unsigned char, vpRGB, vpRGBa)
 //************************************************************************
-
+BEGIN_VISP_NAMESPACE
 /*!
   Close the display attached to I.
 */
@@ -96,8 +95,9 @@ void vpDisplay::displayCamera(const vpImage<unsigned char> &I, const vpHomogeneo
   vp_display_display_camera(I, cMo, cam, size, color, thickness);
 }
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Display a string at the image point \e ip location.
+  \deprecated Display a string at the image point \e ip location.
   Use rather displayText() that does the same.
 
   To select the font used to display the string, use setFont().
@@ -112,11 +112,11 @@ void vpDisplay::displayCamera(const vpImage<unsigned char> &I, const vpHomogeneo
 void vpDisplay::displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
                                   const vpColor &color)
 {
-  vp_display_display_char_string(I, ip, string, color);
+  vp_display_display_text(I, ip, string, color);
 }
 
 /*!
-  Display a string at the image point (i,j) location.
+  \deprecated Display a string at the image point (i,j) location.
   Use rather displayText() that does the same.
 
   To select the font used to display the string, use setFont().
@@ -131,7 +131,25 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, const vpImage
 void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
                                   const vpColor &color)
 {
-  vp_display_display_char_string(I, i, j, string, color);
+  vp_display_display_text(I, i, j, string, color);
+}
+#endif
+
+/*!
+  Display a circle.
+  \param I : The image associated to the display.
+  \param circle : Circle to display.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
+  \param thickness : Thickness of the circle. This parameter is only useful
+  when \e fill is set to false.
+*/
+void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImageCircle &circle,
+                              const vpColor &color, bool fill, unsigned int thickness)
+{
+  vp_display_display_circle(I, circle.getCenter(), static_cast<unsigned int>(circle.getRadius()), color, fill, thickness);
 }
 
 /*!
@@ -237,14 +255,18 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, 
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
                                bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
-  for (size_t i = 0; i < ips.size() - 1; i++)
+  size_t  ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_dot_line(I, ips[i], ips[i + 1], color, thickness);
+  }
 
-  if (closeTheShape)
+  if (closeTheShape) {
     vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -259,13 +281,15 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
                                const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
   std::list<vpImagePoint>::const_iterator it = ips.begin();
+  std::list<vpImagePoint>::const_iterator it_end = ips.end();
 
-  vpImagePoint ip_prev = *(it++);
-  for (; it != ips.end(); ++it) {
+  vpImagePoint ip_prev = *(++it);
+  for (; it != it_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;
@@ -286,7 +310,7 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param use_normalized_centered_moments : When false, the parameters coef1, coef2, coef3
   are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
@@ -302,15 +326,15 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<
   The following example shows how to use for example this function to display
   the result of a tracking.
   \code
-    vpMeEllipse ellipse;
-    ...
-    vpDisplay::display(I);
-    ellipse.track(I);
+  vpMeEllipse ellipse;
+  ...
+  vpDisplay::display(I);
+  ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(),
-                              ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
-                              true, vpColor::orange, 1);
-    vpDisplay::flush(I);
+  vpDisplay::displayEllipse(I, ellipse.getCenter(),
+                            ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                            true, vpColor::orange, 1);
+  vpDisplay::flush(I);
   \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
@@ -330,7 +354,7 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
@@ -348,16 +372,16 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
   The following example shows how to use for example this function to display
   the result of a tracking.
   \code
-    vpMeEllipse ellipse;
-    ...
-    vpDisplay::display(I);
-    ellipse.track(I);
+  vpMeEllipse ellipse;
+  ...
+  vpDisplay::display(I);
+  ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(),
-                              ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
-                              ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
-                              true, vpColor::orange, 1);
-    vpDisplay::flush(I);
+  vpDisplay::displayEllipse(I, ellipse.getCenter(),
+                            ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                            ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
+                            true, vpColor::orange, 1);
+  vpDisplay::flush(I);
   \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
@@ -388,7 +412,7 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
 */
 void vpDisplay::displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness,
-                             const vpImagePoint &offset, const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
+                             const vpImagePoint &offset, const std::string &frameName, const vpColor &textColor, const vpImagePoint &textOffset)
 {
   vp_display_display_frame(I, cMo, cam, size, color, thickness, offset, frameName, textColor, textOffset);
 }
@@ -424,7 +448,8 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
 {
   if (segment) {
     vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
-  } else {
+  }
+  else {
     // line equation in image: i = a * j + b
     double delta_j = static_cast<double>(j2) - static_cast<double>(j1);
     double delta_i = static_cast<double>(i2) - static_cast<double>(i1);
@@ -435,18 +460,19 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
     // Test if vertical line
     else if (std::fabs(delta_j) <= std::numeric_limits<double>::epsilon()) {
       vp_display_display_line(I, 0, j1, (I.getHeight() - 1), j1, color, thickness);
-    } else {
+    }
+    else {
       double a = delta_i / delta_j;
-      double b = static_cast<double>(i1) - a * static_cast<double>(j1);
+      double b = static_cast<double>(i1) - (a * static_cast<double>(j1));
       std::vector<vpImagePoint> vip; // Image points that intersect image borders
       // Test intersection with vertical line j=0
       vpImagePoint ip_left(b, 0);
-      if (ip_left.get_i() >= 0. && ip_left.get_i() <= (I.getHeight() - 1.)) {
+      if ((ip_left.get_i() >= 0.) && (ip_left.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_left);
       }
       // Test intersection with vertical line j=width-1
-      vpImagePoint ip_right(a * (I.getWidth() - 1) + b, I.getWidth() - 1.);
-      if (ip_right.get_i() >= 0. && ip_right.get_i() <= (I.getHeight() - 1.)) {
+      vpImagePoint ip_right((a * (I.getWidth() - 1)) + b, I.getWidth() - 1.);
+      if ((ip_right.get_i() >= 0.) && (ip_right.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_right);
       }
       if (vip.size() == 2) {
@@ -455,7 +481,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
       }
       // Test intersection with horizontal line i=0
       vpImagePoint ip_top(0, -b / a);
-      if (ip_top.get_j() >= 0. && ip_top.get_j() <= (I.getWidth() - 1.)) {
+      if ((ip_top.get_j() >= 0.) && (ip_top.get_j() <= (I.getWidth() - 1.))) {
         vip.push_back(ip_top);
       }
       if (vip.size() == 2) {
@@ -464,7 +490,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
       }
       // Test intersection with horizontal line i=height-1
       vpImagePoint ip_bottom(I.getHeight() - 1., (I.getHeight() - 1. - b) / a);
-      if (ip_bottom.get_j() >= 0. && ip_bottom.get_j() <= (I.getWidth() - 1.)) {
+      if ((ip_bottom.get_j() >= 0.) && (ip_bottom.get_j() <= (I.getWidth() - 1.))) {
         vip.push_back(ip_bottom);
       }
       if (vip.size() == 2) {
@@ -486,14 +512,18 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips, bool closeTheShape,
                             const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
-  for (size_t i = 0; i < ips.size() - 1; i++)
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_line(I, ips[i], ips[i + 1], color, thickness);
+  }
 
-  if (closeTheShape)
+  if (closeTheShape) {
     vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -507,13 +537,15 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<v
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
                             const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
   std::list<vpImagePoint>::const_iterator it = ips.begin();
+  std::list<vpImagePoint>::const_iterator it_end = ips.end();
 
-  vpImagePoint ip_prev = *(it++);
-  for (; it != ips.end(); ++it) {
+  vpImagePoint ip_prev = *(++it);
+  for (; it != it_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;
@@ -563,6 +595,20 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vecto
                                const vpColor &color, unsigned int thickness, bool closed)
 {
   vp_display_display_polygon(I, vip, color, thickness, closed);
+}
+
+/*!
+  Display a polygon defined by a set of image points.
+  \param I : The image associated to the display.
+  \param polygon : Polygon to display.
+  \param color : Line color.
+  \param thickness : Line thickness.
+  \param closed : When true display a closed polygon with a segment between first and last image point.
+*/
+void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const vpPolygon &polygon, const vpColor &color,
+                               unsigned int thickness, bool closed)
+{
+  vp_display_display_polygon(I, polygon, color, thickness, closed);
 }
 
 /*!
@@ -732,23 +778,27 @@ void vpDisplay::displayText(const vpImage<unsigned char> &I, int i, int j, const
   to show the overlay. Because it's time spending, use it parcimoniously.
 
   \code
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/core/vpColor.h>
+  #include <visp3/core/vpDisplay.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImagePoint.h>
+  #include <visp3/gui/vpDisplayGDI.h>
 
-int main() {
-  vpImage<unsigned char> I(240, 380);
-  vpDisplayGDI d;
-  d.init(I);
-  vpDisplay::display(I); // display the image
-  vpImagePoint center;
-  unsigned int radius = 100;
-  vpDisplay::displayCircle(I, center, radius, vpColor::red);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay::flush(I); // Mandatory to display the requested features.
-}
+  int main() {
+    vpImage<unsigned char> I(240, 380);
+    vpDisplayGDI d;
+    d.init(I);
+    vpDisplay::display(I); // display the image
+    vpImagePoint center;
+    unsigned int radius = 100;
+    vpDisplay::displayCircle(I, center, radius, vpColor::red);
+
+    vpDisplay::flush(I); // Mandatory to display the requested features.
+  }
   \endcode
 
   \sa flushROI()
@@ -941,70 +991,74 @@ bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMou
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay *d;
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+    vpDisplay *d;
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, false);
-    if (event) {
-      std::cout << "A keyboard event was detected" << std::endl;
-      cpt_event ++;
-    }
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, false);
+      if (event) {
+        std::cout << "A keyboard event was detected" << std::endl;
+        cpt_event ++;
+      }
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
+
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
 {
@@ -1032,70 +1086,74 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay *d;
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+    vpDisplay *d;
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  std::string key;
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, key, false);
-    if (event) {
-      std::cout << "Key detected: " << key << std::endl;
-      cpt_event ++;
-    }
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    std::string key;
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, key, false);
+      if (event) {
+        std::cout << "Key detected: " << key << std::endl;
+        cpt_event ++;
+      }
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
+
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking)
 {
@@ -1123,70 +1181,74 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &k
     to \e false.
 
   Below you will find an example showing how to use this method.
-\code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+  \code
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black image
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay *d;
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black image
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+    vpDisplay *d;
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #else
+    std::cout << "Sorry, no video device is available" << std::endl;
+    return -1;
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Wait for keyboard event
-  std::cout << "Waiting a keyboard event..." << std::endl;
-  vpDisplay::getKeyboardEvent(I, true);
-  std::cout << "A keyboard event was detected" << std::endl;
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Non blocking keyboard event loop
-  int cpt_event = 0;
-  char key[10];
-  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
-  do {
-    bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
-    if (event) {
-      std::cout << "Key detected: " << key << std::endl;
-      cpt_event ++;
-    }
+    // Wait for keyboard event
+    std::cout << "Waiting a keyboard event..." << std::endl;
+    vpDisplay::getKeyboardEvent(I, true);
+    std::cout << "A keyboard event was detected" << std::endl;
 
-    vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+    // Non blocking keyboard event loop
+    int cpt_event = 0;
+    char key[10];
+    std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+    do {
+      bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
+      if (event) {
+        std::cout << "Key detected: " << key << std::endl;
+        cpt_event ++;
+      }
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
-\endcode
+      vpTime::wait(5); // wait 5 ms
+    } while(cpt_event < 5);
+
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
+  \endcode
 */
 bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking)
 {
@@ -1237,7 +1299,7 @@ void vpDisplay::setBackground(const vpImage<unsigned char> &I, const vpColor &co
 
 /*!
   Set the font of a text printed in the display overlay. To print a
-  text you may use displayCharString().
+  text you may use displayText().
 
   \param I : Image associated to the display window.
   \param fontname : The expected font name.
@@ -1291,3 +1353,4 @@ unsigned int vpDisplay::getDownScalingFactor(const vpImage<unsigned char> &I)
 {
   return vp_display_get_down_scaling_factor(I);
 }
+END_VISP_NAMESPACE

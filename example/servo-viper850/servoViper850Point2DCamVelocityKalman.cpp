@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,11 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in camera frame
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoViper850Point2DCamVelocityKalman.cpp
@@ -84,11 +80,15 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
   // - the 6 computed joint velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured joint velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
+  // - the 6 measured joint velocities (m/s, rad/s)
+  // - the 6 measured joint positions (m, rad)
   // - the 2 values of s - s*
   std::string username;
   // Get the user login name
@@ -103,7 +103,8 @@ int main()
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return EXIT_FAILURE;
@@ -240,7 +241,7 @@ int main()
     double t_0, t_1, Tv;
     vpColVector err(2), err_1(2);
     vpColVector dedt_filt(2), dedt_mes(2);
-    dc1394video_frame_t *frame = NULL;
+    dc1394video_frame_t *frame = nullptr;
 
     t_1 = vpTime::measureTimeMs();
 
@@ -285,7 +286,8 @@ int main()
         if (iter == 0) {
           err_1 = 0;
           dedt_mes = 0;
-        } else {
+        }
+        else {
           vpMatrix J1 = task.getTaskJacobian();
           dedt_mes = (err - err_1) / (Tv)-J1 * vm;
           err_1 = err;
@@ -319,7 +321,8 @@ int main()
         vpTime::wait(t_0, 1000. * Tloop);
         // Release the ring buffer used for the last image to start a new acq
         g.enqueue(frame);
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Tracking failed... Stop the robot." << std::endl;
         v = 0;
         // Stop robot
@@ -367,7 +370,8 @@ int main()
     task.print();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

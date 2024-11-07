@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,13 +29,9 @@
  *
  * Description:
  * Compute the pose of a 3D object using the Dementhon method. Assuming that
- * the correspondance between 2D points and 3D points is not done, we use
+ * the correspondence between 2D points and 3D points is not done, we use
  * the RANSAC algorithm to achieve this task
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
@@ -57,6 +52,10 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     std::cout << "Find Matches using Ransac" << std::endl;
@@ -111,7 +110,8 @@ int main()
     std::cout << "Matching is " << (test_fail ? "badly" : "well") << " performed" << std::endl;
 
     return (test_fail ? EXIT_FAILURE : EXIT_SUCCESS);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

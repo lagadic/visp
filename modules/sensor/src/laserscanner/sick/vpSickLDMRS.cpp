@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,14 @@
  * Description:
  * Sick LD-MRS laser driver on UNIX platform.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+
+  \file vpSickLDMRS.cpp
+
+  \brief Driver for the Sick LD-MRS laser scanner.
+*/
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
@@ -55,13 +59,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-/*!
-
-  \file vpSickLDMRS.cpp
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   Default constructor that initialize the Ethernet address to
@@ -69,7 +67,7 @@
   body messages.
 */
 vpSickLDMRS::vpSickLDMRS()
-  : socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true), maxlen_body(104000)
+  : socket_fd(-1), body(nullptr), vAngle(), time_offset(0), isFirstMeasure(true), maxlen_body(104000)
 {
   ip = "131.254.12.119";
   port = 12002;
@@ -138,13 +136,15 @@ bool vpSickLDMRS::setup()
     tv.tv_usec = 0;
     FD_ZERO(&myset);
     FD_SET(static_cast<unsigned int>(socket_fd), &myset);
-    res = select(socket_fd + 1, NULL, &myset, NULL, &tv);
+    res = select(socket_fd + 1, nullptr, &myset, nullptr, &tv);
     if (res < 0 && errno != EINTR) {
       fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno));
       return false;
-    } else if (res > 0) {
+    }
+    else if (res > 0) {
       fprintf(stderr, "ok");
-    } else {
+    }
+    else {
       fprintf(stderr, "Timeout in select() - Cancelling!\n");
       return false;
     }
@@ -237,8 +237,6 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   // get the start/stop angle
   short startAngle = (short)ushortptr[12];
   short stopAngle = (short)ushortptr[13];
-  //   std::cout << "angle in [" << startAngle << "; " << stopAngle
-  // 	    << "]" << std::endl;
 
   // get the number of points of this measurement
   unsigned short numPoints = ushortptr[14];
@@ -280,5 +278,5 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
   return true;
 }
-
+END_VISP_NAMESPACE
 #endif

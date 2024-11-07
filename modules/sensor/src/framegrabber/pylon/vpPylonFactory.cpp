@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  * Authors:
  * Wenfeng CAI
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPylonFactory.cpp
@@ -48,6 +48,7 @@
 #include "vpPylonGrabberGigE.h"
 #include "vpPylonGrabberUsb.h"
 
+BEGIN_VISP_NAMESPACE
 /*!
   \brief Get the vpPylonFactory singleton.
  */
@@ -64,7 +65,7 @@ vpPylonFactory &vpPylonFactory::instance()
   \param  dev_class The device class. See vpPylonFactory::DeviceClass
   for valid values.
   \return The pointer towards the vpPylonGrabber object. It's the
-  caller's responsibility to destroy the object. NULL pointer will be
+  caller's responsibility to destroy the object. nullptr pointer will be
   returned if requested object can't be properly created.
  */
 vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
@@ -77,13 +78,13 @@ vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
     return new vpPylonGrabberUsb();
     break;
   default:
-    return NULL;
+    return nullptr;
     break;
   }
 }
-
+END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonFactory.cpp.o) has no symbols
-void dummy_vpPylonFactory(){};
+void dummy_vpPylonFactory() { };
 #endif // #ifdef VISP_HAVE_PYLON

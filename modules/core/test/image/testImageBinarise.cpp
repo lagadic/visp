@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test for vpImageTools::binarise() function.
- *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+ */
 /*!
   \example testImageBinarise.cpp
 
@@ -46,6 +41,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   std::cout << "Test vpImageTools::binarise() with different data types." << std::endl;
 
   unsigned int width = 5, height = 4;
@@ -82,8 +80,8 @@ int main()
   for (unsigned int i = 0; i < I_rgba.getHeight(); i++) {
     for (unsigned int j = 0; j < I_rgba.getWidth(); j++) {
       std::cout << static_cast<unsigned>(I_rgba[i][j].R) << " ; " << static_cast<unsigned>(I_rgba[i][j].G) << " ; "
-                << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned int>(I_rgba[i][j].A)
-                << std::endl;
+        << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned int>(I_rgba[i][j].A)
+        << std::endl;
     }
     std::cout << std::endl;
   }
@@ -113,7 +111,7 @@ int main()
   for (unsigned int i = 0; i < I_rgba.getHeight(); i++) {
     for (unsigned int j = 0; j < I_rgba.getWidth(); j++) {
       std::cout << static_cast<unsigned>(I_rgba[i][j].R) << " ; " << static_cast<unsigned>(I_rgba[i][j].G) << " ; "
-                << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned>(I_rgba[i][j].A) << std::endl;
+        << static_cast<unsigned>(I_rgba[i][j].B) << " ; " << static_cast<unsigned>(I_rgba[i][j].A) << std::endl;
     }
     std::cout << std::endl;
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,29 +31,35 @@
  * Description:
  * Interface for the Irisa's Afma6 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
-
-#ifndef _vpAfma6_h
-#define _vpAfma6_h
+*****************************************************************************/
 
 /*!
 
   \file vpAfma6.h
 
-  Modelisation of Irisa's gantry robot named Afma6.
+  Modelization of Irisa's gantry robot named Afma6.
 
 */
 
+#ifndef _vpAfma6_h
+#define _vpAfma6_h
+
+#include <visp3/core/vpConfig.h>
+
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpAfma6
 
   \ingroup group_robot_real_gantry group_robot_simu_gantry
 
-  \brief Modelisation of Irisa's gantry robot named Afma6.
+  \brief Modelization of Irisa's gantry robot named Afma6.
 
   In this modelization, different frames have to be considered.
 
@@ -68,20 +74,13 @@
   set this tool during robot initialisation or using set_eMc().
 
 */
-
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-
 class VISP_EXPORT vpAfma6
 {
 public:
 #ifdef VISP_HAVE_AFMA6_DATA
   //! File where constant parameters in relation with the robot are stored:
   //! joint max, min, coupling factor between 4 ant 5 joint, distance between
-  //! 5 and 6 joint, tranformation eMc between end-effector and camera frame.
+  //! 5 and 6 joint, transformation eMc between end-effector and camera frame.
   static const std::string CONST_AFMA6_FILENAME;
   static const std::string CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
@@ -123,7 +122,8 @@ public:
   static const char *const CONST_INTEL_D435_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
-  typedef enum {
+  typedef enum
+  {
     TOOL_CCMOP,             /*!< Pneumatic CCMOP gripper. */
     TOOL_GRIPPER,           /*!< Pneumatic gripper with 2 fingers. */
     TOOL_VACUUM,            /*!< Pneumatic vaccum gripper. */
@@ -138,7 +138,7 @@ public:
 public:
   vpAfma6();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma6(){};
+  virtual ~vpAfma6() { };
 
   /** @name Inherited functionalities from vpAfma6 */
   //@{
@@ -148,8 +148,8 @@ public:
   void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc_);
   void
-  init(vpAfma6::vpAfma6ToolType tool,
-       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+    init(vpAfma6::vpAfma6ToolType tool,
+         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
   int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q, const bool &nearest = true,
@@ -214,5 +214,5 @@ protected:
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
 };
-
+END_VISP_NAMESPACE
 #endif

@@ -9,7 +9,8 @@
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -18,10 +19,10 @@
     </sample>
   </ecm>
   <camera>
-    <u0>325.66776</u0> 
-    <v0>243.69727</v0> 
-    <px>839.21470</px> 
-    <py>839.44555</py> 
+    <u0>325.66776</u0>
+    <v0>243.69727</v0>
+    <px>839.21470</px>
+    <py>839.44555</py>
   </camera>
   <face>
     <angle_appear>70</angle_appear>

@@ -1,7 +1,7 @@
 # ############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 # ############################################################################
 
@@ -60,18 +57,37 @@ if(DOXYGEN_FOUND)
     COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
     DEPENDS "${VISP_DOC_DIR}/config-doxygen"
   )
+  add_custom_target(visp_doc_xml
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen-xml"
+    DEPENDS "${VISP_DOC_DIR}/config-doxygen-xml"
+  )
 
   if(CMAKE_GENERATOR MATCHES "Xcode")
     add_dependencies(visp_doc man) # developer_scripts not available when Xcode
+    add_dependencies(visp_doc man)
   elseif(UNIX AND NOT ANDROID) # man target available only on unix
     add_dependencies(visp_doc man developer_scripts)
+    add_dependencies(visp_doc_xml man developer_scripts)
   elseif(NOT(MINGW OR IOS))
     add_dependencies(visp_doc developer_scripts)
+    add_dependencies(visp_doc_xml developer_scripts)
   endif()
 
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_doc PROPERTIES FOLDER "extra")
+    set_target_properties(visp_doc_xml PROPERTIES FOLDER "extra")
     set_target_properties(html-doc PROPERTIES FOLDER "extra")
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
+# Tests target, for make visp_apps
+# ----------------------------------------------------------------------------
+if(BUILD_APPS)
+  add_custom_target(visp_apps)
+
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(visp_apps PROPERTIES FOLDER "extra")
   endif()
 endif()
 

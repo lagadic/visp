@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,30 +29,24 @@
  *
  * Description:
  * 2D point useful for image processing
- *
- * Authors:
- * Nicolas Melchior
- * Fabien Spindler
- * Julien Dufour
- *
- *****************************************************************************/
-
-#ifndef vpImagePoint_H
-#define vpImagePoint_H
+ */
 
 /*!
   \file vpImagePoint.h
   \brief Class that defines a 2D point in an image. This class is useful
   for image processing
-*/
+ */
+
+#ifndef VP_IMAGE_POINT_H
+#define VP_IMAGE_POINT_H
 
 #include <visp3/core/vpConfig.h>
 
 #include <cmath>  // std::fabs
-#include <limits> // numeric_limits
 #include <ostream>
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 class vpRect;
 
 /*!
@@ -92,12 +85,12 @@ public:
     Default constructor that initialize the coordinates of the image
     point to zero.
   */
-  inline vpImagePoint() : i(0), j(0) {}
+  inline vpImagePoint() : i(0), j(0) { }
   /*!
     Default constructor that initialize the coordinates of the image
     thanks to the parameters \f$ ii \f$ and \f$ jj \f$.
   */
-  inline vpImagePoint(double ii, double jj) : i(ii), j(jj) {}
+  inline vpImagePoint(double ii, double jj) : i(ii), j(jj) { }
   /*!
     Copy constructor.
 
@@ -105,9 +98,9 @@ public:
 
     \param ip : An image point.
   */
-  inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) {}
+  inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) { }
   //! Destructor.
-  inline virtual ~vpImagePoint() {}
+  inline virtual ~vpImagePoint() { }
 
   /*!
 
@@ -168,10 +161,11 @@ public:
    */
   inline bool inSegment(const vpImagePoint &start, const vpImagePoint &end) const
   {
-    return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
-            (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
-           ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
-            (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
+    bool cond11 = ((end.get_j() >= start.get_j()) && (end.get_j() >= this->j) && (this->j >= start.get_j()));
+    bool cond12 = ((end.get_j() <= start.get_j()) && (end.get_j() <= this->j) && (this->j <= start.get_j()));
+    bool cond21 = ((end.get_i() >= start.get_i()) && (end.get_i() >= this->i) && (this->i >= start.get_i()));
+    bool cond22 = ((end.get_i() <= start.get_i()) && (end.get_i() <= this->i) && (this->i <= start.get_i()));
+    return (cond11 || cond12) && (cond21 || cond22);
   }
 
   /*!
@@ -186,6 +180,10 @@ public:
    * \code
    * #include <iostream>
    * #include <visp3/core/vpImagePoint.h>
+   *
+   * #ifdef ENABLE_VISP_NAMESPACE
+   * using namespace VISP_NAMESPACE_NAME;
+   * #endif
    *
    * int main()
    * {
@@ -223,18 +221,19 @@ public:
   {
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
-      double j = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {end.get_i() - line_slope * (end.get_j() - j), j};
+      double j_ = (end.get_j() > this->j ? (this->j + 1) : (this->j - 1));
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+      return { end.get_i() - (line_slope * (end.get_j() - j_)), j_ };
 #else
-      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j), j);
+      return vpImagePoint(end.get_i() - (line_slope * (end.get_j() - j_)), j_);
 #endif
-    } else {
-      double i = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {i, end.get_j() - ((end.get_i() - i) / line_slope)};
+    }
+    else {
+      double i_ = (end.get_i() > this->i ? (this->i + 1) : (this->i - 1));
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+      return { i_, end.get_j() - ((end.get_i() - i_) / line_slope) };
 #else
-      return vpImagePoint(i, end.get_j() - ((end.get_i() - i) / line_slope));
+      return vpImagePoint(i_, end.get_j() - ((end.get_i() - i_) / line_slope));
 #endif
     }
   }
@@ -248,7 +247,8 @@ public:
     this->j = ip.j;
     return *this;
   }
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   /*!
     Move operator.
   */
@@ -382,5 +382,5 @@ public:
 private:
   double i, j;
 };
-
+END_VISP_NAMESPACE
 #endif

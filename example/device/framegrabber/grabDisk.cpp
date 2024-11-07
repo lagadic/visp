@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,17 @@
  * Description:
  * Read an image sequence from the disk and display it.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file grabDisk.cpp
+
+  \brief Example of image sequence reading from the disk using vpDiskGrabber
+  class.
+
+  The sequence is made of separate images. Each image corresponds to a PGM
+  file.
+*/
 
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
@@ -51,18 +57,12 @@
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpParseArgv.h>
 
-/*!
-  \file grabDisk.cpp
-
-  \brief Example of image sequence reading from the disk using vpDiskGrabber
-  class.
-
-  The sequence is made of separate images. Each image corresponds to a PGM
-  file.
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "b:de:f:hi:l:s:z:"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*
 
@@ -187,7 +187,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       nzero = (unsigned)atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
+      usage(argv[0], nullptr, ipath, basename, ext, first, last, step, nzero);
       return false;
       break;
 
@@ -200,7 +200,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
+    usage(argv[0], nullptr, ipath, basename, ext, first, last, step, nzero);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -257,24 +257,24 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero);
+      usage(argv[0], nullptr, ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -306,8 +306,8 @@ int main(int argc, const char **argv)
 
     std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
-// We open a window using either X11 or GDI.
-// Its size is automatically defined by the image (I) size
+    // We open a window using either X11 or GDI.
+    // Its size is automatically defined by the image (I) size
 #if defined(VISP_HAVE_X11)
     vpDisplayX display(I);
 #elif defined(VISP_HAVE_GDI)
@@ -344,7 +344,8 @@ int main(int argc, const char **argv)
       vpTime::wait(tms, 40);
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -354,11 +355,11 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface) functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-}
+  }
 #endif

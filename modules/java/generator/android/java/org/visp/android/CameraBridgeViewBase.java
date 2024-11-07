@@ -396,7 +396,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 
         boolean bmpValid = true;
         if (modified != -1) {
-			      if (mPreviewFormat == RGBA){
+            if (mPreviewFormat == RGBA){
                 try {
                     Utils.vpImageUCharToBitmap(modified, mCacheBitmap);
                 } catch(Exception e) {
@@ -421,7 +421,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-        				Log.d(TAG, "mStretch value: " + mScale);
+                Log.d(TAG, "mStretch value: " + mScale);
 
                 if (mScale != 0) {
                     canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
@@ -502,7 +502,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             }
         }
 
-		int size[] = {calcWidth, calcHeight};
+    int size[] = {calcWidth, calcHeight};
         return size;
     }
 }

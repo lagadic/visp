@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Odile Bourquardez
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!  \file vpFeatureVanishingPoint.cpp
   \brief Class that defines 2D vanishing
@@ -55,10 +55,11 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * Vanishing point visual feature initialization.
  */
-void vpFeatureVanishingPoint::init()
+  void vpFeatureVanishingPoint::init()
 {
   // Feature dimension
   dim_s = 5;
@@ -67,7 +68,7 @@ void vpFeatureVanishingPoint::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -346,7 +347,11 @@ void vpFeatureVanishingPoint::print(unsigned int select) const
 }
 
 //! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as set_xy().
-void vpFeatureVanishingPoint::buildFrom(double x, double y) { set_xy(x, y); }
+vpFeatureVanishingPoint &vpFeatureVanishingPoint::buildFrom(const double &x, const double &y)
+{
+  set_xy(x, y);
+  return *this;
+}
 
 /*!
   Display vanishing point feature.
@@ -365,13 +370,15 @@ void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpIma
     y = get_y();
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } else if (vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
+  }
+  else if (vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
     double one_over_rho = getOneOverRho();
     double alpha = getAlpha();
     double x = cos(alpha) / one_over_rho;
     double y = sin(alpha) / one_over_rho;
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } else if (vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
+  }
+  else if (vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
     double atan_one_over_rho = getAtanOneOverRho();
     double alpha = getAlpha();
     double x = cos(alpha) / tan(atan_one_over_rho);
@@ -397,13 +404,15 @@ void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpIma
     y = get_y();
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } else if (vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
+  }
+  else if (vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
     double one_over_rho = getOneOverRho();
     double alpha = getAlpha();
     double x = cos(alpha) / one_over_rho;
     double y = sin(alpha) / one_over_rho;
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  } else if (vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
+  }
+  else if (vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
     double atan_one_over_rho = getAtanOneOverRho();
     double alpha = getAlpha();
     double x = cos(alpha) / tan(atan_one_over_rho);
@@ -441,3 +450,4 @@ unsigned int vpFeatureVanishingPoint::selectAtanOneOverRho() { return FEATURE_LI
  * Select \f$ s = \theta \f$ visual feature.
  */
 unsigned int vpFeatureVanishingPoint::selectAlpha() { return FEATURE_LINE[4]; }
+END_VISP_NAMESPACE

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,18 +29,26 @@
  *
  * Description:
  * TCP Client
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
-#include <visp3/core/vpClient.h>
+#include <visp3/core/vpConfig.h>
+
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT) || defined(_WIN32)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
-vpClient::vpClient() : vpNetwork(), numberOfAttempts(0) {}
+#include <visp3/core/vpClient.h>
+#include <visp3/core/vpDebug.h>
+
+BEGIN_VISP_NAMESPACE
+vpClient::vpClient() : vpNetwork(), m_numberOfAttempts(0) { }
 
 /*!
   Disconnect the client from all the servers, and close the sockets.
@@ -64,7 +71,7 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   // get server host information from hostname
   struct hostent *server = gethostbyname(hostname.c_str());
 
-  if (server == NULL) {
+  if (server == nullptr) {
     std::string noSuchHostMessage("ERROR, ");
     noSuchHostMessage.append(hostname);
     noSuchHostMessage.append(": no such host\n");
@@ -94,18 +101,18 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
   return connectServer(serv);
-}
+  }
 
-/*!
-  Connect to the server represented by the given ip, and at a given port.
+  /*!
+    Connect to the server represented by the given ip, and at a given port.
 
-  \sa vpClient::connectToHostname()
+    \sa vpClient::connectToHostname()
 
-  \param ip : IP of the server.
-  \param port_serv : Port used for the connection.
+    \param ip : IP of the server.
+    \param port_serv : Port used for the connection.
 
-  \return True if the connection has been etablished, false otherwise.
-*/
+    \return True if the connection has been etablished, false otherwise.
+  */
 bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
 {
   vpNetwork::vpReceptor serv;
@@ -127,13 +134,13 @@ bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
   serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
 
   return connectServer(serv);
-}
+  }
 
-/*!
-  Deconnect from the server at a specific index.
+  /*!
+    Deconnect from the server at a specific index.
 
-  \param index : Index of the server.
-*/
+    \param index : Index of the server.
+  */
 void vpClient::deconnect(const unsigned int &index)
 {
   if (index < receptor_list.size()) {
@@ -172,15 +179,15 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
 {
   serv.receptorAddressSize = sizeof(serv.receptorAddress);
 
-  numberOfAttempts = 15;
+  m_numberOfAttempts = 15;
   unsigned int ind = 1;
   int connectionResult = -1;
 
-  while (ind <= numberOfAttempts) {
+  while (ind <= m_numberOfAttempts) {
     std::cout << "Attempt number " << ind << "..." << std::endl;
 
     connectionResult =
-        connect(serv.socketFileDescriptorReceptor, (sockaddr *)&serv.receptorAddress, serv.receptorAddressSize);
+      connect(serv.socketFileDescriptorReceptor, (sockaddr *)&serv.receptorAddress, serv.receptorAddressSize);
     if (connectionResult >= 0)
       break;
 
@@ -204,7 +211,8 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   if (serv.socketFileDescriptorReceptor > 0) {
     int set_option = 1;
     if (0 == setsockopt(serv.socketFileDescriptorReceptor, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
-    } else {
+    }
+    else {
       std::cout << "Failed to set socket signal option" << std::endl;
     }
   }
@@ -213,8 +221,8 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   std::cout << "Connected!" << std::endl;
   return true;
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpClient.cpp.o) has no symbols
-void dummy_vpClient(){};
+void dummy_vpClient() { };
 #endif

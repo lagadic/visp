@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test force/torque IIT sensor.
- *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \example testForceTorqueIitSensor.cpp
@@ -49,6 +44,9 @@
 
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 #ifdef VISP_HAVE_FT_IIT_SDK
   bool opt_no_display = false;
   bool opt_filtered = false;
@@ -69,7 +67,7 @@ int main(int argc, char **argv)
   vpForceTorqueIitSensor iit_ft;
 
 #if defined(VISP_HAVE_DISPLAY)
-  vpPlot *plotter = NULL;
+  vpPlot *plotter = nullptr;
   if (!opt_no_display) {
     plotter = new vpPlot(2, 700, 700, 100, 200, "Curves...");
     plotter->initGraph(0, 3);
@@ -116,7 +114,8 @@ int main(int argc, char **argv)
         }
       }
       vpDisplay::flush(plotter->I);
-    } else {
+    }
+    else {
       std::cout << "F/T: " << ft.t() << std::endl;
       if (nbacq > 30) {
         end = true;

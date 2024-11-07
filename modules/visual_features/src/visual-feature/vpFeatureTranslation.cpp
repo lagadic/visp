@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,12 @@
  * Description:
  * 3D translation visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpFeatureTranslation.cpp
+  \brief class that defines 3D translation visual feature
+*/
 
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureTranslation.h>
@@ -49,10 +50,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-/*!
-  \file vpFeatureTranslation.cpp
-  \brief class that defines 3D translation visual feature
-*/
 /*
 
 attributes and members directly related to the vpBasicFeature needs
@@ -60,6 +57,7 @@ other functionalities are useful but not mandatory
 
 */
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialise the memory space requested for 3D translation visual
@@ -73,7 +71,7 @@ void vpFeatureTranslation::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -128,7 +126,7 @@ vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1_, vpFeatur
   move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$
   ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$).
 */
-void vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
+vpFeatureTranslation &vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
 {
   this->f2Mf1 = f2Mf1_;
   s[0] = f2Mf1[0][3];
@@ -136,6 +134,7 @@ void vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
   s[2] = f2Mf1[2][3];
 
   flags[0] = true;
+  return *this;
 }
 
 /*!
@@ -591,7 +590,7 @@ void vpFeatureTranslation::print(unsigned int select) const
 */
 vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 {
-  vpFeatureTranslation *feature = NULL;
+  vpFeatureTranslation *feature = nullptr;
   if (translation == cdMc)
     feature = new vpFeatureTranslation(cdMc);
   if (translation == cMo)
@@ -771,3 +770,4 @@ unsigned int vpFeatureTranslation::selectTy() { return FEATURE_LINE[1]; }
   \sa selectTx(), selectTy()
 */
 unsigned int vpFeatureTranslation::selectTz() { return FEATURE_LINE[2]; }
+END_VISP_NAMESPACE

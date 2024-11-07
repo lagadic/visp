@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 project(example-robot-simulator-camera)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
@@ -107,24 +104,24 @@ foreach(cpp ${example_cpp})
 endforeach()
 
 # Add test
-add_test(servoSimu3D_cdMc_CamVelocity			servoSimu3D_cdMc_CamVelocity			)
-add_test(servoSimu3D_cdMc_CamVelocityWithoutVpServo	servoSimu3D_cdMc_CamVelocityWithoutVpServo	)
-add_test(servoSimu3D_cMcd_CamVelocity			servoSimu3D_cMcd_CamVelocity			)
-add_test(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocityWithoutVpServo	)
-add_test(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
-add_test(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
-add_test(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuPoint2DCamVelocity1			servoSimuPoint2DCamVelocity1			)
-add_test(servoSimuPoint2DCamVelocity2			servoSimuPoint2DCamVelocity2			)
-add_test(servoSimuPoint2DCamVelocity3			servoSimuPoint2DCamVelocity3			)
-add_test(servoSimuPoint2DhalfCamVelocity1		servoSimuPoint2DhalfCamVelocity1		)
-add_test(servoSimuPoint2DhalfCamVelocity2		servoSimuPoint2DhalfCamVelocity2		)
-add_test(servoSimuPoint2DhalfCamVelocity3		servoSimuPoint2DhalfCamVelocity3		)
-add_test(servoSimuPoint3DCamVelocity			servoSimuPoint3DCamVelocity			)
-add_test(servoSimuSphere2DCamVelocity			servoSimuSphere2DCamVelocity			)
-add_test(servoSimuSphere2DCamVelocityDisplay		servoSimuSphere2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuSphere2DCamVelocityDisplaySecondaryTask servoSimuSphere2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuThetaUCamVelocity			servoSimuThetaUCamVelocity			)
+add_test(servoSimu3D_cdMc_CamVelocity                     servoSimu3D_cdMc_CamVelocity)
+add_test(servoSimu3D_cdMc_CamVelocityWithoutVpServo       servoSimu3D_cdMc_CamVelocityWithoutVpServo)
+add_test(servoSimu3D_cMcd_CamVelocity                     servoSimu3D_cMcd_CamVelocity)
+add_test(servoSimu3D_cMcd_CamVelocityWithoutVpServo       servoSimu3D_cMcd_CamVelocityWithoutVpServo)
+add_test(servoSimuCircle2DCamVelocity                     servoSimuCircle2DCamVelocity)
+add_test(servoSimuCircle2DCamVelocityDisplay              servoSimuCircle2DCamVelocityDisplay  -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuCylinder2DCamVelocityDisplay            servoSimuCylinder2DCamVelocityDisplay  -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuFourPoints2DCamVelocity                 servoSimuFourPoints2DCamVelocity)
+add_test(servoSimuFourPoints2DCamVelocityDisplay          servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuLine2DCamVelocityDisplay                servoSimuLine2DCamVelocityDisplay  -c ${OPTION_TO_DESACTIVE_DISPLAY}  )
+add_test(servoSimuPoint2DCamVelocity1                     servoSimuPoint2DCamVelocity1)
+add_test(servoSimuPoint2DCamVelocity2                     servoSimuPoint2DCamVelocity2)
+add_test(servoSimuPoint2DCamVelocity3                     servoSimuPoint2DCamVelocity3)
+add_test(servoSimuPoint2DhalfCamVelocity1                 servoSimuPoint2DhalfCamVelocity1)
+add_test(servoSimuPoint2DhalfCamVelocity2                 servoSimuPoint2DhalfCamVelocity2)
+add_test(servoSimuPoint2DhalfCamVelocity3                 servoSimuPoint2DhalfCamVelocity3)
+add_test(servoSimuPoint3DCamVelocity                      servoSimuPoint3DCamVelocity)
+add_test(servoSimuSphere2DCamVelocity                     servoSimuSphere2DCamVelocity)
+add_test(servoSimuSphere2DCamVelocityDisplay              servoSimuSphere2DCamVelocityDisplay  -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuSphere2DCamVelocityDisplaySecondaryTask servoSimuSphere2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuThetaUCamVelocity                       servoSimuThetaUCamVelocity)

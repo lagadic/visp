@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,11 +34,11 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
 
+BEGIN_VISP_NAMESPACE
 // findWarp special a SL3 car methode additionnelle ne marche pas (la derivee
 // n est calculable qu en p=0)
 // => resout le probleme de maniere compositionnelle
@@ -110,8 +110,9 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const doubl
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       dp = HLM.inverseByLU() * G_;
-    } catch (const vpException &e) {
-      // std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
+    }
+    catch (const vpException &e) {
+   // std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
       throw(e);
     }
     pRondp(p, dp, p);
@@ -153,8 +154,6 @@ vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3() : G(), 
   A[6][2][0] = 1;
   A[7][2][1] = 1;
 }
-
-vpTemplateTrackerWarpHomographySL3::~vpTemplateTrackerWarpHomographySL3() {}
 
 // get the parameter corresponding to the lower level of a gaussian pyramid
 // a refaire de facon analytique
@@ -528,3 +527,4 @@ void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1, const vpC
   // vrai que si commutatif ...
   p12 = p1 + p2;
 }
+END_VISP_NAMESPACE

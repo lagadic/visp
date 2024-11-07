@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,13 @@
  *
  * Description:
  * Test for image display.
- *
- * Authors:
- * Anthony Saunier
- *
- *****************************************************************************/
+ */
+
+/*!
+  \example testVideoDevice.cpp
+
+  \brief Image display manipulations.
+*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -56,15 +57,12 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-/*!
-  \example testVideoDevice.cpp
-
-  \brief Image display manipulations.
-
-*/
-
 // List of allowed command line options
 #define GETOPTARGS "i:hlt:dc"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
 
@@ -91,7 +89,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] \n\
      [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ",
-          name);
+name);
 
   std::string display;
   switch (dtype) {
@@ -183,19 +181,23 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
         dtype = vpX11;
-      } else if (sDisplayType.compare("GTK") == 0) {
+      }
+      else if (sDisplayType.compare("GTK") == 0) {
         dtype = vpGTK;
-      } else if (sDisplayType.compare("GDI") == 0) {
+      }
+      else if (sDisplayType.compare("GDI") == 0) {
         dtype = vpGDI;
-      } else if (sDisplayType.compare("D3D") == 0) {
+      }
+      else if (sDisplayType.compare("D3D") == 0) {
         dtype = vpD3D;
-      } else if (sDisplayType.compare("CV") == 0) {
+      }
+      else if (sDisplayType.compare("CV") == 0) {
         dtype = vpCV;
       }
 
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, dtype);
+      usage(argv[0], nullptr, ipath, dtype);
       return false;
       break;
     case 'c':
@@ -214,7 +216,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, dtype);
+    usage(argv[0], nullptr, ipath, dtype);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -297,24 +299,24 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_dtype);
+      usage(argv[0], nullptr, ipath, opt_dtype);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -334,7 +336,7 @@ int main(int argc, const char **argv)
     vpImageIo::read(Irgba, filename);
 
     // Create a display for the image
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
 
     switch (opt_dtype) {
     case vpX11:
@@ -469,7 +471,8 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(Irgba);
     }
     delete display;
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error while displaying the image");
     return EXIT_FAILURE;
   }

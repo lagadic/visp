@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Server
- *
- *****************************************************************************/
+ */
 
 #ifndef _vpUDPServer_h_
 #define _vpUDPServer_h_
@@ -53,6 +51,7 @@
 
 #define VP_MAX_UDP_PAYLOAD 508
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpUDPServer
 
@@ -84,112 +83,118 @@ href="https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2
   echo message to the client:
 
   \code
-#include <cstdlib>
-#include <iostream>
-#include <iterator>
-#include <sstream>
-#include <vector>
-#include <visp3/core/vpUDPServer.h>
+  #include <cstdlib>
+  #include <iostream>
+  #include <iterator>
+  #include <sstream>
+  #include <vector>
+  #include <visp3/core/vpUDPServer.h>
 
-int main() {
-  try {
-    int port = 50037;
-    vpUDPServer server(port);
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-    while (true) {
-    std::string msg = "", hostInfo = "";
-      int res = server.receive(msg, hostInfo, 5000);
+  int main() {
+    try {
+      int port = 50037;
+      vpUDPServer server(port);
+
+      while (true) {
+      std::string msg = "", hostInfo = "";
+        int res = server.receive(msg, hostInfo, 5000);
+        if (res) {
+          std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
+          std::cout << "Reply to the client: Echo: " << msg << std::endl;
+
+          //Get address and port
+          std::istringstream iss(hostInfo);
+          std::vector<std::string> tokens;
+          std::copy(std::istream_iterator<std::string>(iss),
+                    std::istream_iterator<std::string>(),
+                    std::back_inserter(tokens));
+          server.send("Echo: " + msg, tokens[1], atoi(tokens[2].c_str()));
+        } else if (res == 0) {
+          std::cout << "Receive timeout" << std::endl;
+        } else {
+          std::cerr << "Error server.receive()!" << std::endl;
+        }
+      }
+
+      return EXIT_SUCCESS;
+    } catch (const vpException &e) {
+      std::cerr << "Catch an exception: " << e.what() << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  \endcode
+
+  If you want to send a complex data type, you can either send the ASCII
+  representation or send directly the byte data. In the last case, you should
+  have to handle that both the server and the client have the same data type
+  representation. Be careful also with the endianness of the network / host.
+
+  Here an example using a structure of data, assuming that both the server and
+  the client have the same architecture (probably you should write your own
+  serialization / deserialization functions for the data you want to send /
+  receive):
+
+  \code
+  #include <cstdlib>
+  #include <cstring>
+  #include <iostream>
+  #include <iterator>
+  #include <sstream>
+  #include <vector>
+  #include <visp3/core/vpUDPServer.h>
+
+  struct vpDataType_t {
+    double double_val;
+    int int_val;
+
+    vpDataType_t() : double_val(0.0), int_val(0) {}
+    vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
+  };
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main() {
+    try {
+      int port = 50037;
+      vpUDPServer server(port);
+
+      std::string msg = "", hostInfo = "";
+      int res = server.receive(msg, hostInfo);
       if (res) {
-        std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
-        std::cout << "Reply to the client: Echo: " << msg << std::endl;
+        vpDataType_t data_type;
+        memcpy(&data_type.double_val, msg.c_str(), sizeof(data_type.double_val));
+        memcpy(&data_type.int_val, msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
+        std::cout << "Server received double_val: " << data_type.double_val << " ; int_val: "
+                  << data_type.int_val << " from: " << hostInfo << std::endl;
 
-        //Get address and port
+        // Get address and port
         std::istringstream iss(hostInfo);
         std::vector<std::string> tokens;
         std::copy(std::istream_iterator<std::string>(iss),
                   std::istream_iterator<std::string>(),
                   std::back_inserter(tokens));
-        server.send("Echo: " + msg, tokens[1], atoi(tokens[2].c_str()));
-      } else if (res == 0) {
-        std::cout << "Receive timeout" << std::endl;
-      } else {
-        std::cerr << "Error server.receive()!" << std::endl;
+        data_type.double_val += 1.5;
+        data_type.int_val += 2;
+        char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
+        memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
+        memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
+        msg = std::string(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
+
+        server.send(msg, tokens[1], atoi(tokens[2].c_str()));
       }
+
+      return EXIT_SUCCESS;
+    } catch (const vpException &e) {
+      std::cerr << "Catch an exception: " << e.what() << std::endl;
+      return EXIT_FAILURE;
     }
-
-    return EXIT_SUCCESS;
-  } catch (const vpException &e) {
-    std::cerr << "Catch an exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
   }
-}
-  \endcode
-
-  If you want to send a complex data type, you can either send the ASCII
-representation or send directly the byte data. In the last case, you should
-have to handle that both the server and the client have the same data type
-representation. Be careful also with the endianness of the network / host.
-
-  Here an example using a structure of data, assuming that both the server and
-the client have the same architecture (probably you should write your own
-serialization / deserialization functions for the data you want to send /
-receive):
-
-  \code
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <iterator>
-#include <sstream>
-#include <vector>
-#include <visp3/core/vpUDPServer.h>
-
-struct DataType {
-  double double_val;
-  int int_val;
-
-  DataType() : double_val(0.0), int_val(0) {}
-  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
-};
-
-int main() {
-  try {
-    int port = 50037;
-    vpUDPServer server(port);
-
-    std::string msg = "", hostInfo = "";
-    int res = server.receive(msg, hostInfo);
-    if (res) {
-      DataType data_type;
-      memcpy(&data_type.double_val, msg.c_str(),
-sizeof(data_type.double_val)); memcpy(&data_type.int_val,
-msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
-      std::cout << "Server received double_val: " << data_type.double_val << "
-; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
-
-      //Get address and port
-      std::istringstream iss(hostInfo);
-      std::vector<std::string> tokens;
-      std::copy(std::istream_iterator<std::string>(iss),
-                std::istream_iterator<std::string>(),
-                std::back_inserter(tokens));
-      data_type.double_val += 1.5;
-      data_type.int_val += 2;
-      char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
-      memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-      memcpy(data+sizeof(data_type.double_val), &data_type.int_val,
-sizeof(data_type.int_val)); msg = std::string(data,
-sizeof(data_type.double_val)+sizeof(data_type.int_val));
-
-      server.send(msg, tokens[1], atoi(tokens[2].c_str()));
-    }
-
-    return EXIT_SUCCESS;
-  } catch (const vpException &e) {
-    std::cerr << "Catch an exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-}
   \endcode
 
   \sa vpUDPServer
@@ -219,6 +224,6 @@ private:
 
   void init(const std::string &hostname, int port);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

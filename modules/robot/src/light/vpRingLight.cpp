@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,12 @@
  * Description:
  * Ring light management.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpRingLight.cpp
+  \brief Ring light management under unix.
+*/
 
 #include <visp3/core/vpConfig.h>
 
@@ -51,11 +53,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRingLight.h>
 
-/*!
-  \file vpRingLight.cpp
-  \brief Ring light management under unix.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   Constructor to access to the ring light device connected to the parallel
@@ -137,7 +135,7 @@ void vpRingLight::pulse(double time)
   // Data set by the parallel port:
   // - D1: a pulse with duration fixed by time
   // - D2: 0 }
-  // - D3: 1 } To control the light directly throw the pulse comming from D1
+  // - D3: 1 } To control the light directly throw the pulse coming from D1
   // D2 and D3 are used to select the multiplexer output.
   // Light must be connected to output 1+,1-
 
@@ -215,9 +213,8 @@ void vpRingLight::off()
   // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data);
 }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no
-// symbols
-void dummy_vpRingLight(){};
+// Work around to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no symbols
+void dummy_vpRingLight() { };
 #endif

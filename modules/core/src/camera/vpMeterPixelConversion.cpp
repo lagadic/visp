@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +38,11 @@
 */
 
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distortion
@@ -58,15 +57,14 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
 {
   double co = cos(theta_m);
   double si = sin(theta_m);
-  double d = sqrt(vpMath::sqr(cam.py * co) + vpMath::sqr(cam.px * si));
+  double d = sqrt(vpMath::sqr(cam.m_py * co) + vpMath::sqr(cam.m_px * si));
 
   if (fabs(d) < 1e-6) {
-    vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
 
-  theta_p = atan2(cam.px * si, cam.py * co);
-  rho_p = (cam.px * cam.py * rho_m + cam.u0 * cam.py * co + cam.v0 * cam.px * si);
+  theta_p = atan2(cam.m_px * si, cam.m_py * co);
+  rho_p = ((cam.m_px * cam.m_py * rho_m) + (cam.m_u0 * cam.m_py * co) + (cam.m_v0 * cam.m_px * si));
   rho_p /= d;
 }
 
@@ -82,7 +80,7 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -100,11 +98,16 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
                                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p)
 {
   // Get the parameters of the ellipse in the image plane
-  double xc_m = circle.p[0];
-  double yc_m = circle.p[1];
-  double n20_m = circle.p[2];
-  double n11_m = circle.p[3];
-  double n02_m = circle.p[4];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  double xc_m = circle.p[index_0];
+  double yc_m = circle.p[index_1];
+  double n20_m = circle.p[index_2];
+  double n11_m = circle.p[index_3];
+  double n02_m = circle.p[index_4];
 
   // Convert from meter to pixels
   vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center_p);
@@ -125,7 +128,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -143,11 +146,16 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
                                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p)
 {
   // Get the parameters of the ellipse in the image plane
-  double xc_m = sphere.p[0];
-  double yc_m = sphere.p[1];
-  double n20_m = sphere.p[2];
-  double n11_m = sphere.p[3];
-  double n02_m = sphere.p[4];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  double xc_m = sphere.p[index_0];
+  double yc_m = sphere.p[index_1];
+  double n20_m = sphere.p[index_2];
+  double n11_m = sphere.p[index_3];
+  double n02_m = sphere.p[index_4];
 
   // Convert from meter to pixels
   vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center_p);
@@ -209,7 +217,6 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const doub
   double d = sqrt(vpMath::sqr(py * co) + vpMath::sqr(px * si));
 
   if (fabs(d) < 1e-6) {
-    vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
 
@@ -250,15 +257,21 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const doub
 void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center,
                                             double &n20_p, double &n11_p, double &n02_p)
 {
-  double px = cameraMatrix.at<double>(0, 0);
-  double py = cameraMatrix.at<double>(1, 1);
-  cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  double px = cameraMatrix.at<double>(index_0, index_0);
+  double py = cameraMatrix.at<double>(index_1, index_1);
+  cv::Mat distCoeffs = cv::Mat::zeros(index_5, index_1, CV_64FC1);
   // Get the parameters of the ellipse in the image plane
-  double xc_m = circle.p[0];
-  double yc_m = circle.p[1];
-  double n20_m = circle.p[2];
-  double n11_m = circle.p[3];
-  double n02_m = circle.p[4];
+  double xc_m = circle.p[index_0];
+  double yc_m = circle.p[index_1];
+  double n20_m = circle.p[index_2];
+  double n11_m = circle.p[index_3];
+  double n02_m = circle.p[index_4];
 
   // Convert from meter to pixels
   vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, xc_m, yc_m, center);
@@ -299,15 +312,21 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const v
 void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const vpSphere &sphere, vpImagePoint &center,
                                             double &n20_p, double &n11_p, double &n02_p)
 {
-  double px = cameraMatrix.at<double>(0, 0);
-  double py = cameraMatrix.at<double>(1, 1);
-  cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  double px = cameraMatrix.at<double>(index_0, index_0);
+  double py = cameraMatrix.at<double>(index_1, index_1);
+  cv::Mat distCoeffs = cv::Mat::zeros(index_5, index_1, CV_64FC1);
   // Get the parameters of the ellipse in the image plane
-  double xc_m = sphere.p[0];
-  double yc_m = sphere.p[1];
-  double n20_m = sphere.p[2];
-  double n11_m = sphere.p[3];
-  double n02_m = sphere.p[4];
+  double xc_m = sphere.p[index_0];
+  double yc_m = sphere.p[index_1];
+  double n20_m = sphere.p[index_2];
+  double n11_m = sphere.p[index_3];
+  double n02_m = sphere.p[index_4];
 
   // Convert from meter to pixels
   vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, xc_m, yc_m, center);
@@ -357,7 +376,7 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, double 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] u : output coordinate in pixels along image horizontal axis.
@@ -384,7 +403,7 @@ void vpMeterPixelConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] iP : output coordinates in pixels.
@@ -402,3 +421,4 @@ void vpMeterPixelConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   iP.set_v(imagePoints_vec[0].y);
 }
 #endif
+END_VISP_NAMESPACE

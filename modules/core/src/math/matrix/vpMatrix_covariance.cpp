@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Covariance matrix computation.
- *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+ */
 
 #include <cmath>  // std::fabs()
 #include <limits> // numeric_limits
@@ -46,9 +41,10 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpTranslationVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Compute the covariance matrix of the parameters x from a least squares
-  minimisation defined as: Ax = b
+  minimization defined as: Ax = b
 
   \param A : Matrix A from Ax = b.
 
@@ -60,11 +56,12 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 {
   //  double denom = ((double)(A.getRows()) - (double)(A.getCols())); // To
   //  consider OLS Estimate for sigma
-  double denom = ((double)(A.getRows())); // To consider MLE Estimate for sigma
+  double denom = (static_cast<double>(A.getRows())); // To consider MLE Estimate for sigma
 
-  if (denom <= std::numeric_limits<double>::epsilon())
+  if (denom <= std::numeric_limits<double>::epsilon()) {
     throw vpMatrixException(vpMatrixException::divideByZeroError,
                             "Impossible to compute covariance matrix: not enough data");
+  }
 
   //  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) ); // Should be
   //  equivalent to line bellow.
@@ -77,7 +74,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
 /*!
   Compute the covariance matrix of the parameters x from a least squares
-  minimisation defined as: WAx = Wb
+  minimization defined as: WAx = Wb
 
   \param A : Matrix A from WAx = Wb.
 
@@ -93,21 +90,23 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 {
   double denom = 0.0;
   vpMatrix W2(W.getCols(), W.getCols());
-  for (unsigned int i = 0; i < W.getCols(); i++) {
+  unsigned int w_cols = W.getCols();
+  for (unsigned int i = 0; i < w_cols; ++i) {
     denom += W[i][i];
     W2[i][i] = W[i][i] * W[i][i];
   }
 
-  if (denom <= std::numeric_limits<double>::epsilon())
+  if (denom <= std::numeric_limits<double>::epsilon()) {
     throw vpMatrixException(vpMatrixException::divideByZeroError,
                             "Impossible to compute covariance matrix: not enough data");
+  }
 
   //  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) ); // Should
   //  be equivalent to line bellow.
-  double sigma2 = (W * b - (W * A * x)).t() * (W * b - (W * A * x));
+  double sigma2 = ((W * b) - (W * A * x)).t() * ((W * b) - (W * A * x));
   sigma2 /= denom;
 
-  return (A.t() * (W2)*A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
+  return (A.t() * W2 * A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
 }
 
 /*!
@@ -162,9 +161,12 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   // building Lp
   vpMatrix LpInv(6, 6);
   LpInv = 0;
-  LpInv[0][0] = -1.0;
-  LpInv[1][1] = -1.0;
-  LpInv[2][2] = -1.0;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  LpInv[index_0][index_0] = -1.0;
+  LpInv[index_1][index_1] = -1.0;
+  LpInv[index_2][index_2] = -1.0;
 
   vpTranslationVector ctoInit;
 
@@ -175,53 +177,58 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   cMo.extract(thetau);
 
   vpColVector tu(3);
-  for (unsigned int i = 0; i < 3; i++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
     tu[i] = thetau[i];
+  }
 
   double theta = sqrt(tu.sumSquare());
 
-  //    vpMatrix Lthetau(3,3);
+  // --comment: declare variable Lthetau of three by three of type vpMatrix
   vpMatrix LthetauInvAnalytic(3, 3);
   vpMatrix I3(3, 3);
   I3.eye();
-  //    Lthetau = -I3;
+  // --comment:   Lthetau equals -I3;
   LthetauInvAnalytic = -I3;
 
-  if (theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon()) {
+  if ((theta / (2.0 * M_PI)) > std::numeric_limits<double>::epsilon()) {
     // Computing [theta/2 u]_x
     vpColVector theta2u(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       theta2u[i] = tu[i] / 2.0;
     }
     vpMatrix theta2u_skew = vpColVector::skew(theta2u);
 
     vpColVector u(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < val_3; ++i) {
       u[i] = tu[i] / theta;
     }
     vpMatrix u_skew = vpColVector::skew(u);
 
-    //        Lthetau += (theta2u_skew -
-    //        (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
     LthetauInvAnalytic +=
-        -(vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew - (1.0 - vpMath::sinc(theta)) * u_skew * u_skew);
+      -((vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew) - ((1.0 - vpMath::sinc(theta)) * u_skew * u_skew));
   }
 
-  //    vpMatrix LthetauInv = Lthetau.inverseByLU();
+  // --comment:  vpMatrix LthetauInv equals Lthetau dot inverseByLU()
 
   ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
 
-  for (unsigned int a = 0; a < 3; a++)
-    for (unsigned int b = 0; b < 3; b++)
+  for (unsigned int a = 0; a < val_3; ++a) {
+    for (unsigned int b = 0; b < val_3; ++b) {
       LpInv[a][b + 3] = ctoInitSkew[a][b];
+    }
+  }
 
-  for (unsigned int a = 0; a < 3; a++)
-    for (unsigned int b = 0; b < 3; b++)
+  for (unsigned int a = 0; a < val_3; ++a) {
+    for (unsigned int b = 0; b < val_3; ++b) {
       LpInv[a + 3][b + 3] = LthetauInvAnalytic[a][b];
+    }
+  }
 
   // Building Js
   Js = Ls * LpInv;
 
   // building deltaP
-  deltaP = (Js).pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
+  deltaP = Js.pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
 }
+END_VISP_NAMESPACE

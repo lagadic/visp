@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpTemplateTrackerBSpline.h
  \brief
@@ -50,7 +49,7 @@
 #include <visp3/core/vpMath.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpTemplateTrackerBSpline
 {
 public:
@@ -58,5 +57,6 @@ public:
 
   static double getSubPixBspline4(const vpImage<double> &I, double r, double t);
 };
+END_VISP_NAMESPACE
 #endif
 #endif

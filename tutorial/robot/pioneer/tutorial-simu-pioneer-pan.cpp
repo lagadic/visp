@@ -19,6 +19,7 @@
   */
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/gui/vpPlot.h>
@@ -30,6 +31,9 @@
 
 int main()
 {
+#if defined(ENABLE_VISP_NAMESPACE)
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     // Set the position the camera has to reach
     vpHomogeneousMatrix cdMo;
@@ -164,7 +168,8 @@ int main()
 
     // Kill the servo task
     task.print();
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

@@ -1,4 +1,5 @@
 //! \example tutorial-bridge-opencv-matrix.cpp
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -9,7 +10,10 @@
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   {
     std::cout << "From OpenCV to ViSP conversion" << std::endl;
     //! [Create OpenCV matrix]
@@ -27,7 +31,7 @@ int main()
   {
     std::cout << "From ViSP to OpenCV conversion" << std::endl;
     //! [Create ViSP matrix]
-    vpMatrix M(3, 4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+    vpMatrix M(3, 4, { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
     std::cout << "M: \n" << M << std::endl;
     //! [Create ViSP matrix]
 
@@ -48,6 +52,6 @@ int main()
     std::cout << "M: \n" << M << std::endl;
     std::cout << "M_cv: \n" << M_cv << std::endl;
     //! [Modify ViSP matrix]
-  }
+}
 #endif
 }

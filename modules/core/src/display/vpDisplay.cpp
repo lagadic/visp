@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +30,12 @@
  * Description:
  * Image display.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#include <limits>
+/*!
+  \file vpDisplay.cpp
+  \brief Generic class for image display.
+*/
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpDisplayException.h>
@@ -47,32 +45,26 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPoint.h>
 
-/*!
-  \file vpDisplay.cpp
-  \brief Generic class for image display.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor.
 */
 vpDisplay::vpDisplay()
   : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0), m_width(0), m_height(0), m_title(),
-    m_scale(1), m_scaleType(SCALE_DEFAULT)
-{
-}
+  m_scale(1), m_scaleType(SCALE_DEFAULT)
+{ }
 
 /*!
   Copy constructor.
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
   : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized), m_windowXPosition(d.m_windowXPosition),
-    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
-    m_scale(d.m_scale), m_scaleType(d.m_scaleType)
-{
-}
+  m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
+  m_scale(d.m_scale), m_scaleType(d.m_scaleType)
+{ }
 
 /*!
-  Destructor that desallocates memory.
+  Destructor that deallocates memory.
 */
 vpDisplay::~vpDisplay() { m_displayHasBeenInitialized = false; }
 
@@ -81,71 +73,76 @@ vpDisplay::~vpDisplay() { m_displayHasBeenInitialized = false; }
 
   The code below shows how to use this method.
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpConfig.h>
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<unsigned char> I(240, 320); // Create a black grey level image
-  vpImage<vpRGBa> Ioverlay;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay *d;
+  int main()
+  {
+    vpImage<unsigned char> I(240, 320); // Create a black grey level image
+    vpImage<vpRGBa> Ioverlay;
 
-  // Depending on the detected third party libraries, we instantiate here the
-  // first video device which is available
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#endif
+    vpDisplay *d;
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Depending on the detected third party libraries, we instantiate here the
+    // first video device which is available
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Draw a red rectangle in the display overlay (foreground)
+    vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
 
-  // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Write the color image on the disk
-  std::string ofilename("overlay.ppm");
-  vpImageIo::write(Ioverlay, ofilename);
+    // Updates the color image with the original loaded image and the overlay
+    vpDisplay::getImage(I, Ioverlay);
 
-  // Wait for a click in the display window
-  vpDisplay::getClick(I);
+    // Write the color image on the disk
+    std::string ofilename("overlay.ppm");
+    vpImageIo::write(Ioverlay, ofilename);
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
+    // Wait for a click in the display window
+    vpDisplay::getClick(I);
+
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
   \endcode
 */
 void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Idest)
 {
-  if (Isrc.display != NULL) {
+  if (Isrc.display != nullptr) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     vpImageConvert::convert(Isrc, Idest);
   }
 }
@@ -155,70 +152,75 @@ void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Id
 
   The code below shows how to use this method.
   \code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/gui/vpDisplayD3D.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayGTK.h>
+  #include <visp3/gui/vpDisplayOpenCV.h>
+  #include <visp3/gui/vpDisplayX.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<vpRGBa> I(240, 320); // Create a black RGB color image
-  vpImage<vpRGBa> Ioverlay;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpDisplay *d;
+  int main()
+  {
+    vpImage<vpRGBa> I(240, 320); // Create a black RGB color image
+    vpImage<vpRGBa> Ioverlay;
 
-  // Depending on the detected third party libraries, we instantiate here the
-  // first video device which is available
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  d = new vpDisplayOpenCV;
-#endif
+    vpDisplay *d;
 
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-#ifdef VISP_HAVE_DISPLAY
-  d->init(I);
-#endif
+    // Depending on the detected third party libraries, we instantiate here the
+    // first video device which is available
+  #if defined(VISP_HAVE_X11)
+    d = new vpDisplayX;
+  #elif defined(VISP_HAVE_GTK)
+    d = new vpDisplayGTK;
+  #elif defined(VISP_HAVE_GDI)
+    d = new vpDisplayGDI;
+  #elif defined(VISP_HAVE_D3D9)
+    d = new vpDisplayD3D;
+  #elif defined(HAVE_OPENCV_HIGHGUI)
+    d = new vpDisplayOpenCV;
+  #endif
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+    // Initialize the display with the image I. Display and image are
+    // now link together.
+  #ifdef VISP_HAVE_DISPLAY
+    d->init(I);
+  #endif
 
-  // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+    // Set the display background with image I content
+    vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+    // Draw a red rectangle in the display overlay (foreground)
+    vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
 
-  // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay);
+    // Flush the foreground and background display
+    vpDisplay::flush(I);
 
-  // Write the color image on the disk
-  std::string ofilename("overlay.ppm");
-  vpImageIo::write(Ioverlay, ofilename);
+    // Updates the color image with the original loaded image and the overlay
+    vpDisplay::getImage(I, Ioverlay);
 
-  // Wait for a click in the display window
-  vpDisplay::getClick(I);
+    // Write the color image on the disk
+    std::string ofilename("overlay.ppm");
+    vpImageIo::write(Ioverlay, ofilename);
 
-#ifdef VISP_HAVE_DISPLAY
-  delete d;
-#endif
-}
+    // Wait for a click in the display window
+    vpDisplay::getClick(I);
+
+  #ifdef VISP_HAVE_DISPLAY
+    delete d;
+  #endif
+  }
   \endcode
 */
 void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
-  if (Isrc.display != NULL) {
+  if (Isrc.display != nullptr) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     Idest = Isrc;
   }
 }
@@ -230,11 +232,12 @@ void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
  */
 void vpDisplay::setDownScalingFactor(unsigned int scale)
 {
-  if (!m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized) {
     m_scale = scale;
+  }
   else {
     std::cout << "Warning: Cannot apply the down scaling factor " << scale
-              << " to the display window since the display is initialized yet..." << std::endl;
+      << " to the display window since the display is initialized yet..." << std::endl;
   }
 }
 
@@ -247,9 +250,9 @@ unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  double wscale = (std::max)(1., ceil(2. * (double)width / (double)screen_width));
-  double hscale = (std::max)(1., ceil(2. * (double)height / (double)screen_height));
-  unsigned int scale = (unsigned int)(std::max)(1u, (std::max)((unsigned int)wscale, (unsigned int)hscale));
+  double wscale = std::max<double>(1., ceil((2. * static_cast<double>(width)) / static_cast<double>(screen_width)));
+  double hscale = std::max<double>(1., ceil((2. * static_cast<double>(height)) / static_cast<double>(screen_height)));
+  unsigned int scale = std::max<unsigned int>(1u, std::max<unsigned int>(static_cast<unsigned int>(wscale), static_cast<unsigned int>(hscale)));
   return scale;
 }
 
@@ -292,6 +295,10 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
   case vpDisplay::SCALE_10:
     setDownScalingFactor(10);
     break;
+  default:
+  {
+    std::cout << "undefined scaleType" << std::endl;
+  }
   }
 }
 
@@ -301,28 +308,34 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
    This method has to be called before display initialization.
 
    \code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
+  #include <visp3/gui/vpDisplayGDI.h>
+  #include <visp3/gui/vpDisplayX.h>
 
-int main()
-{
-  vpImage<unsigned char> I(480, 640); // Black 640 by 480 image
-#ifdef VISP_HAVE_X11
-  vpDisplayX d;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d;
-#endif
-  // Display in a 160 by 120 windows size
-  d.setDownScalingFactor(vpDisplay::SCALE_4);
-  d.init(I);
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-  vpDisplay::getClick(I); // wait for a click to quit
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpImage<unsigned char> I(480, 640); // Black 640 by 480 image
+  #ifdef VISP_HAVE_X11
+    vpDisplayX d;
+  #elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d;
+  #endif
+    // Display in a 160 by 120 windows size
+    d.setDownScalingFactor(vpDisplay::SCALE_4);
+    d.init(I);
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I); // wait for a click to quit
+  }
    \endcode
  */
 void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
 {
-  if (!m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized) {
     m_scaleType = scaleType;
+  }
 }
+END_VISP_NAMESPACE

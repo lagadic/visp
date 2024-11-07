@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,17 +29,7 @@
  *
  * Description:
  * Test automatic thresholding.
- *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
-
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/imgproc/vpImgproc.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/io/vpParseArgv.h>
+ */
 
 /*!
   \example testAutoThreshold.cpp
@@ -48,8 +37,18 @@
   \brief Test automatic thresholding.
 */
 
+#include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
+
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
@@ -66,9 +65,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
+  std::string ext("png");
 #else
-    std::string ext("pgm");
+  std::string ext("pgm");
 #endif
   fprintf(stdout, "\n\
 Test automatic thresholding.\n\
@@ -77,7 +76,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n                 \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -128,7 +127,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, opath, user);
+      usage(argv[0], nullptr, ipath, opath, user);
       return false;
       break;
 
@@ -145,7 +144,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user);
+    usage(argv[0], nullptr, ipath, opath, user);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -208,8 +207,9 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
+      }
+      catch (...) {
+        usage(argv[0], nullptr, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
@@ -218,24 +218,24 @@ int main(int argc, const char **argv)
     }
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username);
+      usage(argv[0], nullptr, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -252,7 +252,7 @@ int main(int argc, const char **argv)
 
     // Huang
     double t = vpTime::measureTimeMs();
-    double threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_HUANG);
+    double threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_HUANG);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Huang): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -263,7 +263,7 @@ int main(int argc, const char **argv)
     // Intermodes
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_INTERMODES);
+    threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_INTERMODES);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Intermodes): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -274,7 +274,7 @@ int main(int argc, const char **argv)
     // IsoData
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_ISODATA);
+    threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_ISODATA);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (IsoData): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -285,7 +285,7 @@ int main(int argc, const char **argv)
     // Mean
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_MEAN);
+    threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_MEAN);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Mean): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -296,7 +296,7 @@ int main(int argc, const char **argv)
     // Otsu
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_OTSU);
+    threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_OTSU);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Otsu): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -307,7 +307,7 @@ int main(int argc, const char **argv)
     // Triangle
     I_thresh = I;
     t = vpTime::measureTimeMs();
-    threshold = vp::autoThreshold(I_thresh, vp::AUTO_THRESHOLD_TRIANGLE);
+    threshold = VISP_NAMESPACE_NAME::autoThreshold(I_thresh, VISP_NAMESPACE_NAME::AUTO_THRESHOLD_TRIANGLE);
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Triangle): " << threshold << " ; t=" << t << " ms" << std::endl;
 
@@ -316,7 +316,8 @@ int main(int argc, const char **argv)
     std::cout << "Write: " << filename << std::endl;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

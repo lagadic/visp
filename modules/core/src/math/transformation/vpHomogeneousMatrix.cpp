@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Homogeneous matrix.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpHomogeneousMatrix.cpp
@@ -42,18 +37,18 @@
   the particular case of an homogeneous matrix.
 */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
+  vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
   : vpArray2D<double>(4, 4)
 {
   buildFrom(t, q);
@@ -92,9 +87,10 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpT
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
   : vpArray2D<double>(4, 4), m_index(0)
 {
+  const unsigned int index_3 = 3;
   insert(R);
   insert(t);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
@@ -102,8 +98,14 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpR
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(4, 4), m_index(0)
 {
-  buildFrom(p[0], p[1], p[2], p[3], p[4], p[5]);
-  (*this)[3][3] = 1.;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  buildFrom(p[index_0], p[index_1], p[index_2], p[index_3], p[index_4], p[index_5]);
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
@@ -113,26 +115,30 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<doub
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<float> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<float> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
@@ -157,37 +163,39 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2
   \param list : List of double.
   The following code shows how to use this constructor to initialize an homogeneous matrix:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpHomogeneousMatrix M {
-    0, 0, 1, 0.1,
-    0, 1, 0, 0.2,
-    1, 0, 0, 0.3 };
-  std::cout << "M:\n" << M << std::endl;
-  vpHomogeneousMatrix N {
-    0, 0, 1, 0.1,
-    0, 1, 0, 0.2,
-    1, 0, 0, 0.3,
-    0, 0, 0, 1 };
-  std::cout << "N:\n" << N << std::endl;
-#endif
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpHomogeneousMatrix M {
+      0, 0, 1, 0.1,
+      0, 1, 0, 0.2,
+      1, 0, 0, 0.3 };
+    std::cout << "M:\n" << M << std::endl;
+    vpHomogeneousMatrix N {
+      0, 0, 1, 0.1,
+      0, 1, 0, 0.2,
+      1, 0, 0, 0.3,
+      0, 0, 0, 1 };
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following output:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list)
@@ -199,9 +207,10 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
     data[13] = 0.;
     data[14] = 0.;
     data[15] = 1.;
-  } else if (list.size() == 16) {
+  }
+  else if (list.size() == 16) {
     std::copy(list.begin(), list.end(), data);
-    for (size_t i = 12; i < 15; i++) {
+    for (size_t i = 12; i < 15; ++i) {
       if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
         throw(vpException(vpException::fatalError,
                           "Cannot initialize homogeneous matrix. "
@@ -215,7 +224,8 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
                         "List element 15 (%f) should be 1.",
                         data[15]));
     }
-  } else {
+  }
+  else {
     throw(vpException(vpException::fatalError,
                       "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements",
                       list.size()));
@@ -223,23 +233,33 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
 
   if (!isAnHomogeneousMatrix()) {
     if (isAnHomogeneousMatrix(1e-3)) {
+      const unsigned int index_0 = 0;
+      const unsigned int index_1 = 1;
+      const unsigned int index_2 = 2;
+      const unsigned int index_4 = 4;
+      const unsigned int index_5 = 5;
+      const unsigned int index_6 = 6;
+      const unsigned int index_8 = 8;
+      const unsigned int index_9 = 9;
+      const unsigned int index_10 = 10;
       // re-orthogonalize rotation matrix since the input is close to a valid rotation matrix
       vpRotationMatrix R(*this);
       R.orthogonalize();
 
-      data[0] = R[0][0];
-      data[1] = R[0][1];
-      data[2] = R[0][2];
-      data[4] = R[1][0];
-      data[5] = R[1][1];
-      data[6] = R[1][2];
-      data[8] = R[2][0];
-      data[9] = R[2][1];
-      data[10] = R[2][2];
-    } else {
+      data[index_0] = R[index_0][index_0];
+      data[index_1] = R[index_0][index_1];
+      data[index_2] = R[index_0][index_2];
+      data[index_4] = R[index_1][index_0];
+      data[index_5] = R[index_1][index_1];
+      data[index_6] = R[index_1][index_2];
+      data[index_8] = R[index_2][index_0];
+      data[index_9] = R[index_2][index_1];
+      data[index_10] = R[index_2][index_2];
+    }
+    else {
       throw(vpException(
-          vpException::fatalError,
-          "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
+        vpException::fatalError,
+        "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
     }
   }
 }
@@ -252,36 +272,40 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<double> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<double> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3
-1  0  0  0.4
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3
+  1  0  0  0.4
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4), m_index(0)
@@ -306,42 +330,52 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(double tx, double ty, double tz, double
   Build an homogeneous matrix from a translation vector
   and a \f$\theta {\bf u}\f$ rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu)
 {
   insert(tu);
   insert(t);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a translation vector
   and a rotation matrix.
  */
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
 {
   insert(R);
   insert(t);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a pose vector.
  */
-void vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
 {
-  vpTranslationVector tv(p[0], p[1], p[2]);
-  vpThetaUVector tu(p[3], p[4], p[5]);
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  vpTranslationVector tv(p[index_0], p[index_1], p[index_2]);
+  vpThetaUVector tu(p[index_3], p[index_4], p[index_5]);
 
   insert(tu);
   insert(tv);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a translation vector
   and a quaternion rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuaternionVector &q)
 {
   insert(t);
   insert(q);
+  return *this;
 }
 
 /*!
@@ -349,113 +383,126 @@ void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuater
   t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$
   rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz);
   vpTranslationVector t(tx, ty, tz);
 
   insert(R);
   insert(t);
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<float> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<float> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.buildFrom(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.buildFrom(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3000000119
-1  0  0  0.400000006
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3000000119
+  1  0  0  0.400000006
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
-void vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<float> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
-    this->data[i] = (double)v[i];
+  for (unsigned int i = 0; i < 12; ++i) {
+    this->data[i] = static_cast<double>(v[i]);
+  }
+  return *this;
 }
 
 /*!
   Build an homogeneous matrix from a vector of double.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  std::vector<double> v(12, 0);
-  v[1]  = -1.; // ry=-90
-  v[4]  =  1.; // rx=90
-  v[10] = -1.; // rz=-90
-  v[3]  = 0.3; // tx
-  v[7]  = 0.4; // ty
-  v[11] = 0.5; // tz
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
-    std::cout << v[i] << " ";
-  std::cout << std::endl;
+  int main()
+  {
+    std::vector<double> v(12, 0);
+    v[1]  = -1.; // ry=-90
+    v[4]  =  1.; // rx=90
+    v[10] = -1.; // rz=-90
+    v[3]  = 0.3; // tx
+    v[7]  = 0.4; // ty
+    v[11] = 0.5; // tz
 
-  vpHomogeneousMatrix M;
-  M.buildFrom(v);
-  std::cout << "M:\n" << M << std::endl;
-}
+    std::cout << "v: ";
+    for(unsigned int i=0; i<v.size(); ++i)
+      std::cout << v[i] << " ";
+    std::cout << std::endl;
+
+    vpHomogeneousMatrix M;
+    M.buildFrom(v);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
 
   It produces the following printings:
   \code
-v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
-M:
-0  -1  0  0.3
-1  0  0  0.4
-0  0  -1  0.5
-0  0  0  1
+  v: 0 -1 0 0.3 1 0 0 0.4 0 0 -1 0.5
+  M:
+  0  -1  0  0.3
+  1  0  0  0.4
+  0  0  -1  0.5
+  0  0  0  1
   \endcode
   */
-void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
+vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<double> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     this->data[i] = v[i];
+  }
+  return *this;
 }
 
 /*!
@@ -465,8 +512,8 @@ void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -477,16 +524,20 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M
   Operator that allow to multiply an homogeneous matrix by an other one.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix aMb, bMc;
-  // Initialize aMb and bMc...
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Compute aMc * bMc
-  vpHomogeneousMatrix aMc = aMb * bMc;
-}
+  int main()
+  {
+    vpHomogeneousMatrix aMb, bMc;
+    // Initialize aMb and bMc...
+
+    // Compute aMc * bMc
+    vpHomogeneousMatrix aMc = aMb * bMc;
+  }
   \endcode
 
 */
@@ -505,7 +556,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M)
 
   R = R1 * R2;
 
-  T = R1 * T2 + T1;
+  T = (R1 * T2) + T1;
 
   p.insert(T);
   p.insert(R);
@@ -517,16 +568,20 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M)
   Operator that allow to multiply an homogeneous matrix by an other one.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M1, M2;
-  // Initialize M1 and M2...
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Compute M1 = M1 * M2
-  M1 *= M2;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M1, M2;
+    // Initialize M1 and M2...
+
+    // Compute M1 = M1 * M2
+    M1 *= M2;
+  }
   \endcode
 
 */
@@ -545,7 +600,8 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::operator*=(const vpHomogeneousMatrix &
 */
 vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
 {
-  if (v.getRows() != 4) {
+  const unsigned int val_4 = 4;
+  if (v.getRows() != val_4) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply a (4x4) homogeneous matrix by a "
                       "(%dx1) column vector",
@@ -555,8 +611,8 @@ vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
 
   p = 0.0;
 
-  for (unsigned int j = 0; j < 4; j++) {
-    for (unsigned int i = 0; i < 4; i++) {
+  for (unsigned int j = 0; j < val_4; ++j) {
+    for (unsigned int i = 0; i < val_4; ++i) {
       p[i] += rowPtrs[i][j] * v[j];
     }
   }
@@ -581,28 +637,33 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
 
   vpColVector v(4), v1(4);
 
-  v[0] = bP.get_X();
-  v[1] = bP.get_Y();
-  v[2] = bP.get_Z();
-  v[3] = bP.get_W();
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
 
-  v1[0] = (*this)[0][0] * v[0] + (*this)[0][1] * v[1] + (*this)[0][2] * v[2] + (*this)[0][3] * v[3];
-  v1[1] = (*this)[1][0] * v[0] + (*this)[1][1] * v[1] + (*this)[1][2] * v[2] + (*this)[1][3] * v[3];
-  v1[2] = (*this)[2][0] * v[0] + (*this)[2][1] * v[1] + (*this)[2][2] * v[2] + (*this)[2][3] * v[3];
-  v1[3] = (*this)[3][0] * v[0] + (*this)[3][1] * v[1] + (*this)[3][2] * v[2] + (*this)[3][3] * v[3];
+  v[index_0] = bP.get_X();
+  v[index_1] = bP.get_Y();
+  v[index_2] = bP.get_Z();
+  v[index_3] = bP.get_W();
+
+  v1[index_0] = ((*this)[index_0][0] * v[0]) + ((*this)[index_0][1] * v[1]) + ((*this)[index_0][index_2] * v[index_2]) + ((*this)[index_0][index_3] * v[index_3]);
+  v1[index_1] = ((*this)[index_1][0] * v[0]) + ((*this)[index_1][1] * v[1]) + ((*this)[index_1][index_2] * v[index_2]) + ((*this)[index_1][index_3] * v[index_3]);
+  v1[index_2] = ((*this)[index_2][0] * v[0]) + ((*this)[index_2][1] * v[1]) + ((*this)[index_2][index_2] * v[index_2]) + ((*this)[index_2][index_3] * v[index_3]);
+  v1[index_3] = ((*this)[index_3][0] * v[0]) + ((*this)[index_3][1] * v[1]) + ((*this)[index_3][index_2] * v[index_2]) + ((*this)[index_3][index_3] * v[index_3]);
 
   v1 /= v1[3];
 
-  //  v1 = M*v ;
-  aP.set_X(v1[0]);
-  aP.set_Y(v1[1]);
-  aP.set_Z(v1[2]);
-  aP.set_W(v1[3]);
+  //  --comment: v1 equals M multiplied by v
+  aP.set_X(v1[index_0]);
+  aP.set_Y(v1[index_1]);
+  aP.set_Z(v1[index_2]);
+  aP.set_W(v1[index_3]);
 
-  aP.set_oX(v1[0]);
-  aP.set_oY(v1[1]);
-  aP.set_oZ(v1[2]);
-  aP.set_oW(v1[3]);
+  aP.set_oX(v1[index_0]);
+  aP.set_oY(v1[index_1]);
+  aP.set_oZ(v1[index_2]);
+  aP.set_oW(v1[index_3]);
 
   return aP;
 }
@@ -620,11 +681,34 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
 vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t) const
 {
   vpTranslationVector t_out;
-  t_out[0] = (*this)[0][0] * t[0] + (*this)[0][1] * t[1] + (*this)[0][2] * t[2] + (*this)[0][3];
-  t_out[1] = (*this)[1][0] * t[0] + (*this)[1][1] * t[1] + (*this)[1][2] * t[2] + (*this)[1][3];
-  t_out[2] = (*this)[2][0] * t[0] + (*this)[2][1] * t[1] + (*this)[2][2] * t[2] + (*this)[2][3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  t_out[index_0] = (((*this)[index_0][0] * t[0]) + ((*this)[index_0][1] * t[1]) + ((*this)[index_0][index_2] * t[index_2])) + (*this)[index_0][index_3];
+  t_out[index_1] = (((*this)[index_1][0] * t[0]) + ((*this)[index_1][1] * t[1]) + ((*this)[index_1][index_2] * t[index_2])) + (*this)[index_1][index_3];
+  t_out[index_2] = (((*this)[index_2][0] * t[0]) + ((*this)[index_2][1] * t[1]) + ((*this)[index_2][index_2] * t[index_2])) + (*this)[index_2][index_3];
 
   return t_out;
+}
+
+/*!
+  Operator that allows to multiply a rotation matrix by a rotation matrix.
+
+  \param[in] R : Rotation matrix.
+
+  \return The product between the homogeneous matrix and the rotation matrix `R`.
+
+  The following snippet shows how to use this method:
+  \code
+  vpHomogeneousMatrix c1_M_c2;
+  vpRotationMatrix c2_R_c3;
+  vpHomogeneousMatrix c1_M_c3 = c1_M_c2 * c2_R_c3;
+  \endcode
+*/
+vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpRotationMatrix &R) const
+{
+  return (vpHomogeneousMatrix((*this).getTranslationVector(), (*this).getRotationMatrix() * R));
 }
 
 /*!
@@ -635,36 +719,40 @@ vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t)
 
   The following example shows how to initialize a rotation matrix using this operator.
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
-  M << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3;
-  std::cout << "M:\n" << M << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpHomogeneousMatrix N;
-  N << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3,
-       0, 0, 0, 1;
-  std::cout << "N:\n" << N << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+    M << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3;
+    std::cout << "M:\n" << M << std::endl;
+
+    vpHomogeneousMatrix N;
+    N << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3,
+        0, 0, 0, 1;
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
 
   \sa operator,()
@@ -684,43 +772,47 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::operator<<(double val)
 
   The following example shows how to initialize an homogeneous matrix using this operator.
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
-  M << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3;
-  std::cout << "M:\n" << M << std::endl;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpHomogeneousMatrix N;
-  N << 0, 0, 1, 0.1,
-       0, 1, 0, 0.2,
-       1, 0, 0, 0.3,
-       0, 0, 0, 1;
-  std::cout << "N:\n" << N << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+    M << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3;
+    std::cout << "M:\n" << M << std::endl;
+
+    vpHomogeneousMatrix N;
+    N << 0, 0, 1, 0.1,
+        0, 1, 0, 0.2,
+        1, 0, 0, 0.3,
+        0, 0, 0, 1;
+    std::cout << "N:\n" << N << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-M:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
-N:
-0  0  1  0.1
-0  1  0  0.2
-1  0  0  0.3
-0  0  0  1
+  M:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
+  N:
+  0  0  1  0.1
+  0  1  0  0.2
+  1  0  0  0.3
+  0  0  0  1
   \endcode
 
   \sa operator<<()
  */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator,(double val)
 {
-  m_index++;
+  ++m_index;
   if (m_index >= size()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize "
@@ -744,9 +836,14 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
   vpRotationMatrix R;
   extract(R);
 
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
   const double epsilon = std::numeric_limits<double>::epsilon();
-  return R.isARotationMatrix(threshold) && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon) &&
-         vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
+  bool isLastRowOK = vpMath::nul((*this)[index_3][index_0], epsilon) && vpMath::nul((*this)[index_3][index_1], epsilon) &&
+    vpMath::nul((*this)[index_3][index_2], epsilon);
+  return R.isARotationMatrix(threshold) && isLastRowOK && vpMath::equal((*this)[index_3][index_3], 1.0, epsilon);
 }
 
 /*!
@@ -755,7 +852,8 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
  */
 bool vpHomogeneousMatrix::isValid() const
 {
-  for (unsigned int i = 0; i < size(); i++) {
+  unsigned int l_size = size();
+  for (unsigned int i = 0; i < l_size; ++i) {
     if (vpMath::isNaN(data[i])) {
       return false;
     }
@@ -769,9 +867,12 @@ bool vpHomogeneousMatrix::isValid() const
 */
 void vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       R[i][j] = (*this)[i][j];
+    }
+  }
 }
 
 /*!
@@ -779,9 +880,13 @@ void vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 */
 void vpHomogeneousMatrix::extract(vpTranslationVector &t) const
 {
-  t[0] = (*this)[0][3];
-  t[1] = (*this)[1][3];
-  t[2] = (*this)[2][3];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  t[index_0] = (*this)[index_0][index_3];
+  t[index_1] = (*this)[index_1][index_3];
+  t[index_2] = (*this)[index_2][index_3];
 }
 /*!
   Extract the rotation as a \f$\theta \bf u\f$ vector.
@@ -808,9 +913,12 @@ void vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 */
 void vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  const unsigned int val_3 = 3;
+  for (unsigned int i = 0; i < val_3; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
+    }
+  }
 }
 
 /*!
@@ -830,9 +938,13 @@ void vpHomogeneousMatrix::insert(const vpThetaUVector &tu)
 */
 void vpHomogeneousMatrix::insert(const vpTranslationVector &t)
 {
-  (*this)[0][3] = t[0];
-  (*this)[1][3] = t[1];
-  (*this)[2][3] = t[2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  (*this)[index_0][index_3] = t[index_0];
+  (*this)[index_1][index_3] = t[index_1];
+  (*this)[index_2][index_3] = t[index_2];
 }
 
 /*!
@@ -880,15 +992,27 @@ vpHomogeneousMatrix vpHomogeneousMatrix::inverse() const
 */
 void vpHomogeneousMatrix::eye()
 {
-  (*this)[0][0] = 1;
-  (*this)[1][1] = 1;
-  (*this)[2][2] = 1;
-  (*this)[3][3] = 1;
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_3 = 3;
+  (*this)[index_0][index_0] = 1;
+  (*this)[index_1][index_1] = 1;
+  (*this)[index_2][index_2] = 1;
+  (*this)[index_3][index_3] = 1;
 
-  (*this)[0][1] = (*this)[0][2] = (*this)[0][3] = 0;
-  (*this)[1][0] = (*this)[1][2] = (*this)[1][3] = 0;
-  (*this)[2][0] = (*this)[2][1] = (*this)[2][3] = 0;
-  (*this)[3][0] = (*this)[3][1] = (*this)[3][2] = 0;
+  (*this)[index_0][index_1] = 0;
+  (*this)[index_0][index_2] = 0;
+  (*this)[index_0][index_3] = 0;
+  (*this)[index_1][index_0] = 0;
+  (*this)[index_1][index_2] = 0;
+  (*this)[index_1][index_3] = 0;
+  (*this)[index_2][index_0] = 0;
+  (*this)[index_2][index_1] = 0;
+  (*this)[index_2][index_3] = 0;
+  (*this)[index_3][index_0] = 0;
+  (*this)[index_3][index_1] = 0;
+  (*this)[index_3][index_2] = 0;
 }
 
 /*!
@@ -907,66 +1031,45 @@ void vpHomogeneousMatrix::eye()
 */
 void vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const { M = inverse(); }
 
-/*!
-  Write an homogeneous matrix in an output file stream.
-
-  \param f : Output file stream. The homogeneous matrix is saved as a
-  4 by 4 matrix.
-
-  The code below shows how to save an homogeneous matrix in a file.
-
-  \code
-  // Contruct an homogeneous matrix
-  vpTranslationVector t(1,2,3);
-  vpRxyzVector r(M_PI, 0, -M_PI/4.);
-  vpRotationMatrix R(r);
-  vpHomogeneousMatrix M(t, R);
-
-  // Save the content of the matrix in "homogeneous.dat"
-  std::ofstream f("homogeneous.dat");
-  M.save(f);
-  \endcode
-
-  \sa load()
-*/
 void vpHomogeneousMatrix::save(std::ofstream &f) const
 {
   if (!f.fail()) {
     f << *this;
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot save homogeneous matrix: ostream not open"));
   }
 }
 
-/*!
+void vpHomogeneousMatrix::save(const std::string &filename) const
+{
+  std::ofstream f;
+  f.open(filename.c_str());
+  save(f);
+  f.close();
+}
 
-  Read an homogeneous matrix from an input file stream. The
-  homogeneous matrix is considered as a 4 by 4 matrix.
-
-  \param f : Input file stream.
-
-  The code below shows how to get an homogeneous matrix from a file.
-
-  \code
-  vpHomogeneousMatrix M;
-
-  std::ifstream f("homogeneous.dat");
-  M.load(f);
-  \endcode
-
-  \sa save()
-*/
 void vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (!f.fail()) {
-    for (unsigned int i = 0; i < 4; i++) {
-      for (unsigned int j = 0; j < 4; j++) {
+    const unsigned int val_4 = 4;
+    for (unsigned int i = 0; i < val_4; ++i) {
+      for (unsigned int j = 0; j < val_4; ++j) {
         f >> (*this)[i][j];
       }
     }
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot load homogeneous matrix: ifstream not open"));
   }
+}
+
+void vpHomogeneousMatrix::load(const std::string &filename)
+{
+  std::ifstream f;
+  f.open(filename.c_str());
+  load(f);
+  f.close();
 }
 
 /*!
@@ -977,15 +1080,25 @@ void vpHomogeneousMatrix::orthogonalizeRotation()
   vpRotationMatrix R(*this);
   R.orthogonalize();
 
-  data[0] = R[0][0];
-  data[1] = R[0][1];
-  data[2] = R[0][2];
-  data[4] = R[1][0];
-  data[5] = R[1][1];
-  data[6] = R[1][2];
-  data[8] = R[2][0];
-  data[9] = R[2][1];
-  data[10] = R[2][2];
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  const unsigned int index_6 = 6;
+  const unsigned int index_8 = 8;
+  const unsigned int index_9 = 9;
+  const unsigned int index_10 = 10;
+
+  data[index_0] = R[index_0][index_0];
+  data[index_1] = R[index_0][index_1];
+  data[index_2] = R[index_0][index_2];
+  data[index_4] = R[index_1][index_0];
+  data[index_5] = R[index_1][index_1];
+  data[index_6] = R[index_1][index_2];
+  data[index_8] = R[index_2][index_0];
+  data[index_9] = R[index_2][index_1];
+  data[index_10] = R[index_2][index_2];
 }
 
 //! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
@@ -1002,8 +1115,9 @@ void vpHomogeneousMatrix::print() const
 void vpHomogeneousMatrix::convert(std::vector<float> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
-    M[i] = (float)(this->data[i]);
+  for (unsigned int i = 0; i < 12; ++i) {
+    M[i] = static_cast<float>(this->data[i]);
+  }
 }
 
 /*!
@@ -1013,8 +1127,9 @@ void vpHomogeneousMatrix::convert(std::vector<float> &M)
 void vpHomogeneousMatrix::convert(std::vector<double> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     M[i] = this->data[i];
+  }
 }
 
 /*!
@@ -1051,39 +1166,45 @@ vpThetaUVector vpHomogeneousMatrix::getThetaUVector() const
 /*!
   Extract a column vector from an homogeneous matrix.
   \warning All the indexes start from 0 in this function.
-  \param j : Index of the column to extract. If j=0, the first column is
-extracted. \return The extracted column vector.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  vpColVector t = M.getCol(3);
-  std::cout << "Last column: \n" << t << std::endl;
-}
+  int main()
+  {
+    vpHomogeneousMatrix M;
+
+    vpColVector t = M.getCol(3);
+    std::cout << "Last column: \n" << t << std::endl;
+  }
   \endcode
-It produces the following output:
+  It produces the following output:
   \code
-Last column:
-0
-0
-1
-0
+  Last column:
+  0
+  0
+  1
+  0
   \endcode
  */
 vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 {
-  if (j >= getCols())
+  if (j >= getCols()) {
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));
+  }
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
-  for (unsigned int i = 0; i < nb_rows; i++)
+  for (unsigned int i = 0; i < nb_rows; ++i) {
     c[i] = (*this)[i][j];
+  }
   return c;
 }
 
@@ -1099,14 +1220,16 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
 
   vpColVector p_bar(3, 0.0);
   vpColVector q_bar(3, 0.0);
-  for (size_t i = 0; i < p.size(); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  size_t p_size = p.size();
+  const unsigned int val_3 = 3;
+  for (size_t i = 0; i < p_size; ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       p_bar[j] += p.at(i).oP[j];
       q_bar[j] += q.at(i).oP[j];
     }
   }
 
-  for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int j = 0; j < val_3; ++j) {
     p_bar[j] /= N;
     q_bar[j] /= N;
   }
@@ -1114,8 +1237,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
   vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
   vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
 
-  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p_size); ++i) {
+    for (unsigned int j = 0; j < val_3; ++j) {
       pc[i][j] = p.at(i).oP[j] - p_bar[j];
       qc[i][j] = q.at(i).oP[j] - q_bar[j];
     }
@@ -1129,14 +1252,17 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
   vpMatrix Vt = V.t();
   vpMatrix R = U * Vt;
   if (R.det() < 0) {
-    Vt[2][0] *= -1;
-    Vt[2][1] *= -1;
-    Vt[2][2] *= -1;
+    const unsigned int index_0 = 0;
+    const unsigned int index_1 = 1;
+    const unsigned int index_2 = 2;
+    Vt[index_2][index_0] *= -1.;
+    Vt[index_2][index_1] *= -1.;
+    Vt[index_2][index_2] *= -1.;
 
     R = U * Vt;
   }
 
-  const vpColVector t = p_bar - R * q_bar;
+  const vpColVector t = p_bar - (R * q_bar);
 
   return vpHomogeneousMatrix(vpTranslationVector(t), vpRotationMatrix(R));
 }
@@ -1155,7 +1281,11 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix meanR(3, 3);
   vpColVector meanT(3);
   vpRotationMatrix R;
-  for (size_t i = 0; i < vec_M.size(); i++) {
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  size_t vec_m_size = vec_M.size();
+  for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
     meanR += (vpMatrix)R;
     meanT += (vpColVector)vec_M[i].getTranslationVector();
@@ -1167,14 +1297,16 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix M, U, V;
   vpColVector sv;
   meanR.pseudoInverse(M, sv, 1e-6, U, V);
-  double det = sv[0] * sv[1] * sv[2];
+  double det = sv[index_0] * sv[index_1] * sv[index_2];
   if (det > 0) {
     meanR = U * V.t();
-  } else {
+  }
+  else {
     vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0;
-    D[2][2] = -1;
+    D[index_0][index_0] = 1.0;
+    D[index_1][index_1] = 1.0;
+    D[index_2][index_2] = -1.;
     meanR = U * D * V.t();
   }
 
@@ -1207,22 +1339,28 @@ void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
   j["type"] = vpHomogeneousMatrix::jsonTypeName;
 }
 
-void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
-  vpArray2D<double>* asArray = (vpArray2D<double>*) this;
-  if(j.is_object() && j.contains("type")) { // Specific conversions
+void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  vpArray2D<double> *asArray = (vpArray2D<double>*) this;
+  if (j.is_object() && j.contains("type")) { // Specific conversions
     const bool converted = convertFromTypeAndBuildFrom<vpHomogeneousMatrix, vpPoseVector>(j, *this);
-    if(!converted) {
+    if (!converted) {
       from_json(j, *asArray);
     }
-  } else { // Generic 2D array conversion
+  }
+  else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
 
-  if (getCols() != 4 && getRows() != 4) {
+  if ((getCols() != 4) && (getRows() != 4)) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 4x4 matrix");
   }
-  if(!isAnHomogeneousMatrix()) {
+  if (!isAnHomogeneousMatrix()) {
     throw vpException(vpException::badValue, "From JSON read a non homogeneous matrix into a vpHomogeneousMatrix");
   }
 }
 #endif
+END_VISP_NAMESPACE

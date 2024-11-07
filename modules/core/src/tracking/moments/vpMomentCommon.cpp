@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,11 +34,12 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Default constructor. Initializes the common database with the following
   moments: basic, gravity,centered,centered+normalized,normalized
@@ -54,7 +55,7 @@
 vpMomentCommon::vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ,
                                bool flg_sxsyfromnormalized)
   : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
-    momentSurfaceNormalized(dstSurface, dstZ), momentCInvariant(), momentAlpha(ref, refAlpha), momentArea()
+  momentSurfaceNormalized(dstSurface, dstZ), momentCInvariant(), momentAlpha(ref, refAlpha), momentArea()
 {
   momentCInvariant = new vpMomentCInvariant(flg_sxsyfromnormalized);
 
@@ -69,59 +70,62 @@ vpMomentCommon::vpMomentCommon(double dstSurface, const std::vector<double> &ref
 }
 
 /*!
-Updates all moments in the database with the object and computes all their
-values. This is possible because this particular database knows the link
-between the moments it contains. The order of computation is as follows:
-vpMomentGravityCenter,vpMomentCentered,vpMomentAlpha,vpMomentCInvariant,vpMomentSInvariant,vpMomentAreaNormalized,vpMomentGravityCenterNormalized
-\param object : Moment object.
+  Updates all moments in the database with the object and computes all their
+  values. This is possible because this particular database knows the link
+  between the moments it contains. The order of computation is as follows:
+  vpMomentGravityCenter,vpMomentCentered,vpMomentAlpha,vpMomentCInvariant,vpMomentSInvariant,vpMomentAreaNormalized,vpMomentGravityCenterNormalized
+  \param object : Moment object.
 
-Example of using a preconfigured database to compute one of the C-invariants:
-\code
-#include <iostream>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+  Example of using a preconfigured database to compute one of the C-invariants:
+  \code
+  #include <iostream>
+  #include <visp3/core/vpMomentCInvariant.h>
+  #include <visp3/core/vpMomentCommon.h>
+  #include <visp3/core/vpMomentObject.h>
+  #include <visp3/core/vpPoint.h>
 
-int main()
-{
-  // Define two discrete points
-  vpPoint p;
-  std::vector<vpPoint> vec_p; // std::vector that contains the vertices of the contour polygon
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
-  vec_p.push_back(p);
-  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(-3);
-  p.set_y(0); // coordinates in meters in the image plane (vertex 3)
-  vec_p.push_back(p);
-  p.set_x(-3);
-  p.set_y(1); // coordinates in meters in the image plane (vertex 4)
-  vec_p.push_back(p);
+  int main()
+  {
+    // Define two discrete points
+    vpPoint p;
+    std::vector<vpPoint> vec_p; // std::vector that contains the vertices of the contour polygon
 
-  vpMomentObject obj(5); // Object initialized up to order 5 to handle
-                         // all computations required by vpMomentCInvariant
-  obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a polygon
-  obj.fromstd::vector(vec_p); // Init the discrete object with two points
+    p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+    vec_p.push_back(p);
+    p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+    vec_p.push_back(p);
+    p.set_x(-3);
+    p.set_y(0); // coordinates in meters in the image plane (vertex 3)
+    vec_p.push_back(p);
+    p.set_x(-3);
+    p.set_y(1); // coordinates in meters in the image plane (vertex 4)
+    vec_p.push_back(p);
 
-  //initialisation with default values
-  vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),vpMomentCommon::getAlpha(obj),1.);
-  bool success;
+    vpMomentObject obj(5); // Object initialized up to order 5 to handle
+                          // all computations required by vpMomentCInvariant
+    obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a polygon
+    obj.fromstd::vector(vec_p); // Init the discrete object with two points
 
-  db.updateAll(obj); // Update AND compute all moments
+    //initialisation with default values
+    vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),vpMomentCommon::getAlpha(obj),1.);
+    bool success;
 
-  //get C-invariant
-  vpMomentCInvariant& C = static_cast<vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
-  if(success) {
-    std::cout << C.get(0) << std:: std::endl;
-  } else
-    std::cout << "vpMomentCInvariant not found." << std::endl;
+    db.updateAll(obj); // Update AND compute all moments
 
-  return 0;
-}
+    //get C-invariant
+    vpMomentCInvariant& C = static_cast<vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+    if(success) {
+      std::cout << C.get(0) << std:: std::endl;
+    } else
+      std::cout << "vpMomentCInvariant not found." << std::endl;
 
-\endcode
+    return 0;
+  }
+  \endcode
 */
 void vpMomentCommon::updateAll(vpMomentObject &object)
 {
@@ -136,9 +140,9 @@ void vpMomentCommon::updateAll(vpMomentObject &object)
     momentSurfaceNormalized.compute();
     momentGravityNormalized.compute();
     momentArea.compute();
-
-  } catch (const char *ex) {
-    std::cout << "exception:" << ex << std::endl;
+  }
+  catch (const vpException &e) {
+    std::cout << "Exception in vpMomentCommon:" << e.getStringMessage() << std::endl;
   }
 }
 
@@ -170,8 +174,8 @@ double vpMomentCommon::getSurface(vpMomentObject &object)
 }
 
 /*!
-Gets a reference alpha of an object.
-\param object : Moment object.
+  Gets a reference alpha of an object.
+  \param object : Moment object.
 */
 double vpMomentCommon::getAlpha(vpMomentObject &object)
 {
@@ -193,8 +197,8 @@ double vpMomentCommon::getAlpha(vpMomentObject &object)
 }
 
 /*!
-Gets the reference 3rd order moments of an object.
-\param object : Moment object.
+  Gets the reference 3rd order moments of an object.
+  \param object : Moment object.
 */
 std::vector<double> vpMomentCommon::getMu3(vpMomentObject &object)
 {
@@ -228,3 +232,4 @@ vpMomentCommon::~vpMomentCommon()
   if (momentCInvariant)
     delete momentCInvariant;
 }
+END_VISP_NAMESPACE

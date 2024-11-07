@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,23 +31,17 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private
 include_directories(${PUGIXML_INCLUDE_DIRS})
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
+list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
 # OpenCV
 if(USE_OPENCV)
@@ -156,22 +150,21 @@ if(USE_OPENCV)
   endif()
 endif(USE_OPENCV)
 
-vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPTIONAL ${PUGIXML_LIBRARIES})
+vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
 
-if(USE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
 endif()
 
-vp_set_source_file_compile_flag(src/pose-estimation/vpPoseFeatures.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/pose-estimation/vpPoseRansac.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/pose-estimation/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/keypoint/vpKeyPoint.cpp -Wno-strict-overflow)
+vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
   if(VISP_DATASET_FOUND)

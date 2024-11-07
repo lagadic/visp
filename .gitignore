@@ -10,3 +10,5 @@ platforms/ios/build_framework.pyc
 modules/java/\.idea/
 .scannerwork
 build
+*.blend1
+**/results/**

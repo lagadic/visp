@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -35,7 +35,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpCoreDisplay_h
 #define vpCoreDisplay_h
@@ -47,11 +47,12 @@
 #include "vpArit.h"
 #include "vpBound.h"
 
+BEGIN_VISP_NAMESPACE
 void open_display(void);
 void close_display(void);
 void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
 void set_Bound_face_display(Bound *bp, Byte b);
 void wireframe_Face(Face *fp, Point2i *pp);
-
+END_VISP_NAMESPACE
 #endif
 #endif

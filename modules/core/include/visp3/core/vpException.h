@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,46 +29,109 @@
  *
  * Description:
  * Exception handling.
- *
- * Authors:
- * Nicolas Mansard
- *
- *****************************************************************************/
-
-/* \file vpException.h
-   \brief error that can be emited by the vp class and its derivates
  */
 
-#ifndef _vpException_h_
-#define _vpException_h_
+/*!
+ * \file vpException.h
+ * \brief error that can be emitted by the vp class and its derivatives
+ */
 
-/* --------------------------------------------------------------------- */
-/* --- INCLUDE --------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
+#ifndef VP_EXCEPTION_H
+#define VP_EXCEPTION_H
 
 #include <visp3/core/vpConfig.h>
 
-/* Classes standards. */
-#include <iostream> /* Classe std::ostream.    */
+#include <iostream>
 #include <stdarg.h>
-#include <string> /* Classe string.     */
+#include <string>
 
-/* --------------------------------------------------------------------- */
-/* --- CLASS ----------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-   \class vpException
-   \ingroup group_core_debug
-   \brief error that can be emited by ViSP classes.
-
-   This class inherites from the standard std::exception contained in the C++
-   STL.
-   It is therefore possible to catch vpException with any other derivative of
-   std::exception in the same catch.
- */
+ * \class vpException
+ * \ingroup group_core_debug
+ * \brief error that can be emitted by ViSP classes.
+ *
+ * This class inherits from the standard std::exception contained in the C++
+ * STL.
+ * It is therefore possible to catch vpException with any other derivative of
+ * std::exception in the same catch.
+*/
 class VISP_EXPORT vpException : public std::exception
 {
+public:
+  enum generalExceptionEnum
+  {
+    memoryAllocationError,       //!< Memory allocation error
+    memoryFreeError,             //!< Memory free error
+    functionNotImplementedError, //!< Function not implemented
+    ioError,                     //!< I/O error
+    cannotUseConstructorError,   //!< constructor error
+    notImplementedError,         //!< Not implemented
+    divideByZeroError,           //!< Division by zero
+    dimensionError,              //!< Bad dimension
+    fatalError,                  //!< Fatal error
+    badValue,                    //!< Used to indicate that a value is not in the allowed range.
+    notInitialized               //!< Used to indicate that a parameter is not initialized.
+  };
+
+  /*!
+   * Constructor.
+   */
+  vpException(int code, const char *format, va_list args);
+  /*!
+   * Constructor.
+   */
+  vpException(int code, const char *format, ...);
+
+  /*!
+   * Constructor.
+   */
+  vpException(int code, const std::string &msg);
+
+  /*!
+    Basic destructor. Do nothing but implemented to fit the inheritance from
+    std::exception
+  */
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
+  virtual ~vpException() throw() { }
+#endif
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpException(int code);
+
+  /** @name Inherited functionalities from vpException */
+  //@{
+  /*!
+   * Send the object code.
+   */
+  int getCode() const;
+
+  /*!
+   * Send a reference (constant) related the error message (can be empty).
+   */
+  const std::string &getStringMessage() const;
+
+  /*!
+   * Send a pointer on the array of  \e char related to the error string.
+   * Cannot be  \e nullptr.
+   */
+  const char *getMessage() const;
+
+  /*!
+   * Overloading of the what() method of std::exception to return the vpException
+   * message.
+   *
+   * \return pointer on the array of  \e char related to the error string.
+   */
+  const char *what() const throw();
+  //@}
+
+  /*!
+   * Print the error structure.
+   */
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
+
 protected:
   //! Contains the error code, see the errorCodeEnum table for details.
   int code;
@@ -81,54 +143,8 @@ protected:
   void setMessage(const char *format, va_list args);
 
   //!  forbid the empty constructor (protected)
-  vpException() : code(notInitialized), message(""){};
+  vpException() : code(notInitialized), message("") { }
 
-public:
-  enum generalExceptionEnum {
-    memoryAllocationError,       //!< Memory allocation error
-    memoryFreeError,             //!< Memory free error
-    functionNotImplementedError, //!< Function not implemented
-    ioError,                     //!< I/O error
-    cannotUseConstructorError,   //!< Contructor error
-    notImplementedError,         //!< Not implemented
-    divideByZeroError,           //!< Division by zero
-    dimensionError,              //!< Bad dimension
-    fatalError,                  //!< Fatal error
-    badValue,                    //!< Used to indicate that a value is not in the allowed range.
-    notInitialized               //!< Used to indicate that a parameter is not initialized.
-  };
-
-  vpException(int code, const char *format, va_list args);
-  vpException(int code, const char *format, ...);
-  vpException(int code, const std::string &msg);
-  explicit vpException(int code);
-
-  /*!
-    Basic destructor. Do nothing but implemented to fit the inheritance from
-    std::exception
-  */
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  virtual ~vpException() {}
-#else
-  virtual ~vpException() throw() {}
-#endif
-
-  /** @name Inherited functionalities from vpException */
-  //@{
-  //! Send the object code.
-  int getCode() const;
-
-  //! Send a reference (constant) related the error message (can be empty).
-  const std::string &getStringMessage() const;
-  //! send a pointer on the array of  \e char related to the error string.
-  //! Cannot be  \e NULL.
-  const char *getMessage() const;
-  //@}
-
-  //! Print the error structure.
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
-
-  const char *what() const throw();
 };
-
-#endif /* #ifndef _vpException_h_ */
+END_VISP_NAMESPACE
+#endif

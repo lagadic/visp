@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,13 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 # Add optional 3rd parties
 set(opt_incs "")
+set(opt_system_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 if(USE_COIN3D AND NOT HAVE_visp_ar)
   if(WIN32)
@@ -111,27 +110,13 @@ endif()
 
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
-
-  # list(APPEND opt_libs ${PCL_LIBRARIES})
-  # Using PCL_LIBRARIES works to build visp library, examples, demos and test thanks to the components,
-  # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
-  # ViSP as a 3rd party.
-  # To be clear PCL_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
-  # full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
-  # The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
-  # is able to find the real name and location of the libraries.
-  # But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
-  # PCL_LIBRARIES and especially with VTK_LIBRARIES.
-  # The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
-  # with these names.
-  # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
-  # will be not able to give the names of PCL libraries when used without CMake.
-  vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+  # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
+  # and PCL_DEPS_LIBRARIES instead
   list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
-if(USE_NLOHMANN_JSON)
+if(USE_NLOHMANN_JSON AND NOT VISP_HAVE_NLOHMANN_JSON_FROM_VTK)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
@@ -139,47 +124,23 @@ endif()
 if(WITH_CLIPPER)
   # clipper is private
   include_directories(${CLIPPER_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${CLIPPER_LIBRARIES})
 endif()
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private
 include_directories(${PUGIXML_INCLUDE_DIRS})
+list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
-
-vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
+vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 vp_glob_module_sources()
 
-if(USE_OGRE)
-  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(src/edge/vpMbEdgeTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceCircle.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceCylinder.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceLine.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/hybrid/vpMbEdgeKltTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/klt/vpMbKltTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-strict-overflow -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/klt/vpMbtDistanceKltCylinder.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/klt/vpMbtDistanceKltPoints.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/vpMbTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-strict-overflow -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/depth/vpMbtFaceDepthDense.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/depth/vpMbtFaceDepthNormal.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy -Wno-shadow -Wno-register)
-  vp_set_source_file_compile_flag(src/depth/vpMbDepthDenseTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/depth/vpMbDepthNormalTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/vpMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  vp_set_source_file_compile_flag(src/vpMbGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-else()
-  vp_set_source_file_compile_flag(src/vpMbTracker.cpp -Wno-strict-overflow)
-  vp_set_source_file_compile_flag(src/klt/vpMbKltTracker.cpp -Wno-strict-overflow)
-  vp_set_source_file_compile_flag(src/edge/vpMbEdgeTracker.cpp -Wno-deprecated-declarations)
-  vp_set_source_file_compile_flag(src/depth/vpMbtFaceDepthNormal.cpp -Wno-deprecated-declarations -Wno-shadow -Wno-deprecated-copy)
-endif()
 if(MSVC)
   if(BUILD_SHARED_LIBS)
     vp_set_source_file_compile_flag(src/depth/vpMbtTukeyEstimator.cpp /wd4244)
@@ -195,19 +156,16 @@ endif()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
-if(BUILD_TESTS)
-  if(USE_OGRE)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/perfGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerCAOParsing.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDeterminist.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-    vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtJsonSettings.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
-  endif()
+set(opt_test_incs "")
+set(opt_test_libs "")
+
+if(WITH_CATCH2)
+  # catch2 is private
+  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
 endif()
 
-vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
+vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
 
 if(VISP_DATASET_FOUND)
   #add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1) #already added by vp_add_tests

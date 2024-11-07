@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,14 +29,10 @@
  *
  * Description:
  * GDI renderer for windows 32 display
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
 
-#ifndef vpWin32API_HH
-#define vpWin32API_HH
+#ifndef VP_WIN32_API_H
+#define VP_WIN32_API_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -48,6 +43,8 @@
 #include <WinSock2.h>
 #include <string>
 #include <windows.h>
+
+BEGIN_VISP_NAMESPACE
 
 DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
@@ -63,5 +60,7 @@ BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC 
 BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase);
 COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor);
 HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits);
+
+END_VISP_NAMESPACE
 #endif
 #endif

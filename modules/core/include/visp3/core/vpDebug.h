@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,24 +31,20 @@
  * Debug and trace macro.
  *
  *   - TRACING:    vpTRACE and vpERROR_TRACE work like printf with carreer
- *return at the end of the string. vpCERROR et vpCTRACE work like the C++
- *output streams std::cout and std::cerr.
+ *                 return at the end of the string. vpCERROR et vpCTRACE work like the C++
+ *                 output streams std::cout and std::cerr.
  *   - DEBUGING:   vpDEBUG_TRACE(niv) and vpDERROR_TRACE(niv), work like
- *printf, but print only if the tracing level niv is greater than the debug
- *level VP_DEBUG_MODE. vpCDEBUG(niv) work like the C++ output
- *stream std::cout. vpDEBUG_ENABLE(niv) is equal to 1 if the
- *debug level niv is greater than the debug mode
+ *                 printf, but print only if the tracing level niv is greater than the debug
+ *                 level VP_DEBUG_MODE. vpCDEBUG(niv) work like the C++ output
+ *                 stream std::cout. vpDEBUG_ENABLE(niv) is equal to 1 if the
+ *                 debug level niv is greater than the debug mode
  *                 VP_DEBUG_MODE, 0 else.
  *   - PROG DEFENSIVE: DEFENSIF(a) is equal to a if defensive mode is active,
- *0 else.
- *
- * Authors:
- * Nicolas Mansard, Bruno Renier
- *
- *****************************************************************************/
+ *                 0 else.
+ */
 
-#ifndef _vpDebug_h_
-#define _vpDebug_h_
+#ifndef VP_DEBUG_H
+#define VP_DEBUG_H
 
 #include <iostream>
 #include <stdarg.h>
@@ -66,6 +61,7 @@
 #define VP_DEBUG_MODE 0
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpTraceOutput
 
@@ -75,18 +71,18 @@
 
   It needs to be initialized with the file name, function name and
   line, of the place where it is created.  It is best used by first
-  instanciating the object and directly calling the () operator.  This
+  instantiating the object and directly calling the () operator.  This
   is used to mimic variadic macros.
 
   This class is used to define the following macros:
 
   - Macros for tracing: vpTRACE(), vpERROR_TRACE(), vpIN_FCT() and
     vpOUT_FCT() work like printf
-    with carreer return at the end of the string, while vpCTRACE() and
+    with career return at the end of the string, while vpCTRACE() and
     vpCERROR() work like the C++ output streams std::cout and
     std::cerr.
 
-  - Macros for debuging: vpDEBUG_TRACE(level) and vpDERROR_TRACE(level)
+  - Macros for debugging: vpDEBUG_TRACE(level) and vpDERROR_TRACE(level)
     work like printf, but print only if the tracing level \e level is
     greater than the debug level VP_DEBUG_MODE macro. vpCDEBUG(level)
     work like the C++ output stream std::cout. vpDEBUG_ENABLE(level) is
@@ -96,76 +92,69 @@
   The example below shows how to use these macros.
 
   \code
-#define VP_TRACE        // Activate the trace mode
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_TRACE        // Activate the trace mode
+  #define VP_DEBUG        // Activate the debug mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  vpIN_FCT("main()");
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Check the active debug levels
-  std::cout << "Debug level 1 active: " << vpDEBUG_ENABLE(1) << std::endl;
-  std::cout << "Debug level 2 active: " << vpDEBUG_ENABLE(2) << std::endl;
-  std::cout << "Debug level 3 active: " << vpDEBUG_ENABLE(3) << std::endl;
+  int main()
+  {
+    vpIN_FCT("main()");
 
-  // C-like debug printings
-  vpTRACE("C-like trace"); // stdout
+    // Check the active debug levels
+    std::cout << "Debug level 1 active: " << vpDEBUG_ENABLE(1) << std::endl;
+    std::cout << "Debug level 2 active: " << vpDEBUG_ENABLE(2) << std::endl;
+    std::cout << "Debug level 3 active: " << vpDEBUG_ENABLE(3) << std::endl;
 
-  // Printing depend only VP_DEBUG_MODE value is >= 1
-  vpTRACE(1, "C-like trace level 1");              // stdout
-  vpERROR_TRACE(1, "C-like error trace level 1");  // stderr
+    // C-like debug printings
+    vpTRACE("C-like trace"); // stdout
 
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
-  vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
+    // Printing depend only VP_DEBUG_MODE value is >= 1
+    vpTRACE(1, "C-like trace level 1");              // stdout
+    vpERROR_TRACE(1, "C-like error trace level 1");  // stderr
 
-  // C++-like debug printings
-  vpCTRACE << "C++-like trace" << std::endl; // stdout
-  vpCERROR << "C++-like error trace" << std::endl; // stderr
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
+    vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
 
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
+    // C++-like debug printings
+    vpCTRACE << "C++-like trace" << std::endl; // stdout
+    vpCERROR << "C++-like error trace" << std::endl; // stderr
 
-  vpOUT_FCT("main()");
-}
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
+
+    vpOUT_FCT("main()");
+  }
   \endcode
 
 */
 class vpTraceOutput
 {
-private:
-  const char *currentFile; // Name of the file to use in the displays
-  const char *currentFunc; // Name of the function to use in the displays
-  int currentLine;         // Line to use in the displays
-
-  // if true, output to std::cerr/stderr else std::cout/stdout
-  bool err;
-  // string to display before anything else
-  const char *header;
-
 public:
   /*!
     Constructor.
-    \param file Should be the name of the file where this constructor was
-    called. \param line Should be the line in file where this constructor was
-    called. \param func Should be the name of the function where this
-    constructor was called. \param error If true, writes to the error stream.
+    \param file Should be the name of the file where this constructor was called.
+    \param line Should be the line in file where this constructor was called.
+    \param func Should be the name of the function where this constructor was called.
+    \param error If true, writes to the error stream.
     \param s String to print before any other message (acts like a header).
     \note Call the constructor with something like
     vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
   */
-  vpTraceOutput(const char *file, int line, const char *func, bool error = false, const char *s = NULL)
+  vpTraceOutput(const char *file, int line, const char *func, bool error = false, const char *s = nullptr)
     : currentFile(file), currentFunc(func), currentLine(line), err(error), header(s)
-  {
-  }
+  { }
 
   /*!
     Displays a string if the debug level is inferior to VP_DEBUG_MODE.
     \param level Level of this message.
-    \param format Formating string.
+    \param format String format.
   */
   void operator()(int level, const char *format, ...)
   {
@@ -175,10 +164,12 @@ public:
       va_list args;
       va_start(args, format);
 
-      if (err)
+      if (err) {
         std::cerr << "(L" << level << ") ";
-      else
+      }
+      else {
         std::cout << "(L" << level << ") ";
+      }
 
       // calls display with it
       display(format, args);
@@ -221,8 +212,9 @@ public:
     // if we want to write to std::cerr/stderr
     if (err) {
       // first writes the header if there is one
-      if (header != NULL)
+      if (header != nullptr) {
         std::cerr << header;
+      }
       // then writes the recorded namefile, function and line
       std::cerr << "!!\t" << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";
       // and finally writes the message passed to () operator.
@@ -230,10 +222,12 @@ public:
       fprintf(stderr, "\n");
       // flushes the buffer
       fflush(stderr);
-    } else {
+    }
+    else {
       // first writes the header if there is one
-      if (header != NULL)
+      if (header != nullptr) {
         std::cout << header;
+      }
       // then writes the recorded namefile, function and line
       std::cout << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";
       // and finally writes the message passed to () operator.
@@ -243,14 +237,21 @@ public:
       fflush(stdout);
     }
   }
+private:
+  const char *currentFile; // Name of the file to use in the displays
+  const char *currentFunc; // Name of the function to use in the displays
+  int currentLine;         // Line to use in the displays
+
+  // if true, output to std::cerr/stderr else std::cout/stdout
+  bool err;
+  // string to display before anything else
+  const char *header;
+
 };
 
-/* -------------------------------------------------------------------------
- */
-/* --- vpTRACE IN/OUT FONCTION ---------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+/* ------------------------------------------------------------------------- */
+/* --- vpTRACE IN/OUT FONCTION --------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 
 #ifdef VP_TRACE // Activate the trace mode
 
@@ -259,15 +260,19 @@ public:
   Works like vpTRACE() and should be used at the beginning of a function.
 
   \code
-#define VP_TRACE // To activate the trace mode
-#include <visp3/core/vpDebug.h>
+  #define VP_TRACE // To activate the trace mode
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  vpIN_FCT("main()");
-  // the body of the main() function
-  vpOUT_FCT("main()");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpIN_FCT("main()");
+    // the body of the main() function
+    vpOUT_FCT("main()");
+  }
   \endcode
 
   \sa vpOUT_FCT
@@ -279,15 +284,19 @@ int main()
   Works like vpTRACE() and should be used at the end of a function.
 
   \code
-#define VP_TRACE // To activate the trace mode
-#include <visp3/core/vpDebug.h>
+  #define VP_TRACE // To activate the trace mode
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  vpIN_FCT("main()");
-  // the body of the main() function
-  vpOUT_FCT("main()");
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    vpIN_FCT("main()");
+    // the body of the main() function
+    vpOUT_FCT("main()");
+  }
   \endcode
 
   \sa vpIN_FCT
@@ -296,41 +305,42 @@ int main()
 
 #else // #ifdef VP_TRACE
 
-inline void vpIN_FCT(const char * /* a */, ...) {}
-inline void vpOUT_FCT(const char * /* a */, ...) {}
+inline void vpIN_FCT(const char * /* a */, ...) { }
+inline void vpOUT_FCT(const char * /* a */, ...) { }
 
 #endif // #ifdef VP_TRACE
 
-/* --------------------------------------------------------------------------
- */
-/* --- vpTRACE --------------------------------------------------------------
- */
-/* --------------------------------------------------------------------------
- */
+/* -------------------------------------------------------------------------- */
+/* --- vpTRACE -------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 #ifdef VP_TRACE
 
 /*!
   \ingroup group_core_debug
   Used to display trace messages on the standard stream (C++).
-  Use like this : vpCTRACE<<"my message"<<std::endl;
+  Use like this : vpCTRACE << "my message" << std::endl;
 
   \code
-#define VP_TRACE        // To activate trace mode
-#define VP_DEBUG        // To activate the debug mode
-#define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
+  #define VP_TRACE        // To activate trace mode
+  #define VP_DEBUG        // To activate the debug mode
+  #define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // C++-like debug printings
-  vpCTRACE << "C++-like trace" << std::endl; // stdout
-  vpCERROR << "C++-like error trace" << std::endl; // stderr
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
-}
+  int main()
+  {
+    // C++-like debug printings
+    vpCTRACE << "C++-like trace" << std::endl; // stdout
+    vpCERROR << "C++-like error trace" << std::endl; // stderr
+
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
+  }
   \endcode
 
   \sa vpTRACE(), vpCERROR(), vpCDEBUG()
@@ -343,28 +353,30 @@ int main()
   Use like this : vpCERROR<<"my message"<<std::endl;
 
   \code
-#define VP_TRACE        // To activate trace mode
-#define VP_DEBUG        // To activate the debug mode
-#define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
+  #define VP_TRACE        // To activate trace mode
+  #define VP_DEBUG        // To activate the debug mode
+  #define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // C++-like debug printings
-  vpCTRACE << "C++-like trace" << std::endl; // stdout
-  vpCERROR << "C++-like error trace" << std::endl; // stderr
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
-}
+  int main()
+  {
+    // C++-like debug printings
+    vpCTRACE << "C++-like trace" << std::endl; // stdout
+    vpCERROR << "C++-like error trace" << std::endl; // stderr
+
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
+  }
   \endcode
 
   \sa vpCTRACE(), vpCDEBUG()
 */
-#define vpCERROR                                                                                                       \
-  std::cerr << "(L0) "                                                                                                 \
-            << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
+#define vpCERROR  std::cerr << "(L0) " << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup group_core_debug
@@ -375,17 +387,21 @@ int main()
   with any "printf" string.
 
   \code
-#define VP_TRACE // To activate trace mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_TRACE // To activate trace mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // Printing depend only VP_DEBUG_MODE value is >= 1
-  vpTRACE(1, "C-like trace level 1");              // stdout
-  vpERROR_TRACE(1, "C-like error trace level 1");  // stderr
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    // Printing depend only VP_DEBUG_MODE value is >= 1
+    vpTRACE(1, "C-like trace level 1");              // stdout
+    vpERROR_TRACE(1, "C-like error trace level 1");  // stderr
+  }
   \endcode
 
   \sa vpTRACE()
@@ -401,14 +417,18 @@ int main()
   with any "printf" string.
 
   \code
-#define VP_TRACE // To activate trace mode
-#include <visp3/core/vpDebug.h>
+  #define VP_TRACE // To activate trace mode
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // C-like debug printings
-  vpTRACE("C-like trace"); // stdout
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    // C-like debug printings
+    vpTRACE("C-like trace"); // stdout
+  }
   \endcode
 
   \sa vpCTRACE(), vpERROR_TRACE()
@@ -424,19 +444,16 @@ int main()
   if (false)                                                                                                           \
   std::cerr // Warning C4127
 
-inline void vpERROR_TRACE(const char * /* a */, ...) {}
-inline void vpERROR_TRACE(int /* level */, const char * /* a */, ...) {}
-inline void vpTRACE(const char * /* a */, ...) {}
-inline void vpTRACE(int /* level */, const char * /* a */, ...) {}
+inline void vpERROR_TRACE(const char * /* a */, ...) { }
+inline void vpERROR_TRACE(int /* level */, const char * /* a */, ...) { }
+inline void vpTRACE(const char * /* a */, ...) { }
+inline void vpTRACE(int /* level */, const char * /* a */, ...) { }
 
 #endif // #ifdef VP_TRACE
 
-/* -------------------------------------------------------------------------
- */
-/* --- VP_DEBUG ------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+/* ------------------------------------------------------------------------- */
+/* --- VP_DEBUG ------------------------------------------------------------ */
+/* ------------------------------------------------------------------------- */
 
 #ifdef VP_DEBUG
 
@@ -446,17 +463,21 @@ inline void vpTRACE(int /* level */, const char * /* a */, ...) {}
   tracing level is smaller than the debug level VP_DEBUG_MODE.
 
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_DEBUG        // Activate the debug mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
-  vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
+    vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
+  }
   \endcode
 
   \sa vpDEBUG_TRACE()
@@ -469,17 +490,21 @@ int main()
   tracing level level is greater than the debug level VP_DEBUG_MODE.
 
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_DEBUG        // Activate the debug mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
-  vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpDEBUG_TRACE(2, "C-like debug trace level 2");  // stdout
+    vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
+  }
   \endcode
 
   \sa vpDERROR_TRACE()
@@ -490,20 +515,24 @@ int main()
   \ingroup group_core_debug
   vpCDEBUG(level) work like the C++ output stream std::cout.
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_DEBUG        // Activate the debug mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // C++-like debug printings
-  vpCTRACE << "C++-like trace" << std::endl; // stdout
-  vpCERROR << "C++-like error trace" << std::endl; // stderr
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
-  vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
-}
+  int main()
+  {
+    // C++-like debug printings
+    vpCTRACE << "C++-like trace" << std::endl; // stdout
+    vpCERROR << "C++-like error trace" << std::endl; // stderr
+
+    // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
+    vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // stdout
+  }
   \endcode
 
   \sa vpCTRACE(), vpCERROR()
@@ -518,31 +547,35 @@ int main()
   \ingroup group_core_debug
 
   vpDEBUG_ENABLE(level) is equal to 1 if the debug level \e level is greater
-than the debug mode VP_DEBUG_MODE, 0 else.
+  than the debug mode VP_DEBUG_MODE, 0 else.
 
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+  #define VP_DEBUG        // Activate the debug mode
+  #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp3/core/vpDebug.h>
+  #include <visp3/core/vpDebug.h>
 
-int main()
-{
-  // Check the active debug levels
-  std::cout << "Debug level 1 active: " << vpDEBUG_ENABLE(1) << std::endl;
-  std::cout << "Debug level 2 active: " << vpDEBUG_ENABLE(2) << std::endl;
-  std::cout << "Debug level 3 active: " << vpDEBUG_ENABLE(3) << std::endl;
-}
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
+  int main()
+  {
+    // Check the active debug levels
+    std::cout << "Debug level 1 active: " << vpDEBUG_ENABLE(1) << std::endl;
+    std::cout << "Debug level 2 active: " << vpDEBUG_ENABLE(2) << std::endl;
+    std::cout << "Debug level 3 active: " << vpDEBUG_ENABLE(3) << std::endl;
+  }
   \endcode
 */
 #define vpDEBUG_ENABLE(level) (VP_DEBUG_MODE >= level)
 
 #else // #ifdef VP_DEBUG
 
-inline void vpDERROR_TRACE(const char * /* a */, ...) {}
-inline void vpDEBUG_TRACE(const char * /* a */, ...) {}
-inline void vpDERROR_TRACE(int /* level */, const char * /* a */, ...) {}
-inline void vpDEBUG_TRACE(int /* level */, const char * /* a */, ...) {}
+inline void vpDERROR_TRACE(const char * /* a */, ...) { }
+inline void vpDEBUG_TRACE(const char * /* a */, ...) { }
+inline void vpDERROR_TRACE(int /* level */, const char * /* a */, ...) { }
+inline void vpDEBUG_TRACE(int /* level */, const char * /* a */, ...) { }
 
 #define vpCDEBUG(level)                                                                                                \
   if (false)                                                                                                           \
@@ -551,16 +584,13 @@ inline void vpDEBUG_TRACE(int /* level */, const char * /* a */, ...) {}
 
 #endif // #ifdef VP_DEBUG
 
-/* --------------------------------------------------------------------------
- */
-/* --- DEFENSIF -------------------------------------------------------------
- */
-/* --------------------------------------------------------------------------
- */
+/* -------------------------------------------------------------------------- */
+/* --- DEFENSIF ------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 #ifdef VP_DEFENSIF
 #define DEFENSIF(a) (a)
 #else
 #define DEFENSIF(a) (0)
 #endif /*#ifdef DEFENSIF*/
-
+END_VISP_NAMESPACE
 #endif /* #ifdef __DEBUG_HH */

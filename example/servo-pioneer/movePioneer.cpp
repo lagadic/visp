@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example that shows how to control a Pioneer mobile robot in ViSP.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iostream>
 
@@ -46,8 +43,8 @@
 int main()
 {
   std::cout << "\nThis example requires Aria 3rd party library. You should "
-               "install it.\n"
-            << std::endl;
+    "install it.\n"
+    << std::endl;
   return EXIT_SUCCESS;
 }
 
@@ -67,13 +64,17 @@ int main()
 */
 int main(int argc, char **argv)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     std::cout << "\nWARNING: this program does no sensing or avoiding of "
-                 "obstacles, \n"
-                 "the robot WILL collide with any objects in the way! Make sure "
-                 "the \n"
-                 "robot has approximately 3 meters of free space on all sides.\n"
-              << std::endl;
+      "obstacles, \n"
+      "the robot WILL collide with any objects in the way! Make sure "
+      "the \n"
+      "robot has approximately 3 meters of free space on all sides.\n"
+      << std::endl;
 
     vpRobotPioneer robot;
 
@@ -141,7 +142,8 @@ int main(int argc, char **argv)
     // exit
     ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

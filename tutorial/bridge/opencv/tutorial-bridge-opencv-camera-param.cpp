@@ -1,6 +1,7 @@
 //! \example tutorial-bridge-opencv-camera-param.cpp
 #include <iostream>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -11,6 +12,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   //! [Set ViSP camera parameters]
   double u0 = 326.6;
   double v0 = 215.0;

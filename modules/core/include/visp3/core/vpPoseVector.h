@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +30,7 @@
  * Description:
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
- *
-*****************************************************************************/
-
-#ifndef vpPOSEVECTOR_H
-#define vpPOSEVECTOR_H
+ */
 
 /*!
   \file vpPoseVector.h
@@ -45,20 +40,21 @@
     translation vector.
 */
 
-class vpRotationMatrix;
-class vpHomogeneousMatrix;
-class vpTranslationVector;
-class vpThetaUVector;
-class vpRowVector;
+#ifndef VP_POSE_VECTOR_H
+#define VP_POSE_VECTOR_H
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-#endif
+BEGIN_VISP_NAMESPACE
+class vpRotationMatrix;
+class vpHomogeneousMatrix;
+class vpTranslationVector;
+class vpThetaUVector;
+class vpRowVector;
 
 /*!
   \class vpPoseVector
@@ -92,6 +88,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpPoseVector pose;
@@ -121,6 +121,10 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
@@ -135,15 +139,16 @@ class vpRowVector;
   \code
   #include <visp3/core/vpPoseVector.h>
 
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
+
   int main()
   {
     vpTranslationVector t;
     vpThetaUVector tu;
-
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     t = { 0.1, 0.2, 0.3 };
     tu = { M_PI, M_PI_2, M_PI_4 };
-  #endif
     vpPoseVector pose(t, tu);
   }
   \endcode
@@ -155,6 +160,10 @@ class vpRowVector;
   and reload the values from this JSON file.
   \code
   #include <visp3/core/vpPoseVector.h>
+
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
   int main()
   {
@@ -198,23 +207,21 @@ public:
   // constructor from 3 angles (in radian)
   vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // constructor convert an homogeneous matrix in a pose
-  explicit vpPoseVector(const vpHomogeneousMatrix &M);
+  VP_EXPLICIT vpPoseVector(const vpHomogeneousMatrix &M);
   // constructor  convert a translation and a "thetau" vector into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu);
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
-  /*!
-    Destructor.
-  */
-  virtual ~vpPoseVector() { };
 
-  vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
+  virtual ~vpPoseVector() { }
+
+  vpPoseVector &buildFrom(const double &tx, const double &ty, const double &tz, const double &tux, const double &tuy, const double &tuz);
   // convert an homogeneous matrix in a pose
-  vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
+  vpPoseVector &buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
+  vpPoseVector &buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
   //  convert a translation and a rotation matrix into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
+  vpPoseVector &buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
   void extract(vpRotationMatrix &R) const;
   void extract(vpThetaUVector &tu) const;
@@ -288,7 +295,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a pose vector"));
-  };
+  }
 
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const;
@@ -306,6 +313,7 @@ private:
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
+public:
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -317,21 +325,22 @@ private:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  vp_deprecated void init() { };
+  VP_DEPRECATED void init() { };
   //@}
 #endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
+#include VISP_NLOHMANN_JSON(json.hpp)
 inline void to_json(nlohmann::json &j, const vpPoseVector &r)
 {
   r.convert_to_json(j);
 }
+
 inline void from_json(const nlohmann::json &j, vpPoseVector &r)
 {
   r.parse_json(j);
 }
 #endif
-
+END_VISP_NAMESPACE
 #endif

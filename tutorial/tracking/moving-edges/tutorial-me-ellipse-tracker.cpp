@@ -1,4 +1,4 @@
-/*! \example tutorial-me-ellipse-tracker.cpp */
+//! \example tutorial-me-ellipse-tracker.cpp
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vp1394CMUGrabber.h>
@@ -10,9 +10,16 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/me/vpMeEllipse.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main()
 {
 #if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO))
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     vpImage<unsigned char> I;
 
@@ -33,7 +40,7 @@ int main()
 
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
     g.acquire(I);
-#elif defined(VISP_HAVE_VIDEOIO)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
@@ -53,13 +60,16 @@ int main()
 
     vpMe me;
     me.setRange(25);
-    me.setThreshold(15000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(20);
     me.setSampleStep(10);
 
+    //! [me ellipse container]
     vpMeEllipse ellipse;
     ellipse.setMe(&me);
     ellipse.setDisplay(vpMeSite::RANGE_RESULT);
     ellipse.initTracking(I);
+    //! [me ellipse container]
 
     while (1) {
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
@@ -73,7 +83,8 @@ int main()
       ellipse.display(I, vpColor::red);
       vpDisplay::flush(I);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

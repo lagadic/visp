@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,16 +33,15 @@
  *
  * Authors:
  * Gatien Gaumerais
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRobotBebop2_h_
 #define _vpRobotBebop2_h_
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_ARSDK
+#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpImage.h>
 
@@ -60,6 +59,7 @@ extern "C" {
 #include <signal.h>
 #include <string>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpRobotBebop2
 
@@ -250,6 +250,6 @@ private:
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//
 };
-
+END_VISP_NAMESPACE
 #endif //#ifdef VISP_HAVE_ARSDK
 #endif //#ifndef _vpRobotBebop2_h_

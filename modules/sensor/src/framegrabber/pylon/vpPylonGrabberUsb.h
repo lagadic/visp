@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,7 +33,7 @@
  * Authors:
  * Wenfeng CAI
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPylonGrabberUsb.h
@@ -52,6 +52,7 @@
 
 #include <pylon/usb/BaslerUsbInstantCamera.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpPylonGrabberUsb
 
@@ -61,7 +62,7 @@
   vpPylonFactory::createPylonGrabber() instead.
 
   \headerfile vpPylonGrabberUsb.h ""
- */
+*/
 class VISP_EXPORT vpPylonGrabberUsb : public vpPylonGrabber
 {
 public:
@@ -122,6 +123,6 @@ private:
   unsigned int m_numCameras;               //!< Number of connected USB cameras
   bool m_connected;                        //!< true if camera connected
 };
-
+END_VISP_NAMESPACE
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef _vpPylonGrabberUsb_h_

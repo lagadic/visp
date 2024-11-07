@@ -2,10 +2,16 @@ name: MacOS
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
-  push:
   pull_request:
+    types: [opened, reopened, synchronize]
   schedule:
     - cron: '0 2 * * SUN'
+
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-macos:
@@ -13,17 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12]
+        os: [macos-13, macos-latest]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: |
@@ -33,8 +33,31 @@ jobs:
     - name: Print OS information
       run: system_profiler SPSoftwareDataType
 
-    - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+    - name: Install dependencies on macos-latest
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+
+    - name: Install dependencies on macos-13
+      # On macos-13 we need to do a specific action
+      # ==> Pouring python@3.12--3.12.1_1.ventura.bottle.tar.gz
+      # Error: The `brew link` step did not complete successfully
+      # The formula built, but is not symlinked into /usr/local
+      # Could not symlink bin/2to3-3.12
+      # Target /usr/local/bin/2to3-3.12
+      # already exists. You may want to remove it:
+      #   rm '/usr/local/bin/2to3-3.12'
+      #
+      # To force the link and overwrite all conflicting files:
+      #   brew link --overwrite python@3.12
+      #
+      # Fix proposed in https://github.com/actions/runner-images/issues/6817
+      if: matrix.os == 'macos-13'
+      run: |
+        brew update
+        brew upgrade || true
+        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+        brew install opencv
 
     - name: Install java dependencies
       run: |
@@ -49,7 +72,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Clone visp_sample
@@ -58,16 +81,13 @@ jobs:
 
     # Openblas location is exported explicitly because openblas is keg-only,
     # which means it was not symlinked into /usr/local/.
-    # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
-    # qt@5 is keg-only, which means it was not symlinked into /usr/local that's why we need to set Qt5_DIR
     - name: Configure CMake
       run: |
         export LDFLAGS="-L/usr/local/opt/openblas/lib"
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
-        export Qt5_DIR="$(brew --prefix qt5)/lib/cmake/Qt5"
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -76,7 +96,7 @@ jobs:
 
     - name: Run unit tests
       working-directory: build
-      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
+      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure -V
 
     - name: ViSP as 3rdparty with cmake
       run: |
@@ -87,18 +107,7 @@ jobs:
         make -j$(sysctl -n hw.logicalcpu)
 
     - name: ViSP as 3rdparty with visp.pc and pkg-config
-      if: matrix.os != 'macOS-10.15'
       run: |
-        # With macOS 10.15 there is the following build error:
-        # /Applications/Xcode_12.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath:317:9:
-        #   error: no member named 'signbit' in the global namespace
-        #   using ::signbit;
-        # also reported here https://stackoverflow.com/questions/58313047/cannot-compile-r-packages-with-c-code-after-updating-to-macos-catalina
-        # As suggested adding -isysroot build flag in VISPGenerateConfigScript.cmake around line 149 with
-        #   execute_process(COMMAND xcrun --show-sdk-path
-        #                   OUTPUT_VARIABLE SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-        #   list(APPEND _cxx_flags "-isysroot ${SDK_PATH}")
-        # doesn't fix the build issue. That's why here the test is only done for macOS 11.0
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
         pkg-config --cflags visp
@@ -107,11 +116,11 @@ jobs:
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp.pc clean
 
     - name: ViSP as 3rdparty with visp-config
-      if: matrix.os != 'macos-10.15'
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
-        /tmp/usr/local/bin/visp-config --cflags
-        /tmp/usr/local/bin/visp-config --libs
+        export VISP_INSTALL_PREFIX=/tmp/usr/local
+        $VISP_INSTALL_PREFIX/bin/visp-config --cflags
+        $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config clean

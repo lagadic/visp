@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Generic motion capture.
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef vpMocap_h
 #define vpMocap_h
 
@@ -41,22 +41,23 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
  * \class vpMocap
  * \ingroup group_sensor_mocap
  * Generic motion capture wrapper.
- */
+*/
 class VISP_EXPORT vpMocap
 {
 public:
   /*!
    * Default constructor that turns off the verbose mode.
    */
-  vpMocap() : m_verbose(false), m_serverAddr(){};
+  vpMocap() : m_verbose(false), m_serverAddr() { };
   /*!
    * Destructor.
    */
-  virtual ~vpMocap(){};
+  virtual ~vpMocap() { };
 
   /*!
    * Close connexion with the motion capture device.
@@ -104,5 +105,5 @@ protected:
   bool m_verbose;
   std::string m_serverAddr;
 };
-
+END_VISP_NAMESPACE
 #endif // vpMocap_h

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,18 @@
  * Description:
  * Single laser scanner point.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \file vpScanPoint.h
+
+  \brief Implements a single laser scanner point.
+*/
+
 #ifndef vpScanPoint_h
 #define vpScanPoint_h
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 
 #include <cmath>  // std::fabs
@@ -46,12 +51,7 @@
 #include <ostream>
 #include <sstream>
 
-/*!
-  \file vpScanPoint.h
-
-  \brief Implements a single laser scanner point.
-*/
-
+BEGIN_VISP_NAMESPACE
 /*!
 
   \class vpScanPoint
@@ -76,7 +76,7 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not
 {
 public:
   /*! Default constructor. */
-  inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) {}
+  inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) { }
   /*! Copy constructor. */
   inline vpScanPoint(const vpScanPoint &scanpoint) : rDist(0), hAngle(0), vAngle(0)
   {
@@ -97,7 +97,7 @@ public:
     this->vAngle = v_angle;
   }
   /*! Destructor that does nothing. */
-  inline virtual ~vpScanPoint(){};
+  inline virtual ~vpScanPoint() { };
   /*!
     Set the polar point coordinates.
     \param r_dist : Radial distance in meter.
@@ -159,9 +159,6 @@ public:
   */
   friend inline bool operator==(const vpScanPoint &sp1, const vpScanPoint &sp2)
   {
-    // return ( ( sp1.getRadialDist() == sp2.getRadialDist() )
-    //	      && ( sp1.getHAngle() == sp2.getHAngle() )
-    //	      && ( sp1.getVAngle() == sp2.getVAngle() ) );
     double rd1 = sp1.getRadialDist();
     double ha1 = sp1.getHAngle();
     double va1 = sp1.getVAngle();
@@ -217,24 +214,28 @@ private:
   The following code
 
   \code
-#include <iostream>
-#include <visp3/sensor/vpScanPoint.h>
+  #include <iostream>
+  #include <visp3/sensor/vpScanPoint.h>
 
-int main()
-{
-  vpScanPoint p;
-  double radialDistance = 3; // 3 meters
-  double horizontalAngle = 1.12; // 1.12 radian
-  double verticalAngle = 0; // 0 radian for a horizontal layer
+  #ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+  #endif
 
-  p.setPolar(radialDistance, horizontalAngle, verticalAngle);
+  int main()
+  {
+    vpScanPoint p;
+    double radialDistance = 3; // 3 meters
+    double horizontalAngle = 1.12; // 1.12 radian
+    double verticalAngle = 0; // 0 radian for a horizontal layer
 
-  std::cout << p << std::endl;
-}
+    p.setPolar(radialDistance, horizontalAngle, verticalAngle);
+
+    std::cout << p << std::endl;
+  }
   \endcode
   will produce the prints
   \code
-"3 1.12 0 1.307047339 2.700301327 0"
+  "3 1.12 0 1.307047339 2.700301327 0"
   \endcode
 
  */
@@ -250,5 +251,5 @@ inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p)
 
   return s;
 }
-
+END_VISP_NAMESPACE
 #endif

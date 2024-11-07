@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,8 +29,7 @@
  *
  * Description:
  * Libpng backend for PNG image I/O operations.
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpImageIoLibpng.cpp
@@ -51,6 +49,7 @@
 
 #if defined(VISP_HAVE_PNG)
 
+BEGIN_VISP_NAMESPACE
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a PNG file.
@@ -69,32 +68,29 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PNG file \"%s\"", filename.c_str()));
   }
 
   /* create a png info struct */
-  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!png_ptr) {
     fclose(file);
-    vpERROR_TRACE("Error during png_create_write_struct()\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     fclose(file);
-    png_destroy_write_struct(&png_ptr, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    png_destroy_write_struct(&png_ptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during init_io\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
@@ -111,7 +107,6 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during write header\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
@@ -121,14 +116,14 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
   png_write_info(png_ptr, info_ptr);
 
   png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     row_ptrs[i] = new png_byte[width];
 
   unsigned char *input = (unsigned char *)I.bitmap;
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
+    for (unsigned int j = 0; j < width; ++j) {
       row[j] = *(input);
       input++;
     }
@@ -136,9 +131,9 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
 
   png_write_image(png_ptr, row_ptrs);
 
-  png_write_end(png_ptr, NULL);
+  png_write_end(png_ptr, nullptr);
 
-  for (unsigned int j = 0; j < height; j++)
+  for (unsigned int j = 0; j < height; ++j)
     delete[] row_ptrs[j];
 
   delete[] row_ptrs;
@@ -166,32 +161,29 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PNG file \"%s\"", filename.c_str()));
   }
 
   /* create a png info struct */
-  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!png_ptr) {
     fclose(file);
-    vpERROR_TRACE("Error during png_create_write_struct()\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     fclose(file);
-    png_destroy_write_struct(&png_ptr, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    png_destroy_write_struct(&png_ptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during init_io\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
@@ -208,7 +200,6 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
     png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during write header\n");
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
@@ -218,14 +209,14 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
   png_write_info(png_ptr, info_ptr);
 
   png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     row_ptrs[i] = new png_byte[3 * width];
 
   unsigned char *input = (unsigned char *)I.bitmap;
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
+    for (unsigned int j = 0; j < width; ++j) {
       row[3 * j] = *(input);
       input++;
       row[3 * j + 1] = *(input);
@@ -238,9 +229,9 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
 
   png_write_image(png_ptr, row_ptrs);
 
-  png_write_end(png_ptr, NULL);
+  png_write_end(png_ptr, nullptr);
 
-  for (unsigned int j = 0; j < height; j++)
+  for (unsigned int j = 0; j < height; ++j)
     delete[] row_ptrs[j];
 
   delete[] row_ptrs;
@@ -276,7 +267,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read file \"%s\"", filename.c_str()));
   }
 
@@ -295,8 +286,8 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   /* create a png read struct */
   // printf("version %s\n", PNG_LIBPNG_VER_STRING);
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (png_ptr == NULL) {
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  if (png_ptr == nullptr) {
     fprintf(stderr, "error: can't create a png read structure!\n");
     fclose(file);
     throw(vpImageException(vpImageException::ioError, "error reading png file"));
@@ -304,19 +295,18 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   /* create a png info struct */
   png_infop info_ptr = png_create_info_struct(png_ptr);
-  if (info_ptr == NULL) {
+  if (info_ptr == nullptr) {
     fprintf(stderr, "error: can't create a png info structure!\n");
     fclose(file);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
+    png_destroy_read_struct(&png_ptr, nullptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "error reading png file"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    vpERROR_TRACE("Error during init io\n");
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "PNG read error"));
   }
 
@@ -371,7 +361,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char *data = new unsigned char[stride * height];
 
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     rowPtrs[i] = (png_bytep)data + (i * stride);
 
   png_read_image(png_ptr, rowPtrs);
@@ -382,21 +372,21 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   switch (channels) {
   case 1:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i];
     }
     break;
 
   case 2:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 2];
     }
     break;
 
   case 3:
     output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 3];
       *(output++) = data[i * 3 + 1];
       *(output++) = data[i * 3 + 2];
@@ -407,7 +397,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   case 4:
     output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 4];
       *(output++) = data[i * 4 + 1];
       *(output++) = data[i * 4 + 2];
@@ -419,8 +409,8 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   delete[](png_bytep) rowPtrs;
   delete[] data;
-  png_read_end(png_ptr, NULL);
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+  png_read_end(png_ptr, nullptr);
+  png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
   fclose(file);
 }
 
@@ -454,7 +444,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read file \"%s\"", filename.c_str()));
   }
 
@@ -472,10 +462,9 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   }
 
   /* create a png read struct */
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!png_ptr) {
     fclose(file);
-    vpERROR_TRACE("Error during png_create_read_struct()\n");
     throw(vpImageException(vpImageException::ioError, "PNG read error"));
   }
 
@@ -483,17 +472,15 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     fclose(file);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    png_destroy_read_struct(&png_ptr, nullptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "PNG read error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    vpERROR_TRACE("Error during init io\n");
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     throw(vpImageException(vpImageException::ioError, "PNG read error"));
   }
 
@@ -548,7 +535,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char *data = new unsigned char[stride * height];
 
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     rowPtrs[i] = (png_bytep)data + (i * stride);
 
   png_read_image(png_ptr, rowPtrs);
@@ -559,7 +546,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   switch (channels) {
   case 1:
     output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i];
     }
     vpImageConvert::convert(Ig, I);
@@ -567,7 +554,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   case 2:
     output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 2];
     }
     vpImageConvert::convert(Ig, I);
@@ -575,7 +562,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   case 3:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 3];
       *(output++) = data[i * 3 + 1];
       *(output++) = data[i * 3 + 2];
@@ -585,7 +572,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   case 4:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
+    for (unsigned int i = 0; i < width * height; ++i) {
       *(output++) = data[i * 4];
       *(output++) = data[i * 4 + 1];
       *(output++) = data[i * 4 + 2];
@@ -596,8 +583,11 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
 
   delete[](png_bytep) rowPtrs;
   delete[] data;
-  png_read_end(png_ptr, NULL);
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+  png_read_end(png_ptr, nullptr);
+  png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
   fclose(file);
 }
+
+END_VISP_NAMESPACE
+
 #endif

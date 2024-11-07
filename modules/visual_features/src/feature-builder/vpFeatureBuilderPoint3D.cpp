@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,20 +31,20 @@
  * Description:
  * Conversion between tracker and visual feature 3D Point.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeatureBuilderPoint3D.cpp
   \brief  conversion between tracker
   and visual feature 3D Point
 */
+
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
 
   Initialize a 3D point feature using the coordinates of the point
@@ -67,14 +67,10 @@ void vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t)
     s.set_Y(t.cP[1] / t.cP[3]);
     s.set_Z(t.cP[2] / t.cP[3]);
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+END_VISP_NAMESPACE

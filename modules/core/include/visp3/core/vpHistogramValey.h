@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpHistogramValey.h
@@ -43,11 +38,12 @@
 
 */
 
-#ifndef vpHistogramValey_h
-#define vpHistogramValey_h
+#ifndef VP_HISTOGRAM_VALEY_H
+#define VP_HISTOGRAM_VALEY_H
 
 #include <visp3/core/vpHistogramPeak.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \class vpHistogramValey
 
@@ -63,14 +59,11 @@
 class VISP_EXPORT vpHistogramValey : vpHistogramPeak
 {
 public:
-  vpHistogramValey() : vpHistogramPeak(){};
+  vpHistogramValey() : vpHistogramPeak() { };
 
-  vpHistogramValey(unsigned char lvl, unsigned val) : vpHistogramPeak(lvl, val){};
+  vpHistogramValey(unsigned char lvl, unsigned val) : vpHistogramPeak(lvl, val) { };
 
-  vpHistogramValey(const vpHistogramValey &v) : vpHistogramPeak(v){};
-
-  /*! Destructor that does nothing. */
-  virtual ~vpHistogramValey() {}
+  vpHistogramValey(const vpHistogramValey &v) : vpHistogramPeak(v) { };
 
   vpHistogramValey &operator=(const vpHistogramValey &v);
   bool operator==(const vpHistogramValey &v) const;
@@ -147,5 +140,5 @@ public:
  * c-basic-offset: 2
  * End:
  */
-
+END_VISP_NAMESPACE
 #endif

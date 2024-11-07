@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,17 +29,14 @@
  *
  * Description:
  * GDI renderer for windows 32 display
- *
- * Authors:
- * Bruno Renier
- *
- *****************************************************************************/
+ */
+
+#ifndef VP_GDI_RENDERER_H
+#define VP_GDI_RENDERER_H
 
 #include <visp3/core/vpConfig.h>
 
 #if (defined(VISP_HAVE_GDI))
-#ifndef vpGDIRenderer_HH
-#define vpGDIRenderer_HH
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -55,6 +51,8 @@
 #include <visp3/gui/vpWin32Renderer.h>
 
 #include <visp3/core/vpMath.h>
+
+BEGIN_VISP_NAMESPACE
 
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
@@ -110,7 +108,7 @@ public:
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
-  void getImage(vpImage<vpRGBa> &I);
+  void getImage(vpImage<vpRGBa> &I) VP_OVERRIDE;
 
 private:
   // updates the renderer hbitmaps.
@@ -130,6 +128,8 @@ private:
   // converst a vpImage<unsigned char> into a HBITMAP .
   void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 };
+
+END_VISP_NAMESPACE
 #endif
 #endif
 #endif

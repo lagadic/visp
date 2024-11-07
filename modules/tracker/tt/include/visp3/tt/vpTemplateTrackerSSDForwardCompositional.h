@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpTemplateTrackerSSDForwardCompositional.h
  \brief
@@ -45,13 +44,15 @@
 #ifndef vpTemplateTrackerSSDForwardCompositional_hh
 #define vpTemplateTrackerSSDForwardCompositional_hh
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \ingroup group_tt_tracker
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
- */
+*/
 class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional : public vpTemplateTrackerSSD
 {
 protected:
@@ -63,6 +64,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
+  VP_EXPLICIT vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
 };
+END_VISP_NAMESPACE
 #endif

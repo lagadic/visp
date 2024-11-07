@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,10 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example servoUniversalRobotsIBVS.cpp
 
@@ -62,6 +59,7 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -74,8 +72,11 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE)
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE)
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
@@ -86,7 +87,8 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
       if (vpImagePoint::distance(vip[i], traj_vip[i].back()) > 1.) {
         traj_vip[i].push_back(vip[i]);
       }
-    } else {
+    }
+    else {
       traj_vip[i].push_back(vip[i]);
     }
   }
@@ -113,29 +115,38 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       opt_tagSize = std::stod(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       opt_robot_ip = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
       opt_eMc_filename = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--verbose") {
+    }
+    else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
-    } else if (std::string(argv[i]) == "--plot") {
+    }
+    else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
-    } else if (std::string(argv[i]) == "--adaptive_gain") {
+    }
+    else if (std::string(argv[i]) == "--adaptive_gain") {
       opt_adaptive_gain = true;
-    } else if (std::string(argv[i]) == "--task_sequencing") {
+    }
+    else if (std::string(argv[i]) == "--task_sequencing") {
       opt_task_sequencing = true;
-    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--no-convergence-threshold") {
+    }
+    else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout
-          << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
-          << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-          << "[--quad_decimate <decimation; default " << opt_quad_decimate
-          << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
-          << "\n";
+        << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
+        << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
+        << "[--quad_decimate <decimation; default " << opt_quad_decimate
+        << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
+        << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -146,8 +157,8 @@ int main(int argc, char **argv)
     robot.connect(opt_robot_ip);
 
     std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
-              << "Press Enter to continue..." << std::endl;
+      << "Please make sure to have the user stop button at hand!" << std::endl
+      << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
     /*
@@ -185,16 +196,17 @@ int main(int argc, char **argv)
     // If provided, read camera extrinsics from --eMc <file>
     if (!opt_eMc_filename.empty()) {
       ePc.loadYAML(opt_eMc_filename, ePc);
-    } else {
+    }
+    else {
       std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values."
-                << "\n";
+        << "\n";
     }
     vpHomogeneousMatrix eMc(ePc);
     std::cout << "eMc:\n" << eMc << "\n";
 
     // Get camera intrinsics
     vpCameraParameters cam =
-        rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+      rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << "cam:\n" << cam << "\n";
 
     vpImage<unsigned char> I(height, width);
@@ -218,7 +230,7 @@ int main(int argc, char **argv)
 
     // Desired pose used to compute the desired features
     vpHomogeneousMatrix cdMo(vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
-                             vpRotationMatrix({1, 0, 0, 0, -1, 0, 0, 0, -1}));
+                             vpRotationMatrix({ 1, 0, 0, 0, -1, 0, 0, 0, -1 }));
 
     // Create visual features
     std::vector<vpFeaturePoint> p(4), pd(4); // We use 4 points
@@ -241,7 +253,8 @@ int main(int argc, char **argv)
     if (opt_adaptive_gain) {
       vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
-    } else {
+    }
+    else {
       task.setLambda(0.5);
     }
 
@@ -314,7 +327,8 @@ int main(int argc, char **argv)
           }
           if (std::fabs(v_cdMc[0].getThetaUVector().getTheta()) < std::fabs(v_cdMc[1].getThetaUVector().getTheta())) {
             oMo = v_oMo[0];
-          } else {
+          }
+          else {
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
             oMo = v_oMo[1]; // Introduce PI rotation
           }
@@ -353,7 +367,8 @@ int main(int argc, char **argv)
             t_init_servo = vpTime::measureTimeMs();
           }
           v_c = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
-        } else {
+        }
+        else {
           v_c = task.computeControlLaw();
         }
 
@@ -396,7 +411,7 @@ int main(int argc, char **argv)
         if (error < convergence_threshold) {
           has_converged = true;
           std::cout << "Servo task has converged"
-                    << "\n";
+            << "\n";
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
         if (first_time) {
@@ -464,12 +479,14 @@ int main(int argc, char **argv)
     if (traj_corners) {
       delete[] traj_corners;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "ur_rtde exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -482,12 +499,9 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x" << std::endl;
 #endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
-#endif
 #if !defined(VISP_HAVE_UR_RTDE)
   std::cout << "ViSP is not build with libur_rtde 3rd party used to control a robot from Universal Robots..."
-            << std::endl;
+    << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,16 +31,15 @@
  * Description:
  * Basic class used to make robot simulators.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/robot/vpRobotSimulator.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor that sets the sampling time by default to 40ms.
 */
-vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f) {}
+vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f) { }
+END_VISP_NAMESPACE

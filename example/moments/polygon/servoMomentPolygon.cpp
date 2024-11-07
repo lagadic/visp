@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,16 +30,12 @@
  *
  * Description:
  * Example of visual servoing with moments using a polygon as object container
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
-
- /*!
-   \example servoMomentPolygon.cpp
-   Example of moment-based visual servoing with Images
  */
+
+/*!
+  \example servoMomentPolygon.cpp
+  Example of moment-based visual servoing with Images
+*/
 
 #include <iostream>
 #include <visp3/core/vpCameraParameters.h>
@@ -64,37 +60,34 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
-#if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
- // Robot simulator used in this example is not available
-int main()
-{
-  std::cout << "Can't run this example since vpSimulatorAfma6 capability is "
-    "not available."
-    << std::endl;
-  std::cout << "You should install pthread third-party library." << std::endl;
-  return EXIT_SUCCESS;
-}
-// No display available
-#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&  \
-    !defined(VISP_HAVE_GTK)
+#if !defined(VISP_HAVE_DISPLAY)
 int main()
 {
   std::cout << "Can't run this example since no display capability is available." << std::endl;
-  std::cout << "You should install one of the following third-party library: "
-    "X11, OpenCV, GDI, GTK."
-    << std::endl;
+  std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
+  return EXIT_SUCCESS;
+}
+#elif !defined(VISP_HAVE_THREADS)
+int main()
+{
+  std::cout << "Can't run this example since multi-threading capability is not available." << std::endl;
+  std::cout << "You should maybe enable cxx11 standard." << std::endl;
   return EXIT_SUCCESS;
 }
 #else
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class servoMoment
 {
 public:
   servoMoment()
-    : m_width(640), m_height(480), m_cMo(), m_cdMo(), m_robot(false), m_Iint(m_height, m_width, 255), m_task(), m_cam(),
-    m_error(0), m_imsim(), m_interaction_type(), m_src(6), m_dst(6), m_moments(NULL), m_momentsDes(NULL),
-    m_featureMoments(NULL), m_featureMomentsDes(NULL), m_displayInt(NULL)
+    : m_width(640), m_height(480), m_cMo(), m_cdMo(), m_robot(false), m_Iint(m_height, m_width, vpRGBa(255)), m_task(), m_cam(),
+    m_error(0), m_imsim(), m_interaction_type(), m_src(6), m_dst(6), m_moments(nullptr), m_momentsDes(nullptr),
+    m_featureMoments(nullptr), m_featureMomentsDes(nullptr), m_displayInt(nullptr)
   { }
   ~servoMoment()
   {

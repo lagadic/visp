@@ -1,6 +1,7 @@
 /*! \example tutorial-image-colormap.cpp */
 #include <map>
 #include <visp3/core/vpColormap.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -11,6 +12,9 @@
 int main()
 {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   try {
     std::map<vpColormap::vpColormapType, std::string> colormaps_str = {
         {vpColormap::COLORMAP_AUTUMN, "Colormap Autumn"},
@@ -59,16 +63,16 @@ int main()
       vpImage<vpRGBa> Icolor(Irgbf.getHeight(), Irgbf.getWidth());
       vpImage<vpRGBa> Icolor2(Irgbf.getHeight() * 2, Irgbf.getWidth() * 2);
 
-  #if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_X11)
       vpDisplayX d(Icolor2, 10, 10, "Memorial");
-  #elif defined(VISP_HAVE_GDI)
+#elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Memorial");
-  #elif defined(HAVE_OPENCV_HIGHGUI)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Memorial");
-  #else
+#else
       std::cout << "No image viewer is available..." << std::endl;
       return EXIT_SUCCESS;
-  #endif
+#endif
 
       vpFont font(20);
       for (size_t i = 0; i < colormaps.size(); i++) {
@@ -92,16 +96,16 @@ int main()
       vpImage<vpRGBa> Icolor(I.getHeight(), I.getWidth());
       vpImage<vpRGBa> Icolor2(I.getHeight() * 2, I.getWidth() * 2);
 
-  #if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_X11)
       vpDisplayX d(Icolor2, 10, 10, "Monkey");
-  #elif defined(VISP_HAVE_GDI)
+#elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
-  #elif defined(HAVE_OPENCV_HIGHGUI)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
-  #else
+#else
       std::cout << "No image viewer is available..." << std::endl;
       return EXIT_SUCCESS;
-  #endif
+#endif
 
       vpFont font(20);
       for (size_t i = 0; i < colormaps.size(); i++) {
@@ -117,7 +121,7 @@ int main()
       }
     }
 
-    // Apply a colormap on a 8-bit RGB image, with normalisation to the [0 - 255] range
+    // Apply a colormap on a 8-bit RGB image, with normalization to the [0 - 255] range
     {
       vpImage<vpRGBa> I;
       vpImageIo::read(I, "monkey.png");
@@ -125,16 +129,16 @@ int main()
       vpImage<vpRGBa> Icolor(I.getHeight(), I.getWidth());
       vpImage<vpRGBa> Icolor2(I.getHeight() * 2, I.getWidth() * 2);
 
-  #if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_X11)
       vpDisplayX d(Icolor2, 10, 10, "Monkey");
-  #elif defined(VISP_HAVE_GDI)
+#elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
-  #elif defined(HAVE_OPENCV_HIGHGUI)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
-  #else
+#else
       std::cout << "No image viewer is available..." << std::endl;
       return EXIT_SUCCESS;
-  #endif
+#endif
 
       vpFont font(20);
       for (size_t i = 0; i < colormaps.size(); i++) {
@@ -150,11 +154,12 @@ int main()
         vpDisplay::getClick(Icolor2);
       }
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;
   }
 #else
-  std::cout << "This tutorial needs at least cxx11 standard." << std::endl;
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

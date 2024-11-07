@@ -1,6 +1,7 @@
 //! \example tutorial-bridge-opencv-image.cpp
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -11,6 +12,9 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // From ViSP to OpenCV conversion
   {
     //! [Load ViSP color image]

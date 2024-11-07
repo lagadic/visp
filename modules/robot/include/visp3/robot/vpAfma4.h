@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Irisa's Afma4 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpAfma4_h
 #define _vpAfma4_h
@@ -43,7 +40,7 @@
 
   \file vpAfma4.h
 
-  Modelisation of Irisa's cylindrical robot named Afma4.
+  Modelization of Irisa's cylindrical robot named Afma4.
 
 */
 
@@ -53,7 +50,7 @@
 
   \ingroup group_robot_real_cylindrical
 
-  \brief Modelisation of Irisa's cylindrical robot named Afma4.
+  \brief Modelization of Irisa's cylindrical robot named Afma4.
 
   This robot has five degrees of freedom, but only four motorized
   joints (joint 3 is not motorized). Joint 2 and 3 are prismatic. The
@@ -102,25 +99,25 @@
 */
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
+BEGIN_VISP_NAMESPACE
 class VISP_EXPORT vpAfma4
 {
 public:
   vpAfma4();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma4(){};
+  virtual ~vpAfma4() { };
 
   /** @name Inherited functionalities from vpAfma4 */
   //@{
   void init(void);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
-  /*   int getInverseKinematics(const vpHomogeneousMatrix & fMc, */
-  /* 			   vpColVector & q, const bool &nearest=true); */
   vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
   void get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const;
   void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
@@ -142,7 +139,7 @@ public:
   static const unsigned int njoint; ///< Number of joint.
 
 protected:
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   double _a1;           // distance along x2
   double _d3;           // distance along z2
   double _d4;           // distance along z3
@@ -155,7 +152,7 @@ protected:
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 };
-
+END_VISP_NAMESPACE
 /*
  * Local variables:
  * c-basic-offset: 2

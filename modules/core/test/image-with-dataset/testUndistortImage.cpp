@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test for image undistortion.
- *
- * Authors:
- * Anthony Saunier
- *
- *****************************************************************************/
+ */
 
 #include <stdlib.h>
 #include <visp3/core/vpDebug.h>
@@ -45,18 +40,21 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
+
 /*!
   \example testUndistortImage.cpp
 
   \brief Undistort an image.
 
-  Read an image from the disk, undistort it and save the
-  undistorted image on the disk.
-
- */
+  Read an image from the disk, undistort it and save the undistorted image on the disk.
+*/
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:t:s:h"
+
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 /*
   Print the program options.
@@ -149,7 +147,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       scale = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, opath, user);
+      usage(argv[0], nullptr, ipath, opath, user);
       return false;
 
     case 'c':
@@ -164,7 +162,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user);
+    usage(argv[0], nullptr, ipath, opath, user);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -200,7 +198,7 @@ int main(int argc, const char **argv)
     if (!env_ipath.empty())
       ipath = env_ipath;
 
-// Set the default output path
+    // Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -229,8 +227,9 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
+      }
+      catch (...) {
+        usage(argv[0], nullptr, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
@@ -239,24 +238,24 @@ int main(int argc, const char **argv)
     }
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (opt_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username);
+      usage(argv[0], nullptr, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -279,7 +278,8 @@ int main(int argc, const char **argv)
     if (scale > 1) {
       std::cout << "Scale the image by a factor of " << scale << std::endl;
       vpImageTools::resize(I_, I, I_.getWidth() * scale, I_.getHeight() * scale);
-    } else {
+    }
+    else {
       I = I_;
     }
     std::cout << "Input image: " << I.getWidth() << "x" << I.getHeight() << std::endl;
@@ -430,7 +430,8 @@ int main(int argc, const char **argv)
     vpImageIo::write(U_diff_gray, filename);
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

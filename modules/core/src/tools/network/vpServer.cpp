@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,20 +29,31 @@
  *
  * Description:
  * TCP Server
- *
- *****************************************************************************/
+ */
 
-#include <visp3/core/vpServer.h>
+#include <visp3/core/vpConfig.h>
 
-#include <sstream>
+// Specific case for UWP to introduce a workaround
+// error C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+#if defined(WINRT) || defined(_WIN32)
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
+
+#include <sstream>
+
+#include <visp3/core/vpServer.h>
+#include <visp3/core/vpDebug.h>
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+BEGIN_VISP_NAMESPACE
 /*!
   Construct a server on the machine launching it.
 */
@@ -174,7 +184,8 @@ bool vpServer::start()
     int set_option = 1;
     if (0 ==
         setsockopt(emitter.socketFileDescriptorEmitter, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
-    } else {
+    }
+    else {
       std::cout << "Failed to set socket signal option" << std::endl;
     }
   }
@@ -207,7 +218,7 @@ bool vpServer::checkForConnections()
     }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -228,13 +239,15 @@ bool vpServer::checkForConnections()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     return false;
-  } else {
+  }
+  else {
     if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter, &readFileDescriptor)) {
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
@@ -243,8 +256,8 @@ bool vpServer::checkForConnections()
           emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress, &client.receptorAddressSize);
 #else // Win32
       client.socketFileDescriptorReceptor =
-          accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
-                 &client.receptorAddressSize);
+        accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
+               &client.receptorAddressSize);
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -259,7 +272,8 @@ bool vpServer::checkForConnections()
       receptor_list.push_back(client);
 
       return true;
-    } else {
+    }
+    else {
       for (unsigned int i = 0; i < receptor_list.size(); i++) {
         if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
           char deco;
@@ -286,8 +300,8 @@ bool vpServer::checkForConnections()
   Print the connected clients.
 */
 void vpServer::print() { vpNetwork::print("Client"); }
-
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
-void dummy_vpServer(){};
+void dummy_vpServer() { };
 #endif

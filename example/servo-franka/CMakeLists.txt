@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-servo-franka)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(example-servo-franka)
 
 find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 
@@ -64,6 +64,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
 
   visp_set_source_file_compile_flag(servoFrankaPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(servoFrankaIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})

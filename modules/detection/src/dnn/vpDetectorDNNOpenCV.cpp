@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,27 @@
  *
  * Description:
  * DNN object detection using OpenCV DNN module.
- *
-*****************************************************************************/
+ */
+
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/core/vpIoTools.h>
 
 #include<algorithm>
+
+BEGIN_VISP_NAMESPACE
 /**
  * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
  *
  * \return std::string The list of the supported parsing methods / types of DNNs.
  */
-std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
+  std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 {
   std::string list = "[";
   for (unsigned int i = 0; i < vpDetectorDNNOpenCV::COUNT - 1; i++) {
@@ -82,6 +86,9 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
     break;
   case YOLO_V8:
     name = "yolov8";
+    break;
+  case YOLO_V11:
+    name = "yolov11";
     break;
   case FASTER_RCNN:
     name = "faster-rcnn";
@@ -167,6 +174,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResul
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+using json = nlohmann::json;
+
 /**
  * \brief Construct a new vpDetectorDNNOpenCV object from a JSON file and a potential parsing method.
  *
@@ -491,7 +501,8 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
     postProcess_YoloV5_V7(proposals, m_dnnRes, m_netConfig);
     break;
   case YOLO_V8:
-    postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
+  case YOLO_V11:
+    postProcess_YoloV8_V11(proposals, m_dnnRes, m_netConfig);
     break;
   case FASTER_RCNN:
     postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
@@ -807,7 +818,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
   \param netConfig: the configuration of the network, to know for instance the DNN input size.
 */
-void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
+void vpDetectorDNNOpenCV::postProcess_YoloV8_V11(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Code adapted from here: https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/inference.cpp
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
@@ -1138,7 +1149,7 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
   m_netConfig.m_scaleFactor = scaleFactor;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11) && m_netConfig.m_scaleFactor != 1 / 255.) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1161,7 +1172,7 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 {
   m_netConfig.m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8) && m_netConfig.m_scaleFactor != 1 / 255.) {
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8 || m_netConfig.m_parsingMethodType == YOLO_V11) && m_netConfig.m_scaleFactor != 1 / 255.) {
     m_netConfig.m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
@@ -1175,8 +1186,8 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 #endif
 }
 
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
 void dummy_vpDetectorDNN() { };
 #endif

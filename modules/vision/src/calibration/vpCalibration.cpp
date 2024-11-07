@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,13 +29,7 @@
  *
  * Description:
  * Camera calibration.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- * Anthony Saunier
- *
- *****************************************************************************/
+ */
 
 /*!
   \file vpCalibration.cpp
@@ -48,67 +41,54 @@
 #include <visp3/vision/vpCalibration.h>
 #include <visp3/vision/vpPose.h>
 
-double vpCalibration::threshold = 1e-10f;
-unsigned int vpCalibration::nbIterMax = 4000;
-double vpCalibration::gain = 0.25;
-/*!
-  Basic initialisation (called by the constructors)
-*/
+BEGIN_VISP_NAMESPACE
+
+double vpCalibration::m_threshold = 1e-10f;
+unsigned int vpCalibration::m_nbIterMax = 4000;
+double vpCalibration::m_gain = 0.25;
+
 int vpCalibration::init()
 {
-  npt = 0;
+  m_npt = 0;
 
-  residual = residual_dist = 1000.;
+  m_residual = m_residual_dist = 1000.;
 
-  LoX.clear();
-  LoY.clear();
-  LoZ.clear();
-  Lip.clear();
+  m_LoX.clear();
+  m_LoY.clear();
+  m_LoZ.clear();
+  m_Lip.clear();
 
   return 0;
 }
 
-/*!
-  Default constructor.
- */
 vpCalibration::vpCalibration()
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
-    Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), m_npt(0),
+  m_LoX(), m_LoY(), m_LoZ(), m_Lip(), m_residual(1000.), m_residual_dist(1000.)
 
 {
   init();
 }
-/*!
-  Copy constructor.
- */
+
 vpCalibration::vpCalibration(const vpCalibration &c)
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
-    Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), m_npt(0),
+  m_LoX(), m_LoY(), m_LoZ(), m_Lip(), m_residual(1000.), m_residual_dist(1000.)
 {
   (*this) = c;
 }
 
-/*!
-  Destructor : delete the array of point (freed the memory)
-*/
 vpCalibration::~vpCalibration() { clearPoint(); }
 
-/*!
-  = operator.
-
-  \param twinCalibration : object to be copied
-*/
 vpCalibration &vpCalibration::operator=(const vpCalibration &twinCalibration)
 {
-  npt = twinCalibration.npt;
-  LoX = twinCalibration.LoX;
-  LoY = twinCalibration.LoY;
-  LoZ = twinCalibration.LoZ;
-  Lip = twinCalibration.Lip;
+  m_npt = twinCalibration.m_npt;
+  m_LoX = twinCalibration.m_LoX;
+  m_LoY = twinCalibration.m_LoY;
+  m_LoZ = twinCalibration.m_LoZ;
+  m_Lip = twinCalibration.m_Lip;
 
-  residual = twinCalibration.residual;
+  m_residual = twinCalibration.m_residual;
   cMo = twinCalibration.cMo;
-  residual_dist = twinCalibration.residual_dist;
+  m_residual_dist = twinCalibration.m_residual_dist;
   cMo_dist = twinCalibration.cMo_dist;
 
   cam = twinCalibration.cam;
@@ -124,35 +104,26 @@ vpCalibration &vpCalibration::operator=(const vpCalibration &twinCalibration)
   return (*this);
 }
 
-/*!
-  Delete the array of points.
-*/
 int vpCalibration::clearPoint()
 {
-  LoX.clear();
-  LoY.clear();
-  LoZ.clear();
-  Lip.clear();
-  npt = 0;
+  m_LoX.clear();
+  m_LoY.clear();
+  m_LoZ.clear();
+  m_Lip.clear();
+  m_npt = 0;
 
   return 0;
 }
 
-/*!
-
-  Add a new point in the array of points.
-  \param  X,Y,Z : 3D coordinates of a point in the object frame
-  \param ip : 2D Coordinates of the point in the camera frame.
-*/
 int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
 {
-  LoX.push_back(X);
-  LoY.push_back(Y);
-  LoZ.push_back(Z);
+  m_LoX.push_back(X);
+  m_LoY.push_back(Y);
+  m_LoZ.push_back(Z);
 
-  Lip.push_back(ip);
+  m_Lip.push_back(ip);
 
-  npt++;
+  m_npt++;
 
   return 0;
 }
@@ -170,12 +141,12 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   //  the list of point is cleared (if that's not done before)
   pose.clearPoint();
   // we set the 3D points coordinates (in meter !) in the object/world frame
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     vpPoint P(*it_LoX, *it_LoY, *it_LoZ);
     double x = 0, y = 0;
     vpPixelMeterConversion::convertPoint(camera, *it_Lip, x, y);
@@ -194,21 +165,14 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_est);
 }
 
-/*!
-  Compute and return the standard deviation expressed in pixel
-  for pose matrix and camera intrinsic parameters for model without
-  distortion. \param cMo_est : the matrix that defines the pose to be tested.
-  \param camera : camera intrinsic parameters to be tested.
-  \return the standard deviation by point of the error in pixel .
-*/
 double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
-  double residual_ = 0;
+  m_residual = 0;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   double u0 = camera.get_u0();
   double v0 = camera.get_v0();
@@ -216,7 +180,7 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, co
   double py = camera.get_py();
   vpImagePoint ip;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;
@@ -235,31 +199,24 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, co
     double xp = u0 + x * px;
     double yp = v0 + y * py;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
 
     ++it_LoX;
     ++it_LoY;
     ++it_LoZ;
     ++it_Lip;
   }
-  this->residual = residual_;
-  return sqrt(residual_ / npt);
+  return sqrt(m_residual / m_npt);
 }
-/*!
-  Compute and return the standard deviation expressed in pixel
-  for pose matrix and camera intrinsic parameters with pixel to meter model.
-  \param cMo_est : the matrix that defines the pose to be tested.
-  \param camera : camera intrinsic parameters to be tested.
-  \return the standard deviation by point of the error in pixel .
-*/
+
 double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
-  double residual_ = 0;
+  m_residual_dist = 0;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   double u0 = camera.get_u0();
   double v0 = camera.get_v0();
@@ -272,7 +229,7 @@ double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_es
   double inv_py = 1 / px;
   vpImagePoint ip;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;
@@ -293,49 +250,30 @@ double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_es
     double xp = u0 + x * px * r2ud;
     double yp = v0 + y * py * r2ud;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual_dist += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
 
     double r2du = (vpMath::sqr((u - u0) * inv_px) + vpMath::sqr((v - v0) * inv_py));
 
     xp = u0 + x * px - kdu * (u - u0) * r2du;
     yp = v0 + y * py - kdu * (v - v0) * r2du;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual_dist += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
     ++it_LoX;
     ++it_LoY;
     ++it_LoZ;
     ++it_Lip;
   }
-  residual_ /= 2;
+  m_residual_dist /= 2;
 
-  this->residual_dist = residual_;
-  return sqrt(residual_ / npt);
+  return sqrt(m_residual_dist / m_npt);
 }
 
-/*!
-  Compute and return the standard deviation expressed in pixel
-  for pose matrix and camera intrinsic parameters.
-  \param deviation   : the standard deviation computed for the model without
-  distortion. \param deviation_dist : the standard deviation computed for the
-  model with distortion.
-*/
 void vpCalibration::computeStdDeviation(double &deviation, double &deviation_dist)
 {
   deviation = computeStdDeviation(cMo, cam);
   deviation_dist = computeStdDeviation_dist(cMo_dist, cam_dist);
 }
 
-/*!
-  Compute the calibration according to the desired method using one pose.
-
-  \param method : Method that will be used to estimate the parameters.
-  \param cMo_est : estimated homogeneous matrix that defines the pose.
-  \param cam_est : estimated intrinsic camera parameters.
-  \param verbose : set at true if information about the residual at each loop
-  of the algorithm is hoped.
-
-  \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
-*/
 int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogeneousMatrix &cMo_est,
                                       vpCameraParameters &cam_est, bool verbose)
 {
@@ -415,25 +353,12 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogene
     }
 
     return EXIT_SUCCESS;
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 }
 
-/*!
-  Compute the multi-images calibration according to the desired method using
-  many poses.
-
-  \param method : Method used to estimate the camera parameters.
-  \param table_cal : Vector of vpCalibration.
-  \param cam_est : Estimated intrinsic camera parameters.
-  \param globalReprojectionError : Global reprojection error or global
-  residual.
-  \param verbose : Set at true if information about the residual at
-  each loop of the algorithm is hoped.
-
-  \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
-*/
 int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
                                            vpCameraParameters &cam_est, double &globalReprojectionError, bool verbose)
 {
@@ -447,9 +372,10 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
     case CALIB_LAGRANGE: {
       if (nbPose > 1) {
         std::cout << "this calibration method is not available in" << std::endl
-                  << "vpCalibration::computeCalibrationMulti()" << std::endl;
+          << "vpCalibration::computeCalibrationMulti()" << std::endl;
         return -1;
-      } else {
+      }
+      else {
         table_cal[0].calibLagrange(cam_est, table_cal[0].cMo);
         table_cal[0].cam = cam_est;
         table_cal[0].cam_dist = cam_est;
@@ -461,10 +387,11 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST: {
       if (nbPose > 1) {
         std::cout << "this calibration method is not available in" << std::endl
-                  << "vpCalibration::computeCalibrationMulti()" << std::endl
-                  << "with several images." << std::endl;
+          << "vpCalibration::computeCalibrationMulti()" << std::endl
+          << "with several images." << std::endl;
         return -1;
-      } else {
+      }
+      else {
         table_cal[0].calibLagrange(cam_est, table_cal[0].cMo);
         table_cal[0].cam = cam_est;
         table_cal[0].cam_dist = cam_est;
@@ -518,33 +445,27 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
     }
 
     return EXIT_SUCCESS;
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 }
 
-/*!
-  Write data into a file.
-
-  data are organized as follow oX oY oZ u v
-
-  \param filename : name of the file
-*/
-int vpCalibration::writeData(const char *filename)
+int vpCalibration::writeData(const std::string &filename)
 {
-  std::ofstream f(filename);
+  std::ofstream f(filename.c_str());
   vpImagePoint ip;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   f.precision(10);
   f.setf(std::ios::fixed, std::ios::floatfield);
-  f << LoX.size() << std::endl;
+  f << m_LoX.size() << std::endl;
 
-  for (unsigned int i = 0; i < LoX.size(); i++) {
+  for (unsigned int i = 0; i < m_LoX.size(); ++i) {
 
     double oX = *it_LoX;
     double oY = *it_LoY;
@@ -566,17 +487,11 @@ int vpCalibration::writeData(const char *filename)
   return 0;
 }
 
-/*!
-  Read data from disk :
-  data are organized as follow oX oY oZ u v
-
-  \param filename : name of the file
-*/
-int vpCalibration::readData(const char *filename)
+int vpCalibration::readData(const std::string &filename)
 {
   vpImagePoint ip;
   std::ifstream f;
-  f.open(filename);
+  f.open(filename.c_str());
   if (!f.fail()) {
     unsigned int n;
     f >> n;
@@ -598,32 +513,18 @@ int vpCalibration::readData(const char *filename)
 
     f.close();
     return 0;
-  } else {
+  }
+  else {
     return -1;
   }
 }
-/*!
-  Read calibration grid coordinates from disk :
-  data are organized as follow oX oY oZ
 
-  \param filename : name of the file
-  \param n : number of points in the calibration grid
-  \param oX : List of oX coordinates
-  \param oY : List of oY coordinates
-  \param oZ : List of oZ coordinates
-
-  \param verbose : Additionnal printings if true (number of points on
-  the calibration grid and their respective coordinates in the object
-  frame).
-
-  \return 0 if success, -1 if an error occurs.
-*/
-int vpCalibration::readGrid(const char *filename, unsigned int &n, std::list<double> &oX, std::list<double> &oY,
+int vpCalibration::readGrid(const std::string &filename, unsigned int &n, std::list<double> &oX, std::list<double> &oY,
                             std::list<double> &oZ, bool verbose)
 {
   try {
     std::ifstream f;
-    f.open(filename);
+    f.open(filename.c_str());
     if (!f.fail()) {
 
       f >> n;
@@ -652,29 +553,21 @@ int vpCalibration::readGrid(const char *filename, unsigned int &n, std::list<dou
       }
 
       f.close();
-    } else {
+    }
+    else {
       return -1;
     }
-  } catch (...) {
+  }
+  catch (...) {
     return -1;
   }
   return 0;
 }
 
-/*!
-  Display the data of the calibration (center of the tracked dots)
-  \param I : Image where to display data.
-  \param color : Color of the data.
-  \param thickness : Thickness of the displayed data.
-  \param subsampling_factor : Subsampling factor. Default value is 1.
-  Admissible values are multiple of 2. Divide by this parameter the
-  coordinates of the data points resulting from image processing.
-
-*/
 int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, unsigned int thickness, int subsampling_factor)
 {
 
-  for (std::list<vpImagePoint>::const_iterator it = Lip.begin(); it != Lip.end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = m_Lip.begin(); it != m_Lip.end(); ++it) {
     vpImagePoint ip = *it;
     if (subsampling_factor > 1.) {
       ip.set_u(ip.get_u() / subsampling_factor);
@@ -685,16 +578,6 @@ int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, unsigne
   return 0;
 }
 
-/*!
-  Display estimated centers of dots using intrinsic camera parameters
-  with model with distortion and the computed pose.
-  \param I : Image where to display grid data.
-  \param color : Color of the data.
-  \param thickness : Thickness of the displayed data.
-  \param subsampling_factor : Subsampling factor. Default value is 1.
-  Admissible values are multiple of 2. Divide by this parameter the
-  values of the camera parameters.
-*/
 int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigned int thickness, int subsampling_factor)
 {
   double u0_dist = cam_dist.get_u0() / subsampling_factor;
@@ -709,28 +592,14 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigne
   //   double px = cam.get_px() ;
   //   double py = cam.get_py() ;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;
-
-    // double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
-    // double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
-    // double cZ = oX*cMo[2][0]+oY*cMo[2][1]+oZ*cMo[2][2] + cMo[2][3];
-
-    // double x = cX/cZ ;
-    // double y = cY/cZ ;
-
-    //     double xp = u0 + x*px ;
-    //     double yp = v0 + y*py ;
-
-    //     vpDisplay::displayCross(I,(int)vpMath::round(yp),
-    //     (int)vpMath::round(xp),
-    // 			    5,col) ;
 
     double cX = oX * cMo_dist[0][0] + oY * cMo_dist[0][1] + oZ * cMo_dist[0][2] + cMo_dist[0][3];
     double cY = oX * cMo_dist[1][0] + oY * cMo_dist[1][1] + oZ * cMo_dist[1][2] + cMo_dist[1][3];
@@ -757,14 +626,10 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigne
   return 0;
 }
 
-/*!
- * Set pixel aspect ratio px/py.
- * \param[in] aspect_ratio : px/py aspect ratio. Value need to be positive.
- * To estimate a model where px=py set 1 as aspect ratio.
- */
 void vpCalibration::setAspectRatio(double aspect_ratio)
 {
   if (aspect_ratio > 0.) {
     m_aspect_ratio = aspect_ratio;
   }
 }
+END_VISP_NAMESPACE

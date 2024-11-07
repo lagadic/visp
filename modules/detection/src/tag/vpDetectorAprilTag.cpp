@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,13 +29,15 @@
  *
  * Description:
  * Base class for AprilTag detection.
- *
- *****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
 #include <map>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <apriltag.h>
 #include <apriltag_pose.h>
 #include <common/homography.h>
@@ -47,26 +48,31 @@
 #include <tag36h11.h>
 #include <tagCircle21h7.h>
 #include <tagStandard41h12.h>
-#include <visp3/detection/vpDetectorAprilTag.h>
 #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
 #include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
+#ifdef __cplusplus
+}
+#endif
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/vision/vpPose.h>
+
+BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpDetectorAprilTag::Impl
 {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
-    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(NULL), m_tf(NULL), m_detections(NULL),
-      m_zAlignedWithCameraFrame(false)
+    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(nullptr), m_tf(nullptr), m_detections(nullptr),
+    m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -124,7 +130,7 @@ public:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
+    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
       m_td = apriltag_detector_create();
       apriltag_detector_add_family(m_td, m_tf);
     }
@@ -134,8 +140,8 @@ public:
   }
 
   Impl(const Impl &o)
-    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily), m_td(NULL),
-      m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
+    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily), m_td(nullptr),
+    m_tf(nullptr), m_detections(nullptr), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -193,15 +199,15 @@ public:
       throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
-      m_td = apriltag_detector_create();
+    if ((m_tagFamily != TAG_36ARTOOLKIT) && m_tf) {
+      m_td = apriltag_detector_copy(o.m_td);
       apriltag_detector_add_family(m_td, m_tf);
     }
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
 
-    if (o.m_detections != NULL) {
+    if (o.m_detections != nullptr) {
       m_detections = apriltag_detections_copy(o.m_detections);
     }
   }
@@ -272,17 +278,18 @@ public:
 
     if (m_detections) {
       apriltag_detections_destroy(m_detections);
-      m_detections = NULL;
+      m_detections = nullptr;
     }
   }
 
   void convertHomogeneousMatrix(const apriltag_pose_t &pose, vpHomogeneousMatrix &cMo)
   {
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++) {
+    const unsigned int val_3 = 3;
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         cMo[i][j] = MATD_EL(pose.R, i, j);
       }
-      cMo[i][3] = MATD_EL(pose.t, i, 0);
+      cMo[i][val_3] = MATD_EL(pose.t, i, 0);
     }
   }
 
@@ -298,24 +305,24 @@ public:
       return false;
     }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 ||
-        m_tagFamily == TAG_STANDARD52h13) {
+    if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
+        (m_tagFamily == TAG_STANDARD52h13)) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled."
-                << std::endl;
+        << std::endl;
       return false;
     }
 #endif
 
-    const bool computePose = (cMo_vec != NULL);
+    const bool computePose = (cMo_vec != nullptr);
 
-    image_u8_t im = {/*.width =*/(int32_t)I.getWidth(),
-                     /*.height =*/(int32_t)I.getHeight(),
-                     /*.stride =*/(int32_t)I.getWidth(),
-                     /*.buf =*/I.bitmap};
+    image_u8_t im = {/*.width =*/static_cast<int32_t>(I.getWidth()),
+      /*.height =*/static_cast<int32_t>(I.getHeight()),
+      /*.stride =*/static_cast<int32_t>(I.getWidth()),
+      /*.buf =*/I.bitmap };
 
     if (m_detections) {
       apriltag_detections_destroy(m_detections);
-      m_detections = NULL;
+      m_detections = nullptr;
     }
 
     m_detections = apriltag_detector_detect(m_td, &im);
@@ -326,12 +333,14 @@ public:
     messages.resize(static_cast<size_t>(nb_detections));
     m_tagsId.resize(static_cast<size_t>(nb_detections));
 
-    for (int i = 0; i < zarray_size(m_detections); i++) {
+    int zarray_size_m_detections = zarray_size(m_detections);
+    for (int i = 0; i < zarray_size_m_detections; ++i) {
       apriltag_detection_t *det;
       zarray_get(m_detections, i, &det);
 
       std::vector<vpImagePoint> polygon;
-      for (int j = 0; j < 4; j++) {
+      const int polygonSize = 4;
+      for (int j = 0; j < polygonSize; ++j) {
         polygon.push_back(vpImagePoint(det->p[j][1], det->p[j][0]));
       }
       polygons[static_cast<size_t>(i)] = polygon;
@@ -346,21 +355,22 @@ public:
         vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
         vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
 
-        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[1][1], (int)det->p[1][0], Ox,
+        const unsigned int polyId0 = 0, polyId1 = 1, polyId2 = 2, polyId3 = 3;
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), Ox,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[3][1], (int)det->p[3][0], Oy,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId0][1]), static_cast<int>(det->p[polyId0][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[1][1], (int)det->p[1][0], (int)det->p[2][1], (int)det->p[2][0], Ox2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId1][1]), static_cast<int>(det->p[polyId1][0]), static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), Ox2,
                                thickness);
-        vpDisplay::displayLine(I, (int)det->p[2][1], (int)det->p[2][0], (int)det->p[3][1], (int)det->p[3][0], Oy2,
+        vpDisplay::displayLine(I, static_cast<int>(det->p[polyId2][1]), static_cast<int>(det->p[polyId2][0]), static_cast<int>(det->p[polyId3][1]), static_cast<int>(det->p[polyId3][0]), Oy2,
                                thickness);
       }
 
       if (computePose) {
         vpHomogeneousMatrix cMo, cMo2;
         double err1, err2;
-        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : NULL, projErrors ? &err1 : NULL,
-                    projErrors2 ? &err2 : NULL)) {
+        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : nullptr, projErrors ? &err1 : nullptr,
+                    projErrors2 ? &err2 : nullptr)) {
           cMo_vec->push_back(cMo);
           if (cMo_vec2) {
             cMo_vec2->push_back(cMo2);
@@ -382,7 +392,8 @@ public:
   void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
                      const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < cMo_vec.size(); i++) {
+    size_t cmo_vec_size = cMo_vec.size();
+    for (size_t i = 0; i < cmo_vec_size; ++i) {
       const vpHomogeneousMatrix &cMo = cMo_vec[i];
       vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
     }
@@ -391,7 +402,8 @@ public:
   void displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
                      const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < cMo_vec.size(); i++) {
+    size_t cmo_vec_size = cMo_vec.size();
+    for (size_t i = 0; i < cmo_vec_size; ++i) {
       const vpHomogeneousMatrix &cMo = cMo_vec[i];
       vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
     }
@@ -400,7 +412,8 @@ public:
   void displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < tagsCorners.size(); i++) {
+    size_t tagscorners_size = tagsCorners.size();
+    for (size_t i = 0; i < tagscorners_size; ++i) {
       const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
       const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
       const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
@@ -408,22 +421,24 @@ public:
 
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
+      const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
 
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
-                             Ox, thickness);
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy, thickness);
-      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
-                             Ox2, thickness);
-      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
+                                                                                       Ox, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
+                                                                                       Oy, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()), static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()),
+                                                                                       Ox2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
+                                                                                       Oy2, thickness);
     }
   }
 
   void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
                    const vpColor &color, unsigned int thickness) const
   {
-    for (size_t i = 0; i < tagsCorners.size(); i++) {
+    size_t tagscorners_size = tagsCorners.size();
+    for (size_t i = 0; i < tagscorners_size; ++i) {
       const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
       const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
       const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
@@ -431,22 +446,23 @@ public:
 
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
+      const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
 
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
-                             Ox, thickness);
-      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy, thickness);
-      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
-                             Ox2, thickness);
-      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
-                             Oy2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()),
+                                                                                       Ox, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId0].get_i()), static_cast<int>(corners[cornerId0].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
+                                                                                       Oy, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId1].get_i()), static_cast<int>(corners[cornerId1].get_j()), static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()),
+                                                                                       Ox2, thickness);
+      vpDisplay::displayLine(I, static_cast<int>(corners[cornerId2].get_i()), static_cast<int>(corners[cornerId2].get_j()), static_cast<int>(corners[cornerId3].get_i()), static_cast<int>(corners[cornerId3].get_j()),
+                                                                                       Oy2, thickness);
     }
   }
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2, double *projErrors, double *projErrors2)
   {
-    if (m_detections == NULL) {
+    if (m_detections == nullptr) {
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
     }
     if (m_tagFamily == TAG_36ARTOOLKIT) {
@@ -455,10 +471,10 @@ public:
       return false;
     }
 #if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 ||
-        m_tagFamily == TAG_STANDARD52h13) {
+    if ((m_tagFamily == TAG_CIRCLE49h12) || (m_tagFamily == TAG_CUSTOM48h12) || (m_tagFamily == TAG_STANDARD41h12) ||
+        (m_tagFamily == TAG_STANDARD52h13)) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled."
-                << std::endl;
+        << std::endl;
       return false;
     }
 #endif
@@ -467,7 +483,7 @@ public:
     zarray_get(m_detections, static_cast<int>(tagIndex), &det);
 
     int nb_detections = zarray_size(m_detections);
-    if (tagIndex >= (size_t)nb_detections) {
+    if (tagIndex >= static_cast<size_t>(nb_detections)) {
       return false;
     }
 
@@ -478,8 +494,8 @@ public:
     // Under the hood, we use aligned frames everywhere and transform the pose according to the option.
 
     vpHomogeneousMatrix cMo_homography_ortho_iter;
-    if (m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION ||
-        m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+    if ((m_poseEstimationMethod == HOMOGRAPHY_ORTHOGONAL_ITERATION) ||
+        (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
       double fx = cam.get_px(), fy = cam.get_py();
       double cx = cam.get_u0(), cy = cam.get_v0();
 
@@ -497,8 +513,8 @@ public:
     }
 
     vpHomogeneousMatrix cMo_homography;
-    if (m_poseEstimationMethod == HOMOGRAPHY || m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS ||
-        m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+    if ((m_poseEstimationMethod == HOMOGRAPHY) || (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS) ||
+        (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS)) {
       double fx = cam.get_px(), fy = cam.get_py();
       double cx = cam.get_u0(), cy = cam.get_v0();
 
@@ -541,29 +557,31 @@ public:
     pt.set_y(y);
     pts[1] = pt;
 
+    const int idCorner2 = 2;
     pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
-    imPt.set_uv(det->p[2][0], det->p[2][1]);
+    imPt.set_uv(det->p[idCorner2][0], det->p[idCorner2][1]);
     vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
     pt.set_x(x);
     pt.set_y(y);
-    pts[2] = pt;
+    pts[idCorner2] = pt;
 
+    const int idCorner3 = 3;
     pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
-    imPt.set_uv(det->p[3][0], det->p[3][1]);
+    imPt.set_uv(det->p[idCorner3][0], det->p[idCorner3][1]);
     vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
     pt.set_x(x);
     pt.set_y(y);
-    pts[3] = pt;
+    pts[idCorner3] = pt;
 
     pose.addPoints(pts);
 
-    if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS &&
-        m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
+    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) &&
+        (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
       if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
         vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
 
         double residual_dementhon = std::numeric_limits<double>::max(),
-               residual_lagrange = std::numeric_limits<double>::max();
+          residual_lagrange = std::numeric_limits<double>::max();
         double residual_homography = pose.computeResidual(cMo_homography);
         double residual_homography_ortho_iter = pose.computeResidual(cMo_homography_ortho_iter);
 
@@ -588,12 +606,13 @@ public:
 
         std::ptrdiff_t minIndex = std::min_element(residuals.begin(), residuals.end()) - residuals.begin();
         cMo = *(poses.begin() + minIndex);
-      } else {
+      }
+      else {
         pose.computePose(m_mapOfCorrespondingPoseMethods[m_poseEstimationMethod], cMo);
       }
     }
 
-    if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
+    if ((m_poseEstimationMethod != HOMOGRAPHY) && (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION)) {
       // Compute final pose using VVS
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
@@ -602,28 +621,31 @@ public:
     if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
       if (cMo2) {
         double scale = tagSize / 2.0;
-        double data_p0[] = {-scale, scale, 0};
-        double data_p1[] = {scale, scale, 0};
-        double data_p2[] = {scale, -scale, 0};
-        double data_p3[] = {-scale, -scale, 0};
-        matd_t *p[4] = {matd_create_data(3, 1, data_p0), matd_create_data(3, 1, data_p1),
-                        matd_create_data(3, 1, data_p2), matd_create_data(3, 1, data_p3)};
-        matd_t *v[4];
-        for (int i = 0; i < 4; i++) {
-          double data_v[] = {(det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
-                             1};
-          v[i] = matd_create_data(3, 1, data_v);
+        double data_p0[] = { -scale, scale, 0 };
+        double data_p1[] = { scale, scale, 0 };
+        double data_p2[] = { scale, -scale, 0 };
+        double data_p3[] = { -scale, -scale, 0 };
+        const unsigned int nbPoints = 4;
+        const int nbRows = 3;
+        matd_t *p[nbPoints] = { matd_create_data(nbRows, 1, data_p0), matd_create_data(nbRows, 1, data_p1),
+                        matd_create_data(nbRows, 1, data_p2), matd_create_data(nbRows, 1, data_p3) };
+        matd_t *v[nbPoints];
+        for (unsigned int i = 0; i < nbPoints; ++i) {
+          double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
+                             1 };
+          v[i] = matd_create_data(nbRows, 1, data_v);
         }
 
         apriltag_pose_t solution1, solution2;
         const int nIters = 50;
-        solution1.R = matd_create_data(3, 3, cMo.getRotationMatrix().data);
-        solution1.t = matd_create_data(3, 1, cMo.getTranslationVector().data);
+        const int nbCols = 3;
+        solution1.R = matd_create_data(nbRows, nbCols, cMo.getRotationMatrix().data);
+        solution1.t = matd_create_data(nbRows, 1, cMo.getTranslationVector().data);
 
         double err2;
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
-        for (int i = 0; i < 4; i++) {
+        for (unsigned int i = 0; i < nbPoints; ++i) {
           matd_destroy(p[i]);
           matd_destroy(v[i]);
         }
@@ -649,17 +671,18 @@ public:
     }
 
     if (!m_zAlignedWithCameraFrame) {
+      const unsigned int idX = 0, idY = 1, idZ = 2;
       vpHomogeneousMatrix oMo;
       // Apply a rotation of 180deg around x axis
-      oMo[0][0] = 1;
-      oMo[0][1] = 0;
-      oMo[0][2] = 0;
-      oMo[1][0] = 0;
-      oMo[1][1] = -1;
-      oMo[1][2] = 0;
-      oMo[2][0] = 0;
-      oMo[2][1] = 0;
-      oMo[2][2] = -1;
+      oMo[idX][idX] = 1;
+      oMo[idX][idY] = 0;
+      oMo[idX][idZ] = 0;
+      oMo[idY][idX] = 0;
+      oMo[idY][idY] = -1;
+      oMo[idY][idZ] = 0;
+      oMo[idZ][idX] = 0;
+      oMo[idZ][idY] = 0;
+      oMo[idZ][idZ] = -1;
       cMo = cMo * oMo;
       if (cMo2) {
         *cMo2 = *cMo2 * oMo;
@@ -674,17 +697,20 @@ public:
   {
     apriltag_pose_t pose1, pose2;
     double err_1, err_2;
-    estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, 50);
+    const unsigned int nbIters = 50;
+    estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, nbIters);
     if (err_1 <= err_2) {
       convertHomogeneousMatrix(pose1, cMo1);
       if (cMo2) {
         if (pose2.R) {
           convertHomogeneousMatrix(pose2, *cMo2);
-        } else {
+        }
+        else {
           *cMo2 = cMo1;
         }
       }
-    } else {
+    }
+    else {
       convertHomogeneousMatrix(pose2, cMo1);
       if (cMo2) {
         convertHomogeneousMatrix(pose1, *cMo2);
@@ -698,10 +724,12 @@ public:
     }
     matd_destroy(pose2.R);
 
-    if (err1)
+    if (err1) {
       *err1 = err_1;
-    if (err2)
+    }
+    if (err2) {
       *err2 = err_2;
+    }
   }
 
   bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
@@ -783,20 +811,31 @@ public:
     }
   }
 
-  void setRefineDecode(bool) {}
+  void setRefineDecode(bool) { }
 
   void setRefineEdges(bool refineEdges)
   {
     if (m_td) {
-      m_td->refine_edges = refineEdges ? 1 : 0;
+      m_td->refine_edges = (refineEdges ? true : false);
     }
   }
 
-  void setRefinePose(bool) {}
+  void setRefinePose(bool) { }
 
-  void setPoseEstimationMethod(const vpPoseEstimationMethod &method) { m_poseEstimationMethod = method; }
+  void setPoseEstimationMethod(const vpPoseEstimationMethod &method)
+  {
+    m_poseEstimationMethod = method;
+  }
 
-  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame) { m_zAlignedWithCameraFrame = zAlignedWithCameraFrame; }
+  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
+  {
+    m_zAlignedWithCameraFrame = zAlignedWithCameraFrame;
+  }
+
+  bool isZAlignedWithCameraAxis() const
+  {
+    return m_zAlignedWithCameraFrame;
+  }
 
 protected:
   std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
@@ -808,22 +847,25 @@ protected:
   zarray_t *m_detections;
   bool m_zAlignedWithCameraFrame;
 };
+
+namespace
+{
+const unsigned int def_tagThickness = 2;
+}
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
-  : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
-    m_impl(new Impl(tagFamily, poseEstimationMethod))
-{
-}
+  : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
+  m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
+  m_impl(new Impl(tagFamily, poseEstimationMethod))
+{ }
 
 vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
-  : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
-    m_impl(new Impl(*o.m_impl))
-{
-}
+  : vpDetectorBase(o), m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(def_tagThickness),
+  m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
+  m_impl(new Impl(*o.m_impl))
+{ }
 
 vpDetectorAprilTag &vpDetectorAprilTag::operator=(vpDetectorAprilTag o)
 {
@@ -849,7 +891,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   std::vector<vpHomogeneousMatrix> cMo_vec;
   const double tagSize = 1.0;
   bool detected = m_impl->detect(I, tagSize, m_defaultCam, m_polygon, m_message, m_displayTag, m_displayTagColor,
-                                 m_displayTagThickness, NULL, NULL, NULL, NULL);
+                                 m_displayTagThickness, nullptr, nullptr, nullptr, nullptr);
   m_nb_objects = m_message.size();
 
   return detected;
@@ -1012,34 +1054,39 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
   std::vector<std::vector<vpPoint> > tagsPoints3D;
 
   double default_size = -1;
-  {
-    std::map<int, double>::const_iterator it = tagsSize.find(-1);
-    if (it != tagsSize.end()) {
-      default_size = it->second; // Default size
-    }
+
+  std::map<int, double>::const_iterator it = tagsSize.find(-1);
+  if (it != tagsSize.end()) {
+    default_size = it->second; // Default size
   }
-  for (size_t i = 0; i < tagsId.size(); i++) {
-    std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
+
+  size_t tagsid_size = tagsId.size();
+  for (size_t i = 0; i < tagsid_size; ++i) {
+    it = tagsSize.find(tagsId[i]);
     double tagSize = default_size; // Default size
     if (it == tagsSize.end()) {
       if (default_size < 0) { // no default size found
         throw(vpException(vpException::fatalError,
                           "Tag with id %d has no 3D size or there is no default 3D size defined", tagsId[i]));
       }
-    } else {
+    }
+    else {
       tagSize = it->second;
     }
     std::vector<vpPoint> points3D(4);
+    const unsigned int idX = 0, idY = 1, idZ = 2, idHomogen = 3;
+    const double middleFactor = 2.0;
     if (m_impl->getZAlignedWithCameraAxis()) {
-      points3D[0] = vpPoint(-tagSize / 2, tagSize / 2, 0);
-      points3D[1] = vpPoint(tagSize / 2, tagSize / 2, 0);
-      points3D[2] = vpPoint(tagSize / 2, -tagSize / 2, 0);
-      points3D[3] = vpPoint(-tagSize / 2, -tagSize / 2, 0);
-    } else {
-      points3D[0] = vpPoint(-tagSize / 2, -tagSize / 2, 0);
-      points3D[1] = vpPoint(tagSize / 2, -tagSize / 2, 0);
-      points3D[2] = vpPoint(tagSize / 2, tagSize / 2, 0);
-      points3D[3] = vpPoint(-tagSize / 2, tagSize / 2, 0);
+      points3D[idX] = vpPoint(-tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idY] = vpPoint(tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idZ] = vpPoint(tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idHomogen] = vpPoint(-tagSize / middleFactor, -tagSize / middleFactor, 0);
+    }
+    else {
+      points3D[idX] = vpPoint(-tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idY] = vpPoint(tagSize / middleFactor, -tagSize / middleFactor, 0);
+      points3D[idZ] = vpPoint(tagSize / middleFactor, tagSize / middleFactor, 0);
+      points3D[idHomogen] = vpPoint(-tagSize / middleFactor, tagSize / middleFactor, 0);
     }
     tagsPoints3D.push_back(points3D);
   }
@@ -1144,9 +1191,9 @@ void vpDetectorAprilTag::setAprilTagQuadSigma(float quadSigma) { m_impl->setQuad
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Deprecated parameter from AprilTag 2 version.
+  \deprecated Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode)
+void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode)
 {
   m_impl->setRefineDecode(refineDecode);
 }
@@ -1164,36 +1211,42 @@ vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode
   </blockquote>
   Default is 1.
 
-  \param refineEdges : If true, set refine_edges to 1.
+  \param refineEdges : If true, set refine edges parameter.
 */
 void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges) { m_impl->setRefineEdges(refineEdges); }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Deprecated parameter from AprilTag 2 version.
+  \deprecated Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRefinePose(refinePose); }
+void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose) { m_impl->setRefinePose(refinePose); }
 #endif
 
-void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
-{
-  using std::swap;
-
-  swap(o1.m_impl, o2.m_impl);
-}
-
 /*!
- * Modify the resulting tag pose returned by getPose() in order to get
- * a pose where z-axis is aligned when the camera plane is parallel to the tag.
- * \param zAlignedWithCameraFrame : Flag to get a pose where z-axis is aligned with the camera frame.
+ * Modify the resulting tag pose returned by getPose() or
+ * detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &, std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
+ * in order to get a pose where z-axis is aligned when the camera plane is parallel to the tag.
+ *
+ * \image html img-tag-frame.jpg Tag 36h11_00000 with location of the 4 corners and tag frame
+ * \param zAlignedWithCameraFrame : When set to true, estimated tag pose has a z-axis aligned with the
+ * camera frame.
  */
 void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
 }
 
+/*!
+ * Indicate it z-axis of the tag frame is aligned with the camera frame or not.
+ * @return When true, z-axis are aligned, false otherwise
+ */
+bool vpDetectorAprilTag::isZAlignedWithCameraAxis() const
+{
+  return m_impl->isZAlignedWithCameraAxis();
+}
+END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
 // no symbols
-void dummy_vpDetectorAprilTag() {}
+void dummy_vpDetectorAprilTag() { }
 #endif

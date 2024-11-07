@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,65 +28,50 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpCalibration class and its derivates.
- *
- * Authors:
- * Anthony Saunier
- *
- *****************************************************************************/
+ * Exceptions that can be emitted by the vpCalibration class and its derivatives.
+ */
 
 #ifndef _vpCalibrationException_h_
 #define _vpCalibrationException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* Classes standards. */
-//
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
+BEGIN_VISP_NAMESPACE
 /*!
-
-  \class vpCalibrationException
-  \brief Error that can be emited by the vpCalibration class.
- */
+ * \class vpCalibrationException
+ * \brief Error that can be emitted by the vpCalibration class.
+*/
 class VISP_EXPORT vpCalibrationException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
-  vpCalibration member
- */
-  enum errorCodeEnum {
-    //! error returns by a constructor
+   * \brief Lists the possible error than can be emitted while calling
+   * vpCalibration member
+   */
+  enum errorCodeEnum
+  {
+    //! Error returns by a constructor
     constructionError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedError,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
-    //! iterative algorithm doesn't converge
+    //! Iterative algorithm doesn't converge
     convergencyError,
+    //! Forbidden operator
     forbiddenOperatorError,
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpCalibrationException(int id, const char *format, ...)
   {
     this->code = id;
@@ -96,8 +80,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpCalibrationException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpCalibrationException(int id) : vpException(id) { ; }
-};
 
+  /*!
+   * Constructor.
+   */
+  vpCalibrationException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
+  VP_EXPLICIT vpCalibrationException(int id) : vpException(id) { }
+};
+END_VISP_NAMESPACE
 #endif

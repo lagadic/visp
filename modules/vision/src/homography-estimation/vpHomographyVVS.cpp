@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,14 +29,8 @@
  *
  * Description:
  * Homography transformation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+ */
 
-//#include <computeHomography.h>
-//#include <utilsHomography.h>
 #include <iostream>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -48,37 +41,43 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpHomography.h>
 
-const double vpHomography::threshold_rotation = 1e-7;
-const double vpHomography::threshold_displacement = 1e-18;
+BEGIN_VISP_NAMESPACE
+
+const double vpHomography::m_threshold_rotation = 1e-7;
+const double vpHomography::m_threshold_displacement = 1e-18;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 static void updatePoseRotation(vpColVector &dx, vpHomogeneousMatrix &mati)
 {
   vpRotationMatrix rd;
+  const unsigned int val_3 = 3;
 
-  double s = sqrt(dx[0] * dx[0] + dx[1] * dx[1] + dx[2] * dx[2]);
+  double s = sqrt((dx[0] * dx[0]) + (dx[1] * dx[1]) + (dx[2] * dx[2]));
   if (s > 1.e-25) {
     double u[3];
 
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < val_3; ++i) {
       u[i] = dx[i] / s;
+    }
     double sinu = sin(s);
     double cosi = cos(s);
     double mcosi = 1 - cosi;
-    rd[0][0] = cosi + mcosi * u[0] * u[0];
-    rd[0][1] = -sinu * u[2] + mcosi * u[0] * u[1];
-    rd[0][2] = sinu * u[1] + mcosi * u[0] * u[2];
-    rd[1][0] = sinu * u[2] + mcosi * u[1] * u[0];
-    rd[1][1] = cosi + mcosi * u[1] * u[1];
-    rd[1][2] = -sinu * u[0] + mcosi * u[1] * u[2];
-    rd[2][0] = -sinu * u[1] + mcosi * u[2] * u[0];
-    rd[2][1] = sinu * u[0] + mcosi * u[2] * u[1];
-    rd[2][2] = cosi + mcosi * u[2] * u[2];
-  } else {
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < 3; j++)
+    rd[0][0] = cosi + (mcosi * u[0] * u[0]);
+    rd[0][1] = (-sinu * u[2]) + (mcosi * u[0] * u[1]);
+    rd[0][2] = (sinu * u[1]) + (mcosi * u[0] * u[2]);
+    rd[1][0] = (sinu * u[2]) + (mcosi * u[1] * u[0]);
+    rd[1][1] = cosi + (mcosi * u[1] * u[1]);
+    rd[1][2] = (-sinu * u[0]) + (mcosi * u[1] * u[2]);
+    rd[2][0] = (-sinu * u[1]) + (mcosi * u[2] * u[0]);
+    rd[2][1] = (sinu * u[0]) + (mcosi * u[2] * u[1]);
+    rd[2][2] = cosi + (mcosi * u[2] * u[2]);
+  }
+  else {
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         rd[i][j] = 0.0;
+      }
       rd[i][i] = 1.0;
     }
   }
@@ -108,17 +107,19 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   bool only_1 = false;
   bool only_2 = false;
   int iter = 0;
+  const unsigned int val_3 = 3;
 
   unsigned int n = 0;
-  for (unsigned int i = 0; i < nbpoint; i++) {
-    //    if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
+  for (unsigned int i = 0; i < nbpoint; ++i) {
+    // Check if c2P[i].get_x() and c1P[i].get_x() are different from -1
     if ((std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
         (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
-      n++;
+      ++n;
     }
   }
-  if ((!only_1) && (!only_2))
+  if ((!only_1) && (!only_2)) {
     n *= 2;
+  }
 
   vpRobust robust;
   vpColVector res(n);
@@ -129,20 +130,22 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   W = 0;
   vpMatrix c2Rc1(3, 3);
   double r = 0;
-  while (vpMath::equal(r_1, r, threshold_rotation) == false) {
+  bool stop = false;
+  while ((vpMath::equal(r_1, r, m_threshold_rotation) == false) && (stop == false)) {
 
     r_1 = r;
     // compute current position
 
     // Change frame (current)
-    for (unsigned int i = 0; i < 3; i++)
-      for (unsigned int j = 0; j < 3; j++)
+    for (unsigned int i = 0; i < val_3; ++i) {
+      for (unsigned int j = 0; j < val_3; ++j) {
         c2Rc1[i][j] = c2Mc1[i][j];
+      }
+    }
 
     vpMatrix L(2, 3), Lp;
     int k = 0;
-    for (unsigned int i = 0; i < nbpoint; i++) {
-      // if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
+    for (unsigned int i = 0; i < nbpoint; ++i) {
       if ((std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
           (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
         p2[0] = c2P[i].get_x();
@@ -155,7 +158,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         Hp2 = c2Rc1.t() * p2; // p2 = Hp1
         Hp1 = c2Rc1 * p1;     // p1 = Hp2
 
-        Hp2 /= Hp2[2]; // normalisation
+        Hp2 /= Hp2[2]; // normalization
         Hp1 /= Hp1[2];
 
         // set up the interaction matrix
@@ -163,9 +166,9 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         double y = Hp2[1];
 
         H2[0][0] = x * y;
-        H2[0][1] = -(1 + x * x);
+        H2[0][1] = -(1 + (x * x));
         H2[0][2] = y;
-        H2[1][0] = 1 + y * y;
+        H2[1][0] = 1 + (y * y);
         H2[1][1] = -x * y;
         H2[1][2] = -x;
         H2 *= -1;
@@ -180,9 +183,9 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         y = Hp1[1];
 
         H1[0][0] = x * y;
-        H1[0][1] = -(1 + x * x);
+        H1[0][1] = -(1 + (x * x));
         H1[0][2] = y;
-        H1[1][0] = 1 + y * y;
+        H1[1][0] = 1 + (y * y);
         H1[1][1] = -x * y;
         H1[1][2] = -x;
 
@@ -194,23 +197,28 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
           if (k == 0) {
             L = H2;
             e = e2;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H2);
             e = vpColVector::stack(e, e2);
           }
-        } else if (only_1) {
+        }
+        else if (only_1) {
           if (k == 0) {
             L = H1;
             e = e1;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H1);
             e = vpColVector::stack(e, e1);
           }
-        } else {
+        }
+        else {
           if (k == 0) {
             L = H2;
             e = e2;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H2);
             e = vpColVector::stack(e, e2);
           }
@@ -218,57 +226,56 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
           e = vpColVector::stack(e, e1);
         }
 
-        k++;
+        ++k;
       }
     }
 
     if (userobust) {
-      for (unsigned int l = 0; l < n; l++) {
-        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[2 * l + 1]);
+      for (unsigned int l = 0; l < n; ++l) {
+        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l)+ 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix
-      for (unsigned int l = 0; l < n; l++) {
+      for (unsigned int l = 0; l < n; ++l) {
         W[2 * l][2 * l] = w[l];
-        W[2 * l + 1][2 * l + 1] = w[l];
+        W[(2 * l) + 1][(2 * l) + 1] = w[l];
       }
-    } else {
-      for (unsigned int l = 0; l < 2 * n; l++)
-        W[l][l] = 1;
     }
-    // CreateDiagonalMatrix(w, W) ;
-    (L).pseudoInverse(Lp, 1e-6);
+    else {
+      for (unsigned int l = 0; l < (2 * n); ++l) {
+        W[l][l] = 1;
+      }
+    }
+    L.pseudoInverse(Lp, 1e-6);
     // Compute the camera velocity
     vpColVector c2rc1, v(6);
 
     c2rc1 = -2 * Lp * W * e;
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < val_3; ++i) {
       v[i + 3] = c2rc1[i];
+    }
 
     // only for simulation
 
     updatePoseRotation(c2rc1, c2Mc1);
     r = e.sumSquare();
 
-    if ((W * e).sumSquare() < 1e-10)
-      break;
-    if (iter > 25)
-      break;
-    iter++; // std::cout <<  iter <<"  e=" <<(e).sumSquare() <<"  e="
-            // <<(W*e).sumSquare() <<std::endl ;
+    if (((W * e).sumSquare() < 1e-10) || (iter > 25)) {
+      stop = true;
+    }
+    ++iter;
   }
 
-  //  std::cout << c2Mc1 <<std::endl ;
   return (W * e).sumSquare();
 }
 
 static void getPlaneInfo(vpPlane &oN, vpHomogeneousMatrix &cMo, vpColVector &cN, double &cd)
 {
-  double A1 = cMo[0][0] * oN.getA() + cMo[0][1] * oN.getB() + cMo[0][2] * oN.getC();
-  double B1 = cMo[1][0] * oN.getA() + cMo[1][1] * oN.getB() + cMo[1][2] * oN.getC();
-  double C1 = cMo[2][0] * oN.getA() + cMo[2][1] * oN.getB() + cMo[2][2] * oN.getC();
-  double D1 = oN.getD() - (cMo[0][3] * A1 + cMo[1][3] * B1 + cMo[2][3] * C1);
+  double A1 = (cMo[0][0] * oN.getA()) + (cMo[0][1] * oN.getB()) + (cMo[0][2] * oN.getC());
+  double B1 = (cMo[1][0] * oN.getA()) + (cMo[1][1] * oN.getB()) + (cMo[1][2] * oN.getC());
+  double C1 = (cMo[2][0] * oN.getA()) + (cMo[2][1] * oN.getB()) + (cMo[2][2] * oN.getC());
+  double D1 = oN.getD() - ((cMo[0][3] * A1) + (cMo[1][3] * B1) + (cMo[2][3] * C1));
 
   cN.resize(3);
   cN[0] = A1;
@@ -299,10 +306,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
   unsigned int n = 0;
   n = nbpoint;
 
-  // next 2 lines are useless (detected by Coverity Scan)
-  // if ( (! only_1) && (! only_2) )
-  //  n *=2 ;
-
   vpRobust robust;
   vpColVector res(n);
   vpColVector w(n);
@@ -316,7 +319,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (vpMath::equal(r_1, r, threshold_displacement) == false) {
+  vpMatrix sTR;
+  bool stop = false;
+  while ((!vpMath::equal(r_1, r, m_threshold_displacement)) && (stop == false)) {
     r_1 = r;
     // compute current position
 
@@ -337,7 +342,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
     vpMatrix L(2, 3), Lp;
     int k = 0;
-    for (unsigned int i = 0; i < nbpoint; i++) {
+    for (unsigned int i = 0; i < nbpoint; ++i) {
       p2[0] = c2P[i].get_x();
       p2[1] = c2P[i].get_y();
       p2[2] = 1.0;
@@ -347,10 +352,10 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
       vpMatrix H(3, 3);
 
-      Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
-      Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
+      Hp2 = (static_cast<vpMatrix>(c1Rc2) + ((c1Tc2 * N2.t()) / d2)) * p2; // p2 = Hp1
+      Hp1 = (static_cast<vpMatrix>(c2Rc1) + ((c2Tc1 * N1.t()) / d1)) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix
@@ -358,7 +363,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       double y = Hp2[1];
       double Z1;
 
-      Z1 = (N1[0] * x + N1[1] * y + N1[2]) / d1; // 1/z
+      Z1 = ((N1[0] * x) + (N1[1] * y) + N1[2]) / d1; // 1/z
 
       H2[0][0] = -Z1;
       H2[0][1] = 0;
@@ -367,23 +372,24 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H2[1][1] = -Z1;
       H2[1][2] = y * Z1;
       H2[0][3] = x * y;
-      H2[0][4] = -(1 + x * x);
+      H2[0][4] = -(1 + (x * x));
       H2[0][5] = y;
-      H2[1][3] = 1 + y * y;
+      H2[1][3] = 1 + (y * y);
       H2[1][4] = -x * y;
       H2[1][5] = -x;
       H2 *= -1;
 
       vpMatrix c1CFc2(6, 6);
-      {
-        vpMatrix sTR = c1Tc2.skew() * (vpMatrix)c1Rc2;
-        for (unsigned int k_ = 0; k_ < 3; k_++)
-          for (unsigned int l = 0; l < 3; l++) {
-            c1CFc2[k_][l] = c1Rc2[k_][l];
-            c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
-            c1CFc2[k_][l + 3] = sTR[k_][l];
-          }
+
+      sTR = c1Tc2.skew() * c1Rc2;
+      for (unsigned int k_ = 0; k_ < 3; ++k_) {
+        for (unsigned int l = 0; l < 3; ++l) {
+          c1CFc2[k_][l] = c1Rc2[k_][l];
+          c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
+          c1CFc2[k_][l + 3] = sTR[k_][l];
+        }
       }
+
       H2 = H2 * c1CFc2;
 
       // Set up the error vector
@@ -393,7 +399,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       x = Hp1[0];
       y = Hp1[1];
 
-      Z1 = (N2[0] * x + N2[1] * y + N2[2]) / d2; // 1/z
+      Z1 = ((N2[0] * x) + (N2[1] * y) + N2[2]) / d2; // 1/z
 
       H1[0][0] = -Z1;
       H1[0][1] = 0;
@@ -402,9 +408,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H1[1][1] = -Z1;
       H1[1][2] = y * Z1;
       H1[0][3] = x * y;
-      H1[0][4] = -(1 + x * x);
+      H1[0][4] = -(1 + (x * x));
       H1[0][5] = y;
-      H1[1][3] = 1 + y * y;
+      H1[1][3] = 1 + (y * y);
       H1[1][4] = -x * y;
       H1[1][5] = -x;
 
@@ -416,23 +422,28 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
-      } else if (only_1) {
+      }
+      else if (only_1) {
         if (k == 0) {
           L = H1;
           e = e1;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H1);
           e = vpColVector::stack(e, e1);
         }
-      } else {
+      }
+      else {
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
@@ -440,23 +451,25 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         e = vpColVector::stack(e, e1);
       }
 
-      k++;
+      ++k;
     }
 
     if (userobust) {
-      for (unsigned int l = 0; l < n; l++) {
-        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[2 * l + 1]);
+      for (unsigned int l = 0; l < n; ++l) {
+        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l)+ 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix
-      for (unsigned int l = 0; l < n; l++) {
+      for (unsigned int l = 0; l < n; ++l) {
         W[2 * l][2 * l] = w[l];
-        W[2 * l + 1][2 * l + 1] = w[l];
+        W[(2 * l) + 1][(2 * l) + 1] = w[l];
       }
-    } else {
-      for (unsigned int l = 0; l < 2 * n; l++)
+    }
+    else {
+      for (unsigned int l = 0; l < (2 * n); ++l) {
         W[l][l] = 1;
+      }
     }
     (W * L).pseudoInverse(Lp, 1e-16);
     // Compute the camera velocity
@@ -467,19 +480,12 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     // only for simulation
 
     c2Mc1 = vpExponentialMap::direct(c2Tcc1).inverse() * c2Mc1;
-    //   UpdatePose2(c2Tcc1, c2Mc1) ;
     r = (W * e).sumSquare();
 
-    if (r < 1e-15) {
-      break;
+    if ((r < 1e-15) || (iter > 1000) || (r > r_1)) {
+      stop = true;
     }
-    if (iter > 1000) {
-      break;
-    }
-    if (r > r_1) {
-      break;
-    }
-    iter++;
+    ++iter;
   }
 
   return (W * e).sumSquare();
@@ -509,10 +515,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
   unsigned int n = 0;
   n = nbpoint;
 
-  // next 2 lines are useless (detected by Coverity Scan)
-  // if ( (! only_1) && (! only_2) )
-  //  n *=2 ;
-
   vpRobust robust;
   vpColVector res(n);
   vpColVector w(n);
@@ -526,7 +528,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (vpMath::equal(r_1, r, threshold_displacement) == false) {
+  vpMatrix sTR;
+  bool stop = false;
+  while ((!vpMath::equal(r_1, r, m_threshold_displacement)) && (stop == false)) {
     r_1 = r;
     // compute current position
 
@@ -544,7 +548,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
     vpMatrix L(2, 3), Lp;
     int k = 0;
-    for (i = 0; i < nbpoint; i++) {
+    for (i = 0; i < nbpoint; ++i) {
       getPlaneInfo(oN[i], c1Mo, N1, d1);
       getPlaneInfo(oN[i], c2Mo, N2, d2);
       p2[0] = c2P[i].get_x();
@@ -556,10 +560,10 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
       vpMatrix H(3, 3);
 
-      Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
-      Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
+      Hp2 = (static_cast<vpMatrix>(c1Rc2) + ((c1Tc2 * N2.t()) / d2)) * p2; // p2 = Hp1
+      Hp1 = (static_cast<vpMatrix>(c2Rc1) + ((c2Tc1 * N1.t()) / d1)) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix
@@ -567,7 +571,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       double y = Hp2[1];
       double Z1;
 
-      Z1 = (N1[0] * x + N1[1] * y + N1[2]) / d1; // 1/z
+      Z1 = ((N1[0] * x) + (N1[1] * y) + N1[2]) / d1; // 1/z
 
       H2[0][0] = -Z1;
       H2[0][1] = 0;
@@ -576,23 +580,24 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H2[1][1] = -Z1;
       H2[1][2] = y * Z1;
       H2[0][3] = x * y;
-      H2[0][4] = -(1 + x * x);
+      H2[0][4] = -(1 + (x * x));
       H2[0][5] = y;
-      H2[1][3] = 1 + y * y;
+      H2[1][3] = 1 + (y * y);
       H2[1][4] = -x * y;
       H2[1][5] = -x;
       H2 *= -1;
 
       vpMatrix c1CFc2(6, 6);
-      {
-        vpMatrix sTR = c1Tc2.skew() * (vpMatrix)c1Rc2;
-        for (unsigned int k_ = 0; k_ < 3; k_++)
-          for (unsigned int l = 0; l < 3; l++) {
-            c1CFc2[k_][l] = c1Rc2[k_][l];
-            c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
-            c1CFc2[k_][l + 3] = sTR[k_][l];
-          }
+
+      sTR = c1Tc2.skew() * static_cast<vpMatrix>(c1Rc2);
+      for (unsigned int k_ = 0; k_ < 3; ++k_) {
+        for (unsigned int l = 0; l < 3; ++l) {
+          c1CFc2[k_][l] = c1Rc2[k_][l];
+          c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
+          c1CFc2[k_][l + 3] = sTR[k_][l];
+        }
       }
+
       H2 = H2 * c1CFc2;
 
       // Set up the error vector
@@ -602,7 +607,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       x = Hp1[0];
       y = Hp1[1];
 
-      Z1 = (N2[0] * x + N2[1] * y + N2[2]) / d2; // 1/z
+      Z1 = ((N2[0] * x) + (N2[1] * y) + N2[2]) / d2; // 1/z
 
       H1[0][0] = -Z1;
       H1[0][1] = 0;
@@ -611,9 +616,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H1[1][1] = -Z1;
       H1[1][2] = y * Z1;
       H1[0][3] = x * y;
-      H1[0][4] = -(1 + x * x);
+      H1[0][4] = -(1 + (x * x));
       H1[0][5] = y;
-      H1[1][3] = 1 + y * y;
+      H1[1][3] = 1 + (y * y);
       H1[1][4] = -x * y;
       H1[1][5] = -x;
 
@@ -625,23 +630,28 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
-      } else if (only_1) {
+      }
+      else if (only_1) {
         if (k == 0) {
           L = H1;
           e = e1;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H1);
           e = vpColVector::stack(e, e1);
         }
-      } else {
+      }
+      else {
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
@@ -649,23 +659,25 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         e = vpColVector::stack(e, e1);
       }
 
-      k++;
+      ++k;
     }
 
     if (userobust) {
-      for (unsigned int k_ = 0; k_ < n; k_++) {
-        res[k_] = vpMath::sqr(e[2 * k_]) + vpMath::sqr(e[2 * k_ + 1]);
+      for (unsigned int k_ = 0; k_ < n; ++k_) {
+        res[k_] = vpMath::sqr(e[2 * k_]) + vpMath::sqr(e[(2 * k_) + 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix
-      for (unsigned int k_ = 0; k_ < n; k_++) {
+      for (unsigned int k_ = 0; k_ < n; ++k_) {
         W[2 * k_][2 * k_] = w[k_];
-        W[2 * k_ + 1][2 * k_ + 1] = w[k_];
+        W[(2 * k_) + 1][(2 * k_) + 1] = w[k_];
       }
-    } else {
-      for (unsigned int k_ = 0; k_ < 2 * n; k_++)
+    }
+    else {
+      for (unsigned int k_ = 0; k_ < (2 * n); ++k_) {
         W[k_][k_] = 1;
+      }
     }
     (W * L).pseudoInverse(Lp, 1e-16);
     // Compute the camera velocity
@@ -676,22 +688,17 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     // only for simulation
 
     c2Mc1 = vpExponentialMap::direct(c2Tcc1).inverse() * c2Mc1;
-    //   UpdatePose2(c2Tcc1, c2Mc1) ;
     r = (W * e).sumSquare();
 
-    if (r < 1e-15) {
-      break;
+    if ((r < 1e-15) || (iter > 1000) || (r > r_1)) {
+      stop = true;
     }
-    if (iter > 1000) {
-      break;
-    }
-    if (r > r_1) {
-      break;
-    }
-    iter++;
+    ++iter;
   }
 
   return (W * e).sumSquare();
 }
 
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+END_VISP_NAMESPACE

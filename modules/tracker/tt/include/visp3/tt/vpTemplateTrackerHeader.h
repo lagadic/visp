@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,9 +34,8 @@
  * Authors:
  * Amaury Dame
  * Aurelien Yol
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpTemplateTrackerHeader.h
  \brief
@@ -46,49 +45,56 @@
 #define vpTemplateTrackerHeader_hh
 
 #include <stdio.h>
+#include <visp3/core/vpConfig.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
   \struct vpTemplateTrackerZPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerZPoint {
+struct vpTemplateTrackerZPoint
+{
   int x, y;
 
-  vpTemplateTrackerZPoint() : x(0), y(0) {}
+  vpTemplateTrackerZPoint() : x(0), y(0) { }
 };
 /*!
   \struct vpTemplateTrackerDPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerDPoint {
+struct vpTemplateTrackerDPoint
+{
   double x, y;
 
-  vpTemplateTrackerDPoint() : x(0), y(0) {}
+  vpTemplateTrackerDPoint() : x(0), y(0) { }
 };
 /*!
   \struct vpTemplateTrackerPoint
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerPoint {
+struct vpTemplateTrackerPoint
+{
   int x, y;
   double dx, dy;
   double val;
   double *dW;
   double *HiG;
 
-  vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(NULL), HiG(NULL) {}
+  vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(nullptr), HiG(nullptr) { }
 };
 /*!
   \struct vpTemplateTrackerPointCompo
   \ingroup group_tt_tools
 */
-struct vpTemplateTrackerPointCompo {
+struct vpTemplateTrackerPointCompo
+{
   double *dW;
-  vpTemplateTrackerPointCompo() : dW(NULL) {}
+  vpTemplateTrackerPointCompo() : dW(nullptr) { }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-struct vpTemplateTrackerPointSuppMIInv {
+struct vpTemplateTrackerPointSuppMIInv
+{
   double et;
   int ct;
   double *BtInit;
@@ -97,10 +103,10 @@ struct vpTemplateTrackerPointSuppMIInv {
   double *d2W;
   double *d2Wx;
   double *d2Wy;
-  vpTemplateTrackerPointSuppMIInv() : et(0), ct(0), BtInit(NULL), Bt(NULL), dBt(NULL), d2W(NULL), d2Wx(NULL), d2Wy(NULL)
-  {
-  }
+  vpTemplateTrackerPointSuppMIInv() : et(0), ct(0), BtInit(nullptr), Bt(nullptr), dBt(nullptr), d2W(nullptr), d2Wx(nullptr), d2Wy(nullptr)
+  { }
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
+END_VISP_NAMESPACE
 
 #endif

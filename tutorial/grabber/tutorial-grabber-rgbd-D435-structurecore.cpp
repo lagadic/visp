@@ -1,6 +1,7 @@
 /*! \example tutorial-grabber-rgbd-D435-structurecore.cpp */
 #include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -8,12 +9,14 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 /*!
-  Grab color and depth images from Intel RealSense D435 and Occipital Structure Core sensors.
+ * Grab color and depth images from Intel RealSense D435 and Occipital Structure Core sensors.
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) &&                                         \
-    (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   // Both cameras can stream color and depth in 640x480 resolution.
   unsigned int width = 640, height = 480;
 
@@ -28,9 +31,9 @@ int main(int argc, char **argv)
   vpImage<vpRGBa> I_color_sc(height, width), I_color_rs(height, width);
 
   vpDisplayX d_rs_depth(I_depth_rs, 10, height + 10, "RealSense Depth"),
-      d_sc_depth(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
+    d_sc_depth(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
   vpDisplayX d_color_rs(I_color_rs, 10, 10, "RealSense Color"),
-      d_color_sc(I_color_sc, width + 10, 10, "Structure Core Color");
+    d_color_sc(I_color_sc, width + 10, 10, "Structure Core Color");
 
   // Configuring and opening RealSense grabber.
   rs2::config cfg;
@@ -48,7 +51,7 @@ int main(int argc, char **argv)
   // Acquiring images.
   for (;;) {
     rs.acquire(reinterpret_cast<unsigned char *>(I_color_rs.bitmap),
-               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), NULL, NULL, NULL, NULL, NULL);
+               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), nullptr, nullptr, nullptr, nullptr, nullptr);
     sc.acquire(reinterpret_cast<unsigned char *>(I_color_sc.bitmap),
                reinterpret_cast<unsigned char *>(sc_I_depth_raw.bitmap));
 
@@ -69,8 +72,8 @@ int main(int argc, char **argv)
     if (vpDisplay::getClick(I_color_rs, false) || vpDisplay::getClick(I_color_sc, false) ||
         vpDisplay::getClick(I_depth_rs, false) || vpDisplay::getClick(I_depth_sc, false)) {
       break;
-    }
-  }
+}
+}
 #else
   (void)argc;
   (void)argv;

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,11 +29,7 @@
  *
  * Description:
  * Pre-filled moment database with all commonly used moments.
- *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+ */
 /*!
   \file vpMomentCommon.h
   \brief Pre-filled moment database with all commonly used moments.
@@ -54,6 +49,7 @@
 
 #include <vector>
 
+BEGIN_VISP_NAMESPACE
 class vpMomentObject;
 
 /*!
@@ -73,27 +69,27 @@ class vpMomentObject;
     - vpMomentAlpha
     - vpMomentArea
 
-    There is no need to do the linkTo operations manually nor is it necessary
+  There is no need to do the linkTo operations manually nor is it necessary
   to care about the order of moment computation.
 
-    This class carries an vpMomentCommon::updateAll() method capable of
+  This class carries an vpMomentCommon::updateAll() method capable of
   updating AND computing moments from an object (see 4-step process in
   vpMoment). The moments computed by this class are classical moments used in
   moment-based visual servoing. For more information see \cite Tahri05z.
 
-    To initialize this moment set the user needs to compute the following
+  To initialize this moment set the user needs to compute the following
   things:
     - the Mu3 value set: set of third-order centered moments computed for a
-  reference object. (\f$\mu_{ij}$ with $i+j = 3\f$ ). These values allow the
-  system to save the reference angular position and to perform planar
-  rotations of more than 180 degrees if needed.
+      reference object. (\f$\mu_{ij}$ with $i+j = 3\f$ ). These values allow the
+      system to save the reference angular position and to perform planar
+      rotations of more than 180 degrees if needed.
     - the destination depth.
     - the surface of the destination object in the end of the visual servoing
-  process.
+      process.
     - the reference alpha: angular position of the object used to obtain the
-  Mu3 set.
+      Mu3 set.
 
-    Shortcuts for each of these prerequisites are provided by this class
+  Shortcuts for each of these prerequisites are provided by this class
   except depth (methods vpMomentCommon::getMu3(),
   vpMomentCommon::getSurface(), vpMomentCommon::getAlpha()).
 
@@ -133,12 +129,14 @@ private:
 public:
   vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ = 1.0,
                  bool flg_sxsyfromnormalized = false);
-  virtual ~vpMomentCommon();
+
+  virtual ~vpMomentCommon() VP_OVERRIDE;
 
   static double getAlpha(vpMomentObject &object);
   static std::vector<double> getMu3(vpMomentObject &object);
   static double getSurface(vpMomentObject &object);
 
-  void updateAll(vpMomentObject &object);
+  void updateAll(vpMomentObject &object) VP_OVERRIDE;
 };
+END_VISP_NAMESPACE
 #endif // VPCOMMONMOMENTS_H

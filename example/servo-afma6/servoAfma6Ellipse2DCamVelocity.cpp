@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +13,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,25 +31,15 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
- *****************************************************************************/
+ */
 
 /*!
   \file servoAfma6Ellipse2DCamVelocity.cpp
+  \example servoAfma6Ellipse2DCamVelocity.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
   computed in the camera frame. The used visual feature is a circle.
-
-*/
-
-/*!
-  \example servoAfma6Ellipse2DCamVelocity.cpp
-
-  Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame. The used visual feature is a circle.
-
 */
 
 #include <cmath>  // std::fabs
@@ -65,7 +54,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
@@ -83,15 +72,26 @@
 
 int main()
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   try {
     vpServo task;
 
     vpImage<unsigned char> I;
-    vp1394TwoGrabber g;
-    g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-    g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I);
-    g.acquire(I);
+    vpRealSense2 rs;
+    rs2::config config;
+    unsigned int width = 640, height = 480, fps = 60;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
+    rs.open(config);
+
+    // Warm up camera
+    for (size_t i = 0; i < 10; ++i) {
+      rs.acquire(I);
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -104,14 +104,12 @@ int main()
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a point " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
 
     vpDot dot;
 
@@ -126,11 +124,11 @@ int main()
 
     dot.track(I);
 
-    vpCameraParameters cam;
-
     vpRobotAfma6 robot;
+    robot.init(vpAfma6::TOOL_INTEL_D435_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
 
-    // Update camera parameters
+    // Get camera intrinsics
+    vpCameraParameters cam;
     robot.getCameraParameters(cam, I);
 
     vpTRACE("sets the current position of the visual feature ");
@@ -180,10 +178,11 @@ int main()
     std::cin >> alpha;
     std::cout << "beta 5" << std::endl;
     std::cin >> beta;
-    for (;;) {
+    bool quit = false;
+    while (!quit) {
       std::cout << "---------------------------------------------" << iter++ << std::endl;
 
-      g.acquire(I);
+      rs.acquire(I);
       vpDisplay::display(I);
 
       dot.track(I);
@@ -202,7 +201,8 @@ int main()
         else {
           gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
         }
-      } else
+      }
+      else
         gain = lambda_av;
 
       vpTRACE("%f %f", (task.getError()).sumSquare(), gain);
@@ -214,6 +214,10 @@ int main()
       std::cout << v.t();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) {
+        quit = true;
+      }
       vpDisplay::flush(I);
       vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
     }
@@ -221,7 +225,8 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

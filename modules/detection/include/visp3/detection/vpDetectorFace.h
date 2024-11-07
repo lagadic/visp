@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Detect faces.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpDetectorFace_h_
 #define _vpDetectorFace_h_
@@ -48,40 +46,47 @@
 
 #include <visp3/detection/vpDetectorBase.h>
 
+BEGIN_VISP_NAMESPACE
 /*!
-  \class vpDetectorFace
-  \ingroup group_detection_face
-  The vpDetectorFace class is a wrapper over OpenCV Haar cascade face
-  detection capabilities. To use this class ViSP should be build against
-  OpenCV 2.2.0 or a more recent version. Installation instructions are provided
-  here https://visp.inria.fr/3rd_opencv.
-
-  The following sample code shows how to use this class to detect the largest
-  face in the image. The cascade classifier file
-  "haarcascade_frontalface_alt.xml" can be found in ViSP source code or in
-  OpenCV.
-\code
-#include <visp3/detection/vpDetectorFace.h>
-
-int main()
-{
-  vpImage<unsigned char> I;
-  vpDetectorFace face_detector;
-  face_detector.setCascadeClassifierFile("haarcascade_frontalface_alt.xml");
-
-  while(1) {
-    // acquire a new image in I
-    bool face_found = face_detector.track(I);
-    if (face_found) {
-      vpRect face_bbox = face_detector.getBoundingBox(0); // largest face has index 0
-    }
-  }
-}
-  \endcode
-
-  A more complete example that works with images acquired from a camera is
-  provided in tutorial-face-detector-live.cpp.
- */
+ * \class vpDetectorFace
+ * \ingroup group_detection_face
+ * The vpDetectorFace class is a wrapper over OpenCV Haar cascade face
+ * detection capabilities. To use this class ViSP should be build against
+ * OpenCV 2.2.0 or a more recent version. Installation instructions are provided
+ * here https://visp.inria.fr/3rd_opencv.
+ *
+ * The following sample code shows how to use this class to detect the largest
+ * face in the image. The cascade classifier file
+ * "haarcascade_frontalface_alt.xml" can be found in ViSP source code or in
+ * OpenCV.
+ * \code
+ * #include <visp3/detection/vpDetectorFace.h>
+ *
+ * #ifdef ENABLE_VISP_NAMESPACE
+ * using namespace VISP_NAMESPACE_NAME;
+ * #endif
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_OBJDETECT)
+ *   vpImage<unsigned char> I;
+ *   vpDetectorFace face_detector;
+ *   face_detector.setCascadeClassifierFile("haarcascade_frontalface_alt.xml");
+ *
+ *   while(1) {
+ *     // Acquire a new image in I
+ *     bool face_found = face_detector.detect(I);
+ *     if (face_found) {
+ *       vpRect face_bbox = face_detector.getBBox(0); // largest face has index 0
+ *     }
+ *   }
+ * #endif
+ * }
+ * \endcode
+ *
+ * A more complete example that works with images acquired from a camera is
+ * provided in tutorial-face-detector-live.cpp.
+*/
 class VISP_EXPORT vpDetectorFace : public vpDetectorBase
 {
 protected:
@@ -91,15 +96,11 @@ protected:
 
 public:
   vpDetectorFace();
-  /*!
-    Default destructor.
-   */
-  virtual ~vpDetectorFace() {}
 
-  bool detect(const vpImage<unsigned char> &I);
+  bool detect(const vpImage<unsigned char> &I) VP_OVERRIDE;
   bool detect(const cv::Mat &frame_gray);
   void setCascadeClassifierFile(const std::string &filename);
 };
-
+END_VISP_NAMESPACE
 #endif
 #endif

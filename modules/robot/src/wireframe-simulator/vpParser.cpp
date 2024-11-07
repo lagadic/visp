@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Authors:
  * Jean-Luc CORRE
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include "vpParser.h"
 #include "vpBoundio.h"
@@ -47,10 +47,11 @@
 #include <stdio.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+BEGIN_VISP_NAMESPACE
 /*
  * La procedure "parser" fait l'analyse syntaxique du fichier source.
  * Entree/Sortie :
- * bsp		Scene surfacique polygonale a lire.
+ * bsp    Scene surfacique polygonale a lire.
  */
 void parser(Bound_scene *bsp)
 {
@@ -60,7 +61,7 @@ void parser(Bound_scene *bsp)
     switch (token) {
     case '$':
       switch (lex()) {
-      case T_IDENT: /* saute la commande inconnue	*/
+      case T_IDENT: /* saute la commande inconnue  */
         skip_cmd(/* stderr */);
         unlex();
         break;
@@ -82,7 +83,7 @@ void parser(Bound_scene *bsp)
         fscanf_View_parameters(get_view_parameters());
         set_projection(void);
         break;
-#endif /* used	*/
+#endif /* used  */
       default:
         lexerr("start", "keyword expected", NULL);
         break;
@@ -93,5 +94,5 @@ void parser(Bound_scene *bsp)
       break;
     }
 }
-
+END_VISP_NAMESPACE
 #endif

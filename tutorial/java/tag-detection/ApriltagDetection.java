@@ -72,7 +72,7 @@ public class ApriltagDetection extends JFrame {
     private static String[] poseEstimationMethodNames = {"HOMOGRAPHY", "HOMOGRAPHY_VIRTUAL_VS", "DEMENTHON_VIRTUAL_VS",
             "LAGRANGE_VIRTUAL_VS", "BEST_RESIDUAL_VIRTUAL_VS", "HOMOGRAPHY_ORTHOGONAL_ITERATION"};
     @SuppressWarnings("deprecation")
-	private Object[][] data = { { Integer.valueOf(-1), Double.valueOf(0.053) } };
+    private Object[][] data = { { Integer.valueOf(-1), Double.valueOf(0.053) } };
     private JTextArea poseArea;
 
     public ApriltagDetection() {
@@ -613,4 +613,3 @@ public class ApriltagDetection extends JFrame {
         });
     }
 }
-
