@@ -109,7 +109,6 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
     }
     jpeg_write_scanlines(&cinfo, &line, 1);
   }
-  std::cout << "DEBUG FS - on est dans writeJPEGLibjpeg() 1" << std::endl; exit(-1);
 
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
@@ -174,7 +173,6 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
     }
     jpeg_write_scanlines(&cinfo, &line, 1);
   }
-  std::cout << "DEBUG FS - on est dans writeJPEGLibjpeg() 2" << std::endl; exit(-1);
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
   delete[] line;
