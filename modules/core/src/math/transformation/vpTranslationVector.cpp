@@ -39,13 +39,17 @@
 #include <math.h>                            // for sqrt
 #include <string.h>                          // for memcpy, size_t
 #include <algorithm>                         // for copy
-#include <initializer_list>                  // for initializer_list
 #include <vector>                            // for vector
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE, END...
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <initializer_list>                  // for initializer_list
+#endif
 
 #include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 #include <visp3/core/vpArray2D.h>            // for vpArray2D
 #include <visp3/core/vpColVector.h>          // for vpColVector
-#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
 #include <visp3/core/vpException.h>          // for vpException
 #include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
 #include <visp3/core/vpMatrix.h>             // for vpMatrix

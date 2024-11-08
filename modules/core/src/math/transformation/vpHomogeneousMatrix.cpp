@@ -41,7 +41,6 @@
 #include <algorithm>                         // for copy
 #include <cmath>                             // for isnan, fabs
 #include <fstream>                           // for basic_ifstream, basic_of...
-#include <initializer_list>                  // for initializer_list
 #include <iostream>                          // for cout
 #include <limits>                            // for numeric_limits
 #include <map>                               // for operator==, operator!=
@@ -49,6 +48,11 @@
 #include <vector>                            // for vector
 
 #include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <initializer_list>                  // for initializer_list
+#endif
+
 #include <visp3/core/vpException.h>          // for vpException
 #include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
 #include <visp3/core/vpMatrix.h>             // for vpMatrix

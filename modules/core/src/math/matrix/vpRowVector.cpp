@@ -41,7 +41,6 @@
 #include <string.h>                  // for memcpy
 #include <algorithm>                 // for copy, min
 #include <cmath>                     // for sqrt, fabs
-#include <initializer_list>          // for initializer_list
 #include <iostream>                  // for cout
 #include <limits>                    // for numeric_limits
 #include <sstream>                   // for basic_ostream, char_traits, oper...
@@ -49,6 +48,11 @@
 #include <vector>                    // for vector
 
 #include <visp3/core/vpConfig.h>     // for VISP_CXX_STANDARD, VISP_CXX_STAN...
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <initializer_list>          // for initializer_list
+#endif
+
 #include <visp3/core/vpArray2D.h>    // for vpArray2D
 #include <visp3/core/vpColVector.h>  // for vpColVector
 #include <visp3/core/vpException.h>  // for vpException

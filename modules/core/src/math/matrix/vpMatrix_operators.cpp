@@ -35,10 +35,14 @@
 #include <string.h>                            // for memcpy
 #include <algorithm>                           // for copy, fill
 #include <cmath>                               // for fabs
-#include <initializer_list>                    // for initializer_list
 #include <limits>                              // for numeric_limits
 
 #include <visp3/core/vpConfig.h>               // for VISP_HAVE_GSL, VISP_HA...
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <initializer_list>                    // for initializer_list
+#endif
+
 #include <visp3/core/vpMatrix.h>               // for vpMatrix, operator*
 #include <visp3/core/vpArray2D.h>              // for vpArray2D
 #include <visp3/core/vpColVector.h>            // for vpColVector
