@@ -822,6 +822,8 @@ bool vpVideoReader::isVideoExtensionSupported() const
   \param I : The captured image.
 
   \code
+  #include <visp3/core/vpRGBa.h>
+  #include <visp3/core/vpImage.h>
   #include <visp3/io/vpVideoReader.h>
 
   #ifdef ENABLE_VISP_NAMESPACE
@@ -855,6 +857,8 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<unsigned char> &I)
   \param I : The captured image.
 
   \code
+  #include <visp3/core/vpRGBa.h>
+  #include <visp3/core/vpImage.h>
   #include <visp3/io/vpVideoReader.h>
 
   #ifdef ENABLE_VISP_NAMESPACE

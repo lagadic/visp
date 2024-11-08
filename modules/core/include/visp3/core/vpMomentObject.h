@@ -66,7 +66,7 @@ class vpCameraParameters;
   used moment order as parameter.
 
   Then there are three ways to initialize a vpMomentObject. Firstly using
-  fromImage() you can considerer a dense object \e O defined by an image.
+  fromImage() you can consider a dense object \e O defined by an image.
   Secondly, as described in fromVector() you can also define a dense object \e O
   by a closed contour. In these two cases, 2D basic moments are defined by:
   \f[m_{ij} = \int \int_{O} x^i y^j dx dy\f]

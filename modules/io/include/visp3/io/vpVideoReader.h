@@ -124,6 +124,8 @@ BEGIN_VISP_NAMESPACE
  * to match the first and image images of the sequence.
  *
  * \code
+ * #include <visp3/core/vpRGBa.h>
+ * #include <visp3/core/vpImage.h>
  * #include <visp3/io/vpVideoReader.h>
  *
  * #ifdef ENABLE_VISP_NAMESPACE
@@ -151,6 +153,8 @@ BEGIN_VISP_NAMESPACE
  *
  * Note that it is also possible to access to a specific frame using getFrame().
  * \code
+ * #include <visp3/core/vpRGBa.h>
+ * #include <visp3/core/vpImage.h>
  * #include <visp3/io/vpVideoReader.h>
  *
  * #ifdef ENABLE_VISP_NAMESPACE

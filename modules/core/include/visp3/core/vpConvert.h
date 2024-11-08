@@ -36,8 +36,8 @@
   \brief Tools for type or general conversion.
  */
 
-#ifndef _vpConvert_h_
-#define _vpConvert_h_
+#ifndef VP_CONVERT_H
+#define VP_CONVERT_H
 
 #include <visp3/core/vpConfig.h>
 
