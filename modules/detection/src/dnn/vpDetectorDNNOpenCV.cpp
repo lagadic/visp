@@ -63,8 +63,10 @@
 #include <opencv2/core/types.hpp>                 // for Rect, Point, Size
 #include <opencv2/dnn/dnn.hpp>                    // for Net, blobFromImage
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json.hpp)             // for basic_json
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)         // for json
+#endif
 
 #include <visp3/core/vpImageConvert.h>            // for vpImageConvert
 #include <visp3/core/vpIoTools.h>                 // for vpIoTools
