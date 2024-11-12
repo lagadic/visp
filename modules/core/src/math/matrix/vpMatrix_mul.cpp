@@ -35,6 +35,8 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <visp3/core/vpMatrix.h>  // for vpMatrix
+
 // Since GSL doesn't provide Fortran interface for Lapack we should use
 // gsl_blas_dgemm() and gsl_blas_dgemv() instead of dgemm() and dgemv().
 // As a side effect, it means that we have to allocate and copy the matrix
