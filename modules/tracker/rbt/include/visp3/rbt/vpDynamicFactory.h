@@ -53,10 +53,21 @@ public:
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   void registerType(const std::string &key, const std::function<std::shared_ptr<T>(const nlohmann::json &)> &function)
   {
-    if (m_jsonBuilders.find(key) != m_jsonBuilders.end()) {
+    if (m_jsonBuilders.find(key) != m_jsonBuilders.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
       throw vpException(vpException::badValue, "Type %s was already registered in the factory", key.c_str());
     }
     m_jsonBuilders[key] = function;
+  }
+
+  void registerTypeRaw(const std::string &key, const std::function<std::shared_ptr<T>(const std::string &)> function)
+  {
+    if (m_jsonBuilders.find(key) != m_jsonBuilders.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
+      throw vpException(vpException::badValue, "Type %s was already registered in the factory", key.c_str());
+    }
+    std::cout << "IN REGISTERING RAW TYPE" << std::endl;
+    m_jsonRawBuilders[key] = function;
+    std::cout << "IN REGISTERING RAW TYPE END" << std::endl;
+
   }
 
   std::shared_ptr<T> buildFromJson(const nlohmann::json &j)
@@ -65,6 +76,9 @@ public:
 
     if (m_jsonBuilders.find(key) != m_jsonBuilders.end()) {
       return m_jsonBuilders[key](j);
+    }
+    else if (m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
+      return m_jsonRawBuilders[key](j.dump());
     }
     else {
       return nullptr;
@@ -82,6 +96,8 @@ protected:
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   std::map<std::string, std::function<std::shared_ptr<T>(const nlohmann::json &)>> m_jsonBuilders;
+  std::map<std::string, std::function<std::shared_ptr<T>(const std::string &)>> m_jsonRawBuilders;
+
   std::function<std::string(const nlohmann::json &)> m_keyFinder; //! Function to retrieve the key from a json object
 #endif
 };
