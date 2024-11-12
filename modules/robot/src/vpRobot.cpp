@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,17 @@
  *
  * Description:
  * Generic virtual robot.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpRobotException.h>
+
+#include <math.h>                          // for fabs
+#include <iostream>                        // for basic_ostream, char_traits
+
+#include <visp3/robot/vpRobot.h>           // for vpRobot, vpRobot::CAMERA_F...
+#include <visp3/robot/vpRobotException.h>  // for vpRobotException
+#include <visp3/core/vpColVector.h>        // for vpColVector
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 const double vpRobot::maxTranslationVelocityDefault = 0.2;

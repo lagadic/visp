@@ -37,20 +37,27 @@
   Test saving and parsing JSON configuration for vpCameraParameters.
 */
 
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpConfig.h>            // for VP_OVERRIDE, ENABLE_VISP_...
 
 #if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include VISP_NLOHMANN_JSON(json.hpp)
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 
-#include <catch_amalgamated.hpp>
+#include <catch_amalgamated.hpp>            // for SourceLineInfo, Section
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#include <random>
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters, opera...
+#include <visp3/core/vpException.h>         // for vpException
+
+#include <cmath>                            // for isnan
+#include <map>                              // for operator==
+#include <random>                           // for uniform_real_distribution
+#include <vector>                           // for vector
+
 namespace
 {
 // This class shows how to implement a simple generator for Catch tests

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,17 +39,42 @@
   implemented with opencv.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>        // for HAVE_OPENCV_HIGHGUI, HAV...
+#endif
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
-#include <string>
+#include <sstream>                           // for basic_ostringstream, bas...
+#include <string>                            // for allocator, basic_string
+#include <vector>                            // for vector, swap
+#include <stddef.h>                          // for size_t
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/klt/vpKltOpencv.h>
+#include <opencv2/core.hpp>                  // for swap
+#include <opencv2/core/hal/interface.h>      // for uchar
+#include <opencv2/core/mat.hpp>              // for Mat, _OutputArray, _Inpu...
+#include <opencv2/core/mat.inl.hpp>          // for _OutputArray::_OutputArray
+#include <opencv2/core/traits.hpp>           // for Depth<>::value, Type<>::...
+#include <opencv2/core/types.hpp>            // for Point2f, Point_, TermCri...
+#include <opencv2/imgproc.hpp>               // for cornerSubPix, goodFeatur...
+#include <opencv2/video/tracking.hpp>        // for calcOpticalFlowPyrLK
+
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/klt/vpKltOpencv.h>           // for vpKltOpencv
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpMath.h>               // for vpMath
+
 
 BEGIN_VISP_NAMESPACE
+
+class vpColor;
+class vpRGBa;
+template <class Type> class vpImage;
+
 vpKltOpencv::vpKltOpencv()
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
   m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +31,20 @@
  * Le module "parser.c" contient les procedures de gestion
  * de l'analyse syntaxique d'un fichier source dont la grammaire
  * possede les symboles terminaux de "lex.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
+
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include "vpParser.h"
-#include "vpBoundio.h"
-#include "vpLex.h"
-#include "vpSkipio.h"
-#include "vpToken.h"
+#include "vpBoundio.h"                    // for fscanf_Bound
+#include "vpLex.h"                        // for lex, lexerr, unlex
+#include "vpSkipio.h"                     // for skip_cmd
+#include "vpToken.h"                      // for T_BOUND, T_EOF, T_EXIT, T_I...
 
-#include <stdio.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include <stdio.h>                        // for NULL, fprintf, stderr
+#include <wireframe-simulator/vpBound.h>  // for BOUND_NBR
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -53,7 +52,7 @@ BEGIN_VISP_NAMESPACE
  * Entree/Sortie :
  * bsp    Scene surfacique polygonale a lire.
  */
-void parser(Bound_scene *bsp)
+  void parser(Bound_scene *bsp)
 {
   int token;
 

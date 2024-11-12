@@ -45,7 +45,9 @@
 #include <catch_amalgamated.hpp>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
+#ifdef VISP_BIG_ENDIAN
 #include <visp3/core/vpEndian.h>
+#endif
 #include <visp3/io/vpImageIo.h>
 
 #ifdef ENABLE_VISP_NAMESPACE

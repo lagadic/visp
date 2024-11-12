@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,13 +29,12 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
+
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
+#include <visp3/core/vpImage.h>   // for vpImage
+#include <visp3/core/vpMath.h>    // for vpMath
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

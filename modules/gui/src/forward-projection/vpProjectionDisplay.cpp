@@ -29,34 +29,34 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpProjectionDisplay.cpp
   \brief interface with the image for feature display
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
 #if defined(VISP_HAVE_DISPLAY)
 
-// Meter/pixel conversion
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
+#include <list>                                 // for list, operator!=, _Li...
 
-// Color / image / display
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-
-#include <visp3/core/vpDisplay.h>
-
-#include <visp3/gui/vpProjectionDisplay.h>
-
-//#include <visp3/visual_features/vpBasicFeature.h>
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/gui/vpProjectionDisplay.h>      // for vpProjectionDisplay
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpForwardProjection.h>     // for vpForwardProjection
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
 
 void vpProjectionDisplay::insert(vpForwardProjection &fp)
 {

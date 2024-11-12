@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,19 +33,17 @@
  * Les entrees non specifiees sont effectuees
  * sur le fichier "source" du module "lex.c".
  * Pour les mots cles des "fprintf_..." voir "token.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
+
+#include <stdio.h>                // for NULL, size_t, printf
+#include <stdlib.h>               // for malloc, realloc
+#include <string.h>               // for strncpy
+
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #include "vpMyio.h"
-#include "vpLex.h"
-#include "vpToken.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vpLex.h"                // for lex, lexerr
+#include "vpToken.h"              // for T_INT, myint, mylength, T_FLOAT
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -58,7 +55,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * fp    Nombre flottant a lire.
  */
-void fscanf_float(float *fp)
+  void fscanf_float(float *fp)
 {
   int t;
 

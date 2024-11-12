@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,27 +29,32 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+ */
+
+#include <visp3/core/vpTrackingException.h>            // for vpTrackingExce...
+#include <visp3/tt/vpTemplateTrackerWarpHomography.h>  // for vpTemplateTrac...
+#include <visp3/core/vpArray2D.h>                      // for vpArray2D
+#include <visp3/core/vpColVector.h>                    // for vpColVector
+#include <visp3/core/vpConfig.h>                       // for BEGIN_VISP_NAM...
+#include <visp3/core/vpException.h>                    // for vpException
+#include <visp3/core/vpMatrix.h>                       // for vpMatrix
+#include <visp3/vision/vpHomography.h>                 // for vpHomography
+
+#include <cmath>                                       // for fabs
+#include <limits>                                      // for numeric_limits
 
 BEGIN_VISP_NAMESPACE
 /*!
  * Construct an homography model with 8 parameters initialized to zero.
  */
-vpTemplateTrackerWarpHomography::vpTemplateTrackerWarpHomography() { nbParam = 8; }
+  vpTemplateTrackerWarpHomography::vpTemplateTrackerWarpHomography() { nbParam = 8; }
 
-/*!
- * Get the parameters of the warping function one level down
- * where image size is divided by two along the lines and the columns.
- * \param p : 8-dim vector that contains the current parameters of the warping function.
- * \param p_down : 8-dim vector that contains the resulting parameters one level down.
- */
+  /*!
+   * Get the parameters of the warping function one level down
+   * where image size is divided by two along the lines and the columns.
+   * \param p : 8-dim vector that contains the current parameters of the warping function.
+   * \param p_down : 8-dim vector that contains the resulting parameters one level down.
+   */
 void vpTemplateTrackerWarpHomography::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
   p_down[0] = p[0];

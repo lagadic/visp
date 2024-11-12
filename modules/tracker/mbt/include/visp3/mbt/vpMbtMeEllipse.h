@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +36,20 @@
  * \brief Moving edges on an ellipse
  */
 
-#ifndef vpMbtMeEllipse_HH
-#define vpMbtMeEllipse_HH
+#ifndef VP_MBT_ME_ELLIPSE_H
+#define VP_MBT_ME_ELLIPSE_H
 
-#include <list>
-#include <math.h>
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/me/vpMeEllipse.h>
+#include <visp3/core/vpConfig.h>   // for BEGIN_VISP_NAMESPACE, END_VISP_NAM...
+#include <visp3/me/vpMeEllipse.h>  // for vpMeEllipse
+#include <visp3/me/vpMeTracker.h>  // for vpMeTracker
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_VISP_NAMESPACE
+
+class vpImagePoint;
+class vpMatrix;
+template <class Type> class vpImage;
+
 /*!
  * \class vpMbtMeEllipse
  * \ingroup group_mbt_features

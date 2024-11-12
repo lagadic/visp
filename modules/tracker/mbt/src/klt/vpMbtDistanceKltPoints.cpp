@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,27 +29,74 @@
  *
  * Description:
  * Klt polygon, containing points of interest.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpPolygon.h>
-#include <visp3/mbt/vpMbtDistanceKltPoints.h>
-#include <visp3/me/vpMeTracker.h>
+
+#include <visp3/core/vpConfig.h>                // for VISP_HAVE_CLIPPER
+#include <visp3/visp_modules.h>                 // for VISP_HAVE_MODULE_KLT
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>           // for HAVE_OPENCV_IMGPROC
+#endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #if defined(VISP_HAVE_CLIPPER)
-#include <clipper.hpp> // clipper private library
+#include <clipper.hpp>                          // for IntPoint, ClipperOffset
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+#include <opencv2/core/hal/interface.h>         // for uchar
+#include <opencv2/core/mat.hpp>                 // for Mat
+#include <opencv2/core/mat.inl.hpp>             // for Mat::ptr
+
+#include <visp3/core/vpPolygon.h>               // for vpPolygon
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpGEMM.h>                  // for vpGEMM, VP_GEMM_B_T
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpPlane.h>                 // for vpPlane
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpPolygon3D.h>             // for vpPolygon3D, vpPolygo...
+#include <visp3/core/vpRotationMatrix.h>        // for vpRotationMatrix
+#include <visp3/core/vpTranslationVector.h>     // for vpTranslationVector
+#include <visp3/klt/vpKltOpencv.h>              // for vpKltOpencv
+#include <visp3/mbt/vpMbHiddenFaces.h>          // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbScanLine.h>             // for vpMbScanLine
+#include <visp3/mbt/vpMbtPolygon.h>             // for vpMbtPolygon
+#include <visp3/mbt/vpMbtDistanceKltPoints.h>   // for vpMbtDistanceKltPoints
+#include <visp3/me/vpMeTracker.h>               // for vpMeTracker
+#include <visp3/vision/vpHomography.h>          // for vpHomography
+
+#include <math.h>                               // for fabs
+#include <stddef.h>                             // for size_t
+#include <map>                                  // for map, _Rb_tree_const_i...
+#include <limits>                               // for numeric_limits
+#include <sstream>                              // for basic_stringstream
+#include <string>                               // for allocator, basic_string
+#include <utility>                              // for pair, make_pair
+#include <vector>                               // for vector
+#include <iterator>                             // for pair
+
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+
 /*!
   Basic constructor.
-
 */
 vpMbtDistanceKltPoints::vpMbtDistanceKltPoints()
   : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(std::map<int, vpImagePoint>()),

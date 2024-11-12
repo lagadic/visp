@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,35 +29,60 @@
  *
  * Description:
  * Make the complete tracking of an object by using its CAD model
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMbEdgeTracker.cpp
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpPolygon3D.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/mbt/vpMbtDistanceLine.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
-#include <visp3/vision/vpPose.h>
+#include <stddef.h>                            // for size_t
+#include <cmath>                               // for fabs, pow, sqrt
+#include <iostream>                            // for cerr, cout
+#include <limits>                              // for numeric_limits
+#include <list>                                // for list, operator!=, _Lis...
+#include <sstream>                             // for basic_ostream, basic_o...
+#include <string>                              // for basic_string, char_traits
+#include <vector>                              // for vector
 
-#include <float.h>
-#include <limits>
-#include <map>
-#include <sstream>
-#include <string>
+#include <visp3/core/vpDebug.h>                // for vpERROR_TRACE, vpTRACE
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpExponentialMap.h>       // for vpExponentialMap
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpPolygon3D.h>            // for vpPolygon3D, vpPolygon...
+#include <visp3/core/vpTrackingException.h>    // for vpTrackingException
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/ar/vpAROgre.h>                 // for vpAROgre
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>     // for vpCameraParameters
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpColor.h>                // for vpColor
+#include <visp3/core/vpConfig.h>               // for VISP_HAVE_OGRE, BEGIN_...
+#include <visp3/core/vpDisplay.h>              // for vpDisplay
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                // for vpImage
+#include <visp3/core/vpImageConvert.h>         // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>           // for vpImagePoint
+#include <visp3/core/vpMatrix.h>               // for vpMatrix, operator*
+#include <visp3/core/vpPoint.h>                // for vpPoint
+#include <visp3/core/vpRobust.h>               // for vpRobust, vpRobust::TUKEY
+#include <visp3/mbt/vpMbHiddenFaces.h>         // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbTracker.h>             // for vpMbTracker, vpMbTrack...
+#include <visp3/mbt/vpMbtDistanceCircle.h>     // for vpMbtDistanceCircle
+#include <visp3/mbt/vpMbtDistanceCylinder.h>   // for vpMbtDistanceCylinder
+#include <visp3/mbt/vpMbtMeEllipse.h>          // for vpMbtMeEllipse
+#include <visp3/mbt/vpMbtMeLine.h>             // for vpMbtMeLine
+#include <visp3/mbt/vpMbtPolygon.h>            // for vpMbtPolygon
+#include <visp3/mbt/vpMbEdgeTracker.h>         // for vpMbEdgeTracker
+#include <visp3/mbt/vpMbtDistanceLine.h>       // for vpMbtDistanceLine
+#include <visp3/mbt/vpMbtXmlGenericParser.h>   // for vpMbtXmlGenericParser
+#include <visp3/me/vpMe.h>                     // for vpMe
+#include <visp3/me/vpMeSite.h>                 // for vpMeSite, vpMeSite::NO...
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 /*!
   Basic constructor
 */

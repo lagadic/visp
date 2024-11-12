@@ -43,8 +43,10 @@
 #include <visp3/core/vpMomentObject.h>                      // for vpMomentO...
 #include <visp3/visual_features/vpFeatureMomentBasic.h>     // for vpFeature...
 #include <visp3/visual_features/vpFeatureMomentCentered.h>  // for vpFeature...
+#if defined(VISP_MOMENTS_COMBINE_MATRICES)
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>  // for vpFeature...
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>  // for vpFeature...
+#endif
 #include <visp3/core/vpArray2D.h>                           // for vpArray2D
 #include <visp3/core/vpException.h>                         // for vpException
 #include <visp3/core/vpMath.h>                              // for vpMath
@@ -56,7 +58,9 @@
 
 BEGIN_VISP_NAMESPACE
 
+#if !defined(VISP_MOMENTS_COMBINE_MATRICES)
 class vpFeatureMomentDatabase;
+#endif
 
 /*!
  * Default constructor.

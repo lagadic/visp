@@ -28,15 +28,29 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include "orthographicLens.h"
-#include "cardMaker.h"
-#include "texturePool.h"
+#include <vector>                                // for vector
+#include <string.h>                              // for memcpy
+#include <sstream>                               // for basic_ostream, basic...
+#include <string>                                // for basic_string, string
+
+#include <cardMaker.h>                           // for CardMaker
+#include <orthographicLens.h>                    // for OrthographicLens
+
+
+#include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/ar/vpPanda3DBaseRenderer.h>      // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpRGBa.h>                   // for vpRGBa
 
 BEGIN_VISP_NAMESPACE
+
 const char *vpPanda3DRGBRenderer::COOK_TORRANCE_VERT =
 "#version 330\n"
 "in vec3 p3d_Normal;\n"

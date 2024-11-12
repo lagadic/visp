@@ -28,11 +28,22 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/ar/vpPanda3DGeometryRenderer.h>
+#include <utility>                               // for move
+#include <vector>                                // for vector
+#include <algorithm>                             // for max
+#include <string>                                // for basic_string, string
+
+#include <visp3/ar/vpPanda3DBaseRenderer.h>      // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DGeometryRenderer.h>  // for vpPanda3DGeometryRen...
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpRGBf.h>                   // for vpRGBf
+#include <visp3/core/vpRect.h>                   // for vpRect
 
 BEGIN_VISP_NAMESPACE
 

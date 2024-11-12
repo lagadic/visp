@@ -31,17 +31,26 @@
 #ifndef VP_PANDA3D_RGB_RENDERER_H
 #define VP_PANDA3D_RGB_RENDERER_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for VP_OVERRIDE, BEGIN_VISP_...
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/ar/vpPanda3DBaseRenderer.h>
-#include <visp3/ar/vpPanda3DLight.h>
-#include <visp3/core/vpImage.h>
+#include <string>                            // for basic_string, string
 
-#include "pointerTo.h"
+#include <displayRegion.h>                   // for DisplayRegion
+#include <graphicsOutput.h>                  // for GraphicsOutput
+#include <nodePath.h>                        // for NodePath
+#include <texture.h>                         // for Texture
+#include <pointerTo.h>                       // for PointerTo
+
+#include <visp3/ar/vpPanda3DBaseRenderer.h>  // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DLight.h>         // for vpPanda3DLightableScene
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+template <class Type> class vpImage;
+
 /**
  * \ingroup group_ar_renderer_panda3d_3d
  * \brief Implementation of a traditional RGB renderer in Panda3D

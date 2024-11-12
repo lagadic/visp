@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the ADEPT Viper 650 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -41,14 +39,33 @@
 
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/robot/vpViper650.h>
+#include <math.h>                            // for M_PI
+#include <fstream>                           // for basic_ostream, basic_ist...
+#include <iostream>                          // for cout
+#include <sstream>                           // for basic_istringstream
+#include <string>                            // for char_traits, basic_string
+
+#include <visp3/core/vpDebug.h>              // for vpTRACE
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/robot/vpViper650.h>          // for vpViper650, vpViper650::...
+#include <visp3/core/vpCameraParameters.h>   // for vpCameraParameters, vpCa...
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRxyzVector.h>         // for vpRxyzVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+#include <visp3/robot/vpRobotException.h>    // for vpRobotException
 
 static const char *opt_viper650[] = { "CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 #ifdef VISP_HAVE_VIPER650_DATA
 const std::string vpViper650::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
 std::string(VISP_VIPER650_DATA_PATH) +

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,35 +29,28 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
+
 /*!
  \file vpTemplateTrackerZNCC.h
  \brief
 */
 
-#ifndef vpTemplateTrackerZNCC_hh
-#define vpTemplateTrackerZNCC_hh
+#ifndef VP_TEMPLATE_TRACKER_ZNCC_H
+#define VP_TEMPLATE_TRACKER_ZNCC_H
 
-#include <math.h>
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/tt/vpTemplateTracker.h>
-#include <visp3/vision/vpHomography.h>
+#include <visp3/core/vpConfig.h>         // for BEGIN_VISP_NAMESPACE, END_VI...
+#include <visp3/tt/vpTemplateTracker.h>  // for vpTemplateTracker
+#include <visp3/core/vpColVector.h>      // for vpColVector
+#include <visp3/core/vpRowVector.h>      // for vpRowVector
 
 #define APPROX_NCC
 
 BEGIN_VISP_NAMESPACE
+
+class vpTemplateTrackerWarp;
+template <class Type> class vpImage;
+
 /*!
   \class vpTemplateTrackerZNCC
   \ingroup group_tt_tracker

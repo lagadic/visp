@@ -37,11 +37,24 @@
   \brief  Class required to compute the visual servoing control law
 */
 
-#include <sstream>
+#include <visp3/core/vpDebug.h>                    // for vpERROR_TRACE, vpD...
+#include <visp3/vs/vpServo.h>                      // for vpServo, vpServo::...
+#include <visp3/core/vpArray2D.h>                  // for operator<<, vpArray2D
+#include <visp3/core/vpColVector.h>                // for vpColVector, opera...
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMath.h>                     // for vpMath
+#include <visp3/core/vpMatrix.h>                   // for vpMatrix, operator*
+#include <visp3/core/vpRowVector.h>                // for vpRowVector
+#include <visp3/core/vpVelocityTwistMatrix.h>      // for vpVelocityTwistMatrix
+#include <visp3/visual_features/vpBasicFeature.h>  // for vpBasicFeature
+#include <visp3/vs/vpAdaptiveGain.h>               // for vpAdaptiveGain
+#include <visp3/vs/vpServoException.h>             // for vpServoException
 
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/vs/vpServo.h>
+#include <cmath>                                   // for exp, fabs
+#include <limits>                                  // for numeric_limits
+#include <list>                                    // for list, _List_const_...
+#include <sstream>                                 // for basic_ostream, ope...
+#include <string>                                  // for allocator, basic_s...
 
 BEGIN_VISP_NAMESPACE
 vpServo::vpServo()

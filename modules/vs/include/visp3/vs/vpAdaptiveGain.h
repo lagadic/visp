@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Adaptive gain
  */
 
-#ifndef _vpAdaptiveGain_h_
-#define _vpAdaptiveGain_h_
+#ifndef VP_ADAPTIVE_GAIN_H
+#define VP_ADAPTIVE_GAIN_H
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,25 +29,31 @@
  *
  * Description:
  * Make the complete tracking of an object by using its CAD model
- *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
-#include <limits.h>
-
-#include <visp3/core/vpConfig.h>
 /*!
  \file vpMbtPolygon.cpp
  \brief Implements a polygon of the model used by the model-based tracker.
 */
 
-#include <visp3/core/vpPolygon.h>
-#include <visp3/mbt/vpMbtPolygon.h>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
+#include <visp3/core/vpPolygon.h>           // for vpPolygon
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters
+#include <visp3/core/vpColVector.h>         // for vpColVector
+#include <visp3/core/vpImagePoint.h>        // for vpImagePoint
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/core/vpPoint.h>             // for vpPoint
+#include <visp3/core/vpPolygon3D.h>         // for vpPolygon3D
+#include <visp3/mbt/vpMbtPolygon.h>         // for vpMbtPolygon
+
+#include <cmath>                            // for acos, sqrt, M_PI
+#include <string>                           // for basic_string
+#include <vector>                           // for vector
 
 BEGIN_VISP_NAMESPACE
+
+class vpHomogeneousMatrix;
+
 /*!
   Basic constructor.
 */

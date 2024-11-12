@@ -28,16 +28,29 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DBaseRenderer.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/core/vpMath.h>
+#include <limits>                                // for numeric_limits
+#include <memory>                                // for shared_ptr, __shared...
+#include <string>                                // for basic_string, string
+#include <vector>                                // for vector
 
 #include "load_prc_file.h"
-#include <antialiasAttrib.h>
-#include "boundingSphere.h"
-#include "boundingBox.h"
+
+#include <boundingBox.h>                         // for BoundingBox
+#include <boundingSphere.h>                      // for BoundingSphere
+
+#include <visp3/ar/vpPanda3DBaseRenderer.h>      // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpQuaternionVector.h>       // for vpQuaternionVector
+#include <visp3/core/vpRotationMatrix.h>         // for vpRotationMatrix
+#include <visp3/core/vpTranslationVector.h>      // for vpTranslationVector
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>                   // for vpMath
 
 BEGIN_VISP_NAMESPACE
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({

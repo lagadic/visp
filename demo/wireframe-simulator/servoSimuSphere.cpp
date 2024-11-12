@@ -65,6 +65,9 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpGenericFeature.h>
 #include <visp3/vs/vpServo.h>
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
 
 #define GETOPTARGS "dhp"
 

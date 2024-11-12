@@ -30,6 +30,7 @@
  * Description:
  * Convert image types.
  */
+
 /* Retinex_.java Using ImageJ Gaussian Filter
  * Retinex filter algorithm based on the plugin for GIMP.
  *
@@ -81,12 +82,21 @@
   \brief Retinex algorithm
 */
 
-#include <functional>
-#include <numeric>
+#include <visp3/core/vpImageFilter.h>      // for vpImageFilter
+#include <visp3/core/vpMath.h>             // for vpMath
+#include <visp3/core/vpConfig.h>           // for VISP_CXX_STANDARD, VISP_CX...
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImage_operators.h>  // for vpImage::operator=
+#include <visp3/core/vpRGBa.h>             // for vpRGBa
 
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/imgproc/vpImgproc.h>
+#include <stddef.h>                        // for size_t
+#include <visp3/imgproc/vpImgproc.h>       // for RETINEX_LEVEL, retinex
+#include <algorithm>                       // for min, transform
+#include <cmath>                           // for log, pow, sqrt
+#include <functional>                      // for minus, bind, _1
+#include <iostream>                        // for basic_ostream, char_traits
+#include <numeric>                         // for accumulate, inner_product
+#include <vector>                          // for vector
 
 #define MAX_RETINEX_SCALES 8
 namespace VISP_NAMESPACE_NAME

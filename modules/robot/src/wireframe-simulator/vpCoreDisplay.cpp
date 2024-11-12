@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,25 +30,23 @@
  * Description:
  * Le module "display.c" contient les procedures de d'affichage
  * des scenes de modele geometrique surfacique.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include <stdio.h>
-#include <stdlib.h>
 
+#include <stdio.h>                        // for NULL, perror, printf
+#include <stdlib.h>                       // for free, malloc
+
+#include "vpMy.h"                         // for Byte, TRUE
+#include "vpView.h"                       // for IS_ABOVE, IS_BACK, IS_BELOW
 #include "vpCoreDisplay.h"
-#include "vpImstack.h"
-#include "vpMy.h"
-#include "vpRfstack.h"
-#include "vpView.h"
-#include "vpVwstack.h"
+
+#include <visp3/core/vpException.h>       // for vpException
+#include <wireframe-simulator/vpArit.h>   // for Point2i, SET_COORD2
+#include <wireframe-simulator/vpBound.h>  // for POINT_NBR
+
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -60,7 +57,7 @@ BEGIN_VISP_NAMESPACE
  * Tableau de renommage des sommets ou tableau de compteurs associes aux
  * points.
  */
-Point2i *point2i = (Point2i *)NULL;
+  Point2i *point2i = (Point2i *)NULL;
 Point2i *listpoint2i = (Point2i *)NULL;
 static int *rename_jlc = (int *)NULL;
 

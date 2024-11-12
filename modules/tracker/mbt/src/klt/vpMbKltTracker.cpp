@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,23 +29,81 @@
  *
  * Description:
  * Model based tracker using only KLT
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/mbt/vpMbKltTracker.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
+#include <visp3/core/vpConfig.h>                 // for VISP_HAVE_OGRE, BEGI...
+#include <visp3/visp_modules.h>                  // for VISP_HAVE_MODULE_KLT
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>            // for HAVE_OPENCV_IMGPROC
+#endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+
+#include <math.h>                                // for fabs
+#include <stddef.h>                              // for size_t
+#include <algorithm>                             // for find
+#include <iostream>                              // for basic_ostream, opera...
+#include <limits>                                // for numeric_limits
+#include <list>                                  // for list, operator!=
+#include <map>                                   // for map, _Rb_tree_const_...
+#include <sstream>                               // for basic_stringstream
+#include <string>                                // for basic_string, allocator
+#include <utility>                               // for pair
+#include <vector>                                // for vector
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+#include <opencv2/core/hal/interface.h>          // for CV_8UC1
+#include <opencv2/core/mat.hpp>                  // for Mat
+#include <opencv2/core/types.hpp>                // for Point2f, Scalar
+
+#include <visp3/core/vpDebug.h>                  // for vpERROR_TRACE
+#include <visp3/core/vpImageConvert.h>           // for vpImageConvert
+#include <visp3/core/vpTrackingException.h>      // for vpTrackingException
+#include <visp3/core/vpVelocityTwistMatrix.h>    // for vpVelocityTwistMatrix
+#include <visp3/ar/vpAROgre.h>                   // for vpAROgre
+#include <visp3/core/vpArray2D.h>                // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>       // for vpCameraParameters
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpColor.h>                  // for vpColor
+#include <visp3/core/vpDisplay.h>                // for vpDisplay
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpExponentialMap.h>         // for vpExponentialMap
+#include <visp3/core/vpGEMM.h>                   // for vpGEMM, VP_GEMM_B_T
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpImagePoint.h>             // for vpImagePoint
+#include <visp3/core/vpMath.h>                   // for vpMath
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix
+#include <visp3/core/vpPlane.h>                  // for vpPlane
+#include <visp3/core/vpPoint.h>                  // for vpPoint
+#include <visp3/core/vpPolygon3D.h>              // for vpPolygon3D, vpPolyg...
+#include <visp3/core/vpRobust.h>                 // for vpRobust
+#include <visp3/core/vpRotationMatrix.h>         // for vpRotationMatrix
+#include <visp3/core/vpSubColVector.h>           // for vpSubColVector
+#include <visp3/core/vpSubMatrix.h>              // for vpSubMatrix
+#include <visp3/core/vpTranslationVector.h>      // for vpTranslationVector
+
+#include <visp3/klt/vpKltOpencv.h>               // for vpKltOpencv
+
+#include <visp3/mbt/vpMbHiddenFaces.h>           // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbScanLine.h>              // for vpMbScanLine
+#include <visp3/mbt/vpMbTracker.h>               // for vpMbTracker, vpMbTra...
+#include <visp3/mbt/vpMbtDistanceCircle.h>       // for vpMbtDistanceCircle
+#include <visp3/mbt/vpMbtDistanceKltCylinder.h>  // for vpMbtDistanceKltCyli...
+#include <visp3/mbt/vpMbtDistanceKltPoints.h>    // for vpMbtDistanceKltPoints
+#include <visp3/mbt/vpMbtPolygon.h>              // for vpMbtPolygon
+#include <visp3/mbt/vpMbKltTracker.h>            // for vpMbKltTracker
+#include <visp3/mbt/vpMbtXmlGenericParser.h>     // for vpMbtXmlGenericParser
+
+#include <visp3/vision/vpHomography.h>           // for vpHomography
+
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace

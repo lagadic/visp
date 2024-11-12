@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,19 +31,23 @@
  * Common features for Pololu Maestro Servo Motor.
  */
 
-#include <visp3/core/vpConfig.h>
-
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
 
 #if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
-#include <chrono>
-#include <thread>
+#include <RPMSerialInterface.h>            // for RPMSerialInterface
+#include <visp3/robot/vpPololu.h>          // for vpPololu
+#include <visp3/robot/vpRobotException.h>  // for vpRobotException
+#include <visp3/core/vpException.h>        // for vpException
 
-#include <RPMSerialInterface.h>
-
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/robot/vpPololu.h>
+#include <stdlib.h>                        // for abs
+#include <chrono>                          // for milliseconds, operator*
+#include <cmath>                           // for fabs, abs
+#include <iostream>                        // for basic_ostream, operator<<
+#include <mutex>                           // for mutex
+#include <ratio>                           // for ratio
+#include <string>                          // for char_traits, basic_string
+#include <thread>                          // for sleep_for, thread
 
 std::chrono::milliseconds millis(1);
 

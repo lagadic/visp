@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,27 +29,63 @@
  *
  * Description:
  * Class which provides a simulator for the robot Afma6.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
+#include <visp3/visp_modules.h>                     // for VISP_HAVE_MODULE_GUI
+
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <string>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
 
-#include "../wireframe-simulator/vpBound.h"
-#include "../wireframe-simulator/vpRfstack.h"
-#include "../wireframe-simulator/vpScene.h"
-#include "../wireframe-simulator/vpVwstack.h"
+#include <cmath>                                    // for fabs, cos, sin, M_PI
+#include <fstream>                                  // for basic_ostream
+#include <functional>                               // for ref
+#include <iostream>                                 // for cout
+#include <limits>                                   // for numeric_limits
+#include <mutex>                                    // for mutex
+#include <sstream>                                  // for basic_istringstream
+#include <string>                                   // for basic_string, cha...
+#include <thread>                                   // for thread
+#include <vector>                                   // for vector
+#include <stdio.h>                                  // for FILENAME_MAX, fpr...
+#include <string.h>                                 // for strcat, strcpy
+
+#include "../wireframe-simulator/vpBound.h"         // for free_Bound_scene
+#include "../wireframe-simulator/vpRfstack.h"       // for add_rfstack
+#include "../wireframe-simulator/vpScene.h"         // for set_scene, vp2jlc...
+#include "../wireframe-simulator/vpVwstack.h"       // for add_vwstack
+#include "../wireframe-simulator/vpView.h"          // for IS_BACK, PERSPECTIVE
+
+#include <visp3/core/vpDebug.h>                     // for vpERROR_TRACE
+#include <visp3/core/vpImagePoint.h>                // for vpImagePoint
+#include <visp3/core/vpIoTools.h>                   // for vpIoTools
+#include <visp3/core/vpMeterPixelConversion.h>      // for vpMeterPixelConve...
+#include <visp3/core/vpPoint.h>                     // for vpPoint
+#include <visp3/core/vpTime.h>                      // for wait, measureTimeMs
+#include <visp3/core/vpArray2D.h>                   // for vpArray2D, operat...
+#include <visp3/core/vpCameraParameters.h>          // for vpCameraParameters
+#include <visp3/core/vpColVector.h>                 // for vpColVector
+#include <visp3/core/vpColor.h>                     // for vpColor
+#include <visp3/core/vpDisplay.h>                   // for vpDisplay
+#include <visp3/core/vpException.h>                 // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>         // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                     // for vpImage
+#include <visp3/core/vpMath.h>                      // for vpMath
+#include <visp3/core/vpMatrix.h>                    // for vpMatrix
+#include <visp3/core/vpPoseVector.h>                // for vpPoseVector
+#include <visp3/core/vpRGBa.h>                      // for vpRGBa
+#include <visp3/core/vpRotationMatrix.h>            // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>            // for vpRotationVector
+#include <visp3/core/vpRowVector.h>                 // for vpRowVector
+#include <visp3/core/vpRxyzVector.h>                // for vpRxyzVector
+#include <visp3/core/vpThetaUVector.h>              // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>         // for vpTranslationVector
+#include <visp3/core/vpVelocityTwistMatrix.h>       // for vpVelocityTwistMa...
+#include <visp3/robot/vpAfma6.h>                    // for vpAfma6, vpAfma6:...
+#include <visp3/robot/vpRobot.h>                    // for vpRobot, vpRobot:...
+#include <visp3/robot/vpRobotWireFrameSimulator.h>  // for vpRobotWireFrameS...
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound_scene
+#include <visp3/robot/vpRobotException.h>           // for vpRobotException
+#include <visp3/robot/vpSimulatorAfma6.h>           // for vpSimulatorAfma6
 
 BEGIN_VISP_NAMESPACE
 const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;

@@ -31,8 +31,8 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpDisplayPCL_h_
-#define _vpDisplayPCL_h_
+#ifndef VP_DISPLAY_PCL_H
+#define VP_DISPLAY_PCL_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -42,8 +42,11 @@
 #include <thread>
 #include <string>
 
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/point_cloud.h>                               // for PointCloud
+#include <pcl/impl/point_types.hpp>                        // for PointXYZRGB
+#include <pcl/visualization/common/common.h>               // for RenderingP...
+#include <pcl/visualization/pcl_visualizer.h>              // for PCLVisualizer
+#include <pcl/visualization/impl/pcl_visualizer.hpp>       // for PCLVisuali...
 
 BEGIN_VISP_NAMESPACE
 /*!

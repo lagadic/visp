@@ -38,14 +38,15 @@
  *
 *****************************************************************************/
 
-#ifndef vpVwstack_H
-#define vpVwstack_H
+#ifndef VP_VW_STACK_H
+#define VP_VW_STACK_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpView.h"
+#include <stdio.h>                // for FILE
+#include "vpView.h"               // for View_parameters
 
 BEGIN_VISP_NAMESPACE
 void fprintf_vwstack(FILE *fp, char *argv);

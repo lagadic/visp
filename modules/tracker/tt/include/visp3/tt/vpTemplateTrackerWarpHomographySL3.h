@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +37,20 @@
  *sl3 lie algebra  H=exp(Sum(p[i]* A_i)) A_i is the basis of the SL3 Algebra
  */
 
-#ifndef vpTemplateTrackerWarpHomographySL3_hh
-#define vpTemplateTrackerWarpHomographySL3_hh
+#ifndef VP_TEMPLATE_TRACKER_WARP_HOMOGRAPHY_SL3_H
+#define VP_TEMPLATE_TRACKER_WARP_HOMOGRAPHY_SL3_H
 
-#include <vector>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/tt/vpTemplateTrackerWarp.h>  // for vpTemplateTrackerWarp
+#include <visp3/vision/vpHomography.h>       // for vpHomography
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/tt/vpTemplateTrackerWarp.h>
-#include <visp3/vision/vpHomography.h>
+#include <vector>                            // for vector
 
 BEGIN_VISP_NAMESPACE
+
+class vpColVector;
+
 /*!
  * \class vpTemplateTrackerWarpHomographySL3
  * \ingroup group_tt_warp

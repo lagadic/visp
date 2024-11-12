@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,31 +29,35 @@
  *
  * Description:
  * Make the complete tracking of an object by using its CAD model
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>            // for VISP_HAVE_X11, BEGIN_VISP...
 
 #if defined _MSC_VER && _MSC_VER >= 1200
 #define NOMINMAX
 #endif
 
-#include <algorithm>
-#include <cmath>
-#include <cstddef>
-#include <iostream>
-#include <utility>
-
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/mbt/vpMbScanLine.h>
-
 #if defined(DEBUG_DISP)
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
+
+#include <visp3/mbt/vpMbScanLine.h>         // for vpMbScanLine, vpMbScanLin...
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters
+#include <visp3/core/vpColVector.h>         // for vpColVector
+#include <visp3/core/vpImage.h>             // for vpImage
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/core/vpPoint.h>             // for vpPoint
+
+#include <algorithm>                        // for max, min, sort
+#include <cmath>                            // for ceil, fabs, sqrt
+#include <cstddef>                          // for size_t
+#include <iterator>                         // for pair
+#include <limits>                           // for numeric_limits
+#include <map>                              // for map, operator!=, _Rb_tree...
+#include <set>                              // for set
+#include <utility>                          // for pair, swap, make_pair
+#include <vector>                           // for vector
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_VISP_NAMESPACE

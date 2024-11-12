@@ -39,10 +39,8 @@
   vpPixelMeterConversion class.
 */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>

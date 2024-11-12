@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,21 +31,17 @@
  * Le module "tmstack.c" contient les procedures de gestion
  * de la pile de matrices de transformation (Transformation
  * Matrix STACK).
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include "vpTmstack.h"
-#include "vpArit.h"
-#include "vpMy.h"
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <stdio.h>                // for fprintf, stderr
+#include <string.h>               // for memmove
+
+#include "vpTmstack.h"
+#include "vpArit.h"               // for Vector, Rotate_to_Matrix, postmult3...
 
 #define STACKSIZE 32
 

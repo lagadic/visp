@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,22 +29,31 @@
  *
  * Description:
  * Defines the simplest robot : a free flying camera.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRobotCamera.cpp
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotException.h>
+#include <iostream>                            // for basic_ostream, char_tr...
+
+#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpExponentialMap.h>       // for vpExponentialMap
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/robot/vpRobotException.h>      // for vpRobotException
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>       // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>       // for vpRotationVector
+#include <visp3/core/vpRxyzVector.h>           // for vpRxyzVector
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
 
 BEGIN_VISP_NAMESPACE
 /*!

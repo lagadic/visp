@@ -35,9 +35,16 @@
    \brief error that can be emitted by the vpSimulator class and its derivatives
  */
 
-#include <visp3/ar/vpSimulatorException.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+#include <string>                           // for string
+#include <stdarg.h>                         // for va_end, va_list, va_start
+
+#include <visp3/ar/vpSimulatorException.h>  // for vpSimulatorException
+#include <visp3/core/vpException.h>         // for vpException
+
 BEGIN_VISP_NAMESPACE
 vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
 {

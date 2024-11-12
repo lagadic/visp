@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,24 +33,21 @@
  * Les entrees non specifiees sont effectuees
  * sur le fichier source de "lex.c".
  * Pour les mots cles des "fprintf_..." voir "token.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END_VI...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <stdio.h>
-
-#include "vpArit.h"
-#include "vpLex.h"
-#include "vpMyio.h"
-#include "vpSkipio.h"
-#include "vpToken.h"
 #include "vpViewio.h"
+#include "vpArit.h"                         // for fscanf_Point3f, fscanf_Vector
+#include "vpLex.h"                          // for poperr, pusherr, popuperr, lex
+#include "vpMyio.h"                         // for fscanf_float
+#include "vpSkipio.h"                       // for skip_keyword
+#include "vpToken.h"                        // for T_ABOVE, T_BACK, T_BELOW, T_COP
+#include "../wireframe-simulator/vpMy.h"    // for Byte
+#include "../wireframe-simulator/vpView.h"  // for IS_ABOVE, IS_BACK, IS_BELOW
+
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -60,7 +56,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * bp    Parametres a lire.
  */
-void fscanf_Remove(Byte *bp)
+  void fscanf_Remove(Byte *bp)
 {
   switch (lex()) {
   case T_NONE:

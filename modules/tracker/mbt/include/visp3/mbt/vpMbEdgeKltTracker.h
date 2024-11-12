@@ -36,10 +36,14 @@
  * \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
  */
 
-#ifndef _vpMbEdgeKltTracker_h_
-#define _vpMbEdgeKltTracker_h_
+#ifndef VP_MB_EDGE_KLT_TRACKER_H
+#define VP_MB_EDGE_KLT_TRACKER_H
 
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>            // for HAVE_OPENCV_IMGPROC
+#endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,26 +33,21 @@
  * Les entrees non specifiees sont effectuees
  * sur le fichier "source" de "lex.c".
  * Pour les mots cles des "fprintf_..." voir "token.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpArit.h"
-#include "vpBoundio.h"
-#include "vpLex.h"
-#include "vpMy.h"
-#include "vpSkipio.h"
-#include "vpToken.h"
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>                   // for NULL, perror
+#include <stdlib.h>                  // for malloc
+
+#include "vpBoundio.h"
+#include "vpLex.h"                   // for lex, lexerr, poperr, pusherr
+#include "vpSkipio.h"                // for skip_keyword
+#include "vpToken.h"                 // for T_INT, myint, T_FLOAT, myfloat
+#include <visp3/core/vpException.h>  // for vpException
+
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -61,7 +55,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * bp    Surface a lire.
  */
-void fscanf_Bound(Bound *bp)
+  void fscanf_Bound(Bound *bp)
 {
   /* Lecture du type polygonale de la surface.  */
 

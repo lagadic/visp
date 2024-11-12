@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Sick LD-MRS laser driver on UNIX platform.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -49,15 +47,19 @@
 #include <string.h>
 #include <sys/select.h>
 #include <sys/socket.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/sensor/vpSickLDMRS.h>
-//#include <strings.h>
 #include <assert.h>
 #include <limits.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include <visp3/core/vpMath.h>         // for vpMath
+#include <visp3/core/vpTime.h>         // for measureTimeSecond
+#include <visp3/sensor/vpSickLDMRS.h>  // for vpSickLDMRS
+#include <visp3/core/vpColVector.h>    // for vpColVector
+#include <visp3/core/vpConfig.h>       // for BEGIN_VISP_NAMESPACE, END_VISP...
+#include <visp3/core/vpException.h>    // for vpException
+#include <visp3/sensor/vpLaserScan.h>  // for vpLaserScan
+#include <visp3/sensor/vpScanPoint.h>  // for vpScanPoint
 
 BEGIN_VISP_NAMESPACE
 /*!

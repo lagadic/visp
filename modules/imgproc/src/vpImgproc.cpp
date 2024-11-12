@@ -30,6 +30,7 @@
  * Description:
  * Convert image types.
  */
+
 /* Autostretch HSV 0.10 --- image filter plug-in for GIMP
  *
  * Copyright (C) 1997 Scott Goehring
@@ -56,14 +57,26 @@
   \brief Basic image processing functions.
 */
 
-#include <visp3/core/vpGaussianFilter.h>
-#include <visp3/core/vpHistogram.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/core/vpGaussianFilter.h>   // for vpGaussianFilter
+#include <visp3/core/vpHistogram.h>        // for vpHistogram
+#include <visp3/core/vpImageConvert.h>     // for vpImageConvert
+#include <visp3/core/vpImageFilter.h>      // for vpImageFilter
+#include <visp3/core/vpImageTools.h>       // for vpImageTools
+#include <visp3/core/vpMath.h>             // for vpMath, M_PI_FLOAT
+#include <visp3/imgproc/vpImgproc.h>       // for vpGammaMethod, vpGammaColo...
+#include <visp3/core/vpConfig.h>           // for VISP_HAVE_SIMDLIB, VISP_NA...
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImage_getters.h>    // for vpImage::getMinMaxValue
+#include <visp3/core/vpImage_lut.h>        // for vpImage<>::performLut
+#include <visp3/core/vpImage_operators.h>  // for vpImage::operator=
+#include <visp3/core/vpRGBa.h>             // for vpRGBa
 
+#include <algorithm>                       // for max, min
+#include <cmath>                           // for pow, log, cos, sin, exp, log2
+#include <sstream>                         // for basic_stringstream, basic_...
+#include <string>                          // for basic_string, char_traits
+#include <vector>                          // for vector
 namespace VISP_NAMESPACE_NAME
 {
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)

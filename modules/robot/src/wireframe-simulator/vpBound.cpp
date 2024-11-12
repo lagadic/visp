@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,25 +29,23 @@
  *
  * Description:
  * Le fichier "bound.c" contient les procedures de gestion des scenes de
- *modele geometrique surfacique.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ * modele geometrique surfacique.
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpArit.h"
+
+#include <stdio.h>                                  // for NULL, perror
+#include <stdlib.h>                                 // for free, malloc, exit
+#include <string.h>                                 // for strcpy, strlen
+
 #include "vpBound.h"
-#include "vpMy.h"
-#include <errno.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vpMy.h"                                   // for TRUE, FALSE
+
+#include <visp3/core/vpException.h>                 // for vpException
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound, Index, Face
+
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -57,7 +54,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * bp    Surface a liberer.
  */
-void free_Bound(Bound *bp)
+  void free_Bound(Bound *bp)
 {
   Face *fp = bp->face.ptr;
   Face *fend = fp + bp->face.nbr;

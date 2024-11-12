@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,27 +29,55 @@
  *
  * Description:
  * Model-based tracker using depth normal features.
- *
-*****************************************************************************/
+ */
 
-#include <iostream>
+#include <stddef.h>                            // for size_t
+#include <cmath>                               // for fabs, sqrt
+#include <iostream>                            // for basic_ostream, char_tr...
+#include <memory>                              // for __shared_ptr_access
+#include <string>                              // for basic_string, string
+#include <vector>                              // for vector
 
-#include <visp3/core/vpConfig.h>
+
+#include <visp3/core/vpConfig.h>               // for VISP_HAVE_PCL, VISP_HA...
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-#include <pcl/point_cloud.h>
+#include <pcl/point_cloud.h>                   // for PointCloud
+namespace pcl { struct PointXYZ; }
 #endif
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/mbt/vpMbDepthNormalTracker.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
+#include <visp3/core/vpDisplay.h>              // for vpDisplay
+#include <visp3/core/vpExponentialMap.h>       // for vpExponentialMap
+#include <visp3/ar/vpAROgre.h>                 // for vpAROgre
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>     // for vpCameraParameters
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpColor.h>                // for vpColor
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                // for vpImage, swap
+#include <visp3/core/vpImageConvert.h>         // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>           // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>      // for vpImage::operator=
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpPlane.h>                // for vpPlane, vpPlane::obje...
+#include <visp3/core/vpPoint.h>                // for vpPoint
+#include <visp3/core/vpPolygon3D.h>            // for vpPolygon3D, vpPolygon...
+#include <visp3/core/vpRobust.h>               // for vpRobust
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/mbt/vpMbHiddenFaces.h>         // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbTracker.h>             // for vpMbTracker, vpMbTrack...
+#include <visp3/mbt/vpMbDepthNormalTracker.h>  // for vpMbDepthNormalTracker
+#include <visp3/mbt/vpMbtXmlGenericParser.h>   // for vpMbtXmlGenericParser
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>    // for vpMbtFaceDepthNormal
+#include <visp3/mbt/vpMbtPolygon.h>            // for vpMbtPolygon
 
 #if DEBUG_DISPLAY_DEPTH_NORMAL
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
+
 
 BEGIN_VISP_NAMESPACE
 vpMbDepthNormalTracker::vpMbDepthNormalTracker()

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,20 +31,16 @@
  * Le module "parser.c" contient les procedures de gestion
  * de l'analyse syntaxique d'un fichier source dont la grammaire
  * possede les symboles terminaux de "lex.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpParser_h
-#define vpParser_h
+#ifndef VP_PARSER_H
+#define VP_PARSER_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpBound.h"
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound_scene
 
 BEGIN_VISP_NAMESPACE
 void parser(Bound_scene *bsp);

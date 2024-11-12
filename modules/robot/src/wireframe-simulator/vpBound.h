@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,19 +33,16 @@
  *
  * Authors:
  * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpBound_H
-#define vpBound_H
+#ifndef VP_BOUND_H
+#define VP_BOUND_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpArit.h"
-#include "vpMy.h"
-#include <visp3/robot/vpWireFrameSimulatorTypes.h>
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound, Index, Bou...
 
 #define START_ARG 0
 #define NEXT_ARG 1

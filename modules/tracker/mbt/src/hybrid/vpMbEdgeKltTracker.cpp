@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,20 +29,73 @@
  *
  * Description:
  * Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
- *
-*****************************************************************************/
+ */
 
 //#define VP_DEBUG_MODE 1 // Activate debug level 1
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
+#include <visp3/core/vpConfig.h>                 // for VISP_HAVE_OGRE, BEGI...
+#include <visp3/visp_modules.h>                  // for VISP_HAVE_MODULE_KLT
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>            // for HAVE_OPENCV_IMGPROC
+#endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
+#include <visp3/core/vpDebug.h>                  // for vpERROR_TRACE
+#include <visp3/core/vpTrackingException.h>      // for vpTrackingException
+#include <visp3/core/vpVelocityTwistMatrix.h>    // for vpVelocityTwistMatrix
+#include <visp3/core/vpArray2D.h>                // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>       // for vpCameraParameters
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpColor.h>                  // for vpColor
+#include <visp3/core/vpDisplay.h>                // for vpDisplay
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpExponentialMap.h>         // for vpExponentialMap
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpImageConvert.h>           // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>             // for vpImagePoint
+#include <visp3/core/vpMath.h>                   // for vpMath
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix
+#include <visp3/core/vpPolygon3D.h>              // for vpPolygon3D, vpPolyg...
+#include <visp3/core/vpRobust.h>                 // for vpRobust, vpRobust::...
+#include <visp3/core/vpSubColVector.h>           // for vpSubColVector
+#include <visp3/core/vpSubMatrix.h>              // for vpSubMatrix
+#include <visp3/klt/vpKltOpencv.h>               // for vpKltOpencv
+#include <visp3/mbt/vpMbEdgeTracker.h>           // for vpMbEdgeTracker
+#include <visp3/mbt/vpMbHiddenFaces.h>           // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbKltTracker.h>            // for vpMbKltTracker
+#include <visp3/mbt/vpMbScanLine.h>              // for vpMbScanLine
+#include <visp3/mbt/vpMbTracker.h>               // for vpMbTracker
+#include <visp3/mbt/vpMbtDistanceCircle.h>       // for vpMbtDistanceCircle
+#include <visp3/mbt/vpMbtDistanceCylinder.h>     // for vpMbtDistanceCylinder
+#include <visp3/mbt/vpMbtDistanceKltCylinder.h>  // for vpMbtDistanceKltCyli...
+#include <visp3/mbt/vpMbtDistanceKltPoints.h>    // for vpMbtDistanceKltPoints
+#include <visp3/mbt/vpMbtDistanceLine.h>         // for vpMbtDistanceLine
+#include <visp3/mbt/vpMbtMeEllipse.h>            // for vpMbtMeEllipse
+#include <visp3/mbt/vpMbtMeLine.h>               // for vpMbtMeLine
+#include <visp3/mbt/vpMbtPolygon.h>              // for vpMbtPolygon
+#include <visp3/mbt/vpMbEdgeKltTracker.h>        // for vpMbEdgeKltTracker
+#include <visp3/mbt/vpMbtXmlGenericParser.h>     // for vpMbtXmlGenericParser
+
+#include <visp3/ar/vpAROgre.h>                   // for vpAROgre
+#include <visp3/me/vpMe.h>                       // for vpMe
+#include <visp3/me/vpMeSite.h>                   // for vpMeSite, vpMeSite::...
+#include <visp3/vision/vpHomography.h>           // for vpHomography
+
+#include <math.h>                                // for fabs, sqrt
+#include <stddef.h>                              // for size_t
+#include <iostream>                              // for basic_ostream, basic...
+#include <list>                                  // for list, operator!=
+#include <sstream>                               // for basic_stringstream
+#include <string>                                // for allocator, basic_string
+#include <vector>                                // for vector
+
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   : m_thresholdKLT(2.), m_thresholdMBT(2.), m_maxIterKlt(30), m_w_mbt(), m_w_klt(), m_error_hybrid(), m_w_hybrid()
 {

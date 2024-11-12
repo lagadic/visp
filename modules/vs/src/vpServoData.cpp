@@ -36,11 +36,18 @@
   \brief save data during the task execution
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpIoException.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/vs/vpServoData.h>
+#include <visp3/core/vpDebug.h>      // for vpERROR_TRACE
+#include <visp3/core/vpIoTools.h>    // for vpIoTools
+#include <visp3/vs/vpServo.h>        // for vpServo
+#include <visp3/vs/vpServoData.h>    // for vpServoData
+#include <visp3/core/vpArray2D.h>    // for operator<<
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpMath.h>       // for vpMath
+#include <visp3/core/vpRowVector.h>  // for vpRowVector
+
+#include <fstream>                   // for basic_ofstream, basic_ostream
+#include <string>                    // for basic_string, char_traits, opera...
 
 BEGIN_VISP_NAMESPACE
 void vpServoData::open(const std::string &directory)

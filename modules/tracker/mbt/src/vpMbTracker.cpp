@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,73 +29,123 @@
  *
  * Description:
  * Generic model based tracker
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMbTracker.cpp
   \brief Generic model based tracker
 */
 
-#include <algorithm>
-#include <iostream>
-#include <limits>
-#include <sstream>
+#include <visp3/core/vpConfig.h>                      // for VISP_HAVE_THREADS
+#include <visp3/visp_modules.h>                       // for VISP_HAVE_MODUL...
 
-#include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_SIMDLIB)
-#include <Simd/SimdLib.h>
-#endif
-
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/vision/vpPose.h>
-#ifdef VISP_HAVE_MODULE_GUI
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#endif
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#ifdef VISP_HAVE_MODULE_IO
-#include <visp3/io/vpImageIo.h>
-#endif
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/mbt/vpMbTracker.h>
-
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
-
-#ifdef VISP_HAVE_COIN3D
-// Inventor includes
-#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
-#include <Inventor/VRMLnodes/SoVRMLGroup.h>
-#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
-#include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
-#include <Inventor/VRMLnodes/SoVRMLShape.h>
-#include <Inventor/VRMLnodes/SoVRMLTransform.h>
-#include <Inventor/actions/SoGetMatrixAction.h>
-#include <Inventor/actions/SoGetPrimitiveCountAction.h>
-#include <Inventor/actions/SoSearchAction.h>
-#include <Inventor/actions/SoToVRML2Action.h>
-#include <Inventor/actions/SoWriteAction.h>
-#include <Inventor/misc/SoChildList.h>
-#include <Inventor/nodes/SoSeparator.h>
+#include <Simd/SimdLib.h>                             // for SimdComputeJtR
 #endif
 
 #if defined(VISP_HAVE_THREADS)
-#include <mutex>
+#include <mutex>                                      // for mutex, lock_guard
 #endif
+
+#include <visp3/core/vpCameraParameters.h>            // for vpCameraParameters
+#include <visp3/core/vpColVector.h>                   // for vpColVector
+#include <visp3/core/vpColor.h>                       // for vpColor
+#include <visp3/core/vpDebug.h>                       // for vpTRACE, vpERRO...
+#include <visp3/core/vpDisplay.h>                     // for vpDisplay
+#include <visp3/core/vpException.h>                   // for vpException
+#include <visp3/core/vpImageFilter.h>                 // for vpImageFilter
+#include <visp3/core/vpIoTools.h>                     // for vpIoTools
+#include <visp3/core/vpMath.h>                        // for vpMath
+#include <visp3/core/vpMatrix.h>                      // for vpMatrix, opera...
+#include <visp3/core/vpMatrixException.h>             // for vpMatrixException
+#include <visp3/core/vpPixelMeterConversion.h>        // for vpPixelMeterCon...
+#include <visp3/core/vpPoint.h>                       // for vpPoint
+#include <visp3/core/vpTrackingException.h>           // for vpTrackingExcep...
+#include <visp3/core/vpArray2D.h>                     // for vpArray2D, oper...
+#include <visp3/core/vpHomogeneousMatrix.h>           // for vpHomogeneousMa...
+#include <visp3/core/vpImage.h>                       // for vpImage
+#include <visp3/core/vpImageConvert.h>                // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>                  // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>                 // for vpMouseButton
+#include <visp3/core/vpPlane.h>                       // for vpPlane, vpPlan...
+#include <visp3/core/vpPolygon.h>                     // for vpPolygon
+#include <visp3/core/vpPolygon3D.h>                   // for vpPolygon3D
+#include <visp3/core/vpPoseVector.h>                  // for vpPoseVector
+#include <visp3/core/vpQuaternionVector.h>            // for vpQuaternionVector
+#include <visp3/core/vpRGBa.h>                        // for vpRGBa
+#include <visp3/core/vpRobust.h>                      // for vpRobust, vpRob...
+#include <visp3/core/vpRotationMatrix.h>              // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>              // for vpRotationVector
+#include <visp3/core/vpThetaUVector.h>                // for vpThetaUVector
+#include <visp3/core/vpTranslationVector.h>           // for vpTranslationVe...
+#include <visp3/core/vpVelocityTwistMatrix.h>         // for vpVelocityTwist...
+
+#ifdef VISP_HAVE_MODULE_GUI
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>                     // for vpDisplayX
+#endif
+
+#ifdef VISP_HAVE_MODULE_IO
+#include <visp3/io/vpImageIo.h>                       // for vpImageIo
+#endif
+
+#ifdef VISP_HAVE_COIN3D
+// Inventor includes
+#include <Inventor/C/basic.h>                         // for COIN_MAJOR_VERSION
+#include <Inventor/SbName.h>                          // for SbName
+#include <Inventor/SbRotation.h>                      // for SbRotation
+#include <Inventor/SbVec3f.h>                         // for SbVec3f
+#include <Inventor/SoDB.h>                            // for SoDB
+#include <Inventor/SoInput.h>                         // for SoInput
+#include <Inventor/SoType.h>                          // for SoType
+#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>      // for SoVRMLCoordinate
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>           // for SoVRMLGroup
+#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>  // for SoVRMLIndexedFa...
+#include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>  // for SoVRMLIndexedLi...
+#include <Inventor/VRMLnodes/SoVRMLShape.h>           // for SoVRMLShape
+#include <Inventor/VRMLnodes/SoVRMLTransform.h>       // for SoVRMLTransform
+#include <Inventor/actions/SoToVRML2Action.h>         // for SoToVRML2Action
+#include <Inventor/fields/SoMFInt32.h>                // for SoMFInt32
+#include <Inventor/fields/SoMFVec3f.h>                // for SoMFVec3f
+#include <Inventor/fields/SoSFNode.h>                 // for SoSFNode
+#include <Inventor/fields/SoSFRotation.h>             // for SoSFRotation
+#include <Inventor/fields/SoSFVec3f.h>                // for SoSFVec3f
+#include <Inventor/misc/SoChildList.h>                // for SoChildList
+#include <Inventor/nodes/SoNode.h>                    // for SoNode
+#include <Inventor/nodes/SoSeparator.h>               // for SoSeparator
+#endif
+
+#include <visp3/me/vpMe.h>                            // for vpMe
+
+#include <visp3/mbt/vpMbHiddenFaces.h>                // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbtDistanceCircle.h>            // for vpMbtDistanceCi...
+#include <visp3/mbt/vpMbtDistanceCylinder.h>          // for vpMbtDistanceCy...
+#include <visp3/mbt/vpMbtDistanceLine.h>              // for vpMbtDistanceLine
+#include <visp3/mbt/vpMbtMeEllipse.h>                 // for vpMbtMeEllipse
+#include <visp3/mbt/vpMbtMeLine.h>                    // for vpMbtMeLine
+#include <visp3/mbt/vpMbtPolygon.h>                   // for vpMbtPolygon
+#include <visp3/mbt/vpMbTracker.h>                    // for vpMbTracker
+#include <visp3/mbt/vpMbtXmlGenericParser.h>          // for vpMbtXmlGeneric...
+
+#include <visp3/vision/vpPose.h>                      // for vpPose, vpPose:...
+#include <visp3/ar/vpAROgre.h>                        // for vpAROgre
+
+#include <algorithm>                                  // for find, sort
+#include <cmath>                                      // for fabs, sqrt
+#include <cstdlib>                                    // for atof, size_t
+#include <exception>                                  // for exception
+#include <fstream>                                    // for basic_ifstream
+#include <iostream>                                   // for basic_ostream
+#include <limits>                                     // for numeric_limits
+#include <list>                                       // for list, operator!=
+#include <map>                                        // for map, operator!=
+#include <sstream>                                    // for basic_stringstream
+#include <string>                                     // for basic_string
+#include <utility>                                    // for pair
+#include <vector>                                     // for vector
+#include <string.h>                                   // for strncmp
+#include <iterator>                                   // for pair
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

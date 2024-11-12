@@ -31,18 +31,36 @@
  * Display a point cloud using PCL library.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                           // for BEGIN_VISP...
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION) && defined(VISP_HAVE_THREADS)
 
-#include <visp3/gui/vpDisplayPCL.h>
+#include <algorithm>                                       // for find_if, copy
+#include <cmath>                                           // for isfinite
+#include <functional>                                      // for ref
+#include <iostream>                                        // for basic_ostream
+#include <memory>                                          // for __shared_p...
+#include <mutex>                                           // for mutex, loc...
+#include <string>                                          // for basic_string
+#include <thread>                                          // for thread
+
+#include <pcl/for_each_type.h>                             // for for_each_type
+#include <pcl/point_cloud.h>                               // for PointCloud
+#include <pcl/visualization/common/common.h>               // for RenderingP...
+#include <pcl/visualization/pcl_visualizer.h>              // for PCLVisualizer
+#include <pcl/visualization/point_cloud_color_handlers.h>  // for PointCloud...
+#include <pcl/common/impl/io.hpp>                          // for getFieldIndex
+#include <pcl/impl/point_types.hpp>                        // for PointXYZRGB
+#include <pcl/visualization/impl/pcl_visualizer.hpp>       // for PCLVisuali...
+
+#include <visp3/gui/vpDisplayPCL.h>                        // for vpDisplayPCL
 
 BEGIN_VISP_NAMESPACE
 /*!
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
  */
-vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
+  vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
   : m_stop(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
 { }

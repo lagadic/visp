@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +29,25 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
-#include <limits> // numeric_limits
+#include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>  // for vpTempla...
+#include <visp3/core/vpArray2D.h>                            // for vpArray2D
+#include <visp3/core/vpColVector.h>                          // for vpColVector
+#include <visp3/core/vpConfig.h>                             // for BEGIN_VI...
+#include <visp3/core/vpException.h>                          // for vpException
+#include <visp3/core/vpImage.h>                              // for vpImage
+#include <visp3/core/vpImageFilter.h>                        // for vpImageF...
+#include <visp3/core/vpImage_getters.h>                      // for vpImage<...
+#include <visp3/core/vpMatrix.h>                             // for vpMatrix
+#include <visp3/core/vpRowVector.h>                          // for vpRowVector
+#include <visp3/core/vpTrackingException.h>                  // for vpTracki...
+#include <visp3/tt/vpTemplateTrackerHeader.h>                // for vpTempla...
+#include <visp3/tt/vpTemplateTrackerSSD.h>                   // for vpTempla...
+#include <visp3/tt/vpTemplateTrackerWarp.h>                  // for vpTempla...
 
-#include <visp3/core/vpImageTools.h>
-#include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>
+#include <cmath>                                             // for fabs
+#include <limits>                                            // for numeric_...
 
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp)

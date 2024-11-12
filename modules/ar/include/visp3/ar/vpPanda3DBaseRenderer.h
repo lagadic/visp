@@ -31,15 +31,26 @@
 #ifndef VP_PANDA3D_BASE_RENDERER_H
 #define VP_PANDA3D_BASE_RENDERER_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/ar/vpPanda3DRenderParameters.h>
 
-#include <pandaFramework.h>
-#include <pandaSystem.h>
+#include <string>                                // for string, basic_string
+#include <vector>                                // for vector
+#include <memory>                                // for shared_ptr, __shared...
+
+#include <camera.h>                              // for Camera
+#include <graphicsEngine.h>                      // for GraphicsEngine
+#include <graphicsOutput.h>                      // for GraphicsOutput
+#include <nodePath.h>                            // for NodePath
+#include <pandaFramework.h>                      // for PandaFramework
+#include <pointerTo.h>                           // for PointerTo
+#include <windowFramework.h>                     // for WindowFramework
+
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+
 
 BEGIN_VISP_NAMESPACE
 /**

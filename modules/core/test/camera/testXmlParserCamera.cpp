@@ -37,8 +37,15 @@
   Test vpXmlParserCamera parse / save.
 */
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpXmlParserCamera.h>
+#include <stdlib.h>                         // for EXIT_FAILURE, EXIT_SUCCESS
+#include <iostream>                         // for basic_ostream, operator<<
+#include <string>                           // for char_traits, basic_string
+#include <vector>                           // for vector
+
+#include <visp3/core/vpIoTools.h>           // for vpIoTools
+#include <visp3/core/vpXmlParserCamera.h>   // for vpXmlParserCamera
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters, opera...
+#include <visp3/core/vpConfig.h>            // for ENABLE_VISP_NAMESPACE
 
 int main()
 {

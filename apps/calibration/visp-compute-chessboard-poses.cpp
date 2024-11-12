@@ -36,6 +36,10 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
+
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(VISP_HAVE_PUGIXML)
 
 #include <opencv2/calib3d/calib3d.hpp>
@@ -228,7 +232,7 @@ int main(int argc, const char **argv)
 #elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK(I);
 #endif
-  }
+    }
 #endif
 
     std::vector<vpPoint> corners_pts;
@@ -339,7 +343,7 @@ int main(int argc, const char **argv)
       }
     }
 #endif
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }

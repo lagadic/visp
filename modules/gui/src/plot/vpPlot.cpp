@@ -29,24 +29,37 @@
  *
  * Description:
  * Plot curves.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_DISPLAY)
-#include <fstream>
-#include <list>
-#include <vector>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
+
+#include <fstream>                           // for basic_ostream, char_traits
+#include <list>                              // for list, _List_const_iterator
+#include <string>                            // for basic_string, string
+#include <vector>                            // for vector
+
+#include <visp3/gui/vpDisplayX.h>            // for vpDisplayX
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpPlot.h>
+#include <visp3/gui/vpPlot.h>                // for vpPlot
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>        // for vpMouseButton, vpMouseBu...
+#include <visp3/core/vpPoseVector.h>         // for vpPoseVector
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRowVector.h>          // for vpRowVector
+#include <visp3/core/vpTime.h>               // for sleepMs
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+#include <visp3/gui/vpPlotCurve.h>           // for vpPlotCurve
+#include <visp3/gui/vpPlotGraph.h>           // for vpPlotGraph
 
 BEGIN_VISP_NAMESPACE
 

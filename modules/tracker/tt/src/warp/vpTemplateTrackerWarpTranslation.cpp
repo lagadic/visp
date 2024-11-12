@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,26 +29,26 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
+
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
+#include <visp3/core/vpArray2D.h>    // for vpArray2D
+#include <visp3/core/vpColVector.h>  // for vpColVector
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpMatrix.h>     // for vpMatrix
 
 BEGIN_VISP_NAMESPACE
 /*!
  * Construct a model with 2 parameters for translation initialized to zero.
  */
-vpTemplateTrackerWarpTranslation::vpTemplateTrackerWarpTranslation() { nbParam = 2; }
+  vpTemplateTrackerWarpTranslation::vpTemplateTrackerWarpTranslation() { nbParam = 2; }
 
-/*!
- * Get the parameters of the warping function one level down
- * where image size is divided by two along the lines and the columns.
- * \param p : 2-dim vector that contains the current parameters of the warping function.
- * \param p_down : 2-dim vector that contains the resulting parameters one level down.
- */
+  /*!
+   * Get the parameters of the warping function one level down
+   * where image size is divided by two along the lines and the columns.
+   * \param p : 2-dim vector that contains the current parameters of the warping function.
+   * \param p_down : 2-dim vector that contains the resulting parameters one level down.
+   */
 void vpTemplateTrackerWarpTranslation::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
   p_down[0] = p[0] / 2.;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief  Class required to compute the visual servoing control law.
  */
 
-#ifndef _vpServo_h_
-#define _vpServo_h_
+#ifndef VP_SERVO_H
+#define VP_SERVO_H
 
 #include <list>
 

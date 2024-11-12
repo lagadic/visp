@@ -40,7 +40,9 @@
 #include <visp3/core/vpConfig.h>                              // for VISP_HA...
 #include <visp3/core/vpColVector.h>                           // for vpColVe...
 #include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#if !defined(VISP_HAVE_GSL)
 #include <visp3/core/vpMatrixException.h>                     // for vpMatrixException
+#endif
 
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>

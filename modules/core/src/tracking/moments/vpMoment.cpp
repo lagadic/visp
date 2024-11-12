@@ -43,15 +43,17 @@
 #include <visp3/core/vpMoment.h>          // for vpMoment, operator<<
 #include <visp3/core/vpMomentDatabase.h>  // for vpMomentDatabase
 #include <visp3/core/vpConfig.h>          // for BEGIN_VISP_NAMESPACE, END_V...
-class vpMomentObject;
 
 BEGIN_VISP_NAMESPACE
+
+class vpMomentObject;
+
 /*!
  * Prints the moment contents to a stream
  * \param os : a std::stream.
  * \param m : a moment instance.
  */
-  VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
 {
   for (std::vector<double>::const_iterator i = m.values.begin(); i != m.values.end(); ++i)
     os << *i << ",";

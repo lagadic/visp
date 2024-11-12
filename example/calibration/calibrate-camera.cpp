@@ -36,6 +36,9 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_HIGHGUI) && \
   defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_PUGIXML)
 
@@ -683,5 +686,5 @@ int main()
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
 #endif
   return EXIT_SUCCESS;
-  }
+}
 #endif

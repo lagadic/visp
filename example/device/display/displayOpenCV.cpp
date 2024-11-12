@@ -46,6 +46,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
 #if defined(HAVE_OPENCV_HIGHGUI)
 
 #include <visp3/core/vpImage.h>
@@ -463,5 +466,5 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-  }
+}
 #endif

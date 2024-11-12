@@ -36,8 +36,17 @@
   \brief Additional image morphology functions.
 */
 
-#include <visp3/core/vpImageTools.h>
-#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/core/vpImageTools.h>       // for vpImageTools
+#include <visp3/imgproc/vpImgproc.h>       // for USE_OLD_FILL_HOLE, floodFill
+#include <visp3/core/vpConfig.h>           // for VISP_NAMESPACE_NAME
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImageMorphology.h>  // for vpImageMorphology
+#include <visp3/core/vpImagePoint.h>       // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>  // for vpImage::operator=, vpImag...
+
+#include <string.h>                        // for memcpy
+#include <algorithm>                       // for min
+#include <iostream>                        // for basic_ostream, char_traits
 
 namespace VISP_NAMESPACE_NAME
 {

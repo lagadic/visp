@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,18 +30,15 @@
  * Description:
  * Le module "keyword.c" contient les procedures de gestion
  * des mots cles retournes par l'analyseur lexical "lex".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpKeyword_H
-#define vpKeyword_H
+#ifndef VP_KEYWORD_H
+#define VP_KEYWORD_H
 
-#include "vpMy.h"
-#include "vpToken.h"
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Index
+#include "vpToken.h"                                // for Keyword
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_VISP_NAMESPACE

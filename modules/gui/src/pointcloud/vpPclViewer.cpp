@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +28,35 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  * Description:
  * Real-time 3D point clouds plotter based on the PCL library.
- *
-*****************************************************************************/
+ */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_THREADS)
-// ViSP
-#include <visp3/gui/vpPclViewer.h>
-#include <visp3/gui/vpColorBlindFriendlyPalette.h>
-#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpConfig.h>                      // for BEGIN_VISP_NAME...
 
-// PCL
-#include <pcl/io/pcd_io.h>
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO) && defined(VISP_HAVE_THREADS)
+
+#include <sstream>                                    // for basic_ostream
+#include <string>                                     // for basic_string
+#include <thread>                                     // for thread
+#include <vector>                                     // for vector
+#include <string.h>                                   // for memcpy
+#include <algorithm>                                  // for copy
+#include <memory>                                     // for __shared_ptr_ac...
+#include <mutex>                                      // for mutex
+
+#include <pcl/common/impl/io.hpp>                     // for getFields, copy...
+#include <pcl/for_each_type.h>                        // for for_each_type
+#include <pcl/io/pcd_io.h>                            // for savePCDFile
+#include <pcl/point_cloud.h>                          // for PointCloud
+#include <pcl/visualization/pcl_visualizer.h>         // for PCLVisualizer
+#include <pcl/impl/point_types.hpp>                   // for PointXYZRGB
+
+#include <visp3/core/vpIoTools.h>                     // for vpIoTools
+#include <visp3/gui/vpColorBlindFriendlyPalette.h>    // for vpColorBlindFri...
+#include <visp3/gui/vpPclViewer.h>                    // for vpPclViewer
+#include <visp3/core/vpColVector.h>                   // for vpColVector
+#include <visp3/core/vpException.h>                   // for vpException
 
 BEGIN_VISP_NAMESPACE
 const std::vector<vpColorBlindFriendlyPalette::Palette> gcolor = { vpColorBlindFriendlyPalette::Palette::Green, vpColorBlindFriendlyPalette::Palette::Vermillon,vpColorBlindFriendlyPalette::Palette::Blue,

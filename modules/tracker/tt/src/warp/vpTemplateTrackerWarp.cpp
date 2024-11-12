@@ -31,8 +31,17 @@
  * Template tracker.
  */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/tt/vpTemplateTrackerWarp.h>
+#include <visp3/core/vpDebug.h>                  // for vpCTRACE
+#include <visp3/tt/vpTemplateTrackerWarp.h>      // for vpTemplateTrackerWarp
+#include <visp3/core/vpColVector.h>              // for vpColVector
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix
+#include <visp3/tt/vpTemplateTrackerTriangle.h>  // for vpTemplateTrackerTri...
+#include <visp3/tt/vpTemplateTrackerZone.h>      // for vpTemplateTrackerZone
+
+#include <math.h>                                // for sqrt
+#include <ostream>                               // for char_traits, basic_o...
 
 BEGIN_VISP_NAMESPACE
 void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p,

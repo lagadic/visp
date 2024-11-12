@@ -41,15 +41,14 @@
 #include <omp.h>
 #endif
 
+#include <stdint.h>                             // for uint16_t
 #include <algorithm>                            // for max, min
 #include <cmath>                                // for fabs, sqrt, hypot
+#include <functional>                           // for reference_wrapper
+#include <optional>                             // for optional, nullopt
 #include <tuple>                                // for make_tuple, tie, tuple
 #include <vector>                               // for vector
 
-#include <visp3/vision/vpPlaneEstimation.h>
-#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
-#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
-#include <visp3/core/vpRobust.h>                // for vpRobust, vpRobust::T...
 #include <visp3/core/vpArray2D.h>               // for vpArray2D
 #include <visp3/core/vpColVector.h>             // for vpColVector
 #include <visp3/core/vpColor.h>                 // for vpColor
@@ -58,10 +57,14 @@
 #include <visp3/core/vpImage_operators.h>       // for vpImage::operator=
 #include <visp3/core/vpMath.h>                  // for vpMath
 #include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
 #include <visp3/core/vpPlane.h>                 // for vpPlane
 #include <visp3/core/vpPolygon.h>               // for vpPolygon
 #include <visp3/core/vpRGBa.h>                  // for vpRGBa
 #include <visp3/core/vpRect.h>                  // for vpRect
+#include <visp3/core/vpRobust.h>                // for vpRobust, vpRobust::T...
+#include <visp3/vision/vpPlaneEstimation.h>     // for vpPlaneEstimation
 
 BEGIN_VISP_NAMESPACE
 

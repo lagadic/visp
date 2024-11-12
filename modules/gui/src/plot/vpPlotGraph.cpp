@@ -29,29 +29,37 @@
  *
  * Description:
  * Define a graph for the vpPlot class.
- *
-*****************************************************************************/
+ */
 #define FLUSH_ON_PLOT
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                // for VISP_HAVE_X11, BEGIN_...
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/gui/vpPlotGraph.h>
-
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <sstream>
-
 #if defined(VISP_HAVE_DISPLAY)
+
+#include <cmath>                                // for fabs, pow
+#include <limits>                               // for numeric_limits
+#include <list>                                 // for list, _List_const_ite...
+#include <sstream>                              // for basic_stringstream
+#include <string>                               // for basic_string, allocator
+#include <stddef.h>                             // for size_t
+
+#include <visp3/core/vpMath.h>                  // for vpMath
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/gui/vpPlotGraph.h>              // for vpPlotGraph
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint, operator+
+#include <visp3/core/vpMouseButton.h>           // for vpMouseButton, vpMous...
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRect.h>                  // for vpRect
+#include <visp3/core/vpTime.h>                  // for sleepMs
+#include <visp3/gui/vpPlotCurve.h>              // for vpPlotCurve, vpPlotCu...
 
 BEGIN_VISP_NAMESPACE
 

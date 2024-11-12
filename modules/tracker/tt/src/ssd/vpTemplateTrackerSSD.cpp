@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,18 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/tt/vpTemplateTrackerSSD.h>
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpImage.h>                // for vpImage
+#include <visp3/core/vpImage_getters.h>        // for vpImage<>::getValue
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/tt/vpTemplateTracker.h>        // for vpTemplateTracker
+#include <visp3/tt/vpTemplateTrackerHeader.h>  // for vpTemplateTrackerPoint
+#include <visp3/tt/vpTemplateTrackerWarp.h>    // for vpTemplateTrackerWarp
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpRowVector.h>            // for vpRowVector
 
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp) : vpTemplateTracker(warp), DI(), temp()

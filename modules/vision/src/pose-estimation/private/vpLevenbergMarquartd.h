@@ -34,14 +34,7 @@
 #ifndef VP_LEVENBERG_MARQUARTD_H
 #define VP_LEVENBERG_MARQUARTD_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMath.h>
-
-#include <errno.h>
-#include <float.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <visp3/core/vpConfig.h>  // for VISP_EXPORT, BEGIN_VISP_NAMESPACE
 
 BEGIN_VISP_NAMESPACE
 

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,20 +29,22 @@
  *
  * Description:
  * Interface for the ptu-46 robot.
- *
-*****************************************************************************/
+ */
 
-/* ----------------------------------------------------------------------- */
-/* --- INCLUDE ----------------------------------------------------------- */
-/* ----------------------------------------------------------------------- */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/robot/vpPtu46.h>
-#include <visp3/robot/vpRobotException.h>
+#include <math.h>                              // for cos, sin
+#include <ostream>                             // for basic_ostream, char_tr...
 
-/* Inclusion des fichiers standards. */
-#include <math.h>
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpDebug.h>                // for vpERROR_TRACE, vpCDEBUG
+#include <visp3/robot/vpPtu46.h>               // for vpPtu46, operator<<
+#include <visp3/core/vpArray2D.h>              // for vpArray2D, operator<<
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpPoseVector.h>           // for vpPoseVector
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
 
 BEGIN_VISP_NAMESPACE
 /* ------------------------------------------------------------------------ */

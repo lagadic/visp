@@ -28,16 +28,28 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DPostProcessFilter.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/core/vpRGBf.h>
-#include <visp3/core/vpImage.h>
+#include <utility>                               // for move
+#include <vector>                                // for vector
+#include <memory>                                // for __shared_ptr_access
+#include <string>                                // for basic_string
 
-#include <lightRampAttrib.h>
+#include <lightRampAttrib.h>                     // for LightRampAttrib
+#include <cardMaker.h>                           // for CardMaker
+#include <orthographicLens.h>                    // for OrthographicLens
+
+#include <visp3/ar/vpPanda3DPostProcessFilter.h>
+#include <visp3/ar/vpPanda3DBaseRenderer.h>      // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpRGBf.h>                   // for vpRGBf
 
 BEGIN_VISP_NAMESPACE
+
 const char *vpPanda3DPostProcessFilter::FILTER_VERTEX_SHADER = R"shader(
 #version 330
 in vec4 p3d_Vertex;

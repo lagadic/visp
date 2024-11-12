@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,18 +29,15 @@
  *
  * Description:
  * Le module "arit.c" contient les procedures arithmetiques.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
+#include <math.h>                                   // for cos, sin, M_PI, sqrt
+#include <stdio.h>                                  // for fprintf, stderr
+#include <string.h>                                 // for memmove
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Matrix, Point3f
+#include "vpMy.h"                                   // for M_EPSILON, FABS
 #include "vpArit.h"
-#include "vpMy.h"
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <visp3/core/vpMath.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_VISP_NAMESPACE
@@ -51,7 +47,7 @@ BEGIN_VISP_NAMESPACE
  * fp    Fichier en sortie.
  * m    Matrice a ecrire.
  */
-void fprintf_matrix(FILE *fp, Matrix m)
+  void fprintf_matrix(FILE *fp, Matrix m)
 {
   int i;
 

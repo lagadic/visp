@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +36,32 @@
  * \brief Class which provides a simulator for the robot Viper850..
  */
 
-#ifndef vpSimulatorViper850_HH
-#define vpSimulatorViper850_HH
+#ifndef VP_SIMULATOR_VIPER850_H
+#define VP_SIMULATOR_VIPER850_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotWireFrameSimulator.h>
+#include <visp3/core/vpConfig.h>                    // for VP_OVERRIDE, BEGI...
+#include <visp3/visp_modules.h>                     // for VISP_HAVE_MODULE_GUI
+
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
-#include <string>
+#include <mutex>                                    // for mutex
+#include <string>                                   // for string, basic_string
 
-#include <visp3/robot/vpViper850.h>
+#include <visp3/robot/vpRobotWireFrameSimulator.h>  // for vpRobotWireFrameS...
+#include <visp3/robot/vpViper850.h>                 // for vpViper850
+#include <visp3/core/vpCameraParameters.h>          // for vpCameraParameters
+#include <visp3/core/vpColVector.h>                 // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>         // for vpHomogeneousMatrix
+#include <visp3/robot/vpRobot.h>                    // for vpRobot
 
 BEGIN_VISP_NAMESPACE
+
+class vpMatrix;
+class vpPoseVector;
+class vpRGBa;
+class vpVelocityTwistMatrix;
+class vpVelocityTwistMatrix;
+
 /*!
  * \class vpSimulatorViper850
  *

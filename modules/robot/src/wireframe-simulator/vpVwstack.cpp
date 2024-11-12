@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,26 +30,24 @@
  * Description:
  * Le module "vwstack.c" contient les procedures de gestion
  * de la pile des points de vue (VieW STACK).
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <cmath> // std::fabs()
-#include <limits>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdarg.h>                                 // for va_arg, va_end
+#include <stdio.h>                                  // for fprintf, NULL
+#include <string.h>                                 // for strcmp
+#include <cmath>                                    // for fabs
+#include <limits>                                   // for numeric_limits
 
-#include "vpArit.h"
-#include "vpMy.h"
-#include "vpView.h"
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Type
+
 #include "vpVwstack.h"
+#include "vpArit.h"                                 // for SET_COORD3
+#include "vpMy.h"                                   // for SWAP
+#include "vpView.h"                                 // for View_parameters
 
 #define STACKSIZE 4
 

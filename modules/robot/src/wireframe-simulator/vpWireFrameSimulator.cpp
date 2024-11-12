@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,42 +29,52 @@
  *
  * Description:
  * Wire frame simulator
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpWireFrameSimulator.cpp
   \brief Implementation of a wire frame simulator.
 */
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <vector>
-#include <visp3/robot/vpWireFrameSimulator.h>
+#include <stdio.h>                                  // for FILENAME_MAX, NULL
+#include <string.h>                                 // for strcat, strcpy
+#include <cmath>                                    // for fabs
+#include <iostream>                                 // for basic_ostream
+#include <limits>                                   // for numeric_limits
+#include <list>                                     // for list, operator!=
+#include <string>                                   // for basic_string, cha...
+#include <vector>                                   // for vector
 
-#include "vpArit.h"
-#include "vpBound.h"
-#include "vpClipping.h"
-#include "vpCoreDisplay.h"
-#include "vpKeyword.h"
-#include "vpLex.h"
-#include "vpMy.h"
-#include "vpParser.h"
-#include "vpProjection.h"
-#include "vpRfstack.h"
-#include "vpScene.h"
-#include "vpTmstack.h"
-#include "vpToken.h"
-#include "vpView.h"
-#include "vpVwstack.h"
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDebug.h>                     // for vpERROR_TRACE
+#include <visp3/core/vpException.h>                 // for vpException
+#include <visp3/core/vpIoTools.h>                   // for vpIoTools
+#include <visp3/core/vpMeterPixelConversion.h>      // for vpMeterPixelConve...
+#include <visp3/core/vpPoint.h>                     // for vpPoint
+#include <visp3/robot/vpWireFrameSimulator.h>       // for vpWireFrameSimulator
+#include <visp3/core/vpArray2D.h>                   // for vpArray2D
+#include <visp3/core/vpColor.h>                     // for vpColor
+#include <visp3/core/vpDisplay.h>                   // for vpDisplay
+#include <visp3/core/vpHomogeneousMatrix.h>         // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                     // for vpImage
+#include <visp3/core/vpImagePoint.h>                // for vpImagePoint, ope...
+#include <visp3/core/vpImage_operators.h>           // for vpImage::operator=
+#include <visp3/core/vpMath.h>                      // for vpMath
+#include <visp3/core/vpMouseButton.h>               // for vpMouseButton
+#include <visp3/core/vpRGBa.h>                      // for vpRGBa
+#include <visp3/robot/vpImageSimulator.h>           // for vpImageSimulator
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Matrix, Bound, Face
+#include "vpArit.h"                                 // for Point2i, postmult...
+#include "vpBound.h"                                // for free_Bound_scene
+#include "vpClipping.h"                             // for clipping_Bound
+#include "vpCoreDisplay.h"                          // for point_3D_2D, set_...
+#include "vpMy.h"                                   // for Byte
+#include "vpProjection.h"                           // for View_to_Matrix
+#include "vpRfstack.h"                              // for add_rfstack, get_...
+#include "vpScene.h"                                // for vp2jlc_matrix
+#include "vpTmstack.h"                              // for get_tmstack
+#include "vpView.h"                                 // for PERSPECTIVE, IS_BACK
+#include "vpVwstack.h"                              // for add_vwstack, get_...
 
 BEGIN_VISP_NAMESPACE
 extern Point2i *point2i;

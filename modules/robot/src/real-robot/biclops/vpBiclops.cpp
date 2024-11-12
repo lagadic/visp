@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,19 @@
  * Interface for the Biclops robot.
  */
 
-#include <math.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/robot/vpBiclops.h>
-#include <visp3/robot/vpRobotException.h>
+#include <math.h>                              // for cos, sin, M_PI
+#include <ostream>                             // for basic_ostream, char_tr...
+
+#include <visp3/core/vpDebug.h>                // for vpCDEBUG
+#include <visp3/robot/vpBiclops.h>             // for vpBiclops, vpBiclops::DH1
+#include <visp3/core/vpArray2D.h>              // for vpArray2D, operator<<
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpPoseVector.h>           // for vpPoseVector
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpBiclops::ndof = 2;

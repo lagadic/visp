@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,32 +30,44 @@
  * Description:
  * Make the complete tracking of an object by using its CAD model. Cylinder
  * tracking.
- *
- * Authors:
- * Romain Tallonneau
- * Bertrand Delabarre
- *
-*****************************************************************************/
-
-#include <visp3/core/vpConfig.h>
+ */
 
 /*!
  \file vpMbtDistanceCylinder.cpp
  \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#include <algorithm>
-#include <stdlib.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpPlane.h>
-#include <visp3/mbt/vpMbtDistanceCylinder.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureEllipse.h>
+#include <math.h>                                    // for M_PI, cos, sin
+#include <stdlib.h>                                  // for size_t
+#include <iostream>                                  // for basic_ostream
+#include <list>                                      // for list, _List_cons...
+#include <vector>                                    // for vector
 
-#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpConfig.h>                     // for VISP_CXX_STANDARD
+#include <visp3/core/vpMeterPixelConversion.h>       // for vpMeterPixelConv...
+#include <visp3/core/vpArray2D.h>                    // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>           // for vpCameraParameters
+#include <visp3/core/vpCircle.h>                     // for vpCircle
+#include <visp3/core/vpColVector.h>                  // for vpColVector
+#include <visp3/core/vpColor.h>                      // for vpColor
+#include <visp3/core/vpCylinder.h>                   // for vpCylinder, vpCy...
+#include <visp3/core/vpDisplay.h>                    // for vpDisplay
+#include <visp3/core/vpImage.h>                      // for vpImage
+#include <visp3/core/vpImagePoint.h>                 // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                     // for vpMatrix
+#include <visp3/core/vpPoint.h>                      // for vpPoint
+#include <visp3/mbt/vpMbtMeLine.h>                   // for vpMbtMeLine
+#include <visp3/mbt/vpMbtDistanceCylinder.h>         // for vpMbtDistanceCyl...
+#include <visp3/me/vpMeSite.h>                       // for vpMeSite
+#include <visp3/visual_features/vpFeatureLine.h>     // for vpFeatureLine
+#include <visp3/visual_features/vpFeatureBuilder.h>  // for vpFeatureBuilder
 
 BEGIN_VISP_NAMESPACE
+
+class vpHomogeneousMatrix;
+class vpMe;
+class vpRGBa;
+
 /*!
   Basic constructor
 */

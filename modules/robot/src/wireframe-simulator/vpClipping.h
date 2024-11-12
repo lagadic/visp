@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -36,22 +35,19 @@
  * "Reentrant Polygon Clipping".
  * Communications of the ACM,
  * Junary 1974, Volume 17, Number 1, pp 32-44.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpClipping_h
-#define vpClipping_h
+#ifndef VP_CLIPPING_H
+#define VP_CLIPPING_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpArit.h"
-#include "vpBound.h"
-#include "vpMy.h"
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound, Matrix
+#include "vpArit.h"                                 // for Point4f
+#include "vpMy.h"                                   // for Byte
+
 
 BEGIN_VISP_NAMESPACE
 void open_clipping(void);

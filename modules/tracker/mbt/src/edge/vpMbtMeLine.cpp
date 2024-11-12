@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,21 +31,36 @@
  * Make the complete tracking of an object by using its CAD model
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  \file vpMbtMeLine.cpp
  \brief Make the complete tracking of an object by using its CAD model.
 */
-#include <algorithm> // (std::min)
-#include <cmath>     // std::fabs
-#include <limits>    // numeric_limits
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/mbt/vpMbtMeLine.h>
+#include <visp3/core/vpDebug.h>              // for vpCDEBUG, vpDEBUG_ENABLE
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
+#include <visp3/mbt/vpMbtMeLine.h>           // for vpMbtMeLine
+
+#include <stddef.h>                          // for size_t
+#include <algorithm>                         // for min
+#include <cmath>                             // for fabs, cos, sin, M_PI, sqrt
+#include <limits>                            // for numeric_limits
+#include <list>                              // for list, _List_const_iterator
+#include <ostream>                           // for basic_ostream, char_traits
 
 BEGIN_VISP_NAMESPACE
 //! Normalize an angle between -Pi and Pi

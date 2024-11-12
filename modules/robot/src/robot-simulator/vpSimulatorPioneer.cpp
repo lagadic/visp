@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Pioneer mobile robot simulator without display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpSimulatorPioneer.cpp
@@ -40,11 +38,24 @@
 
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/robot/vpSimulatorPioneer.h>
+
+#include <math.h>                            // for cos, sin
+#include <iostream>                          // for basic_ostream, char_traits
+
+#include <visp3/core/vpDebug.h>              // for vpERROR_TRACE
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
+#include <visp3/core/vpRotationVector.h>     // for vpRotationVector
+#include <visp3/core/vpRxyzVector.h>         // for vpRxyzVector
+#include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
+#include <visp3/robot/vpRobot.h>             // for vpRobot, vpRobot::ARTICU...
+#include <visp3/robot/vpUnicycle.h>          // for vpUnicycle
+#include <visp3/robot/vpRobotException.h>    // for vpRobotException
+#include <visp3/robot/vpSimulatorPioneer.h>  // for vpSimulatorPioneer
 
 BEGIN_VISP_NAMESPACE
 /*!

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,31 +29,26 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 /*!
  \file vpTemplateTrackerTriangle.h
  \brief
 */
 
-#ifndef vpTemplateTrackerTriangle_hh
-#define vpTemplateTrackerTriangle_hh
+#ifndef VP_TEMPLATE_TRACKER_TRIANGLE_H
+#define VP_TEMPLATE_TRACKER_TRIANGLE_H
 
-#include <assert.h>
-#include <vector>
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/tt/vpTemplateTrackerHeader.h>  // for vpTemplateTrackerDPoint
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/tt/vpTemplateTrackerHeader.h>
+#include <vector>                              // for vector
+#include <assert.h>                            // for assert
 
 BEGIN_VISP_NAMESPACE
+
+class vpImagePoint;
+
 /*!
   \class vpTemplateTrackerTriangle
   \ingroup group_tt_tools

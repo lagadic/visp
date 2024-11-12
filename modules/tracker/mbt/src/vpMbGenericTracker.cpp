@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,23 +29,85 @@
  *
  * Description:
  * Generic model-based tracker.
- *
-*****************************************************************************/
+ */
 
+#include <visp3/core/vpDisplay.h>                         // for vpDisplay
+#include <visp3/core/vpExponentialMap.h>                  // for vpExponenti...
+#include <visp3/core/vpIoTools.h>                         // for vpIoTools
+#include <visp3/core/vpTrackingException.h>               // for vpTrackingE...
+#include <visp3/ar/vpAROgre.h>                            // for vpAROgre
+#include <visp3/core/vpArray2D.h>                         // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>                // for vpCameraPar...
+#include <visp3/core/vpColor.h>                           // for vpColor
+#include <visp3/core/vpConfig.h>                          // for VISP_HAVE_O...
+#include <visp3/core/vpException.h>                       // for vpException
+#include <visp3/core/vpImageConvert.h>                    // for vpImageConvert
+#include <visp3/core/vpPoint.h>                           // for vpPoint
+#include <visp3/core/vpPolygon.h>                         // for vpPolygon
+#include <visp3/core/vpVelocityTwistMatrix.h>             // for vpVelocityT...sp3/core/vpCameraParameters.h>                // for vpCameraPar...
+#include <visp3/core/vpColVector.h>                       // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>               // for vpHomogeneo...
+#include <visp3/core/vpImage.h>                           // for vpImage, swap
+#include <visp3/core/vpImagePoint.h>                      // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>                 // for vpImage::op...
+#include <visp3/core/vpMath.h>                            // for vpMath
+#include <visp3/core/vpMatrix.h>                          // for vpMatrix
+#include <visp3/core/vpPolygon3D.h>                       // for vpPolygon3D
 #include <visp3/mbt/vpMbGenericTracker.h>
+#include <visp3/mbt/vpMbDepthDenseTracker.h>              // for vpMbDepthDe...
+#include <visp3/mbt/vpMbDepthNormalTracker.h>             // for vpMbDepthNo...
+#include <visp3/mbt/vpMbEdgeTracker.h>                    // for vpMbEdgeTra...
+#include <visp3/mbt/vpMbKltTracker.h>                     // for vpMbKltTracker
+#include <visp3/mbt/vpMbtDistanceCircle.h>                // for vpMbtDistan...
+#include <visp3/mbt/vpMbtDistanceCylinder.h>              // for vpMbtDistan...
+#include <visp3/mbt/vpMbtDistanceKltCylinder.h>           // for vpMbtDistan...
+#include <visp3/mbt/vpMbtDistanceKltPoints.h>             // for vpMbtDistan...
+#include <visp3/mbt/vpMbtDistanceLine.h>                  // for vpMbtDistan...
+#include <visp3/mbt/vpMbtFaceDepthDense.h>                // for vpMbtFaceDe...
+#include <visp3/mbt/vpMbtXmlGenericParser.h>              // for vpMbtXmlGen...
+#include <visp3/mbt/vpMbHiddenFaces.h>                    // for vpMbHiddenF...
+#include <visp3/mbt/vpMbScanLine.h>                       // for vpMbScanLine
+#include <visp3/mbt/vpMbTracker.h>                        // for vpMbTracker
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>               // for vpMbtFaceDe...
+#include <visp3/mbt/vpMbtPolygon.h>                       // for vpMbtPolygon
+#include <visp3/me/vpMe.h>                                // for vpMe
+#include <visp3/me/vpMeSite.h>                            // for vpMeSite#include <vi
+#include <visp3/klt/vpKltOpencv.h>                        // for vpKltOpencv
+#include <visp3/visp_modules.h>                           // for VISP_HAVE_M...
 
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
+#include <stddef.h>                                       // for size_t
+#include <fstream>                                        // for basic_ostream
+#include <iostream>                                       // for cerr, cout
+#include <sstream>                                        // for basic_strin...
+#include <utility>                                        // for pair
+#include <cmath>                                          // for isnan, fabs
+#include <list>                                           // for list, opera...
+#include <map>                                            // for map, operat...
+#include <memory>                                         // for allocator
+#include <string>                                         // for basic_string
+#include <vector>                                         // for vector
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+#include <algorithm>                                      // for remove
+
 #include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 #endif
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+#include <pcl/point_cloud.h>                              // for PointCloud
+namespace pcl { struct PointXYZ; }
+#endif
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/core/types.hpp>                         // for Point2f
+#include <opencv2/opencv_modules.hpp>                     // for HAVE_OPENCV...
+#endif
+
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 vpMbGenericTracker::vpMbGenericTracker()
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
   m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
@@ -1698,11 +1759,10 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, unsi
   possibility to order by distance to the camera or to use the visibility
   check to consider if the polygon face must be retrieved or not.
 
-  \param orderPolygons : If true, the resulting list is ordered from the
-  nearest polygon faces to the farther. \param useVisibility : If true, only
-  visible faces will be retrieved. \param clipPolygon : If true, the polygons
-  will be clipped according to the clipping flags set in vpMbTracker. \return
-  A pair object containing the list of vpPolygon and the list of face corners.
+  \param orderPolygons : If true, the resulting list is ordered from the nearest polygon faces to the farther.
+  \param useVisibility : If true, only visible faces will be retrieved.
+  \param clipPolygon : If true, the polygons will be clipped according to the clipping flags set in vpMbTracker.
+  \return A pair object containing the list of vpPolygon and the list of face corners.
 
   \note This function will return the 2D polygons faces and 3D face points
   only for the reference camera.
@@ -2912,11 +2972,11 @@ void vpMbGenericTracker::loadConfigFileXML(const std::string &configFile, bool v
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 /*!
-Load tracker settings from a JSON configuration file.
-A single JSON settings file is a more complete description of the tracker than what is provided by XML loading.
-It may contain the full information regarding the different cameras and trackers that are used.
-Additionally, the user may supply path to the 3D model (.cao) to be loaded at the same time as the other tracker settings.
-\throw vpException::ioError if the file cannot be read, or if JSON parsiing fails.
+  Load tracker settings from a JSON configuration file.
+  A single JSON settings file is a more complete description of the tracker than what is provided by XML loading.
+  It may contain the full information regarding the different cameras and trackers that are used.
+  Additionally, the user may supply path to the 3D model (.cao) to be loaded at the same time as the other tracker settings.
+  \throw vpException::ioError if the file cannot be read, or if JSON parsing fails.
 
 */
 void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, bool verbose)
@@ -2993,7 +3053,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
     throw vpException(vpException::badValue, "Reference camera not found in trackers");
   }
 
-  // All camerasthat were defined in the tracker but not in the config file are removed
+  // All cameras that were defined in the tracker but not in the config file are removed
   for (const std::string &oldCameraName : unusedCameraNames) {
     m_mapOfCameraTransformationMatrix.erase(oldCameraName);
     TrackerWrapper *tw = m_mapOfTrackers[oldCameraName];

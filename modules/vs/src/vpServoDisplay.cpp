@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +36,20 @@
   \brief interface with the image for feature display
 */
 
-// Servo
-#include <visp3/vs/vpServo.h>
+#include <visp3/core/vpColor.h>                    // for vpColor, operator!=
+#include <visp3/visual_features/vpBasicFeature.h>  // for vpBasicFeature
+#include <visp3/vs/vpServo.h>                      // for vpServo
+#include <visp3/vs/vpServoDisplay.h>               // for vpServoDisplay
+#include <visp3/core/vpConfig.h>                   // for BEGIN_VISP_NAMESPACE
 
-// Meter/pixel conversion
-#include <visp3/core/vpCameraParameters.h>
-
-// Color / image / display
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/vs/vpServoDisplay.h>
-#include <visp3/visual_features/vpBasicFeature.h>
+#include <list>                                    // for list, _List_const_...
 
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+class vpRGBa;
+template <class Type> class vpImage;
+
 void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                              vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {

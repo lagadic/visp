@@ -32,7 +32,6 @@
  */
 
 #include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
-#include <visp3/core/vpMatrix.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

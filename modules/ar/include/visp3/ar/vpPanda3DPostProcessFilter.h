@@ -31,16 +31,20 @@
 #ifndef VP_PANDA3D_POST_PROCESS_FILTER_H
 #define VP_PANDA3D_POST_PROCESS_FILTER_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for VP_OVERRIDE, BEGIN_VISP_...
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <string>
+#include <string>                            // for basic_string, string
+#include <memory>                            // for shared_ptr, __shared_ptr...
 
-#include <visp3/ar/vpPanda3DBaseRenderer.h>
+#include <frameBufferProperties.h>           // for FrameBufferProperties
+#include <graphicsOutput.h>                  // for GraphicsOutput
+#include <pointerTo.h>                       // for PointerTo
+#include <shader.h>                          // for Shader
+#include <texture.h>                         // for Texture
 
-#include "cardMaker.h"
-#include "orthographicLens.h"
+#include <visp3/ar/vpPanda3DBaseRenderer.h>  // for vpPanda3DBaseRenderer
 
 BEGIN_VISP_NAMESPACE
 

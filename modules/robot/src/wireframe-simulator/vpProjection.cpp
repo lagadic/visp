@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +30,18 @@
  * Description:
  * Le module "projection.c" contient les procedures de calcul
  * des matrices de projection perspective et parallele.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>         // for BEGIN_VISP_NAMESPACE, END_VI...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <stdio.h>                       // for fprintf, stderr
+
 #include "vpProjection.h"
-#include <math.h>
-#include <stdio.h>
+
+#include <wireframe-simulator/vpArit.h>  // for postmult_matrix, SET_COORD3
+#include <wireframe-simulator/vpView.h>  // for View_parameters, PARALLEL
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -52,7 +51,7 @@ BEGIN_VISP_NAMESPACE
  * vp    Parametres de la prise de vue.
  * m    Matrice homogene a construire.
  */
-void View_to_Matrix(View_parameters *vp, Matrix m)
+  void View_to_Matrix(View_parameters *vp, Matrix m)
 {
   static char proc_name[] = "View_to_Matrix";
 

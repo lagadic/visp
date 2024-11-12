@@ -65,9 +65,10 @@
 #include <visp3/core/vpThetaUVector.h>       // for vpThetaUVector
 #include <visp3/core/vpTranslationVector.h>  // for vpTranslationVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpPoseVector;
 
-BEGIN_VISP_NAMESPACE
 /*!
   Initialize the rotation matrix as identity.
 

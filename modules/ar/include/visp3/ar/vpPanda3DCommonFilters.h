@@ -31,14 +31,21 @@
 #ifndef VP_PANDA3D_COMMON_FILTERS_H
 #define VP_PANDA3D_COMMON_FILTERS_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                  // for VP_OVERRIDE, VISP_E...
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <visp3/ar/vpPanda3DPostProcessFilter.h>
+#include <memory>                                 // for shared_ptr
+#include <string>                                 // for string
+
+#include <visp3/ar/vpPanda3DPostProcessFilter.h>  // for vpPanda3DPostProces...
 
 BEGIN_VISP_NAMESPACE
+
+class vpPanda3DBaseRenderer;
 class vpPanda3DRGBRenderer;
+class vpRGBf;
+template <class Type> class vpImage;
 
 /**
  * \ingroup group_ar_renderer_panda3d_filters

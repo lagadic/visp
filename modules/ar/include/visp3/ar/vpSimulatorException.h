@@ -39,12 +39,12 @@
 #ifndef VP_SIMULATOR_EXCEPTION_H
 #define VP_SIMULATOR_EXCEPTION_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+
+#include <visp3/core/vpException.h>  // for vpException
+#include <string>                    // for string
 
 BEGIN_VISP_NAMESPACE
 /*!

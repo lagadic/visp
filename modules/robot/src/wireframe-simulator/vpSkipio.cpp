@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +31,17 @@
  * Le module "skipio.c" contient les procedures d'analyse
  * syntaxique du fichier "source" qui permettent de traiter
  * les commandes inconnues.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpLex.h"
-#include "vpMy.h"
+
+#include <stdio.h>                // for stderr, NULL, fprintf, fwrite, size_t
+
 #include "vpSkipio.h"
-#include "vpToken.h"
-#include <stdio.h>
+#include "vpLex.h"                // for lex, lexerr, lexecho, unlex
+#include "vpToken.h"              // for T_EOF, T_IDENT, mylength, mytext
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -54,7 +50,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * f    Fichier en sortie.
  */
-void skip_cmd(void)
+  void skip_cmd(void)
 {
   int token;
 

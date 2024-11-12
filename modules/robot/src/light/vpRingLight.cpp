@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Ring light management.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRingLight.cpp
@@ -45,13 +43,14 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+#include <sys/time.h>                 // for timeval, gettimeofday
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRingLight.h>
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
+#include <visp3/robot/vpRingLight.h>  // for vpRingLight
+#include <visp3/io/vpParallelPort.h>  // for vpParallelPort
+#include <visp3/visp_modules.h>       // for VISP_HAVE_MODULE_IO
 
 BEGIN_VISP_NAMESPACE
 /*!

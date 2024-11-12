@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,21 +30,19 @@
  * Description:
  * Le module "display.c" contient les procedures de d'affichage
  * des scenes de modele geometrique surfacique.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpCoreDisplay_h
-#define vpCoreDisplay_h
+#ifndef VP_CORE_DISPLAY_H
+#define VP_CORE_DISPLAY_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpArit.h"
-#include "vpBound.h"
+#include "vpArit.h"                                 // for Point2i
+
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Bound, Face, Index
+#include <wireframe-simulator/vpMy.h>               // for Byte
 
 BEGIN_VISP_NAMESPACE
 void open_display(void);

@@ -39,14 +39,67 @@
 #ifndef VP_MB_GENERIC_TRACKER_H
 #define VP_MB_GENERIC_TRACKER_H
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/mbt/vpMbDepthDenseTracker.h>
-#include <visp3/mbt/vpMbDepthNormalTracker.h>
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/mbt/vpMbKltTracker.h>
-#include <visp3/core/vpJsonParsing.h>
+#include <cmath>                               // for isnan
+#include <list>                                // for list
+#include <map>                                 // for map, operator==, opera...
+#include <string>                              // for string, basic_string
+#include <vector>                              // for vector
+
+#include <visp3/core/vpConfig.h>               // for VP_OVERRIDE, VISP_HAVE...
+#include <visp3/core/vpJsonParsing.h>          // for flagsToJSON, flagsFrom...
+#include <visp3/mbt/vpMbDepthDenseTracker.h>   // for vpMbDepthDenseTracker
+#include <visp3/mbt/vpMbDepthNormalTracker.h>  // for vpMbDepthNormalTracker
+#include <visp3/mbt/vpMbEdgeTracker.h>         // for vpMbEdgeTracker
+#include <visp3/mbt/vpMbKltTracker.h>          // for vpMbKltTracker
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>          // for HAVE_OPENCV_IMGPROC
+#endif
+
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+#include <opencv2/core/types.hpp>              // for Point2f
+#endif
+
+#include <visp3/core/vpCameraParameters.h>     // for vpCameraParameters (pt...
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                // for vpImage (ptr only), swap
+#include <visp3/core/vpImagePoint.h>           // for vpImagePoint
+#include <visp3/core/vpImage_operators.h>      // for vpImage::operator=
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpPolygon3D.h>            // for clippingFlagsToJSON
+#include <visp3/klt/vpKltOpencv.h>             // for vpKltOpencv
+#include <visp3/mbt/vpMbHiddenFaces.h>         // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbScanLine.h>            // for vpMbScanLine
+#include <visp3/mbt/vpMbTracker.h>             // for vpMbTracker
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>    // for vpMbtFaceDepthNormal
+#include <visp3/mbt/vpMbtPolygon.h>            // for vpMbtPolygon
+#include <visp3/me/vpMe.h>                     // for from_json, to_json, vpMe
+#include <visp3/visp_modules.h>                // for VISP_HAVE_MODULE_KLT
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include VISP_NLOHMANN_JSON(json.hpp)
+#endif
+
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
+namespace pcl { struct PointXYZ; }
+#include <pcl/point_cloud.h>                   // for PointCloud
+#endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpColor;
+class vpMbtDistanceCircle;
+class vpMbtDistanceCylinder;
+class vpMbtDistanceKltCylinder;
+class vpMbtDistanceKltPoints;
+class vpMbtDistanceLine;
+class vpPoint;
+class vpPolygon;
+class vpRGBa;
+class vpVelocityTwistMatrix;
+
 /*!
  * \class vpMbGenericTracker
  * \ingroup group_mbt_trackers
@@ -512,8 +565,8 @@ public:
   virtual void setGoodMovingEdgesRatioThreshold(double threshold);
 
 #ifdef VISP_HAVE_OGRE
-  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio);
-  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts);
+  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio) VP_OVERRIDE;;
+  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) VP_OVERRIDE;;
 #endif
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)

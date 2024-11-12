@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,27 +29,28 @@
  *
  * Description:
  * Defines the simplest robot : a free flying camera.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRobotCamera.h
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#ifndef vpRobotCamera_H
-#define vpRobotCamera_H
+#ifndef VP_ROBOT_CAMERA_H
+#define VP_ROBOT_CAMERA_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for VP_OVERRIDE, BEGIN_VISP_...
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/robot/vpRobotSimulator.h>
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/robot/vpRobotSimulator.h>    // for vpRobotSimulator
+#include <visp3/robot/vpRobot.h>             // for vpRobot
 
 BEGIN_VISP_NAMESPACE
+
+class vpVelocityTwistMatrix;
+
 /*!
   \class vpRobotCamera
   \ingroup group_robot_simu_camera

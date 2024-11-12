@@ -36,9 +36,15 @@
   \brief Basic connected components.
 */
 
-#include <queue>
-#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/core/vpConfig.h>           // for VISP_NAMESPACE_NAME
 
+#include <visp3/imgproc/vpImgproc.h>       // for connectedComponents
+#include <visp3/core/vpImage.h>            // for vpImage
+#include <visp3/core/vpImageMorphology.h>  // for vpImageMorphology, vpImage...
+#include <visp3/core/vpImagePoint.h>       // for vpImagePoint
+
+#include <queue>                           // for queue
+#include <string.h>                        // for memcpy, memset
 namespace VISP_NAMESPACE_NAME
 {
 

@@ -37,15 +37,15 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpArit.h"
-#include "vpMy.h"
+
 #include "vpRfstack.h"
-#include "vpView.h"
-#include <stdio.h>
-#include <string.h>
+#include "vpView.h"               // for IS_ABOVE, IS_BACK, IS_BELOW, IS_FRONT
+
+#include <stdio.h>                // for fprintf, stderr, FILE
+
 #define STACKSIZE 32
 
 static int stack[STACKSIZE] = { vpDEFAULT_REMOVE }; /* pile    */
@@ -58,7 +58,7 @@ BEGIN_VISP_NAMESPACE
  * Entree :
  * fp    Fichier en sortie.
  */
-void fprintf_rfstack(FILE *fp)
+  void fprintf_rfstack(FILE *fp)
 {
   int flg;
   flg = 0; /* nul si element unique  */

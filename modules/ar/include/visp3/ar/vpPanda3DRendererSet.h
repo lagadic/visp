@@ -31,16 +31,21 @@
 #ifndef VP_PANDA3D_RENDERER_SET_H
 #define VP_PANDA3D_RENDERER_SET_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for VP_OVERRIDE, BEGIN_VISP_...
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <vector>
+#include <memory>                            // for shared_ptr, __shared_ptr...
+#include <string>                            // for string, basic_string
+#include <vector>                            // for vector
 
-#include <visp3/ar/vpPanda3DBaseRenderer.h>
-#include <visp3/ar/vpPanda3DLight.h>
+#include <visp3/ar/vpPanda3DBaseRenderer.h>  // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DLight.h>         // for vpPanda3DLightable
 
 BEGIN_VISP_NAMESPACE
+
+class vpPanda3DRenderParameters;
+
 /**
  * \ingroup group_ar_renderer_panda3d
  *

@@ -39,7 +39,9 @@
 #include <visp3/core/vpConfig.h>           // for VISP_HAVE_GSL, VISP_HAVE_LAPACK
 #include <visp3/core/vpColVector.h>        // for vpColVector
 #include <visp3/core/vpException.h>        // for vpException
+#if !defined(VISP_HAVE_GSL)
 #include <visp3/core/vpMatrixException.h>  // for vpMatrixException
+#endif
 #include <visp3/core/vpMatrix.h>           // for vpMatrix
 #include <visp3/core/vpArray2D.h>          // for vpArray2D
 

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,35 +29,46 @@
  *
  * Description:
  * Interface for the Irisa's Afma6 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
-
   \file vpAfma6.cpp
 
   Control of Irisa's gantry robot named Afma6.
-
 */
 
-#include <iostream>
-#include <sstream>
+#include <visp3/core/vpCameraParameters.h>     // for vpCameraParameters
+#include <visp3/core/vpDebug.h>                // for vpTRACE, vpERROR_TRACE
+#include <visp3/core/vpRotationMatrix.h>       // for vpRotationMatrix
+#include <visp3/core/vpRxyzVector.h>           // for vpRxyzVector
+#include <visp3/core/vpTranslationVector.h>    // for vpTranslationVector
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/robot/vpAfma6.h>               // for vpAfma6, vpAfma6::TOOL...
+#include <visp3/robot/vpRobotException.h>      // for vpRobotException
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>            // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                // for vpImage
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpRotationVector.h>       // for vpRotationVector
 
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/robot/vpAfma6.h>
-#include <visp3/robot/vpRobotException.h>
+#include <fstream>                             // for basic_ifstream
+#include <iostream>                            // for basic_ostream, char_tr...
+#include <sstream>                             // for basic_istringstream
+#include <string>                              // for basic_string, string
+#include <math.h>                              // for cos, sin, atan2, M_PI
 
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 static const char *opt_Afma6[] = { "JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
                                   "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 

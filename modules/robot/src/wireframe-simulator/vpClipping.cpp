@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -36,23 +35,23 @@
  * "Reentrant Polygon Clipping".
  * Communications of the ACM,
  * Junary 1974, Volume 17, Number 1, pp 32-44.
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE, END_V...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpClipping.h"
-#include "vpView.h"
 
-#include <cmath>
-#include <limits>
-#include <stdio.h>
-#include <stdlib.h>
+#include "vpView.h"                          // for IS_INSIDE, IS_ABOVE, IS_BACK
+#include "vpClipping.h"
+#include "../wireframe-simulator/vpArit.h"   // for Point4f, PAR_COORD3, point_...
+#include "../wireframe-simulator/vpBound.h"  // for POINT_NBR, free_huge_Bound
+#include "../wireframe-simulator/vpMy.h"     // for Byte, M_EPSILON
+
+#include <stdio.h>                           // for NULL, perror
+#include <stdlib.h>                          // for free, malloc
+#include <visp3/core/vpException.h>          // for vpException
+#include <cmath>                             // for fabs
+#include <limits>                            // for numeric_limits
 
 BEGIN_VISP_NAMESPACE
 static void inter(Byte mask, Index v0, Index v1);
@@ -378,18 +377,18 @@ static void inter(Byte mask, Index v0, Index v1)
     SET_COORD3(*n, (n1->x - n0->x) * t + n0->x, (n1->y - n0->y) * t + n0->y, (n1->z - n0->z) * t + n0->z);
   }
 #endif /* face_normal  */
-}
+  }
 
-/*
- * La procedure "point_4D_3D" transforme les points homogenes 4D  visibles
- * en points 3D par projection.
- * Note  : On marque un point 3D invisible par une profondeur negative.
- * Entree :
- * p4    Tableau de points 4D a transformer.
- * size    Taille  du tableau "p4".
- * cp    Tableau de code indiquant la visibilite des points 4D.
- * p3    Tableau de points 3D issus de la transformation.
- */
+  /*
+   * La procedure "point_4D_3D" transforme les points homogenes 4D  visibles
+   * en points 3D par projection.
+   * Note  : On marque un point 3D invisible par une profondeur negative.
+   * Entree :
+   * p4    Tableau de points 4D a transformer.
+   * size    Taille  du tableau "p4".
+   * cp    Tableau de code indiquant la visibilite des points 4D.
+   * p3    Tableau de points 3D issus de la transformation.
+   */
 static void point_4D_3D(Point4f *p4, int size, Byte *cp, Point3f *p3)
 {
   Point4f *pend = p4 + size; /* borne de p4  */

@@ -29,46 +29,60 @@
  *
  * Description:
  * Image display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDisplayOpenCV.cpp
   \brief Define the OpenCV console to display images.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>            // for VISP_HAVE_OPENCV_VERSION
+
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>       // for HAVE_OPENCV_HIGHGUI, HAVE...
+#endif
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>                          // for size_t
+#include <sstream>                          // for basic_ostringstream, basi...
+#include <string>                           // for basic_string, allocator
+#include <utility>                          // for swap
+#include <vector>                           // for vector
+#include <algorithm>                        // for min, max
+#include <cmath>                            // for ceil, fabs, sqrt
+#include <functional>                       // for function
+#include <limits>                           // for numeric_limits
 
-// Display stuff
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-
-// debug / exception
-#include <visp3/core/vpDisplayException.h>
-
-#include <opencv2/core/core_c.h> // for CV_FILLED versus cv::FILLED
+#include <opencv2/core.hpp>                 // for addWeighted
+#include <opencv2/core/hal/interface.h>     // for CV_8U, CV_MAKETYPE
+#include <opencv2/core/mat.hpp>             // for Mat, _InputOutputArray
+#include <opencv2/core/mat.inl.hpp>         // for _InputOutputArray::_Input...
+#include <opencv2/core/types.hpp>           // for Point, Scalar, Size
+#include <opencv2/highgui.hpp>              // for waitKey, MouseEventTypes
 
 #if defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc.hpp>              // for CV_RGB, rectangle, line
 #endif
 
 #ifndef CV_RGB
 #define CV_RGB(r, g, b) cv::Scalar((b), (g), (r), 0)
 #endif
 
+#include <visp3/core/vpDisplay.h>           // for vpDisplay
+#include <visp3/core/vpDisplayException.h>  // for vpDisplayException
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/gui/vpDisplayOpenCV.h>      // for vpDisplayOpenCV
+#include <visp3/core/vpColor.h>             // for vpColor, vpColor::id_unknown
+#include <visp3/core/vpImage.h>             // for vpImage
+#include <visp3/core/vpImageConvert.h>      // for vpImageConvert
+#include <visp3/core/vpImagePoint.h>        // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>       // for vpMouseButton, vpMouseBut...
+#include <visp3/core/vpRGBa.h>              // for vpRGBa
+#include <visp3/core/vpRect.h>              // for vpRect
+
 #ifdef VISP_HAVE_X11
-#include <visp3/gui/vpDisplayX.h> // to get screen resolution
+#include <visp3/gui/vpDisplayX.h>           // for vpDisplayX
 #elif defined(_WIN32)
 #include <windows.h>
 #endif
@@ -79,7 +93,6 @@ std::vector<std::string> vpDisplayOpenCV::m_listTitles = std::vector<std::string
 unsigned int vpDisplayOpenCV::m_nbWindows = 0;
 
 /*!
-
   Constructor. Initialize a display to visualize a gray level image
   (8 bits).
 
@@ -88,16 +101,15 @@ unsigned int vpDisplayOpenCV::m_nbWindows = 0;
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
+    same than the image size.
   - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+    and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleType)
   : vpDisplay(),
@@ -112,7 +124,6 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
 }
 
 /*!
-
   Constructor. Initialize a display to visualize a gray level image
   (8 bits).
 
@@ -123,16 +134,15 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
+    same than the image size.
   - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
-
+    and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const std::string &title,
                                  vpScaleType scaleType)
@@ -155,15 +165,15 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
+    same than the image size.
   - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+    and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   :
@@ -187,15 +197,15 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
   - vpDisplay::SCALE_DEFAULT or vpDisplay::SCALE_1, the display size is the
-  same than the image size.
+    same than the image size.
   - vpDisplay::SCALE_2, the display size is down scaled by 2 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_3, the display size is down scaled by 3 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_4, the display size is down scaled by 4 along the lines
-  and the columns.
+    and the columns.
   - vpDisplay::SCALE_5, the display size is down scaled by 5 along the lines
-  and the columns.
+    and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
   :
@@ -210,7 +220,6 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::st
 }
 
 /*!
-
   Constructor that just initialize the display position in the screen
   and the display title.
 

@@ -29,22 +29,25 @@
  *
  * Description:
  * Define a curve for the vpPlot class.
- *
-*****************************************************************************/
-#include <visp3/core/vpConfig.h>
+ */
+
+#include <visp3/core/vpConfig.h>      // for VISP_HAVE_DISPLAY, BEGIN_VISP_N...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpPlotCurve.h>
-
 #if defined(VISP_HAVE_DISPLAY)
 
+#include <list>                       // for list, _List_const_iterator
+
+#include <visp3/gui/vpPlotCurve.h>    // for vpPlotCurve, vpPlotCurve::point
+#include <visp3/core/vpColor.h>       // for vpColor
+#include <visp3/core/vpDisplay.h>     // for vpDisplay
+#include <visp3/core/vpImagePoint.h>  // for vpImagePoint
+#include <visp3/core/vpRect.h>        // for vpRect
+
 BEGIN_VISP_NAMESPACE
+
+template <class Type> class vpImage;
 
 vpPlotCurve::vpPlotCurve()
   : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(), pointListx(), pointListy(),

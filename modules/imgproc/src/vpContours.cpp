@@ -31,6 +31,7 @@
  * Basic contours extraction based on the original work of
  * Sina Samangooei (ss@ecs.soton.ac.uk).
  */
+
 /**
  * Copyright (c) 2011, The University of Southampton and the individual
  * contributors. All rights reserved.
@@ -67,8 +68,20 @@
    \brief Basic contours extraction.
  */
 
-#include <map>
-#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/core/vpColor.h>        // for vpColor
+#include <visp3/core/vpConfig.h>       // for VISP_NAMESPACE_NAME, ENABLE_VI...
+#include <visp3/core/vpException.h>    // for vpException
+#include <visp3/core/vpImage.h>        // for vpImage
+#include <visp3/core/vpImagePoint.h>   // for vpImagePoint, operator==
+#include <visp3/core/vpRGBa.h>         // for vpRGBa
+#include <visp3/imgproc/vpContours.h>  // for vpContour, vpDirection, CONTOU...
+
+#include <stdlib.h>                    // for abs, size_t
+#include <string.h>                    // for memset
+#include <cmath>                       // for fabs, abs
+#include <limits>                      // for numeric_limits
+#include <map>                         // for map
+#include <vector>                      // for vector
 
 namespace VISP_NAMESPACE_NAME
 {

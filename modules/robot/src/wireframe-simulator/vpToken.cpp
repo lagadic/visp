@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +30,14 @@
  * Description:
  * Le module "token.c" contient la declaration des mots cles.
  * de l'analyseur lexical "lex".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include "vpToken.h"
-#include "vpMy.h"
-
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>  // for BEGIN_VISP_NAMESPACE, END_VISP_NAME...
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include "vpToken.h"
+#include <stddef.h>               // for NULL
 
 BEGIN_VISP_NAMESPACE
 Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,11 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -161,7 +156,7 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
   for (int i = 0; i < nbShapes; i++) {
     child = sceneGraphVRML2->getChild(i);
     if (child->getTypeId() == SoVRMLShape::getClassTypeId()) {
-      int nbFaces = 0;
+      //int nbFaces = 0;
       std::list<indexFaceSet *> ifs_list;
       SoChildList *child2list = child->getChildren();
       for (int j = 0; j < child2list->getLength(); j++) {
@@ -171,7 +166,7 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
           face_set = (SoVRMLIndexedFaceSet *)child2list->get(j);
           extractFaces(face_set, ifs);
           ifs_list.push_back(ifs);
-          nbFaces++;
+          //nbFaces++;
         }
         //         if (((SoNode*)child2list->get(j))->getTypeId() ==
         //         SoVRMLIndexedLineSet::getClassTypeId())

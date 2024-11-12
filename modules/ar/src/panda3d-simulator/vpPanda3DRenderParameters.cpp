@@ -29,11 +29,17 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DRenderParameters.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE, END...
+
 #if defined(VISP_HAVE_PANDA3D)
 
-#include <matrixLens.h>
-#include <camera.h>
+#include <camera.h>                              // for Camera
+#include <matrixLens.h>                          // for MatrixLens
+
+#include <visp3/core/vpCameraParameters.h>       // for vpCameraParameters
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParameters
+
 
 BEGIN_VISP_NAMESPACE
 void vpPanda3DRenderParameters::setupPandaCamera(Camera *camera)

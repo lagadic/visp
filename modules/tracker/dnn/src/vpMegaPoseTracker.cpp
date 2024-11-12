@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +29,28 @@
  *
  * Description:
  * Tracker based on MegaPose.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                  // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
 
-#include <visp3/dnn_tracker/vpMegaPoseTracker.h>
-#include <future>
+#include <visp3/dnn_tracker/vpMegaPoseTracker.h>  // for vpMegaPoseTracker
+#include <visp3/core/vpException.h>               // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>       // for vpHomogeneousMatrix
+#include <visp3/core/vpRect.h>                    // for vpRect
+#include <visp3/dnn_tracker/vpMegaPose.h>         // for vpMegaPoseEstimate
+
+#include <future>                                 // for async, launch, future
+#include <memory>                                 // for __shared_ptr_access
+#include <string>                                 // for basic_string
+#include <vector>                                 // for vector
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+template <class Type> class vpImage;
+
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I, const vpRect &bb)
 {
   return std::async(std::launch::async, [&I, &bb, this]() -> vpMegaPoseEstimate {

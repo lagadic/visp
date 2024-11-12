@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Irisa's Afma4 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -41,14 +39,21 @@
 
 */
 
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpRxyzVector.h>
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpAfma4.h>
-#include <visp3/robot/vpRobotException.h>
+#include <visp3/core/vpRotationMatrix.h>       // for vpRotationMatrix
+#include <visp3/core/vpRxyzVector.h>           // for vpRxyzVector
+#include <visp3/core/vpTranslationVector.h>    // for vpTranslationVector
+#include <visp3/core/vpVelocityTwistMatrix.h>  // for vpVelocityTwistMatrix
+#include <visp3/robot/vpAfma4.h>               // for vpAfma4, operator<<
+#include <visp3/core/vpArray2D.h>              // for vpArray2D
+#include <visp3/core/vpColVector.h>            // for vpColVector
+#include <visp3/core/vpConfig.h>               // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpHomogeneousMatrix.h>    // for vpHomogeneousMatrix
+#include <visp3/core/vpMath.h>                 // for vpMath
+#include <visp3/core/vpMatrix.h>               // for vpMatrix
+#include <visp3/core/vpRotationVector.h>       // for vpRotationVector
+
+#include <ostream>                             // for basic_ostream, char_tr...
+#include <math.h>                              // for cos, sin, M_PI
 
 BEGIN_VISP_NAMESPACE
 /* ----------------------------------------------------------------------- */

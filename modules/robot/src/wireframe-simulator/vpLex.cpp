@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -33,26 +32,21 @@
  * de l'analyse lexicale de l'analyseur lexicale "lex"
  * d'un fichier source dont la grammaire possede
  * les symboles terminaux suivants (ecrit en "LEX", UNIX) :
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
+#include <ctype.h>                   // for isalpha, isdigit, isspace
+#include <stdarg.h>                  // for va_arg, va_end, va_list, va_start
+#include <stdio.h>                   // for fwrite, fprintf, NULL, stderr
+#include <stdlib.h>                  // for free, malloc, atof
+#include <string.h>                  // for strcpy, strlen
 
-#include "vpKeyword.h"
-#include "vpMy.h"
-#include "vpToken.h"
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpException.h>  // for vpException
 
-#include <ctype.h>
-#include <fcntl.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vpKeyword.h"               // for get_symbol
+#include "vpMy.h"                    // for Byte
+#include "vpToken.h"                 // for T_FLOAT, T_EOF, T_INT, T_STRING
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 BEGIN_VISP_NAMESPACE

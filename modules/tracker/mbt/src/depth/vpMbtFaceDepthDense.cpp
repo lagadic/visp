@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,14 +29,45 @@
  *
  * Description:
  * Manage depth dense features for a particular face.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/mbt/vpMbtFaceDepthDense.h>
+#include <stddef.h>                             // for size_t
+#include <algorithm>                            // for max, min
+#include <cmath>                                // for fabs, sqrt, isfinite
+#include <limits>                               // for numeric_limits
+#include <list>                                 // for list, operator!=, _Li...
+#include <memory>                               // for __shared_ptr_access
+#include <string>                               // for basic_string, string
+#include <utility>                              // for pair
+#include <vector>                               // for vector
+
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>      // for vpCameraParameters
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpConfig.h>                // for VISP_HAVE_OPENCV_VERSION
+#include <visp3/core/vpCPUFeatures.h>           // for checkNeon, checkSSE2
+#include <visp3/core/vpDisplay.h>               // for vpDisplay
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPlane.h>                 // for vpPlane
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpPolygon.h>               // for vpPolygon
+#include <visp3/core/vpPolygon3D.h>             // for vpPolygon3D, vpPolygo...
+#include <visp3/core/vpRect.h>                  // for vpRect
+#include <visp3/core/vpRowVector.h>             // for vpRowVector
+#include <visp3/mbt/vpMbHiddenFaces.h>          // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbScanLine.h>             // for vpMbScanLine
+#include <visp3/mbt/vpMbtDistanceLine.h>        // for vpMbtDistanceLine
+#include <visp3/mbt/vpMbtPolygon.h>             // for vpMbtPolygon
+#include <visp3/mbt/vpMbtFaceDepthDense.h>      // for vpMbtFaceDepthDense
+#include <visp3/me/vpMeTracker.h>               // for vpMeTracker
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-#include <pcl/common/point_tests.h>
+#include <pcl/common/point_tests.h>             // for isFinite
+#include <pcl/point_cloud.h>                    // for PointCloud
+#include <pcl/impl/point_types.hpp>             // for PointXYZ
 #endif
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
@@ -76,8 +106,7 @@
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
 #define USE_OPENCV_HAL 1
-#include <opencv2/core/simd_intrinsics.hpp>
-#include <opencv2/core/hal/intrin.hpp>
+#include <opencv2/core/hal/intrin.hpp>          // for v_float64x2, operator*
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
@@ -158,6 +187,12 @@ inline float64x2_t v_fma(const float64x2_t &a, const float64x2_t &b, const float
 #endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
 BEGIN_VISP_NAMESPACE
+
+class vpColor;
+class vpHomogeneousMatrix;
+class vpRGBa;
+class vpUniRand;
+
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false),

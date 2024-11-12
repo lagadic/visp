@@ -55,9 +55,10 @@
 #include <visp3/core/vpRotationVector.h>  // for vpRotationVector
 #include <visp3/core/vpRzyzVector.h>      // for vpRzyzVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpThetaUVector;
 
-BEGIN_VISP_NAMESPACE
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpRzyzVector::vpRzyzVector() : vpRotationVector(3) { }
 /*! Copy constructor. */

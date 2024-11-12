@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,22 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/tt/vpTemplateTrackerZNCCForwardAdditional.h>
+ */
+
+#include <visp3/core/vpImageFilter.h>                         // for vpImage...
+#include <visp3/tt/vpTemplateTrackerZNCCForwardAdditional.h>  // for vpTempl...
+#include <visp3/core/vpArray2D.h>                             // for vpArray2D
+#include <visp3/core/vpColVector.h>                           // for vpColVe...
+#include <visp3/core/vpConfig.h>                              // for BEGIN_V...
+#include <visp3/core/vpException.h>                           // for vpExcep...
+#include <visp3/core/vpImage.h>                               // for vpImage
+#include <visp3/core/vpImage_getters.h>                       // for vpImage...
+#include <visp3/core/vpMatrix.h>                              // for vpMatrix
+#include <visp3/tt/vpTemplateTrackerHeader.h>                 // for vpTempl...
+#include <visp3/tt/vpTemplateTrackerWarp.h>                   // for vpTempl...
+#include <visp3/tt/vpTemplateTrackerZNCC.h>                   // for vpTempl...
+
+#include <cmath>                                              // for sqrt, fabs
 
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerZNCCForwardAdditional::vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp)

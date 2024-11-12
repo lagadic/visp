@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,25 @@
  * Common features for Pololu Maestro PanTiltUnit.
  */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>           // for BEGIN_VISP_NAMESPACE, END_...
 
 #if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/robot/vpRobotPololuPtu.h>
+#include <visp3/core/vpDebug.h>            // for vpERROR_TRACE
+#include <visp3/robot/vpRobot.h>           // for vpRobot, vpRobot::JOINT_STATE
+#include <visp3/robot/vpRobotException.h>  // for vpRobotException
+#include <visp3/robot/vpRobotPololuPtu.h>  // for vpRobotPololuPtu
+#include <visp3/core/vpArray2D.h>          // for vpArray2D, operator<<
+#include <visp3/core/vpColVector.h>        // for vpColVector
+#include <visp3/core/vpException.h>        // for vpException
+#include <visp3/core/vpMath.h>             // for vpMath
+#include <visp3/core/vpMatrix.h>           // for vpMatrix
+#include <visp3/core/vpRowVector.h>        // for vpRowVector
+#include <visp3/robot/vpPololu.h>          // for vpPololu
+
+#include <math.h>                          // for cos, fabs, sin
+#include <iostream>                        // for basic_ostream, operator<<
+#include <string>                          // for char_traits, string
 
 BEGIN_VISP_NAMESPACE
 vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, int baudrate, bool verbose)

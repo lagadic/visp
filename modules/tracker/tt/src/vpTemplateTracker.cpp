@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +29,30 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/tt/vpTemplateTracker.h>
-#include <visp3/tt/vpTemplateTrackerBSpline.h>
+#include <visp3/tt/vpTemplateTrackerBSpline.h>   // for vpTemplateTrackerBSp...
+#include <visp3/core/vpArray2D.h>                // for vpArray2D
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpImageFilter.h>            // for vpImageFilter
+#include <visp3/core/vpImage_operators.h>        // for vpImage::operator=
+#include <visp3/core/vpTrackingException.h>      // for vpTrackingException
+#include <visp3/core/vpColVector.h>              // for vpColVector, operator*
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpMatrix.h>                 // for vpMatrix
+#include <visp3/tt/vpTemplateTrackerHeader.h>    // for vpTemplateTrackerPoi...
+#include <visp3/tt/vpTemplateTrackerTriangle.h>  // for vpTemplateTrackerTri...
+#include <visp3/tt/vpTemplateTrackerWarp.h>      // for vpTemplateTrackerWarp
+#include <visp3/tt/vpTemplateTrackerZone.h>      // for vpTemplateTrackerZone
 
 BEGIN_VISP_NAMESPACE
+
+class vpImagePoint;
+class vpRGBa;
+class vpColor;
+
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(nullptr),
   ptTemplatePyr(nullptr), ptTemplateInit(false), templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr),

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +29,17 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
+
 #include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
+#include <visp3/core/vpArray2D.h>       // for vpArray2D
+#include <visp3/core/vpColVector.h>     // for vpColVector
+#include <visp3/core/vpConfig.h>        // for BEGIN_VISP_NAMESPACE, END_VIS...
+#include <visp3/core/vpException.h>     // for vpException
+#include <visp3/core/vpMatrix.h>        // for vpMatrix
+#include <visp3/vision/vpHomography.h>  // for vpHomography
+
+#include <math.h>                       // for sqrt
 
 BEGIN_VISP_NAMESPACE
 // findWarp special a SL3 car methode additionnelle ne marche pas (la derivee
@@ -52,8 +55,8 @@ BEGIN_VISP_NAMESPACE
  * \param nb_pt : Number of points.
  * \param p : Resulting warping function parameters.
  */
-void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
-                                                  const double *v, int nb_pt, vpColVector &p)
+  void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
+                                                    const double *v, int nb_pt, vpColVector &p)
 {
   vpColVector dp(nbParam);
   vpMatrix dW_(2, nbParam);

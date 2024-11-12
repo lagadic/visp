@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,30 +29,47 @@
  *
  * Description:
  * MegaPose wrapper.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
 
-#include <visp3/dnn_tracker/vpMegaPose.h>
+#include <visp3/core/vpCameraParameters.h>   // for vpCameraParameters
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>  // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpRGBa.h>               // for vpRGBa
+#include <visp3/core/vpRect.h>               // for vpRect
+#include <visp3/dnn_tracker/vpMegaPose.h>    // for vpMegaPose, to_megapose_...
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <arpa/inet.h>                       // for htonl, ntohl, htons, ine...
+#include <netinet/in.h>                      // for sockaddr_in
+#include <sys/socket.h>                      // for send, AF_INET, connect
+#include <unistd.h>                          // for read, close
 #else
 #include <io.h>
 #include <winsock2.h>
 #include <ws2tcpip.h> // for inet_pton()
 #endif
-#include <stdexcept>
-#include <mutex>
-#include <thread>
+#include <mutex>                             // for mutex, lock_guard
+
+#include VISP_NLOHMANN_JSON(json.hpp)        // for basic_json
+#include VISP_NLOHMANN_JSON(json_fwd.hpp)    // for json
+
 using json = nlohmann::json; //! json namespace shortcut
+
+#include <assert.h>                          // for assert
+#include <stdint.h>                          // for uint8_t, uint32_t, uint16_t
+#include <string.h>                          // for memcpy, size_t
+#include <cmath>                             // for isnan
+#include <map>                               // for operator==
+#include <string>                            // for basic_string, allocator
+#include <tuple>                             // for tie, tuple
+#include <unordered_map>                     // for unordered_map, _Node_con...
+#include <utility>                           // for pair, make_pair
+#include <vector>                            // for vector
 
 BEGIN_VISP_NAMESPACE
 
@@ -394,7 +410,7 @@ vpMegaPose::vpMegaPose(const std::string &host, int port, const vpCameraParamete
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
-}
+  }
 
 vpMegaPose::~vpMegaPose()
 {

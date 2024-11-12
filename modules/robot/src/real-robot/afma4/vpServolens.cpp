@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
- *
-*****************************************************************************/
+ */
 
 /*!
 
@@ -54,10 +52,13 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/robot/vpServolens.h>
+#include <visp3/core/vpDebug.h>             // for vpERROR_TRACE
+#include <visp3/core/vpTime.h>              // for wait
+#include <visp3/robot/vpRobotException.h>   // for vpRobotException
+#include <visp3/robot/vpServolens.h>        // for vpServolens, vpServolens:...
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
+#include <visp3/core/vpImage.h>             // for vpImage
 
 BEGIN_VISP_NAMESPACE
 /*!

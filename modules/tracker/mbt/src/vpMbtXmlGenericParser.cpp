@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,18 +29,25 @@
  *
  * Description:
  * Load XML Parameter for Model Based Tracker.
- *
-*****************************************************************************/
-#include <visp3/core/vpConfig.h>
+ */
 
-#include <clocale>
-#include <iostream>
-#include <map>
-
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
+#include <visp3/core/vpConfig.h>              // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PUGIXML)
-#include <pugixml.hpp>
+
+#include <clocale>                            // for setlocale, LC_ALL
+#include <iostream>                           // for basic_ostream, char_traits
+#include <map>                                // for map, operator!=, _Rb_tr...
+#include <string>                             // for basic_string, operator<
+#include <utility>                            // for pair
+
+#include <pugixml.hpp>                        // for xml_node, xml_text, xml...
+
+#include <visp3/mbt/vpMbtXmlGenericParser.h>  // for vpMbtXmlGenericParser
+#include <visp3/core/vpCameraParameters.h>    // for vpCameraParameters
+#include <visp3/core/vpException.h>           // for vpException
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>   // for vpMbtFaceDepthNormal
+#include <visp3/me/vpMe.h>                    // for vpMe
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

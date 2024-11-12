@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,26 +29,47 @@
  *
  * Description:
  * Template tracker.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                 // for VISP_HAVE_OPENCV
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc/imgproc.hpp>
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>            // for HAVE_OPENCV_IMGPROC
 #endif
 
-#include <visp3/tt/vpTemplateTrackerZone.h>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/core/matx.hpp>                 // for Vec6f
+#include <opencv2/core/types.hpp>                // for Point2f, Rect
+#include <opencv2/imgproc.hpp>                   // for Subdiv2D
+#endif
+
+#include <visp3/tt/vpTemplateTrackerZone.h>      // for vpTemplateTrackerZone
+#include <visp3/core/vpColor.h>                  // for vpColor
+#include <visp3/core/vpDisplay.h>                // for vpDisplay
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpImagePoint.h>             // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>            // for vpMouseButton, vpMou...
+#include <visp3/core/vpRect.h>                   // for vpRect
+#include <visp3/core/vpTime.h>                   // for wait
+#include <visp3/tt/vpTemplateTrackerTriangle.h>  // for vpTemplateTrackerTri...
+
+#include <assert.h>                              // for assert
+#include <stddef.h>                              // for size_t
+#include <vector>                                // for vector
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+
 /*!
    Default constructor.
  */
-  vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) { }
+vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) { }
 
-  /*!
-     Copy constructor.
-   */
+/*!
+   Copy constructor.
+ */
 vpTemplateTrackerZone::vpTemplateTrackerZone(const vpTemplateTrackerZone &z)
   : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1)
 {

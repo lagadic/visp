@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,18 +29,36 @@
  *
  * Description:
  * Basic class used to make robot simulators.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for VISP_HAVE_DISPLAY
+#include <visp3/visp_modules.h>                     // for VISP_HAVE_MODULE_GUI
 
 #if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
-#include <visp3/robot/vpRobotWireFrameSimulator.h>
-#include <visp3/robot/vpSimulatorViper850.h>
 
-#include "../wireframe-simulator/vpBound.h"
-#include "../wireframe-simulator/vpScene.h"
-#include "../wireframe-simulator/vpVwstack.h"
+#include <cmath>                                    // for fabs
+#include <limits>                                   // for numeric_limits
+#include <mutex>                                    // for mutex
+#include <string>                                   // for basic_string
+
+#include "../wireframe-simulator/vpBound.h"         // for free_Bound_scene
+#include "../wireframe-simulator/vpScene.h"         // for vp2jlc_matrix
+#include "../wireframe-simulator/vpVwstack.h"       // for add_vwstack
+#include "../wireframe-simulator/vpArit.h"          // for IDENTITY_MATRIX
+
+#include <visp3/core/vpColVector.h>                 // for vpColVector
+#include <visp3/core/vpColor.h>                     // for vpColor
+#include <visp3/core/vpHomogeneousMatrix.h>         // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                     // for vpImage
+#include <visp3/core/vpImage_operators.h>           // for vpImage::operator=
+#include <visp3/core/vpMath.h>                      // for vpMath
+#include <visp3/core/vpRGBa.h>                      // for vpRGBa
+#include <visp3/core/vpTime.h>                      // for wait
+#include <visp3/gui/vpDisplayX.h>                   // for vpDisplayX
+#include <visp3/robot/vpRobotSimulator.h>           // for vpRobotSimulator
+#include <visp3/robot/vpWireFrameSimulator.h>       // for vpWireFrameSimulator
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Matrix
+#include <visp3/robot/vpRobotWireFrameSimulator.h>  // for vpRobotWireFrameS...
 
 BEGIN_VISP_NAMESPACE
 /*!

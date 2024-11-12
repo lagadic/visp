@@ -39,18 +39,21 @@
   implemented with opencv.
 */
 
-#ifndef _vpKltOpencv_h_
-#define _vpKltOpencv_h_
+#ifndef VP_KLT_OPENCV_H
+#define VP_KLT_OPENCV_H
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>        // for HAVE_OPENCV_HIGHGUI, HAV...
+#endif
+
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/video/tracking.hpp>
+#include <opencv2/core/mat.hpp>              // for Mat, _OutputArray, _Inpu...
+#include <opencv2/core/types.hpp>            // for Point2f, Point_, TermCri...
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -150,8 +153,8 @@ public:
    * \param thickness : Thickness of the points
    */
   static void display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
-                        const std::vector<long> &featuresid, const vpColor &color = vpColor::green,
-                        unsigned int thickness = 1);
+                      const std::vector<long> &featuresid, const vpColor &color = vpColor::green,
+                      unsigned int thickness = 1);
   /*!
    * Display features list with ids.
    *

@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +29,64 @@
  *
  * Description:
  * Manage depth normal features for a particular face.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpCPUFeatures.h>
-#include <visp3/mbt/vpMbtFaceDepthNormal.h>
-#include <visp3/mbt/vpMbtTukeyEstimator.h>
+#include <visp3/core/vpConfig.h>                      // for VISP_HAVE_PCL
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_SEGMENTATION) && defined(VISP_HAVE_PCL_FILTERS) && defined(VISP_HAVE_PCL_COMMON)
-#include <pcl/common/centroid.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/ModelCoefficients.h>                    // for ModelCoefficients
+#include <pcl/PointIndices.h>                         // for PointIndices
+#include <pcl/common/point_tests.h>                   // for isFinite
+#include <pcl/exceptions.h>                           // for PCLException
+#include <pcl/filters/extract_indices.h>              // for ExtractIndices
+#include <pcl/pcl_config.h>                           // for PCL_VERSION_COM...
+#include <pcl/point_cloud.h>                          // for PointCloud
+#include <pcl/sample_consensus/model_types.h>         // for SacModel
+#include <pcl/segmentation/sac_segmentation.h>        // for SACSegmentation
+#include <pcl/common/impl/centroid.hpp>               // for computeCentroid
+#include <pcl/impl/point_types.hpp>                   // for PointXYZ
 #endif
+
+#include <visp3/core/vpCPUFeatures.h>                 // for checkSSE2
+#include <visp3/core/vpArray2D.h>                     // for vpArray2D
+#include <visp3/core/vpCameraParameters.h>            // for vpCameraParameters
+#include <visp3/core/vpColVector.h>                   // for vpColVector
+#include <visp3/core/vpColor.h>                       // for vpColor
+#include <visp3/core/vpDisplay.h>                     // for vpDisplay
+#include <visp3/core/vpException.h>                   // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>           // for vpHomogeneousMa...
+#include <visp3/core/vpImage.h>                       // for vpImage
+#include <visp3/core/vpImagePoint.h>                  // for vpImagePoint
+#include <visp3/core/vpMath.h>                        // for vpMath
+#include <visp3/core/vpMatrix.h>                      // for vpMatrix
+#include <visp3/core/vpMeterPixelConversion.h>        // for vpMeterPixelCon...
+#include <visp3/core/vpPixelMeterConversion.h>        // for vpPixelMeterCon...
+#include <visp3/core/vpPlane.h>                       // for vpPlane
+#include <visp3/core/vpPoint.h>                       // for vpPoint
+#include <visp3/core/vpPolygon.h>                     // for vpPolygon
+#include <visp3/core/vpPolygon3D.h>                   // for vpPolygon3D
+#include <visp3/core/vpRect.h>                        // for vpRect
+#include <visp3/core/vpTranslationVector.h>           // for vpTranslationVe...
+#include <visp3/mbt/vpMbHiddenFaces.h>                // for vpMbHiddenFaces
+#include <visp3/mbt/vpMbScanLine.h>                   // for vpMbScanLine
+#include <visp3/mbt/vpMbtDistanceLine.h>              // for vpMbtDistanceLine
+#include <visp3/mbt/vpMbtPolygon.h>                   // for vpMbtPolygon
+#include <visp3/mbt/vpMbtFaceDepthNormal.h>           // for vpMbtFaceDepthN...
+#include <visp3/mbt/vpMbtTukeyEstimator.h>            // for vpMbtTukeyEstim...
+#include <visp3/me/vpMeTracker.h>                     // for vpMeTracker
+
+
+#include <stddef.h>                                   // for size_t
+#include <algorithm>                                  // for max, min, fill_n
+#include <cmath>                                      // for fabs, acos, sqrt
+#include <iostream>                                   // for basic_ostream
+#include <iterator>                                   // for pair
+#include <limits>                                     // for numeric_limits
+#include <list>                                       // for list, operator!=
+#include <memory>                                     // for __shared_ptr_ac...
+#include <string>                                     // for char_traits
+#include <utility>                                    // for pair
+#include <vector>                                     // for vector
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
@@ -56,6 +101,10 @@
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpRGBa;
+class vpUniRand;
+
 vpMbtFaceDepthNormal::vpMbtFaceDepthNormal()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
   m_planeObject(), m_polygon(nullptr), m_useScanLine(false), m_faceActivated(false),

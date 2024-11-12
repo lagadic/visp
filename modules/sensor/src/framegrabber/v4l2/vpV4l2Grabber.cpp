@@ -52,12 +52,16 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpFrameGrabberException.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
-//#include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageTools.h>
+
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
+#include <visp3/core/vpDebug.h>                  // for vpERROR_TRACE
+#include <visp3/core/vpFrameGrabberException.h>  // for vpFrameGrabberException
+#include <visp3/core/vpImageConvert.h>           // for vpImageConvert
+#include <visp3/core/vpImageTools.h>             // for vpImageTools
+#include <visp3/sensor/vpV4l2Grabber.h>          // for vpV4l2Grabber, vpV4l...
+#include <visp3/core/vpImage.h>                  // for vpImage
+#include <visp3/core/vpRGBa.h>                   // for vpRGBa
+#include <visp3/core/vpRect.h>                   // for vpRect
 
 BEGIN_VISP_NAMESPACE
 const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;

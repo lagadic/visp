@@ -35,14 +35,13 @@
   \file vpAdaptiveGain.cpp
 */
 
-/* --- VISP --- */
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/core/vpColVector.h>   // for vpColVector
+#include <visp3/vs/vpAdaptiveGain.h>  // for vpAdaptiveGain, operator<<
+#include <visp3/core/vpConfig.h>      // for BEGIN_VISP_NAMESPACE, END_VISP_...
 
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
+#include <cmath>                      // for exp, fabs
+#include <iostream>                   // for basic_ostream, char_traits, ope...
+#include <limits>                     // for numeric_limits
 
 BEGIN_VISP_NAMESPACE
 const double vpAdaptiveGain::DEFAULT_LAMBDA_ZERO = 1.666;

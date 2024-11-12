@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,20 +33,16 @@
  * Les entrees non specifiees sont effectuees
  * sur le fichier "source" du module "lex.c".
  * Pour les mots cles des "fprintf_..." voir "token.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#ifndef vpMyio_h
-#define vpMyio_h
+#ifndef VP_MY_IO_H
+#define VP_MY_IO_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpMy.h"
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Index, Type
 
 BEGIN_VISP_NAMESPACE
 void fscanf_float(float *fp);

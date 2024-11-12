@@ -52,9 +52,10 @@
 #include <visp3/core/vpPoint.h>                 // for vpPoint
 #include <visp3/core/vpRowVector.h>             // for vpRowVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpHomogeneousMatrix;
 
-BEGIN_VISP_NAMESPACE
 /*!
   Basic constructor.
 */

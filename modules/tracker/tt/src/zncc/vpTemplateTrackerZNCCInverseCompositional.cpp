@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +29,23 @@
  *
  * Description:
  * Template tracker.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
-#include <limits> // numeric_limits
+ */
 
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/tt/vpTemplateTrackerZNCCInverseCompositional.h>
+#include <visp3/core/vpImageFilter.h>                            // for vpIm...
+#include <visp3/tt/vpTemplateTrackerZNCCInverseCompositional.h>  // for vpTe...
+#include <visp3/core/vpArray2D.h>                                // for vpAr...
+#include <visp3/core/vpColVector.h>                              // for vpCo...
+#include <visp3/core/vpConfig.h>                                 // for BEGI...
+#include <visp3/core/vpException.h>                              // for vpEx...
+#include <visp3/core/vpImage.h>                                  // for vpImage
+#include <visp3/core/vpImage_getters.h>                          // for vpIm...
+#include <visp3/core/vpMatrix.h>                                 // for vpMa...
+#include <visp3/tt/vpTemplateTrackerHeader.h>                    // for vpTe...
+#include <visp3/tt/vpTemplateTrackerWarp.h>                      // for vpTe...
+#include <visp3/tt/vpTemplateTrackerZNCC.h>                      // for APPR...
+
+#include <cmath>                                                 // for sqrt
+#include <limits>                                                // for nume...
 
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)

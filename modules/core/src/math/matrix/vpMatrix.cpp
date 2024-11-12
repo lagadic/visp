@@ -58,12 +58,6 @@
 #include <visp3/core/vpArray2D.h>    // for vpArray2D
 #include <visp3/core/vpRowVector.h>  // for vpRowVector
 
-class vpForceTwistMatrix;
-class vpHomogeneousMatrix;
-class vpRotationMatrix;
-class vpTranslationVector;
-class vpVelocityTwistMatrix;
-
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL
 #include <gsl/gsl_eigen.h>           // for gsl_eigen_symmv, gsl_eigen_symmv...
@@ -76,6 +70,12 @@ class vpVelocityTwistMatrix;
 #endif
 
 BEGIN_VISP_NAMESPACE
+
+class vpForceTwistMatrix;
+class vpHomogeneousMatrix;
+class vpRotationMatrix;
+class vpTranslationVector;
+class vpVelocityTwistMatrix;
 
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_GSL

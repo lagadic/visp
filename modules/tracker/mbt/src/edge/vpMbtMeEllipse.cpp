@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,22 +29,34 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
+
+#include <visp3/core/vpConfig.h>             // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <visp3/core/vpDebug.h>              // for vpDERROR_TRACE
+#include <visp3/core/vpImagePoint.h>         // for vpImagePoint
+#include <visp3/core/vpTrackingException.h>  // for vpTrackingException
+#include <visp3/core/vpArray2D.h>            // for vpArray2D
+#include <visp3/core/vpColVector.h>          // for vpColVector
+#include <visp3/core/vpColor.h>              // for vpColor
+#include <visp3/core/vpDisplay.h>            // for vpDisplay
+#include <visp3/core/vpException.h>          // for vpException
+#include <visp3/core/vpImage.h>              // for vpImage
+#include <visp3/core/vpMath.h>               // for vpMath
+#include <visp3/core/vpMatrix.h>             // for vpMatrix
+#include <visp3/me/vpMe.h>                   // for vpMe
+#include <visp3/me/vpMeEllipse.h>            // for vpMeEllipse
+#include <visp3/me/vpMeSite.h>               // for vpMeSite, vpMeSite::NO_S...
+#include <visp3/me/vpMeTracker.h>            // for vpMeTracker
 #include <visp3/mbt/vpMbtMeEllipse.h>
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpRobust.h>
-#include <visp3/core/vpTrackingException.h>
-#include <visp3/me/vpMe.h>
-
-#include <algorithm> // (std::min)
-#include <cmath>     // std::fabs
-#include <limits>    // numeric_limits
+#include <algorithm>                         // for min
+#include <cmath>                             // for cos, sin, M_PI, acos, fabs
+#include <iostream>                          // for basic_ostream, operator<<
+#include <limits>                            // for numeric_limits
+#include <list>                              // for _List_iterator, list
 
 BEGIN_VISP_NAMESPACE
 /*!

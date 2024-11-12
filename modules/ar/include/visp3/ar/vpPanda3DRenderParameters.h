@@ -31,10 +31,14 @@
 #ifndef VP_PANDA3D_RENDER_PARAMETERS_H
 #define VP_PANDA3D_RENDER_PARAMETERS_H
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
 
 #if defined(VISP_HAVE_PANDA3D)
-#include <visp3/core/vpCameraParameters.h>
+
+#include <utility>                          // for swap
+
+#include <visp3/core/vpCameraParameters.h>  // for vpCameraParameters, vpCam...
+#include <visp3/core/vpException.h>         // for vpException
 
 class Camera;
 

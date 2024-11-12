@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +29,26 @@
  *
  * Description:
  * Example of template tracking.
- *
- * Authors:
- * Amaury Dame
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
+#include <visp3/tt/vpTemplateTrackerWarp.h>          // for vpTemplateTracke..
+#include <visp3/core/vpArray2D.h>                    // for vpArray2D
+#include <visp3/core/vpConfig.h>                     // for BEGIN_VISP_NAMES...
+#include <visp3/core/vpException.h>                  // for vpException
+#include <visp3/core/vpImage.h>                      // for vpImage
+#include <visp3/core/vpImageFilter.h>                // for vpImageFilter
+#include <visp3/core/vpImage_getters.h>              // for vpImage<>::getValue
+#include <visp3/core/vpColVector.h>                  // for vpColVector, ope...
+#include <visp3/core/vpMatrix.h>                     // for vpMatrix, operator*
+#include <visp3/core/vpRowVector.h>                  // for vpRowVector
+#include <visp3/core/vpTrackingException.h>          // for vpTrackingException
+#include <visp3/tt/vpTemplateTrackerHeader.h>        // for vpTemplateTracke...
+#include <visp3/tt_mi/vpTemplateTrackerMI.h>         // for vpTemplateTrackerMI
+#include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>  // for vpTemplateTracke...
+
+#include <cmath>                                     // for fabs
+#include <limits>                                    // for numeric_limits
 
 #ifdef VISP_HAVE_OPENMP
 #include <omp.h>

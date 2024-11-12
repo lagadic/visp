@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -34,21 +33,18 @@
  *      Les entrees non specifiees sont effectuees
  *      sur le fichier "source" du module "lex.c".
  *      Pour les mots cles des "fprintf_..." voir "token.c".
- *
- * Authors:
- * Jean-Luc CORRE
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpArit.h"
-#include "vpLex.h"
-#include "vpMy.h"
-#include "vpToken.h"
 
-#include <stdio.h>
+#include <stdio.h>                                  // for NULL, fprintf, FILE
+#include "vpArit.h"                                 // for AritPosition, Vector
+#include "vpLex.h"                                  // for lex, lexerr, popu...
+#include "vpToken.h"                                // for T_INT, T_FLOAT
+
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Point3f
 
 BEGIN_VISP_NAMESPACE
 /*
@@ -57,7 +53,7 @@ BEGIN_VISP_NAMESPACE
  * f    Fichier en sortie.
  * pp    Positionnement a ecrite.
  */
-void fprintf_Position(FILE *f, AritPosition *pp)
+  void fprintf_Position(FILE *f, AritPosition *pp)
 {
   fprintf(f, "%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n", pp->rotate.x, pp->rotate.y, pp->rotate.z,
           pp->scale.x, pp->scale.y, pp->scale.z, pp->translate.x, pp->translate.y, pp->translate.z);

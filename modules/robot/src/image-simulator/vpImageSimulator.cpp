@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,22 +29,46 @@
  *
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- *
-*****************************************************************************/
+ */
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpPolygon3D.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/robot/vpImageSimulator.h>
+#include <visp3/core/vpConfig.h>                // for BEGIN_VISP_NAMESPACE
+#include <visp3/visp_modules.h>                 // for VISP_HAVE_MODULE_IO
+
+#include <visp3/core/vpImageConvert.h>          // for vpImageConvert
+#include <visp3/core/vpMatrixException.h>       // for vpMatrixException
+#include <visp3/core/vpMeterPixelConversion.h>  // for vpMeterPixelConversion
+#include <visp3/core/vpPixelMeterConversion.h>  // for vpPixelMeterConversion
+#include <visp3/core/vpPolygon3D.h>             // for vpPolygon3D, vpPolygo...
+#include <visp3/core/vpRotationMatrix.h>        // for vpRotationMatrix
+#include <visp3/robot/vpImageSimulator.h>       // for vpImageSimulator, vpI...
+#include <visp3/core/vpArray2D.h>               // for vpArray2D
+#include <visp3/core/vpColVector.h>             // for vpColVector
+#include <visp3/core/vpColor.h>                 // for vpColor
+#include <visp3/core/vpException.h>             // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>     // for vpHomogeneousMatrix
+#include <visp3/core/vpImage.h>                 // for vpImage
+#include <visp3/core/vpImagePoint.h>            // for vpImagePoint
+#include <visp3/core/vpImage_getters.h>         // for vpImage<>::getValue
+#include <visp3/core/vpImage_operators.h>       // for vpImage::operator=
+#include <visp3/core/vpMatrix.h>                // for vpMatrix
+#include <visp3/core/vpPoint.h>                 // for vpPoint
+#include <visp3/core/vpRGBa.h>                  // for vpRGBa
+#include <visp3/core/vpRect.h>                  // for vpRect
+#include <visp3/core/vpTriangle.h>              // for vpTriangle
 
 #ifdef VISP_HAVE_MODULE_IO
-#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>                 // for vpImageIo
 #endif
 
+#include <list>                                 // for list, operator!=, _Li...
+#include <ostream>                              // for basic_ostream, operat...
+#include <string>                               // for basic_string
+#include <vector>                               // for vector
+
 BEGIN_VISP_NAMESPACE
+
+class vpCameraParameters;
+
 /*!
   Basic constructor.
 

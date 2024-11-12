@@ -28,11 +28,22 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DRendererSet.h>
+#include <visp3/core/vpConfig.h>                 // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
-#include "load_prc_file.h"
+#include <string>                                // for basic_string, operat...
+#include <memory>                                // for shared_ptr, __shared...
+#include <vector>                                // for vector
+
+#include "load_prc_file.h"                       // for load_prc_file_data
+
+#include <visp3/ar/vpPanda3DRendererSet.h>
+#include <visp3/ar/vpPanda3DBaseRenderer.h>      // for vpPanda3DBaseRenderer
+#include <visp3/ar/vpPanda3DLight.h>             // for vpPanda3DLightable
+#include <visp3/ar/vpPanda3DRenderParameters.h>  // for vpPanda3DRenderParam...
+#include <visp3/core/vpException.h>              // for vpException
+#include <visp3/core/vpHomogeneousMatrix.h>      // for vpHomogeneousMatrix
 
 BEGIN_VISP_NAMESPACE
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")

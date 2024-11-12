@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +30,17 @@
  * Description:
  * Palette of colors that is said to be color-blind people friendly.
  * This palette has been found on https://jfly.uni-koeln.de/color/#see
- *
-*****************************************************************************/
+ */
 
-#ifndef _vpColorBlindFliendlyPalette_h_
-#define _vpColorBlindFliendlyPalette_h_
+#ifndef VP_COLOR_BLIND_FRIENDLY_PALETTE_H
+#define VP_COLOR_BLIND_FRIENDLY_PALETTE_H
 
-#include <iostream>
+#include <iostream>               // for istream, ostream
+#include <string>                 // for basic_string, string
+#include <vector>                 // for vector
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpColor.h>
+#include <visp3/core/vpColor.h>   // for vpColor
+#include <visp3/core/vpConfig.h>  // for VISP_NAMESPACE_ADDRESSING, BEGIN_VI...
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
 /**
@@ -197,4 +197,4 @@ END_VISP_NAMESPACE
 std::istream &operator>>(std::istream &is, VISP_NAMESPACE_ADDRESSING vpColorBlindFriendlyPalette &color);
 
 #endif
-#endif // _vpColorBlindFliendlyPalette_h_
+#endif

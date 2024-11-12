@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +29,32 @@
  *
  * Description:
  * Interface for the qb robotics devices.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
 
-#include <regex>
+#include <errno.h>                   // for errno
+#include <string.h>                  // for strerror
+#include <algorithm>                 // for copy, max
+#include <array>                     // for array
+#include <cstdlib>                   // for size_t, atof
+#include <iostream>                  // for basic_ostream, operator<<, basic...
+#include <map>                       // for map, _Rb_tree_iterator, operator!=
+#include <memory>                    // for unique_ptr, allocator, shared_ptr
+#include <mutex>                     // for unique_lock, mutex, lock_guard
+#include <regex>                     // for regex_match, regex
+#include <string>                    // for basic_string, char_traits, opera...
+#include <utility>                   // for pair, make_pair
+#include <vector>                    // for vector
 
-#include <qb_device_driver.h>
+#include <qb_device_driver.h>        // for qbDeviceAPI
 
-#include <visp3/core/vpIoTools.h>
-#include <visp3/robot/vpQbDevice.h>
+#include <visp3/core/vpConfig.h>     // for BEGIN_VISP_NAMESPACE, END_VISP_N...
+#include <visp3/core/vpIoTools.h>    // for vpIoTools
+#include <visp3/robot/vpQbDevice.h>  // for vpQbDevice
+#include <qbmove_communications.h>   // for comm_settings, INVALID_HANDLE_VALUE
+
 
 BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

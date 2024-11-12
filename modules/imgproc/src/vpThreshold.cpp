@@ -36,9 +36,19 @@
   \brief Automatic thresholding functions.
 */
 
-#include <visp3/core/vpHistogram.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/imgproc/vpImgproc.h>
+#include <visp3/core/vpHistogram.h>   // for vpHistogram
+#include <visp3/core/vpImageTools.h>  // for vpImageTools
+#include <visp3/imgproc/vpImgproc.h>  // for AUTO_THRESHOLD_HUANG, AUTO_THRE...
+#include <visp3/core/vpConfig.h>      // for VISP_NAMESPACE_NAME
+#include <visp3/core/vpImage.h>       // for vpImage
+#include <visp3/core/vpMath.h>        // for vpMath
+
+#include <algorithm>                  // for max
+#include <cmath>                      // for floor, log, abs
+#include <iostream>                   // for char_traits, basic_ostream, ope...
+#include <limits>                     // for numeric_limits
+#include <vector>                     // for vector
+#include <stdlib.h>                   // for size_t, abs
 
 namespace VISP_NAMESPACE_NAME
 {

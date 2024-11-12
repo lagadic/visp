@@ -36,29 +36,32 @@
   \brief Define the X11 console to display images.
 */
 
-#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>            // for BEGIN_VISP_NAMESPACE, END...
+
 #ifdef VISP_HAVE_X11
 
-#include <cmath> // std::fabs
-#include <iostream>
-#include <limits> // numeric_limits
-#include <stdio.h>
-#include <stdlib.h>
+#include <algorithm>                        // for max, min
+#include <cmath>                            // for ceil, fabs, sqrt
+#include <limits>                           // for numeric_limits
+#include <string>                           // for basic_string, string
+#include <stdlib.h>                         // for free, malloc, size_t
 
-// Display stuff
-#include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-
-// debug / exception
-#include <visp3/core/vpDisplayException.h>
-
-// math
-#include <visp3/core/vpMath.h>
+#include <visp3/core/vpDisplay.h>           // for vpDisplay
+#include <visp3/core/vpDisplayException.h>  // for vpDisplayException
+#include <visp3/core/vpMath.h>              // for vpMath
+#include <visp3/core/vpColor.h>             // for vpColor, vpColor::id_unknown
+#include <visp3/core/vpImage.h>             // for vpImage
+#include <visp3/core/vpImagePoint.h>        // for vpImagePoint
+#include <visp3/core/vpMouseButton.h>       // for vpMouseButton, vpMouseBut...
+#include <visp3/core/vpRGBa.h>              // for vpRGBa
+#include <visp3/core/vpRect.h>              // for vpRect
+#include <visp3/gui/vpDisplayX.h>           // for vpDisplayX
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <X11/X.h>                          // for Window, ButtonPressMask
+#include <X11/Xlib.h>                       // for XAllocColor, XStoreColor
+#include <X11/Xutil.h>                      // for XLookupString, XDestroyImage
 
 BEGIN_VISP_NAMESPACE
 

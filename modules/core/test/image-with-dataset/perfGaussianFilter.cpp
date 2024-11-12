@@ -46,9 +46,12 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/opencv_modules.hpp>     // for HAVE_OPENCV_IMGCODECS, HAVE...
+#endif
+
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #endif
 
 #ifdef ENABLE_VISP_NAMESPACE

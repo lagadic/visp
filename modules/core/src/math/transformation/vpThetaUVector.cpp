@@ -57,12 +57,13 @@
 #include <visp3/core/vpRotationMatrix.h>     // for vpRotationMatrix
 #include <visp3/core/vpRotationVector.h>     // for vpRotationVector
 
+BEGIN_VISP_NAMESPACE
+
 class vpQuaternionVector;
 class vpRxyzVector;
 class vpRzyxVector;
 class vpRzyzVector;
 
-BEGIN_VISP_NAMESPACE
 const double vpThetaUVector::minimum = 0.0001;
 
 /*! Default constructor that initialize all the 3 angles to zero. */

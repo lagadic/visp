@@ -28,12 +28,24 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <visp3/ar/vpPanda3DCommonFilters.h>
-#include <visp3/ar/vpPanda3DRGBRenderer.h>
+#include <visp3/core/vpConfig.h>                  // for BEGIN_VISP_NAMESPACE
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include <utility>                                // for move
+#include <memory>                                 // for shared_ptr
+#include <string>                                 // for basic_string, string
+
+#include <visp3/ar/vpPanda3DCommonFilters.h>
+#include <visp3/ar/vpPanda3DPostProcessFilter.h>  // for vpPanda3DPostProces...
+#include <visp3/ar/vpPanda3DRGBRenderer.h>        // for vpPanda3DRGBRenderer
+
 BEGIN_VISP_NAMESPACE
+
+class vpPanda3DBaseRenderer;
+class vpRGBf;
+template <class Type> class vpImage;
+
 const std::string vpPanda3DLuminanceFilter::FRAGMENT_SHADER =
 "#version 330\n"
 "in vec2 texcoords;\n"
