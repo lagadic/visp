@@ -36,6 +36,7 @@
 #include <string.h>                                 // for memmove
 #include <visp3/core/vpConfig.h>                    // for BEGIN_VISP_NAMESPACE
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>  // for Matrix, Point3f
+#include <visp3/robot/vpMath.h>                     // for M_PI_2 under Windows
 #include "vpMy.h"                                   // for M_EPSILON, FABS
 #include "vpArit.h"
 
