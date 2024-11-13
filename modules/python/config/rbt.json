@@ -29,13 +29,7 @@
       "methods": [
         {
           "static": false,
-          "signature": "void registerTypeRaw(const std::string&, const std::function<std::shared_ptr<T>(const std::string &)>)",
-          "keep_alive": [
-            [
-              1,
-              3
-            ]
-          ]
+          "signature": "void registerTypeRaw(const std::string&, const std::function<std::shared_ptr<T>(const std::string&)>&)"
         }
       ],
       "acknowledge_pointer_or_ref_fields": [

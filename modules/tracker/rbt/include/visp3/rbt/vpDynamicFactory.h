@@ -59,13 +59,23 @@ public:
     m_jsonBuilders[key] = function;
   }
 
-  void registerTypeRaw(const std::string &key, const std::function<std::shared_ptr<T>(const std::string &)> function)
+  void registerTypeRaw(const std::string &key, const std::function<std::shared_ptr<T>(const std::string &)> &function)
   {
     if (m_jsonBuilders.find(key) != m_jsonBuilders.end() || m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
       throw vpException(vpException::badValue, "Type %s was already registered in the factory", key.c_str());
     }
     std::cout << "IN REGISTERING RAW TYPE" << std::endl;
-    m_jsonRawBuilders[key] = function;
+    std::cout << "Key is " << key << std::endl;
+
+    // m_jsonRawBuilders.insert({ key, function });
+    // m_jsonRawBuilders[key] = [](const std::string &s) -> std::shared_ptr<T> {
+    m_raw = [](const std::string &s) -> std::shared_ptr<T> {
+      std::cout << "IN CPP LAMBDA, before calling python fn" << std::endl;
+      return nullptr;
+      // return function(s);
+      };
+    std::cout << "in register: THIS is " << (void *)(this) << std::endl;
+
     std::cout << "IN REGISTERING RAW TYPE END" << std::endl;
 
   }
@@ -77,12 +87,25 @@ public:
     if (m_jsonBuilders.find(key) != m_jsonBuilders.end()) {
       return m_jsonBuilders[key](j);
     }
-    else if (m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
-      return m_jsonRawBuilders[key](j.dump());
-    }
     else {
-      return nullptr;
+      std::cout << "in call: THIS is " << (void *)(this) << std::endl;
+
+      std::cout << "CALLING RAW METHOD!" << std::endl;
+      std::string rawRep = j.dump();
+      std::cout << rawRep << std::endl;
+      std::cout << (void *)(&m_raw) << std::endl;
+      std::shared_ptr<T> res = m_raw(rawRep);
+      std::cout << "After RAW METHOD!" << std::endl;
+      return res;
     }
+
+    // else if (m_jsonRawBuilders.find(key) != m_jsonRawBuilders.end()) {
+    //   std::cout << "Before accessing map" << std::endl;
+    //   return m_jsonRawBuilders[key](j.dump());
+    // }
+    // else {
+    //   return nullptr;
+    // }
   }
 
   void setJsonKeyFinder(const std::function<std::string(const nlohmann::json &)> &finderFn)
@@ -92,11 +115,16 @@ public:
 #endif
 
 protected:
-  vpDynamicFactory() = default;
+
+  vpDynamicFactory()
+  {
+    std::cout << "in constructor: THIS is " << (void *)(this) << std::endl;
+  }
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
   std::map<std::string, std::function<std::shared_ptr<T>(const nlohmann::json &)>> m_jsonBuilders;
   std::map<std::string, std::function<std::shared_ptr<T>(const std::string &)>> m_jsonRawBuilders;
+  std::function<std::shared_ptr<T>(const std::string &)> m_raw;
 
   std::function<std::string(const nlohmann::json &)> m_keyFinder; //! Function to retrieve the key from a json object
 #endif
