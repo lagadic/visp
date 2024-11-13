@@ -245,12 +245,7 @@ void vpPanda3DRGBRenderer::setBackgroundImage(const vpImage<vpRGBa> &background)
   for (unsigned int i = 0; i < background.getHeight(); ++i) {
     const vpRGBa *srcRow = background[background.getHeight() - (i + 1)];
     unsigned char *destRow = data + i * background.getWidth() * 4;
-    for (unsigned int j = 0; j < background.getWidth(); ++j) {
-      destRow[j * 4] = srcRow[j].B;
-      destRow[j * 4 + 1] = srcRow[j].G;
-      destRow[j * 4 + 2] = srcRow[j].R;
-      destRow[j * 4 + 3] = srcRow[j].A;
-    }
+    memcpy(destRow, srcRow, background.getWidth() * 4);
   }
 }
 
