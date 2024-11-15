@@ -97,6 +97,8 @@ public:
   std::string getModelPath() const { return m_modelPath; }
   void setModelPath(const std::string &path);
 
+  std::vector<std::shared_ptr<vpRBFeatureTracker>> getFeatureTrackers() { return m_trackers; }
+
   vpCameraParameters getCameraParameters() const;
   void setCameraParameters(const vpCameraParameters &cam, unsigned h, unsigned w);
 

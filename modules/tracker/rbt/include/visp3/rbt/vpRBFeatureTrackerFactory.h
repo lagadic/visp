@@ -55,9 +55,9 @@ public:
   static vpRBFeatureTrackerFactory &getFactory()
   {
     static vpRBFeatureTrackerFactory factory;
-    std::cout << "RBFEATUREFACTORY = " << (void *)(&factory) << std::endl;
     return factory;
   }
+
 };
 
 END_VISP_NAMESPACE

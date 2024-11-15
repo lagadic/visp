@@ -39,7 +39,6 @@ BEGIN_VISP_NAMESPACE
 
 vpRBFeatureTrackerFactory::vpRBFeatureTrackerFactory()
 {
-  std::cout << "in RBFEATURE constructor: THIS is " << (void *)(this) << std::endl;
   setJsonKeyFinder([](const nlohmann::json &j) -> std::string {
     return j.at("type");
   });
