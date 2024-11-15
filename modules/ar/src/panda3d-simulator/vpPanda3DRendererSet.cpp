@@ -35,6 +35,13 @@
 #include "load_prc_file.h"
 
 BEGIN_VISP_NAMESPACE
+vpPanda3DRendererSet::vpPanda3DRendererSet() : vpPanda3DBaseRenderer("set")
+{
+  load_prc_file_data("", "textures-power-2 none");
+  load_prc_file_data("", "gl-version 3 2");
+  load_prc_file_data("", "no-singular-invert");
+}
+
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
