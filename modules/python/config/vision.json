@@ -1,9 +1,15 @@
 {
-  "ignored_headers": ["vpPoseException.h", "vpCalibrationException.h", "vpPoseFeatures.h"],
+  "ignored_headers": [
+    "vpPoseException.h",
+    "vpCalibrationException.h",
+    "vpPoseFeatures.h"
+  ],
+  "user_defined_headers": [
+    "vision.hpp"
+  ],
   "classes": {
-    "vpHomography" : {
-      "methods":
-      [
+    "vpHomography": {
+      "methods": [
         {
           "static": true,
           "signature": "void computeDisplacement(const vpHomography &, const vpColVector &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)",
@@ -20,6 +26,9 @@
           "custom_name": "computeHomographyDisplacement"
         }
       ]
+    },
+    "vpPose": {
+      "additional_bindings": "bindings_vpPose"
     }
   }
 }
