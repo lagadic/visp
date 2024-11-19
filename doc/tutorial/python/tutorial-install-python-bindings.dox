@@ -115,19 +115,19 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
   - **A. On macOS**:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
+        (visp-conda-ws) $ conda install cmake cxx-compiler make xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
 
   - **B. On Ubuntu or other linux-like**:
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake xorg-libx11 xorg-libxfixes libxml2 libdc1394 >=2.2.6 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
+        (visp-conda-ws) $ conda install cmake cxx-compiler make xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
 
   - **C. On Windows**:
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) C:\Users\User> conda install cmake llvm-openmp openmp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
+        (visp-conda-ws) C:\Users\User> conda install cmake cxx-compiler llvm-openmp openmp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
 
 \note In the previous installation commands you can also specify the Python version if desired adding
 for example `python=3.10` to the previous command lines.
