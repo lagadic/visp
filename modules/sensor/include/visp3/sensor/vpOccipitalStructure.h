@@ -84,7 +84,7 @@ BEGIN_VISP_NAMESPACE
   uses vpOccipitalStructure class.
 
   \code
-  cmake_minimum_required(VERSION 3.5)
+  cmake_minimum_required(VERSION 3.10)
 
   project(sample)
 
