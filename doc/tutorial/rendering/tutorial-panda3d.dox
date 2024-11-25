@@ -34,6 +34,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 - Hereafter you will find the instructions to build and install Panda3D from source on Ubuntu 22.04
   \code{.sh}
+  $ sudo apt install python3-pip
   $ mkdir -p $VISP_WS/3rdparty/panda3d
   $ cd $VISP_WS/3rdparty/panda3d
   $ git clone https://github.com/panda3d/panda3d
