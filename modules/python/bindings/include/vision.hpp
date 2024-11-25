@@ -50,6 +50,18 @@ void bindings_vpPose(py::class_<vpPose, std::shared_ptr<vpPose>> &pyPose)
    [](vpPose &self, vpPose::vpPoseMethodType method, vpHomogeneousMatrix &cMo) -> bool {
      return self.computePose(method, cMo);
   });
+
+  pyPose.def_static("computePlanarObjectPoseFromRGBD",
+   [](const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+      const vpCameraParameters &colorIntrinsics,
+      const std::vector<vpPoint> &point3d) -> std::tuple<bool, vpHomogeneousMatrix, double> {
+        double confidence = 0.0;
+        vpHomogeneousMatrix cMo;
+        bool valid = vpPose::computePlanarObjectPoseFromRGBD(depthMap, corners, colorIntrinsics, point3d, cMo, &confidence);
+        return std::make_tuple(valid, cMo, confidence);
+  });
+
+
 }
 
 

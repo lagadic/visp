@@ -28,7 +28,15 @@
       ]
     },
     "vpPose": {
-      "additional_bindings": "bindings_vpPose"
+      "additional_bindings": "bindings_vpPose",
+      "methods": [
+        {
+          "static": true,
+          "signature": "bool computePlanarObjectPoseFromRGBD(const vpImage<float>&, const std::vector<vpImagePoint>&, const vpCameraParameters&, const std::vector<vpPoint>&, vpHomogeneousMatrix&, double*)",
+          "ignore": true,
+          "custom_implem": true
+        }
+      ]
     }
   }
 }
