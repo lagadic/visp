@@ -86,5 +86,5 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonFactory.cpp.o) has no symbols
-void dummy_vpPylonFactory() { };
+void dummy_vpPylonFactory() { }
 #endif // #ifdef VISP_HAVE_PYLON

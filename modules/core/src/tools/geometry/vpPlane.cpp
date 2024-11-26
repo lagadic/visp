@@ -414,5 +414,5 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p)
 {
   return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << "," << p.getD() << ") ");
-};
+}
 END_VISP_NAMESPACE
