@@ -115,13 +115,13 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
   - **A. On macOS**:
 
-        (visp-conda-ws) $ conda install cmake cxx-compiler make xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
+        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11
 
   - **B. On Ubuntu or other linux-like**:
 
     We recommend this minimal set of dependencies to get the main features of ViSP available:
 
-        (visp-conda-ws) $ conda install cmake cxx-compiler make xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
+        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11
 
   - **C. On Windows**:
 
@@ -551,17 +551,89 @@ to uninstall Miniforge:
       and
       # <<< conda initialize <<<
 
-\section py_bindings_known_errors Known build errors
+\section py_bindings_known_errors Known issues
 
-When compiling or modifying the bindings, you may encounter errors.
+When configuring with CMake, compiling or modifying the bindings, you may encounter errors.
 
-Here is a non-exhaustive list of errors.
+Here is a non-exhaustive list of warnings and errors.
 
 If you encounter a compilation error, make sure to first try rebuilding after cleaning the CMake cache.
 Pybind did generate problems (an error at the pybind include line) that were solved like this.
 
-\subsection py_bindings_known_errors_buil When building ViSP
+\subsection py_bindings_known_warnings When configuring ViSP
+\subsubsection py_bindings_known_warnings_safe-rpath CMake Warning: Cannot generate a safe runtime search path
 
+When building Python bindings using Conda as described in section \ref py_bindings_build_conda, you may encounter
+the following CMake warning:
+\code{.sh}
+CMake Warning at cmake/VISPUtils.cmake:813 (add_library):
+  Cannot generate a safe runtime search path for target visp_ar because files
+  in some directories may conflict with libraries in implicit directories:
+
+    runtime library [libm.so.6] in $HOME/miniforge3/envs/visp-conda-ws/x86_64-conda-linux-gnu/sysroot/usr/lib may be hidden by files in:
+      /usr/lib/x86_64-linux-gnu
+    runtime library [libxml2.so.2] in $HOME/miniforge3/envs/visp-conda-ws/lib may be hidden by files in:
+      /usr/lib/x86_64-linux-gnu
+    runtime library [libz.so.1] in $HOME/miniforge3/envs/visp-conda-ws/lib may be hidden by files in:
+      /usr/lib/x86_64-linux-gnu
+    runtime library [libgomp.so.1] in $HOME/miniforge3/envs/visp-conda-ws/lib may be hidden by files in:
+      /usr/lib/x86_64-linux-gnu
+
+  Some of these libraries may not be found correctly.
+Call Stack (most recent call first):
+  cmake/VISPModule.cmake:806 (vp_add_library)
+  cmake/VISPModule.cmake:798 (_vp_create_module)
+  modules/ar/CMakeLists.txt:193 (vp_create_module)
+\endcode
+
+It means that the project requests linking with the shared libraries (`libxml2.so`, `libz.so` and
+`libgomp.so`), which are contained in two directories `$HOME/miniforge3/envs/visp-conda-ws/lib` and `/usr/lib/x86_64-linux-gnu`.
+The same occurs for `libm.so` that is present in
+`$HOME/miniforge3/envs/visp-conda-ws/x86_64-conda-linux-gnu/sysroot/usr/lib` and in `/usr/lib/x86_64-linux-gnu`.
+
+CMake first searches for the 3rd parties in the Conda environment, and if they are not found, it extends
+the search path to try to find them in the system path as `/usr/`. As a result, CMake cannot guarantee that, when you run
+the executable, the loader will find the proper library.
+
+If you don't fix these warnings, the behavior of the project could be affected.
+
+The way to proceed is to analyse the `ViSP-third-party.txt` file which summarises the third parties found and
+identify those you haven't installed in the Conda environment with `conda install <3rdparty>`.
+An other solution is to call `cmake` with `--debug-find` command line option that will explicitly show the search
+path for the 3rd parties:
+\code{.sh}
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX --debug-find
+\endcode
+
+In our case, we produced the CMake warning mentioned before by installing Panda3D and Ogre as system libraries.
+
+The solution is to deactivate the use of these two third parties as long as they are not needed, or simply to check
+that by not using them the CMake warnings disappear. After cleaning the `visp-build` folder you may run:
+\code{.sh}
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DUSE_OGRE=OFF -DUSE_PANDA3D=OFF
+\endcode
+
+Once confirmed that the warnings were due to the disabled 3rd parties, if they exist you can try installing them in
+the conda environment.
+
+For example:
+- for Panda3d:
+\code{.sh}
+$ conda create --name visp-conda-ws python=3.12
+$ conda activate visp-conda-ws
+(visp-conda-ws) $ conda install panda3d
+\endcode
+- for Ogre
+\code{.sh}
+(visp-conda-ws) $ conda install ogre
+\endcode
+- before running CMake and helping CMake to find Panda3d headers
+\code{.sh}
+(visp-conda-ws) $ export Panda3D_DIR=$CONDA_PREFIX/share/panda3d
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+\endcode
+
+\subsection py_bindings_known_errors_build When building ViSP
 \subsubsection py_bindings_known_errors_build_x11 Cannot build vpDisplayX.cpp
 
 The following error may occur on macOS during a build
