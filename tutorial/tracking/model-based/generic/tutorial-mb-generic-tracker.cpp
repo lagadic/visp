@@ -136,8 +136,6 @@ int main(int argc, char **argv)
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
 
-
-
     while (!g.end()) {
       g.acquire(I);
       vpDisplay::display(I);
@@ -155,8 +153,9 @@ int main(int argc, char **argv)
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
       vpDisplay::flush(I);
 
-      if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I, false)) {
         break;
+      }
     }
     vpDisplay::getClick(I);
     //! [Cleanup]

@@ -1,6 +1,6 @@
 project(tutorial-grabber)
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 

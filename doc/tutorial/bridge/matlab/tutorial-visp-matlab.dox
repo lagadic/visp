@@ -29,7 +29,7 @@ In order to build a source code that mix ViSP and MATLAB you should first create
 find ViSP and MATLAB. In the following example we consider the case of the tutorial-matlab.cpp source file.
 
 \code
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(visp-matlab)
 
