@@ -330,8 +330,9 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
   // Perform a look-up table transformation
-  static const unsigned int val_256 = 256;
-  void performLut(const Type(&lut)[val_256], unsigned int nbThreads = 1);
+  // static const unsigned int val_256 = 256;
+  // void performLut(const Type(&lut)[val_256], unsigned int nbThreads = 1); // Doesn't pass CI
+  void performLut(const Type(&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res) const;
