@@ -272,5 +272,5 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_sensor.a(vpMocapVicon.cpp.o) has no symbols
-void dummy_vpMocapVicon() { };
+void dummy_vpMocapVicon() { }
 #endif

@@ -53,7 +53,7 @@ void vpSAT(int &c)
     c = val_255;
   }
 }
-};
+}
 
 BEGIN_VISP_NAMESPACE
 /*!

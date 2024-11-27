@@ -969,7 +969,7 @@ std::ostream &vpColVector::cppPrint(std::ostream &os, const std::string &matrixN
   }
   std::cout << std::endl;
   return os;
-};
+}
 
 std::ostream &vpColVector::csvPrint(std::ostream &os) const
 {
@@ -980,7 +980,7 @@ std::ostream &vpColVector::csvPrint(std::ostream &os) const
     os << std::endl;
   }
   return os;
-};
+}
 
 std::ostream &vpColVector::maplePrint(std::ostream &os) const
 {
@@ -993,7 +993,7 @@ std::ostream &vpColVector::maplePrint(std::ostream &os) const
   }
   os << "])" << std::endl;
   return os;
-};
+}
 
 std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 {
@@ -1009,7 +1009,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
     }
   }
   return os;
-};
+}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
