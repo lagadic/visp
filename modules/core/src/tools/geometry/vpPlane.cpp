@@ -257,7 +257,8 @@ double vpPlane::computeZ(double x, double y) const
 */
 vpColVector vpPlane::getNormal() const
 {
-  vpColVector n(3);
+  const unsigned int val_3 = 3;
+  vpColVector n(val_3);
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
@@ -280,7 +281,8 @@ vpColVector vpPlane::getNormal() const
 */
 void vpPlane::getNormal(vpColVector &n) const
 {
-  n.resize(3);
+  const unsigned int val_3 = 3;
+  n.resize(val_3);
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;

@@ -292,7 +292,8 @@ vpRowVector vpRowVector::operator*(double x) const
   double *d = data;
 
   for (unsigned int i = 0; i < colNum; ++i) {
-    *(vd++) = (*d++) * x;
+    *(vd++) = (*d) * x;
+    ++d;
   }
   return v;
 }
@@ -349,7 +350,8 @@ vpRowVector vpRowVector::operator/(double x) const
   double *d = data;
 
   for (unsigned int i = 0; i < colNum; ++i) {
-    *(vd++) = (*d++) / x;
+    *(vd++) = (*d) / x;
+    ++d;
   }
   return v;
 }
@@ -398,7 +400,8 @@ vpRowVector vpRowVector::operator-() const
   double *d = data;
 
   for (unsigned int i = 0; i < colNum; ++i) {
-    *(vd++) = -(*d++);
+    *(vd++) = -(*d);
+    ++d;
   }
 
   return A;

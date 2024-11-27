@@ -1031,7 +1031,7 @@ vpMatrix vpMatrix::dampedInverse(const double &ratioOfMaxSvd) const
   vpMatrix I;
   I.eye(this->colNum);
   double lambda = ratioOfMaxSvd * maxSingularValue;
-  vpMatrix dampedInv = (lambda * I + this->transpose() * *this).inverseByLU()* this->transpose();
+  vpMatrix dampedInv = ((lambda * I) + (this->transpose() * (*this))).inverseByLU()* this->transpose();
   return dampedInv;
 }
 

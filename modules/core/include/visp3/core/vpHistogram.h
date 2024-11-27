@@ -314,6 +314,7 @@ private:
   unsigned m_size; /*!< Histogram size (max allowed 256).*/
   const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
   unsigned int m_total; /*!< Cumulated number of pixels in the input image. */
+  static const unsigned int constr_val_256;
 };
 END_VISP_NAMESPACE
 #endif

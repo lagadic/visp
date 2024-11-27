@@ -206,6 +206,8 @@ public:
 
 protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
+private:
+  static const unsigned int constr_val_3;
 };
 END_VISP_NAMESPACE
 #endif

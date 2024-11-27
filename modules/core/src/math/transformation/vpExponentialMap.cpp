@@ -169,11 +169,12 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   const unsigned int index_3 = 3;
+  const unsigned int val_3 = 3;
 
   M.extract(Rd);
   u.buildFrom(Rd);
-  for (i = 0; i < 3; ++i) {
-    v[3 + i] = u[i];
+  for (i = 0; i < val_3; ++i) {
+    v[index_3 + i] = u[i];
   }
 
   theta = sqrt((u[index_0] * u[index_0]) + (u[index_1] * u[index_1]) + (u[index_2] * u[index_2]));

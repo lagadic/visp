@@ -156,6 +156,7 @@ public:
 
 private:
   static const double minimum;
+  static const unsigned int constr_val_4;
 
 };
 END_VISP_NAMESPACE

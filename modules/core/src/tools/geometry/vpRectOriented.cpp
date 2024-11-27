@@ -186,16 +186,17 @@ vpImagePoint vpRectOriented::getBottomRight() const { return m_bottomRight; }
 /// Set the size of the rectangle : performs a homothety relatively to the rectangle center.
 void vpRectOriented::setSize(double width, double height)
 {
+  const int val_2 = 2;
   m_width = width;
   m_height = height;
-  m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
-  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / 2));
-  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / 2));
-  m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
-  m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
-  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / 2));
-  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / 2));
-  m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
+  m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / val_2));
+  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / val_2));
+  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / val_2));
+  m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / val_2));
+  m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / val_2));
+  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / val_2));
+  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / val_2));
+  m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / val_2));
 }
 
 /// Get the rectangle width.
@@ -207,15 +208,16 @@ double vpRectOriented::getHeight() const { return m_height; }
 /// Set the rectangle orientation (rad).
 void vpRectOriented::setOrientation(double theta)
 {
+  const int val_2 = 2;
   m_theta = theta;
-  m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / 2));
-  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / 2));
-  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / 2));
-  m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / 2));
-  m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / 2));
-  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / 2));
-  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / 2));
-  m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / 2));
+  m_topLeft.set_i(m_center.get_i() - ((m_height * cos(m_theta)) / 2.0) - ((m_width * sin(m_theta)) / val_2));
+  m_topLeft.set_j((m_center.get_j() + ((m_height * sin(m_theta)) / 2.0)) - ((m_width * cos(m_theta)) / val_2));
+  m_bottomLeft.set_i((m_center.get_i() + ((m_height * cos(m_theta)) / 2.0)) - ((m_width * sin(m_theta)) / val_2));
+  m_bottomLeft.set_j(m_center.get_j() - ((m_height * sin(m_theta)) / 2.0) - ((m_width * cos(m_theta)) / val_2));
+  m_bottomRight.set_i(m_center.get_i() + ((m_height * cos(m_theta)) / 2.0) + ((m_width * sin(m_theta)) / val_2));
+  m_bottomRight.set_j((m_center.get_j() - ((m_height * sin(m_theta)) / 2.0)) + ((m_width * cos(m_theta)) / val_2));
+  m_topRight.set_i((m_center.get_i() - ((m_height * cos(m_theta)) / 2.0)) + ((m_width * sin(m_theta)) / val_2));
+  m_topRight.set_j(m_center.get_j() + ((m_height * sin(m_theta)) / 2.0) + ((m_width * cos(m_theta)) / val_2));
 }
 
 /// Get the rectangle orientation (rad).

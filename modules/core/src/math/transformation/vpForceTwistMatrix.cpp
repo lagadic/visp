@@ -30,8 +30,7 @@
  * Description:
  * Twist transformation matrix that allows to transform forces from one
  * frame to an other.
- *
-*****************************************************************************/
+ **/
 
 /*!
   \file vpForceTwistMatrix.cpp
@@ -49,6 +48,8 @@
 
 BEGIN_VISP_NAMESPACE
 
+const unsigned int vpForceTwistMatrix::constr_value_6 = 6;
+
 /*!
   Copy operator.
 
@@ -56,8 +57,9 @@ BEGIN_VISP_NAMESPACE
 */
 vpForceTwistMatrix &vpForceTwistMatrix::operator=(const vpForceTwistMatrix &M)
 {
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 6; ++j) {
+  const int val_6 = 6;
+  for (int i = 0; i < val_6; ++i) {
+    for (int j = 0; j < val_6; ++j) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -86,7 +88,7 @@ void vpForceTwistMatrix::eye()
 /*!
   Initialize a force/torque twist transformation matrix to identity.
 */
-vpForceTwistMatrix::vpForceTwistMatrix() : vpArray2D<double>(6, 6) { eye(); }
+vpForceTwistMatrix::vpForceTwistMatrix() : vpArray2D<double>(constr_value_6, constr_value_6) { eye(); }
 
 /*!
 
@@ -95,7 +97,7 @@ vpForceTwistMatrix::vpForceTwistMatrix() : vpArray2D<double>(6, 6) { eye(); }
 
   \param F : Force/torque twist matrix used as initializer.
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpForceTwistMatrix &F) : vpArray2D<double>(6, 6) { *this = F; }
+vpForceTwistMatrix::vpForceTwistMatrix(const vpForceTwistMatrix &F) : vpArray2D<double>(constr_value_6, constr_value_6) { *this = F; }
 
 /*!
 
@@ -126,7 +128,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpForceTwistMatrix &F) : vpArray2D<
   \f]
 
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
+vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(constr_value_6, constr_value_6)
 {
   if (full) {
     buildFrom(M);
@@ -156,7 +158,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full) 
 
 */
 vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_value_6, constr_value_6)
 {
   buildFrom(t, thetau);
 }
@@ -178,7 +180,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t, const vpThe
   \param thetau : \f$\theta u\f$ rotation vector used to initialize \f$R\f$.
 
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(6, 6) { buildFrom(thetau); }
+vpForceTwistMatrix::vpForceTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(constr_value_6, constr_value_6) { buildFrom(thetau); }
 
 /*!
 
@@ -200,7 +202,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpThetaUVector &thetau) : vpArray2D
 
 */
 vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_value_6, constr_value_6)
 {
   buildFrom(t, R);
 }
@@ -222,7 +224,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t, const vpRot
   \param R : Rotation matrix.
 
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(6, 6) { buildFrom(R); }
+vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(constr_value_6, constr_value_6) { buildFrom(R); }
 
 /*!
 
@@ -245,7 +247,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<do
   radians used to initialize \f$R\f$.
 */
 vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
-  : vpArray2D<double>(6, 6)
+  : vpArray2D<double>(constr_value_6, constr_value_6)
 {
   vpTranslationVector T(tx, ty, tz);
   vpThetaUVector tu(tux, tuy, tuz);
@@ -368,10 +370,11 @@ vpMatrix vpForceTwistMatrix::operator*(const vpMatrix &M) const
 */
 vpColVector vpForceTwistMatrix::operator*(const vpColVector &H) const
 {
+  const unsigned int val_6 = 6;
   const unsigned int nparam = 6;
   vpColVector Hout(nparam);
 
-  if (6 != H.getRows()) {
+  if (val_6 != H.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply a (6x6) force/torque twist matrix by "
                       "a %d dimension column vector",
@@ -412,11 +415,12 @@ vpForceTwistMatrix &vpForceTwistMatrix::buildFrom(const vpTranslationVector &t, 
   vpMatrix skewaR = t.skew(t) * R;
 
   const unsigned int val_3 = 3;
+  const unsigned int index_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
-      (*this)[i + 3][j + 3] = R[i][j];
-      (*this)[i + 3][j] = skewaR[i][j];
+      (*this)[i + index_3][j + index_3] = R[i][j];
+      (*this)[i + index_3][j] = skewaR[i][j];
     }
   }
   return *this;
@@ -440,12 +444,13 @@ vpForceTwistMatrix &vpForceTwistMatrix::buildFrom(const vpTranslationVector &t, 
 */
 vpForceTwistMatrix &vpForceTwistMatrix::buildFrom(const vpRotationMatrix &R)
 {
+  const unsigned int index_3 = 3;
   const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = R[i][j];
-      (*this)[i + 3][j + 3] = R[i][j];
-      (*this)[i + 3][j] = 0;
+      (*this)[i + index_3][j + index_3] = R[i][j];
+      (*this)[i + index_3][j] = 0;
     }
   }
   return *this;
