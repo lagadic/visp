@@ -93,7 +93,7 @@ BEGIN_VISP_NAMESPACE
 #endif
 
   const unsigned int val_0x10000 = 0x10000;
-  for (int i = 2; i < val_0x10000; ++i) {
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
   dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
@@ -151,7 +151,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
 #endif
 
   const unsigned int val_0x10000 = 0x10000;
-  for (int i = 2; i < val_0x10000; ++i) {
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
   dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
@@ -196,15 +196,16 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<vpRGBa> &d
   }
 
   const unsigned int val_0x10000 = 0x10000;
-  for (int i = 2; i < val_0x10000; ++i) {
+  for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for
-#endif
+
   const unsigned char val_uc_5 = 5;
   const unsigned char val_uc_20 = 20;
   const unsigned char val_uc_255 = 255;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
   for (int i = 0; i < src_depth_size; ++i) {
     uint16_t d = static_cast<uint16_t>(src_depth.bitmap[i]);
     if (d) {
@@ -247,13 +248,13 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa>
   for (unsigned int i = 2; i < val_0x10000; ++i) {
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
   }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp parallel for
-#endif
 
   const unsigned char val_uc_5 = 5;
   const unsigned char val_uc_20 = 20;
   const unsigned char val_uc_255 = 255;
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
   for (int i = 0; i < src_depth_size; ++i) {
     uint16_t d = src_depth.bitmap[i];
     if (d) {

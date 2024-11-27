@@ -1217,10 +1217,11 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
   unsigned char v_high = static_cast<unsigned char>(hsv_range[index_5]);
   int size_ = static_cast<int>(size);
   int cpt_in_range = 0;
+
+  const unsigned char val_uc_255 = 255;
 #if defined(_OPENMP)
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
-  const unsigned char val_uc_255 = 255;
   for (int i = 0; i < size_; ++i) {
     bool check_h_low_high_hue = (h_low <= hue[i]) && (hue[i] <= h_high);
     bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
