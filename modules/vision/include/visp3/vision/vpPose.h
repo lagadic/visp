@@ -95,7 +95,7 @@ public:
                              initialized by Dementhon approach */
     LAGRANGE_VIRTUAL_VS,  /*!< Non linear virtual visual servoing approach
                              initialized by Lagrange approach */
-    DEMENTHON_LAGRANGE_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
+    DEMENTHON_LAGRANGE_VIRTUAL_VS /*!< Non linear virtual visual servoing approach
                              initialized by either Dementhon or Lagrange approach,
                              depending on which method has the smallest residual. */
   } vpPoseMethodType;

@@ -55,7 +55,7 @@ static void scaleFilter(
     }
   }
 }
-};
+}
 #endif
 
 BEGIN_VISP_NAMESPACE
