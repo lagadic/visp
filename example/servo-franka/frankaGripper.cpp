@@ -64,11 +64,12 @@ int main(int argc, char **argv)
   double opt_grasping_width = 0.;
   double opt_grasping_speed = 0.1;
   double opt_grasping_force = 60;
+  double opt_grasping_time = 0;
   GripperState_t opt_gripper_state = Gripper_None;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_robot_ip = std::string(argv[i]);
     }
     else if (std::string(argv[i]) == "--home") {
@@ -80,21 +81,28 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--close") {
       opt_gripper_state = Gripper_Close;
     }
+    else if (std::string(argv[i]) == "--release") {
+      opt_gripper_state = Gripper_Release;
+    }
     else if (std::string(argv[i]) == "--grasp" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_gripper_state = Gripper_Grasp;
       opt_grasping_width = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--grasp-speed" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_grasping_speed = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--grasp-force" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_grasping_force = std::atof(argv[i]);
     }
+    else if (std::string(argv[i]) == "--grasp-time" && i + 1 < argc) {
+      ++i;
+      opt_grasping_time = std::atof(argv[i]);
+    }
     else if (std::string(argv[i]) == "--test" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_gripper_state = Gripper_Test;
       opt_grasping_width = std::atof(argv[i]);
     }
@@ -107,7 +115,8 @@ int main(int argc, char **argv)
         << " [--close]"
         << " [--grasp <width>]"
         << " [--grasp-speed <speed>]"
-        << " [--grasp-force <speed>]"
+        << " [--grasp-force <force>]"
+        << " [--grasp-time <duration>]"
         << " [--release]"
         << " [--test <width>]"
         << " [--help] [-h]\n" << std::endl;
@@ -139,6 +148,11 @@ int main(int argc, char **argv)
         << "  --grasp-force <force>" << std::endl
         << "    Force in [N] applied during grasping." << std::endl
         << "    Default: " << opt_grasping_force << " [N]" << std::endl
+        << std::endl
+        << "  --grasp-time <duration>" << std::endl
+        << "    Duration in [s] the grasping force will be applied before releasing the object." << std::endl
+        << "    When duration is set to -1, grasping will be applied until stopped by CTRL-C." << std::endl
+        << "    Default: " << opt_grasping_time << " [s]" << std::endl
         << std::endl
         << "  --release" << std::endl
         << "    Release an object that is grasped." << std::endl
@@ -191,6 +205,16 @@ int main(int argc, char **argv)
     else if (opt_gripper_state == Gripper_Grasp) {
       std::cout << "Gripper grasp " << opt_grasping_width << "m object width, with speed: " << opt_grasping_speed << " and force: " << opt_grasping_force << "N..." << std::endl;
       robot.gripperGrasp(opt_grasping_width, opt_grasping_speed, opt_grasping_force);
+      if (opt_grasping_time < 0) {
+        std::cout << "Hit CTRL-C to quit. The grasping force will continue to be applied..." << std::endl;
+        while (1) {
+          vpTime::sleepMs(1000);
+        }
+      }
+      else {
+        std::cout << "Wait " << 1000 * opt_grasping_time << " seconds before releasing the object" << std::endl;
+        vpTime::sleepMs(1000 * opt_grasping_time);
+      }
     }
     else if (opt_gripper_state == Gripper_Release) {
       std::cout << "Gripper release object..." << std::endl;
