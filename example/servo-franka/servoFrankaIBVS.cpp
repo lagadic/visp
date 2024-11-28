@@ -116,14 +116,17 @@ int main(int argc, char **argv)
   double convergence_threshold = 0.00005;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    if ((std::string(argv[i]) == "--tag_size") && (i + 1 < argc)) {
       opt_tagSize = std::stod(argv[i + 1]);
+      ++i;
     }
-    else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--ip") && (i + 1 < argc)) {
       opt_robot_ip = std::string(argv[i + 1]);
+      ++i;
     }
-    else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--eMc") && (i + 1 < argc)) {
       opt_eMc_filename = std::string(argv[i + 1]);
+      ++i;
     }
     else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
@@ -137,19 +140,20 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task_sequencing") {
       opt_task_sequencing = true;
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if ((std::string(argv[i]) == "--quad_decimate") && (i + 1 < argc)) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
+      ++i;
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
     }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
       std::cout
         << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
         << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
         << "[--quad_decimate <decimation; default " << opt_quad_decimate
         << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
-        << "\n";
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -182,16 +186,14 @@ int main(int argc, char **argv)
       ePc.loadYAML(opt_eMc_filename, ePc);
     }
     else {
-      std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values."
-        << "\n";
+      std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values." << std::endl;
     }
     vpHomogeneousMatrix eMc(ePc);
-    std::cout << "eMc:\n" << eMc << "\n";
+    std::cout << "eMc:\n" << eMc << std::endl;
 
     // Get camera intrinsics
-    vpCameraParameters cam =
-      rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-    std::cout << "cam:\n" << cam << "\n";
+    vpCameraParameters cam = rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+    std::cout << "cam:\n" << cam << std::endl;
 
     vpImage<unsigned char> I(height, width);
 
@@ -394,8 +396,7 @@ int main(int argc, char **argv)
 
         if (error < convergence_threshold) {
           has_converged = true;
-          std::cout << "Servo task has converged"
-            << "\n";
+          std::cout << "Servo task has converged" << std::endl;
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
         if (first_time) {
