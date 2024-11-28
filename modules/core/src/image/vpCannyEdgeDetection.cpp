@@ -103,7 +103,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
   , m_upperThreshold(-1.f)
   , m_upperThresholdRatio(0.8f)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  , m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+  , m_minStackSize(0)  // Deactivated by default
 #endif
   , mp_mask(nullptr)
 {
@@ -128,7 +128,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  , m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+  , m_minStackSize(0)  // Deactivated by default
 #endif
   , m_storeListEdgePoints(storeEdgePoints)
   , mp_mask(nullptr)
@@ -143,7 +143,7 @@ using json = nlohmann::json;
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const std::string &jsonPath) :
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  m_minStackSize(65532000)  // Maximum stack size on MacOS, see https://stackoverflow.com/a/13261334
+  m_minStackSize(0)  // Deactivated by default
 #endif
 {
   initFromJSON(jsonPath);
@@ -255,23 +255,26 @@ vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Increase stack size due to the recursive algorithm
   rlim_t initialStackSize;
   struct rlimit rl;
   int result;
-  result = getrlimit(RLIMIT_STACK, &rl);
-  if (result == 0) {
-    initialStackSize = rl.rlim_cur;
-    if (rl.rlim_cur < m_minStackSize) {
-      rl.rlim_cur = m_minStackSize;
-      result = setrlimit(RLIMIT_STACK, &rl);
-      if (result != 0) {
-        throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+  if (m_minStackSize > 0) {
+    // Check the current stack size
+    result = getrlimit(RLIMIT_STACK, &rl);
+    if (result == 0) {
+      initialStackSize = rl.rlim_cur;
+      if (rl.rlim_cur < m_minStackSize) {
+        // Increase stack size due to the recursive algorithm
+        rl.rlim_cur = m_minStackSize;
+        result = setrlimit(RLIMIT_STACK, &rl);
+        if (result != 0) {
+          throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+        }
       }
     }
-  }
-  else {
-    throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+    else {
+      throw(vpException(vpException::fatalError, "getrlimit returned result = %d\n", result));
+    }
   }
 #endif
   // // Clearing the previous results
@@ -309,13 +312,15 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   performEdgeTracking();
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Reset stack size to its original value
-  if (rl.rlim_cur > initialStackSize) {
-    rl.rlim_cur = initialStackSize;
-    result = setrlimit(RLIMIT_STACK, &rl);
-    if (result != 0) {
-      throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
+  if (m_minStackSize > 0) {
+    if (rl.rlim_cur > initialStackSize) {
+      // Reset stack size to its original value
+      rl.rlim_cur = initialStackSize;
+      result = setrlimit(RLIMIT_STACK, &rl);
+      if (result != 0) {
+        throw(vpException(vpException::fatalError, "setrlimit returned result = %d\n", result));
 
+      }
     }
   }
 #endif
