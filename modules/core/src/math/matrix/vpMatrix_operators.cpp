@@ -397,12 +397,12 @@ vpTranslationVector vpMatrix::operator*(const vpTranslationVector &tv) const
 {
   vpTranslationVector t_out;
 
-  if ((rowNum != 3) || (colNum != 3)) {
+  const unsigned int val_3 = 3;
+  if ((rowNum != val_3) || (colNum != val_3)) {
     throw(vpException(vpException::dimensionError, "Cannot multiply a (%dx%d) matrix by a (%dx%d) translation vector",
                       rowNum, colNum, tv.getRows(), tv.getCols()));
   }
 
-  const unsigned int val_3 = 3;
   for (unsigned int j = 0; j < val_3; ++j) {
     t_out[j] = 0;
   }
@@ -451,7 +451,8 @@ vpMatrix vpMatrix::operator*(const vpRotationMatrix &R) const
                       colNum));
   }
   vpMatrix C;
-  C.resize(rowNum, 3, false, false);
+  const unsigned int val_3 = 3;
+  C.resize(rowNum, val_3, false, false);
 
   unsigned int RcolNum = R.getCols();
   unsigned int RrowNum = R.getRows();
@@ -481,7 +482,8 @@ vpMatrix vpMatrix::operator*(const vpHomogeneousMatrix &M) const
                       colNum));
   }
   vpMatrix C;
-  C.resize(rowNum, 4, false, false);
+  const unsigned int val_4 = 4;
+  C.resize(rowNum, val_4, false, false);
 
   const unsigned int McolNum = M.getCols();
   const unsigned int MrowNum = M.getRows();
@@ -512,7 +514,8 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
                       rowNum, colNum));
   }
   vpMatrix M;
-  M.resize(rowNum, 6, false, false);
+  const unsigned int val_6 = 6;
+  M.resize(rowNum, val_6, false, false);
 
   // Considering perfMatrixMultiplication.cpp benchmark,
   // using either MKL, OpenBLAS, or Netlib can slow down this function with respect to the naive code.
@@ -568,7 +571,8 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
                       rowNum, colNum));
   }
   vpMatrix M;
-  M.resize(rowNum, 6, false, false);
+  const unsigned int val_6 = 6;
+  M.resize(rowNum, val_6, false, false);
 
   // Considering perfMatrixMultiplication.cpp benchmark,
   // using either MKL, OpenBLAS, or Netlib can slow down this function with respect to the naive code.

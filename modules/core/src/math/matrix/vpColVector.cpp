@@ -73,13 +73,13 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
 
 vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
 {
-  if (getRows() != 3) {
+  const unsigned int val_3 = 3;
+  if (getRows() != val_3) {
     throw(vpException(vpException::dimensionError, "Cannot add %d-dimension column vector to a translation vector",
                       getRows()));
   }
   vpTranslationVector s;
 
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     s[i] = (*this)[i] + t[i];
   }
@@ -285,7 +285,9 @@ vpColVector vpColVector::operator-() const
 
   for (unsigned int i = 0; i < rowNum; ++i) {
     // move the d++ increment/decrement into a dedicated expression-statement
-    *(vd++) = -(*d++);
+    *vd = -(*d);
+    ++vd;
+    ++d;
   }
 
   return A;
@@ -300,7 +302,9 @@ vpColVector vpColVector::operator*(double x) const
 
   for (unsigned int i = 0; i < rowNum; ++i) {
     // move the d++ increment/decrement into a dedicated expression-statement
-    *(vd++) = (*d++) * x;
+    *vd = (*d) * x;
+    ++vd;
+    ++d;
   }
   return v;
 }
@@ -330,7 +334,9 @@ vpColVector vpColVector::operator/(double x) const
 
   for (unsigned int i = 0; i < rowNum; ++i) {
     // move the d++ increment/decrement into a dedicated expression-statement
-    *(vd++) = (*d++) / x;
+    *vd = (*d) / x;
+    ++vd;
+    ++d;
   }
   return v;
 }
@@ -557,7 +563,9 @@ double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
   unsigned int a_rows_nbr = a.getRows();
   for (unsigned int i = 0; i < a_rows_nbr; ++i) {
     // Move the ad++ and bd++ increment/decrement into a dedicated expression-statement
-    c += *(ad++) * *(bd++);
+    c += (*ad) * (*bd);
+    ++ad;
+    ++bd;
   }
 
   return c;
@@ -713,7 +721,8 @@ double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
 #else
   double mean_value = v.sum() / v.size();
   double sum_squared_diff = 0.0;
-  for (size_t i = 0; i < v.size(); i++) {
+  unsigned int v_size = v.size();
+  for (size_t i = 0; i < v_size; ++i) {
     sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
   }
 
@@ -735,7 +744,7 @@ vpMatrix vpColVector::skew(const vpColVector &v)
                       v.getRows()));
   }
 
-  M.resize(3, 3, false, false);
+  M.resize(rows_size, rows_size, false, false);
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
@@ -754,7 +763,8 @@ vpMatrix vpColVector::skew(const vpColVector &v)
 
 vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 {
-  if ((a.getRows() != 3) || (b.getRows() != 3)) {
+  const unsigned int val_3 = 3;
+  if ((a.getRows() != val_3) || (b.getRows() != val_3)) {
     throw(vpException(vpException::dimensionError,
                       "Cannot compute the cross product between column "
                       "vector with dimension %d and %d",

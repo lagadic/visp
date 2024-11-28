@@ -157,9 +157,11 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
 #if defined(VISP_HAVE_SIMDLIB)
   SimdImageDifference(I1.bitmap, I2.bitmap, I1.getSize(), Idiff.bitmap);
 #else
-  for (unsigned int i = 0; i < I1.getSize(); ++i) {
+  const int val_255 = 255;
+  unsigned int i1_size = I1.getSize();
+  for (unsigned int i = 0; i < i1_size; ++i) {
     int diff = (I1.bitmap[i] - I2.bitmap[i]) + 128;
-    Idiff.bitmap[i] = static_cast<unsigned char>(std::max<unsigned char>(std::min<unsigned char>(diff, 255), 0));
+    Idiff.bitmap[i] = static_cast<unsigned char>(std::max<unsigned char>(std::min<unsigned char>(diff, val_255), 0));
   }
 #endif
 }
@@ -194,16 +196,18 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
   SimdImageDifference(reinterpret_cast<unsigned char *>(I1.bitmap), reinterpret_cast<unsigned char *>(I2.bitmap),
                       I1.getSize() * 4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
 #else
+  const unsigned int val_4 = 4;
+  const int val_255 = 255;
   unsigned int i1_size = I1.getSize();
-  for (unsigned int i = 0; i < (i1_size * 4); ++i) {
+  for (unsigned int i = 0; i < (i1_size * val_4); ++i) {
     int diffR = (I1.bitmap[i].R - I2.bitmap[i].R) + 128;
     int diffG = (I1.bitmap[i].G - I2.bitmap[i].G) + 128;
     int diffB = (I1.bitmap[i].B - I2.bitmap[i].B) + 128;
     int diffA = (I1.bitmap[i].A - I2.bitmap[i].A) + 128;
-    Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
-    Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
-    Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
-    Idiff.bitmap[i].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
+    Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, val_255), 0));
+    Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, val_255), 0));
+    Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, val_255), 0));
+    Idiff.bitmap[i].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, val_255), 0));
   }
 #endif
 }
@@ -1128,11 +1132,12 @@ int vpImageTools::inMask(const vpImage<unsigned char> &I, const vpImage<unsigned
 int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                           const vpColVector &hsv_range, unsigned char *mask, unsigned int size)
 {
+  const std::size_t val_6 = 6;
   if ((hue == nullptr) || (saturation == nullptr) || (value == nullptr)) {
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): hsv pointer are empty"));
   }
-  else if (hsv_range.size() != 6) {
+  else if (hsv_range.size() != val_6) {
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
   }
@@ -1142,6 +1147,7 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
   const unsigned int index_3 = 3;
   const unsigned int index_4 = 4;
   const unsigned int index_5 = 5;
+  const unsigned char val_uchar_255 = 255;
   unsigned char h_low = static_cast<unsigned char>(hsv_range[index_0]);
   unsigned char h_high = static_cast<unsigned char>(hsv_range[index_1]);
   unsigned char s_low = static_cast<unsigned char>(hsv_range[index_2]);
@@ -1158,7 +1164,7 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
     bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
     if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
-      mask[i] = 255;
+      mask[i] = val_uchar_255;
       ++cpt_in_range;
     }
     else {
@@ -1188,11 +1194,12 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
 int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                            const std::vector<int> &hsv_range, unsigned char *mask, unsigned int size)
 {
+  const std::size_t val_6 = 6;
   if ((hue == nullptr) || (saturation == nullptr) || (value == nullptr)) {
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): hsv pointer are empty"));
   }
-  else if (hsv_range.size() != 6) {
+  else if (hsv_range.size() != val_6) {
     throw(vpImageException(vpImageException::notInitializedError,
                            "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
   }
@@ -1210,6 +1217,8 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
   unsigned char v_high = static_cast<unsigned char>(hsv_range[index_5]);
   int size_ = static_cast<int>(size);
   int cpt_in_range = 0;
+
+  const unsigned char val_uc_255 = 255;
 #if defined(_OPENMP)
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
@@ -1218,7 +1227,7 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
     bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
     bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
     if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
-      mask[i] = 255;
+      mask[i] = val_uc_255;
       ++cpt_in_range;
     }
     else {

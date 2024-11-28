@@ -129,6 +129,8 @@ BEGIN_VISP_NAMESPACE
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   if ((colNum == 1) && (rowNum == 1)) {
     vpMatrix inv;
     inv.resize(1, 1, false);
@@ -140,9 +142,9 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[0][0] = 1. / d;
     return inv;
   }
-  else if ((colNum == 2) && (rowNum == 2)) {
+  else if ((colNum == val_2) && (rowNum == val_2)) {
     vpMatrix inv;
-    inv.resize(2, 2, false);
+    inv.resize(val_2, val_2, false);
     double d = det();
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
       throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.",
@@ -155,9 +157,9 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[1][0] = -(*this)[1][0] * d;
     return inv;
   }
-  else if ((colNum == 3) && (rowNum == 3)) {
+  else if ((colNum == val_3) && (rowNum == val_3)) {
     vpMatrix inv;
-    inv.resize(3, 3, false);
+    inv.resize(val_3, val_3, false);
     double d = det();
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
       throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.",
@@ -233,13 +235,15 @@ vpMatrix vpMatrix::inverseByLU() const
 */
 double vpMatrix::detByLU() const
 {
+  const unsigned int val_2 = 2;
+  const unsigned int val_3 = 3;
   if ((rowNum == 1) && (colNum == 1)) {
     return (*this)[0][0];
   }
-  else if ((rowNum == 2) && (colNum == 2)) {
+  else if ((rowNum == val_2) && (colNum == val_2)) {
     return (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0]));
   }
-  else if ((rowNum == 3) && (colNum == 3)) {
+  else if ((rowNum == val_3) && (colNum == val_3)) {
     const unsigned int index_0 = 0;
     const unsigned int index_1 = 1;
     const unsigned int index_2 = 2;

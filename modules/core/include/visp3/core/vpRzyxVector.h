@@ -211,6 +211,8 @@ public:
   vpRzyxVector &operator=(const vpRzyxVector &) = default;
   vpRzyxVector &operator=(const std::initializer_list<double> &list);
 #endif
+private:
+  static const unsigned int constr_val_3;
 };
 END_VISP_NAMESPACE
 #endif

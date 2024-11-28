@@ -41,10 +41,12 @@ BEGIN_VISP_NAMESPACE
  */
   void vpSphere::init()
 {
-  oP.resize(4);
-  cP.resize(4);
+  const unsigned int val_4 = 4;
+  const unsigned int val_5 = 5;
+  oP.resize(val_4);
+  cP.resize(val_4);
 
-  p.resize(5);
+  p.resize(val_5);
 }
 
 /*!
@@ -138,7 +140,8 @@ void vpSphere::projection() { projection(cP, p); }
  */
 void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
 {
-  p_.resize(5, false);
+  const unsigned int val_5 = 5;
+  p_.resize(val_5, false);
   double x0, y0, z0;
   double E, A, B;
   const unsigned int index_0 = 0;
@@ -217,7 +220,8 @@ void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP
  */
 void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 {
-  cP_.resize(4, false);
+  const unsigned int val_4 = 4;
+  cP_.resize(val_4, false);
 
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;

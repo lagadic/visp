@@ -50,6 +50,7 @@
 #include <math.h>
 
 BEGIN_VISP_NAMESPACE
+const unsigned int vpRotationMatrix::constr_val_3 = 3;
 /*!
   Initialize the rotation matrix as identity.
 
@@ -161,12 +162,12 @@ vpRotationMatrix &vpRotationMatrix::operator=(const std::initializer_list<double
 */
 vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
 {
-  if ((M.getCols() != 3) && (M.getRows() != 3)) {
+  const unsigned int val_3 = 3;
+  if ((M.getCols() != val_3) && (M.getRows() != val_3)) {
     throw(vpException(vpException::dimensionError, "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
                       M.getRows(), M.getCols()));
   }
 
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       (*this)[i][j] = M[i][j];
@@ -275,7 +276,7 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 3; ++k) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         s += rowPtrs[i][k] * R.rowPtrs[k][j];
       }
       p[i][j] = s;
@@ -303,17 +304,17 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
 */
 vpMatrix vpRotationMatrix::operator*(const vpMatrix &M) const
 {
-  if ((M.getRows() != 3) || (M.getCols() != 3)) {
+  const unsigned int val_3 = 3;
+  if ((M.getRows() != val_3) || (M.getCols() != val_3)) {
     throw(vpException(vpException::dimensionError, "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
                       M.getRows(), M.getCols()));
   }
   vpMatrix p(3, 3);
 
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 3; ++k) {
+      for (unsigned int k = 0; k < val_3; ++k) {
         s += (*this)[i][k] * M[k][j];
       }
       p[i][j] = s;
@@ -460,14 +461,14 @@ vpRotationMatrix &vpRotationMatrix::operator*=(double x)
 bool vpRotationMatrix::isARotationMatrix(double threshold) const
 {
   bool isRotation = true;
+  const unsigned int val_3 = 3;
 
-  if ((getCols() != 3) || (getRows() != 3)) {
+  if ((getCols() != val_3) || (getRows() != val_3)) {
     return false;
   }
 
   // --comment: test R^TR = Id
   vpRotationMatrix RtR = (*this).t() * (*this);
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     for (unsigned int j = 0; j < val_3; ++j) {
       if (i == j) {
@@ -505,35 +506,35 @@ bool vpRotationMatrix::isARotationMatrix(double threshold) const
 /*!
   Default constructor that initialise a 3-by-3 rotation matrix to identity.
 */
-vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3), m_index(0) { eye(); }
+vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { eye(); }
 
 /*!
   Copy constructor that construct a 3-by-3 rotation matrix from another
   rotation matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { (*this) = M; }
+vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { (*this) = M; }
 
 /*!
   Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(M); }
+vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(M); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}\f$ angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(tu); }
+vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(tu); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a pose vector.
  */
-vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(p); }
+vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(p); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3), m_index(0)
+vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0)
 {
   buildFrom(euler);
 }
@@ -542,24 +543,24 @@ vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double
   Construct a 3-by-3 rotation matrix from \f$ R(x,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rxyz); }
+vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(Rxyz); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,x) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rzyx); }
+vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(Rzyx); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a matrix that contains values corresponding to a rotation matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3), m_index(0) { *this = R; }
+vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { *this = R; }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray2D<double>(3, 3), m_index(0)
+vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -567,7 +568,7 @@ vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray
 /*!
   Construct a 3-by-3 rotation matrix from quaternion angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(q); }
+vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(constr_val_3, constr_val_3), m_index(0) { buildFrom(q); }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
@@ -880,15 +881,15 @@ vpRotationMatrix &vpRotationMatrix::buildFrom(const vpQuaternionVector &q)
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   (*this)[index_0][index_0] = (((a * a) + (b * b)) - (c * c)) - (d * d);
-  (*this)[index_0][index_1] = (2 * b * c) - (2 * a * d);
-  (*this)[index_0][index_2] = (2 * a * c) + (2 * b * d);
+  (*this)[index_0][index_1] = (2.0 * b * c) - (2.0 * a * d);
+  (*this)[index_0][index_2] = (2.0 * a * c) + (2.0 * b * d);
 
-  (*this)[index_1][index_0] = (2 * a * d) + (2 * b * c);
+  (*this)[index_1][index_0] = (2.0 * a * d) + (2.0 * b * c);
   (*this)[index_1][index_1] = (((a * a) - (b * b)) + (c * c)) - (d * d);
-  (*this)[index_1][index_2] = (2 * c * d) - (2 * a * b);
+  (*this)[index_1][index_2] = (2.0 * c * d) - (2.0 * a * b);
 
-  (*this)[index_2][index_0] = (2 * b * d) - (2 * a * c);
-  (*this)[index_2][index_1] = (2 * a * b) + (2 * c * d);
+  (*this)[index_2][index_0] = (2.0 * b * d) - (2.0 * a * c);
+  (*this)[index_2][index_1] = (2.0 * a * b) + (2.0 * c * d);
   (*this)[index_2][index_2] = ((a * a) - (b * b) - (c * c)) + (d * d);
   return *this;
 }
@@ -964,7 +965,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   size_t vec_m_size = vec_M.size();
   for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
-    meanR += (vpMatrix)R;
+    meanR += static_cast<vpMatrix>(R);
   }
   meanR /= static_cast<double>(vec_M.size());
 
@@ -1006,7 +1007,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   vpRotationMatrix R;
   size_t vec_r_size = vec_R.size();
   for (size_t i = 0; i < vec_r_size; ++i) {
-    meanR += (vpMatrix)vec_R[i];
+    meanR += static_cast<vpMatrix>(vec_R[i]);
   }
   meanR /= static_cast<double>(vec_R.size());
 

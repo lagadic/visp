@@ -230,6 +230,8 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
   }
 
+private:
+  static const unsigned int constr_value_6;
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions

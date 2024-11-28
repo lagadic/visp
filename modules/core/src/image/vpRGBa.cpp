@@ -123,7 +123,8 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
 */
 vpRGBa &vpRGBa::operator=(const vpColVector &v)
 {
-  if (v.getRows() != 4) {
+  const unsigned int val_4 = 4;
+  if (v.getRows() != val_4) {
     throw(vpException(vpException::dimensionError, "Bad vector dimension "));
   }
   const unsigned int index_0 = 0;

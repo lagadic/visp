@@ -31,8 +31,8 @@
  * Generation of random number with uniform and normal probability density.
  */
 
-#ifndef vpGaussRand_hh
-#define vpGaussRand_hh
+#ifndef VP_GAUSSRAND_H
+#define VP_GAUSSRAND_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpUniRand.h>
@@ -149,12 +149,15 @@ public:
 
       \param seed_val : New seed.
     */
-  void seed(long seed_val) { m_rng.setSeed(seed_val, 0x123465789ULL); }
+  void seed(long seed_val) {
+    const unsigned long long val_ull = 0x123465789ULL;
+    m_rng.setSeed(seed_val, val_ull);
+  }
 
   /*!
       Return a random value from the Gaussian noise generator.
     */
-  double operator()() { return m_sigma * gaussianDraw() + m_mean; }
+  double operator()() { return (m_sigma * gaussianDraw()) + m_mean; }
 
 private:
   double gaussianDraw();

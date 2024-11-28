@@ -434,6 +434,8 @@ public:
 
 protected:
   unsigned int m_index;
+private:
+  static const unsigned int constr_value_4;
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

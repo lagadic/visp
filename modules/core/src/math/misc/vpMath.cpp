@@ -324,7 +324,7 @@ double vpMath::getMedian(const std::vector<double> &v)
   if (v.empty()) {
     throw vpException(vpException::notInitialized, "Empty vector !");
   }
-
+  const size_t val_2 = 2;
   std::vector<double> v_copy = v;
   size_t size = v_copy.size();
 
@@ -332,7 +332,7 @@ double vpMath::getMedian(const std::vector<double> &v)
   std::nth_element(v_copy.begin(), v_copy.begin() + n, v_copy.end());
   double val_n = v_copy[n];
 
-  if ((size % 2) == 1) {
+  if ((size % val_2) == 1) {
     return val_n;
   }
   else {
@@ -389,7 +389,8 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 */
 double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c)
 {
-  if (imPts.size() < 3) {
+  const unsigned int val_3 = 3;
+  if (imPts.size() < val_3) {
     throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
   }
 
@@ -723,7 +724,8 @@ vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &t
  */
 vpColVector vpMath::deg(const vpRotationVector &r)
 {
-  if (r.size() == 4) {
+  const unsigned int val_4 = 4;
+  if (r.size() == val_4) {
     throw(vpException(vpException::fatalError, "Cannot convert angles of a quaternion vector in degrees!"));
   }
   vpColVector r_deg(r.size());

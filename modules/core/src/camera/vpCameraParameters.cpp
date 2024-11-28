@@ -640,14 +640,16 @@ void vpCameraParameters::printParameters()
   std::ios::fmtflags original_flags(std::cout.flags());
   switch (m_projModel) {
   case vpCameraParameters::perspectiveProjWithoutDistortion: {
-    std::cout.precision(10);
+    const unsigned int precision = 10;
+    std::cout.precision(precision);
     std::cout << "Camera parameters for perspective projection without distortion:" << std::endl;
     std::cout << "  px = " << m_px << "\t py = " << m_py << std::endl;
     std::cout << "  u0 = " << m_u0 << "\t v0 = " << m_v0 << std::endl;
     break;
   }
   case vpCameraParameters::perspectiveProjWithDistortion: {
-    std::cout.precision(10);
+    const unsigned int precision = 10;
+    std::cout.precision(precision);
     std::cout << "Camera parameters for perspective projection with distortion:" << std::endl;
     std::cout << "  px = " << m_px << "\t py = " << m_py << std::endl;
     std::cout << "  u0 = " << m_u0 << "\t v0 = " << m_v0 << std::endl;
