@@ -277,6 +277,8 @@ public:
 
   /**
    * \brief Set the minimum stack size, expressed in bytes, due to the recursive algorithm.
+   * If not called, the stack size is left at its default value when running the
+   * Canny edge detection algorithm.
    *
    * \note The stack size is changed back to its original value after
    * before leaving the detect() function.

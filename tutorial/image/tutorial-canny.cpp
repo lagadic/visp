@@ -171,7 +171,8 @@ void checkEdgeList(const vpCannyEdgeDetection &cannyDetector, const vpImage<unsi
   // Check if the edge points are uniquely present in the edge lists
   std::vector<vpImagePoint> cpyListEdgePoints = listEdgePoints;
   std::sort(cpyListEdgePoints.begin(), cpyListEdgePoints.end(), sortImagePoints);
-  std::unique(cpyListEdgePoints.begin(), cpyListEdgePoints.end());
+  std::vector<vpImagePoint>::iterator last = std::unique(cpyListEdgePoints.begin(), cpyListEdgePoints.end());
+  static_cast<void>(cpyListEdgePoints.erase(last, cpyListEdgePoints.end()));
   if (listEdgePoints.size() != cpyListEdgePoints.size()) {
     throw(vpException(vpException::fatalError, "There are duplicated points in the edge points list !"));
   }
