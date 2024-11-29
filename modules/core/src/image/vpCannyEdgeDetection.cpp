@@ -255,7 +255,7 @@ vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  rlim_t initialStackSize;
+  rlim_t initialStackSize = 0;
   struct rlimit rl;
   int result;
   if (m_minStackSize > 0) {
