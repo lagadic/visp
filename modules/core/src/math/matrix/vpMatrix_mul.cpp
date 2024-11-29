@@ -115,7 +115,7 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
-void dummy_vpMatrix_blas() { };
+void dummy_vpMatrix_blas() { }
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

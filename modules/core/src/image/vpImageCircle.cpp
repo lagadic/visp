@@ -1049,7 +1049,7 @@ void incrementIfIsInMask(const vpImage<bool> &mask, const int &width, const int 
     ++count;
   }
 }
-};
+}
 #endif
 
 unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
