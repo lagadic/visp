@@ -147,11 +147,55 @@ int main(int argc, char **argv)
       convergence_threshold_tu = 0.;
     }
     else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
-      std::cout
-        << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
-        << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-        << "[--quad_decimate <decimation; default " << opt_quad_decimate
-        << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
+      std::cout << "SYNOPSYS" << std::endl
+        << "  " << argv[0]
+        << " [--ip <controller ip>]"
+        << " [--tag-size <size>]"
+        << " [--eMc <extrinsic transformation file>]"
+        << " [--quad-decimate <decimation factor>]"
+        << " [--adaptive-gain]"
+        << " [--plot]"
+        << " [--task-sequencing]"
+        << " [--no-convergence-threshold]"
+        << " [--verbose]"
+        << " [--help] [-h]\n"
+        << std::endl;
+      std::cout << "DESCRIPTION" << std::endl
+        << "  Use a position-based visual-servoing scheme to position the camera in front of an Apriltag." << std::endl
+        << std::endl
+        << "  --ip <controller ip>" << std::endl
+        << "    Franka controller ip address" << std::endl
+        << "    Default: " << opt_robot_ip << std::endl
+        << std::endl
+        << "  --tag-size <size>" << std::endl
+        << "    Apriltag size in [m]." << std::endl
+        << "    Default: " << opt_tagSize << " [m]" << std::endl
+        << std::endl
+        << "  --eMc <extrinsic transformation file>" << std::endl
+        << "    File containing the homogeneous transformation matrix between" << std::endl
+        << "    robot end-effector and camera frame." << std::endl
+        << std::endl
+        << "  --quad-decimate <decimation factor>" << std::endl
+        << "    Decimation factor used during Apriltag detection." << std::endl
+        << "    Default: " << opt_quad_decimate << std::endl
+        << std::endl
+        << "  --adaptive-gain" << std::endl
+        << "    Flag to enable adaptive gain to speed up visual servo near convergence." << std::endl
+        << std::endl
+        << "  --plot" << std::endl
+        << "    Flag to enable curve plotter." << std::endl
+        << std::endl
+        << "  --task-sequencing" << std::endl
+        << "    Flag to enable task sequencing scheme." << std::endl
+        << std::endl
+        << "  --no-convergence-threshold" << std::endl
+        << "    Flag to disable convergence threshold used to stop the visual servo." << std::endl
+        << std::endl
+        << "  --verbose" << std::endl
+        << "    Flag to enable extra verbosity." << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "    Print this helper message." << std::endl
         << std::endl;
       return EXIT_SUCCESS;
     }
