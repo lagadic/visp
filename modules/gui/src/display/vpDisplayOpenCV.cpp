@@ -57,6 +57,8 @@
 // debug / exception
 #include <visp3/core/vpDisplayException.h>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core_c.h> // for CV_FILLED versus cv::FILLED
 
 #if defined(HAVE_OPENCV_IMGPROC)
@@ -75,8 +77,735 @@
 
 BEGIN_VISP_NAMESPACE
 
-std::vector<std::string> vpDisplayOpenCV::m_listTitles = std::vector<std::string>();
-unsigned int vpDisplayOpenCV::m_nbWindows = 0;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+class vpDisplayOpenCV::Impl
+{
+private:
+  cv::Mat m_background;
+  cv::Scalar *col;
+  cv::Scalar cvcolor;
+  int font;
+  float fontScale;
+  static std::vector<std::string> m_listTitles;
+  static unsigned int m_nbWindows;
+  int fontHeight;
+  int x_move;
+  int y_move;
+  bool move;
+  int x_lbuttondown;
+  int y_lbuttondown;
+  bool lbuttondown;
+  int x_mbuttondown;
+  int y_mbuttondown;
+  bool mbuttondown;
+  int x_rbuttondown;
+  int y_rbuttondown;
+  bool rbuttondown;
+  int x_lbuttonup;
+  int y_lbuttonup;
+  bool lbuttonup;
+  int x_mbuttonup;
+  int y_mbuttonup;
+  bool mbuttonup;
+  int x_rbuttonup;
+  int y_rbuttonup;
+  bool rbuttonup;
+
+  friend class vpDisplayOpenCV;
+
+public:
+  Impl() :
+    m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+    x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+    x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
+    y_rbuttonup(0), rbuttonup(false)
+  { }
+
+  virtual ~Impl()
+  {
+    if (col != nullptr) {
+      delete[] col;
+      col = nullptr;
+    }
+  }
+
+  void getImage(vpImage<vpRGBa> &I)
+  {
+    // Should be optimized
+    vpImageConvert::convert(m_background, I);
+  }
+
+  std::string init(const std::string &title, const int &windowXPosition, const int &windowYPosition)
+  {
+    int flags = cv::WINDOW_AUTOSIZE;
+    std::string outTitle = title;
+    if (outTitle.empty()) {
+      std::ostringstream s;
+      s << m_nbWindows++;
+      outTitle = std::string("Window ") + s.str();
+    }
+
+    bool isInList;
+    do {
+      isInList = false;
+      size_t i = 0;
+      while (i < m_listTitles.size() && !isInList) {
+        if (m_listTitles[i] == outTitle) {
+          std::ostringstream s;
+          s << m_nbWindows++;
+          outTitle = std::string("Window ") + s.str();
+          isInList = true;
+        }
+        i++;
+      }
+    } while (isInList);
+
+    m_listTitles.push_back(outTitle);
+
+
+    /* Create the window*/
+    cv::namedWindow(outTitle, flags);
+    cv::moveWindow(outTitle.c_str(), windowXPosition, windowYPosition);
+
+    move = false;
+    lbuttondown = false;
+    mbuttondown = false;
+    rbuttondown = false;
+    lbuttonup = false;
+    mbuttonup = false;
+    rbuttonup = false;
+
+    cv::setMouseCallback(outTitle, on_mouse, this);
+    col = new cv::Scalar[vpColor::id_unknown];
+
+    /* Create color */
+    vpColor pcolor; // Predefined colors
+    pcolor = vpColor::lightBlue;
+    col[vpColor::id_lightBlue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::blue;
+    col[vpColor::id_blue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::darkBlue;
+    col[vpColor::id_darkBlue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::lightRed;
+    col[vpColor::id_lightRed] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::red;
+    col[vpColor::id_red] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::darkRed;
+    col[vpColor::id_darkRed] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::lightGreen;
+    col[vpColor::id_lightGreen] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::green;
+    col[vpColor::id_green] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::darkGreen;
+    col[vpColor::id_darkGreen] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::yellow;
+    col[vpColor::id_yellow] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::cyan;
+    col[vpColor::id_cyan] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::orange;
+    col[vpColor::id_orange] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::purple;
+    col[vpColor::id_purple] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::white;
+    col[vpColor::id_white] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::black;
+    col[vpColor::id_black] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::lightGray;
+    col[vpColor::id_lightGray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::gray;
+    col[vpColor::id_gray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+    pcolor = vpColor::darkGray;
+    col[vpColor::id_darkGray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
+
+    int thickness = 1;
+    cv::Size fontSize;
+    int baseline;
+    fontSize = cv::getTextSize("A", font, fontScale, thickness, &baseline);
+
+    fontHeight = fontSize.height + baseline;
+    return outTitle;
+  }
+
+  void closeDisplay(const std::string &title)
+  {
+    if (col != nullptr) {
+      delete[] col;
+      col = nullptr;
+    }
+
+    cv::destroyWindow(title);
+    for (size_t i = 0; i < m_listTitles.size(); i++) {
+      if (title == m_listTitles[i]) {
+        m_listTitles.erase(m_listTitles.begin() + (long int)i);
+        break;
+      }
+    }
+  }
+
+  void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                    const unsigned int &w, const unsigned int &h, const unsigned int &thickness, const unsigned int &scale)
+  {
+    double a = ip2.get_i() - ip1.get_i();
+    double b = ip2.get_j() - ip1.get_j();
+    double lg = sqrt(vpMath::sqr(a) + vpMath::sqr(b));
+
+    if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
+    }
+    else {
+      a /= lg;
+      b /= lg;
+
+      vpImagePoint ip3;
+      ip3.set_i(ip2.get_i() - w * a);
+      ip3.set_j(ip2.get_j() - w * b);
+
+      vpImagePoint ip4;
+      ip4.set_i(ip3.get_i() - b * h);
+      ip4.set_j(ip3.get_j() + a * h);
+
+      if (lg > 2 * vpImagePoint::distance(ip2, ip4))
+        displayLine(ip2, ip4, color, thickness, scale);
+
+      ip4.set_i(ip3.get_i() + b * h);
+      ip4.set_j(ip3.get_j() - a * h);
+
+      if (lg > 2 * vpImagePoint::distance(ip2, ip4))
+        displayLine(ip2, ip4, color, thickness, scale);
+
+      displayLine(ip1, ip2, color, thickness, scale);
+    }
+  }
+
+  void displayCircle(const vpImagePoint &center, const unsigned int &radius, const vpColor &color, const bool &fill,
+                     const unsigned int &thickness, const unsigned int &scale)
+  {
+    int x = vpMath::round(center.get_u() / scale);
+    int y = vpMath::round(center.get_v() / scale);
+    int r = static_cast<int>(radius / scale);
+    cv::Scalar cv_color;
+    if (color.id < vpColor::id_unknown) {
+      cv_color = col[color.id];
+    }
+    else {
+      cv_color = CV_RGB(color.R, color.G, color.B);
+    }
+
+    if (fill == false) {
+      int cv_thickness = static_cast<int>(thickness);
+      cv::circle(m_background, cv::Point(x, y), r, cv_color, cv_thickness);
+    }
+    else {
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+      int filled = cv::FILLED;
+#else
+      int filled = CV_FILLED;
+#endif
+      double opacity = static_cast<double>(color.A) / 255.0;
+      overlay([x, y, r, cv_color, filled](cv::Mat image) { cv::circle(image, cv::Point(x, y), r, cv_color, filled); },
+              opacity);
+    }
+  }
+
+  void displayCross(const vpImagePoint &ip, const unsigned int &size, const vpColor &color, const unsigned int &thickness, const unsigned int &scale)
+  {
+    vpImagePoint top, bottom, left, right;
+    top.set_i(ip.get_i() - size / 2);
+    top.set_j(ip.get_j());
+    bottom.set_i(ip.get_i() + size / 2);
+    bottom.set_j(ip.get_j());
+    left.set_i(ip.get_i());
+    left.set_j(ip.get_j() - size / 2);
+    right.set_i(ip.get_i());
+    right.set_j(ip.get_j() + size / 2);
+    displayLine(top, bottom, color, thickness, scale);
+    displayLine(left, right, color, thickness, scale);
+  }
+
+  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                      const unsigned int &thickness, const unsigned int &scale)
+  {
+    vpImagePoint ip1_ = ip1;
+    vpImagePoint ip2_ = ip2;
+
+    double size = 10. * scale;
+    double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
+    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    if (vertical_line) {
+      if (ip2_.get_i() < ip1_.get_i()) {
+        std::swap(ip1_, ip2_);
+      }
+    }
+    else if (ip2_.get_j() < ip1_.get_j()) {
+      std::swap(ip1_, ip2_);
+    }
+
+    double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
+    double deltaj = size / length * diff_j;
+    double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
+    double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
+    double orig = ip1_.get_i() - slope * ip1_.get_j();
+
+    if (vertical_line) {
+      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+        double j = ip1_.get_j();
+        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness, scale);
+      }
+    }
+    else {
+      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+        double i = slope * j + orig;
+        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness, scale);
+      }
+    }
+  }
+
+  void displayImage(const vpImage<unsigned char> &I, const unsigned int &scale, const unsigned int &width, const unsigned int &height)
+  {
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)width, (int)height);
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
+        m_background.cols != (int)width) {
+      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
+    }
+
+    if (scale == 1) {
+      for (unsigned int i = 0; i < height; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        for (unsigned int j = 0; j < width; j++) {
+          unsigned char val = I[i][j];
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+        }
+      }
+    }
+    else {
+      for (unsigned int i = 0; i < height; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        for (unsigned int j = 0; j < width; j++) {
+          unsigned char val = I[i * scale][j * scale];
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+        }
+      }
+    }
+  }
+
+  void displayImage(const vpImage<vpRGBa> &I, const unsigned int &scale, const unsigned int &width, const unsigned int &height)
+  {
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)width, (int)height);
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)height ||
+        m_background.cols != (int)width) {
+      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
+    }
+
+    if (scale == 1) {
+      for (unsigned int i = 0; i < height; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        for (unsigned int j = 0; j < width; j++) {
+          vpRGBa val = I[i][j];
+          *(dst_24++) = val.B;
+          *(dst_24++) = val.G;
+          *(dst_24++) = val.R;
+        }
+      }
+    }
+    else {
+      for (unsigned int i = 0; i < height; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * width);
+        for (unsigned int j = 0; j < width; j++) {
+          vpRGBa val = I[i * scale][j * scale];
+          *(dst_24++) = val.B;
+          *(dst_24++) = val.G;
+          *(dst_24++) = val.R;
+        }
+      }
+    }
+  }
+
+  void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int &w,
+                       const unsigned int &h, const unsigned int &imgWidth, const unsigned int &imgHeight, const unsigned int &scale)
+  {
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)imgWidth, (int)imgHeight);
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
+        m_background.cols != (int)imgWidth) {
+      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
+    }
+
+    if (scale == 1) {
+      unsigned int i_min = (unsigned int)iP.get_i();
+      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
+      unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        for (unsigned int j = j_min; j < j_max; j++) {
+          unsigned char val = I[i][j];
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+        }
+      }
+    }
+    else {
+      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
+      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      for (int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        for (int j = j_min; j < j_max; j++) {
+          unsigned char val = I[i * scale][j * scale];
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+          *(dst_24++) = val;
+        }
+      }
+    }
+  }
+
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int &w, const unsigned int &h, const unsigned int &imgWidth, const unsigned int &imgHeight, const unsigned int &scale)
+  {
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)imgWidth, (int)imgHeight);
+    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)imgHeight ||
+        m_background.cols != (int)imgWidth) {
+      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
+    }
+
+    if (scale == 1) {
+      unsigned int i_min = (unsigned int)iP.get_i();
+      unsigned int j_min = (unsigned int)iP.get_j();
+      unsigned int i_max = std::min<unsigned int>(i_min + h, imgHeight);
+      unsigned int j_max = std::min<unsigned int>(j_min + w, imgWidth);
+      for (unsigned int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        for (unsigned int j = j_min; j < j_max; j++) {
+          vpRGBa val = I[i][j];
+          *(dst_24++) = val.B;
+          *(dst_24++) = val.G;
+          *(dst_24++) = val.R;
+        }
+      }
+    }
+    else {
+      int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+      int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)imgHeight);
+      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)imgWidth);
+      for (int i = i_min; i < i_max; i++) {
+        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * imgWidth + j_min * 3);
+        for (int j = j_min; j < j_max; j++) {
+          vpRGBa val = I[i * scale][j * scale];
+          *(dst_24++) = val.B;
+          *(dst_24++) = val.G;
+          *(dst_24++) = val.R;
+        }
+      }
+    }
+  }
+
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, const unsigned int &thickness, const unsigned int &scale)
+  {
+    if (color.id < vpColor::id_unknown) {
+      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
+               cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), col[color.id],
+               (int)thickness);
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B);
+      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale)),
+               cv::Point(vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale)), cvcolor,
+               (int)thickness);
+    }
+  }
+
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, const unsigned int &thickness, const unsigned int &scale)
+  {
+    for (unsigned int i = 0; i < thickness; i++) {
+      if (color.id < vpColor::id_unknown) {
+        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
+                 cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
+                 col[color.id], (int)thickness);
+      }
+      else {
+        cvcolor = CV_RGB(color.R, color.G, color.B);
+        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale)),
+                 cv::Point(vpMath::round(ip.get_u() / scale + thickness - 1), vpMath::round(ip.get_v() / scale)),
+                 cvcolor, (int)thickness);
+      }
+    }
+  }
+
+  void displayRectangle(const vpImagePoint &topLeft, const unsigned int &w, const unsigned int &h, const vpColor &color,
+                        const bool &fill, const unsigned int &thickness, const unsigned int &scale)
+  {
+    int left = vpMath::round(topLeft.get_u() / scale);
+    int top = vpMath::round(topLeft.get_v() / scale);
+    int right = vpMath::round((topLeft.get_u() + w) / scale);
+    int bottom = vpMath::round((topLeft.get_v() + h) / scale);
+    cv::Scalar cv_color;
+    if (color.id < vpColor::id_unknown) {
+      cv_color = col[color.id];
+    }
+    else {
+      cv_color = CV_RGB(color.R, color.G, color.B);
+    }
+
+    if (fill == false) {
+      int cv_thickness = static_cast<int>(thickness);
+      cv::rectangle(m_background, cv::Point(left, top), cv::Point(right, bottom), cv_color, cv_thickness);
+    }
+    else {
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+      int filled = cv::FILLED;
+#else
+      int filled = CV_FILLED;
+#endif
+      double opacity = static_cast<double>(color.A) / 255.0;
+      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
+        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
+          },
+          opacity);
+    }
+  }
+
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color, const unsigned int &scale)
+  {
+    if (color.id < vpColor::id_unknown) {
+      cv::putText(m_background, text,
+                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)),
+                  font, fontScale, col[color.id]);
+    }
+    else {
+      cvcolor = CV_RGB(color.R, color.G, color.B);
+      cv::putText(m_background, text,
+                  cv::Point(vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale + fontHeight)),
+                  font, fontScale, cvcolor);
+    }
+  }
+
+  void flushDisplay(const std::string &title)
+  {
+    cv::imshow(title, m_background);
+    cv::waitKey(5);
+  }
+
+  void flushDisplayROI(const std::string &title)
+  {
+    cv::imshow(title.c_str(), m_background);
+    cv::waitKey(5);
+  }
+
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, const bool &blocking, const std::string &title, const unsigned int &scale)
+  {
+    flushDisplay(title);
+    bool ret = false;
+    double u, v;
+    if (blocking) {
+      lbuttondown = false;
+      mbuttondown = false;
+      rbuttondown = false;
+    }
+    do {
+      if (lbuttondown) {
+        ret = true;
+        u = (unsigned int)x_lbuttondown * scale;
+        v = (unsigned int)y_lbuttondown * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button1;
+        lbuttondown = false;
+      }
+      if (mbuttondown) {
+        ret = true;
+        u = (unsigned int)x_mbuttondown * scale;
+        v = (unsigned int)y_mbuttondown * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button2;
+        mbuttondown = false;
+      }
+      if (rbuttondown) {
+        ret = true;
+        u = (unsigned int)x_rbuttondown * scale;
+        v = (unsigned int)y_rbuttondown * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button3;
+        rbuttondown = false;
+      }
+      if (blocking) {
+        cv::waitKey(10);
+      }
+    } while (ret == false && blocking == true);
+    return ret;
+  }
+
+  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, const bool &blocking, const unsigned int &scale)
+  {
+    bool ret = false;
+    double u, v;
+    if (blocking) {
+      lbuttonup = false;
+      mbuttonup = false;
+      rbuttonup = false;
+    }
+    do {
+      if (lbuttonup) {
+        ret = true;
+        u = (unsigned int)x_lbuttonup * scale;
+        v = (unsigned int)y_lbuttonup * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button1;
+        lbuttonup = false;
+      }
+      if (mbuttonup) {
+        ret = true;
+        u = (unsigned int)x_mbuttonup * scale;
+        v = (unsigned int)y_mbuttonup * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button2;
+        mbuttonup = false;
+      }
+      if (rbuttonup) {
+        ret = true;
+        u = (unsigned int)x_rbuttonup * scale;
+        v = (unsigned int)y_rbuttonup * scale;
+        ip.set_u(u);
+        ip.set_v(v);
+        button = vpMouseButton::button3;
+        rbuttonup = false;
+      }
+      if (blocking) {
+        cv::waitKey(10);
+      }
+    } while (ret == false && blocking == true);
+    return ret;
+  }
+
+  bool getPointerMotionEvent(vpImagePoint &ip, const unsigned int &scale)
+  {
+    bool ret = false;
+    if (move) {
+      ret = true;
+      double u = (unsigned int)x_move / scale;
+      double v = (unsigned int)y_move / scale;
+      ip.set_u(u);
+      ip.set_v(v);
+      move = false;
+    }
+    return ret;
+  }
+
+  void getPointerPosition(vpImagePoint &ip, const unsigned int &scale)
+  {
+    bool moved = getPointerMotionEvent(ip, scale);
+    if (!moved) {
+      double u, v;
+      u = (unsigned int)x_move / scale;
+      v = (unsigned int)y_move / scale;
+      ip.set_u(u);
+      ip.set_v(v);
+    }
+  }
+
+  static void on_mouse(int event, int x, int y, int /*flags*/, void *display)
+  {
+    Impl *disp = static_cast<Impl *>(display);
+
+    switch (event) {
+    case cv::EVENT_MOUSEMOVE:
+    {
+      disp->move = true;
+      disp->x_move = x;
+      disp->y_move = y;
+      break;
+    }
+    case cv::EVENT_LBUTTONDOWN:
+    {
+      disp->lbuttondown = true;
+      disp->x_lbuttondown = x;
+      disp->y_lbuttondown = y;
+      break;
+    }
+    case cv::EVENT_MBUTTONDOWN:
+    {
+      disp->mbuttondown = true;
+      disp->x_mbuttondown = x;
+      disp->y_mbuttondown = y;
+      break;
+    }
+    case cv::EVENT_RBUTTONDOWN:
+    {
+      disp->rbuttondown = true;
+      disp->x_rbuttondown = x;
+      disp->y_rbuttondown = y;
+      break;
+    }
+    case cv::EVENT_LBUTTONUP:
+    {
+      disp->lbuttonup = true;
+      disp->x_lbuttonup = x;
+      disp->y_lbuttonup = y;
+      break;
+    }
+    case cv::EVENT_MBUTTONUP:
+    {
+      disp->mbuttonup = true;
+      disp->x_mbuttonup = x;
+      disp->y_mbuttonup = y;
+      break;
+    }
+    case cv::EVENT_RBUTTONUP:
+    {
+      disp->rbuttonup = true;
+      disp->x_rbuttonup = x;
+      disp->y_rbuttonup = y;
+      break;
+    }
+
+    default:
+      break;
+    }
+  }
+
+  void overlay(std::function<void(cv::Mat &)> overlay_function, const double &opacity)
+  {
+    // Initialize overlay layer for transparency
+    cv::Mat overlay;
+    if (opacity < 1.0) {
+      // Deep copy
+      overlay = m_background.clone();
+    }
+    else {
+      // Shallow copy
+      overlay = m_background;
+    }
+
+    overlay_function(overlay);
+
+    // Blend background and overlay
+    if (opacity < 1.0) {
+      cv::addWeighted(overlay, opacity, m_background, 1.0 - opacity, 0.0, m_background);
+    }
+  }
+};
+
+std::vector<std::string> vpDisplayOpenCV::Impl::m_listTitles = std::vector<std::string>();
+unsigned int vpDisplayOpenCV::Impl::m_nbWindows = 0;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
 
@@ -100,12 +829,8 @@ unsigned int vpDisplayOpenCV::m_nbWindows = 0;
 
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : vpDisplay(),
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -136,12 +861,8 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleTyp
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const std::string &title,
                                  vpScaleType scaleType)
-  : vpDisplay(),
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -166,12 +887,8 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
   and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  :
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -198,12 +915,8 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   and the columns.
 */
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
-  :
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -236,12 +949,8 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::st
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
-  :
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 {
   m_windowXPosition = x;
   m_windowYPosition = y;
@@ -251,17 +960,17 @@ vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
   }
   else {
     std::ostringstream s;
-    s << m_nbWindows++;
+    s << vpDisplayOpenCV::Impl::m_nbWindows++;
     m_title = std::string("Window ") + s.str();
   }
 
   bool isInList;
   do {
     isInList = false;
-    for (size_t i = 0; i < m_listTitles.size(); i++) {
-      if (m_listTitles[i] == m_title) {
+    for (size_t i = 0; i < vpDisplayOpenCV::Impl::m_listTitles.size(); i++) {
+      if (vpDisplayOpenCV::Impl::m_listTitles[i] == m_title) {
         std::ostringstream s;
-        s << m_nbWindows++;
+        s << vpDisplayOpenCV::Impl::m_nbWindows++;
         m_title = std::string("Window ") + s.str();
         isInList = true;
         break;
@@ -269,7 +978,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
     }
   } while (isInList);
 
-  m_listTitles.push_back(m_title);
+  vpDisplayOpenCV::Impl::m_listTitles.push_back(m_title);
 }
 
 /*!
@@ -296,12 +1005,8 @@ vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV()
-  :
-  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-  fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false), x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false), x_rbuttonup(0),
-  y_rbuttonup(0), rbuttonup(false)
+  : vpDisplay()
+  , m_impl(new Impl())
 { }
 
 /*!
@@ -310,6 +1015,7 @@ vpDisplayOpenCV::vpDisplayOpenCV()
 vpDisplayOpenCV::~vpDisplayOpenCV()
 {
   closeDisplay();
+  delete m_impl;
 }
 
 /*!
@@ -375,96 +1081,14 @@ void vpDisplayOpenCV::init(unsigned int w, unsigned int h, int x, int y, const s
   if (y != -1) {
     this->m_windowYPosition = y;
   }
-  int flags = cv::WINDOW_AUTOSIZE;
 
   if (m_title.empty()) {
     if (!title.empty()) {
       m_title = std::string(title);
     }
-    else {
-
-      std::ostringstream s;
-      s << m_nbWindows++;
-      m_title = std::string("Window ") + s.str();
-    }
-
-    bool isInList;
-    do {
-      isInList = false;
-      for (size_t i = 0; i < m_listTitles.size(); i++) {
-        if (m_listTitles[i] == m_title) {
-          std::ostringstream s;
-          s << m_nbWindows++;
-          m_title = std::string("Window ") + s.str();
-          isInList = true;
-          break;
-        }
-      }
-    } while (isInList);
-
-    m_listTitles.push_back(m_title);
   }
+  m_title = m_impl->init(m_title, m_windowXPosition, m_windowYPosition);
 
-  /* Create the window*/
-  cv::namedWindow(this->m_title, flags);
-  cv::moveWindow(this->m_title.c_str(), this->m_windowXPosition, this->m_windowYPosition);
-
-  move = false;
-  lbuttondown = false;
-  mbuttondown = false;
-  rbuttondown = false;
-  lbuttonup = false;
-  mbuttonup = false;
-  rbuttonup = false;
-
-  cv::setMouseCallback(this->m_title, on_mouse, this);
-  col = new cv::Scalar[vpColor::id_unknown];
-
-  /* Create color */
-  vpColor pcolor; // Predefined colors
-  pcolor = vpColor::lightBlue;
-  col[vpColor::id_lightBlue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::blue;
-  col[vpColor::id_blue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::darkBlue;
-  col[vpColor::id_darkBlue] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::lightRed;
-  col[vpColor::id_lightRed] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::red;
-  col[vpColor::id_red] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::darkRed;
-  col[vpColor::id_darkRed] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::lightGreen;
-  col[vpColor::id_lightGreen] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::green;
-  col[vpColor::id_green] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::darkGreen;
-  col[vpColor::id_darkGreen] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::yellow;
-  col[vpColor::id_yellow] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::cyan;
-  col[vpColor::id_cyan] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::orange;
-  col[vpColor::id_orange] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::purple;
-  col[vpColor::id_purple] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::white;
-  col[vpColor::id_white] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::black;
-  col[vpColor::id_black] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::lightGray;
-  col[vpColor::id_lightGray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::gray;
-  col[vpColor::id_gray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-  pcolor = vpColor::darkGray;
-  col[vpColor::id_darkGray] = CV_RGB(pcolor.R, pcolor.G, pcolor.B);
-
-  int thickness = 1;
-  cv::Size fontSize;
-  int baseline;
-  fontSize = cv::getTextSize("A", font, fontScale, thickness, &baseline);
-
-  fontHeight = fontSize.height + baseline;
   m_displayHasBeenInitialized = true;
 }
 
@@ -520,6 +1144,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
   }
 }
+
 /*!
   Display the gray level image \e I (8bits).
 
@@ -534,36 +1159,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 {
   if (m_displayHasBeenInitialized) {
-    int depth = CV_8U;
-    int channels = 3;
-    cv::Size size((int)m_width, (int)m_height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)m_height ||
-        m_background.cols != (int)m_width) {
-      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
-    }
-
-    if (m_scale == 1) {
-      for (unsigned int i = 0; i < m_height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width);
-        for (unsigned int j = 0; j < m_width; j++) {
-          unsigned char val = I[i][j];
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-        }
-      }
-    }
-    else {
-      for (unsigned int i = 0; i < m_height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width);
-        for (unsigned int j = 0; j < m_width; j++) {
-          unsigned char val = I[i * m_scale][j * m_scale];
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-        }
-      }
-    }
+    m_impl->displayImage(I, m_scale, m_width, m_height);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -589,44 +1185,7 @@ void vpDisplayOpenCV::displayImageROI(const vpImage<unsigned char> &I, const vpI
                                       unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
-    int depth = CV_8U;
-    int channels = 3;
-    cv::Size size((int)m_width, (int)m_height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)m_height ||
-        m_background.cols != (int)m_width) {
-      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
-    }
-
-    if (m_scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min<unsigned int>(i_min + h, m_height);
-      unsigned int j_max = std::min<unsigned int>(j_min + w, m_width);
-      for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width + j_min * 3);
-        for (unsigned int j = j_min; j < j_max; j++) {
-          unsigned char val = I[i][j];
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-        }
-      }
-    }
-    else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / m_scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / m_scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
-          unsigned char val = I[i * m_scale][j * m_scale];
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-          *(dst_24++) = val;
-        }
-      }
-    }
+    m_impl->displayImageROI(I, iP, w, h, m_width, m_height, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -648,36 +1207,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 {
 
   if (m_displayHasBeenInitialized) {
-    int depth = CV_8U;
-    int channels = 3;
-    cv::Size size((int)this->m_width, (int)this->m_height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)m_height ||
-        m_background.cols != (int)m_width) {
-      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
-    }
-
-    if (m_scale == 1) {
-      for (unsigned int i = 0; i < m_height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width);
-        for (unsigned int j = 0; j < m_width; j++) {
-          vpRGBa val = I[i][j];
-          *(dst_24++) = val.B;
-          *(dst_24++) = val.G;
-          *(dst_24++) = val.R;
-        }
-      }
-    }
-    else {
-      for (unsigned int i = 0; i < m_height; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width);
-        for (unsigned int j = 0; j < m_width; j++) {
-          vpRGBa val = I[i * m_scale][j * m_scale];
-          *(dst_24++) = val.B;
-          *(dst_24++) = val.G;
-          *(dst_24++) = val.R;
-        }
-      }
-    }
+    m_impl->displayImage(I, m_scale, m_width, m_height);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -702,44 +1232,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 void vpDisplayOpenCV::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
-    int depth = CV_8U;
-    int channels = 3;
-    cv::Size size((int)this->m_width, (int)this->m_height);
-    if (m_background.channels() != channels || m_background.depth() != depth || m_background.rows != (int)m_height ||
-        m_background.cols != (int)m_width) {
-      m_background = cv::Mat(size, CV_MAKETYPE(depth, channels));
-    }
-
-    if (m_scale == 1) {
-      unsigned int i_min = (unsigned int)iP.get_i();
-      unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min<unsigned int>(i_min + h, m_height);
-      unsigned int j_max = std::min<unsigned int>(j_min + w, m_width);
-      for (unsigned int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width + j_min * 3);
-        for (unsigned int j = j_min; j < j_max; j++) {
-          vpRGBa val = I[i][j];
-          *(dst_24++) = val.B;
-          *(dst_24++) = val.G;
-          *(dst_24++) = val.R;
-        }
-      }
-    }
-    else {
-      int i_min = std::max<int>((int)ceil(iP.get_i() / m_scale), 0);
-      int j_min = std::max<int>((int)ceil(iP.get_j() / m_scale), 0);
-      int i_max = std::min<int>((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-      int j_max = std::min<int>((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
-      for (int i = i_min; i < i_max; i++) {
-        unsigned char *dst_24 = (unsigned char *)m_background.data + (int)(i * 3 * m_width + j_min * 3);
-        for (int j = j_min; j < j_max; j++) {
-          vpRGBa val = I[i * m_scale][j * m_scale];
-          *(dst_24++) = val.B;
-          *(dst_24++) = val.G;
-          *(dst_24++) = val.R;
-        }
-      }
-    }
+    m_impl->displayImageROI(I, iP, w, h, m_width, m_height, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -765,18 +1258,8 @@ void vpDisplayOpenCV::displayImage(const unsigned char * /* I */)
 */
 void vpDisplayOpenCV::closeDisplay()
 {
-  if (col != nullptr) {
-    delete[] col;
-    col = nullptr;
-  }
   if (m_displayHasBeenInitialized) {
-    cv::destroyWindow(this->m_title);
-    for (size_t i = 0; i < m_listTitles.size(); i++) {
-      if (m_title == m_listTitles[i]) {
-        m_listTitles.erase(m_listTitles.begin() + (long int)i);
-        break;
-      }
-    }
+    m_impl->closeDisplay(m_title);
 
     m_title.clear();
 
@@ -792,8 +1275,7 @@ void vpDisplayOpenCV::closeDisplay()
 void vpDisplayOpenCV::flushDisplay()
 {
   if (m_displayHasBeenInitialized) {
-    cv::imshow(this->m_title, m_background);
-    cv::waitKey(5);
+    m_impl->flushDisplay(m_title);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -809,8 +1291,7 @@ void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigne
                                       const unsigned int /*height*/)
 {
   if (m_displayHasBeenInitialized) {
-    cv::imshow(this->m_title.c_str(), m_background);
-    cv::waitKey(5);
+    m_impl->flushDisplayROI(m_title);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -836,38 +1317,7 @@ void vpDisplayOpenCV::displayArrow(const vpImagePoint &ip1, const vpImagePoint &
                                    unsigned int w, unsigned int h, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    double a = ip2.get_i() - ip1.get_i();
-    double b = ip2.get_j() - ip1.get_j();
-    double lg = sqrt(vpMath::sqr(a) + vpMath::sqr(b));
-
-    // if ((a==0)&&(b==0))
-    if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
-      // DisplayCrossLarge(i1,j1,3,col) ;
-    }
-    else {
-      a /= lg;
-      b /= lg;
-
-      vpImagePoint ip3;
-      ip3.set_i(ip2.get_i() - w * a);
-      ip3.set_j(ip2.get_j() - w * b);
-
-      vpImagePoint ip4;
-      ip4.set_i(ip3.get_i() - b * h);
-      ip4.set_j(ip3.get_j() + a * h);
-
-      if (lg > 2 * vpImagePoint::distance(ip2, ip4))
-        displayLine(ip2, ip4, color, thickness);
-
-      ip4.set_i(ip3.get_i() + b * h);
-      ip4.set_j(ip3.get_j() - a * h);
-
-      if (lg > 2 * vpImagePoint::distance(ip2, ip4))
-        displayLine(ip2, ip4, color, thickness);
-
-      displayLine(ip1, ip2, color, thickness);
-    }
+    m_impl->displayArrow(ip1, ip2, color, w, h, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -888,22 +1338,13 @@ void vpDisplayOpenCV::displayArrow(const vpImagePoint &ip1, const vpImagePoint &
 void vpDisplayOpenCV::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
-    if (color.id < vpColor::id_unknown) {
-      cv::putText(m_background, text,
-                  cv::Point(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale + fontHeight)),
-                  font, fontScale, col[color.id]);
-    }
-    else {
-      cvcolor = CV_RGB(color.R, color.G, color.B);
-      cv::putText(m_background, text,
-                  cv::Point(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale + fontHeight)),
-                  font, fontScale, cvcolor);
-    }
+    m_impl->displayText(ip, text, color, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
   }
 }
+
 /*!
   Display a circle.
   \param center : Circle center position.
@@ -920,31 +1361,7 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center, unsigned int rad
                                     unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    int x = vpMath::round(center.get_u() / m_scale);
-    int y = vpMath::round(center.get_v() / m_scale);
-    int r = static_cast<int>(radius / m_scale);
-    cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
-    }
-    else {
-      cv_color = CV_RGB(color.R, color.G, color.B);
-    }
-
-    if (fill == false) {
-      int cv_thickness = static_cast<int>(thickness);
-      cv::circle(m_background, cv::Point(x, y), r, cv_color, cv_thickness);
-    }
-    else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-      int filled = cv::FILLED;
-#else
-      int filled = CV_FILLED;
-#endif
-      double opacity = static_cast<double>(color.A) / 255.0;
-      overlay([x, y, r, cv_color, filled](cv::Mat image) { cv::circle(image, cv::Point(x, y), r, cv_color, filled); },
-              opacity);
-    }
+    m_impl->displayCircle(center, radius, color, fill, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -962,17 +1379,7 @@ void vpDisplayOpenCV::displayCross(const vpImagePoint &ip, unsigned int size, co
                                    unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    vpImagePoint top, bottom, left, right;
-    top.set_i(ip.get_i() - size / 2);
-    top.set_j(ip.get_j());
-    bottom.set_i(ip.get_i() + size / 2);
-    bottom.set_j(ip.get_j());
-    left.set_i(ip.get_i());
-    left.set_j(ip.get_j() - size / 2);
-    right.set_i(ip.get_i());
-    right.set_j(ip.get_j() + size / 2);
-    displayLine(top, bottom, color, thickness);
-    displayLine(left, right, color, thickness);
+    m_impl->displayCross(ip, size, color, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -990,39 +1397,7 @@ void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, const vpImagePoint
                                      unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    vpImagePoint ip1_ = ip1;
-    vpImagePoint ip2_ = ip2;
-
-    double size = 10. * m_scale;
-    double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
-    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
-    if (vertical_line) {
-      if (ip2_.get_i() < ip1_.get_i()) {
-        std::swap(ip1_, ip2_);
-      }
-    }
-    else if (ip2_.get_j() < ip1_.get_j()) {
-      std::swap(ip1_, ip2_);
-    }
-
-    double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
-    double deltaj = size / length * diff_j;
-    double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
-    double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
-    double orig = ip1_.get_i() - slope * ip1_.get_j();
-
-    if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
-        double j = ip1_.get_j();
-        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness);
-      }
-    }
-    else {
-      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
-        double i = slope * j + orig;
-        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness);
-      }
-    }
+    m_impl->displayDotLine(ip1, ip2, color, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1039,17 +1414,7 @@ void vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, const vpImagePoint &i
                                   unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    if (color.id < vpColor::id_unknown) {
-      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale)),
-               cv::Point(vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale)), col[color.id],
-               (int)thickness);
-    }
-    else {
-      cvcolor = CV_RGB(color.R, color.G, color.B);
-      cv::line(m_background, cv::Point(vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale)),
-               cv::Point(vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale)), cvcolor,
-               (int)thickness);
-    }
+    m_impl->displayLine(ip1, ip2, color, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1065,19 +1430,7 @@ void vpDisplayOpenCV::displayLine(const vpImagePoint &ip1, const vpImagePoint &i
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    for (unsigned int i = 0; i < thickness; i++) {
-      if (color.id < vpColor::id_unknown) {
-        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale)),
-                 cv::Point(vpMath::round(ip.get_u() / m_scale + thickness - 1), vpMath::round(ip.get_v() / m_scale)),
-                 col[color.id], (int)thickness);
-      }
-      else {
-        cvcolor = CV_RGB(color.R, color.G, color.B);
-        cv::line(m_background, cv::Point(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale)),
-                 cv::Point(vpMath::round(ip.get_u() / m_scale + thickness - 1), vpMath::round(ip.get_v() / m_scale)),
-                 cvcolor, (int)thickness);
-      }
-    }
+    m_impl->displayPoint(ip, color, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1103,34 +1456,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
                                        const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    int left = vpMath::round(topLeft.get_u() / m_scale);
-    int top = vpMath::round(topLeft.get_v() / m_scale);
-    int right = vpMath::round((topLeft.get_u() + w) / m_scale);
-    int bottom = vpMath::round((topLeft.get_v() + h) / m_scale);
-    cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
-    }
-    else {
-      cv_color = CV_RGB(color.R, color.G, color.B);
-    }
-
-    if (fill == false) {
-      int cv_thickness = static_cast<int>(thickness);
-      cv::rectangle(m_background, cv::Point(left, top), cv::Point(right, bottom), cv_color, cv_thickness);
-    }
-    else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-      int filled = cv::FILLED;
-#else
-      int filled = CV_FILLED;
-#endif
-      double opacity = static_cast<double>(color.A) / 255.0;
-      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
-        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
-          },
-          opacity);
-    }
+    m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1154,34 +1480,9 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
                                        const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    int left = vpMath::round(topLeft.get_u() / m_scale);
-    int top = vpMath::round(topLeft.get_v() / m_scale);
-    int right = vpMath::round(bottomRight.get_u() / m_scale);
-    int bottom = vpMath::round(bottomRight.get_v() / m_scale);
-    cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
-    }
-    else {
-      cv_color = CV_RGB(color.R, color.G, color.B);
-    }
-
-    if (fill == false) {
-      int cv_thickness = static_cast<int>(thickness);
-      cv::rectangle(m_background, cv::Point(left, top), cv::Point(right, bottom), cv_color, cv_thickness);
-    }
-    else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-      int filled = cv::FILLED;
-#else
-      int filled = CV_FILLED;
-#endif
-      double opacity = static_cast<double>(color.A) / 255.0;
-      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
-        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
-          },
-          opacity);
-    }
+    unsigned int w = bottomRight.get_u() - topLeft.get_u() + 1;
+    unsigned int h = bottomRight.get_v() - topLeft.get_v() + 1;
+    displayRectangle(topLeft, w, h, color, fill, thickness);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1204,34 +1505,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
 void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    int left = vpMath::round(rectangle.getLeft() / m_scale);
-    int top = vpMath::round(rectangle.getTop() / m_scale);
-    int right = vpMath::round(rectangle.getRight() / m_scale);
-    int bottom = vpMath::round(rectangle.getBottom() / m_scale);
-    cv::Scalar cv_color;
-    if (color.id < vpColor::id_unknown) {
-      cv_color = col[color.id];
-    }
-    else {
-      cv_color = CV_RGB(color.R, color.G, color.B);
-    }
-
-    if (fill == false) {
-      int cv_thickness = static_cast<int>(thickness);
-      cv::rectangle(m_background, cv::Point(left, top), cv::Point(right, bottom), cv_color, cv_thickness);
-    }
-    else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-      int filled = cv::FILLED;
-#else
-      int filled = CV_FILLED;
-#endif
-      double opacity = static_cast<double>(color.A) / 255.0;
-      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
-        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
-          },
-          opacity);
-    }
+    displayRectangle(rectangle.getTopLeft(), rectangle.getWidth(), rectangle.getHeight(), color, fill, thickness);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1257,29 +1531,9 @@ bool vpDisplayOpenCV::getClick(bool blocking)
 {
   bool ret = false;
   if (m_displayHasBeenInitialized) {
-    flushDisplay();
-    if (blocking) {
-      lbuttondown = false;
-      mbuttondown = false;
-      rbuttondown = false;
-    }
-    do {
-      if (lbuttondown) {
-        ret = true;
-        lbuttondown = false;
-      }
-      if (mbuttondown) {
-        ret = true;
-        mbuttondown = false;
-      }
-      if (rbuttondown) {
-        ret = true;
-        rbuttondown = false;
-      }
-      if (blocking) {
-        cv::waitKey(10);
-      }
-    } while (ret == false && blocking == true);
+    vpImagePoint ip;
+    vpMouseButton::vpMouseButtonType button;
+    ret = getClick(ip, button, blocking);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1307,44 +1561,8 @@ bool vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-    flushDisplay();
-
-    double u, v;
-
-    if (blocking) {
-      lbuttondown = false;
-      mbuttondown = false;
-      rbuttondown = false;
-    }
-    do {
-      if (lbuttondown) {
-        ret = true;
-        u = (unsigned int)x_lbuttondown * m_scale;
-        v = (unsigned int)y_lbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        lbuttondown = false;
-      }
-      if (mbuttondown) {
-        ret = true;
-        u = (unsigned int)x_mbuttondown * m_scale;
-        v = (unsigned int)y_mbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        mbuttondown = false;
-      }
-      if (rbuttondown) {
-        ret = true;
-        u = (unsigned int)x_rbuttondown * m_scale;
-        v = (unsigned int)y_rbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        rbuttondown = false;
-      }
-      if (blocking) {
-        cv::waitKey(10);
-      }
-    } while (ret == false && blocking == true);
+    vpMouseButton::vpMouseButtonType button;
+    ret = getClick(ip, button, blocking);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1375,45 +1593,7 @@ bool vpDisplayOpenCV::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonTyp
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-    // flushDisplay() ;
-    double u, v;
-    if (blocking) {
-      lbuttondown = false;
-      mbuttondown = false;
-      rbuttondown = false;
-    }
-    do {
-      if (lbuttondown) {
-        ret = true;
-        u = (unsigned int)x_lbuttondown * m_scale;
-        v = (unsigned int)y_lbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button1;
-        lbuttondown = false;
-      }
-      if (mbuttondown) {
-        ret = true;
-        u = (unsigned int)x_mbuttondown * m_scale;
-        v = (unsigned int)y_mbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button2;
-        mbuttondown = false;
-      }
-      if (rbuttondown) {
-        ret = true;
-        u = (unsigned int)x_rbuttondown * m_scale;
-        v = (unsigned int)y_rbuttondown * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button3;
-        rbuttondown = false;
-      }
-      if (blocking) {
-        cv::waitKey(10);
-      }
-    } while (ret == false && blocking == true);
+    ret = m_impl->getClick(ip, button, blocking, m_title, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1446,45 +1626,7 @@ bool vpDisplayOpenCV::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonT
 {
   bool ret = false;
   if (m_displayHasBeenInitialized) {
-    // flushDisplay() ;
-    double u, v;
-    if (blocking) {
-      lbuttonup = false;
-      mbuttonup = false;
-      rbuttonup = false;
-    }
-    do {
-      if (lbuttonup) {
-        ret = true;
-        u = (unsigned int)x_lbuttonup * m_scale;
-        v = (unsigned int)y_lbuttonup * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button1;
-        lbuttonup = false;
-      }
-      if (mbuttonup) {
-        ret = true;
-        u = (unsigned int)x_mbuttonup * m_scale;
-        v = (unsigned int)y_mbuttonup * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button2;
-        mbuttonup = false;
-      }
-      if (rbuttonup) {
-        ret = true;
-        u = (unsigned int)x_rbuttonup * m_scale;
-        v = (unsigned int)y_rbuttonup * m_scale;
-        ip.set_u(u);
-        ip.set_v(v);
-        button = vpMouseButton::button3;
-        rbuttonup = false;
-      }
-      if (blocking) {
-        cv::waitKey(10);
-      }
-    } while (ret == false && blocking == true);
+    ret = m_impl->getClickUp(ip, button, blocking, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1498,67 +1640,7 @@ bool vpDisplayOpenCV::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonT
 */
 void vpDisplayOpenCV::getImage(vpImage<vpRGBa> &I)
 {
-  vpImageConvert::convert(m_background, I);
-  // should certainly be optimized.
-}
-
-void vpDisplayOpenCV::on_mouse(int event, int x, int y, int /*flags*/, void *display)
-{
-  vpDisplayOpenCV *disp = static_cast<vpDisplayOpenCV *>(display);
-  switch (event) {
-  case cv::EVENT_MOUSEMOVE:
-  {
-    disp->move = true;
-    disp->x_move = x;
-    disp->y_move = y;
-    break;
-  }
-  case cv::EVENT_LBUTTONDOWN:
-  {
-    disp->lbuttondown = true;
-    disp->x_lbuttondown = x;
-    disp->y_lbuttondown = y;
-    break;
-  }
-  case cv::EVENT_MBUTTONDOWN:
-  {
-    disp->mbuttondown = true;
-    disp->x_mbuttondown = x;
-    disp->y_mbuttondown = y;
-    break;
-  }
-  case cv::EVENT_RBUTTONDOWN:
-  {
-    disp->rbuttondown = true;
-    disp->x_rbuttondown = x;
-    disp->y_rbuttondown = y;
-    break;
-  }
-  case cv::EVENT_LBUTTONUP:
-  {
-    disp->lbuttonup = true;
-    disp->x_lbuttonup = x;
-    disp->y_lbuttonup = y;
-    break;
-  }
-  case cv::EVENT_MBUTTONUP:
-  {
-    disp->mbuttonup = true;
-    disp->x_mbuttonup = x;
-    disp->y_mbuttonup = y;
-    break;
-  }
-  case cv::EVENT_RBUTTONUP:
-  {
-    disp->rbuttonup = true;
-    disp->x_rbuttonup = x;
-    disp->y_rbuttonup = y;
-    break;
-  }
-
-  default:
-    break;
-  }
+  m_impl->getImage(I);
 }
 
 /*!
@@ -1597,6 +1679,7 @@ bool vpDisplayOpenCV::getKeyboardEvent(bool blocking)
   }
   // return false; // Never reached after throw()
 }
+
 /*!
   Get a keyboard event.
 
@@ -1657,15 +1740,7 @@ bool vpDisplayOpenCV::getPointerMotionEvent(vpImagePoint &ip)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-    // flushDisplay() ;
-    if (move) {
-      ret = true;
-      double u = (unsigned int)x_move / m_scale;
-      double v = (unsigned int)y_move / m_scale;
-      ip.set_u(u);
-      ip.set_v(v);
-      move = false;
-    }
+    ret = m_impl->getPointerMotionEvent(ip, m_scale);
   }
 
   else {
@@ -1687,14 +1762,7 @@ bool vpDisplayOpenCV::getPointerMotionEvent(vpImagePoint &ip)
 bool vpDisplayOpenCV::getPointerPosition(vpImagePoint &ip)
 {
   if (m_displayHasBeenInitialized) {
-    bool moved = getPointerMotionEvent(ip);
-    if (!moved) {
-      double u, v;
-      u = (unsigned int)x_move / m_scale;
-      v = (unsigned int)y_move / m_scale;
-      ip.set_u(u);
-      ip.set_v(v);
-    }
+    m_impl->getPointerPosition(ip, m_scale);
     return false;
   }
   else {
@@ -1767,32 +1835,6 @@ unsigned int vpDisplayOpenCV::getScreenHeight()
   unsigned int width, height;
   getScreenSize(width, height);
   return height;
-}
-
-/*!
- * Initialize display overlay layer for transparency.
- * \param overlay_function : Overlay function
- * \param opacity : Opacity between 0 and 1.
- */
-void vpDisplayOpenCV::overlay(std::function<void(cv::Mat &)> overlay_function, double opacity)
-{
-  // Initialize overlay layer for transparency
-  cv::Mat overlay;
-  if (opacity < 1.0) {
-    // Deep copy
-    overlay = m_background.clone();
-  }
-  else {
-    // Shallow copy
-    overlay = m_background;
-  }
-
-  overlay_function(overlay);
-
-  // Blend background and overlay
-  if (opacity < 1.0) {
-    cv::addWeighted(overlay, opacity, m_background, 1.0 - opacity, 0.0, m_background);
-  }
 }
 
 END_VISP_NAMESPACE

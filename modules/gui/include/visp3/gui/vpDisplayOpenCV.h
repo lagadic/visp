@@ -44,9 +44,6 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 BEGIN_VISP_NAMESPACE
 
 /*!
@@ -140,58 +137,6 @@ BEGIN_VISP_NAMESPACE
 */
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
-private:
-  cv::Mat m_background;
-  cv::Scalar *col;
-  cv::Scalar cvcolor;
-  int font;
-  float fontScale;
-  static std::vector<std::string> m_listTitles;
-  static unsigned int m_nbWindows;
-  int fontHeight;
-  int x_move;
-  int y_move;
-  bool move;
-  int x_lbuttondown;
-  int y_lbuttondown;
-  bool lbuttondown;
-  int x_mbuttondown;
-  int y_mbuttondown;
-  bool mbuttondown;
-  int x_rbuttondown;
-  int y_rbuttondown;
-  bool rbuttondown;
-  int x_lbuttonup;
-  int y_lbuttonup;
-  bool lbuttonup;
-  int x_mbuttonup;
-  int y_mbuttonup;
-  bool mbuttonup;
-  int x_rbuttonup;
-  int y_rbuttonup;
-  bool rbuttonup;
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //  vpDisplayOpenCV(const vpDisplayOpenCV &)
-  //    : vpDisplay(), background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
-  //      fontScale(0.8f), fontHeight(10), x_move(0), y_move(0) , move(false),
-  //      x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-  //      x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
-  //      x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-  //      x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
-  //      x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
-  //      x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
-  //  {
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!");
-  //  }
-  //  vpDisplayOpenCV &operator=(const vpDisplayOpenCV &){
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!"); return *this;
-  //  }
-  //#endif
-
 public:
   vpDisplayOpenCV();
   vpDisplayOpenCV(int winx, int winy, const std::string &title = "");
@@ -263,9 +208,10 @@ protected:
   bool getPointerMotionEvent(vpImagePoint &ip) VP_OVERRIDE;
   bool getPointerPosition(vpImagePoint &ip) VP_OVERRIDE;
 
-  static void on_mouse(int event, int x, int y, int flags, void *param);
-
-  void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
+private:
+  // Implementation
+  class Impl;
+  Impl *m_impl;
 };
 
 END_VISP_NAMESPACE
