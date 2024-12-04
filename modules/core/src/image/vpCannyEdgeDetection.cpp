@@ -141,9 +141,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
 
 using json = nlohmann::json;
 
-vpCannyEdgeDetection::vpCannyEdgeDetection(const std::string &jsonPath) :
+vpCannyEdgeDetection::vpCannyEdgeDetection(const std::string &jsonPath)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  m_minStackSize(0)  // Deactivated by default
+  : m_minStackSize(0)  // Deactivated by default
 #endif
 {
   initFromJSON(jsonPath);
