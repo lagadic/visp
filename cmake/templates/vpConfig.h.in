@@ -274,6 +274,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if Ogre3d is available.
 #cmakedefine VISP_HAVE_OGRE
+#ifdef VISP_HAVE_OGRE
+#  define VISP_HAVE_OGRE_VERSION ${VISP_HAVE_OGRE_VERSION}
+#endif
 
 // Defined if Ogre3d plugins.cfg is available.
 #cmakedefine VISP_HAVE_OGRE_PLUGINS_PATH "${VISP_HAVE_OGRE_PLUGINS_PATH}"
