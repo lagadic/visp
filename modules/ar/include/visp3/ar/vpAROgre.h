@@ -65,6 +65,10 @@
 #include <Bites/OgreBitesConfigDialog.h>
 #endif
 
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+#include <Bites/OgreWindowEventUtilities.h>
+#endif
+
 #ifdef VISP_HAVE_OIS
 #include <OIS.h>
 #endif

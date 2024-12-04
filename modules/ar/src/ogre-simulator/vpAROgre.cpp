@@ -50,6 +50,13 @@
 
 #include <OgreRectangle2D.h>
 
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+#include <Bites/OgreWindowEventUtilities.h>
+typedef OgreBites::WindowEventUtilities OgreWindowEventUtilities;
+#else
+typedef Ogre::WindowEventUtilities OgreWindowEventUtilities;
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
   Constructor.
@@ -309,7 +316,7 @@ void vpAROgre::init(bool
       archName = i->second;
       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
     }
-  }
+}
 #endif
   std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
@@ -428,7 +435,7 @@ void vpAROgre::init(bool
   mRoot->addFrameListener(this);
 
   // Register as a Window listener
-  Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+  OgreWindowEventUtilities::addWindowEventListener(mWindow, this);
 
 #ifdef VISP_HAVE_OIS
   // Initialise OIS
@@ -483,7 +490,7 @@ vpAROgre::~vpAROgre(void)
   closeOIS();
 
   if (mWindow) {
-    Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
+    OgreWindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
   }
 
@@ -526,7 +533,7 @@ bool vpAROgre::frameStarted(const Ogre::FrameEvent &evt)
   bool result = customframeStarted(evt);
 
   // Listen to the window
-  Ogre::WindowEventUtilities::messagePump();
+  OgreWindowEventUtilities::messagePump();
   processInputEvent(evt);
 
   // See if we have to stop rendering
@@ -954,7 +961,7 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-  }
+}
 #endif
 }
 
