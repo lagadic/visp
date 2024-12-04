@@ -482,6 +482,12 @@ void vpXmlParser::save(const std::string &filename, bool append)
   xmlSaveFormatFile(filename.c_str(), doc, 1);
   xmlFreeDoc(doc);
 }
+
+void vpXmlParser::cleanup()
+{
+  xmlCleanupParser();
+}
+
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no symbols

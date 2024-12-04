@@ -45,14 +45,20 @@
 
 #include <visp3/core/vpException.h>
 
-#include <libxml/parser.h>
-
 #include <iomanip>
 #include <map>
 #include <sstream>
 #include <string.h>
 #include <string>
 #include <typeinfo>
+
+struct _xmlDoc;
+typedef _xmlDoc xmlDoc;
+typedef xmlDoc *xmlDocPtr;
+
+struct _xmlNode;
+typedef _xmlNode xmlNode;
+typedef xmlNode *xmlNodePtr;
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -93,6 +99,8 @@ BEGIN_VISP_NAMESPACE
   A class to parse this document is declared as follows:
 
   \code
+  #include <libxml/parser.h>
+
   class vpDataParser: public vpXmlParser
   {
   private:
@@ -307,7 +315,7 @@ public:
   static function vpXmlParser::cleanup() that calls xmlCleanupParser() that
   could be called just before exit().
     */
-  static void cleanup() { xmlCleanupParser(); }
+  static void cleanup();
   //@}
 };
 END_VISP_NAMESPACE
