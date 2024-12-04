@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_robot_ip = std::string(argv[i]);
     }
     else if (std::string(argv[i]) == "--home") {
@@ -80,34 +80,37 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--close") {
       opt_gripper_state = Gripper_Close;
     }
+    else if (std::string(argv[i]) == "--release") {
+      opt_gripper_state = Gripper_Release;
+    }
     else if (std::string(argv[i]) == "--grasp" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_gripper_state = Gripper_Grasp;
       opt_grasping_width = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--grasp-speed" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_grasping_speed = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--grasp-force" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_grasping_force = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--test" && i + 1 < argc) {
-      ++ i;
+      ++i;
       opt_gripper_state = Gripper_Test;
       opt_grasping_width = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSYS" << std::endl
         << "  " << argv[0]
-        << " [--ip <default " << opt_robot_ip << ">]"
+        << " [--ip <controller ip>]"
         << " [--home]"
         << " [--open]"
         << " [--close]"
         << " [--grasp <width>]"
         << " [--grasp-speed <speed>]"
-        << " [--grasp-force <speed>]"
+        << " [--grasp-force <force>]"
         << " [--release]"
         << " [--test <width>]"
         << " [--help] [-h]\n" << std::endl;

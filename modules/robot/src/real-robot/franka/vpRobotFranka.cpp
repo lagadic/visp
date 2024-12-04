@@ -104,8 +104,6 @@ vpRobotFranka::~vpRobotFranka()
     delete m_handler;
 
   if (m_gripper) {
-    std::cout << "Grasped object, will release it now." << std::endl;
-    m_gripper->stop();
     delete m_gripper;
   }
 
