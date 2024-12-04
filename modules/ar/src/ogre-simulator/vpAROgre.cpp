@@ -316,7 +316,7 @@ void vpAROgre::init(bool
       archName = i->second;
       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
     }
-}
+  }
 #endif
   std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
@@ -864,7 +864,17 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+  Ogre::MaterialPtr mMaterial;
+  Ogre::String matName("BackgroundMaterial");
+  //if it doesnt already exist
+  if (!Ogre::MaterialManager::getSingleton().resourceExists(matName)) {
+    mMaterial = Ogre::MaterialManager::getSingleton().create(matName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+  }
+  mBackground->setMaterial(mMaterial);                  // Attach the material to the rectangle
+#else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+#endif
   mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered
@@ -938,7 +948,17 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+#if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
+  Ogre::MaterialPtr mMaterial;
+  Ogre::String matName("BackgroundMaterial");
+  //if it doesnt already exist
+  if (!Ogre::MaterialManager::getSingleton().resourceExists(matName)) {
+    mMaterial = Ogre::MaterialManager::getSingleton().create(matName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
+  }
+  mBackground->setMaterial(mMaterial);                  // Attach the material to the rectangle
+#else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
+#endif
   mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered
@@ -961,7 +981,7 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-}
+  }
 #endif
 }
 
