@@ -309,7 +309,7 @@ void vpAROgre::init(bool
       archName = i->second;
       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
     }
-}
+  }
 #endif
   std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
@@ -323,7 +323,12 @@ void vpAROgre::init(bool
   bool canInit = true;
   if (mshowConfigDialog) {
     mRoot->restoreConfig();
-    if (!mRoot->showConfigDialog()) {
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+    bool isOK = mRoot->showConfigDialog();
+#else
+    bool isOK = mRoot->showConfigDialog(OgreBites::getNativeConfigDialog());
+#endif
+    if (!isOK) {
       canInit = false;
     }
   }
@@ -949,7 +954,7 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-}
+  }
 #endif
 }
 
