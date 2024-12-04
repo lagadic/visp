@@ -51,6 +51,7 @@
 #include <OgreRectangle2D.h>
 
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 11<<8 | 0))
+#include <OgreMatrix4.h>
 #include <Bites/OgreWindowEventUtilities.h>
 typedef OgreBites::WindowEventUtilities OgreWindowEventUtilities;
 #else
@@ -1081,7 +1082,12 @@ void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
                     (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
                     (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
                     (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)1);
+#if (VISP_HAVE_OGRE_VERSION >= (1 << 16 | 11 << 8 | 0))
+  Ogre::Affine3 ModelViewAsAffine(ModelView);
+  mCamera->setCustomViewMatrix(true, ModelViewAsAffine);
+#else
   mCamera->setCustomViewMatrix(true, ModelView);
+#endif
 }
 
 /*!
