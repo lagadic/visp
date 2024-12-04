@@ -283,6 +283,7 @@ void vpAROgre::init(bool
   cf.load(resourceFile);
 
   // Go through all sections & settings in the file
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
   Ogre::String secName, typeName, archName;
@@ -296,6 +297,20 @@ void vpAROgre::init(bool
       Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
     }
   }
+#else
+  const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
+  Ogre::String secName, typeName, archName;
+  for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
+    secName = name_settings.first;
+    Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
+    Ogre::ConfigFile::SettingsMultiMap::iterator i;
+    for (i = settings.begin(); i != settings.end(); ++i) {
+      typeName = i->first;
+      archName = i->second;
+      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+    }
+}
+#endif
   std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
   for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
@@ -934,7 +949,7 @@ void vpAROgre::closeOIS(void)
 
     OIS::InputManager::destroyInputSystem(mInputManager);
     mInputManager = 0;
-  }
+}
 #endif
 }
 
