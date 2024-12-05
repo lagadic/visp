@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
   \brief Tools to simplify the creation of xml parser based on the libXML2
 */
 
-#ifndef vpXmlParser_HH
-#define vpXmlParser_HH
+#ifndef VP_XML_PARSER_H
+#define VP_XML_PARSER_H
 
 #include <visp3/core/vpConfig.h>
 
@@ -113,7 +113,7 @@ BEGIN_VISP_NAMESPACE
       range,
       step,
       size_filter
-    }dataToParse
+    } dataToParse
 
     vpDataParser(){
       nodeMap["config"] = config;
@@ -125,8 +125,7 @@ BEGIN_VISP_NAMESPACE
     virtual void writeMainClass(xmlNodePtr node);
     virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
 
-    // additionals methods specific to the data to parse
-    // such as: accessors
+    // additional methods specific to the data to parse such as: accessors
   }
   \endcode
 
@@ -192,7 +191,7 @@ protected:
 
     As the content of the function depends on the structure of the file to
     read, data name, data types and data values, it has to be reimplemented
-    for every type of filenam
+    for every type of filename.
 
     \param doc : a pointer representing the document
     \param node : the root node of the document
@@ -272,7 +271,7 @@ public:
     dataToParse["size_filter"] = 3;
     \endcode
 
-    Or, you can use keyzord instead of number as key but it implies to declare
+    Or, you can use keyword instead of number as key but it implies to declare
     in the child class an enumeration type of the name. For example:
 
     \code
