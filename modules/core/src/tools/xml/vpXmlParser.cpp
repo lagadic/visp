@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +30,15 @@
  *
  * Description:
  * Tool to automatize the creation of xml parser based on the libXML2.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpXmlParser.h>
 
 #ifdef VISP_HAVE_XML2
 
 #include <libxml/parser.h>
+
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 
@@ -482,6 +482,12 @@ void vpXmlParser::save(const std::string &filename, bool append)
   xmlSaveFormatFile(filename.c_str(), doc, 1);
   xmlFreeDoc(doc);
 }
+
+void vpXmlParser::cleanup()
+{
+  xmlCleanupParser();
+}
+
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no symbols

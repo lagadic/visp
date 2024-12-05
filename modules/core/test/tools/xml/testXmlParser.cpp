@@ -58,6 +58,8 @@
 #include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
 
+#include <libxml/parser.h>
+
 #include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
