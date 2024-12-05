@@ -39,6 +39,8 @@
 #include "core/images.hpp"
 #include "core/pixel_meter.hpp"
 #include "core/image_conversions.hpp"
+#include "core/display.hpp"
+
 
 
 #endif

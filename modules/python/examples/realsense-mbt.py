@@ -195,7 +195,7 @@ if __name__ == '__main__':
   tracker.initClick(I, str(mbt_model.init_file))
   start_time =  time.time()
   for frame_data in data_generator:
-    if frame_data.I_depth is not None:
+    if I_depth is not None:
       ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
 
     Display.display(I)

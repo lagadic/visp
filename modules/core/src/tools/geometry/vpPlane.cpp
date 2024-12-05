@@ -29,8 +29,7 @@
  *
  * Description:
  * Plane geometrical structure.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPlane.cpp
@@ -64,8 +63,8 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) { }
 /*!
   Plane constructor from A, B, C, D parameters.
 
-  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
-  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
+  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
+  (X,Y,Z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
   \param a, b, c, d : Parameters of the plane.
@@ -85,33 +84,34 @@ vpPlane::vpPlane(const vpPlane &P) : A(0), B(0), C(0), D(0)
 }
 
 /*!
+  Plane constructor from a point \e P on the plane and the \e normal to the plane.
 
-  Plane constructor from a point \e P on the plane and the normal
-  \e n to the plane.
-
-  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
-  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
+  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
+  (X,Y,Z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
-  \param P : A point with coordinates (x,y,z) on the plane. The \e frame
-  parameter indicates if the coordinates of this points that are used are
-  expressed in the camera of object frame.
+  \param P : A point with coordinates (X,Y,Z) on the plane. The \e frame
+  parameter indicates if the coordinates of this point are
+  expressed in the camera or object frame.
 
-  \param n : The normal to the plane.
+  \param normal : The normal to the plane.
 
   \param frame: Indicates if the plane should be initialized from the point P
   coordinates expressed in the camera or object frame.
-
+  - When expressed in the camera frame we get the coordinates of the point using
+    (`P.get_X()`, `P.get_Y()`, `P.get_Z()`).
+  - When expressed in the object frame we get the coordinates of the point using
+    (`P.get_oX()`, `P.get_oY()`, `P.get_oZ()`).
 */
-vpPlane::vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
+vpPlane::vpPlane(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   // Equation of the plane is given by:
-  A = n[index_0];
-  B = n[index_1];
-  C = n[index_2];
+  A = normal[index_0];
+  B = normal[index_1];
+  C = normal[index_2];
 
   if (frame == vpPlane::camera_frame) {
     D = -((A * P.get_X()) + (B * P.get_Y()) + (C * P.get_Z()));
@@ -126,12 +126,52 @@ vpPlane::vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame) : A
 
   \param P : Plane used as initializer.
 */
-void vpPlane::init(const vpPlane &P)
+vpPlane &vpPlane::init(const vpPlane &P)
 {
   setA(P.getA());
   setB(P.getB());
   setC(P.getC());
   setD(P.getD());
+
+  return *this;
+}
+
+/*!
+  Initialize the plane from a point \e P on the plane and the \e normal to the plane.
+
+  \param P : A point with coordinates (X,Y,Z) on the plane. The \e frame
+  parameter indicates if the coordinates of this point are
+  expressed in the camera or object frame.
+
+  \param normal : The normal to the plane.
+
+  \param frame: Indicates if the plane should be initialized from the point P
+  coordinates expressed in the camera (X, Y, Z) or object frame (oX, oY, oZ).
+  - When expressed in the camera frame we get the coordinates of the point using
+    (`P.get_X()`, `P.get_Y()`, `P.get_Z()`).
+  - When expressed in the object frame we get the coordinates of the point using
+    (`P.get_oX()`, `P.get_oY()`, `P.get_oZ()`).
+
+  \sa vpPlane(const vpPoint&, const vpColVector &)
+*/
+vpPlane &vpPlane::init(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame)
+{
+  const unsigned int index_0 = 0;
+  const unsigned int index_1 = 1;
+  const unsigned int index_2 = 2;
+  // Equation of the plane is given by:
+  A = normal[index_0];
+  B = normal[index_1];
+  C = normal[index_2];
+
+  if (frame == vpPlane::camera_frame) {
+    D = -((A * P.get_X()) + (B * P.get_Y()) + (C * P.get_Z()));
+  }
+  else {
+    D = -((A * P.get_oX()) + (B * P.get_oY()) + (C * P.get_oZ()));
+  }
+
+  return *this;
 }
 
 /*!
@@ -141,21 +181,23 @@ void vpPlane::init(const vpPlane &P)
   \param P : A point with coordinates (x,y,z) on the plane.
   The size of the vector should be 3, with P[0]=x, with P[1]=y, with P[2]=z.
 
-  \param n : The normal to the plane.
+  \param normal : The normal to the plane.
 
   \sa vpPlane(const vpPoint&, const vpColVector &)
 */
-void vpPlane::init(const vpColVector &P, const vpColVector &n)
+vpPlane &vpPlane::init(const vpColVector &P, const vpColVector &normal)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
   // Equation of the plane is given by:
-  A = n[index_0];
-  B = n[index_1];
-  C = n[index_2];
+  A = normal[index_0];
+  B = normal[index_1];
+  C = normal[index_2];
 
   D = -((A * P[0]) + (B * P[1]) + (C * P[index_2]));
+
+  return *this;
 }
 
 /*!
@@ -169,7 +211,7 @@ void vpPlane::init(const vpColVector &P, const vpColVector &n)
   coordinates expressed in the camera or object frame.
 
 */
-void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
+vpPlane &vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
 {
   vpColVector a(3);
   vpColVector b(3);
@@ -218,6 +260,8 @@ void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlane
   B /= norm;
   C /= norm;
   D /= norm;
+
+  return *this;
 }
 
 /*!
@@ -250,7 +294,7 @@ double vpPlane::computeZ(double x, double y) const
 /*!
   Return the normal to the plane.
 
-  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
   (x,y,z) is a point of R^3 and (A,B,C) are the coordinates of the normal.
 
   \sa getNormal(vpColVector &n)
@@ -272,8 +316,8 @@ vpColVector vpPlane::getNormal() const
 /*!
   Return the normal to the plane.
 
-  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
-  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is normal
+  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
+  (X,Y,Z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
   \sa getNormal()
@@ -294,24 +338,43 @@ void vpPlane::getNormal(vpColVector &n) const
 /*!
   Compute the coordinates of the projection of a point on the plane.
 
-  \param P : point to be projected on the plane
-  \param Pproj : result of the projection (pproj belongs to the plane)
+  \param[in] P : Point to be projected on the plane.
+  \param[out] Pproj : Projected point.
+  \param[in] frame : Indicates if the point P coordinates are expressed in the camera or object frame.
+  - When expressed in the camera frame we get the coordinates of the point using
+    (`P.get_X()`, `P.get_Y()`, `P.get_Z()`).
+  - When expressed in the object frame we get the coordinates of the point using
+    (`P.get_oX()`, `P.get_oY()`, `P.get_oZ()`).
 */
-void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const
+void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, vpPlaneFrame frame) const
 {
   double x0, y0, z0;
   double rho;
 
-  x0 = P.get_X() / P.get_W();
-  y0 = P.get_Y() / P.get_W();
-  z0 = P.get_Z() / P.get_W();
+  if (frame == vpPlane::camera_frame) {
+    x0 = P.get_X() / P.get_W();
+    y0 = P.get_Y() / P.get_W();
+    z0 = P.get_Z() / P.get_W();
 
-  rho = -((A * x0) + (B * y0) + (C * z0) + D) / ((A * A) + (B * B) + (C * C));
+    rho = -((A * x0) + (B * y0) + (C * z0) + D) / ((A * A) + (B * B) + (C * C));
 
-  Pproj.set_X(x0 + (A * rho));
-  Pproj.set_Y(y0 + (B * rho));
-  Pproj.set_Z(z0 + (C * rho));
-  Pproj.set_W(1);
+    Pproj.set_X(x0 + (A * rho));
+    Pproj.set_Y(y0 + (B * rho));
+    Pproj.set_Z(z0 + (C * rho));
+    Pproj.set_W(1);
+  }
+  else {
+    x0 = P.get_oX() / P.get_oW();
+    y0 = P.get_oY() / P.get_oW();
+    z0 = P.get_oZ() / P.get_oW();
+
+    rho = -((A * x0) + (B * y0) + (C * z0) + D) / ((A * A) + (B * B) + (C * C));
+
+    Pproj.set_oX(x0 + (A * rho));
+    Pproj.set_oY(y0 + (B * rho));
+    Pproj.set_oZ(z0 + (C * rho));
+    Pproj.set_oW(1);
+  }
 }
 
 double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVector &H) const

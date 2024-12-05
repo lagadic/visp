@@ -30,6 +30,14 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 \section tutorial-panda3d-install Panda3D installation
 \subsection tutorial-panda3d-install-ubuntu Installation on Ubuntu
 
+- It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files, which are a common and easily exportable format.
+  Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
+
+  To install assimp, run:
+  \code{.sh}
+  $ sudo apt install libassimp-dev
+  \endcode
+
 - Installer are available for Ubuntu browsing the [download](https://www.panda3d.org/download/) page.
 
 - Hereafter you will find the instructions to build and install Panda3D from source on Ubuntu 22.04
@@ -91,6 +99,14 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 
 - Hereafter you will find the instructions to build Panda3D from source on macOS.
 
+  - It is recommended to install the assimp package before installing Panda3D. This will allow you to load .obj files, which are a common and easily exportable format.
+  Without it, you will be restricted to .bam files, which is a panda specific format. To convert to a .bam file, see \ref tutorial-panda3d-file-conversion.
+
+  To install assimp, run:
+  \code{.sh}
+  $ brew install assimp
+  \endcode
+
   - On macOS, you will need to download a set of precompiled third-party packages in order to compile Panda3D.
     Navigate to PandaED [download page](https://www.panda3d.org/download/), select the lastest SDK
     (in our case SDK 1.10.14), and under `</> Source Code` section, download
@@ -114,7 +130,7 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
     \endcode
   - Build Panda3D from source
     \code{.sh}
-    $ python3 makepanda/makepanda.py --everything --installer --no-egl --no-gles --no-gles2 --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
+    $ python3 makepanda/makepanda.py --everything --installer --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
     \endcode
 
 - At this point you can either
@@ -165,6 +181,21 @@ vpPanda3DBaseRenderer, which implements basic functions for a panda renderer.
 \subsection tutorial-panda3d-install-windows Installation on Windows
 
 - Installer are available for Windows browsing the [download](https://www.panda3d.org/download/) page.
+
+\section tutorial-panda3d-file-conversion Converting a mesh to Panda's file format
+
+If you did not install assimp before installing Panda, you are fairly restricted in what mesh format you can load with Panda.
+
+Panda's recommended format is .bam, a binary format specific to the engine itself.
+If you have Python, you can easily convert your model to a .bam file by doing the following:
+
+1. Installing the panda3D-gltf package: `pip install panda3d-gltf`
+2. From your favorite 3D modelling software export your model to GLTF (available in blender)
+3. Running the converter tool:
+   \code{.sh}
+    $ gltf2bam source.gltf output.bam
+   \endcode
+4. If you encounter issues, check the tool's settings with `gltf2bam -h`
 
 \section tutorial-panda3d-usage Using Panda3D for rendering
 

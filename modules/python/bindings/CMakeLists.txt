@@ -43,10 +43,33 @@ pybind11_add_module(_visp ${python_bindings_cpp_src})
 # when installing the python module, pip will look into this subfolder for .so files to copy into the site-packages
 file(MAKE_DIRECTORY "${bindings_gen_location}/src")
 
+get_target_property(PYTHON_CXX_FLAGS _visp COMPILE_OPTIONS)
+get_target_property( PYTHON_LINKER_FLAGS _visp LINK_OPTIONS)
+
+if(PYTHON_CXX_FLAGS STREQUAL "PYTHON_CXX_FLAGS-NOTFOUND")
+  SET(PYTHON_CXX_FLAGS "") # Set to empty string
+else()
+  SET(PYTHON_CXX_FLAGS "${PYTHON_CXX_FLAGS}")
+endif()
+if(PYTHON_LINKER_FLAGS STREQUAL "PYTHON_LINKER_FLAGS-NOTFOUND")
+  SET(PYTHON_LINKER_FLAGS "") # Set to empty string
+else()
+  SET(PYTHON_LINKER_FLAGS "${PYTHON_LINKER_FLAGS}")
+endif()
+CHECK_CXX_COMPILER_FLAG("-flto=auto" COMPILER_SUPPORTS_FLTOAUTO)
+if(COMPILER_SUPPORTS_FLTOAUTO)
+  SET(PYTHON_CXX_FLAGS  "${PYTHON_CXX_FLAGS} -flto=auto")
+  SET(PYTHON_LINKER_FLAGS  "${PYTHON_LINKER_FLAGS} -flto=auto")
+endif()
+
+if(NOT PYTHON_CXX_FLAGS STREQUAL "")
+  set_target_properties(_visp PROPERTIES COMPILE_FLAGS ${PYTHON_CXX_FLAGS})
+  set_target_properties(_visp PROPERTIES LINK_FLAGS ${PYTHON_LINKER_FLAGS})
+endif()
+
 set_target_properties(_visp PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-
 )
 # With MSVC, the compiled pyd file is placed in a Release/Debug folder
 set(build_configs "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
