@@ -142,6 +142,13 @@ set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
 set(VISP_REVISION "1")
 
+# Try to locate visp-images and, if it exists, its version
+vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION
+                    VISP_DATASET_VERSION
+                    VISP_DATASET_VERSION_MAJOR
+                    VISP_DATASET_VERSION_MINOR
+                    VISP_DATASET_VERSION_PATCH)
+
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
 #
