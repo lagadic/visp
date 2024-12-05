@@ -374,7 +374,7 @@ std::string getDateTime(const std::string &format)
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-};
+}
 #endif
 
 vpChrono::vpChrono() : m_durationMs(), m_lastTimePoint() { }

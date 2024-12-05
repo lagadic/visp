@@ -244,6 +244,8 @@ public:
   VP_DEPRECATED void setIdentity();
 //@}
 #endif
+  private:
+    static const unsigned constr_val_6;
 };
 END_VISP_NAMESPACE
 #endif

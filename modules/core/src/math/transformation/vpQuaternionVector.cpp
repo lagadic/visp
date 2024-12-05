@@ -41,6 +41,7 @@
 BEGIN_VISP_NAMESPACE
 // minimum value of sine
 const double vpQuaternionVector::minimum = 0.0001;
+const unsigned int vpQuaternionVector::constr_val_4 = 4;
 
 /*!
   \file vpQuaternionVector.cpp
@@ -48,29 +49,29 @@ const double vpQuaternionVector::minimum = 0.0001;
 */
 
 /*! Default constructor that initialize all the 4 angles to zero. */
-vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) { }
+vpQuaternionVector::vpQuaternionVector() : vpRotationVector(constr_val_4) { }
 
 /*! Copy constructor. */
 vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) { }
 
 //! Constructor from doubles.
-vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(4)
+vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(constr_val_4)
 {
   set(x_, y_, z_, w_);
 }
 
 //! Constructor from a 4-dimension vector of doubles.
-vpQuaternionVector::vpQuaternionVector(const vpColVector &q) : vpRotationVector(4) { buildFrom(q); }
+vpQuaternionVector::vpQuaternionVector(const vpColVector &q) : vpRotationVector(constr_val_4) { buildFrom(q); }
 
 //! Constructor from a 4-dimension vector of doubles.
-vpQuaternionVector::vpQuaternionVector(const std::vector<double> &q) : vpRotationVector(4) { buildFrom(q); }
+vpQuaternionVector::vpQuaternionVector(const std::vector<double> &q) : vpRotationVector(constr_val_4) { buildFrom(q); }
 
 /*!
   Constructs a quaternion from a rotation matrix.
 
   \param R : Matrix containing a rotation.
 */
-vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R) : vpRotationVector(4) { buildFrom(R); }
+vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R) : vpRotationVector(constr_val_4) { buildFrom(R); }
 
 /*!
   Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -78,7 +79,7 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R) : vpRotationVe
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
-vpQuaternionVector::vpQuaternionVector(const vpThetaUVector &tu) : vpRotationVector(4) { buildFrom(tu); }
+vpQuaternionVector::vpQuaternionVector(const vpThetaUVector &tu) : vpRotationVector(constr_val_4) { buildFrom(tu); }
 
 /*!
   Manually change values of a quaternion.
@@ -133,11 +134,11 @@ vpQuaternionVector &vpQuaternionVector::buildFrom(const vpThetaUVector &tu)
 */
 vpQuaternionVector &vpQuaternionVector::buildFrom(const vpColVector &q)
 {
-  if (q.size() != 4) {
+  const unsigned int val_4 = 4;
+  if (q.size() != val_4) {
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a quaternion vector from a %d-dimension col vector", q.size()));
   }
-  const unsigned int val_4 = 4;
   for (unsigned int i = 0; i < val_4; ++i) {
     data[i] = q[i];
   }
@@ -150,12 +151,12 @@ vpQuaternionVector &vpQuaternionVector::buildFrom(const vpColVector &q)
 */
 vpQuaternionVector &vpQuaternionVector::buildFrom(const std::vector<double> &q)
 {
-  if (q.size() != 4) {
+  const unsigned int val_4 = 4;
+  if (q.size() != val_4) {
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a quaternion vector from a %d-dimension std::vector", q.size()));
   }
 
-  const unsigned int val_4 = 4;
   for (unsigned int i = 0; i < val_4; ++i) {
     data[i] = q[i];
   }
@@ -266,11 +267,11 @@ vpQuaternionVector vpQuaternionVector::operator/(double l) const
 */
 vpQuaternionVector &vpQuaternionVector::operator=(const vpColVector &q)
 {
-  if (q.size() != 4) {
+  const unsigned int val_4 = 4;
+  if (q.size() != val_4) {
     throw(vpException(vpException::dimensionError, "Cannot set a quaternion vector from a %d-dimension col vector",
                       q.size()));
   }
-  const unsigned int val_4 = 4;
   for (unsigned int i = 0; i < val_4; ++i) {
     data[i] = q[i];
   }

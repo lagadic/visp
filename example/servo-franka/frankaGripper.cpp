@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Franka robot tool.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example frankaGripper.cpp
@@ -64,11 +62,14 @@ int main(int argc, char **argv)
 
   std::string opt_robot_ip = "192.168.1.1";
   double opt_grasping_width = 0.;
+  double opt_grasping_speed = 0.1;
+  double opt_grasping_force = 60;
   GripperState_t opt_gripper_state = Gripper_None;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-      opt_robot_ip = std::string(argv[i + 1]);
+      ++i;
+      opt_robot_ip = std::string(argv[i]);
     }
     else if (std::string(argv[i]) == "--home") {
       opt_gripper_state = Gripper_Home;
@@ -79,23 +80,83 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--close") {
       opt_gripper_state = Gripper_Close;
     }
+    else if (std::string(argv[i]) == "--release") {
+      opt_gripper_state = Gripper_Release;
+    }
     else if (std::string(argv[i]) == "--grasp" && i + 1 < argc) {
+      ++i;
       opt_gripper_state = Gripper_Grasp;
-      opt_grasping_width = std::atof(argv[i + 1]);
+      opt_grasping_width = std::atof(argv[i]);
+    }
+    else if (std::string(argv[i]) == "--grasp-speed" && i + 1 < argc) {
+      ++i;
+      opt_grasping_speed = std::atof(argv[i]);
+    }
+    else if (std::string(argv[i]) == "--grasp-force" && i + 1 < argc) {
+      ++i;
+      opt_grasping_force = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--test" && i + 1 < argc) {
+      ++i;
       opt_gripper_state = Gripper_Test;
-      opt_grasping_width = std::atof(argv[i + 1]);
+      opt_grasping_width = std::atof(argv[i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Control Panda gripper." << std::endl;
-      std::cout << argv[0] << " [--ip <default " << opt_robot_ip
-        << ">] [--home] [--open] [--close] [--grasp <object width in meter>] [--release] [--test <object width "
-        "in meter>] [--help] [-h]\n"
+      std::cout << "SYNOPSYS" << std::endl
+        << "  " << argv[0]
+        << " [--ip <controller ip>]"
+        << " [--home]"
+        << " [--open]"
+        << " [--close]"
+        << " [--grasp <width>]"
+        << " [--grasp-speed <speed>]"
+        << " [--grasp-force <force>]"
+        << " [--release]"
+        << " [--test <width>]"
+        << " [--help] [-h]\n" << std::endl;
+      std::cout << "DESCRIPTION" << std::endl
+        << "  Control Panda gripper." << std::endl
+        << std::endl
+        << "  --ip <controller ip>" << std::endl
+        << "    Franka controller ip address" << std::endl
+        << "    Default: " << opt_robot_ip << std::endl
+        << std::endl
+        << "  --home" << std::endl
+        << "    Performs homing of the gripper." << std::endl
+        << std::endl
+        << "  --open" << std::endl
+        << "    Performs opening of the gripper." << std::endl
+        << std::endl
+        << "  --close" << std::endl
+        << "    Performs closing of the gripper." << std::endl
+        << std::endl
+        << "  --grasp <object width>" << std::endl
+        << "    Performs grasping of an object." << std::endl
+        << "    Object width is to specify in [m]." << std::endl
+        << "    Default width: " << opt_grasping_width << " [m]" << std::endl
+        << std::endl
+        << "  --grasp-speed <speed>" << std::endl
+        << "    Closing speed in [m/s] applied during grasping." << std::endl
+        << "    Default: " << opt_grasping_speed << " [m/s]" << std::endl
+        << std::endl
+        << "  --grasp-force <force>" << std::endl
+        << "    Force in [N] applied during grasping." << std::endl
+        << "    Default: " << opt_grasping_force << " [N]" << std::endl
+        << std::endl
+        << "  --release" << std::endl
+        << "    Release an object that is grasped." << std::endl
+        << std::endl
+        << "  --test <object width>" << std::endl
+        << "    Performs a gripper test on an object width specified in [m]." << std::endl
+        << "    Default width: " << opt_grasping_width << " [m]" << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "    Print this helper message." << std::endl
         << std::endl;
-      std::cout << "Example to grasp a 4cm width object by first opening the gripper, then grasping the object :\n"
-        << argv[0] << " --ip 192.168.100.1 --open\n"
-        << argv[0] << " --ip 192.168.100.1 --grasp 0.04\n"
+      std::cout << "EXAMPLE" << std::endl
+        << "  To grasp a 4cm width object by first opening the gripper, then grasping the object:\n"
+        << "  " << argv[0] << " --ip 192.168.100.1 --open\n"
+        << "  " << argv[0] << " --ip 192.168.100.1 --grasp 0.04\n"
         << std::endl;
 
       return EXIT_SUCCESS;
@@ -131,8 +192,8 @@ int main(int argc, char **argv)
       robot.gripperOpen();
     }
     else if (opt_gripper_state == Gripper_Grasp) {
-      std::cout << "Gripper grasp " << opt_grasping_width << "m object width..." << std::endl;
-      robot.gripperGrasp(opt_grasping_width);
+      std::cout << "Gripper grasp " << opt_grasping_width << "m object width, with speed: " << opt_grasping_speed << " and force: " << opt_grasping_force << "N..." << std::endl;
+      robot.gripperGrasp(opt_grasping_width, opt_grasping_speed, opt_grasping_force);
     }
     else if (opt_gripper_state == Gripper_Release) {
       std::cout << "Gripper release object..." << std::endl;
@@ -152,8 +213,8 @@ int main(int argc, char **argv)
       std::cout << "- Gripper opening..." << std::endl;
       robot.gripperOpen();
       vpTime::sleepMs(3000);
-      std::cout << "- Gripper grasp " << opt_grasping_width << "m object width..." << std::endl;
-      robot.gripperGrasp(opt_grasping_width);
+      std::cout << "- Gripper grasp " << opt_grasping_width << "m object width, with speed: " << opt_grasping_speed << " and force: " << opt_grasping_force << "N..." << std::endl;
+      robot.gripperGrasp(opt_grasping_width, opt_grasping_speed, opt_grasping_force);
       vpTime::sleepMs(3000);
       std::cout << "- Gripper release object..." << std::endl;
       robot.gripperRelease();

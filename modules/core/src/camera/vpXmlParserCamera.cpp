@@ -472,7 +472,7 @@ public:  /* --- XML Code--------------------------------------------------------
     }
 
     if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITHOUT_DISTORTION)) {
-      if (nb != 5 || validation != 0x001F) {
+      if ((nb != 5) || (validation != 0x001F)) {
         std::cout << "ERROR in 'model' field:\n";
         std::cout << "it must contain 5 parameters\n";
 
@@ -481,7 +481,7 @@ public:  /* --- XML Code--------------------------------------------------------
       cam_tmp.initPersProjWithoutDistortion(px, py, u0, v0);
     }
     else if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITH_DISTORTION)) {
-      if (nb != 7 || validation != 0x7F) {
+      if ((nb != 7) || (validation != 0x7F)) {
         std::cout << "ERROR in 'model' field:\n";
         std::cout << "it must contain 7 parameters\n";
 
@@ -490,7 +490,7 @@ public:  /* --- XML Code--------------------------------------------------------
       cam_tmp.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
     }
     else if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION)) {
-      if (nb != 10 || validation != 0x3FF) { // at least one coefficient is missing. We should know which one
+      if ((nb != 10) || (validation != 0x3FF)) { // at least one coefficient is missing. We should know which one
         std::cout << "ERROR in 'model' field:\n";
         std::cout << "it must contain 10 parameters\n";
 
@@ -807,7 +807,7 @@ public:  /* --- XML Code--------------------------------------------------------
         node_tmp.append_child(pugi::node_pcdata).set_value(cam_name.c_str());
       }
 
-      if (im_width != 0 || im_height != 0) {
+      if ((im_width != 0) || (im_height != 0)) {
         node_tmp = node_camera.append_child(pugi::node_comment);
         node_tmp.set_value("Size of the image on which camera "
                            "calibration was performed");
@@ -819,7 +819,7 @@ public:  /* --- XML Code--------------------------------------------------------
         //<image_height>
         node_tmp = node_camera.append_child(LABEL_XML_HEIGHT);
         node_tmp.append_child(pugi::node_pcdata).text() = im_height;
-        if (subsampling_width != 0 || subsampling_height != 0) {
+        if ((subsampling_width != 0) || (subsampling_height != 0)) {
           node_tmp = node_camera.append_child(pugi::node_comment);
           node_tmp.set_value("Subsampling used to obtain the "
                              "current size of the image.");

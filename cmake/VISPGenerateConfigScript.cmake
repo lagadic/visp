@@ -256,7 +256,7 @@ set(TARGET_LOCATION_${item} \"${item}${VISP_VERSION_MAJOR}${VISP_VERSION_MINOR}$
 # =============================================================================
 else() # DEFINED CMAKE_HELPER_SCRIPT
 
-  cmake_minimum_required(VERSION 3.5)
+  cmake_minimum_required(VERSION 3.10)
   include("${CMAKE_HELPER_SCRIPT}")
   include("${VISP_SOURCE_DIR}/cmake/VISPUtils.cmake")
 

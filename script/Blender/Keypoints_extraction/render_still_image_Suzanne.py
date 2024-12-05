@@ -63,9 +63,13 @@ def inv_transfo(w_T_o):
     return o_T_w
 
 def get_camera_pose(cameraName, objectName):
-    M = np.eye(4)
-    M[1][1] = -1
-    M[2][2] = -1
+    # Camera frame in OpenGL:
+    # X-axis to the right
+    # Y-axis up
+    # Z-axis backward
+    cv_M_gl = np.eye(4)
+    cv_M_gl[1][1] = -1
+    cv_M_gl[2][2] = -1
 
     cam = bpy.data.objects[cameraName]
     object_pose = bpy.data.objects[objectName].matrix_world
@@ -80,16 +84,16 @@ def get_camera_pose(cameraName, objectName):
     w_T_o = np.array(object_pose_normalized_blender)
     print(f"object_pose_normalized:\n{object_pose_normalized_blender}")
 
-    w_T_c = np.array(cam.matrix_world)
+    w_T_c = np.array(cam.matrix_world) @ cv_M_gl
     print(f"w_T_c:\n{w_T_c}")
 
-    c_T_w = np.array(cam.matrix_world.inverted())
+    c_T_w = cv_M_gl @ np.array(cam.matrix_world.inverted())
     print(f"c_T_w:\n{c_T_w}")
 
     c_T_w2 = inv_transfo(w_T_c)
-    print(f"c_T_w2:\n{c_T_w2}")
+    print(f"c_T_w2:\n{c_T_w2}") # c_T_w (using Blender inverted()) and c_T_w2 should be equal
 
-    c_T_o = M @ c_T_w @ w_T_o
+    c_T_o = c_T_w @ w_T_o
     print(f"c_T_o:\n{c_T_o}")
 
     return c_T_o

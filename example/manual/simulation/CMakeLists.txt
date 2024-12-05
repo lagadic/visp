@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(ImageManipulation)
 
@@ -10,4 +10,3 @@ endif()
 add_executable(manServo4PointsDisplay manServo4PointsDisplay.cpp)
 add_executable(manSimu4Dots           manSimu4Dots.cpp)
 add_executable(manSimu4Points         manSimu4Points.cpp)
-

@@ -39,10 +39,12 @@
 BEGIN_VISP_NAMESPACE
 void vpCircle::init()
 {
-  oP.resize(7);
-  cP.resize(7);
+  const unsigned int val_7 = 7;
+  const unsigned int val_5 = 5;
+  oP.resize(val_7);
+  cP.resize(val_7);
 
-  p.resize(5);
+  p.resize(val_5);
 }
 
 /*!
@@ -163,8 +165,12 @@ void vpCircle::projection() { projection(cP, p); }
   */
 void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {
+  const int val_2 = 2;
+  const int val_4 = 4;
+  const unsigned int val_6 = 6;
+  const unsigned int val_5 = 5;
   double det_threshold = 1e-10;
-  p_.resize(5, false);
+  p_.resize(val_5, false);
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
   const unsigned int index_2 = 2;
@@ -172,7 +178,7 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
   const unsigned int index_4 = 4;
   const unsigned int index_5 = 5;
 
-  vpColVector K(6);
+  vpColVector K(val_6);
   {
     double A = cP_[index_0];
     double B = cP_[index_1];
@@ -191,12 +197,12 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
     B = B / det;
     C = C / det;
 
-    K[index_0] = (1 - (2 * A * X0)) + (A * A * s);
-    K[index_1] = (1 - (2 * B * Y0)) + (B * B * s);
+    K[index_0] = (1 - (val_2 * A * X0)) + (A * A * s);
+    K[index_1] = (1 - (val_2 * B * Y0)) + (B * B * s);
     K[index_2] = ((-A * Y0) - (B * X0)) + (A * B * s);
     K[index_3] = ((-C * X0) - (A * Z0)) + (A * C * s);
     K[index_4] = ((-C * Y0) - (B * Z0)) + (B * C * s);
-    K[index_5] = (1 - (2 * C * Z0)) + (C * C * s);
+    K[index_5] = (1 - (val_2 * C * Z0)) + (C * C * s);
   }
 
   double det = (K[index_2] * K[index_2]) - (K[index_0] * K[index_1]);
@@ -224,7 +230,7 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
     }
   }
   else {
-    E = ((K[1] - K[0]) + c) / (2 * K[index_2]);
+    E = ((K[1] - K[0]) + c) / (val_2 * K[index_2]);
     if (fabs(E) > 1.0) {
       A = sqrt(s / ((K[0] + K[1]) + c));
       B = sqrt(s / ((K[0] + K[1]) - c));
@@ -237,7 +243,7 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
   }
 
   // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
-  det = 4 * (1.0 + vpMath::sqr(E));
+  det = val_4 * (1.0 + vpMath::sqr(E));
   double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
   double n11 = ((vpMath::sqr(A) - vpMath::sqr(B)) * E) / det;
   double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
@@ -261,7 +267,8 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 */
 void vpCircle::changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const
 {
-  noP.resize(7, false);
+  const unsigned int val_7 = 7;
+  noP.resize(val_7, false);
 
   double A, B, C;
   const unsigned int index_0 = 0;
@@ -276,9 +283,9 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) co
   C = (noMo[index_2][0] * oP[0]) + (noMo[index_2][1] * oP[1]) + (noMo[index_2][index_2] * oP[index_2]);
 
   double X0, Y0, Z0;
-  X0 = noMo[index_0][index_3] + (noMo[index_0][0] * oP[3]) + (noMo[index_0][1] * oP[index_4]) + (noMo[index_0][index_2] * oP[index_5]);
-  Y0 = noMo[index_1][index_3] + (noMo[index_1][0] * oP[3]) + (noMo[index_1][1] * oP[index_4]) + (noMo[index_1][index_2] * oP[index_5]);
-  Z0 = noMo[index_2][index_3] + (noMo[index_2][0] * oP[3]) + (noMo[index_2][1] * oP[index_4]) + (noMo[index_2][index_2] * oP[index_5]);
+  X0 = noMo[index_0][index_3] + (noMo[index_0][0] * oP[index_3]) + (noMo[index_0][1] * oP[index_4]) + (noMo[index_0][index_2] * oP[index_5]);
+  Y0 = noMo[index_1][index_3] + (noMo[index_1][0] * oP[index_3]) + (noMo[index_1][1] * oP[index_4]) + (noMo[index_1][index_2] * oP[index_5]);
+  Z0 = noMo[index_2][index_3] + (noMo[index_2][0] * oP[index_3]) + (noMo[index_2][1] * oP[index_4]) + (noMo[index_2][index_2] * oP[index_5]);
   double R = oP[6];
 
   noP[index_0] = A;

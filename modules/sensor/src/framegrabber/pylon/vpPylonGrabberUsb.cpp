@@ -797,5 +797,5 @@ END_VISP_NAMESPACE
 #else
 // Work around to avoid warning:
 // libvisp_pylon.a(vpPylonGrabberUsb.cpp.o) has no symbols
-void dummy_vpPylonGrabberUsb() { };
+void dummy_vpPylonGrabberUsb() { }
 #endif // #ifdef VISP_HAVE_PYLON

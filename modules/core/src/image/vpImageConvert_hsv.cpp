@@ -84,6 +84,9 @@ BEGIN_VISP_NAMESPACE
       double q = v * (1.0 - (s * f));
       double t = v * (1.0 - (s * (1.0 - f)));
 
+      const int val_2 = 2;
+      const int val_3 = 3;
+      const int val_4 = 4;
       switch (static_cast<int>(h)) {
       case 0:
         hue = v;
@@ -97,19 +100,19 @@ BEGIN_VISP_NAMESPACE
         value = p;
         break;
 
-      case 2:
+      case val_2:
         hue = p;
         saturation = v;
         value = t;
         break;
 
-      case 3:
+      case val_3:
         hue = p;
         saturation = q;
         value = v;
         break;
 
-      case 4:
+      case val_4:
         hue = t;
         saturation = p;
         value = v;
@@ -127,7 +130,9 @@ BEGIN_VISP_NAMESPACE
     rgb[i_step] = static_cast<unsigned char>(vpMath::round(hue * 255.0));
     rgb[++i_step] = static_cast<unsigned char>(vpMath::round(saturation * 255.0));
     rgb[++i_step] = static_cast<unsigned char>(vpMath::round(value * 255.0));
-    if ((++i_step) == 3) { // alpha
+    const int val_3 = 3;
+    if (i_step == val_3) { // alpha
+      ++i_step;
       rgb[i_step] = vpRGBa::alpha_default;
     }
   }
@@ -148,6 +153,9 @@ BEGIN_VISP_NAMESPACE
 void vpImageConvert::HSV2RGB(const unsigned char *hue_, const unsigned char *saturation_, const unsigned char *value_,
                              unsigned char *rgb, unsigned int size, unsigned int step, bool h_full)
 {
+  const int val_2 = 2;
+  const int val_3 = 3;
+  const int val_4 = 4;
   float h_max;
   if (h_full) {
     h_max = 255.f;
@@ -194,19 +202,19 @@ void vpImageConvert::HSV2RGB(const unsigned char *hue_, const unsigned char *sat
         value = p;
         break;
 
-      case 2:
+      case val_2:
         hue = p;
         saturation = v;
         value = t;
         break;
 
-      case 3:
+      case val_3:
         hue = p;
         saturation = q;
         value = v;
         break;
 
-      case 4:
+      case val_4:
         hue = t;
         saturation = p;
         value = v;
@@ -224,7 +232,8 @@ void vpImageConvert::HSV2RGB(const unsigned char *hue_, const unsigned char *sat
     rgb[i_step] = static_cast<unsigned char>(hue * 255.f);
     rgb[++i_step] = static_cast<unsigned char>(saturation * 255.0f);
     rgb[++i_step] = static_cast<unsigned char>(value * 255.0f);
-    if ((++i_step) == 3) { // alpha
+    if (i_step == val_3) { // alpha
+      ++i_step;
       rgb[i_step] = vpRGBa::alpha_default;
     }
   }
@@ -257,8 +266,10 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     int i_ = i * step;
 
     red = rgb[i_] / 255.0;
-    green = rgb[++i_] / 255.0;
-    blue = rgb[++i_] / 255.0;
+    ++i_;
+    green = rgb[i_] / 255.0;
+    ++i_;
+    blue = rgb[i_] / 255.0;
 
     if (red > green) {
       max = std::max<double>(red, blue);
@@ -288,10 +299,10 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
         h = (green - blue) / delta;
       }
       else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
-        h = 2 + ((blue - red) / delta);
+        h = 2.0 + ((blue - red) / delta);
       }
       else {
-        h = 4 + ((red - green) / delta);
+        h = 4.0 + ((red - green) / delta);
       }
 
       h /= 6.0;
@@ -418,7 +429,8 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
 void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                                unsigned int size)
 {
-  vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4);
+  const unsigned int val_4 = 4;
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, val_4);
 }
 
 /*!
@@ -438,7 +450,8 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, cons
 void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                                unsigned char *rgba, unsigned int size, bool h_full)
 {
-  vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4, h_full);
+ const unsigned int val_4 = 4;
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, val_4, h_full);
 }
 
 /*!
@@ -457,7 +470,8 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *sa
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
                                unsigned int size)
 {
-  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
+  const unsigned int val_4 = 4;
+  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, val_4);
 }
 
 /*!
@@ -479,7 +493,8 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
                                unsigned char *value, unsigned int size, bool h_full)
 {
-  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4, h_full);
+  const unsigned int val_4 = 4;
+  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, val_4, h_full);
 }
 
 /*!
@@ -498,7 +513,8 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, un
 void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
                               unsigned int size)
 {
-  vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3);
+  const unsigned int val_3 = 3;
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, val_3);
 }
 
 /*!
@@ -518,7 +534,8 @@ void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const
 void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                               unsigned char *rgb, unsigned int size, bool h_full)
 {
-  vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3, h_full);
+  const unsigned int val_3 = 3;
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, val_3, h_full);
 }
 
 /*!
@@ -536,7 +553,8 @@ void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *sat
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                               unsigned int size)
 {
-  vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3);
+  const unsigned int val_3 = 3;
+  vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, val_3);
 }
 
 /*!
@@ -557,6 +575,7 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *sat
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation,
                               unsigned char *value, unsigned int size, bool h_full)
 {
-  vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3, h_full);
+  const unsigned int val_3 = 3;
+  vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, val_3, h_full);
 }
 END_VISP_NAMESPACE

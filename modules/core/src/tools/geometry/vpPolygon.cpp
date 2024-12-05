@@ -126,7 +126,8 @@ vpPolygon::vpPolygon()
 vpPolygon::vpPolygon(const std::vector<vpImagePoint> &corners)
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
-  if (corners.size() < 3) {
+  const unsigned int val_3 = 3;
+  if (corners.size() < val_3) {
     _goodPoly = false;
   }
   init(corners);
@@ -143,7 +144,8 @@ vpPolygon::vpPolygon(const std::vector<vpImagePoint> &corners)
 vpPolygon::vpPolygon(const std::list<vpImagePoint> &corners)
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
-  if (corners.size() < 3) {
+  const unsigned int val_3 = 3;
+  if (corners.size() < val_3) {
     _goodPoly = false;
   }
   init(corners);
@@ -399,7 +401,9 @@ bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1, const vpImageP
 */
 bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &method) const
 {
-  if (_corners.size() < 3) {
+  const int val_1000 = 1000;
+  const unsigned int val_3 = 3;
+  if (_corners.size() < val_3) {
     return false;
   }
 
@@ -411,8 +415,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     // we add random since it appears that sometimes infPoint may cause a degenerated case (so relaunch and
     // hope that result will be different).
     vpUniRand generator;
-    infPoint.set_i(infPoint.get_i() + (1000 * generator()));
-    infPoint.set_j(infPoint.get_j() + (1000 * generator()));
+    infPoint.set_i(infPoint.get_i() + (val_1000 * generator()));
+    infPoint.set_j(infPoint.get_j() + (val_1000 * generator()));
 
     bool oddNbIntersections = false;
     size_t v_corners_size = _corners.size();
@@ -452,7 +456,7 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     for (size_t i = 0; i < v_corners_size; ++i) {
       if (((_corners[i].get_v() < ip.get_v()) && (_corners[j].get_v() >= ip.get_v())) ||
           ((_corners[j].get_v() < ip.get_v()) && (_corners[i].get_v() >= ip.get_v()))) {
-        oddNodes ^= (ip.get_v() * m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
+        oddNodes ^= ( ((ip.get_v() * m_PnPolyMultiples[i]) + m_PnPolyConstants[i]) < ip.get_u());
       }
 
       j = i;
@@ -468,7 +472,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
 
 void vpPolygon::precalcValuesPnPoly()
 {
-  if (_corners.size() < 3) {
+  const std::size_t val_3 = 3;
+  if (_corners.size() < val_3) {
     return;
   }
 
@@ -517,7 +522,8 @@ void vpPolygon::updateArea()
     _area += (_corners[i].get_j() * _corners[i_p_1].get_i()) - (_corners[i_p_1].get_j() * _corners[i].get_i());
   }
 
-  _area /= 2;
+  const int val_2 = 2;
+  _area /= val_2;
   if (_area < 0) {
     _area = -_area;
   }
@@ -554,9 +560,10 @@ void vpPolygon::updateCenter()
       ((_corners[i_p_1].get_i() * _corners[i].get_j()) - (_corners[i_p_1].get_j() * _corners[i].get_i()));
   }
 
+  const int val_6 = 6;
   if (_area > 0) {
-    _center.set_i(fabs(i_tmp / (6 * _area)));
-    _center.set_j(fabs(j_tmp / (6 * _area)));
+    _center.set_i(fabs(i_tmp / (val_6 * _area)));
+    _center.set_j(fabs(j_tmp / (val_6 * _area)));
   }
   else {
     _center = _corners[0];

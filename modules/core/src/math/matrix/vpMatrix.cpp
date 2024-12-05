@@ -1253,10 +1253,8 @@ vpColVector vpMatrix::eigenValues() const
   }
 #endif
 #else
-  {
     throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
                       "You should install Lapack 3rd party"));
-  }
 #endif
   return evalue;
 }
@@ -1388,10 +1386,8 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   }
 #endif // defined(VISP_HAVE_GSL)
 #else
-  {
     throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
                       "You should install Lapack 3rd party"));
-  }
 #endif
 }
 
@@ -1729,7 +1725,7 @@ vpMatrix vpMatrix::expm() const
     v_expE = (c * exp) + v_eye;
     v_expD = (-c * exp) + v_eye;
     for (int k = 2; k <= q; ++k) {
-      c = (c * (static_cast<double>((q - k) + 1))) / (static_cast<double>(k * (((2 * q) - k) + 1)));
+      c = (c * (static_cast<double>((q - k) + 1))) / (static_cast<double>(k * (((2.0 * q) - k) + 1)));
       v_expcX = exp * v_expX;
       v_expX = v_expcX;
       v_expcX = c * v_expX;

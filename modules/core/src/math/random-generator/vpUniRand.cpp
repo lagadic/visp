@@ -29,8 +29,8 @@
  *
  * Description:
  * Pseudo random number generator.
- *
-*****************************************************************************/
+ */
+
 /*
  * PCG Random Number Generation for C.
  *
@@ -100,8 +100,8 @@ double vpUniRand::operator()() { return uniform(0.0, 1.0); }
   \note
   <quote>
   Some programmers may think that they can just run rng.next() % bound,
-  but doing so introduces nonuniformity when bound is not a power of two.
-  The code for boundedRand() avoids the nonuniformity by dropping a portion
+  but doing so introduces non uniformity when bound is not a power of two.
+  The code for boundedRand() avoids the non uniformity by dropping a portion
   of the RNG's output.
   </quote>
 */
@@ -144,11 +144,13 @@ uint32_t vpUniRand::boundedRand(uint32_t bound)
 */
 uint32_t vpUniRand::next()
 {
+  const unsigned long long val_ll = 6364136223846793005ULL;
+  const uint32_t val_31 = 31;
   uint64_t oldstate = m_rng.state;
-  m_rng.state = (oldstate * 6364136223846793005ULL) + m_rng.inc;
+  m_rng.state = (oldstate * val_ll) + m_rng.inc;
   uint32_t xorshifted = static_cast<uint32_t>(((oldstate >> 18u) ^ oldstate) >> 27u);
   uint32_t rot = oldstate >> 59u;
-  return (xorshifted >> rot) | (xorshifted << (static_cast<uint32_t>((-static_cast<int64_t>(rot)) & 31)));
+  return (xorshifted >> rot) | (xorshifted << (static_cast<uint32_t>((-static_cast<int64_t>(rot)) & val_31)));
 }
 
 /*!

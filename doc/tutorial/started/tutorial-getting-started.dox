@@ -228,7 +228,7 @@ example. A minimalistic `CMakeLists.txt` should contain the following lines.
 
 Open your editor and copy/paste the following lines in `VISP_WS/started/CMakeLists.txt` file.
 \code
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(tutorial-image)
 
@@ -248,7 +248,7 @@ The `find_package()` CMake command searches for a `VISPConfig.cmake` file that w
 
 Note that the previous `CMakeLists.txt` file can also be:
 \code
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(tutorial-image)
 

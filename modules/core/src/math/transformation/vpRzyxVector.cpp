@@ -30,8 +30,7 @@
  * Description:
  * Rzyx angle parameterization for the rotation.
  * Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpRzyxVector.cpp
@@ -44,8 +43,9 @@
 #include <visp3/core/vpRzyxVector.h>
 
 BEGIN_VISP_NAMESPACE
+const unsigned int vpRzyxVector::constr_val_3 = 3;
 /*! Default constructor that initialize all the 3 angles to zero. */
-vpRzyxVector::vpRzyxVector() : vpRotationVector(3) { }
+vpRzyxVector::vpRzyxVector() : vpRotationVector(constr_val_3) { }
 
 /*! Copy constructor. */
 vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) { }
@@ -56,14 +56,14 @@ vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) { 
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
 */
-vpRzyxVector::vpRzyxVector(double phi, double theta, double psi) : vpRotationVector(3) { buildFrom(phi, theta, psi); }
+vpRzyxVector::vpRzyxVector(double phi, double theta, double psi) : vpRotationVector(constr_val_3) { buildFrom(phi, theta, psi); }
 
 /*!
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.
   \param R : Rotation matrix used to initialize the Euler angles.
 */
-vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(3) { buildFrom(R); }
+vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(constr_val_3) { buildFrom(R); }
 
 /*!
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
@@ -71,13 +71,13 @@ vpRzyxVector::vpRzyxVector(const vpRotationMatrix &R) : vpRotationVector(3) { bu
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
-vpRzyxVector::vpRzyxVector(const vpThetaUVector &tu) : vpRotationVector(3) { buildFrom(tu); }
+vpRzyxVector::vpRzyxVector(const vpThetaUVector &tu) : vpRotationVector(constr_val_3) { buildFrom(tu); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyxVector::vpRzyxVector(const vpColVector &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
+vpRzyxVector::vpRzyxVector(const vpColVector &rzyx) : vpRotationVector(constr_val_3) { buildFrom(rzyx); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyxVector::vpRzyxVector(const std::vector<double> &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
+vpRzyxVector::vpRzyxVector(const std::vector<double> &rzyx) : vpRotationVector(constr_val_3) { buildFrom(rzyx); }
 
 /*!
   Convert a rotation matrix into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
@@ -161,11 +161,11 @@ vpRzyxVector &vpRzyxVector::buildFrom(const double &phi, const double &theta, co
 */
 vpRzyxVector &vpRzyxVector::buildFrom(const vpColVector &rzyx)
 {
-  if (rzyx.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (rzyx.size() != val_3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }
@@ -178,11 +178,11 @@ vpRzyxVector &vpRzyxVector::buildFrom(const vpColVector &rzyx)
 */
 vpRzyxVector &vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
 {
-  if (rzyx.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (rzyx.size() != val_3) {
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension std::vector",
                       rzyx.size()));
   }
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }
@@ -250,11 +250,11 @@ vpRzyxVector &vpRzyxVector::operator=(double v)
 */
 vpRzyxVector &vpRzyxVector::operator=(const vpColVector &rzyx)
 {
-  if (rzyx.size() != 3) {
+  const unsigned int val_3 = 3;
+  if (rzyx.size() != val_3) {
     throw(vpException(vpException::dimensionError, "Cannot set a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  const unsigned int val_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     data[i] = rzyx[i];
   }

@@ -30,8 +30,7 @@
  * Description:
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPoseVector.cpp
@@ -49,6 +48,7 @@
 
 BEGIN_VISP_NAMESPACE
 
+const unsigned int vpPoseVector::constr_value_6 = 6;
 /*!
 
   Default constructor that construct a 6 dimension pose vector \f$ [\bf t,
@@ -59,7 +59,7 @@ BEGIN_VISP_NAMESPACE
   The pose vector is initialized to zero.
 
 */
-vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) { }
+vpPoseVector::vpPoseVector() : vpArray2D<double>(constr_value_6, 1) { }
 
 /*!
 
@@ -77,7 +77,7 @@ vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) { }
 
 */
 vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz)
-  : vpArray2D<double>(6, 1)
+  : vpArray2D<double>(constr_value_6, 1)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -104,7 +104,7 @@ vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double t
   \param tu : \f$\theta \bf u\f$ rotation  vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu) : vpArray2D<double>(6, 1)
+vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu) : vpArray2D<double>(constr_value_6, 1)
 {
   buildFrom(tv, tu);
 }
@@ -121,7 +121,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &
   u\f$ vector is extracted to initialise the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R) : vpArray2D<double>(6, 1)
+vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R) : vpArray2D<double>(constr_value_6, 1)
 {
   buildFrom(tv, R);
 }
@@ -136,7 +136,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix
   initialize the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 1) { buildFrom(M); }
+vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(constr_value_6, 1) { buildFrom(M); }
 
 /*!
 
@@ -239,9 +239,10 @@ vpPoseVector &vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
 vpPoseVector &vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu)
 {
   const unsigned int val_3 = 3;
+  const unsigned int index_3 = 3;
   for (unsigned int i = 0; i < val_3; ++i) {
     (*this)[i] = tv[i];
-    (*this)[i + 3] = tu[i];
+    (*this)[i + index_3] = tu[i];
   }
   return *this;
 }
@@ -307,7 +308,13 @@ void vpPoseVector::extract(vpQuaternionVector &q) const
 /*!
   Extract the rotation as a rotation matrix.
 */
-void vpPoseVector::extract(vpRotationMatrix &R) const { R.buildFrom((*this)[3], (*this)[4], (*this)[5]); }
+void vpPoseVector::extract(vpRotationMatrix &R) const
+{
+  const unsigned int index_3 = 3;
+  const unsigned int index_4 = 4;
+  const unsigned int index_5 = 5;
+  R.buildFrom((*this)[index_3], (*this)[index_4], (*this)[index_5]);
+}
 /*!
   Return the translation vector that corresponds to the translation part of
   the pose vector.

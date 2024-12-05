@@ -44,27 +44,29 @@
 #include <visp3/core/vpQuaternionVector.h>
 
 BEGIN_VISP_NAMESPACE
+const unsigned int vpHomogeneousMatrix::constr_value_4 = 4;
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.
  */
-  vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
-  : vpArray2D<double>(4, 4)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q)
+  : vpArray2D<double>(constr_value_4, constr_value_4)
 {
+  const unsigned int index_3 = 3;
   buildFrom(t, q);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
   Default constructor that initialize an homogeneous matrix as identity.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(4, 4), m_index(0) { eye(); }
+vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0) { eye(); }
 
 /*!
   Copy constructor that initialize an homogeneous matrix from another
   homogeneous matrix.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
   *this = M;
 }
@@ -74,10 +76,11 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray
   u}\f$ rotation vector.
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu)
-  : vpArray2D<double>(4, 4), m_index(0)
+  : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
+  const unsigned int index_3 = 3;
   buildFrom(t, tu);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
@@ -85,7 +88,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpT
   matrix.
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
-  : vpArray2D<double>(4, 4), m_index(0)
+  : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
   const unsigned int index_3 = 3;
   insert(R);
@@ -96,7 +99,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpR
 /*!
   Construct an homogeneous matrix from a pose vector.
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
   const unsigned int index_0 = 0;
   const unsigned int index_1 = 1;
@@ -151,10 +154,11 @@ M:
 0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
+  const unsigned int index_3 = 3;
   buildFrom(v);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -308,10 +312,11 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
   0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
+  const unsigned int index_3 = 3;
   buildFrom(v);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
@@ -320,10 +325,11 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray
   u_z)^T\f$ rotation vector.
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
-  : vpArray2D<double>(4, 4), m_index(0)
+  : vpArray2D<double>(constr_value_4, constr_value_4), m_index(0)
 {
+  const unsigned int index_3 = 3;
   buildFrom(tx, ty, tz, tux, tuy, tuz);
-  (*this)[3][3] = 1.;
+  (*this)[index_3][index_3] = 1.;
 }
 
 /*!
@@ -439,11 +445,14 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const double &tx, const doub
   */
 vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
 {
-  if ((v.size() != 12) && (v.size() != 16)) {
+  const std::size_t val_12 = 12;
+  const std::size_t val_16 = 16;
+  const unsigned int val_12ui = 12;
+  if ((v.size() != val_12) && (v.size() != val_16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<float> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; ++i) {
+  for (unsigned int i = 0; i < val_12ui; ++i) {
     this->data[i] = static_cast<double>(v[i]);
   }
   return *this;
@@ -495,11 +504,14 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
   */
 vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 {
-  if ((v.size() != 12) && (v.size() != 16)) {
+  const std::size_t val_12 = 12;
+  const std::size_t val_16 = 16;
+  const unsigned int val_12ui = 12;
+  if ((v.size() != val_12) && (v.size() != val_16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<double> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; ++i) {
+  for (unsigned int i = 0; i < val_12ui; ++i) {
     this->data[i] = v[i];
   }
   return *this;
@@ -512,8 +524,9 @@ vpHomogeneousMatrix &vpHomogeneousMatrix::buildFrom(const std::vector<double> &v
 */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
+  const int val_4 = 4;
+  for (int i = 0; i < val_4; ++i) {
+    for (int j = 0; j < val_4; ++j) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -652,7 +665,7 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
   v1[index_2] = ((*this)[index_2][0] * v[0]) + ((*this)[index_2][1] * v[1]) + ((*this)[index_2][index_2] * v[index_2]) + ((*this)[index_2][index_3] * v[index_3]);
   v1[index_3] = ((*this)[index_3][0] * v[0]) + ((*this)[index_3][1] * v[1]) + ((*this)[index_3][index_2] * v[index_2]) + ((*this)[index_3][index_3] * v[index_3]);
 
-  v1 /= v1[3];
+  v1 /= v1[index_3];
 
   //  --comment: v1 equals M multiplied by v
   aP.set_X(v1[index_0]);
@@ -1114,8 +1127,10 @@ void vpHomogeneousMatrix::print() const
  */
 void vpHomogeneousMatrix::convert(std::vector<float> &M)
 {
-  M.resize(12);
-  for (unsigned int i = 0; i < 12; ++i) {
+  const std::size_t val_12 = 12;
+  const unsigned int val_12ui = 12;
+  M.resize(val_12);
+  for (unsigned int i = 0; i < val_12ui; ++i) {
     M[i] = static_cast<float>(this->data[i]);
   }
 }
@@ -1126,8 +1141,10 @@ void vpHomogeneousMatrix::convert(std::vector<float> &M)
  */
 void vpHomogeneousMatrix::convert(std::vector<double> &M)
 {
-  M.resize(12);
-  for (unsigned int i = 0; i < 12; ++i) {
+  const std::size_t val_12 = 12;
+  const unsigned int val_12ui = 12;
+  M.resize(val_12);
+  for (unsigned int i = 0; i < val_12ui; ++i) {
     M[i] = this->data[i];
   }
 }
@@ -1287,8 +1304,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   size_t vec_m_size = vec_M.size();
   for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
-    meanR += (vpMatrix)R;
-    meanT += (vpColVector)vec_M[i].getTranslationVector();
+    meanR += static_cast<vpMatrix>(R);
+    meanT += static_cast<vpColVector>(vec_M[i].getTranslationVector());
   }
   meanR /= static_cast<double>(vec_M.size());
   meanT /= static_cast<double>(vec_M.size());
