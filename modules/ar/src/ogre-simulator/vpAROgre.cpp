@@ -501,8 +501,18 @@ vpAROgre::~vpAROgre(void)
   }
 
   // Delete root
-  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements() &&
-      mRoot) {
+  bool hasNoMoreElements = false;
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+  if (Ogre::Root::getSingletonPtr()) {
+    hasNoMoreElements = !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements();
+  }
+#else
+  if (Ogre::Root::getSingletonPtr()) {
+    hasNoMoreElements = Ogre::Root::getSingletonPtr()->getSceneManagers().empty();
+  }
+#endif
+
+  if (hasNoMoreElements && mRoot) {
     delete mRoot;
   }
   mRoot = 0;
@@ -978,13 +988,13 @@ void vpAROgre::closeOIS(void)
     mInputManager = 0;
   }
 #endif
-}
+  }
 
-/*!
-  Update the projection parameters of the camera.
-*/
-// Note: equation taken from:
-// http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
+  /*!
+    Update the projection parameters of the camera.
+  */
+  // Note: equation taken from:
+  // http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
 void vpAROgre::updateCameraProjection(void)
 {
   if (mCamera != 0) {
