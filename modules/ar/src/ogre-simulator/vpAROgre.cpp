@@ -421,7 +421,7 @@ void vpAROgre::init(bool
 #if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
 #else
-  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+  mSceneMgr = mRoot->createSceneManager(Ogre::DefaultSceneManagerFactory::FACTORY_TYPE_NAME, Ogre::BLANKSTRING);
 #endif
 
 // Create the camera
