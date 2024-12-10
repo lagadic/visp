@@ -527,7 +527,13 @@ int main(int argc, const char **argv)
     Ogre::Light *light = ogre.getSceneManager()->createLight();
     light->setDiffuseColour(1, 1, 1);  // scaled RGB values
     light->setSpecularColour(1, 1, 1); // scaled RGB values
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
     light->setPosition(-5, -5, 10);
+#else
+    Ogre::SceneNode *spotLightNode = ogre.getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition(Ogre::Vector3(-5, -5, 10));
+#endif
     light->setType(Ogre::Light::LT_POINT);
 
     // Rendering loop
