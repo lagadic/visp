@@ -182,6 +182,7 @@ function(vp_set_ogre_media)
       /usr/share/OGRE-1.8.0/media
       /usr/share/OGRE-1.8.1/media
       /usr/share/OGRE-1.9.0/media
+      /usr/share/OGRE/Media
     )
   endif()
 
@@ -274,13 +275,14 @@ function(vp_set_ogre_media)
   # Here we copy all the minimal media files
   # - media/materials/...
   # - media/models/...
-  if(OGRE_MEDIA_NOT_AVAILABLE)
+  # if(OGRE_MEDIA_NOT_AVAILABLE)
     file(COPY modules/ar/data/ogre-simulator/media DESTINATION ${VISP_BINARY_DIR}/data/ogre-simulator)
-  endif()
+  # endif()
 
   if(ogre_resources_cfg_exists)
-    set(VISP_HAVE_OGRE_RESOURCES_PATH "${ogre_resources_cfg_exists}" CACHE INTERNAL "Ogre resources location")
-  else()
+    set(VISP_HAVE_OGRE_RESOURCES_PATH "${ogre_resources_cfg_exists};" CACHE INTERNAL "Ogre resources location")
+  endif()
+  # else()
     # Here we create a resources.cfg if it was not found
 
     # we create a resources.cfg file for vpAROgre.cpp
@@ -288,22 +290,23 @@ function(vp_set_ogre_media)
     #         If OGRE_MEDIA_DIR is not found, we set it to VISP_HAVE_OGRE_RESOURCES_PATH in order to use
     #         the minimal requested media to run the examples
     #--------------
-    set(VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_BINARY_DIR}/data/ogre-simulator" CACHE INTERNAL "Ogre resources location")
+    set(OGRE_DATA_ROOT_DIR "${VISP_BINARY_DIR}/data/ogre-simulator")
+    set(VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_HAVE_OGRE_RESOURCES_PATH}${OGRE_DATA_ROOT_DIR}" CACHE INTERNAL "Ogre resources location")
 
-    if(OGRE_MEDIA_NOT_AVAILABLE)
-      set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
-    endif()
+    # if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_VISP_MEDIA_DIR "${VISP_BINARY_DIR}/data/ogre-simulator/media")
+    # endif()
 
-    # Here we add all the subdirs in @OGRE_MEDIA_DIR@/* as resource location.
-    vp_get_relative_subdirs(media_subdirs ${OGRE_MEDIA_DIR})
-    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_MEDIA_DIR}\n")
+    # Here we add all the subdirs in @OGRE_VISP_MEDIA_DIR@/* as resource location.
+    vp_get_relative_subdirs(media_subdirs ${OGRE_VISP_MEDIA_DIR})
+    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_VISP_MEDIA_DIR}\n")
     foreach(m ${media_subdirs})
-      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_MEDIA_DIR}/${m}\n")
+      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_VISP_MEDIA_DIR}/${m}\n")
     endforeach()
 
     configure_file(
       ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
-      ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+      ${OGRE_DATA_ROOT_DIR}/resources.cfg
       IMMEDIATE @ONLY
     )
 
@@ -316,14 +319,14 @@ function(vp_set_ogre_media)
     # make the var global
     set(VISP_INSTALL_DIR_OGRE_RESOURCES ${VISP_INSTALL_DIR_OGRE_RESOURCES} CACHE INTERNAL "Ogre media install dir")
 
-    if(OGRE_MEDIA_NOT_AVAILABLE)
-      set(OGRE_MEDIA_DIR ${VISP_INSTALL_DIR_OGRE_RESOURCES}/media)
-    endif()
+    # if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_VISP_INSTALL_MEDIA_DIR ${VISP_INSTALL_DIR_OGRE_RESOURCES}/media)
+    # endif()
 
-    # Here we add all the subdirs in @OGRE_MEDIA_DIR@/* as resource location.
-    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_MEDIA_DIR}\n")
+    # Here we add all the subdirs in @OGRE_VISP_INSTALL_MEDIA_DIR@/* as resource location.
+    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_VISP_INSTALL_MEDIA_DIR}\n")
     foreach(m ${media_subdirs})
-      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_MEDIA_DIR}/${m}\n")
+      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_VISP_INSTALL_MEDIA_DIR}/${m}\n")
     endforeach()
 
     # install rule for resources.cfg and Ogre media if they are not available:
@@ -339,14 +342,14 @@ function(vp_set_ogre_media)
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT dev
       )
-      if(OGRE_MEDIA_NOT_AVAILABLE)
+      # if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
           ${VISP_BINARY_DIR}/data/ogre-simulator/media
           DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )
-      endif()
+      # endif()
     else()
       configure_file(
         ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
@@ -359,16 +362,16 @@ function(vp_set_ogre_media)
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT dev
       )
-      if(OGRE_MEDIA_NOT_AVAILABLE)
+      # if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
           ${VISP_BINARY_DIR}/data/ogre-simulator/media
           DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )
-      endif()
+      # endif()
     endif()
-  endif()
+  # endif()
 endfunction()
 
 macro(vp_set_ogre_advanced_var)
