@@ -273,52 +273,53 @@ void vpAROgre::init(bool
   std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
   for (size_t i = 0; i < resourcesPaths.size(); i++) {
     resourceFile = resourcesPaths[i] + "/resources.cfg";
-    if (vpIoTools::checkFilename(resourceFile)) {
-      resourcesFileExists = true;
-      break;
+    if (!vpIoTools::checkFilename(resourceFile)) {
+      continue;
     }
+    resourcesFileExists = true;
+    std::cout << "######################### Load resource file: " << resourceFile << std::endl;
+    Ogre::ConfigFile cf;
+    cf.load(resourceFile);
+    // Go through all sections & settings in the file
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
+    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
+
+    Ogre::String secName, typeName, archName;
+    while (seci.hasMoreElements()) {
+      secName = seci.peekNextKey();
+      Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings->begin(); i != settings->end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+      }
+    }
+#else
+    const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
+    Ogre::String secName, typeName, archName;
+    for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
+      secName = name_settings.first;
+      Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
+      Ogre::ConfigFile::SettingsMultiMap::iterator i;
+      for (i = settings.begin(); i != settings.end(); ++i) {
+        typeName = i->first;
+        archName = i->second;
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+      }
+    }
+#endif
   }
   if (!resourcesFileExists) {
     std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"") +
       std::string("doesn't exist in ") + std::string(mResourcePath);
 
-    std::cout << errorMsg << std::endl;
+    std::cout << errorMsg << std::endl << std::flush;
 
     throw(vpException(vpException::ioError, errorMsg));
   }
-  std::cout << "######################### Load resource file: " << resourceFile << std::endl;
-  Ogre::ConfigFile cf;
-  cf.load(resourceFile);
 
-  // Go through all sections & settings in the file
-#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
-  Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
-  Ogre::String secName, typeName, archName;
-  while (seci.hasMoreElements()) {
-    secName = seci.peekNextKey();
-    Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-    Ogre::ConfigFile::SettingsMultiMap::iterator i;
-    for (i = settings->begin(); i != settings->end(); ++i) {
-      typeName = i->first;
-      archName = i->second;
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-    }
-  }
-#else
-  const  Ogre::ConfigFile::SettingsBySection_ &sectionsNamesAndSettigns = cf.getSettingsBySection();
-  Ogre::String secName, typeName, archName;
-  for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
-    secName = name_settings.first;
-    Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
-    Ogre::ConfigFile::SettingsMultiMap::iterator i;
-    for (i = settings.begin(); i != settings.end(); ++i) {
-      typeName = i->first;
-      archName = i->second;
-      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-    }
-  }
-#endif
   std::cout << "##################### add resources" << std::endl;
   // Add Optional resources (given by the user).
   for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
@@ -417,9 +418,13 @@ void vpAROgre::init(bool
   //    ST_INTERIOR = Quake3 BSP
   //-----------------------------------------------------
 
+#if (VISP_HAVE_OGRE_VERSION < (1<<16 | 10<<8 | 0))
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+#else
+  mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
+#endif
 
-  // Create the camera
+// Create the camera
   createCamera();
 
   // Create a viewport
@@ -866,13 +871,7 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
-  Ogre::MaterialPtr mMaterial;
-  Ogre::String matName("BackgroundMaterial");
-  //if it doesnt already exist
-  if (!Ogre::MaterialManager::getSingleton().resourceExists(matName)) {
-    mMaterial = Ogre::MaterialManager::getSingleton().create(matName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-  }
-  mBackground->setMaterial(mMaterial);                  // Attach the material to the rectangle
+  mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
@@ -949,14 +948,9 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
   Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+
 #if (VISP_HAVE_OGRE_VERSION >= (1<<16 | 10<<8 | 0))
-  Ogre::MaterialPtr mMaterial;
-  Ogre::String matName("BackgroundMaterial");
-  //if it doesnt already exist
-  if (!Ogre::MaterialManager::getSingleton().resourceExists(matName)) {
-    mMaterial = Ogre::MaterialManager::getSingleton().create(matName, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true);
-  }
-  mBackground->setMaterial(mMaterial);                  // Attach the material to the rectangle
+  mBackground->setMaterial(Backgroundmaterial);                  // Attach the material to the rectangle
 #else
   mBackground->setMaterial("BackgroundMaterial");                  // Attach the material to the rectangle
 #endif
