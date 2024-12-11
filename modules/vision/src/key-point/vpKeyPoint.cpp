@@ -33,7 +33,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES) || defined(HAVE_OPENCV_XFEATURES2D) || defined(HAVE_OPENCV_NONFREE))
+// opencv_xfeatures2d and opencv_nonfree are optional
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
 
 #include <iomanip>
 #include <limits>
@@ -41,20 +43,17 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-#if defined(HAVE_OPENCV_3D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000)
 #include <opencv2/3d.hpp>
+#include <opencv2/features.hpp>
 #endif
 
-#if defined(HAVE_OPENCV_FEATURES)
-#include <opencv2/features.hpp>
+#if (VISP_HAVE_OPENCV_VERSION <0x050000)
+#include <opencv2/calib3d.hpp>
 #endif
 
 #if defined(HAVE_OPENCV_XFEATURES2D)
 #include <opencv2/xfeatures2d.hpp>
-#endif
-
-#if defined(HAVE_OPENCV_3D)
-#include <opencv2/3d.hpp>
 #endif
 
 #if defined(VISP_HAVE_PUGIXML)

@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES))
+#if defined(HAVE_OPENCV_IMGPROC) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES))
 
 #if defined(HAVE_OPENCV_FEATURES)
 #include <opencv2/features.hpp>
