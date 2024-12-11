@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +31,23 @@
  * Detect faces.
  */
 
-#ifndef _vpDetectorFace_h_
-#define _vpDetectorFace_h_
+#ifndef VP_DETECTOR_FACE_H
+#define VP_DETECTOR_FACE_H
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_OBJDETECT)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT))
 
 #include <algorithm> // needed by (std::min) in opencv2/objdetect/objdetect.hpp
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000)
 #include <opencv2/objdetect/objdetect.hpp>
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x050000)
+#include <opencv2/xobjdetect.hpp>
+#endif
 
 #include <visp3/detection/vpDetectorBase.h>
 

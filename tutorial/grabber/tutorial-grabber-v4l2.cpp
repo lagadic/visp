@@ -90,21 +90,17 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--device") {
-        opt_device = std::atoi(argv[i + 1]);
-        i++;
+      if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+        opt_device = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--scale") {
-        opt_scale = (unsigned int)atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+        opt_scale = (unsigned int)atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--seqname") {
-        opt_seqname = std::string(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+        opt_seqname = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;

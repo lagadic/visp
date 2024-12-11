@@ -42,46 +42,38 @@ int main(int argc, char **argv)
     double opt_square_width = 0.12;
     int opt_device = 0; // For OpenCV and V4l2 grabber to set the camera device
 
-    for (int i = 0; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-        opt_intrinsic_file = std::string(argv[i + 1]);
+        opt_intrinsic_file = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-        opt_camera_name = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+        opt_camera_name = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
-        opt_device = atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
+        opt_device = atoi(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--square-width" && i + 1 < argc) {
+        opt_device = atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [--camera_device <camera device> (default: 0)]"
+        std::cout << "\nUsage: " << argv[0]
+          << " [--camera-device <camera device> (default: 0)]"
           << " [--intrinsic <xml calibration file> (default: empty)]"
-          " [--camera_name <camera name in xml calibration file> (default: empty)]"
-          " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"
-          << "\nExample using default camera parameters and square size:\n"
+          << " [--camera-name <camera name in xml calibration file> (default: empty)]"
+          << " [--square-width <square width in meter (default: 0.12)]"
+          << " [--help] [-h]\n"
+          << std::endl
+          << "Example using default camera parameters and square size:\n"
           << "  " << argv[0] << "\n"
-          << "\nExample fully tuned for a 0.1m x 0.1m square:\n"
-          << "  " << argv[0] << " --intrinsic camera.xml --camera_name Camera --square_width 0.1\n"
+          << std::endl
+          << "Example fully tuned for a 0.1m x 0.1m square:\n"
+          << "  " << argv[0] << " --intrinsic camera.xml --camera-name Camera --square-width 0.1\n"
           << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
     vpImage<unsigned char> I;
-
-    // Parameters of our camera
-    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
-    vpXmlParserCamera parser;
-    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
-      std::cout << "Intrinsic file: " << opt_intrinsic_file << std::endl;
-      std::cout << "Camera name   : " << opt_camera_name << std::endl;
-      if (parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) ==
-          vpXmlParserCamera::SEQUENCE_OK) {
-        std::cout << "Succeed to read camera parameters from xml file" << std::endl;
-      }
-      else {
-        std::cout << "Unable to read camera parameters from xml file" << std::endl;
-      }
-    }
 
     //! [Grabber]
 #if defined(VISP_HAVE_V4L2)
@@ -132,6 +124,21 @@ int main(int argc, char **argv)
     vpImageConvert::convert(frame, I);
 #endif
     //! [Grabber]
+
+    // Parameters of our camera
+    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
+    vpXmlParserCamera parser;
+    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
+      std::cout << "Intrinsic file: " << opt_intrinsic_file << std::endl;
+      std::cout << "Camera name   : " << opt_camera_name << std::endl;
+      if (parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) ==
+          vpXmlParserCamera::SEQUENCE_OK) {
+        std::cout << "Succeed to read camera parameters from xml file" << std::endl;
+      }
+      else {
+        std::cout << "Unable to read camera parameters from xml file" << std::endl;
+      }
+    }
 
     std::cout << "Square width  : " << opt_square_width << std::endl;
     std::cout << cam << std::endl;
@@ -236,4 +243,4 @@ int main(int argc, char **argv)
     "use this example"
     << std::endl;
 #endif
-  }
+}

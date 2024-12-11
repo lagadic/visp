@@ -1214,25 +1214,9 @@ if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_THREADS)
   endif()
 endif()
 
-# check OpenCV nonfree modules and version
+# OpenCV version
 if(USE_OPENCV)
   set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
-  if(OpenCV_VERSION)
-    if(OpenCV_VERSION VERSION_LESS "2.4.0")
-      message(STATUS "opencv nonfree module found")
-      set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
-    elseif(OPENCV_NONFREE_FOUND) # OpenCV < 3.0.0
-      message(STATUS "opencv xfeatures2d module found")
-      set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
-    elseif(OPENCV_XFEATURES2D_FOUND) # OpenCV >= 3.0.0
-      set(VISP_HAVE_OPENCV_XFEATURES2D TRUE)  # for header vpConfig.h
-    else()
-      message(STATUS "opencv nonfree or xfeature2d module not found")
-    endif()
-  else()
-    message(STATUS "opencv nonfree not found")
-    set(VISP_HAVE_OPENCV_VERSION "(0)") # for vpConfig.h
-  endif()
 endif()
 
 # coin and gui

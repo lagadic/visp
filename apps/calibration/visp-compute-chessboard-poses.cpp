@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,14 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(VISP_HAVE_PUGIXML)
+#if defined(VISP_HAVE_PUGIXML) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_HIGHGUI) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB)))
 
+#if defined(HAVE_OPENCV_CALIB3D)
 #include <opencv2/calib3d/calib3d.hpp>
+#elif defined(HAVE_OPENCV_CALIB)
+#include <opencv2/calib.hpp>
+#endif
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -101,7 +106,7 @@ void usage(const char **argv, int error)
     << std::endl
     << "  --input <input images path>  Generic name of the images to process." << std::endl
     << "    Default: empty" << std::endl
-    << "    Example: \"image-%d.png\"" << std::endl
+    << "    Example: \"image-%d.jpg\"" << std::endl
     << std::endl
     << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
     << "    camera parameters. " << std::endl
@@ -119,6 +124,11 @@ void usage(const char **argv, int error)
     << std::endl
 #endif
     << "  --help, -h  Print this helper message." << std::endl
+    << std::endl;
+  std::cout << "Example" << std::endl
+    << "  "
+    << argv[0]
+    << " --input image-%d.jpg" << std::endl
     << std::endl;
   if (error) {
     std::cout << "Error" << std::endl
@@ -140,32 +150,25 @@ int main(int argc, const char **argv)
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "-w" && i + 1 < argc) {
-      opt_chessboard_width = atoi(argv[i + 1]);
-      i++;
+      opt_chessboard_width = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "-h" && i + 1 < argc) {
-      opt_chessboard_height = atoi(argv[i + 1]);
-      i++;
+      opt_chessboard_height = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--square-size" && i + 1 < argc) {
-      opt_chessboard_square_size = atof(argv[i + 1]);
-      i++;
+      opt_chessboard_square_size = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      opt_input_img_files = std::string(argv[i + 1]);
-      i++;
+      opt_input_img_files = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      opt_intrinsic_file = std::string(argv[i + 1]);
-      i++;
+      opt_intrinsic_file = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
-      opt_output_pose_files = std::string(argv[i + 1]);
-      i++;
+      opt_output_pose_files = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
-      opt_camera_name = std::string(argv[i + 1]);
-      i++;
+      opt_camera_name = std::string(argv[++i]);
     }
 #if defined(VISP_HAVE_MODULE_GUI)
     else if (std::string(argv[i]) == "--no-interactive") {
@@ -213,7 +216,6 @@ int main(int argc, const char **argv)
     std::cout << "  Output camera poses          : " << opt_output_pose_files << std::endl;
     std::cout << "  Interactive mode             : " << (opt_interactive ? "yes" : "no") << std::endl << std::endl;
 
-
 #if defined(VISP_HAVE_MODULE_GUI)
     vpDisplay *display = nullptr;
     if (opt_interactive) {
@@ -228,7 +230,7 @@ int main(int argc, const char **argv)
 #elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK(I);
 #endif
-  }
+    }
 #endif
 
     std::vector<vpPoint> corners_pts;
@@ -339,7 +341,7 @@ int main(int argc, const char **argv)
       }
     }
 #endif
-}
+  }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
@@ -349,8 +351,17 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D))
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cerr << "OpenCV imgproc module is requested to run the calibration." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cerr << "OpenCV highgui module is requested to run the calibration." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_CALIB3D)
   std::cerr << "OpenCV calib3d module is requested to run the calibration." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_3D)
+  std::cerr << "OpenCV 3d module is requested to run the calibration." << std::endl;
 #endif
 #if !defined(VISP_HAVE_PUGIXML)
   std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;

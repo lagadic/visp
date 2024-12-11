@@ -33,9 +33,12 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
-     defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
+#if defined(HAVE_OPENCV_VIDEOIO) && \
+  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+    defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES))
+
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -54,18 +57,18 @@ int main(int argc, char **argv)
     std::string opt_intrinsic_file = "";
     std::string opt_camera_name = "";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--model") {
-        opt_modelname = std::string(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+        opt_modelname = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--tracker") {
-        opt_tracker = atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--tracker" && i + 1 < argc) {
+        opt_tracker = atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
-        opt_device = atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
+        opt_device = atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--max_proj_error") {
-        opt_proj_error_threshold = atof(argv[i + 1]);
+      else if (std::string(argv[i]) == "--max_proj_error" && i + 1 < argc) {
+        opt_proj_error_threshold = atof(argv[++i]);
       }
       else if (std::string(argv[i]) == "--use_ogre") {
         opt_use_ogre = true;
@@ -77,7 +80,7 @@ int main(int argc, char **argv)
         opt_learn = true;
       }
       else if (std::string(argv[i]) == "--learning_data" && i + 1 < argc) {
-        opt_learning_data = argv[i + 1];
+        opt_learning_data = argv[++i];
       }
       else if (std::string(argv[i]) == "--auto_init") {
         opt_auto_init = true;
@@ -86,16 +89,16 @@ int main(int argc, char **argv)
         opt_display_projection_error = true;
       }
       else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-        opt_intrinsic_file = std::string(argv[i + 1]);
+        opt_intrinsic_file = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-        opt_camera_name = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+        opt_camera_name = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout
-          << "\nUsage: " << argv[0] << " [--camera_device <camera device> (default: 0)]"
+          << "\nUsage: " << argv[0] << " [--camera-device <camera device> (default: 0)]"
           << " [--intrinsic <intrinsic file> (default: empty)]"
-          << " [--camera_name <camera name>  (default: empty)]"
+          << " [--camera-name <camera name>  (default: empty)]"
           << " [--model <model name> (default: teabox)]"
           << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 2)]"
           << " [--use_ogre] [--use_scanline]"
@@ -328,12 +331,11 @@ int main(int argc, char **argv)
     tracker.setProjectionErrorDisplay(opt_display_projection_error);
     //! [Set projection error computation]
 
-#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) ||                                    \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     std::string detectorName = "SIFT";
     std::string extractorName = "SIFT";
     std::string matcherName = "BruteForce";
-#else
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     std::string detectorName = "FAST";
     std::string extractorName = "ORB";
     std::string matcherName = "BruteForce-Hamming";
@@ -343,15 +345,11 @@ int main(int argc, char **argv)
       keypoint.setDetector(detectorName);
       keypoint.setExtractor(extractorName);
       keypoint.setMatcher(matcherName);
-#if !(defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-      keypoint.setDetectorParameter("ORB", "nLevels", 1);
-#else
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
       cv::Ptr<cv::ORB> orb_detector = keypoint.getDetector("ORB").dynamicCast<cv::ORB>();
       if (orb_detector) {
         orb_detector->setNLevels(1);
       }
-#endif
 #endif
     }
 
@@ -551,4 +549,4 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
 #endif
-  }
+}

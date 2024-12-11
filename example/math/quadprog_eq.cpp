@@ -67,12 +67,14 @@ int main(int argc, char **argv)
   bool opt_click_allowed = true;
 #endif
 
-  for (int i = 0; i < argc; i++) {
+  for (int i = 1; i < argc; i++) {
 #ifdef VISP_HAVE_DISPLAY
-    if (std::string(argv[i]) == "-d")
+    if (std::string(argv[i]) == "-d") {
       opt_display = false;
-    else if (std::string(argv[i]) == "-c")
+    }
+    else if (std::string(argv[i]) == "-c") {
       opt_click_allowed = false;
+    }
     else
 #endif
       if (std::string(argv[i]) == "-h") {

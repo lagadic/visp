@@ -34,58 +34,58 @@ int main(int argc, const char **argv)
   bool z_aligned = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
-      poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[i + 1]));
+    if (std::string(argv[i]) == "--pose-method" && i + 1 < argc) {
+      poseEstimationMethod = static_cast<vpDetectorAprilTag::vpPoseEstimationMethod>(atoi(argv[++i]));
     }
-    else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
-      tagSize = atof(argv[i + 1]);
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
+      tagSize = atof(argv[++i]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      input_filename = std::string(argv[i + 1]);
+      input_filename = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
-      quad_decimate = static_cast<float>(atof(argv[i + 1]));
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
+      quad_decimate = static_cast<float>(atof(argv[++i]));
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
-      nThreads = atoi(argv[i + 1]);
+      nThreads = atoi(argv[++i]);
     }
 #if defined(VISP_HAVE_PUGIXML)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      intrinsic_file = std::string(argv[i + 1]);
+      intrinsic_file = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-      camera_name = std::string(argv[i + 1]);
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+      camera_name = std::string(argv[++i]);
     }
 #endif
-    else if (std::string(argv[i]) == "--display_tag") {
+    else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
     }
     else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[i + 1]);
+      color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = static_cast<unsigned int>(atoi(argv[i + 1]));
+      thickness = static_cast<unsigned int>(atoi(argv[++i]));
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
-      tagFamily = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[i + 1]));
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
+      tagFamily = static_cast<vpDetectorAprilTag::vpAprilTagFamily>(atoi(argv[++i]));
     }
-    else if (std::string(argv[i]) == "--z_aligned") {
+    else if (std::string(argv[i]) == "--z-aligned") {
       z_aligned = true;
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--input <input file>] [--tag_size <tag_size in m>]"
-        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-        " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-        " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
-        " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
-        " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
-        " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
-        " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
-        " [--display_tag] [--color <color_id (0, 1, ...)>]"
-        " [--thickness <thickness>] [--z_aligned]"
-        " [--help]"
+        << " [--input <input file>] [--tag-size <tag_size in m>]"
+        << " [--quad-decimate <quad_decimate>] [--nthreads <nb>]"
+        << " [--intrinsic <intrinsic file>] [--camera-name <camera name>]"
+        << " [--pose-method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
+        << " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
+        << " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
+        << " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
+        << " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
+        << " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
+        << " [--display-tag] [--color <color_id (0, 1, ...)>]"
+        << " [--thickness <thickness>] [--z-aligned]"
+        << " [--help,-h]"
         << std::endl;
       return EXIT_SUCCESS;
     }

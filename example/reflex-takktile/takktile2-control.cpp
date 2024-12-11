@@ -1,7 +1,6 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Reflex Takktile 2 hand from Right Hand Robotics.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example takktile2-control.cpp
@@ -57,22 +55,26 @@ int main(int argc, char *argv[])
   std::string opt_tactile_file_name = "yaml/tactile_calibrate.yaml";
   std::string opt_motor_file_name = "yaml/motor_constants.yaml";
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--network")
-      opt_network_interface = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--finger")
-      opt_finger_file_name = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--tactile")
-      opt_tactile_file_name = atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--motor")
-      opt_motor_file_name = atoi(argv[i + 1]);
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--network" && i + 1 < argc) {
+      opt_network_interface = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--finger" && i + 1 < argc) {
+      opt_finger_file_name = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--tactile" && i + 1 < argc) {
+      opt_tactile_file_name = atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--motor" && i + 1 < argc) {
+      opt_motor_file_name = atoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
         << " [--network <interface name>] "
-        " [--finger <calib file name>]"
-        " [--tactile <calib file name>]"
-        " [--motor <constants file name>]"
-        " [--help] [-h]\n"
+        << " [--finger <calib file name>]"
+        << " [--tactile <calib file name>]"
+        << " [--motor <constants file name>]"
+        << " [--help] [-h]\n"
         << std::endl;
       std::cout << "Options:" << std::endl;
       std::cout << "  --network <interface name>" << std::endl;

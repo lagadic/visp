@@ -36,13 +36,18 @@
   \brief Tools for type or general conversion.
  */
 
-#ifndef _vpConvert_h_
-#define _vpConvert_h_
+#ifndef VP_CONVERT_H
+#define VP_CONVERT_H
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(VISP_HAVE_OPENCV) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES))
+
+#if defined(HAVE_OPENCV_FEATURES2D)
 #include <opencv2/features2d/features2d.hpp>
+#elif defined(HAVE_OPENCV_FEATURES)
+#include <opencv2/features.hpp>
+#endif
 
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPoint.h>

@@ -3,7 +3,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_PUGIXML) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_XFEATURES2D))) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES)))
+
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -274,30 +276,26 @@ int main(int argc, char *argv[])
   tracker.setProjectionErrorComputation(true);
   tracker.setProjectionErrorDisplay(display_projection_error);
 
-#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) ||                                    \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_XFEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   std::string detectorName = "SIFT";
   std::string extractorName = "SIFT";
   std::string matcherName = "BruteForce";
-#else
+#elif ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
   std::string detectorName = "FAST";
   std::string extractorName = "ORB";
-  std::string matcherName = "BruteForce-Hamming";
 #endif
+  std::string matcherName = "BruteForce-Hamming";
+
   vpKeyPoint keypoint;
   if (learn || auto_init) {
     keypoint.setDetector(detectorName);
     keypoint.setExtractor(extractorName);
     keypoint.setMatcher(matcherName);
-#if !(defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-    keypoint.setDetectorParameter("ORB", "nLevels", 1);
-#else
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::ORB> orb_detector = keypoint.getDetector("ORB").dynamicCast<cv::ORB>();
     if (orb_detector) {
       orb_detector->setNLevels(1);
     }
-#endif
 #endif
   }
 

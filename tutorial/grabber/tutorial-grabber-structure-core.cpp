@@ -86,13 +86,11 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--depth-fps") {
-        opt_depth_fps = std::atoi(argv[i + 1]);
-        i++;
+      if (std::string(argv[i]) == "--depth-fps" && i + 1 < argc) {
+        opt_depth_fps = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--visible-fps") {
-        opt_visible_fps = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--visible-fps" && i + 1 < argc) {
+        opt_visible_fps = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--sxga") {
         opt_sxga = true;
@@ -100,9 +98,8 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--no-frame-sync") {
         opt_frame_sync = false;
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;

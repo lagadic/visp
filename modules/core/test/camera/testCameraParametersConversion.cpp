@@ -119,7 +119,9 @@ int main()
       return EXIT_FAILURE;
     }
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB)))
+
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);

@@ -22,7 +22,7 @@ Now enter in `example/servo-franka folder` and run `servoFrankaIBVS` binary usin
 
     $ cd example/servo-franka
     $ ./servoFrankaIBVS --help
-    ./servoFrankaIBVS [--ip <default 192.168.1.1>] [--tag_size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+    ./servoFrankaIBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
 
 Run the binary activating the plot and using a constant gain:
 

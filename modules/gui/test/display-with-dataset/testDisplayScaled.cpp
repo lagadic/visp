@@ -279,13 +279,16 @@ int main(int argc, const char *argv[])
   std::string env_ipath;
   std::string ipath;
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "-c")
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "-c") {
       opt_click = false;
-    else if (std::string(argv[i]) == "-d")
+    }
+    else if (std::string(argv[i]) == "-d") {
       opt_display = false;
-    else if (std::string(argv[i]) == "-i")
-      opt_ipath = std::string(argv[i + 1]);
+    }
+    else if (std::string(argv[i]) == "-i" && i + 1 < argc) {
+      opt_ipath = std::string(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [-i <image path>] [-c] [-d] [--help]\n" << std::endl;
       std::cout << "\nOptions: " << std::endl;

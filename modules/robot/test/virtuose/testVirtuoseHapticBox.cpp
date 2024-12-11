@@ -241,11 +241,13 @@ int main(int argc, char **argv)
 {
   std::string opt_ip = "localhost";
   int opt_port = 5000;
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--ip")
-      opt_ip = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--port")
-      opt_port = std::atoi(argv[i + 1]);
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+      opt_ip = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--port" && i + 1 < argc) {
+      opt_port = std::atoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
         << " [--ip <localhost>] [--port <port>]"

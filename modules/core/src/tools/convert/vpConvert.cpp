@@ -38,12 +38,15 @@
   \brief Tools for type or general conversion.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_OPENCV) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES))
+
 #include <algorithm> // std::transform
 #include <vector>    // std::vector
 
 #include <visp3/core/vpConvert.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
 BEGIN_VISP_NAMESPACE
 /*!
   Unary function used to transform a cv::KeyPoint to a vpImagePoint.
@@ -52,7 +55,7 @@ BEGIN_VISP_NAMESPACE
   \return A vpImagePoint with the 2D coordinates corresponding to the
   location of the KeyPoint.
  */
-vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
+  vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
 {
   return vpImagePoint(keypoint.pt.y, keypoint.pt.x);
 }

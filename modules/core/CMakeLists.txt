@@ -76,7 +76,7 @@ if(USE_OPENCV)
     set(OpenCV_REQUIRED_LIB_COMPONENTS ${OpenCV_LIB_COMPONENTS})
     vp_list_filterout(OpenCV_REQUIRED_LIB_COMPONENTS "opencv_*")
     # We import only required OpenCV libraries
-    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_core" "opencv_imgproc" "opencv_highgui" "opencv_calib3d" "opencv_features2d")
+    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_core" "opencv_imgproc" "opencv_highgui" "opencv_calib3d" "opencv_features2d" "opencv_calib" "opencv_3d" )
     if(OpenCV_VERSION AND OpenCV_VERSION VERSION_LESS 2.4.8)
       list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_legacy")
     endif()

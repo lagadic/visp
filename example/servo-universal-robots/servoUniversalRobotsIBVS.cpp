@@ -134,7 +134,7 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--task_sequencing") {
       opt_task_sequencing = true;
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
@@ -142,9 +142,9 @@ int main(int argc, char **argv)
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout
-        << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
+        << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag-size <marker size in meter; default "
         << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-        << "[--quad_decimate <decimation; default " << opt_quad_decimate
+        << "[--quad-decimate <decimation; default " << opt_quad_decimate
         << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
         << "\n";
       return EXIT_SUCCESS;

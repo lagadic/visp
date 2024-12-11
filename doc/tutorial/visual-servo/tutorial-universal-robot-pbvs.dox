@@ -18,8 +18,8 @@ Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobo
 \verbatim
 $ cd example/servo-universal-robots
 $ ./servoUniversalRobotsPBVS --help
-./servoUniversalRobotsPBVS [--ip <default 192.168.1.1>] [--tag_size <marker size in meter; default 0.12>] \
-                           [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>]         \
+./servoUniversalRobotsPBVS [--ip <default 192.168.1.1>] [--tag-size <marker size in meter; default 0.12>] \
+                           [--eMc <eMc extrinsic file>] [--quad-decimate <decimation; default 2>]         \
                            [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold]    \
                            [--verbose] [--help] [-h]
 \endverbatim

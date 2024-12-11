@@ -18,13 +18,17 @@ int main(int argc, char **argv)
   std::string opt_videoname = "bruegel.mp4";
   unsigned int opt_subsample = 1;
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--videoname")
-      opt_videoname = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--subsample")
-      opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--videoname" && i + 1 < argc) {
+      opt_videoname = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--subsample" && i + 1 < argc) {
+      opt_subsample = static_cast<unsigned int>(std::atoi(argv[++i]));
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n"
+      std::cout << "\nUsage: " << argv[0]
+        << " [--videoname <video name>]"
+        << " [--subsample <scale factor>] [--help] [-h]\n"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -95,8 +99,8 @@ int main(int argc, char **argv)
     vpDisplay::flush(I);
     if (!g.isVideoFormat()) {
       vpTime::wait(t, 40);
-}
-}
+    }
+  }
 #else
   (void)argc;
   (void)argv;

@@ -38,13 +38,13 @@ int main(int argc, const char **argv)
     if (std::string(argv[i]) == "--without_pose_computation") {
       use_pose = false;
     }
-    else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
@@ -53,10 +53,10 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--display_tag") {
+    else if (std::string(argv[i]) == "--display-tag") {
       display_tag = true;
 #if defined(VISP_HAVE_X11)
     }
@@ -70,17 +70,17 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--serial_off") {
       serial_off = true;
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--input <camera input>] [--tag_size <tag_size in m>]"
-        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-        " [--intrinsic <intrinsic file>] [--camera_name <camera name>] [--without_pose_computation]"
-        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
+        << " [--input <camera input>] [--tag-size <tag_size in m>]"
+        " [--quad-decimate <quad_decimate>] [--nthreads <nb>]"
+        " [--intrinsic <intrinsic file>] [--camera-name <camera name>] [--without_pose_computation]"
+        " [--tag-family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
         " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-        " [--display_tag]";
+        " [--display-tag]";
 #if defined(VISP_HAVE_X11)
       std::cout << " [--display_on] [--save_image]";
 #endif

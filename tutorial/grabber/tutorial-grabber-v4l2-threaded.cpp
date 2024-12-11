@@ -113,14 +113,17 @@ int main(int argc, const char *argv[])
                                // it to 1 to avoid subsampling
 
   // Command line options
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--camera_device")
-      opt_device = (unsigned int)atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--scale")
-      opt_scale = (unsigned int)atoi(argv[i + 1]);
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--camera-device" && i + 1 < argc) {
+      opt_device = (unsigned int)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+      opt_scale = (unsigned int)atoi(argv[++i]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "--h") {
       std::cout << "Usage: " << argv[0]
-        << " [--camera_device <camera device (default: 0)>] [--scale <subsampling factor>]"
+        << " [--camera-device <camera device (default: 0)>]"
+        << " [--scale <subsampling factor>]"
         << " [--help] [-h]" << std::endl;
       return EXIT_SUCCESS;
     }

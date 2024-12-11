@@ -20,13 +20,16 @@ int main(int argc, const char *argv[])
     std::string opt_videoname = "video-postcard.mp4";
     bool opt_init_by_click = false;
     unsigned int opt_subsample = 1;
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--videoname")
-        opt_videoname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--init-by-click")
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--videoname") {
+        opt_videoname = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--init-by-click") {
         opt_init_by_click = true;
-      else if (std::string(argv[i]) == "--subsample")
-        opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+      }
+      else if (std::string(argv[i]) == "--subsample") {
+        opt_subsample = static_cast<unsigned int>(std::atoi(argv[++i]));
+      }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "Usage: " << argv[0]
           << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click]"
@@ -148,7 +151,7 @@ int main(int argc, const char *argv[])
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
-}
+  }
 #else
   (void)argc;
   (void)argv;

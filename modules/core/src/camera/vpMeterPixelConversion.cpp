@@ -42,6 +42,14 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)
+#include <opencv2/calib3d/calib3d.hpp>
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)
+#include <opencv2/calib.hpp>
+#include <opencv2/3d.hpp>
+#endif
+
 BEGIN_VISP_NAMESPACE
 /*!
   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
@@ -194,7 +202,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, doubl
   n02_p = n02_m * vpMath::sqr(cam.get_py());
 }
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
+#if (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_CALIB) && defined(HAVE_OPENCV_3D)))
 /*!
   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distortion

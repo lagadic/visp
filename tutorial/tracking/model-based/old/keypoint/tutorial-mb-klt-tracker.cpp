@@ -18,11 +18,14 @@ int main(int argc, char **argv)
   try {
     std::string videoname = "teabox.mp4";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc) {
+        videoname = std::string(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+          << " [--name <video name>]"
+          << " [--help]\n" << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -117,7 +120,7 @@ int main(int argc, char **argv)
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
-}
+  }
 #endif
 #else
   (void)argc;

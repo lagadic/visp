@@ -2,18 +2,20 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_THREADS) && defined(HAVE_OPENCV_HIGHGUI) \
+  && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEOIO)  \
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT)))
+
+#include <thread>
+#include <mutex>
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/detection/vpDetectorFace.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
-
-#if defined(HAVE_OPENCV_OBJDETECT) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) \
-  && defined(HAVE_OPENCV_VIDEOIO) && defined(VISP_HAVE_THREADS)
-
-#include <thread>
-#include <mutex>
 
 #include <opencv2/videoio.hpp>
 
@@ -200,17 +202,22 @@ int main(int argc, const char *argv[])
   unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn
   // it to 1 to avoid subsampling
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--haar")
-      opt_face_cascade_name = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--device")
-      opt_device = (unsigned int)atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--scale")
-      opt_scale = (unsigned int)atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--help") {
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--haar" && i + 1 < argc) {
+      opt_face_cascade_name = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+      opt_device = (unsigned int)atoi(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+      opt_scale = (unsigned int)atoi(argv[++i]);
+    }
+    else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
       std::cout << "Usage: " << argv[0]
-        << " [--haar <haarcascade xml filename>] [--device <camera "
-        "device>] [--scale <subsampling factor>] [--help]"
+        << " [--haar <haarcascade xml filename>]"
+        << " [--device <camera device>]"
+        << " [--scale <subsampling factor>]"
+        << " [--help] [-h]"
         << std::endl;
       return EXIT_SUCCESS;
     }
@@ -266,13 +273,25 @@ int main(int argc, const char *argv[])
 #else
 int main()
 {
-#ifndef VISP_HAVE_OPENCV
-  std::cout << "You should install OpenCV to make this example working..." << std::endl;
-#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
-#else
-  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
+#if !defined(VISP_HAVE_THREADS)
+  std::cout << "This tutorial needs std::threads that is missing." << std::endl;
 #endif
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This tutorial needs OpenCV highgui module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "This tutorial needs OpenCV videoio module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
+  std::cout << "This tutorial needs OpenCV objdetect module that is missing." << std::endl;
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
+  std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
+#endif
+
   return EXIT_SUCCESS;
 }
 

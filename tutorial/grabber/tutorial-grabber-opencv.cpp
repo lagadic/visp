@@ -81,17 +81,14 @@ int main(int argc, const char *argv[])
   bool opt_display = true;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--device") {
-      opt_device = std::atoi(argv[i + 1]);
-      i++;
+    if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+      opt_device = std::atoi(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--seqname") {
-      opt_seqname = std::string(argv[i + 1]);
-      i++;
+    else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+      opt_seqname = std::string(argv[++i]);
     }
-    else if (std::string(argv[i]) == "--record") {
-      opt_record_mode = std::atoi(argv[i + 1]);
-      i++;
+    else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+      opt_record_mode = std::atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--no-display") {
       opt_display = false;
@@ -183,7 +180,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-}
+  }
 #else
   (void)argc;
   (void)argv;
@@ -194,4 +191,4 @@ int main(int argc, const char *argv[])
   std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
-  }
+}

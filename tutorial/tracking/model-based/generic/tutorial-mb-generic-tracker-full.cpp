@@ -53,34 +53,34 @@ int main(int argc, char **argv)
   std::shared_ptr<vpVideoWriter> writer;
 
   try {
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--video") {
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--video" && i + 1 < argc) {
         opt_videoname = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--video-first-frame") {
+      else if (std::string(argv[i]) == "--video-first-frame" && i + 1 < argc) {
         opt_video_first_frame = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--model") {
+      else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
         opt_modelname = std::string(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--tracker") {
+      else if (std::string(argv[i]) == "--tracker" && i + 1 < argc) {
         opt_tracker = atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--downscale-img") {
+      else if (std::string(argv[i]) == "--downscale-img" && i + 1 < argc) {
         opt_downscale_img = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--save") {
+      else if (std::string(argv[i]) == "--save" && i + 1 < argc) {
         opt_save = std::string(argv[++i]);
       }
 #if defined(VISP_HAVE_MINIZ) && defined(VISP_HAVE_WORKING_REGEX)
-      else if (std::string(argv[i]) == "--save-results") {
+      else if (std::string(argv[i]) == "--save-results" && i + 1 < argc) {
         opt_save_results = std::string(argv[++i]);
       }
 #endif
       else if (std::string(argv[i]) == "--plot") {
         opt_plot = true;
       }
-      else if (std::string(argv[i]) == "--dof") {
+      else if (std::string(argv[i]) == "--dof" && i + 6 < argc) {
         for (int j = 0; j < 6; j++) {
           int val = std::atoi(argv[++i]);
           if (val == 0 || val == 1) {

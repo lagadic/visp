@@ -49,11 +49,12 @@ int main(int argc, char **argv)
   std::string port;
 
   unsigned long baud = 9600;
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--port")
-      port = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--baud") {
-      baud = (unsigned long)atol(argv[i + 1]);
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--port" && i + 1 < argc) {
+      port = std::string(argv[++i]);
+    }
+    else if (std::string(argv[i]) == "--baud" && i + 1 < argc) {
+      baud = (unsigned long)atol(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;

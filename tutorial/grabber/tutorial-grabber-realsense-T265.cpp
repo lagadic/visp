@@ -68,13 +68,11 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--fps") {
-        opt_fps = std::atoi(argv[i + 1]);
-        i++;
+      if (std::string(argv[i]) == "--fps" && i + 1 < argc) {
+        opt_fps = std::atoi(argv[++i]);
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
-        i++;
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
       }
       else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;
@@ -174,7 +172,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-}
+  }
 #else
   (void)argc;
   (void)argv;
