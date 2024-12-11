@@ -23,17 +23,22 @@ int main(int argc, char **argv)
     std::string opt_modelname = "teabox";
     int opt_tracker = 0;
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--video")
-        opt_videoname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--model")
-        opt_modelname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--tracker")
-        opt_tracker = atoi(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--video" && i + 1 < argc) {
+        opt_videoname = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+        opt_modelname = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--tracker" && i + 1 < argc) {
+        opt_tracker = atoi(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-          << " [--video <video name>] [--model <model name>] "
-          "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
+          << " [--video <video name>]"
+          << " [--model <model name>] "
+          << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
+          << " [--help] [-h]\n"
           << std::endl;
         return EXIT_SUCCESS;
       }
@@ -163,7 +168,7 @@ int main(int argc, char **argv)
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
-}
+  }
 #else
   (void)argc;
   (void)argv;

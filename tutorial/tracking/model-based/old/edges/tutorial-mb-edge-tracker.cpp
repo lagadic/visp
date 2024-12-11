@@ -20,11 +20,14 @@ int main(int argc, char **argv)
   try {
     std::string videoname = "teabox.mp4";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc) {
+        videoname = std::string(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help] [-h]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+          << " [--name <video name>]"
+          << " [--help,-h]\n" << std::endl;
         return EXIT_SUCCESS;
       }
     }

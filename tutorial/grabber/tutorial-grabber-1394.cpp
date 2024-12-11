@@ -73,12 +73,12 @@ int main(int argc, const char *argv[])
       if (std::string(argv[i]) == "--change-settings") {
         opt_change_settings = true;
       }
-      else if (std::string(argv[i]) == "--seqname") {
-        opt_seqname = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+        opt_seqname = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
         i++;
       }
       else if (std::string(argv[i]) == "--no-display") {
@@ -177,7 +177,7 @@ int main(int argc, const char *argv[])
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-}
+  }
 #else
   (void)argc;
   (void)argv;

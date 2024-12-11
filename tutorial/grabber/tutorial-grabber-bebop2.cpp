@@ -85,16 +85,16 @@ int main(int argc, const char **argv)
     bool opt_display = true;
 
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--seqname") {
-        opt_seqname = std::string(argv[i + 1]);
+      if (std::string(argv[i]) == "--seqname" && i + 1 < argc) {
+        opt_seqname = std::string(argv[++i]);
         i++;
       }
-      else if (std::string(argv[i]) == "--record") {
-        opt_record_mode = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--record" && i + 1 < argc) {
+        opt_record_mode = std::atoi(argv[++i]);
         i++;
       }
       else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
-        ip_address = std::string(argv[i + 1]);
+        ip_address = std::string(argv[++i]);
         i++;
       }
       else if (std::string(argv[i]) == "--hd-resolution") {

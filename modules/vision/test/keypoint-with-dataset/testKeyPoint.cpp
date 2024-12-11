@@ -41,14 +41,11 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D) && defined(HAVE_OPENCV_VIDEO)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES) || defined(HAVE_OPENCV_XFEATURES2D) || defined(HAVE_OPENCV_NONFREE))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -75,24 +72,23 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Test keypoints matching.\n\
-          \n\
-          SYNOPSIS\n\
-          %s [-c] [-d] [-h]\n",
-          name);
+  Test keypoints matching.\n\
+  \n\
+  SYNOPSIS\n\
+  %s [-c] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
-              OPTIONS:                                               \n\
-              \n\
-              -c\n\
-              Disable the mouse click. Useful to automate the \n\
-              execution of this program without human intervention.\n\
-              \n\
-              -d \n\
-              Turn off the display.\n\
-              \n\
-              -h\n\
-              Print the help.\n");
+  OPTIONS:                                               \n\
+  \n\
+  -c\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
+  \n\
+  -d \n\
+     Turn off the display.\n\
+  \n\
+  -h\n\
+     Print the help.\n");
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -174,19 +170,15 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   Imatch.resize(Icur.getHeight(), 2 * Icur.getWidth());
   Imatch.insert(Iref, vpImagePoint(0, 0));
 
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK display;
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display;
-#elif defined(HAVE_OPENCV_HIGHGUI)
-  vpDisplayOpenCV display;
-#endif
+  vpDisplay *display = nullptr;
 
   if (opt_display) {
-    display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-    display.init(Imatch, 0, 0, "ORB keypoints matching");
+#ifdef VISP_HAVE_DISPLAY
+    display = vpDisplayFactory::allocateDisplay(Imatch, 0, 0, "ORB keypoints matching");
+    display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
   }
 
   bool opt_click = false;
@@ -217,7 +209,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         }
       }
       else {
-     // Use right click to enable/disable step by step tracking
+        // Use right click to enable/disable step by step tracking
         if (vpDisplay::getClick(Imatch, button, false)) {
           if (button == vpMouseButton::button3) {
             opt_click = true;
@@ -228,6 +220,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         }
       }
     }
+  }
+
+  if (display) {
+    delete display;
   }
 }
 

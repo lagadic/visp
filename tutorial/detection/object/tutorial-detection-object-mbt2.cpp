@@ -12,7 +12,9 @@
 using namespace VISP_NAMESPACE_NAME;
 #endif
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+
 void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpKeyPoint &keypoint_learning, int id)
 {
   //! [Keypoints reference detection]
@@ -50,16 +52,20 @@ void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpK
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_IMGPROC) && \
+  ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
+
   //! [MBT code]
   try {
     std::string videoname = "cube.mp4";
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i + 1]);
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc)
+        videoname = std::string(argv[++i]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help] [-h]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+          << " [--name <video name>]"
+          << " [--help] [-h]\n" << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -110,18 +116,18 @@ int main(int argc, char **argv)
     }
 
     tracker.setOgreVisibilityTest(false);
-    if (vpIoTools::checkFilename(objectname + ".cao"))
+    if (vpIoTools::checkFilename(objectname + ".cao")) {
       tracker.loadModel(objectname + ".cao");
-    else if (vpIoTools::checkFilename(objectname + ".wrl"))
+    }
+    else if (vpIoTools::checkFilename(objectname + ".wrl")) {
       tracker.loadModel(objectname + ".wrl");
+    }
     tracker.setDisplayFeatures(true);
     //! [MBT code]
 
     //! [Keypoint declaration]
     vpKeyPoint keypoint_learning("ORB", "ORB", "BruteForce-Hamming");
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-    keypoint_learning.setDetectorParameter("ORB", "nLevels", 1);
-#else
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::ORB> orb_learning = keypoint_learning.getDetector("ORB").dynamicCast<cv::ORB>();
     if (orb_learning) {
       orb_learning->setNLevels(1);
@@ -197,9 +203,7 @@ int main(int argc, char **argv)
      */
      //! [Init keypoint detection]
     vpKeyPoint keypoint_detection("ORB", "ORB", "BruteForce-Hamming");
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-    keypoint_detection.setDetectorParameter("ORB", "nLevels", 1);
-#else
+#if ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_FEATURES2D)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_FEATURES))
     cv::Ptr<cv::ORB> orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
     orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
     if (orb_detector) {

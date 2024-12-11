@@ -21,15 +21,15 @@ int main(int argc, char **argv)
   std::vector<std::pair<std::string, std::string> > type_serial_nb;
   std::vector<bool> cam_found;
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--T265") {
-      type_serial_nb.push_back(std::make_pair("T265", std::string(argv[i + 1])));
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--T265" && i + 1 < argc) {
+      type_serial_nb.push_back(std::make_pair("T265", std::string(argv[++i])));
     }
-    else if (std::string(argv[i]) == "--D435") {
-      type_serial_nb.push_back(std::make_pair("D435", std::string(argv[i + 1])));
+    else if (std::string(argv[i]) == "--D435" && i + 1 < argc) {
+      type_serial_nb.push_back(std::make_pair("D435", std::string(argv[++i])));
     }
-    else if (std::string(argv[i]) == "--SR300") {
-      type_serial_nb.push_back(std::make_pair("SR300", std::string(argv[i + 1])));
+    else if (std::string(argv[i]) == "--SR300" && i + 1 < argc) {
+      type_serial_nb.push_back(std::make_pair("SR300", std::string(argv[++i])));
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     if (clicked) {
       break;
     }
-}
+  }
 #else
   (void)argc;
   (void)argv;

@@ -105,7 +105,7 @@ tutorials given in \ref tutorial_install_src.
 Once build, to see the options that are available, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-webcam --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-webcam [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--texture] [--projection_error <30 - 100>] [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-webcam [--input <camera id>] [--cube_size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera-name <camera name in xml file>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--projection_error <30 - 100>] [--help]
 \endcode
 
 To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges and
@@ -202,7 +202,7 @@ provided in the tutorials available from \ref tutorial_install_src.
 Once build, to see the options that are available, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-rs2 --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-rs2 [--cube_size <size in m>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--texture] [--depth] [--projection_error <30 - 100>] [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-rs2 [--cube_size <size in m>] [--tag-size <size in m>] [--quad-decimate <decimation>] [--nthreads <nb>] [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display-off] [--texture] [--depth] [--projection_error <30 - 100>] [--help]
 \endcode
 
 To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges, keypoints

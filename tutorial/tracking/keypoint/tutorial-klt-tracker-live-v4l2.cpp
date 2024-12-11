@@ -23,11 +23,13 @@ int main(int argc, const char *argv[])
     bool opt_init_by_click = false;
     int opt_device = 0;
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--init-by-click")
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--init-by-click") {
         opt_init_by_click = true;
-      else if (std::string(argv[i]) == "--device")
-        opt_device = atoi(argv[i + 1]);
+      }
+      else if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+        opt_device = atoi(argv[++i]);
+      }
       else if (std::string(argv[i]) == "--help") {
         std::cout << "Usage: " << argv[0] << " [--init-by-click] [--device <camera device>] [--help]" << std::endl;
         return EXIT_SUCCESS;

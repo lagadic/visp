@@ -8,7 +8,7 @@
 
 int main(int argc, const char **argv)
 {
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && (defined(HAVE_OPENCV_FEATURES2D) || defined(HAVE_OPENCV_FEATURES) || defined(HAVE_OPENCV_XFEATURES2D) || defined(HAVE_OPENCV_NONFREE))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -79,9 +79,8 @@ int main(int argc, const char **argv)
     std::cout << "Nb matches: " << nbMatch << std::endl;
     //! [Matching]
 
-    std::vector<vpImagePoint> iPref(nbMatch),
-      iPcur(nbMatch); // Coordinates in pixels (for display only)
-  //! [Allocation]
+    std::vector<vpImagePoint> iPref(nbMatch), iPcur(nbMatch); // Coordinates in pixels (for display only)
+    //! [Allocation]
     std::vector<double> mPref_x(nbMatch), mPref_y(nbMatch);
     std::vector<double> mPcur_x(nbMatch), mPcur_y(nbMatch);
     std::vector<bool> inliers(nbMatch);
@@ -137,7 +136,7 @@ int main(int argc, const char **argv)
 
     if (vpDisplay::getClick(Idisp, false))
       break;
-}
+  }
 
   vpDisplay::getClick(Idisp);
 #else

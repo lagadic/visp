@@ -72,7 +72,7 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   if (ret && detector.getNbObjects() > 0) { // if tag detected, we pick the first one
     cMo = cMo_vec[0];
     return state_tracking;
-}
+  }
 
   return state_detection;
 }
@@ -182,16 +182,16 @@ int main(int argc, const char **argv)
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       opt_tag_size = atof(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       opt_quad_decimate = (float)atof(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       opt_nthreads = atoi(argv[i + 1]);
     }
-    else if (std::string(argv[i]) == "--display_off") {
+    else if (std::string(argv[i]) == "--display-off") {
       display_off = true;
     }
-    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--tag-family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
@@ -210,12 +210,12 @@ int main(int argc, const char **argv)
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-        << " [--cube_size <size in m>] [--tag_size <size in m>]"
-        " [--quad_decimate <decimation>] [--nthreads <nb>]"
-        " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
+        << " [--cube_size <size in m>] [--tag-size <size in m>]"
+        " [--quad-decimate <decimation>] [--nthreads <nb>]"
+        " [--tag-family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
         " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-      std::cout << " [--display_off]";
+      std::cout << " [--display-off]";
 #endif
       std::cout << " [--texture] [--depth] [--projection_error <30 - 100>] [--help]" << std::endl;
       return EXIT_SUCCESS;
@@ -459,7 +459,7 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-}
+  }
 
   return EXIT_SUCCESS;
 #else

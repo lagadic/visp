@@ -1,16 +1,15 @@
 //! \example tutorial-bridge-opencv-matrix.cpp
 #include <visp3/core/vpConfig.h>
+
+#if defined(HAVE_OPENCV_CORE)
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
-#if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -52,6 +51,14 @@ int main()
     std::cout << "M: \n" << M << std::endl;
     std::cout << "M_cv: \n" << M_cv << std::endl;
     //! [Modify ViSP matrix]
+  }
+}
+#else
+int main()
+{
+#if !defined(HAVE_OPENCV_CORE)
+  std::cout << "This tutorial requires OpenCV core module." << std::endl;
+#endif
+  return EXIT_SUCCESS;
 }
 #endif
-}

@@ -14,7 +14,8 @@
 
 int main(int argc, const char *argv[])
 {
-#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) \
+  && (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_OBJDETECT)) || ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_XOBJDETECT)))
 #ifdef ENABLE_VISP_NAMESPACE
   using namespace VISP_NAMESPACE_NAME;
 #endif
@@ -24,17 +25,22 @@ int main(int argc, const char *argv[])
     unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn
     // it to 1 to avoid subsampling
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--haar")
-        opt_face_cascade_name = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--device")
-        opt_device = (unsigned int)atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--scale")
-        opt_scale = (unsigned int)atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help") {
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--haar" && i + 1 < argc) {
+        opt_face_cascade_name = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+        opt_device = (unsigned int)atoi(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+        opt_scale = (unsigned int)atoi(argv[++i]);
+      }
+      else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
         std::cout << "Usage: " << argv[0]
-          << " [--haar <haarcascade xml filename>] [--device <camera "
-          "device>] [--scale <subsampling factor>] [--help]"
+          << " [--haar <haarcascade xml filename>]"
+          << " [--device <camera device>]"
+          << " [--scale <subsampling factor>]"
+          << " [--help] [-h]"
           << std::endl;
         return EXIT_SUCCESS;
       }
@@ -124,6 +130,21 @@ int main(int argc, const char *argv[])
     std::cout << e.getMessage() << std::endl;
   }
 #else
+
+
+#if !defined(HAVE_OPENCV_HIGHGUI)
+  std::cout << "This tutorial needs OpenCV highgui module that is missing." << std::endl;
+#endif
+#if !defined(HAVE_OPENCV_IMGPROC)
+  std::cout << "This tutorial needs OpenCV imgproc module that is missing." << std::endl;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x050000) && !defined(HAVE_OPENCV_OBJDETECT)
+  std::cout << "This tutorial needs OpenCV objdetect module that is missing." << std::endl;
+#endif
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && !defined(HAVE_OPENCV_XOBJDETECT))
+  std::cout << "This tutorial needs OpenCV xobjdetect module that is missing." << std::endl;
+#endif
+
   (void)argc;
   (void)argv;
 #endif
