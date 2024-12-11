@@ -48,10 +48,9 @@ BEGIN_VISP_NAMESPACE
 
   \brief This class defines the container for a plane geometrical structure.
 
-  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
-  (x,y,z) are the coordinates of a point and where \f$[A,B,C]^T\f$ is a normal
+  A plane is given by the equation \f$A*X + B*Y + C*Z + D = 0\f$ where
+  (X,Y,Z) are the coordinates of a point and where \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
-
 */
 class VISP_EXPORT vpPlane
 {
@@ -66,14 +65,15 @@ public:
   vpPlane();
   vpPlane(const vpPlane &P);
   vpPlane(double A, double B, double C, double D);
-  vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame = camera_frame);
   vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
 
   double computeZ(double x, double y) const;
 
-  void init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
-  void init(const vpColVector &P, const vpColVector &n);
-  void init(const vpPlane &P);
+  vpPlane &init(const vpPoint &P, const vpColVector &normal, vpPlaneFrame frame = camera_frame);
+  vpPlane &init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
+  vpPlane &init(const vpColVector &P, const vpColVector &n);
+  vpPlane &init(const vpPlane &P);
 
   // SET the parameter
   /*! Set plane parameter A. */
@@ -157,7 +157,7 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPlane &p);
 
   // Operation with  Plane
-  void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;
+  void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj, vpPlaneFrame frame = camera_frame) const;
 
   double rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVector &H) const;
 

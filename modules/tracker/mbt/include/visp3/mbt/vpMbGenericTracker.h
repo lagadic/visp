@@ -919,15 +919,7 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
   //KLT tracker settings
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
-    nlohmann::json klt = nlohmann::json {
-      {"maxFeatures", t.tracker.getMaxFeatures()},
-      {"windowSize", t.tracker.getWindowSize()},
-      {"quality", t.tracker.getQuality()},
-      {"minDistance", t.tracker.getMinDistance()},
-      {"harris", t.tracker.getHarrisFreeParameter()},
-      {"blockSize", t.tracker.getBlockSize()},
-      {"pyramidLevels", t.tracker.getPyramidLevels()}
-    };
+    nlohmann::json klt = t.tracker;
     klt["maskBorder"] = t.maskBorder;
     j["klt"] = klt;
   }
@@ -1030,14 +1022,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     const nlohmann::json klt = j.at("klt");
-    auto &ktrack = t.tracker;
-    ktrack.setMaxFeatures(klt.value("maxFeatures", 10000));
-    ktrack.setWindowSize(klt.value("windowSize", 5));
-    ktrack.setQuality(klt.value("quality", 0.01));
-    ktrack.setMinDistance(klt.value("minDistance", 5));
-    ktrack.setHarrisFreeParameter(klt.value("harris", 0.01));
-    ktrack.setBlockSize(klt.value("blockSize", 3));
-    ktrack.setPyramidLevels(klt.value("pyramidLevels", 3));
+    t.tracker = klt;
     t.setMaskBorder(klt.value("maskBorder", t.maskBorder));
     t.faces.getMbScanLineRenderer().setMaskBorder(t.maskBorder);
   }

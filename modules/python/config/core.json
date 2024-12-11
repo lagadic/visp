@@ -1,12 +1,29 @@
 {
-  "ignored_headers": ["vpGEMM.h", "vpDebug.h", "vpEndian.h"],
-  "ignored_classes": ["vpException", "vpImageException", "vpTrackingException",
-                      "vpFrameGrabberException", "vpIoException",
-                      "vpDisplayException", "vpMatrixException"],
-  "user_defined_headers": ["core.hpp"],
-  "config_includes": ["core_image.json", "core_math.json"],
+  "ignored_headers": [
+    "vpGEMM.h",
+    "vpDebug.h",
+    "vpEndian.h"
+  ],
+  "ignored_classes": [
+    "vpException",
+    "vpImageException",
+    "vpTrackingException",
+    "vpFrameGrabberException",
+    "vpIoException",
+    "vpDisplayException",
+    "vpMatrixException"
+  ],
+  "user_defined_headers": [
+    "core.hpp"
+  ],
+  "config_includes": [
+    "core_image.json",
+    "core_math.json"
+  ],
   "header_additional_dependencies": {
-    "vpUKSigmaDrawerMerwe.h": ["vpUnscentedKalman.h"]
+    "vpUKSigmaDrawerMerwe.h": [
+      "vpUnscentedKalman.h"
+    ]
   },
   "enums": {
     "vpMunkres::STEP_T": {
@@ -95,7 +112,9 @@
   ],
   "classes": {
     "vpIoTools": {
-      "ignored_attributes": ["separator"],
+      "ignored_attributes": [
+        "separator"
+      ],
       "methods": [
         {
           "signature": "void readBinaryValueLE(std::ifstream&, int16_t&)",
@@ -131,70 +150,118 @@
           "static": true,
           "signature": "void getUserName(std::string&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void getVersion(const std::string&, unsigned int&, unsigned int&, unsigned int&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false, false, false],
-          "param_is_output": [false, true, true, true]
+          "param_is_input": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, float&)",
           "custom_name": "readConfigVarFloat",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, double&)",
           "custom_name": "readConfigVarDouble",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, unsigned int&)",
           "custom_name": "readConfigVarUnsigned",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, int&)",
           "custom_name": "readConfigVarInt",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, bool&)",
           "custom_name": "readConfigVarBoolean",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "bool readConfigVar(const std::string&, std::string&)",
           "custom_name": "readConfigVarString",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         }
       ]
     },
-
     "vpPolygon": {
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const vpPolygon::PointInPolygonMethod&)",
@@ -208,61 +275,121 @@
           "static": true,
           "signature": "void getClippedPolygon(const std::vector<vpPoint>&, std::vector<vpPoint>&, const vpHomogeneousMatrix&, const unsigned int&, const vpCameraParameters&, const double&, const double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false, true, true, true, true, true],
-          "param_is_output": [false, true, false, false, false, false, false]
+          "param_is_input": [
+            true,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ]
         },
         {
           "static": false,
           "signature": "void getPolygonClipped(std::vector<vpPoint>&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": false,
           "signature": "void getPolygonClipped(std::vector<std::pair<vpPoint, unsigned int>>&)",
           "custom_name": "getPolygonClippedWithInfo",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": false,
           "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&, const vpHomogeneousMatrix&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false, true],
-          "param_is_output": [false, true, false]
+          "param_is_input": [
+            true,
+            false,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false
+          ]
         },
         {
           "static": false,
           "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": false,
           "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&, const vpHomogeneousMatrix&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false, true],
-          "param_is_output": [false, true, false]
+          "param_is_input": [
+            true,
+            false,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false
+          ]
         },
         {
           "static": false,
           "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, false],
-          "param_is_output": [false, true]
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void getMinMaxRoi(const std::vector<vpImagePoint>&, int&, int&, int&, int&)",
           "use_default_param_policy": false,
           "param_is_input": [
-            true, false, false, false, false
+            true,
+            false,
+            false,
+            false,
+            false
           ],
           "param_is_output": [
-            false, true, true, true, true
+            false,
+            true,
+            true,
+            true,
+            true
           ]
         }
       ]
@@ -277,8 +404,7 @@
       ]
     },
     "vpPoint": {
-      "methods":
-      [
+      "methods": [
         {
           "static": false,
           "ignore": true,
@@ -289,7 +415,6 @@
           "ignore": true,
           "signature": "void getWorldCoordinates(double&, double&, double&)"
         }
-
       ]
     },
     "vpRect": {
@@ -298,14 +423,19 @@
           "static": false,
           "signature": "void getCenter(double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [false,false],
-          "param_is_output": [true, true]
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
         }
       ]
     },
     "vpBSpline": {
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "unsigned int findSpan(double, unsigned int, const std::vector<double> &)",
@@ -331,21 +461,28 @@
           "static": false,
           "signature": "void get_knots(std::list<double>&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": false,
           "signature": "void get_controlPoints(std::list<vpImagePoint>&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         }
       ]
     },
     "vpQuadProg": {
-      "methods":
-      [
+      "methods": [
         {
           "static": true,
           "signature": "bool solveQPe(const vpMatrix &, const vpColVector &, vpMatrix, vpColVector, vpColVector &, const double &)",
@@ -358,17 +495,17 @@
         {
           "static": true,
           "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3d>&, bool)",
-          "ignore" :true
+          "ignore": true
         },
         {
           "static": true,
           "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3f>&, bool)",
-          "ignore" :true
+          "ignore": true
         },
         {
           "static": true,
           "signature": "void convertToOpenCV(const std::vector<vpImagePoint>&, std::vector<cv::Point2d>&)",
-          "ignore" :true
+          "ignore": true
         },
         {
           "static": true,
@@ -413,8 +550,8 @@
       ]
     },
     "vpDisplay": {
-      "methods":
-      [
+      "additional_bindings": "bindings_vpDisplay",
+      "methods": [
         {
           "static": true,
           "signature": "unsigned int getDownScalingFactor(const vpImage<unsigned char> &)",
@@ -527,29 +664,85 @@
           "static": true,
           "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
-          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,true,false,false],
-          "param_is_output": [false,false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,true,false,false],
-          "param_is_output": [false,false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,false,false],
-          "param_is_output": [false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
@@ -572,7 +765,6 @@
           "ignore": true
         }
       ]
-
     },
     "vpMeterPixelConversion": {
       "additional_bindings": "bindings_vpMeterPixelConversion",
@@ -581,50 +773,126 @@
           "static": true,
           "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
-          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertEllipse(const vpCameraParameters&, const vpSphere&, vpImagePoint&, double&, double&, double&)",
           "use_default_param_policy": false,
           "param_is_input": [
-            true, true, true, false, false, false
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
           ],
           "param_is_output": [
-            false, false, false, true, true, true
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
           ]
         },
         {
           "static": true,
           "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,true,false,false],
-          "param_is_output": [false,false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,true,false,false],
-          "param_is_output": [false,false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true,true,false,false],
-          "param_is_output": [false,false,true,true]
+          "param_is_input": [
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            true,
+            true
+          ]
         },
         {
           "static": true,
           "signature": "void convertEllipse(const vpCameraParameters&, const vpCircle&, vpImagePoint&, double&, double&, double&)",
           "use_default_param_policy": false,
           "param_is_input": [
-            true, true, true, true, true, true
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
           ],
           "param_is_output": [
-            false, false, false, true, true, true
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
           ]
         },
         {
@@ -632,10 +900,28 @@
           "signature": "void convertEllipse(const vpCameraParameters&, double, double, double, double, double, vpImagePoint&, double&, double&, double&)",
           "use_default_param_policy": false,
           "param_is_input": [
-            true, true, true, true, true, true, true, false, false, false
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
           ],
           "param_is_output": [
-            false, false, false, false, false, false, false, true, true, true
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true
           ]
         },
         {
@@ -681,8 +967,22 @@
           "static": true,
           "signature": "void computeIntersectionPoint(const vpCircle&, const vpCameraParameters&, const double&, const double&, double&, double&)",
           "use_default_param_policy": false,
-          "param_is_input": [true, true, true, true, false, false],
-          "param_is_output": [false, false, false, false, true, true]
+          "param_is_input": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         }
       ]
     },
@@ -692,14 +992,18 @@
           "static": true,
           "signature": "double derivativeFilterX(const vpImage<ImageType>&, unsigned int, unsigned int)",
           "specializations": [
-            ["TypeFilterable"]
+            [
+              "TypeFilterable"
+            ]
           ]
         },
         {
           "static": true,
           "signature": "double derivativeFilterY(const vpImage<ImageType>&, unsigned int, unsigned int)",
           "specializations": [
-            ["TypeFilterable"]
+            [
+              "TypeFilterable"
+            ]
           ]
         }
       ]
@@ -709,32 +1013,56 @@
         {
           "static": true,
           "signature": "void dilatation(vpImage<T>&, const int&)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void erosion(vpImage<Type>&, Type, Type, vpImageMorphology::vpConnexityType)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void erosion(vpImage<T>&, const vpImageMorphology::vpConnexityType&)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void dilatation(vpImage<Type>&, Type, Type, vpImageMorphology::vpConnexityType)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void dilatation(vpImage<T>&, const vpImageMorphology::vpConnexityType&)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         },
         {
           "static": true,
           "signature": "void erosion(vpImage<T>&, const int&)",
-          "specializations": [["TypeErodableDilatable"]]
+          "specializations": [
+            [
+              "TypeErodableDilatable"
+            ]
+          ]
         }
       ]
     },
@@ -800,15 +1128,29 @@
           "static": false,
           "signature": "int receive(std::string&, std::string&, int)",
           "use_default_param_policy": false,
-          "param_is_input": [false, false, true],
-          "param_is_output": [true, true, false]
+          "param_is_input": [
+            false,
+            false,
+            true
+          ],
+          "param_is_output": [
+            true,
+            true,
+            false
+          ]
         },
         {
           "static": false,
           "signature": "int receive(std::string&, int)",
           "use_default_param_policy": false,
-          "param_is_input": [false, true],
-          "param_is_output": [true, false]
+          "param_is_input": [
+            false,
+            true
+          ],
+          "param_is_output": [
+            true,
+            false
+          ]
         }
       ]
     },
@@ -817,7 +1159,11 @@
         {
           "static": true,
           "signature": "std::vector<T> shuffleVector(const std::vector<T>&)",
-          "specializations": [["TypePythonScalar"]]
+          "specializations": [
+            [
+              "TypePythonScalar"
+            ]
+          ]
         }
       ]
     },
@@ -827,15 +1173,23 @@
           "static": false,
           "signature": "unsigned getPeaks(std::list<vpHistogramPeak>&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": false,
           "signature": "unsigned getValey(std::list<vpHistogramValey>&)",
           "use_default_param_policy": false,
-          "param_is_input": [false],
-          "param_is_output": [true]
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
         },
         {
           "static": false,
