@@ -103,8 +103,14 @@ int main()
     Ogre::Light *light = ogre.getSceneManager()->createLight();
     light->setDiffuseColour(1, 1, 1);  // scaled RGB values
     light->setSpecularColour(1, 1, 1); // scaled RGB values
-    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
     light->setType(Ogre::Light::LT_POINT);
+#if (VISP_HAVE_OGRE_VERSION < (1 << 16 | 10 << 8 | 0))
+    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#else
+    Ogre::SceneNode *spotLightNode = ogre.getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    spotLightNode->attachObject(light);
+    spotLightNode->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+#endif
 
     vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
@@ -229,4 +235,4 @@ int main()
   }
   return EXIT_SUCCESS;
 #endif
-  }
+}

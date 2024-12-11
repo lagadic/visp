@@ -670,8 +670,9 @@ void vpAROgre::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
     mWindow->update();
     keepOn = true;
   }
-  else
+  else {
     keepOn = false;
+  }
 }
 
 /*!
@@ -686,8 +687,9 @@ void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
     mWindow->update();
     keepOn = true;
   }
-  else
+  else {
     keepOn = false;
+  }
 }
 
 /*!
