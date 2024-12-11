@@ -279,6 +279,8 @@ function(vp_set_ogre_media)
     file(COPY modules/ar/data/ogre-simulator/media DESTINATION ${VISP_BINARY_DIR}/data/ogre-simulator)
   # endif()
 
+  # Initialize the variable
+  set(VISP_HAVE_OGRE_RESOURCES_PATH "" CACHE INTERNAL "Ogre resources location")
   if(ogre_resources_cfg_exists)
     set(VISP_HAVE_OGRE_RESOURCES_PATH "${ogre_resources_cfg_exists};" CACHE INTERNAL "Ogre resources location")
   endif()
